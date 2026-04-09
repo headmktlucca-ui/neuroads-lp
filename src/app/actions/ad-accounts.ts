@@ -108,7 +108,7 @@ export async function listGoogleAdsAccounts(accessToken: string) {
 
     return { 
       success: true, 
-      accounts: detailedAccounts.length > 0 ? detailedAccounts : seeds.map(id => ({ id, name: id, isManager: false })) 
+      accounts: detailedAccounts.length > 0 ? detailedAccounts : seeds.map((id: string) => ({ id, name: id, isManager: false })) 
     };
     
   } catch (error: any) {
