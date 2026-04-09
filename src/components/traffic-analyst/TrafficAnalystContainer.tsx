@@ -164,9 +164,16 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
         throw new Error('Não foi possível obter a credencial de acesso.');
       }
 
-    } catch (err: unknown) {
+    } catch (err: any) {
       console.error(err);
-      const message = err instanceof Error ? err.message : 'Erro durante a conexão.';
+      let message = 'Erro durante a conexão.';
+      
+      if (err.code === 'auth/account-exists-with-different-credential') {
+        message = 'Este e-mail já está associado a outra conta (ex: Google). Por favor, use o mesmo método de login anterior ou vincule as contas no painel da NeuroAds.';
+      } else if (err instanceof Error) {
+        message = err.message;
+      }
+      
       setError(message);
     } finally {
       setIsSyncing(false);

@@ -1,4 +1,4 @@
-import { initializeApp, getApps, getApp } from 'firebase/app';
+import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
@@ -14,19 +14,24 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
-// Initialize services with SSR safety
+// Lazy initialization to prevent server-side crashes with client SDK
 let auth: Auth;
 let db: Firestore;
 
+const getFirebaseAuth = () => {
+  if (!auth) auth = getAuth(app);
+  return auth;
+};
+
+const getFirebaseDb = () => {
+  if (!db) db = getFirestore(app);
+  return db;
+};
+
+// Maintain original exports for client components (with safety checks)
 if (typeof window !== 'undefined') {
-  auth = getAuth(app);
-  db = getFirestore(app);
-} else {
-  // On server, we initialize them but avoid calling browser-only methods
-  // getAuth and getFirestore usually work in Node.js if the SDK version is modern,
-  // but they shouldn't be used for auth persistence on the server.
   auth = getAuth(app);
   db = getFirestore(app);
 }
 
-export { auth, db };
+export { app, auth, db, getFirebaseAuth, getFirebaseDb };

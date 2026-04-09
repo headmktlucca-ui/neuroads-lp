@@ -1,7 +1,7 @@
 'use server';
 
-import { db } from '../../lib/firebase';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { getFirebaseDb } from '../../lib/firebase';
+import { doc, updateDoc, setDoc } from 'firebase/firestore';
 
 export async function listGoogleAdsAccounts(accessToken: string) {
   try {
@@ -134,6 +134,7 @@ export async function listGoogleAdsAccounts(accessToken: string) {
 
 export async function saveConnection(userId: string, platform: string, accountId: string, accessToken: string, loginCustomerId?: string) {
   try {
+    const db = getFirebaseDb();
     const userRef = doc(db, 'users', userId);
     const connectionKey = `connections.${platform.toLowerCase().replace(' ', '_')}`;
     
@@ -156,6 +157,7 @@ export async function saveConnection(userId: string, platform: string, accountId
 
 export async function removeConnection(userId: string, platform: string) {
   try {
+    const db = getFirebaseDb();
     const userRef = doc(db, 'users', userId);
     const connectionKey = `connections.${platform.toLowerCase().replace(' ', '_')}`;
     
