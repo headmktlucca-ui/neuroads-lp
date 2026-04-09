@@ -59,11 +59,12 @@ export default function LabHero() {
           </motion.div>
 
           {/* Headline - Radical Typographic Layout */}
-          <motion.div variants={itemVariants} className="relative mb-8">
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black leading-[0.9] tracking-tighter">
-              MUITO ALÉM <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-brand-orange)] to-[var(--color-brand-green)] uppercase">
-                DO CLIQUE.
+          <motion.div variants={itemVariants} className="relative mb-8 text-center">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tighter uppercase italic">
+              Não é o design. <br />
+              Não é o texto. <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-brand-orange)] to-[var(--color-brand-green)]">
+                É ESTRATÉGIA!
               </span>
             </h1>
             <div className="absolute -top-8 -right-24 hidden lg:block">

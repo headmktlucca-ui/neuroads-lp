@@ -34,9 +34,8 @@ export default function Footer() {
           </div>
           
           <div className="text-center">
-            <p className="text-slate-600 text-[10px] font-mono uppercase tracking-[0.3em] mb-2">Systems Contact</p>
-            <a href="mailto:neuroads@gmail.com.br" className="text-slate-400 font-bold hover:text-[var(--color-brand-orange)] transition-colors text-sm">
-              NEUROADS@GMAIL.COM.BR
+            <a href="mailto:avante@neuroads.com.br" className="text-slate-400 font-bold hover:text-[var(--color-brand-orange)] transition-colors text-sm">
+              AVANTE@NEUROADS.COM.BR
             </a>
           </div>
 
