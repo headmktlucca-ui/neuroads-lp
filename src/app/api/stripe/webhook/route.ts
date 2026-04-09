@@ -29,7 +29,7 @@ export async function POST(req: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         const userId = session.client_reference_id;
-        
+
         if (userId) {
           // Update Firebase User to Premium
           const userRef = doc(db, 'users', userId);

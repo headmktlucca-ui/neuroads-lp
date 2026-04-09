@@ -92,10 +92,13 @@ async function fetchGoogleAdsData(accessToken: string, customerId?: string) {
 
 async function fetchMetaAdsData(accessToken: string, accountId?: string) {
   if (!accountId) throw new Error('ID da Conta de Anúncios (Ad Account ID) é obrigatório. Ex: act_12345');
+  
+  // Ensure accountId starts with 'act_'
+  const formattedId = accountId.startsWith('act_') ? accountId : `act_${accountId}`;
 
   // Meta Graph API for Ad Insights
   const response = await fetch(
-    `https://graph.facebook.com/v18.0/${accountId}/insights?fields=spend,impressions,clicks,actions,action_values&date_preset=last_30d&access_token=${accessToken}`
+    `https://graph.facebook.com/v18.0/${formattedId}/insights?fields=spend,impressions,clicks,actions,action_values&date_preset=last_30d&access_token=${accessToken}`
   );
 
   if (!response.ok) {

@@ -14,6 +14,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 interface UserProfile {
   isPremium: boolean;
   usageStats: Record<string, { lastUsed: number; countThisWeek: number }>;
+  connections?: Record<string, { accountId: string; accessToken: string; isActive: boolean }>;
 }
 
 interface AuthContextType {

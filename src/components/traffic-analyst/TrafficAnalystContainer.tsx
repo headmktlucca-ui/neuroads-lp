@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronRight, 
@@ -25,6 +25,14 @@ import { Clock, Key } from 'lucide-react';
 import { GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { syncTrafficData } from '@/app/actions/traffic-sync';
+import { listGoogleAdsAccounts, saveConnection, removeConnection } from '@/app/actions/ad-accounts';
+import { scheduleAutomation, saveToHistory } from '@/app/actions/automations';
+import { sendDiagnosisEmail } from '@/lib/mail';
+import Link from 'next/link';
+
+import { Calendar, History } from 'lucide-react';
+
+
 
 type Step = 'channel' | 'objective' | 'data' | 'insights' | 'generating' | 'report';
 
@@ -62,6 +70,30 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
   const [limitError, setLimitError] = useState<string | null>(null);
   const [adAccountEmail, setAdAccountEmail] = useState('');
   const [showIdInput, setShowIdInput] = useState(false);
+  const [availableAccounts, setAvailableAccounts] = useState<string[]>([]);
+  const [isSelectingAccount, setIsSelectingAccount] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
+  const [connectedAccountId, setConnectedAccountId] = useState<string | null>(null);
+  const [frequency, setFrequency] = useState('Semanal');
+  const [isScheduling, setIsScheduling] = useState(false);
+  const [scheduleSuccess, setScheduleSuccess] = useState(false);
+
+  
+  // Load saved connection for Max plan
+  useEffect(() => {
+    if (profile?.isPremium && profile.connections && data.plataforma) {
+      const platformKey = data.plataforma.toLowerCase().replace(' ', '_');
+      const connection = profile.connections[platformKey];
+      if (connection && connection.isActive) {
+        setConnectedAccountId(connection.accountId);
+        setAccessToken(connection.accessToken);
+      } else {
+        setConnectedAccountId(null);
+        setAccessToken('');
+      }
+    }
+  }, [profile, data.plataforma]);
+
 
   if (!activeApp) return null;
 
@@ -69,33 +101,32 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
     setData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSync = async () => {
+  const handleConnect = async () => {
     if (!data.plataforma) return;
     
-    // Se a plataforma precisa de ID de conta mas ainda não foi inserido
-    if ((data.plataforma === 'Google Ads' || data.plataforma === 'Meta Ads' || data.plataforma === 'TikTok Ads') && !adAccountEmail && !showIdInput) {
-      setShowIdInput(true);
-      return;
-    }
-
-    if (showIdInput && !adAccountEmail) {
-      setError('Por favor, informe o E-mail da sua Conta de Anúncios.');
-      return;
-    }
-
     setIsSyncing(true);
-    setSyncSuccess(false);
     setError(null);
     
     try {
-      let accessToken = '';
+      let token = '';
 
       if (data.plataforma === 'Google Ads') {
         const provider = new GoogleAuthProvider();
         provider.addScope('https://www.googleapis.com/auth/adwords');
         const result = await signInWithPopup(auth, provider);
         const credential = GoogleAuthProvider.credentialFromResult(result);
-        accessToken = credential?.accessToken || '';
+        token = credential?.accessToken || '';
+        
+        if (token) {
+          setAccessToken(token);
+          const accResult = await listGoogleAdsAccounts(token);
+          if (accResult.success && accResult.accounts) {
+            setAvailableAccounts(accResult.accounts);
+            setIsSelectingAccount(true);
+          } else {
+            throw new Error(accResult.error || 'Erro ao listar contas do Google Ads.');
+          }
+        }
       } 
       else if (data.plataforma === 'Meta Ads') {
         const provider = new FacebookAuthProvider();
@@ -103,47 +134,87 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
         provider.addScope('read_insights');
         const result = await signInWithPopup(auth, provider);
         const credential = FacebookAuthProvider.credentialFromResult(result);
-        accessToken = credential?.accessToken || '';
+        token = credential?.accessToken || '';
+        if (token) {
+          setAccessToken(token);
+          // Meta doesn't usually need a second step to "list" if the token is for a specific user, 
+          // but we can ask for the Ad Account ID like before or list them.
+          setShowIdInput(true);
+        }
       }
       else if (data.plataforma === 'TikTok Ads') {
-        // TikTok não possui Provedor de Popup nativo no Firebase - requer fluxo OAuth customizado via backend
-        // Para este MVP, solicitaremos o token de acesso de desenvolvedor se não houver backend
-        accessToken = prompt('Insira seu Access Token do TikTok For Business (Modo Desenvolvedor)') || '';
-        if (!accessToken) throw new Error('Autenticação TikTok cancelada ou inválida.');
+        token = prompt('Insira seu Access Token do TikTok For Business (Modo Desenvolvedor)') || '';
+        if (token) {
+          setAccessToken(token);
+          setShowIdInput(true);
+        }
       }
 
-      if (!accessToken) {
+      if (!token) {
         throw new Error('Não foi possível obter a credencial de acesso.');
       }
 
-      const syncResult = await syncTrafficData(data.plataforma as string, accessToken, adAccountEmail);
+    } catch (err: unknown) {
+      console.error(err);
+      const message = err instanceof Error ? err.message : 'Erro durante a conexão.';
+      setError(message);
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
+  const handleSelectAccount = async (accountId: string) => {
+    setConnectedAccountId(accountId);
+    setIsSelectingAccount(false);
+    
+    if (profile?.isPremium && user) {
+      await saveConnection(user.uid, data.plataforma as string, accountId, accessToken);
+    }
+
+    // Trigger initial sync automatically after connection
+    await executeSync(accountId, accessToken);
+  };
+
+  const executeSync = async (accountId: string, manualToken?: string) => {
+    const tokenToUse = manualToken || accessToken;
+    if (!tokenToUse) {
+      setError('Token de acesso não encontrado. Por favor, conecte novamente.');
+      return;
+    }
+
+    setIsSyncing(true);
+    setSyncSuccess(false);
+    setError(null);
+
+    try {
+      const syncResult = await syncTrafficData(data.plataforma as string, tokenToUse, accountId);
       
       if (syncResult.success && syncResult.data) {
         setData(prev => ({ ...prev, ...syncResult.data }));
         setSyncSuccess(true);
         setTimeout(() => setSyncSuccess(false), 3000);
       } else {
-        throw new Error(syncResult.error || 'Erro desconhecido ao puxar os dados reais.');
+        throw new Error(syncResult.error || 'Erro ao sincronizar dados.');
       }
-
-    } catch (err: unknown) {
-      console.error(err);
-      const message = err instanceof Error ? err.message : 'Erro durante a autenticação ou sincronização.';
-      setError(message);
-      
-      // Fallback para dados mockados em caso de erro sem credencial válida durante desenvolvimento
-      console.log("Aplicando dados mockados como fallback devido a erro de API real");
-      const mockDataMap: Record<string, Partial<TrafficData>> = {
-        'Google Ads': { investimento: '8500', impressoes: '125000', cliques: '1840', conversoes: '42', cpa: '202.38', roas: '4.2' },
-        'Meta Ads': { investimento: '5000', impressoes: '85000', cliques: '2240', conversoes: '68', cpa: '73.53', roas: '5.8' },
-        'TikTok Ads': { investimento: '3200', impressoes: '450000', cliques: '9850', conversoes: '31', cpa: '103.22', roas: '2.9' },
-      };
-      const platformData = mockDataMap[data.plataforma as string] || mockDataMap['Google Ads'];
-      setData(prev => ({ ...prev, ...platformData }));
+    } catch (err: any) {
+      console.error('Sync error:', err);
+      setError(err.message || 'Erro desconhecido ao sincronizar.');
     } finally {
       setIsSyncing(false);
     }
   };
+
+  const handleDisconnect = async () => {
+    if (profile?.isPremium && user) {
+      await removeConnection(user.uid, data.plataforma as string);
+    }
+    setConnectedAccountId(null);
+    setAccessToken('');
+    setAvailableAccounts([]);
+    setShowIdInput(false);
+    setIsSelectingAccount(false);
+  };
+
 
   const nextStep = (next: Step) => {
     if (!user) {
@@ -274,46 +345,89 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
                   </div>
                   
                   {/* Neural Sync Module */}
-                  <div className="relative group/sync mb-8">
+                   <div className="relative group/sync mb-8">
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-brand-orange)] to-[var(--color-brand-green)] opacity-10 group-hover/sync:opacity-20 transition duration-500 blur"></div>
-                    <div className="relative glass-card border-dashed border-white/10 p-6 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden">
-                       <div className="flex flex-col w-full md:w-auto flex-grow">
+                    <div className="relative glass-card border-dashed border-white/10 p-6 flex flex-col items-center justify-between gap-6 overflow-hidden">
+                       <div className="flex flex-col w-full flex-grow">
                           <span className="text-[10px] font-mono text-slate-500 tracking-widest uppercase mb-1">AUTOMAÇÃO EM TEMPO REAL</span>
-                          <h4 className="text-sm font-bold tracking-tight">VINCULAR CONTA {data.plataforma ? data.plataforma.toUpperCase() : 'DE TRÁFEGO'}</h4>
-                          {showIdInput && (
+                          <h4 className="text-sm font-bold tracking-tight">
+                            {connectedAccountId ? `CONECTADO: ${connectedAccountId}` : `VINCULAR CONTA ${data.plataforma ? data.plataforma.toUpperCase() : 'DE TRÁFEGO'}`}
+                          </h4>
+                          
+                          {isSelectingAccount && (
+                             <div className="mt-4 space-y-2">
+                               <label className="text-[10px] font-mono text-slate-500 uppercase">Selecione a conta de anúncios:</label>
+                               <div className="grid grid-cols-1 gap-2">
+                                 {availableAccounts.map(acc => (
+                                   <button 
+                                     key={acc}
+                                     onClick={() => handleSelectAccount(acc)}
+                                     className="text-left p-3 bg-white/5 border border-white/10 hover:border-[var(--color-brand-orange)] text-xs font-mono transition-colors"
+                                   >
+                                     {acc}
+                                   </button>
+                                 ))}
+                               </div>
+                               <button onClick={() => setIsSelectingAccount(false)} className="text-[10px] text-slate-500 mt-2 underline">Cancelar</button>
+                             </div>
+                          )}
+
+                          {showIdInput && !connectedAccountId && (
                             <div className="mt-4 flex items-center bg-white/5 border border-white/10 p-2 pl-4 focus-within:border-[var(--color-brand-orange)] transition-colors">
                               <Key size={14} className="text-slate-500" />
                                 <input 
-                                  type="email"
+                                  type="text"
                                   value={adAccountEmail}
                                   onChange={(e) => setAdAccountEmail(e.target.value)}
-                                  placeholder={`E-mail da conta vinculada ao ${data.plataforma} (Ex: contato@suamarca.com.br)`}
+                                  onBlur={() => adAccountEmail && handleSelectAccount(adAccountEmail)}
+                                  placeholder={`Account ID ou E-mail do ${data.plataforma} (Ex: act_12345)`}
                                   className="w-full bg-transparent border-none text-xs font-mono focus:outline-none focus:ring-0 ml-3 text-white placeholder:text-slate-600"
                                 />
                             </div>
                           )}
+                          
                           {error && step === 'data' && (
                              <p className="mt-2 text-red-400 text-xs font-mono">{error}</p>
                           )}
                        </div>
                        
-                       <button 
-                         onClick={handleSync}
-                         disabled={isSyncing}
-                         className={`px-6 py-3 border border-white/20 font-bold text-xs tracking-widest hover:border-[var(--color-brand-green)] hover:text-[var(--color-brand-green)] transition-all flex items-center justify-center gap-3 w-full md:w-auto whitespace-nowrap ${isSyncing ? 'animate-pulse opacity-50 cursor-wait' : ''}`}
-                       >
-                         {isSyncing ? (
-                           <> <RefreshCw size={14} className="animate-spin" /> AUTENTICANDO CONTA... </>
-                         ) : syncSuccess ? (
-                           <> <CheckCircle2 size={14} className="text-[var(--color-brand-green)]" /> DADOS SINCRONIZADOS_OK </>
-                         ) : showIdInput ? (
-                           <> <RefreshCw size={14} /> CONTINUAR INTEGRAÇÃO </>
-                         ) : (
-                           <> <RefreshCw size={14} /> SINCRONIZAR DADOS AGORA </>
-                         )}
-                       </button>
+                       <div className="flex gap-4 w-full md:w-auto">
+                        {connectedAccountId ? (
+                          <>
+                            <button 
+                              onClick={() => executeSync(connectedAccountId)}
+                              disabled={isSyncing}
+                              className="px-6 py-3 bg-[var(--color-brand-green)]/10 border border-[var(--color-brand-green)]/30 text-[var(--color-brand-green)] font-bold text-xs tracking-widest hover:bg-[var(--color-brand-green)]/20 transition-all flex items-center justify-center gap-3 w-full md:w-auto"
+                            >
+                              {isSyncing ? <RefreshCw size={14} className="animate-spin" /> : <RefreshCw size={14} />}
+                              ATUALIZAR DADOS
+                            </button>
+                            <button 
+                              onClick={handleDisconnect}
+                              className="px-6 py-3 border border-red-500/20 text-red-500/50 hover:text-red-500 hover:border-red-500/50 font-bold text-xs tracking-widest transition-all"
+                            >
+                              DESVINCULAR
+                            </button>
+                          </>
+                        ) : (
+                          <button 
+                            onClick={handleConnect}
+                            disabled={isSyncing}
+                            className={`px-6 py-3 border border-white/20 font-bold text-xs tracking-widest hover:border-[var(--color-brand-orange)] hover:text-[var(--color-brand-orange)] transition-all flex items-center justify-center gap-3 w-full md:w-auto whitespace-nowrap ${isSyncing ? 'animate-pulse opacity-50 cursor-wait' : ''}`}
+                          >
+                            {isSyncing ? (
+                              <> <RefreshCw size={14} className="animate-spin" /> AUTENTICANDO CONTA... </>
+                            ) : syncSuccess ? (
+                              <> <CheckCircle2 size={14} className="text-[var(--color-brand-green)]" /> CONECTADO_OK </>
+                            ) : (
+                              <> <Key size={14} /> CONECTAR CANAL </>
+                            )}
+                          </button>
+                        )}
+                       </div>
                     </div>
                   </div>
+
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <InputField label="Investimento Total (R$)" value={data.investimento} onChange={(v) => updateData('investimento', v)} placeholder="Ex: 5000" />
@@ -379,6 +493,30 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
                         if (result.success && result.diagnosis) {
                           setDiagnosis(result.diagnosis);
                           setStep('report');
+                          
+                          // Save to history if logged in
+                          if (user) {
+                            await saveToHistory(user.uid, {
+                              plataforma: data.plataforma,
+                              objetivo: data.objetivo,
+                              diagnosis: result.diagnosis,
+                              metrics: {
+                                investimento: data.investimento,
+                                conversoes: data.conversoes,
+                                roas: data.roas
+                              }
+                            });
+
+                            // NEW: Send email for Max users
+                            if (profile?.isPremium && user.email) {
+                              await sendDiagnosisEmail(
+                                user.email,
+                                user.displayName || 'Usuário',
+                                data.plataforma as string,
+                                result.diagnosis
+                              );
+                            }
+                          }
                         } else {
                           setError(result.error || 'Erro desconhecido');
                           setStep('insights');
@@ -430,6 +568,9 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
                      <button onClick={() => window.print()} className="p-3 border border-white/10 hover:border-[var(--color-brand-orange)] transition-colors">
                         <FileText size={20} />
                      </button>
+                     <Link href="/historico" className="p-3 border border-white/10 hover:border-[var(--color-brand-green)] transition-all flex items-center gap-2 text-xs font-mono uppercase tracking-widest bg-white/5">
+                        <History size={16} /> Ver Histórico
+                     </Link>
                   </div>
 
                   <div className="glass-card p-6 border-l-4 border-l-[var(--color-brand-orange)] bg-white/5 max-h-[500px] overflow-y-auto custom-scrollbar">
@@ -458,26 +599,64 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
                     <SocialIcon icon={Mail} href="#" />
                   </div>
 
-                  {/* Premium Scheduling Logic */}
+                  {/* Premium Automation Scheduling UI */}
                   {profile?.isPremium && (
                     <motion.div 
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="mt-12 p-6 border border-[var(--color-brand-green)]/30 bg-[var(--color-brand-green)]/5"
+                      className="mt-12 p-8 border border-[var(--color-brand-green)]/30 bg-[var(--color-brand-green)]/5 relative overflow-hidden group"
                     >
-                      <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center gap-3">
-                          <Clock className="text-[var(--color-brand-green)]" size={20} />
-                          <h4 className="font-bold text-sm tracking-tight">AGENDAMENTO GOD MODE</h4>
-                        </div>
-                        <span className="text-[10px] font-mono text-[var(--color-brand-green)] bg-[var(--color-brand-green)]/10 px-2 py-0.5">ATIVO</span>
+                      <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <Calendar size={80} className="text-[var(--color-brand-green)]" />
                       </div>
-                      <p className="text-xs text-slate-400 mb-6">
-                        Deseja que a NeuroAds execute este diagnóstico automaticamente e envie o PDF para seu email todo início de semana?
-                      </p>
-                      <button className="w-full py-3 bg-[var(--color-brand-green)] text-black font-bold text-xs tracking-widest hover:brightness-110 transition-all uppercase">
-                        ATIVAR AGENDAMENTO SEMANAL
-                      </button>
+
+                      <div className="relative z-10">
+                        <div className="flex items-center gap-3 mb-6">
+                          <div className="p-2 bg-[var(--color-brand-green)]/10 rounded-lg">
+                            <Clock className="text-[var(--color-brand-green)]" size={20} />
+                          </div>
+                          <h4 className="font-black text-lg tracking-tight uppercase">Programar Automação Neural</h4>
+                        </div>
+
+                        <p className="text-sm text-slate-400 mb-8 max-w-xl leading-relaxed">
+                          Como usuário <span className="text-[var(--color-brand-green)] font-bold">MAX</span>, você pode automatizar este diagnóstico. 
+                          A NeuroAds sincronizará seus dados e enviará o relatório pronto para seu colo.
+                        </p>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+                          {['Diário', 'Semanal', 'Quinzenal', 'Mensal'].map((freq) => (
+                            <button
+                              key={freq}
+                              onClick={() => setFrequency(freq)}
+                              className={`py-3 px-4 border text-[10px] font-bold tracking-widest transition-all ${frequency === freq ? 'bg-[var(--color-brand-green)] text-black border-[var(--color-brand-green)]' : 'border-white/10 text-slate-500 hover:border-white/30'}`}
+                            >
+                              {freq.toUpperCase()}
+                            </button>
+                          ))}
+                        </div>
+
+                        <button 
+                          onClick={async () => {
+                            if (!user || !connectedAccountId) return;
+                            setIsScheduling(true);
+                            const res = await scheduleAutomation(user.uid, {
+                              platform: data.plataforma as string,
+                              frequency,
+                              accountId: connectedAccountId,
+                              email: user.email || ''
+                            });
+                            setIsScheduling(false);
+                            if (res.success) {
+                              setScheduleSuccess(true);
+                              setTimeout(() => setScheduleSuccess(false), 3000);
+                            }
+                          }}
+                          disabled={isScheduling}
+                          className="w-full py-4 bg-[var(--color-brand-green)] text-black font-black text-sm tracking-[0.2em] hover:brightness-110 transition-all uppercase flex items-center justify-center gap-3"
+                        >
+                          {isScheduling ? 'CONFIGURANDO...' : scheduleSuccess ? 'AGENDADO COM SUCESSO! ✓' : 'PROGRAMAR AGORA'}
+                        </button>
+                      </div>
                     </motion.div>
                   )}
                 </motion.div>
