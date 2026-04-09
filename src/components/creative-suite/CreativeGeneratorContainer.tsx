@@ -57,82 +57,35 @@ export default function CreativeGeneratorContainer() {
     );
   }
 
-  return (
-    <motion.div 
-      initial={{ opacity: 0 }} 
-      animate={{ opacity: 1 }}
-      className="space-y-8"
-    >
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Visual Preview Card */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-6 overflow-hidden relative group">
-            <div className="aspect-square bg-slate-900 rounded-2xl flex items-center justify-center border border-white/5 relative overflow-hidden">
-               <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center grayscale" />
-               <div className="relative z-10 flex flex-col items-center text-center p-8">
-                 <ImageIcon size={48} className="text-slate-700 mb-4" />
-                 <p className="text-slate-500 font-mono text-xs uppercase tracking-widest">Preview Estrutural Neural</p>
-               </div>
-               {/* Label Overlay */}
-               <div className="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-md p-4 rounded-xl border border-white/10">
-                 <div className="h-2 w-24 bg-white/20 rounded mb-2" />
-                 <div className="h-3 w-48 bg-white/40 rounded" />
-               </div>
-            </div>
-            
-            <div className="mt-6 flex items-center justify-between">
-              <div>
-                <h4 className="font-bold uppercase text-sm mb-1">Conceito Visual A: Abstração Minimalista</h4>
-                <p className="text-xs text-slate-500">Baseado no branding do seu site.</p>
-              </div>
-              <button className="p-3 bg-white/5 hover:bg-white/10 rounded-xl transition-colors">
-                <Download size={18} />
-              </button>
-            </div>
+  if (step === 'results' && result) {
+    return (
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
+        <div className="bg-white/5 border border-white/10 rounded-3xl p-8 prose prose-invert max-w-none">
+          <div className="flex justify-between items-center mb-6 pb-6 border-b border-white/10">
+            <h3 className="text-xl font-bold uppercase tracking-widest text-[var(--color-brand-orange)] flex items-center gap-2">
+               <Sparkles size={20} /> Conceito Criativo Neural
+            </h3>
+            <button 
+              onClick={() => setStep('onboarding')}
+              className="text-xs font-mono text-slate-500 hover:text-white transition-colors"
+            >
+              NOVA ANÁLISE
+            </button>
           </div>
-
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-8">
-            <h4 className="font-bold uppercase text-xs text-[var(--color-brand-orange)] tracking-widest mb-6 flex items-center gap-2">
-              <Palette size={14} /> Moodboard de Performance
-            </h4>
-            <div className="flex gap-4">
-              {[1, 2, 3, 4, 5].map(i => (
-                <div key={i} className={`h-12 w-full rounded-lg bg-slate-800 border border-white/5 animate-pulse`} />
-              ))}
-            </div>
-            <p className="mt-4 text-xs text-slate-400">Paleta sugerida para maximizar CTR no feed do Instagram.</p>
+          
+          <div className="whitespace-pre-wrap font-sans text-slate-300 leading-relaxed">
+            {result}
           </div>
         </div>
 
-        {/* Copy & Interaction Card */}
-        <div className="space-y-6">
-          <div className="bg-white/5 border border-white/10 rounded-3xl p-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-[var(--color-brand-green)]/5 blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <h4 className="font-bold uppercase text-sm mb-6 flex items-center gap-2">
-              <Sparkles size={16} className="text-[var(--color-brand-orange)]" /> Ad Copy Sugerida
-            </h4>
-            
-            <div className="bg-black/40 border border-white/5 p-6 rounded-2xl font-mono text-sm leading-relaxed text-slate-300">
-               [Sua Oferta Principal] + [Diferencial Único]
-               <br/><br/>
-               "Pare de desperdiçar budget com criativos genéricos. A NeuroAds acaba de mapear o seu próximo vencedor..."
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 mt-6">
-              <button className="h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-center gap-2 text-xs font-bold transition-all">
-                <Copy size={16} /> COPIAR COPY
-              </button>
-              <button className="h-12 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl flex items-center justify-center gap-2 text-xs font-bold transition-all">
-                <Wand2 size={16} /> VARIAR TOM
-              </button>
-            </div>
-          </div>
-
-          <button className="w-full h-16 bg-[var(--color-brand-orange)] text-black font-bold rounded-2xl flex items-center justify-center gap-3 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_10px_30px_rgba(249,166,32,0.2)]">
-            GERAR NOVAS VARIAÇÕES <Sparkles size={20} />
+        <div className="flex justify-center pt-8">
+          <button className="px-8 py-4 bg-[var(--color-brand-orange)] text-black font-black uppercase tracking-tighter hover:scale-105 transition-all flex items-center gap-3">
+             <Download size={20} /> BAIXAR ESTRATÉGIA CRIATIVA
           </button>
         </div>
-      </div>
-    </motion.div>
-  );
+      </motion.div>
+    );
+  }
+
+  return null;
 }

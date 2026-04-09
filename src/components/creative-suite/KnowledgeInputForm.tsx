@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Globe, Instagram, Facebook, Linkedin, ArrowRight, BrainCircuit } from 'lucide-react';
+import { Globe, Camera, Share2, Link, ArrowRight, BrainCircuit } from 'lucide-react';
 
 interface KnowledgeInputFormProps {
   onComplete: (links: Record<string, string>) => void;
@@ -67,7 +67,7 @@ export default function KnowledgeInputForm({ onComplete, appName, requiredFields
             {requiredFields.includes('instagram') && (
               <div className="space-y-2">
                 <label className="text-xs uppercase font-bold text-slate-500 flex items-center gap-2">
-                  <Instagram size={14} /> Instagram
+                  <Camera size={14} /> Instagram
                 </label>
                 <input
                   type="url"
@@ -83,7 +83,7 @@ export default function KnowledgeInputForm({ onComplete, appName, requiredFields
             {requiredFields.includes('linkedin') && (
               <div className="space-y-2">
                 <label className="text-xs uppercase font-bold text-slate-500 flex items-center gap-2">
-                  <Linkedin size={14} /> LinkedIn
+                  <Link size={14} /> LinkedIn
                 </label>
                 <input
                   type="url"
@@ -99,7 +99,7 @@ export default function KnowledgeInputForm({ onComplete, appName, requiredFields
             {requiredFields.includes('facebook') && (
               <div className="space-y-2">
                 <label className="text-xs uppercase font-bold text-slate-500 flex items-center gap-2">
-                  <Facebook size={14} /> Facebook Ads
+                  <Share2 size={14} /> Facebook Ads
                 </label>
                 <input
                   type="url"
