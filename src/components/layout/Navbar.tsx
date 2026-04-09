@@ -30,10 +30,7 @@ export default function Navbar() {
                   NEURO<span className="text-[var(--color-brand-green)] font-light">ADS</span>
                 </span>
                 
-                {/* Version Badge */}
-                <div className="ml-3 px-1.5 py-0.5 bg-[var(--color-brand-orange)]/10 text-[8px] font-black text-[var(--color-brand-orange)] tracking-tighter border border-[var(--color-brand-orange)]/20 rounded-sm">
-                  LAB v4.0
-                </div>
+
               </div>
             </Link>
           </div>

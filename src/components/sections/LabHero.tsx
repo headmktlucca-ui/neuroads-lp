@@ -60,9 +60,7 @@ export default function LabHero() {
                 É ESTRATÉGIA!
               </span>
             </h1>
-            <div className="absolute -top-8 -right-24 hidden lg:block">
-              <span className="text-[var(--color-brand-green)] font-mono text-sm opacity-50 rotate-90 inline-block">NEUROADS_v4.0</span>
-            </div>
+
           </motion.div>
 
           {/* Description */}
