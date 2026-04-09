@@ -115,7 +115,7 @@ export default function LabPricing() {
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-6xl font-black mb-6 tracking-tight uppercase [word-spacing:0.15em]">
             Desbloqueie todo <br />
-            <span className="text-[var(--color-brand-orange)]">potencial da sua marca</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-brand-orange)] to-[var(--color-brand-green)]">potencial da sua marca</span>
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto font-mono text-sm uppercase tracking-widest">
             Escolha o nível de inteligência que seu tráfego exige hoje.

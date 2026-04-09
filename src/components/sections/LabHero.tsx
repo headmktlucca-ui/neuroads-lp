@@ -68,7 +68,7 @@ export default function LabHero() {
             variants={itemVariants}
             className="max-w-2xl text-lg md:text-xl text-slate-400 font-light leading-relaxed text-balance"
           >
-            Sua operação comercial com inteligência ativa, identificando oportunidades e acelerando resultados.
+            Sua operação digital com inteligência ativa, identificando oportunidades e acelerando resultados.
           </motion.p>
 
           {/* Data Fragment Orbits */}

@@ -60,7 +60,7 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, profile, checkUsageLimit } = useAuth();
   const [limitError, setLimitError] = useState<string | null>(null);
-  const [adAccountId, setAdAccountId] = useState('');
+  const [adAccountEmail, setAdAccountEmail] = useState('');
   const [showIdInput, setShowIdInput] = useState(false);
 
   if (!activeApp) return null;
@@ -73,13 +73,13 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
     if (!data.plataforma) return;
     
     // Se a plataforma precisa de ID de conta mas ainda não foi inserido
-    if ((data.plataforma === 'Google Ads' || data.plataforma === 'Meta Ads' || data.plataforma === 'TikTok Ads') && !adAccountId && !showIdInput) {
+    if ((data.plataforma === 'Google Ads' || data.plataforma === 'Meta Ads' || data.plataforma === 'TikTok Ads') && !adAccountEmail && !showIdInput) {
       setShowIdInput(true);
       return;
     }
 
-    if (showIdInput && !adAccountId) {
-      setError('Por favor, informe o ID da sua Conta de Anúncios.');
+    if (showIdInput && !adAccountEmail) {
+      setError('Por favor, informe o E-mail da sua Conta de Anúncios.');
       return;
     }
 
@@ -116,7 +116,7 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
         throw new Error('Não foi possível obter a credencial de acesso.');
       }
 
-      const syncResult = await syncTrafficData(data.plataforma as string, accessToken, adAccountId);
+      const syncResult = await syncTrafficData(data.plataforma as string, accessToken, adAccountEmail);
       
       if (syncResult.success && syncResult.data) {
         setData(prev => ({ ...prev, ...syncResult.data }));
@@ -283,13 +283,13 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
                           {showIdInput && (
                             <div className="mt-4 flex items-center bg-white/5 border border-white/10 p-2 pl-4 focus-within:border-[var(--color-brand-orange)] transition-colors">
                               <Key size={14} className="text-slate-500" />
-                              <input 
-                                type="text"
-                                value={adAccountId}
-                                onChange={(e) => setAdAccountId(e.target.value)}
-                                placeholder={`ID da sua conta ${data.plataforma} (Ex: 123-456-7890)`}
-                                className="w-full bg-transparent border-none text-xs font-mono focus:outline-none focus:ring-0 ml-3 text-white placeholder:text-slate-600"
-                              />
+                                <input 
+                                  type="email"
+                                  value={adAccountEmail}
+                                  onChange={(e) => setAdAccountEmail(e.target.value)}
+                                  placeholder={`E-mail da conta vinculada ao ${data.plataforma} (Ex: contato@suamarca.com.br)`}
+                                  className="w-full bg-transparent border-none text-xs font-mono focus:outline-none focus:ring-0 ml-3 text-white placeholder:text-slate-600"
+                                />
                             </div>
                           )}
                           {error && step === 'data' && (
