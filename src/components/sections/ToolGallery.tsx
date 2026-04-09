@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import TrafficAnalystContainer, { ActiveAppConfig } from '../traffic-analyst/TrafficAnalystContainer';
 
