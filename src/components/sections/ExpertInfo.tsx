@@ -97,7 +97,7 @@ export default function ExpertInfo() {
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-brand-orange)] to-[var(--color-brand-green)]">
                   Redefinindo operações, <br />
-                  estratégicas e resultados
+                  estratégias e resultados
                 </span> <br />
                 no Marketing Moderno.
               </h2>

@@ -24,15 +24,6 @@ export default function ToolGallery() {
       category: 'Performance'
     },
     {
-      title: 'Rastreador Cirúrgico',
-      description: 'Implementação de tracking Lado-Servidor para ignorar bloqueios de cookies e iOS14+.',
-      icon: '/images/tools/rastreador_cirurgico.png',
-      status: 'EM BREVE',
-      link: '#',
-      color: 'slate-500',
-      category: 'Técnico'
-    },
-    {
       title: 'Gerador de Criativos',
       description: 'Criação de copies e conceitos visuais de alto impacto validados por padrões de conversão.',
       icon: '/images/tools/gerador_criativos.png',
@@ -40,6 +31,33 @@ export default function ToolGallery() {
       link: '#',
       color: 'var(--color-brand-orange)',
       category: 'Criativos'
+    },
+    {
+      title: 'Gerador de Copies de Conversão',
+      description: 'Motor rápido focado na geração expressa de headlines, CTAs chamativos e argumentos diretos.',
+      icon: '/images/tools/gerador_copies.png',
+      status: 'DISPONÍVEL',
+      link: '#',
+      color: 'var(--color-brand-orange)',
+      category: 'Criativos'
+    },
+    {
+      title: 'Análise Viral',
+      description: 'Identificação de padrões de conteúdo com alto potencial de compartilhamento e viralização no seu nicho.',
+      icon: '/images/tools/analise_viral.png',
+      status: 'DISPONÍVEL',
+      link: '#',
+      color: 'var(--color-brand-orange)',
+      category: 'Criativos'
+    },
+    {
+      title: 'Rastreador Cirúrgico',
+      description: 'Implementação de tracking Lado-Servidor para ignorar bloqueios de cookies e iOS14+.',
+      icon: '/images/tools/rastreador_cirurgico.png',
+      status: 'EM BREVE',
+      link: '#',
+      color: 'slate-500',
+      category: 'Técnico'
     },
     {
       title: 'Preditor de Funil',
@@ -85,15 +103,6 @@ export default function ToolGallery() {
       link: '#',
       color: 'slate-500',
       category: 'Técnico'
-    },
-    {
-      title: 'Gerador de Copies de Conversão',
-      description: 'Motor rápido focado na geração expressa de headlines, CTAs chamativos e argumentos diretos.',
-      icon: '/images/tools/gerador_copies.png',
-      status: 'DISPONÍVEL',
-      link: '#',
-      color: 'var(--color-brand-orange)',
-      category: 'Criativos'
     },
     {
       title: 'Auditor de Desperdício',
@@ -166,15 +175,6 @@ export default function ToolGallery() {
       link: '#',
       color: 'slate-500',
       category: 'Inteligência'
-    },
-    {
-      title: 'Análise Viral',
-      description: 'Identificação de padrões de conteúdo com alto potencial de compartilhamento e viralização no seu nicho.',
-      icon: '/images/tools/analise_viral.png',
-      status: 'DISPONÍVEL',
-      link: '#',
-      color: 'var(--color-brand-orange)',
-      category: 'Criativos'
     }
   ];
 

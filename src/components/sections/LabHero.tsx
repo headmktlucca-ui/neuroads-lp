@@ -57,7 +57,7 @@ export default function LabHero() {
               Não é o design. <br />
               Não é o texto. <br />
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-brand-orange)] to-[var(--color-brand-green)] inline-block pr-8">
-                É ESTRATÉGIA!
+                É A ESTRATÉGIA!
               </span>
             </h1>
 
