@@ -5,7 +5,10 @@ import Image from 'next/image';
 import TrafficAnalystContainer, { ActiveAppConfig } from '../traffic-analyst/TrafficAnalystContainer';
 
 export default function ToolGallery() {
+  const [activeCategory, setActiveCategory] = useState('Todos');
   const [activeApp, setActiveApp] = useState<ActiveAppConfig | null>(null);
+
+  const categories = ['Todos', 'Performance', 'Inteligência', 'Criativos', 'Técnico'];
 
   const tools = [
     {
@@ -14,7 +17,8 @@ export default function ToolGallery() {
       icon: '/images/tools/analista_trafego.png',
       status: 'DISPONÍVEL',
       link: '#analista',
-      color: 'var(--color-brand-orange)'
+      color: 'var(--color-brand-orange)',
+      category: 'Performance'
     },
     {
       title: 'Rastreador Cirúrgico',
@@ -22,7 +26,8 @@ export default function ToolGallery() {
       icon: '/images/tools/rastreador_cirurgico.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Técnico'
     },
     {
       title: 'Gerador de Criativos',
@@ -30,7 +35,8 @@ export default function ToolGallery() {
       icon: '/images/tools/gerador_criativos.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Criativos'
     },
     {
       title: 'Preditor de Funil',
@@ -38,7 +44,8 @@ export default function ToolGallery() {
       icon: '/images/tools/preditor_funil.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Técnico'
     },
     {
       title: 'Diagnóstico de Landing Page',
@@ -46,7 +53,8 @@ export default function ToolGallery() {
       icon: '/images/tools/diagnostico_lp.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Inteligência'
     },
     {
       title: 'Simulador de ROAS',
@@ -54,7 +62,8 @@ export default function ToolGallery() {
       icon: '/images/tools/simulador_roas.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Performance'
     },
     {
       title: 'Analisador de Público',
@@ -62,7 +71,8 @@ export default function ToolGallery() {
       icon: '/images/tools/analisador_publico.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Inteligência'
     },
     {
       title: 'Diagnóstico de Funil',
@@ -70,7 +80,8 @@ export default function ToolGallery() {
       icon: '/images/tools/diagnostico_funil.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Técnico'
     },
     {
       title: 'Gerador de Copies de Conversão',
@@ -78,7 +89,8 @@ export default function ToolGallery() {
       icon: '/images/tools/gerador_copies.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Criativos'
     },
     {
       title: 'Auditor de Desperdício',
@@ -86,7 +98,8 @@ export default function ToolGallery() {
       icon: '/images/tools/auditor_desperdicio.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Performance'
     },
     {
       title: 'Otimizador de Orçamento',
@@ -94,7 +107,8 @@ export default function ToolGallery() {
       icon: '/images/tools/alocacao.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Performance'
     },
     {
       title: 'Gerador de Testes A/B',
@@ -102,7 +116,8 @@ export default function ToolGallery() {
       icon: '/images/tools/testes.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Técnico'
     },
     {
       title: 'Avaliador de Oferta',
@@ -110,7 +125,8 @@ export default function ToolGallery() {
       icon: '/images/tools/mineracao.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Inteligência'
     },
     {
       title: 'Radar de Oportunidades',
@@ -118,23 +134,59 @@ export default function ToolGallery() {
       icon: '/images/tools/analise.png',
       status: 'EM BREVE',
       link: '#',
-      color: 'slate-500'
+      color: 'slate-500',
+      category: 'Inteligência'
+    },
+    {
+      title: 'DNA da Marca',
+      description: 'Elaboração de documento estratégico completo com posicionamento, tom de voz e pilares da marca.',
+      icon: '/images/tools/dna_marca.png',
+      status: 'EM BREVE',
+      link: '#',
+      color: 'slate-500',
+      category: 'Inteligência'
+    },
+    {
+      title: 'Análise de Concorrentes',
+      description: 'Varredura profunda via URL para identificar as principais estratégias e pontos cegos dos seus rivais.',
+      icon: '/images/tools/concorrentes.png',
+      status: 'EM BREVE',
+      link: '#',
+      color: 'slate-500',
+      category: 'Inteligência'
+    },
+    {
+      title: 'Identifique seu Público-Alvo Ideal',
+      description: 'Pesquisa neural de segmentação, identificando o que seu público consome e como ele se engaja socialmente.',
+      icon: '/images/tools/publico_ideal.png',
+      status: 'EM BREVE',
+      link: '#',
+      color: 'slate-500',
+      category: 'Inteligência'
+    },
+    {
+      title: 'Análise Viral',
+      description: 'Identificação de padrões de conteúdo com alto potencial de compartilhamento e viralização no seu nicho.',
+      icon: '/images/tools/analise_viral.png',
+      status: 'EM BREVE',
+      link: '#',
+      color: 'slate-500',
+      category: 'Criativos'
     }
   ];
+
+  const filteredTools = activeCategory === 'Todos' 
+    ? tools 
+    : tools.filter(tool => tool.category === activeCategory);
 
   return (
     <section className="pt-8 pb-24 bg-black relative overflow-hidden shadow-[0_-20px_50px_rgba(249,166,32,0.05),0_20px_50px_rgba(204,255,0,0.05)]">
       {/* Creative Background Layout */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_100%_100%_at_50%_50%,#000_30%,transparent_100%)]"></div>
-        {/* Soft edge fade using gradient to blend with surrounding black sections */}
         <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black to-transparent" />
       </div>
-
-      {/* Ambient glowing orbs behind apps */}
-      <div className="absolute top-1/2 left-[15%] w-[600px] h-[600px] bg-[var(--color-brand-orange)]/20 blur-[150px] rounded-full pointer-events-none -translate-y-1/2" />
-      <div className="absolute top-1/2 right-[15%] w-[600px] h-[600px] bg-[var(--color-brand-green)]/20 blur-[150px] rounded-full pointer-events-none -translate-y-1/2" />
 
       <div className="max-w-7xl mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
@@ -144,14 +196,31 @@ export default function ToolGallery() {
               <span className="text-[var(--color-brand-orange)]">Estratégico</span>
             </h2>
             <p className="text-slate-400 font-light leading-relaxed text-[18px]">
-              Seus resultados atuais não são o limite — são o ponto de partida. O Hub Estratégico conecta aplicações que amplificam performance, reduzem ineficiências e aceleram seus resultados.
+              Seus resultados atuais não são o limite — são o ponto de partida. O Hub Estratégico conecta aplicações que amplificam performance.
             </p>
           </div>
 
+          {/* Category Tabs */}
+          <div className="flex flex-wrap gap-2 bg-white/5 p-1 border border-white/10 rounded-xl">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`px-5 py-2 text-[10px] font-bold tracking-widest uppercase transition-all rounded-lg ${
+                  activeCategory === cat 
+                    ? 'bg-[var(--color-brand-orange)] text-black' 
+                    : 'text-slate-500 hover:text-white hover:bg-white/5'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {tools.map((tool, index) => {
+          <AnimatePresence mode="popLayout">
+            {filteredTools.map((tool, index) => {
             const isSoon = tool.status === 'EM BREVE';
             return (
               <motion.div
@@ -227,6 +296,7 @@ export default function ToolGallery() {
               </motion.div>
             );
           })}
+          </AnimatePresence>
         </div>
       </div>
 

@@ -70,10 +70,11 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
   const [limitError, setLimitError] = useState<string | null>(null);
   const [adAccountEmail, setAdAccountEmail] = useState('');
   const [showIdInput, setShowIdInput] = useState(false);
-  const [availableAccounts, setAvailableAccounts] = useState<string[]>([]);
+  const [availableAccounts, setAvailableAccounts] = useState<any[]>([]);
   const [isSelectingAccount, setIsSelectingAccount] = useState(false);
   const [accessToken, setAccessToken] = useState('');
   const [connectedAccountId, setConnectedAccountId] = useState<string | null>(null);
+  const [loginCustomerId, setLoginCustomerId] = useState<string | null>(null);
   const [frequency, setFrequency] = useState('Semanal');
   const [isScheduling, setIsScheduling] = useState(false);
   const [scheduleSuccess, setScheduleSuccess] = useState(false);
@@ -87,9 +88,11 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
       if (connection && connection.isActive) {
         setConnectedAccountId(connection.accountId);
         setAccessToken(connection.accessToken);
+        setLoginCustomerId(connection.loginCustomerId || null);
       } else {
         setConnectedAccountId(null);
         setAccessToken('');
+        setLoginCustomerId(null);
       }
     }
   }, [profile, data.plataforma]);
@@ -163,20 +166,26 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
     }
   };
 
-  const handleSelectAccount = async (accountId: string) => {
-    setConnectedAccountId(accountId);
+  const handleSelectAccount = async (account: any) => {
+    const accId = typeof account === 'string' ? account : account.id;
+    const loginId = typeof account === 'object' ? account.loginCustomerId : null;
+
+    setConnectedAccountId(accId);
+    setLoginCustomerId(loginId);
     setIsSelectingAccount(false);
     
     if (profile?.isPremium && user) {
-      await saveConnection(user.uid, data.plataforma as string, accountId, accessToken);
+      await saveConnection(user.uid, data.plataforma as string, accId, accessToken, loginId);
     }
 
     // Trigger initial sync automatically after connection
-    await executeSync(accountId, accessToken);
+    await executeSync(accId, accessToken, loginId);
   };
 
-  const executeSync = async (accountId: string, manualToken?: string) => {
+  const executeSync = async (accountId: string, manualToken?: string, manualLoginId?: string) => {
     const tokenToUse = manualToken || accessToken;
+    const loginIdToUse = manualLoginId !== undefined ? manualLoginId : loginCustomerId;
+
     if (!tokenToUse) {
       setError('Token de acesso não encontrado. Por favor, conecte novamente.');
       return;
@@ -187,7 +196,12 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
     setError(null);
 
     try {
-      const syncResult = await syncTrafficData(data.plataforma as string, tokenToUse, accountId);
+      const syncResult = await syncTrafficData(
+        data.plataforma as string, 
+        tokenToUse, 
+        accountId, 
+        loginIdToUse || undefined
+      );
       
       if (syncResult.success && syncResult.data) {
         setData(prev => ({ ...prev, ...syncResult.data }));
@@ -209,6 +223,7 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
       await removeConnection(user.uid, data.plataforma as string);
     }
     setConnectedAccountId(null);
+    setLoginCustomerId(null);
     setAccessToken('');
     setAvailableAccounts([]);
     setShowIdInput(false);
@@ -353,18 +368,18 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
                           <h4 className="text-sm font-bold tracking-tight">
                             {connectedAccountId ? `CONECTADO: ${connectedAccountId}` : `VINCULAR CONTA ${data.plataforma ? data.plataforma.toUpperCase() : 'DE TRÁFEGO'}`}
                           </h4>
-                          
-                          {isSelectingAccount && (
+                                         {isSelectingAccount && (
                              <div className="mt-4 space-y-2">
                                <label className="text-[10px] font-mono text-slate-500 uppercase">Selecione a conta de anúncios:</label>
-                               <div className="grid grid-cols-1 gap-2">
+                               <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto custom-scrollbar">
                                  {availableAccounts.map(acc => (
                                    <button 
-                                     key={acc}
+                                     key={acc.id}
                                      onClick={() => handleSelectAccount(acc)}
-                                     className="text-left p-3 bg-white/5 border border-white/10 hover:border-[var(--color-brand-orange)] text-xs font-mono transition-colors"
+                                     className="text-left p-3 bg-white/5 border border-white/10 hover:border-[var(--color-brand-orange)] text-[10px] font-mono transition-colors flex justify-between items-center group"
                                    >
-                                     {acc}
+                                     <span className="truncate mr-2 border-b border-transparent group-hover:border-[var(--color-brand-orange)]">{acc.name || acc.id}</span>
+                                     <span className="text-[8px] text-slate-600 shrink-0 font-bold uppercase">{acc.isManager ? 'Manager' : 'Client'}</span>
                                    </button>
                                  ))}
                                </div>

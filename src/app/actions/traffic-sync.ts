@@ -5,12 +5,13 @@ import { TrafficData } from '../../lib/prompt-master';
 export async function syncTrafficData(
   platform: string, 
   accessToken: string, 
-  adAccountId?: string
+  adAccountId?: string,
+  loginCustomerId?: string
 ): Promise<{ success: boolean; data?: Partial<TrafficData>; error?: string }> {
   try {
     switch (platform) {
       case 'Google Ads':
-        return await fetchGoogleAdsData(accessToken, adAccountId);
+        return await fetchGoogleAdsData(accessToken, adAccountId, loginCustomerId);
       case 'Meta Ads':
         return await fetchMetaAdsData(accessToken, adAccountId);
       case 'TikTok Ads':
@@ -25,11 +26,22 @@ export async function syncTrafficData(
   }
 }
 
-async function fetchGoogleAdsData(accessToken: string, customerId?: string) {
+async function fetchGoogleAdsData(accessToken: string, customerId?: string, loginCustomerId?: string) {
   // Developer token must be in .env
   const developerToken = process.env.GOOGLE_ADS_DEVELOPER_TOKEN;
   if (!developerToken) throw new Error('GOOGLE_ADS_DEVELOPER_TOKEN não configurado.');
   if (!customerId) throw new Error('ID da Conta do Google Ads (Customer ID) é obrigatório.');
+
+  const headers: Record<string, string> = {
+    'Authorization': `Bearer ${accessToken}`,
+    'developer-token': developerToken,
+    'Content-Type': 'application/json',
+  };
+
+  // Add login-customer-id if request is made via manager/MCC
+  if (loginCustomerId) {
+    headers['login-customer-id'] = loginCustomerId;
+  }
 
   // Example Google Ads API Call (REST endpoint)
   // Requer a query em AWQL ou Google Ads Query Language
@@ -46,17 +58,13 @@ async function fetchGoogleAdsData(accessToken: string, customerId?: string) {
 
   const response = await fetch(`https://googleads.googleapis.com/v14/customers/${customerId}/googleAds:search`, {
     method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${accessToken}`,
-      'developer-token': developerToken,
-      'Content-Type': 'application/json',
-    },
+    headers,
     body: JSON.stringify({ query })
   });
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(`Erro Google Ads: ${JSON.stringify(errorData)}`);
+    throw new Error(`Erro Google Ads: ${errorData.error?.message || JSON.stringify(errorData)}`);
   }
 
   const data = await response.json();
