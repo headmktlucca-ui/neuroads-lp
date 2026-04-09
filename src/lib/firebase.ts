@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import { getAuth, Auth } from 'firebase/auth';
+import { getFirestore, Firestore } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
@@ -13,7 +13,20 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+
+// Initialize services with SSR safety
+let auth: Auth;
+let db: Firestore;
+
+if (typeof window !== 'undefined') {
+  auth = getAuth(app);
+  db = getFirestore(app);
+} else {
+  // On server, we initialize them but avoid calling browser-only methods
+  // getAuth and getFirestore usually work in Node.js if the SDK version is modern,
+  // but they shouldn't be used for auth persistence on the server.
+  auth = getAuth(app);
+  db = getFirestore(app);
+}
 
 export { auth, db };

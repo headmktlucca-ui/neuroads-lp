@@ -42,6 +42,13 @@ export type ActiveAppConfig = {
   status: string;
 };
 
+interface AdAccount {
+  id: string;
+  name: string;
+  isManager: boolean;
+  loginCustomerId?: string;
+}
+
 export default function TrafficAnalystContainer({ activeApp }: { activeApp?: ActiveAppConfig | null }) {
   const [step, setStep] = useState<Step>('channel');
   const [data, setData] = useState<TrafficData>({
@@ -70,7 +77,7 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
   const [limitError, setLimitError] = useState<string | null>(null);
   const [adAccountEmail, setAdAccountEmail] = useState('');
   const [showIdInput, setShowIdInput] = useState(false);
-  const [availableAccounts, setAvailableAccounts] = useState<any[]>([]);
+  const [availableAccounts, setAvailableAccounts] = useState<AdAccount[]>([]);
   const [isSelectingAccount, setIsSelectingAccount] = useState(false);
   const [accessToken, setAccessToken] = useState('');
   const [connectedAccountId, setConnectedAccountId] = useState<string | null>(null);

@@ -56,15 +56,22 @@ async function fetchGoogleAdsData(accessToken: string, customerId?: string, logi
     WHERE segments.date DURING LAST_30_DAYS
   `;
 
-  const response = await fetch(`https://googleads.googleapis.com/v14/customers/${customerId}/googleAds:search`, {
+  const response = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
     method: 'POST',
     headers,
     body: JSON.stringify({ query })
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`Erro Google Ads: ${errorData.error?.message || JSON.stringify(errorData)}`);
+    const errorText = await response.text();
+    let errorMessage = 'Erro ao buscar dados do Google Ads.';
+    try {
+      const errorData = JSON.parse(errorText);
+      errorMessage = errorData.error?.message || errorMessage;
+    } catch (e) {
+      errorMessage = errorText || errorMessage;
+    }
+    throw new Error(`Erro Google Ads: ${errorMessage}`);
   }
 
   const data = await response.json();
