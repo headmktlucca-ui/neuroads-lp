@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import TrafficAnalystContainer, { ActiveAppConfig } from '../traffic-analyst/TrafficAnalystContainer';
+import CreativeGeneratorContainer from '../creative-suite/CreativeGeneratorContainer';
+import CopyGeneratorContainer from '../creative-suite/CopyGeneratorContainer';
+import ViralAnalysisContainer from '../creative-suite/ViralAnalysisContainer';
 
 export default function ToolGallery() {
   const [activeCategory, setActiveCategory] = useState('Todos');
@@ -33,9 +36,9 @@ export default function ToolGallery() {
       title: 'Gerador de Criativos',
       description: 'Criação de copies e conceitos visuais de alto impacto validados por padrões de conversão.',
       icon: '/images/tools/gerador_criativos.png',
-      status: 'EM BREVE',
+      status: 'DISPONÍVEL',
       link: '#',
-      color: 'slate-500',
+      color: 'var(--color-brand-orange)',
       category: 'Criativos'
     },
     {
@@ -87,9 +90,9 @@ export default function ToolGallery() {
       title: 'Gerador de Copies de Conversão',
       description: 'Motor rápido focado na geração expressa de headlines, CTAs chamativos e argumentos diretos.',
       icon: '/images/tools/gerador_copies.png',
-      status: 'EM BREVE',
+      status: 'DISPONÍVEL',
       link: '#',
-      color: 'slate-500',
+      color: 'var(--color-brand-orange)',
       category: 'Criativos'
     },
     {
@@ -168,9 +171,9 @@ export default function ToolGallery() {
       title: 'Análise Viral',
       description: 'Identificação de padrões de conteúdo com alto potencial de compartilhamento e viralização no seu nicho.',
       icon: '/images/tools/analise_viral.png',
-      status: 'EM BREVE',
+      status: 'DISPONÍVEL',
       link: '#',
-      color: 'slate-500',
+      color: 'var(--color-brand-orange)',
       category: 'Criativos'
     }
   ];
@@ -281,9 +284,9 @@ export default function ToolGallery() {
                         e.stopPropagation();
                         setActiveApp(tool);
                         setTimeout(() => {
-                          const analystElement = document.getElementById('analista');
-                          if (analystElement) {
-                            analystElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                          const appViewElement = document.getElementById('app-view');
+                          if (appViewElement) {
+                            appViewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
                           }
                         }, 50);
                       }}
@@ -300,7 +303,60 @@ export default function ToolGallery() {
         </div>
       </div>
 
-      <TrafficAnalystContainer activeApp={activeApp} />
+      {/* Application Containers */}
+      <div id="app-view">
+        {activeApp?.title === 'Analista de Tráfego' && (
+          <TrafficAnalystContainer activeApp={activeApp} />
+        )}
+        
+        {activeApp?.title === 'Gerador de Criativos' && (
+          <div className="py-24 bg-black relative">
+            <div className="max-w-4xl mx-auto px-4">
+               <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight uppercase">
+                    GERADOR DE <span className="text-[var(--color-brand-orange)]">CRIATIVOS</span>
+                  </h2>
+                  <p className="text-slate-500 font-mono text-xs md:text-sm tracking-[0.15em] uppercase max-w-2xl mx-auto">
+                    {activeApp.description}
+                  </p>
+               </div>
+               <CreativeGeneratorContainer />
+            </div>
+          </div>
+        )}
+
+        {activeApp?.title === 'Gerador de Copies de Conversão' && (
+          <div className="py-24 bg-black relative">
+            <div className="max-w-4xl mx-auto px-4">
+               <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight uppercase">
+                    GERADOR DE <span className="text-[var(--color-brand-orange)]">COPIES</span>
+                  </h2>
+                  <p className="text-slate-500 font-mono text-xs md:text-sm tracking-[0.15em] uppercase max-w-2xl mx-auto">
+                    {activeApp.description}
+                  </p>
+               </div>
+               <CopyGeneratorContainer />
+            </div>
+          </div>
+        )}
+
+        {activeApp?.title === 'Análise Viral' && (
+          <div className="py-24 bg-black relative">
+            <div className="max-w-4xl mx-auto px-4">
+               <div className="text-center mb-16">
+                  <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight uppercase">
+                    ANÁLISE <span className="text-[var(--color-brand-orange)]">VIRAL</span>
+                  </h2>
+                  <p className="text-slate-500 font-mono text-xs md:text-sm tracking-[0.15em] uppercase max-w-2xl mx-auto">
+                    {activeApp.description}
+                  </p>
+               </div>
+               <ViralAnalysisContainer />
+            </div>
+          </div>
+        )}
+      </div>
     </section>
   );
 }

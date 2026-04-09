@@ -1,37 +1,26 @@
 'use server';
 
-import OpenAI from 'openai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { TrafficData, generateTrafficAnalystPrompt } from '../../lib/prompt-master';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
 export async function analyzeTraffic(data: TrafficData) {
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error('OPENAI_API_KEY is not set in environment variables');
+  if (!process.env.GEMINI_API_KEY) {
+    throw new Error('GEMINI_API_KEY is not set in environment variables');
   }
 
   try {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
     const prompt = generateTrafficAnalystPrompt(data);
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [
-        {
-          role: "system",
-          content: "Você é o Analista de Tráfego Sênior da NeuroAds. Sua missão é fornecer diagnósticos brutais, honestos e altamente lucrativos."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      temperature: 0.7,
-      max_tokens: 2000,
-    });
+    const result = await model.generateContent([
+      { text: "Você é o Analista de Tráfego Sênior da NeuroAds. Sua missão é fornecer diagnósticos brutais, honestos e altamente lucrativos." },
+      { text: prompt }
+    ]);
 
-    const content = response.choices[0].message.content;
+    const response = await result.response;
+    const content = response.text();
 
     if (!content) {
       throw new Error('A IA não retornou um conteúdo válido.');
