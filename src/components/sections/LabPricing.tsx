@@ -95,7 +95,7 @@ export default function LabPricing() {
                 <span className="text-sm font-mono text-slate-500 uppercase">{plan.name === 'Assinatura Lab' ? '/MÊS' : ''}</span>
               </div>
 
-              <p className="text-slate-400 text-sm mb-8 leading-relaxed italic">"{plan.description}"</p>
+              <p className="text-slate-400 text-sm mb-8 leading-relaxed italic">&quot;{plan.description}&quot;</p>
 
               <div className="space-y-4 mb-10 flex-grow">
                 {plan.features.map((feature) => (

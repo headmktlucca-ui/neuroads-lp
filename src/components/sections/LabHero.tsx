@@ -1,7 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { BarChart3, Zap, BrainCircuit } from 'lucide-react';
+import { BrainCircuit } from 'lucide-react';
 
 export default function LabHero() {
   const containerVariants = {

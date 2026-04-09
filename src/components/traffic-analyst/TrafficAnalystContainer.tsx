@@ -21,7 +21,10 @@ import { TrafficData } from '@/lib/prompt-master';
 import { analyzeTraffic } from '@/app/actions/ai-analysis';
 import { useAuth } from '@/context/AuthContext';
 import AuthOverlay from '@/components/auth/AuthOverlay';
-import { Clock } from 'lucide-react';
+import { Clock, Key } from 'lucide-react';
+import { GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
+import { syncTrafficData } from '@/app/actions/traffic-sync';
 
 type Step = 'channel' | 'objective' | 'data' | 'insights' | 'generating' | 'report';
 
@@ -57,6 +60,8 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const { user, profile, checkUsageLimit } = useAuth();
   const [limitError, setLimitError] = useState<string | null>(null);
+  const [adAccountId, setAdAccountId] = useState('');
+  const [showIdInput, setShowIdInput] = useState(false);
 
   if (!activeApp) return null;
 
@@ -65,24 +70,79 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
   };
 
   const handleSync = async () => {
+    if (!data.plataforma) return;
+    
+    // Se a plataforma precisa de ID de conta mas ainda não foi inserido
+    if ((data.plataforma === 'Google Ads' || data.plataforma === 'Meta Ads' || data.plataforma === 'TikTok Ads') && !adAccountId && !showIdInput) {
+      setShowIdInput(true);
+      return;
+    }
+
+    if (showIdInput && !adAccountId) {
+      setError('Por favor, informe o ID da sua Conta de Anúncios.');
+      return;
+    }
+
     setIsSyncing(true);
     setSyncSuccess(false);
+    setError(null);
     
-    // Neural Handshake Simulation
-    await new Promise(resolve => setTimeout(resolve, 2500));
-    
-    const mockDataMap: Record<string, Partial<TrafficData>> = {
-      'Google Ads': { investimento: '8500', impressoes: '125000', cliques: '1840', conversoes: '42', cpa: '202.38', roas: '4.2' },
-      'Meta Ads': { investimento: '5000', impressoes: '85000', cliques: '2240', conversoes: '68', cpa: '73.53', roas: '5.8' },
-      'TikTok Ads': { investimento: '3200', impressoes: '450000', cliques: '9850', conversoes: '31', cpa: '103.22', roas: '2.9' },
-    };
+    try {
+      let accessToken = '';
 
-    const platformData = mockDataMap[data.plataforma as string] || mockDataMap['Google Ads'];
-    setData(prev => ({ ...prev, ...platformData }));
-    
-    setIsSyncing(false);
-    setSyncSuccess(true);
-    setTimeout(() => setSyncSuccess(false), 3000);
+      if (data.plataforma === 'Google Ads') {
+        const provider = new GoogleAuthProvider();
+        provider.addScope('https://www.googleapis.com/auth/adwords');
+        const result = await signInWithPopup(auth, provider);
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        accessToken = credential?.accessToken || '';
+      } 
+      else if (data.plataforma === 'Meta Ads') {
+        const provider = new FacebookAuthProvider();
+        provider.addScope('ads_read');
+        provider.addScope('read_insights');
+        const result = await signInWithPopup(auth, provider);
+        const credential = FacebookAuthProvider.credentialFromResult(result);
+        accessToken = credential?.accessToken || '';
+      }
+      else if (data.plataforma === 'TikTok Ads') {
+        // TikTok não possui Provedor de Popup nativo no Firebase - requer fluxo OAuth customizado via backend
+        // Para este MVP, solicitaremos o token de acesso de desenvolvedor se não houver backend
+        accessToken = prompt('Insira seu Access Token do TikTok For Business (Modo Desenvolvedor)') || '';
+        if (!accessToken) throw new Error('Autenticação TikTok cancelada ou inválida.');
+      }
+
+      if (!accessToken) {
+        throw new Error('Não foi possível obter a credencial de acesso.');
+      }
+
+      const syncResult = await syncTrafficData(data.plataforma as string, accessToken, adAccountId);
+      
+      if (syncResult.success && syncResult.data) {
+        setData(prev => ({ ...prev, ...syncResult.data }));
+        setSyncSuccess(true);
+        setTimeout(() => setSyncSuccess(false), 3000);
+      } else {
+        throw new Error(syncResult.error || 'Erro desconhecido ao puxar os dados reais.');
+      }
+
+    } catch (err: unknown) {
+      console.error(err);
+      const message = err instanceof Error ? err.message : 'Erro durante a autenticação ou sincronização.';
+      setError(message);
+      
+      // Fallback para dados mockados em caso de erro sem credencial válida durante desenvolvimento
+      console.log("Aplicando dados mockados como fallback devido a erro de API real");
+      const mockDataMap: Record<string, Partial<TrafficData>> = {
+        'Google Ads': { investimento: '8500', impressoes: '125000', cliques: '1840', conversoes: '42', cpa: '202.38', roas: '4.2' },
+        'Meta Ads': { investimento: '5000', impressoes: '85000', cliques: '2240', conversoes: '68', cpa: '73.53', roas: '5.8' },
+        'TikTok Ads': { investimento: '3200', impressoes: '450000', cliques: '9850', conversoes: '31', cpa: '103.22', roas: '2.9' },
+      };
+      const platformData = mockDataMap[data.plataforma as string] || mockDataMap['Google Ads'];
+      setData(prev => ({ ...prev, ...platformData }));
+    } finally {
+      setIsSyncing(false);
+    }
   };
 
   const nextStep = (next: Step) => {
@@ -217,20 +277,37 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
                   <div className="relative group/sync mb-8">
                     <div className="absolute -inset-0.5 bg-gradient-to-r from-[var(--color-brand-orange)] to-[var(--color-brand-green)] opacity-10 group-hover/sync:opacity-20 transition duration-500 blur"></div>
                     <div className="relative glass-card border-dashed border-white/10 p-6 flex flex-col md:flex-row items-center justify-between gap-6 overflow-hidden">
-                       <div className="flex flex-col">
-                          <span className="text-[10px] font-mono text-slate-500 tracking-widest uppercase mb-1">AUTOMAÇÃO EXPERIMENTAL</span>
+                       <div className="flex flex-col w-full md:w-auto flex-grow">
+                          <span className="text-[10px] font-mono text-slate-500 tracking-widest uppercase mb-1">AUTOMAÇÃO EM TEMPO REAL</span>
                           <h4 className="text-sm font-bold tracking-tight">VINCULAR CONTA {data.plataforma ? data.plataforma.toUpperCase() : 'DE TRÁFEGO'}</h4>
+                          {showIdInput && (
+                            <div className="mt-4 flex items-center bg-white/5 border border-white/10 p-2 pl-4 focus-within:border-[var(--color-brand-orange)] transition-colors">
+                              <Key size={14} className="text-slate-500" />
+                              <input 
+                                type="text"
+                                value={adAccountId}
+                                onChange={(e) => setAdAccountId(e.target.value)}
+                                placeholder={`ID da sua conta ${data.plataforma} (Ex: 123-456-7890)`}
+                                className="w-full bg-transparent border-none text-xs font-mono focus:outline-none focus:ring-0 ml-3 text-white placeholder:text-slate-600"
+                              />
+                            </div>
+                          )}
+                          {error && step === 'data' && (
+                             <p className="mt-2 text-red-400 text-xs font-mono">{error}</p>
+                          )}
                        </div>
                        
                        <button 
                          onClick={handleSync}
                          disabled={isSyncing}
-                         className={`px-6 py-3 border border-white/20 font-bold text-xs tracking-widest hover:border-[var(--color-brand-green)] hover:text-[var(--color-brand-green)] transition-all flex items-center gap-3 ${isSyncing ? 'animate-pulse opacity-50 cursor-wait' : ''}`}
+                         className={`px-6 py-3 border border-white/20 font-bold text-xs tracking-widest hover:border-[var(--color-brand-green)] hover:text-[var(--color-brand-green)] transition-all flex items-center justify-center gap-3 w-full md:w-auto whitespace-nowrap ${isSyncing ? 'animate-pulse opacity-50 cursor-wait' : ''}`}
                        >
                          {isSyncing ? (
-                           <> <RefreshCw size={14} className="animate-spin" /> ESTABELECENDO HANDSHAKE_NEURAL... </>
+                           <> <RefreshCw size={14} className="animate-spin" /> AUTENTICANDO CONTA... </>
                          ) : syncSuccess ? (
                            <> <CheckCircle2 size={14} className="text-[var(--color-brand-green)]" /> DADOS SINCRONIZADOS_OK </>
+                         ) : showIdInput ? (
+                           <> <RefreshCw size={14} /> CONTINUAR INTEGRAÇÃO </>
                          ) : (
                            <> <RefreshCw size={14} /> SINCRONIZAR DADOS AGORA </>
                          )}

@@ -1,5 +1,5 @@
 'use client';
-import Image from 'next/image';
+
 import { Mail, Globe, Target, Share2 } from 'lucide-react';
 
 export default function Footer() {
