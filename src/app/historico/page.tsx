@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { getHistory } from '@/app/actions/automations';
-import Navbar from '@/components/layout/Navbar';
+import { useAuth } from '../../context/AuthContext';
+import { getHistory } from '../actions/automations';
+import Navbar from '../../components/layout/Navbar';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BrainCircuit, 

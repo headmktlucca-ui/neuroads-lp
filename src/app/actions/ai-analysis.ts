@@ -1,7 +1,7 @@
 'use server';
 
 import OpenAI from 'openai';
-import { TrafficData, generateTrafficAnalystPrompt } from '@/lib/prompt-master';
+import { TrafficData, generateTrafficAnalystPrompt } from '../../lib/prompt-master';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

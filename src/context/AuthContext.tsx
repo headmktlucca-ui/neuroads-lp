@@ -8,7 +8,7 @@ import {
   GoogleAuthProvider,
   signOut 
 } from 'firebase/auth';
-import { auth, db } from '@/lib/firebase';
+import { auth, db } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface UserProfile {

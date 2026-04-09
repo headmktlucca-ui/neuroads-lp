@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import TrafficAnalystContainer, { ActiveAppConfig } from '@/components/traffic-analyst/TrafficAnalystContainer';
+import TrafficAnalystContainer, { ActiveAppConfig } from '../traffic-analyst/TrafficAnalystContainer';
 
 export default function ToolGallery() {
   const [activeApp, setActiveApp] = useState<ActiveAppConfig | null>(null);

@@ -17,17 +17,17 @@ import {
   RefreshCw,
   CheckCircle2
 } from 'lucide-react';
-import { TrafficData } from '@/lib/prompt-master';
-import { analyzeTraffic } from '@/app/actions/ai-analysis';
-import { useAuth } from '@/context/AuthContext';
-import AuthOverlay from '@/components/auth/AuthOverlay';
+import { TrafficData } from '../../lib/prompt-master';
+import { analyzeTraffic } from '../../app/actions/ai-analysis';
+import { useAuth } from '../../context/AuthContext';
+import AuthOverlay from '../auth/AuthOverlay';
 import { Clock, Key } from 'lucide-react';
 import { GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
-import { syncTrafficData } from '@/app/actions/traffic-sync';
-import { listGoogleAdsAccounts, saveConnection, removeConnection } from '@/app/actions/ad-accounts';
-import { scheduleAutomation, saveToHistory } from '@/app/actions/automations';
-import { sendDiagnosisEmail } from '@/lib/mail';
+import { auth } from '../../lib/firebase';
+import { syncTrafficData } from '../../app/actions/traffic-sync';
+import { listGoogleAdsAccounts, saveConnection, removeConnection } from '../../app/actions/ad-accounts';
+import { scheduleAutomation, saveToHistory } from '../../app/actions/automations';
+import { sendDiagnosisEmail } from '../../lib/mail';
 import Link from 'next/link';
 
 import { Calendar, History } from 'lucide-react';

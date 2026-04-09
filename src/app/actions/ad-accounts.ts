@@ -1,6 +1,6 @@
 'use server';
 
-import { db } from '@/lib/firebase';
+import { db } from '../../lib/firebase';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 
 export async function listGoogleAdsAccounts(accessToken: string) {

@@ -1,6 +1,6 @@
 'use server';
 
-import { TrafficData } from '@/lib/prompt-master';
+import { TrafficData } from '../../lib/prompt-master';
 
 export async function syncTrafficData(
   platform: string, 

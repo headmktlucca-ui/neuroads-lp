@@ -1,6 +1,6 @@
 'use server';
 
-import { db } from '@/lib/firebase';
+import { db } from '../../lib/firebase';
 import { collection, addDoc, query, where, getDocs, orderBy, doc, updateDoc } from 'firebase/firestore';
 
 export async function scheduleAutomation(userId: string, config: { platform: string, frequency: string, accountId: string, email: string }) {

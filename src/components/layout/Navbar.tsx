@@ -1,8 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import AuthOverlay from '@/components/auth/AuthOverlay';
+import { useAuth } from '../../context/AuthContext';
+import AuthOverlay from '../auth/AuthOverlay';
 
 export default function Navbar() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
