@@ -27,7 +27,7 @@ import { auth } from '../../lib/firebase';
 import { syncTrafficData } from '../../app/actions/traffic-sync';
 import { listGoogleAdsAccounts, saveConnection, removeConnection } from '../../app/actions/ad-accounts';
 import { scheduleAutomation, saveToHistory } from '../../app/actions/automations';
-import { sendDiagnosisEmail } from '../../lib/mail';
+import { sendDiagnosisEmailAction } from '../../app/actions/mail';
 import Link from 'next/link';
 
 import { Calendar, History } from 'lucide-react';
@@ -509,7 +509,7 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
 
                             // NEW: Send email for Max users
                             if (profile?.isPremium && user.email) {
-                              await sendDiagnosisEmail(
+                              await sendDiagnosisEmailAction(
                                 user.email,
                                 user.displayName || 'Usuário',
                                 data.plataforma as string,
