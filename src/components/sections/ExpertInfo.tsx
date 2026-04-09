@@ -93,11 +93,12 @@ export default function ExpertInfo() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <p className="text-[var(--color-brand-green)] font-bold tracking-wide uppercase text-sm mb-3">
-                Sobre Nós / Conheça o Especialista
-              </p>
+
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight">
-                Redefinindo operações estratégicas <br className="hidden lg:block"/>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-brand-orange)] to-[var(--color-brand-green)]">
+                  Redefinindo operações, <br />
+                  estratégicas e resultados
+                </span> <br />
                 no Marketing Moderno.
               </h2>
               <p className="text-xl italic text-slate-400 mb-8 leading-relaxed">

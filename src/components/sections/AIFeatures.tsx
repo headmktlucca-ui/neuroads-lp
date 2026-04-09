@@ -60,7 +60,7 @@ export default function AIFeatures() {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4"
           >
-            IA e Automação: O Futuro da Sua Estratégia.
+            IA e Automação: <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-brand-orange)] to-[var(--color-brand-green)]">O Futuro da Sua Estratégia.</span>
           </motion.h2>
           <motion.div 
             initial={{ opacity: 0, scale: 0.8 }}
