@@ -123,7 +123,7 @@ export default function ToolGallery() {
   ];
 
   return (
-    <section className="py-24 bg-black relative overflow-hidden shadow-[0_-20px_50px_rgba(249,166,32,0.05),0_20px_50px_rgba(204,255,0,0.05)]">
+    <section className="pt-8 pb-24 bg-black relative overflow-hidden shadow-[0_-20px_50px_rgba(249,166,32,0.05),0_20px_50px_rgba(204,255,0,0.05)]">
       {/* Creative Background Layout */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_100%_100%_at_50%_50%,#000_30%,transparent_100%)]"></div>
@@ -143,13 +143,11 @@ export default function ToolGallery() {
               Hub <br />
               <span className="text-[var(--color-brand-orange)]">Estratégico</span>
             </h2>
-            <p className="text-slate-400 font-light leading-relaxed">
-              Ative as engrenagens certas e escale sua operação.
+            <p className="text-slate-400 font-light leading-relaxed text-[18px]">
+              Seus resultados atuais não são o limite — são o ponto de partida. O Hub Estratégico conecta aplicações que amplificam performance, reduzem ineficiências e aceleram seus resultados.
             </p>
           </div>
-          <div className="font-mono text-[10px] text-slate-600 tracking-[0.2em] hidden md:block">
-            NEUROADS_SYSTEMS_CORE_v4.0.2
-          </div>
+
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">

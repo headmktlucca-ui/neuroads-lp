@@ -21,7 +21,7 @@ export default function LabHero() {
   };
 
   return (
-    <section className="relative min-h-[60vh] md:min-h-[70vh] flex items-center justify-center pt-32 pb-16 overflow-hidden bg-black">
+    <section className="relative min-h-[60vh] md:min-h-[70vh] flex items-center justify-center pt-32 pb-4 overflow-hidden bg-black">
       {/* Neural Background Layer */}
       <div className="absolute inset-0 z-0 opacity-50 pointer-events-none">
         <Image
@@ -49,21 +49,14 @@ export default function LabHero() {
           animate="visible"
           className="flex flex-col items-center text-center"
         >
-          {/* Badge */}
-          <motion.div 
-            variants={itemVariants}
-            className="mb-8 flex items-center gap-2 px-3 py-1 rounded-full border border-[var(--color-brand-orange)]/30 bg-[var(--color-brand-orange)]/5 text-[var(--color-brand-orange)] text-xs font-mono tracking-widest uppercase"
-          >
-            <BrainCircuit size={14} />
-            <span>Laboratório de Performance Neural</span>
-          </motion.div>
+
 
           {/* Headline - Radical Typographic Layout */}
-          <motion.div variants={itemVariants} className="relative mb-8 text-center">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black leading-tight tracking-tighter uppercase italic">
+          <motion.div variants={itemVariants} className="relative mb-12 text-center w-full px-4 overflow-visible">
+            <h1 className="text-4xl md:text-6xl lg:text-7xl font-black leading-[1.2] tracking-tight uppercase italic pb-4 pr-4">
               Não é o design. <br />
               Não é o texto. <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-brand-orange)] to-[var(--color-brand-green)]">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[var(--color-brand-orange)] to-[var(--color-brand-green)] inline-block pr-8">
                 É ESTRATÉGIA!
               </span>
             </h1>
@@ -86,18 +79,18 @@ export default function LabHero() {
              <motion.div 
                animate={{ y: [0, -20, 0] }}
                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-               className="absolute top-[15%] left-[-10%] hidden xl:block glass-card p-4 rounded-none border-l-2 border-l-[var(--color-brand-orange)]"
+               className="absolute top-[15%] left-[-18%] hidden xl:block glass-card p-4 rounded-none border-l-2 border-l-[var(--color-brand-orange)]"
              >
                 <div className="text-[10px] text-slate-500 font-mono mb-1">REAL_TIME_ROI</div>
                 <div className="text-2xl font-bold text-[var(--color-brand-orange)]">482%</div>
              </motion.div>
 
-             {/* Right Card */}
-             <motion.div 
-               animate={{ y: [0, 20, 0] }}
-               transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-               className="absolute bottom-[20%] right-[-10%] hidden xl:block glass-card p-4 rounded-none border-r-2 border-r-[var(--color-brand-green)] text-right"
-             >
+              {/* Right Card */}
+              <motion.div 
+                animate={{ y: [0, 20, 0] }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+                className="absolute bottom-[20%] right-[-18%] hidden xl:block glass-card p-4 rounded-none border-r-2 border-r-[var(--color-brand-green)] text-right"
+              >
                 <div className="text-[10px] text-slate-500 font-mono mb-1">AI_DIAGNOSES_COMPLETED</div>
                 <div className="text-2xl font-bold text-[var(--color-brand-green)]">1,240+</div>
              </motion.div>
