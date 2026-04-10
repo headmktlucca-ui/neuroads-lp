@@ -26,11 +26,25 @@ export default function CopyGeneratorContainer() {
   };
 
   if (step === 'onboarding') {
-    return <KnowledgeInputForm 
-      appName="Gerador de Copies" 
-      onComplete={handleKnowledgeComplete} 
-      requiredFields={['site', 'linkedin', 'facebook']}
-    />;
+    return (
+      <div className="space-y-4">
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }} 
+            animate={{ opacity: 1, height: 'auto' }}
+            className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm font-mono text-center flex items-center justify-center gap-2"
+          >
+            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            {error}
+          </motion.div>
+        )}
+        <KnowledgeInputForm 
+          appName="Gerador de Copies" 
+          onComplete={handleKnowledgeComplete} 
+          requiredFields={['site', 'linkedin', 'facebook']}
+        />
+      </div>
+    );
   }
 
   if (step === 'processing') {

@@ -27,19 +27,39 @@ export default function CreativeGeneratorContainer() {
 
   if (step === 'onboarding') {
     return (
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
+      <div className="space-y-4">
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }} 
+            animate={{ opacity: 1, height: 'auto' }}
+            className="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm font-mono text-center flex items-center justify-center gap-2"
+          >
+            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            {error}
+          </motion.div>
+        )}
         <KnowledgeInputForm 
           appName="Gerador de Criativos" 
           onComplete={handleKnowledgeComplete} 
           requiredFields={['site', 'instagram']}
         />
-      </motion.div>
+      </div>
     );
   }
 
   if (step === 'processing') {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
+        {error && (
+          <motion.div 
+            initial={{ opacity: 0, height: 0 }} 
+            animate={{ opacity: 1, height: 'auto' }}
+            className="p-4 mb-8 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm font-mono text-center flex items-center justify-center gap-2"
+          >
+            <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
+            {error}
+          </motion.div>
+        )}
         <div className="relative w-32 h-32 mb-8">
           <div className="absolute inset-0 border-4 border-[var(--color-brand-orange)]/20 rounded-full" />
           <motion.div 
