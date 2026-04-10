@@ -1,6 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import TrafficAnalystContainer, { ActiveAppConfig } from '../traffic-analyst/TrafficAnalystContainer';
 import CreativeGeneratorContainer from '../creative-suite/CreativeGeneratorContainer';
@@ -178,6 +179,18 @@ export default function ToolGallery() {
     }
   ];
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const scrollAmount = 400;
+      scrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   const filteredTools = activeCategory === 'Todos' 
     ? tools 
     : tools.filter(tool => tool.category === activeCategory);
@@ -191,115 +204,137 @@ export default function ToolGallery() {
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black to-transparent" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-          <div className="max-w-xl">
-            <h2 className="text-4xl md:text-5xl font-black mb-6 tracking-tight uppercase">
+      <div className="max-w-full mx-auto px-6 md:px-12 lg:px-16 relative z-10">
+        <div className="flex flex-col mb-12">
+          <div className="w-full mb-10">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-6 tracking-tight uppercase">
               Hub <br />
               <span className="text-[var(--color-brand-orange)]">Estratégico</span>
             </h2>
-            <p className="text-slate-400 font-light leading-relaxed text-[20px]">
+            <p className="text-slate-400 font-light leading-relaxed text-[20px] max-w-3xl">
               Seus resultados atuais não são o limite — são o ponto de partida. O Hub Estratégico conecta aplicações que amplificam performance.
             </p>
           </div>
 
-          {/* Category Tabs */}
-          <div className="flex flex-nowrap overflow-x-auto scrollbar-hide gap-3 bg-white/5 p-1.5 border border-white/10 rounded-xl max-w-full">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`px-6 py-2 text-[12px] font-bold tracking-widest uppercase transition-all rounded-lg whitespace-nowrap flex-shrink-0 ${
-                  activeCategory === cat 
-                    ? 'bg-[var(--color-brand-orange)] text-black shadow-[0_0_20px_rgba(249,166,32,0.3)]' 
-                    : 'text-slate-500 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+          <div className="flex justify-start md:justify-end mb-8">
+            <div className="flex flex-nowrap overflow-x-auto scrollbar-hide gap-3 bg-white/5 p-1.5 border border-white/10 rounded-xl max-w-full md:max-w-max">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-6 py-2 text-[12px] font-bold tracking-widest uppercase transition-all rounded-lg whitespace-nowrap flex-shrink-0 ${
+                    activeCategory === cat 
+                      ? 'bg-[var(--color-brand-orange)] text-black shadow-[0_0_20px_rgba(249,166,32,0.3)]' 
+                      : 'text-slate-500 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <AnimatePresence mode="popLayout">
-            {filteredTools.map((tool, index) => {
-            const isSoon = tool.status === 'EM BREVE';
-            return (
-              <motion.div
-                key={tool.title}
-                initial={{ opacity: 0, scale: 0.95 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className={`glass-card p-8 transition-all duration-300 flex flex-col min-h-[320px] relative overflow-hidden ${
-                  isSoon
-                    ? 'opacity-70 cursor-not-allowed'
-                    : `group cursor-pointer hover:border-[var(--color-brand-orange)]/50 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(249,166,32,0.1)] ${activeApp?.title === tool.title ? 'border-[var(--color-brand-orange)]/50 shadow-[0_0_30px_rgba(249,166,32,0.1)] -translate-y-2' : ''}`
-                }`}
-                onClick={() => {
-                  if (!isSoon) {
-                    setActiveApp(tool);
-                    // Adiciona delay sútil para dar tempo do componente renderizar na DOM caso seja o primeiro clique
-                    setTimeout(() => {
-                      const analystElement = document.getElementById('analista');
-                      if (analystElement) {
-                        analystElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                      }
-                    }, 50);
-                  }
-                }}
-              >
-                {!isSoon && (
-                  <div className={`absolute inset-0 bg-gradient-to-br from-[var(--color-brand-orange)]/10 to-transparent transition-opacity duration-500 pointer-events-none ${activeApp?.title === tool.title ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
-                )}
+        <div className="relative group/gallery px-4 md:px-12">
+          {/* Floating Navigation Arrows - Reduzidos em 50% */}
+          <button 
+            onClick={() => scroll('left')}
+            className="absolute -left-2 md:left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-[var(--color-brand-green)]/70 border border-white/20 flex items-center justify-center hover:bg-[var(--color-brand-green)] hover:scale-110 active:scale-95 transition-all text-black opacity-0 group-hover/gallery:opacity-100 shadow-[0_0_30px_rgba(204,255,0,0.2)] backdrop-blur-md"
+            aria-label="Anterior"
+          >
+            <ChevronLeft size={24} strokeWidth={3} />
+          </button>
+          
+          <button 
+            onClick={() => scroll('right')}
+            className="absolute -right-2 md:right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-[var(--color-brand-green)]/70 border border-white/20 flex items-center justify-center hover:bg-[var(--color-brand-green)] hover:scale-110 active:scale-95 transition-all text-black opacity-0 group-hover/gallery:opacity-100 shadow-[0_0_30px_rgba(204,255,0,0.2)] backdrop-blur-md"
+            aria-label="Próximo"
+          >
+            <ChevronRight size={24} strokeWidth={3} />
+          </button>
 
-                <div className="mb-6 relative z-10">
-                  <div className={`relative w-20 h-20 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(249,166,32,0.15)] ring-1 ${!isSoon && activeApp?.title === tool.title ? 'ring-[var(--color-brand-orange)]/50' : !isSoon ? 'ring-white/10 group-hover:ring-[var(--color-brand-orange)]/50' : 'ring-white/5 grayscale saturate-50'} transition-all`}>
-                    <Image src={tool.icon} alt={tool.title} fill className={`object-cover transition-transform duration-500 ${!isSoon && activeApp?.title === tool.title ? 'scale-110' : !isSoon ? 'group-hover:scale-110' : ''}`} />
-                  </div>
-                </div>
-
-                <div className="flex-grow">
-                  <h3 className={`text-xl font-bold mb-3 tracking-tight transition-colors ${!isSoon && activeApp?.title === tool.title ? 'text-[var(--color-brand-orange)]' : !isSoon ? 'group-hover:text-[var(--color-brand-orange)]' : 'text-slate-300'}`}>
-                    {tool.title}
-                  </h3>
-                  <p className={`text-sm leading-relaxed mb-6 ${isSoon ? 'text-slate-500' : 'text-slate-400'}`}>
-                    {tool.description}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between pt-6 border-t border-white/5">
-                  <span className={`text-[10px] font-mono tracking-widest ${
-                    tool.status === 'DISPONÍVEL' ? 'text-[var(--color-brand-green)]' 
-                    : isSoon ? 'bg-white/10 text-white px-3 py-1.5 rounded uppercase font-bold border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.05)] text-center tracking-[0.2em]' 
-                    : 'text-slate-600'
-                  }`}>
-                    {tool.status}
-                  </span>
-
+          <div 
+            ref={scrollRef}
+            className="grid grid-rows-1 grid-flow-col auto-cols-[300px] md:auto-cols-[380px] gap-6 overflow-x-auto scrollbar-hide pt-10 pb-12 snap-x snap-mandatory px-4"
+          >
+            <AnimatePresence mode="popLayout">
+              {filteredTools.map((tool, index) => {
+              const isSoon = tool.status === 'EM BREVE';
+              return (
+                <motion.div
+                  key={tool.title}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  className={`glass-card p-8 transition-all duration-300 flex flex-col min-h-[320px] relative overflow-hidden snap-start ${
+                    isSoon
+                      ? 'opacity-70 cursor-not-allowed'
+                      : `group cursor-pointer hover:border-[var(--color-brand-orange)]/50 hover:-translate-y-2 hover:shadow-[0_0_30px_rgba(249,166,32,0.1)] ${activeApp?.title === tool.title ? 'border-[var(--color-brand-orange)]/50 shadow-[0_0_30px_rgba(249,166,32,0.1)] -translate-y-2' : ''}`
+                  }`}
+                  onClick={() => {
+                    if (!isSoon) {
+                      setActiveApp(tool);
+                      setTimeout(() => {
+                        const appViewElement = document.getElementById('app-view');
+                        if (appViewElement) {
+                          appViewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                      }, 50);
+                    }
+                  }}
+                >
                   {!isSoon && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveApp(tool);
-                        setTimeout(() => {
-                          const appViewElement = document.getElementById('app-view');
-                          if (appViewElement) {
-                            appViewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                          }
-                        }, 50);
-                      }}
-                      className="h-10 flex items-center gap-1 text-[var(--color-brand-orange)] text-xs font-bold hover:gap-2 transition-all cursor-pointer bg-transparent border-none p-0 focus:outline-none"
-                    >
-                      ACESSAR <span className="text-lg">→</span>
-                    </button>
+                    <div className={`absolute inset-0 bg-gradient-to-br from-[var(--color-brand-orange)]/10 to-transparent transition-opacity duration-500 pointer-events-none ${activeApp?.title === tool.title ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`} />
                   )}
-                </div>
-              </motion.div>
-            );
-          })}
-          </AnimatePresence>
+
+                  <div className="mb-6 relative z-10">
+                    <div className={`relative w-20 h-20 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(249,166,32,0.15)] ring-1 ${!isSoon && activeApp?.title === tool.title ? 'ring-[var(--color-brand-orange)]/50' : !isSoon ? 'ring-white/10 group-hover:ring-[var(--color-brand-orange)]/50' : 'ring-white/5 grayscale saturate-50'} transition-all`}>
+                      <Image src={tool.icon} alt={tool.title} fill className={`object-cover transition-transform duration-500 ${!isSoon && activeApp?.title === tool.title ? 'scale-110' : !isSoon ? 'group-hover:scale-110' : ''}`} />
+                    </div>
+                  </div>
+
+                  <div className="flex-grow">
+                    <h3 className={`text-xl font-bold mb-3 tracking-tight transition-colors ${!isSoon && activeApp?.title === tool.title ? 'text-[var(--color-brand-orange)]' : !isSoon ? 'group-hover:text-[var(--color-brand-orange)]' : 'text-slate-300'}`}>
+                      {tool.title}
+                    </h3>
+                    <p className={`text-sm leading-relaxed mb-6 ${isSoon ? 'text-slate-500' : 'text-slate-400'}`}>
+                      {tool.description}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-6 border-t border-white/5">
+                    <span className={`text-[10px] font-mono tracking-widest ${
+                      tool.status === 'DISPONÍVEL' ? 'text-[var(--color-brand-green)]' 
+                      : isSoon ? 'bg-white/10 text-white px-3 py-1.5 rounded uppercase font-bold border border-white/20 shadow-[0_0_10px_rgba(255,255,255,0.05)] text-center tracking-[0.2em]' 
+                      : 'text-slate-600'
+                    }`}>
+                      {tool.status}
+                    </span>
+
+                    {!isSoon && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveApp(tool);
+                          setTimeout(() => {
+                            const appViewElement = document.getElementById('app-view');
+                            if (appViewElement) {
+                              appViewElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            }
+                          }, 50);
+                        }}
+                        className="h-10 flex items-center gap-1 text-[var(--color-brand-orange)] text-xs font-bold hover:gap-2 transition-all cursor-pointer bg-transparent border-none p-0 focus:outline-none"
+                      >
+                        ACESSAR <span className="text-lg">→</span>
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              );
+            })}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
@@ -311,7 +346,7 @@ export default function ToolGallery() {
         
         {activeApp?.title === 'Gerador de Criativos' && (
           <div className="py-24 bg-black relative">
-            <div className="max-w-4xl mx-auto px-4">
+            <div className="max-w-full mx-auto px-6 md:px-12 lg:px-20">
                <div className="text-center mb-16">
                   <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight uppercase">
                     GERADOR DE <span className="text-[var(--color-brand-orange)]">CRIATIVOS</span>
@@ -327,7 +362,7 @@ export default function ToolGallery() {
 
         {activeApp?.title === 'Gerador de Copies de Conversão' && (
           <div className="py-24 bg-black relative">
-            <div className="max-w-4xl mx-auto px-4">
+            <div className="max-w-full mx-auto px-6 md:px-12 lg:px-20">
                <div className="text-center mb-16">
                   <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight uppercase">
                     GERADOR DE <span className="text-[var(--color-brand-orange)]">COPIES</span>
@@ -343,7 +378,7 @@ export default function ToolGallery() {
 
         {activeApp?.title === 'Análise Viral' && (
           <div className="py-24 bg-black relative">
-            <div className="max-w-4xl mx-auto px-4">
+            <div className="max-w-full mx-auto px-6 md:px-12 lg:px-20">
                <div className="text-center mb-16">
                   <h2 className="text-3xl md:text-5xl font-black mb-4 tracking-tight uppercase">
                     ANÁLISE <span className="text-[var(--color-brand-orange)]">VIRAL</span>

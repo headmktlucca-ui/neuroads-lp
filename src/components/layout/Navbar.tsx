@@ -80,10 +80,14 @@ export default function Navbar() {
             ) : (
               <button 
                 onClick={() => setIsAuthModalOpen(true)}
-                className="relative px-6 py-2 group overflow-hidden cursor-pointer"
+                className="relative px-8 py-3 group overflow-hidden cursor-pointer"
               >
-                <div className="absolute inset-0 bg-[var(--color-brand-orange)] skew-x-[-12deg] group-hover:bg-[var(--color-brand-green)] transition-colors" />
-                <span className="relative z-10 text-black text-[13px] font-black tracking-tighter uppercase italic">ACESSAR MEU HUB</span>
+                {/* Border Glow Loop */}
+                <div className="absolute inset-0 border border-white/5 rounded-full" />
+                
+                <span className="relative z-10 text-[13px] font-black tracking-[0.4em] uppercase italic bg-gradient-to-r from-[var(--color-brand-orange)] via-[var(--color-brand-green)] to-[var(--color-brand-orange)] bg-[length:200%_auto] bg-clip-text text-transparent animate-shimmer-text flex items-center gap-4">
+                  ACESSAR MEU HUB
+                </span>
               </button>
             )}
           </div>
@@ -136,9 +140,11 @@ export default function Navbar() {
           ) : (
             <button 
               onClick={() => { setIsAuthModalOpen(true); setIsMenuOpen(false); }}
-              className="w-full py-6 bg-[var(--color-brand-orange)] text-black text-lg font-black tracking-widest uppercase italic skew-x-[-4deg] shadow-[0_20px_40px_rgba(249,166,32,0.2)]"
+              className="w-full py-6 bg-transparent border border-white/10 rounded-2xl relative overflow-hidden group"
             >
-              ACESSAR MEU HUB
+              <span className="relative z-10 text-lg font-black tracking-[0.4em] uppercase italic bg-gradient-to-r from-[var(--color-brand-orange)] via-[var(--color-brand-green)] to-[var(--color-brand-orange)] bg-[length:200%_auto] bg-clip-text text-transparent animate-shimmer-text">
+                ACESSAR MEU HUB
+              </span>
             </button>
           )}
         </div>
