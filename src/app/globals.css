@@ -51,6 +51,14 @@ body {
   .border-gradient {
     border-image: linear-gradient(to right, #F9A620, #CCFF00) 1;
   }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* Custom Scrollbar for the future look */

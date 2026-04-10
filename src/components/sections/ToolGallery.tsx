@@ -204,12 +204,12 @@ export default function ToolGallery() {
           </div>
 
           {/* Category Tabs */}
-          <div className="flex flex-wrap gap-3 bg-white/5 p-1.5 border border-white/10 rounded-xl">
+          <div className="flex flex-nowrap overflow-x-auto scrollbar-hide gap-3 bg-white/5 p-1.5 border border-white/10 rounded-xl max-w-full">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-6 py-2 text-[12px] font-bold tracking-widest uppercase transition-all rounded-lg ${
+                className={`px-6 py-2 text-[12px] font-bold tracking-widest uppercase transition-all rounded-lg whitespace-nowrap flex-shrink-0 ${
                   activeCategory === cat 
                     ? 'bg-[var(--color-brand-orange)] text-black shadow-[0_0_20px_rgba(249,166,32,0.3)]' 
                     : 'text-slate-500 hover:text-white hover:bg-white/5'
