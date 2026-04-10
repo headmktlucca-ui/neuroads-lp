@@ -10,6 +10,7 @@ import {
 } from 'firebase/auth';
 import { auth, db } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { syncToHostingerReach } from '../app/actions/hostinger';
 
 interface UserProfile {
   isPremium: boolean;
@@ -50,6 +51,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const newProfile: UserProfile = { isPremium: false, usageStats: {} };
           await setDoc(doc(db, 'users', user.uid), newProfile);
           setProfile(newProfile);
+
+          // Sincronização com Hostinger Reach apenas no primeiro cadastro
+          if (user.email) {
+            syncToHostingerReach({
+              email: user.email,
+              name: user.displayName || 'Usuário NeuroAds',
+              tags: ["Usuários Ativos"]
+            }).catch(err => console.error('Reach sync failed:', err));
+          }
         }
       } else {
         setProfile(null);

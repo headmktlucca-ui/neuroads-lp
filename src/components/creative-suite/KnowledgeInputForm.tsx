@@ -11,10 +11,10 @@ interface KnowledgeInputFormProps {
 
 export default function KnowledgeInputForm({ onComplete, appName, requiredFields = ['site', 'instagram', 'facebook', 'linkedin'] }: KnowledgeInputFormProps) {
   const [links, setLinks] = useState({
-    site: '',
-    instagram: '',
-    facebook: '',
-    linkedin: ''
+    site: 'https://',
+    instagram: 'https://',
+    facebook: 'https://',
+    linkedin: 'https://'
   });
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -26,6 +26,17 @@ export default function KnowledgeInputForm({ onComplete, appName, requiredFields
       onComplete(links);
       setIsProcessing(false);
     }, 2000);
+  };
+
+  const handleUrlChange = (field: string, value: string) => {
+    let val = value;
+    if (val.includes('https://https://')) {
+      val = val.replace('https://https://', 'https://');
+    }
+    if (val.includes('http://https://')) {
+      val = val.replace('http://https://', 'http://');
+    }
+    setLinks(prev => ({ ...prev, [field]: val }));
   };
 
   return (
@@ -56,7 +67,7 @@ export default function KnowledgeInputForm({ onComplete, appName, requiredFields
                   type="url"
                   placeholder="https://suaempresa.com"
                   value={links.site}
-                  onChange={(e) => setLinks({ ...links, site: e.target.value })}
+                  onChange={(e) => handleUrlChange('site', e.target.value)}
                   className="w-full h-12 bg-white/5 border border-white/10 px-4 rounded-xl text-white focus:outline-none focus:border-[var(--color-brand-orange)] transition-all"
                   required
                 />
@@ -73,7 +84,7 @@ export default function KnowledgeInputForm({ onComplete, appName, requiredFields
                   type="url"
                   placeholder="instagram.com/perfil"
                   value={links.instagram}
-                  onChange={(e) => setLinks({ ...links, instagram: e.target.value })}
+                  onChange={(e) => handleUrlChange('instagram', e.target.value)}
                   className="w-full h-12 bg-white/5 border border-white/10 px-4 rounded-xl text-white focus:outline-none focus:border-[var(--color-brand-orange)] transition-all"
                 />
               </div>
@@ -89,7 +100,7 @@ export default function KnowledgeInputForm({ onComplete, appName, requiredFields
                   type="url"
                   placeholder="linkedin.com/company/abc"
                   value={links.linkedin}
-                  onChange={(e) => setLinks({ ...links, linkedin: e.target.value })}
+                  onChange={(e) => handleUrlChange('linkedin', e.target.value)}
                   className="w-full h-12 bg-white/5 border border-white/10 px-4 rounded-xl text-white focus:outline-none focus:border-[var(--color-brand-orange)] transition-all"
                 />
               </div>
@@ -105,7 +116,7 @@ export default function KnowledgeInputForm({ onComplete, appName, requiredFields
                   type="url"
                   placeholder="facebook.com/pagina"
                   value={links.facebook}
-                  onChange={(e) => setLinks({ ...links, facebook: e.target.value })}
+                  onChange={(e) => handleUrlChange('facebook', e.target.value)}
                   className="w-full h-12 bg-white/5 border border-white/10 px-4 rounded-xl text-white focus:outline-none focus:border-[var(--color-brand-orange)] transition-all"
                 />
               </div>
