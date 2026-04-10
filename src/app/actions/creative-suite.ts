@@ -16,7 +16,7 @@ export async function generateCreativeSuiteResult(type: 'creative' | 'copy' | 'v
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     let prompt = '';
     let systemInstruction = '';
