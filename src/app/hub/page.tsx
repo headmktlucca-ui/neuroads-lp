@@ -53,6 +53,16 @@ export default function HubPage() {
               <div className="text-slate-500 text-[10px] font-mono tracking-widest uppercase mb-2">Créditos Semanais</div>
               <div className="text-white font-black italic tracking-wider uppercase">Ilimitado <span className="text-[var(--color-brand-orange)]">PRO</span></div>
             </div>
+
+            <div className="h-12 w-px bg-white/10 hidden md:block" />
+
+            <div className="group cursor-pointer">
+              <div className="text-slate-500 text-[10px] font-mono tracking-widest uppercase mb-2 group-hover:text-[var(--color-brand-green)] transition-colors">Inteligência</div>
+              <div className="text-white font-black italic tracking-wider uppercase flex items-center gap-2 group-hover:text-[var(--color-brand-orange)] transition-colors">
+                HISTÓRICO & INSIGHTS
+                <span className="text-xs group-hover:translate-x-1 transition-transform">→</span>
+              </div>
+            </div>
           </div>
         </div>
 
