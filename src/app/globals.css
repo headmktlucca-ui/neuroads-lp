@@ -78,6 +78,15 @@ body {
   .animate-float {
     animation: float 4s ease-in-out infinite;
   }
+
+  @keyframes wave {
+    0%, 100% { transform: scaleY(1) translateY(0); }
+    50% { transform: scaleY(1.1) translateY(-10px); }
+  }
+
+  .animate-wave {
+    animation: wave 8s ease-in-out infinite;
+  }
 }
 
 /* Custom Scrollbar for the future look */

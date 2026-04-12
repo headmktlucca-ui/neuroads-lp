@@ -123,3 +123,386 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
 [browser] Image with src "/images/tools/diagnostico_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [browser] Image with src "/images/tools/auditor_desperdicio.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
  GET / 200 in 41ms (next.js: 13ms, application-code: 28ms)
+ GET / 200 in 174ms (next.js: 11ms, application-code: 164ms)
+[browser] Image with src "/images/minimalist_expert_bg.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[browser] Image with src "/images/tools/analista_trafego.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/rastreador_cirurgico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/preditor_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/otimizacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/automacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/testes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/mineracao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 487ms
+ GET / 200 in 643ms (next.js: 390ms, application-code: 253ms)
+ GET / 200 in 130ms (next.js: 15ms, application-code: 116ms)
+✓ Compiled in 166ms
+✓ Compiled in 182ms
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+⨯ ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  [90m158 |[0m }
+  [90m159 |[0m ection>
+[31m[1m>[0m [90m160 |[0m   );
+  [90m    |[0m   [31m[1m^[0m
+  [90m161 |[0m }
+  [90m162 |[0m
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx
+
+
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+ GET / 500 in 500ms (next.js: 283ms, application-code: 217ms)
+[browser] Uncaught Error: ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx
+
+
+    at <unknown> (Error: ./src/components/sections/LabHero.tsx:160:3)
+    at <unknown> (Error: (./src/components/sections/LabHero.tsx:160:3)
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+⨯ ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  [90m158 |[0m }
+  [90m159 |[0m ection>
+[31m[1m>[0m [90m160 |[0m   );
+  [90m    |[0m   [31m[1m^[0m
+  [90m161 |[0m }
+  [90m162 |[0m
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx
+
+
+ GET / 500 in 28ms (next.js: 13ms, application-code: 15ms)
+[browser] Uncaught Error: ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx
+
+
+    at <unknown> (Error: ./src/components/sections/LabHero.tsx:160:3)
+    at <unknown> (Error: (./src/components/sections/LabHero.tsx:160:3)
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+⨯ ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  [90m158 |[0m }
+  [90m159 |[0m ection>
+[31m[1m>[0m [90m160 |[0m   );
+  [90m    |[0m   [31m[1m^[0m
+  [90m161 |[0m }
+  [90m162 |[0m
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx
+
+
+ GET / 500 in 19ms (next.js: 9ms, application-code: 11ms)
+[browser] Uncaught Error: ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx
+
+
+    at <unknown> (Error: ./src/components/sections/LabHero.tsx:160:3)
+    at <unknown> (Error: (./src/components/sections/LabHero.tsx:160:3)
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+⨯ ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  [90m158 |[0m }
+  [90m159 |[0m ection>
+[31m[1m>[0m [90m160 |[0m   );
+  [90m    |[0m   [31m[1m^[0m
+  [90m161 |[0m }
+  [90m162 |[0m
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx
+
+
+ GET / 500 in 23ms (next.js: 12ms, application-code: 12ms)
+[browser] Uncaught Error: ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx
+
+
+    at <unknown> (Error: ./src/components/sections/LabHero.tsx:160:3)
+    at <unknown> (Error: (./src/components/sections/LabHero.tsx:160:3)
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/sections/LabHero.tsx:160:3
+Expression expected
+  158 | }
+  159 | ection>
+> 160 |   );
+      |   ^
+  161 | }
+  162 |
+
+Parsing ecmascript source code failed
+
+Import trace:
+  Server Component:
+    ./src/components/sections/LabHero.tsx
+    ./src/app/page.tsx 
+Image with src "/images/minimalist_expert_bg.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ GET / 200 in 607ms (next.js: 140ms, application-code: 467ms)
+[browser] Image with src "/images/minimalist_expert_bg.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[browser] Image with src "/images/tools/analista_trafego.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/rastreador_cirurgico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/preditor_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/otimizacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/automacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/testes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/mineracao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 117ms
+✓ Compiled in 82ms
+✓ Compiled in 483ms
