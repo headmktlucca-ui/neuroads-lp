@@ -3,7 +3,19 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import AuthOverlay from '../auth/AuthOverlay';
-import { ChevronDown, User, CreditCard, LogOut } from 'lucide-react';
+import { ChevronDown, User, CreditCard, LogOut, LayoutDashboard } from 'lucide-react';
+
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return 'Bom dia';
+  if (hour >= 12 && hour < 18) return 'Boa tarde';
+  return 'Boa noite';
+}
+
+function getFirstName(fullName: string | null | undefined): string {
+  if (!fullName) return '';
+  return fullName.split(' ')[0];
+}
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -54,13 +66,23 @@ export default function Navbar() {
                   className="relative px-6 py-2 group overflow-hidden border border-white/20 hover:border-[var(--color-brand-orange)]/50 transition-all flex items-center gap-2"
                 >
                   <div className="absolute inset-0 bg-transparent group-hover:bg-white/5 skew-x-[-12deg] transition-all" />
-                  <span className="relative z-10 text-white text-xs font-black tracking-widest uppercase italic">CONFIGURAÇÕES</span>
+                  <span className="relative z-10 text-white text-xs font-black tracking-widest uppercase italic">
+                    {getGreeting()}, {getFirstName(user.displayName || user.email)}!
+                  </span>
                   <ChevronDown size={14} className={`relative z-10 transition-transform duration-300 ${isSettingsOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* Submenu */}
                 {isSettingsOpen && (
-                  <div className="absolute top-full right-0 mt-3 w-56 bg-black/95 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] py-2 z-[60]">
+                  <div className="absolute top-full right-0 mt-3 w-64 bg-black/95 backdrop-blur-2xl border border-white/10 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] py-2 z-[60]">
+                    <Link
+                      href="/hub"
+                      onClick={() => setIsSettingsOpen(false)}
+                      className="w-full px-6 py-4 text-left text-[11px] font-black tracking-[0.2em] text-[var(--color-brand-orange)] hover:text-white hover:bg-[var(--color-brand-orange)]/10 transition-all flex items-center gap-3"
+                    >
+                      <LayoutDashboard size={14} /> ACESSAR MEU HUB
+                    </Link>
+                    <div className="h-px bg-white/5 mx-4 my-1" />
                     <button className="w-full px-6 py-4 text-left text-[11px] font-black tracking-[0.2em] text-slate-400 hover:text-white hover:bg-white/5 transition-all flex items-center gap-3">
                       <User size={14} /> MEU PERFIL
                     </button>
@@ -128,9 +150,19 @@ export default function Navbar() {
           
           {user ? (
             <div className="w-full space-y-4">
-               <button className="w-full py-5 text-sm font-black text-slate-400 tracking-widest uppercase border border-white/5 rounded-xl">MEU PERFIL</button>
-               <button className="w-full py-5 text-sm font-black text-slate-400 tracking-widest uppercase border border-white/5 rounded-xl">ASSINATURA</button>
-               <button 
+              <p className="text-center text-sm font-black tracking-widest uppercase italic text-[var(--color-brand-orange)]">
+                {getGreeting()}, {getFirstName(user.displayName || user.email)}!
+              </p>
+              <Link
+                href="/hub"
+                onClick={() => setIsMenuOpen(false)}
+                className="w-full py-5 text-sm font-black text-[var(--color-brand-orange)] tracking-widest uppercase border border-[var(--color-brand-orange)]/30 rounded-xl bg-[var(--color-brand-orange)]/5 flex items-center justify-center gap-3"
+              >
+                <LayoutDashboard size={18} /> ACESSAR MEU HUB
+              </Link>
+              <button className="w-full py-5 text-sm font-black text-slate-400 tracking-widest uppercase border border-white/5 rounded-xl">MEU PERFIL</button>
+              <button className="w-full py-5 text-sm font-black text-slate-400 tracking-widest uppercase border border-white/5 rounded-xl">ASSINATURA</button>
+              <button 
                 onClick={() => { logout(); setIsMenuOpen(false); }}
                 className="w-full py-5 text-sm font-black text-red-500 tracking-widest uppercase border border-red-500/20 rounded-xl bg-red-500/5 flex items-center justify-center gap-3"
               >
