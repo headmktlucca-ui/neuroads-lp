@@ -621,3 +621,895 @@ Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
 [browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
  GET / 200 in 14ms (next.js: 5ms, application-code: 9ms)
  GET / 200 in 14ms (next.js: 5ms, application-code: 9ms)
+✓ Compiled in 5.5s
+⨯ ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+
+./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+ GET / 500 in 170ms (next.js: 136ms, application-code: 33ms)
+⨯ ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+
+./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+ GET / 500 in 35ms (next.js: 17ms, application-code: 18ms)
+⨯ ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+
+./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+⨯ ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+
+./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+ GET / 500 in 38ms (next.js: 21ms, application-code: 17ms)
+ GET / 500 in 51ms (next.js: 28ms, application-code: 23ms)
+[browser] Uncaught Error: ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+    at <unknown> (Error: ./src/components/layout/Footer.tsx:1:1)
+    at <unknown> (Error: (./src/components/layout/Footer.tsx:1:1)
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+⨯ ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+
+./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+ GET / 500 in 57ms (next.js: 44ms, application-code: 14ms)
+[browser] Uncaught Error: ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+    at <unknown> (Error: ./src/components/layout/Footer.tsx:1:1)
+    at <unknown> (Error: (./src/components/layout/Footer.tsx:1:1)
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+⨯ ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+
+./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+ GET / 500 in 15ms (next.js: 6ms, application-code: 9ms)
+[browser] Uncaught Error: ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+    at <unknown> (Error: ./src/components/layout/Footer.tsx:1:1)
+    at <unknown> (Error: (./src/components/layout/Footer.tsx:1:1)
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+⨯ ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+
+./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+ GET / 500 in 27ms (next.js: 12ms, application-code: 15ms)
+[browser] Uncaught Error: ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+    at <unknown> (Error: ./src/components/layout/Footer.tsx:1:1)
+    at <unknown> (Error: (./src/components/layout/Footer.tsx:1:1)
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+⨯ ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+
+./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+ GET / 500 in 38ms (next.js: 19ms, application-code: 19ms)
+⨯ ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+
+./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+[31m[1m>[0m [90m1 |[0m [36mimport[0m { [33mInstagram[0m, [33mLinkedin[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m2 |[0m
+  [90m3 |[0m [36mconst[0m [33mWhatsApp[0m = ({ size = [35m18[0m }: { size?: number }) => (
+  [90m4 |[0m   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+ GET / 500 in 31ms (next.js: 15ms, application-code: 16ms)
+[browser] Uncaught Error: ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx
+
+
+    at <unknown> (Error: ./src/components/layout/Footer.tsx:1:1)
+    at <unknown> (Error: (./src/components/layout/Footer.tsx:1:1)
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Instagram doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+[browser] ./src/components/layout/Footer.tsx:1:1
+Export Linkedin doesn't exist in target module
+> 1 | import { Instagram, Linkedin } from 'lucide-react';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  2 |
+  3 | const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  4 |   <svg
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-rsc] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import trace:
+  Server Component:
+    ./src/components/layout/Footer.tsx
+    ./src/app/page.tsx 
+✓ Compiled in 235ms
+Image with src "/images/minimalist_expert_bg.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+ GET / 200 in 483ms (next.js: 107ms, application-code: 377ms)
+[browser] Image with src "/images/minimalist_expert_bg.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[browser] Image with src "/images/tools/analista_trafego.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/rastreador_cirurgico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/preditor_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/otimizacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/automacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/testes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/mineracao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET / 200 in 122ms (next.js: 3ms, application-code: 118ms)
+[browser] Image with src "/images/minimalist_expert_bg.png" is using quality "100" which is not configured in images.qualities [75]. Please update your config to [100, 75].
+Read more: https://nextjs.org/docs/messages/next-image-unconfigured-qualities
+[browser] Image with src "/images/tools/analista_trafego.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/rastreador_cirurgico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/preditor_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/otimizacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/automacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/testes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/mineracao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
