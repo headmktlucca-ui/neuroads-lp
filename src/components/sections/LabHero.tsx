@@ -26,61 +26,25 @@ export default function LabHero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-24 pb-20 overflow-hidden bg-black">
-      {/* Aurora de Dados (Ethereal Flow) Background - High Visibility */}
-      <div className="absolute inset-0 z-0 pointer-events-none bg-[#030303] overflow-hidden">
+      {/* Correct Neural Mesh Background Image - Static */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+        <div 
+          className="absolute inset-0 bg-[#030303] bg-cover bg-center bg-no-repeat opacity-90"
+          style={{ backgroundImage: `url('/images/hero-correct.jpg')` }}
+        />
         
-        {/* Floating Aurora Masses */}
-        <motion.div
-          animate={{
-            x: [0, 150, -150, 0],
-            y: [0, -80, 80, 0],
-            scale: [1, 1.3, 1],
-          }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-          className="absolute -top-1/6 -left-1/6 w-[700px] h-[700px] bg-[var(--color-brand-orange)]/40 blur-[130px] rounded-full"
-        />
+        {/* Static Glow Overlay for Subtle Depth (No Motion) */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-brand-orange)]/5 via-transparent to-[var(--color-brand-green)]/5 opacity-50" />
 
-        <motion.div
-          animate={{
-            x: [0, -200, 200, 0],
-            y: [0, 100, -100, 0],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-          className="absolute -bottom-1/6 -right-1/6 w-[600px] h-[600px] bg-[var(--color-brand-green)]/35 blur-[120px] rounded-full"
-        />
-
-        <motion.div
-          animate={{
-            x: [100, -100, 100],
-            y: [-120, 120, -120],
-          }}
-          transition={{
-            duration: 18,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 4
-          }}
-          className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[550px] h-[550px] bg-[var(--color-brand-orange)]/25 blur-[150px] rounded-full"
-        />
-
-        {/* Subtle Vignette - Softened for better visibility */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_black_85%)] opacity-80" />
+        {/* Strategic Vignette for Readability */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_20%,_black_95%)] opacity-80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
           
-          {/* Left Side: Content */}
+          {/* Left Column: Strategic Content */}
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -89,9 +53,10 @@ export default function LabHero() {
           >
             <motion.div 
               variants={itemVariants}
-              className="px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-sm shadow-[0_0_20px_rgba(249,166,32,0.1)]"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6"
             >
-              <span className="text-xs font-bold tracking-[0.3em] uppercase text-[var(--color-brand-orange)]">
+              <div className="w-2 h-2 rounded-full bg-[var(--color-brand-orange)] animate-pulse" />
+              <span className="text-xs font-bold tracking-[0.2em] text-[var(--color-brand-orange)] uppercase">
                 NEUROADS, AGÊNCIA DE IA
               </span>
             </motion.div>
