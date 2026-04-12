@@ -1,6 +1,33 @@
-'use client';
+const WhatsApp = ({ size = 18 }: { size?: number }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+  </svg>
+);
 
-import { Mail, Globe, Target, Share2 } from 'lucide-react';
+const Instagram = ({ size = 18 }: { size?: number }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>
+  </svg>
+);
+
+const Linkedin = ({ size = 18 }: { size?: number }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/>
+    <rect width="4" height="12" x="2" y="9"/>
+    <circle cx="4" cy="4" r="2"/>
+  </svg>
+);
 
 export default function Footer() {
   return (
@@ -38,13 +65,12 @@ export default function Footer() {
               AVANTE@NEUROADS.COM.BR
             </a>
           </div>
-
+ 
           {/* Social Links */}
           <div className="flex gap-6">
-            <SocialIcon icon={Share2} href="#" />
-            <SocialIcon icon={Target} href="#" />
-            <SocialIcon icon={Globe} href="#" />
-            <SocialIcon icon={Mail} href="#" />
+            <SocialIcon icon={WhatsApp} href="https://wa.me/message/F36EBPNYPSTKK1" />
+            <SocialIcon icon={Instagram} href="https://www.instagram.com/neuroads.oficial" />
+            <SocialIcon icon={Linkedin} href="https://www.linkedin.com/company/neuroads" />
           </div>
         </div>
 
@@ -64,6 +90,8 @@ function SocialIcon({ icon: Icon, href }: { icon: React.ElementType, href: strin
   return (
     <a 
       href={href} 
+      target="_blank"
+      rel="noopener noreferrer"
       className="text-slate-500 hover:text-[var(--color-brand-orange)] transition-colors p-2 bg-white/5 rounded-lg border border-white/10 hover:border-[var(--color-brand-orange)]/50"
     >
       <Icon size={18} />
