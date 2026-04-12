@@ -22,10 +22,10 @@ import { analyzeTraffic } from '../../app/actions/ai-analysis';
 import { useAuth } from '../../context/AuthContext';
 import AuthOverlay from '../auth/AuthOverlay';
 import { Clock, Key } from 'lucide-react';
-import { GoogleAuthProvider, FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
+import { FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { syncTrafficData } from '../../app/actions/traffic-sync';
-import { listGoogleAdsAccounts, saveConnection, removeConnection } from '../../app/actions/ad-accounts';
+import { saveConnection, removeConnection } from '../../app/actions/ad-accounts';
 import { scheduleAutomation, saveToHistory } from '../../app/actions/automations';
 import { sendDiagnosisEmailAction } from '../../app/actions/mail';
 import Link from 'next/link';
@@ -104,6 +104,73 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
     }
   }, [profile, data.plataforma]);
 
+  // Step 1: Read token from URL on mount and persist to sessionStorage
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const gadsToken = params.get('google_ads_token');
+    const gadsError = params.get('google_ads_error');
+
+    if (gadsError) {
+      const messages: Record<string, string> = {
+        missing_credentials: 'Credenciais OAuth não configuradas no servidor. Contacte o suporte.',
+        token_exchange_failed: 'Falha ao trocar o código de autorização. Tente novamente.',
+        callback_error: 'Erro inesperado no callback OAuth.',
+        authorization_failed: 'Autorização negada pelo usuário.',
+      };
+      sessionStorage.setItem('gads_error', messages[gadsError] || `Erro OAuth: ${gadsError}`);
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+
+    if (gadsToken) {
+      // Persist token to sessionStorage BEFORE cleaning URL
+      sessionStorage.setItem('gads_pending_token', gadsToken);
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
+
+  // Step 2: When activeApp becomes available, process any pending token
+  useEffect(() => {
+    if (!activeApp) return;
+
+    // Handle pending error
+    const pendingError = sessionStorage.getItem('gads_error');
+    if (pendingError) {
+      setError(pendingError);
+      sessionStorage.removeItem('gads_error');
+      return;
+    }
+
+    // Handle pending token
+    const pendingToken = sessionStorage.getItem('gads_pending_token');
+    if (!pendingToken) return;
+
+    sessionStorage.removeItem('gads_pending_token');
+    setAccessToken(pendingToken);
+    setIsSyncing(true);
+    setError(null);
+
+    fetch(`/api/google-ads/accounts?access_token=${encodeURIComponent(pendingToken)}`)
+      .then(res => res.json())
+      .then(json => {
+        if (json.error) throw new Error(json.error);
+        const seeds: string[] = (json.resourceNames || []).map((name: string) =>
+          name.replace('customers/', '')
+        );
+        if (seeds.length === 0) {
+          setError('Nenhuma conta do Google Ads encontrada para este e-mail.');
+          return;
+        }
+        setAvailableAccounts(seeds.map(id => ({ id, name: id, isManager: false })));
+        setIsSelectingAccount(true);
+      })
+      .catch(err => {
+        setError(err.message || 'Erro ao listar contas do Google Ads.');
+      })
+      .finally(() => setIsSyncing(false));
+  }, [activeApp]);
+
+
 
   if (!activeApp) return null;
 
@@ -114,31 +181,21 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
   const handleConnect = async () => {
     if (!data.plataforma) return;
     
-    setIsSyncing(true);
     setError(null);
+
+    if (data.plataforma === 'Google Ads') {
+      // Use proper OAuth 2.0 Authorization Code flow via server-side route
+      // This avoids Firebase token scope issues and CORS problems
+      window.location.href = '/api/auth/google-ads/start';
+      return;
+    }
+
+    setIsSyncing(true);
     
     try {
       let token = '';
 
-      if (data.plataforma === 'Google Ads') {
-        const provider = new GoogleAuthProvider();
-        provider.addScope('https://www.googleapis.com/auth/adwords');
-        const result = await signInWithPopup(auth, provider);
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        token = credential?.accessToken || '';
-        
-        if (token) {
-          setAccessToken(token);
-          const accResult = await listGoogleAdsAccounts(token);
-          if (accResult.success && accResult.accounts) {
-            setAvailableAccounts(accResult.accounts);
-            setIsSelectingAccount(true);
-          } else {
-            throw new Error(accResult.error || 'Erro ao listar contas do Google Ads.');
-          }
-        }
-      } 
-      else if (data.plataforma === 'Meta Ads') {
+      if (data.plataforma === 'Meta Ads') {
         const provider = new FacebookAuthProvider();
         provider.addScope('ads_read');
         provider.addScope('read_insights');
@@ -147,12 +204,9 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
         token = credential?.accessToken || '';
         if (token) {
           setAccessToken(token);
-          // Meta doesn't usually need a second step to "list" if the token is for a specific user, 
-          // but we can ask for the Ad Account ID like before or list them.
           setShowIdInput(true);
         }
-      }
-      else if (data.plataforma === 'TikTok Ads') {
+      } else if (data.plataforma === 'TikTok Ads') {
         token = prompt('Insira seu Access Token do TikTok For Business (Modo Desenvolvedor)') || '';
         if (token) {
           setAccessToken(token);
@@ -163,17 +217,14 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
       if (!token) {
         throw new Error('Não foi possível obter a credencial de acesso.');
       }
-
     } catch (err: any) {
       console.error(err);
       let message = 'Erro durante a conexão.';
-      
       if (err.code === 'auth/account-exists-with-different-credential') {
-        message = 'Este e-mail já está associado a outra conta (ex: Google). Por favor, use o mesmo método de login anterior ou vincule as contas no painel da NeuroAds.';
+        message = 'Este e-mail já está associado a outra conta. Por favor, use o mesmo método de login anterior.';
       } else if (err instanceof Error) {
         message = err.message;
       }
-      
       setError(message);
     } finally {
       setIsSyncing(false);

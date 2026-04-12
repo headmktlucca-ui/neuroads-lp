@@ -131,6 +131,12 @@ def status_server():
     print("===================\n")
 
 def main():
+    # Force UTF-8 encoding for stdout/stderr to avoid issues on Windows
+    if sys.platform == 'win32':
+        import io
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
     parser = argparse.ArgumentParser()
     parser.add_argument("action", choices=["start", "stop", "status"])
     parser.add_argument("port", nargs="?", default="3000")

@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, ArrowRight, BrainCircuit } from 'lucide-react';
@@ -19,22 +18,20 @@ const GoogleIcon = () => (
   </svg>
 );
 
-import { useRouter } from 'next/navigation';
-
 export default function AuthOverlay({ isOpen, onClose }: AuthOverlayProps) {
   const { loginWithGoogle } = useAuth();
   const [isEmailLogin, setIsEmailLogin] = useState(false);
-  const router = useRouter();
 
   const handleGoogleLogin = async () => {
     try {
       await loginWithGoogle();
       onClose();
-      router.push('/hub');
+      // No redirect — the calling component handles what happens after login
     } catch (error) {
       console.error('Login error:', error);
     }
   };
+
 
   return (
     <AnimatePresence>

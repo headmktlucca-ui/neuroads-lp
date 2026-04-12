@@ -2,7 +2,6 @@ import Navbar from '../components/layout/Navbar';
 import Footer from '../components/layout/Footer';
 import LabHero from '../components/sections/LabHero';
 import ToolGallery from '../components/sections/ToolGallery';
-import LabPricing from '../components/sections/LabPricing';
 import AIFeatures from '../components/sections/AIFeatures';
 import ExpertInfo from '../components/sections/ExpertInfo';
 
@@ -21,7 +20,6 @@ export default function Home() {
         
         <AIFeatures />
         <ExpertInfo />
-        <LabPricing />
       </div>
 
       <Footer />

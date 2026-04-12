@@ -40,35 +40,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      setUser(user);
-      if (user) {
-        // Fetch or create user profile
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          setProfile(userDoc.data() as UserProfile);
-        } else {
-          const newProfile: UserProfile = { isPremium: false, usageStats: {} };
-          await setDoc(doc(db, 'users', user.uid), newProfile);
-          setProfile(newProfile);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      setUser(firebaseUser);
 
-          // Sincronização com Hostinger Reach apenas no primeiro cadastro
-          if (user.email) {
-            syncToHostingerReach({
-              email: user.email,
-              name: user.displayName || 'Usuário NeuroAds',
-              tags: ["Usuários Ativos"]
-            }).catch(err => console.error('Reach sync failed:', err));
+      if (firebaseUser) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          if (userDoc.exists()) {
+            setProfile(userDoc.data() as UserProfile);
+          } else {
+            const newProfile: UserProfile = { isPremium: false, usageStats: {} };
+            try {
+              await setDoc(doc(db, 'users', firebaseUser.uid), newProfile);
+            } catch (writeErr) {
+              console.warn('Firestore write failed (offline?):', writeErr);
+            }
+            setProfile(newProfile);
+
+            if (firebaseUser.email) {
+              syncToHostingerReach({
+                email: firebaseUser.email,
+                name: firebaseUser.displayName || 'Usuário NeuroAds',
+                tags: ['Usuários Ativos'],
+              }).catch(err => console.error('Reach sync failed:', err));
+            }
           }
+        } catch (err) {
+          // Firestore offline or quota error — set minimal profile so the app still opens
+          console.warn('Firestore getDoc failed (offline?):', err);
+          setProfile({ isPremium: false, usageStats: {} });
         }
       } else {
         setProfile(null);
       }
+
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
+
 
   const loginWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
