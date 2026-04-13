@@ -17,9 +17,9 @@ export default function Navbar() {
     <nav className={`sticky top-0 z-[100] transition-shadow duration-300 py-[1.1rem] px-10 flex items-center justify-between border-b border-black/10 backdrop-blur-2xl ${isScrolled ? 'shadow-[0_4px_40px_rgba(22,15,8,0.07)]' : ''}`} style={{ background: 'rgba(249, 246, 240, 0.95)' }}>
       <Link href="/" className="flex items-center">
         <img 
-          src="/images/logo-neuroads-premium.png" 
+          src="/images/logo-neuroads-premium - horizontal.png" 
           alt="NeuroAds" 
-          className="h-9 w-auto object-contain mix-blend-multiply"
+          className="h-8 w-auto object-contain mix-blend-multiply"
         />
       </Link>
       
