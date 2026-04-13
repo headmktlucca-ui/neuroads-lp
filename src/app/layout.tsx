@@ -25,6 +25,9 @@ const dmSans = DM_Sans({
 export const metadata: Metadata = {
   title: "NeuroAds | Gestão de Tráfego de Alta Performance e Funis Automatizados",
   description: "Escale suas vendas com a NeuroAds. Gestão de tráfego focado em ROI, inteligência neural e funis preditivos para empresas que querem dominar seu mercado.",
+  icons: {
+    icon: '/images/logo-icon.png',
+  },
 };
 
 export default function RootLayout({

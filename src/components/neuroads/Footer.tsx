@@ -21,9 +21,6 @@ export default function Footer() {
               <span className="font-head text-[1.5rem] font-extrabold tracking-tighter text-text-1">
                 Neuro<span className="grad-text italic">Ads</span>
               </span>
-              <p className="text-[0.65rem] text-text-4 font-bold tracking-[0.2em] uppercase -mt-1">
-                Performance Intelligence
-              </p>
             </div>
           </Link>
           
