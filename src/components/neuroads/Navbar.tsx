@@ -15,8 +15,12 @@ export default function Navbar() {
 
   return (
     <nav className={`sticky top-0 z-[100] transition-shadow duration-300 py-[1.1rem] px-10 flex items-center justify-between border-b border-black/10 backdrop-blur-2xl ${isScrolled ? 'shadow-[0_4px_40px_rgba(22,15,8,0.07)]' : ''}`} style={{ background: 'rgba(249, 246, 240, 0.95)' }}>
-      <Link href="/" className="font-serif text-[1.5rem] font-bold text-ink no-underline tracking-[-0.01em]">
-        NeuroAds<sup className="font-sans text-[0.52rem] font-semibold tracking-[0.14em] text-green-brand align-super uppercase ml-[0.1em]">®</sup>
+      <Link href="/" className="flex items-center">
+        <img 
+          src="/images/logo-neuroads-premium.png" 
+          alt="NeuroAds" 
+          className="h-9 w-auto object-contain mix-blend-multiply"
+        />
       </Link>
       
       <ul className="hidden md:flex items-center gap-8 list-none">

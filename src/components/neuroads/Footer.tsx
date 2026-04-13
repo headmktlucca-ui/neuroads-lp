@@ -5,8 +5,12 @@ export default function Footer() {
   return (
     <footer className="bg-[#0A0806] py-12 px-10 border-t border-white/[0.05]">
       <div className="max-w-[1160px] mx-auto flex flex-wrap items-center justify-between gap-6">
-        <Link href="/" className="font-serif text-[1.2rem] font-bold text-cream no-underline tracking-[-0.01em]">
-          NeuroAds<sup className="font-sans text-[0.48rem] font-bold tracking-[0.14em] text-green-bright align-super uppercase ml-[0.1em]">®</sup>
+        <Link href="/" className="flex items-center">
+          <img 
+            src="/images/logo-neuroads-premium.png" 
+            alt="NeuroAds" 
+            className="h-7 w-auto object-contain invert-[0.9] brightness-200 mix-blend-screen"
+          />
         </Link>
         
         <ul className="flex flex-wrap gap-8 list-none">
