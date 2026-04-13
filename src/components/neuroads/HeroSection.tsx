@@ -82,8 +82,8 @@ export default function HeroSection() {
               {/* Top border glow */}
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-1/60 to-transparent" />
               
-              <div className="bg-grad-card p-8 border-b border-white/10 flex items-center gap-5">
-                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-1 shadow-[0_0_24px_rgba(59,111,255,0.4)] relative">
+              <div className="bg-grad-card p-8 border-b border-white/10 flex items-start gap-5 relative">
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-1 shadow-[0_0_24px_rgba(59,111,255,0.4)] relative flex-shrink-0">
                   <Image 
                     src="/images/especialista.jpg" 
                     alt="Claudio Müller" 
@@ -92,11 +92,11 @@ export default function HeroSection() {
                   />
                   <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-green-s border-2 border-[#090B18] z-20 animate-blink" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <div className="font-head font-bold text-[1.05rem] text-text-1">Claudio Müller</div>
-                  <div className="text-[0.75rem] text-text-3 mt-1">Analista em Marketing & Expert em Aplicações IA</div>
+                  <div className="text-[0.72rem] text-text-3 mt-1 whitespace-nowrap">Analista em Marketing & Expert em Aplicações IA</div>
                 </div>
-                <div className="ml-auto text-green-s font-semibold text-[0.68rem] bg-green-s/10 border border-green-s/20 px-2.5 py-1 rounded-full whitespace-nowrap">
+                <div className="absolute top-6 right-6 text-green-s font-bold text-[0.62rem] tracking-wider uppercase bg-green-s/10 border border-green-s/20 px-2.5 py-1 rounded-full">
                    Online
                 </div>
               </div>

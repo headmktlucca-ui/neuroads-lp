@@ -19,15 +19,18 @@ export default function Navbar() {
         <a href="#" className="flex items-center gap-4 no-underline group">
           <div className="w-10 h-10 relative flex-shrink-0 group-hover:scale-110 transition-transform duration-500">
             <Image 
-              src="/images/logo-icon.png" 
+              src="/images/icon_neuroads_transparente.png" 
               alt="NeuroAds Icon" 
               fill 
-              className="object-contain mix-blend-screen"
+              className="object-contain"
             />
           </div>
           <div className="flex flex-col">
             <span className="font-head text-[1.25rem] font-extrabold tracking-tighter text-text-1">
               Neuro<span className="grad-text italic">Ads</span>
+            </span>
+            <span className="text-[0.55rem] text-text-4 font-bold tracking-[0.2em] uppercase -mt-1 hidden sm:block">
+              Insights Inteligentes
             </span>
           </div>
         </a>
@@ -36,7 +39,6 @@ export default function Navbar() {
           <li><a href="#claudio" className="text-[0.835rem] font-medium text-text-3 no-underline transition-colors hover:text-text-1">Sobre Nós</a></li>
           <li><a href="#problemas" className="text-[0.835rem] font-medium text-text-3 no-underline transition-colors hover:text-text-1">Desafios e Soluções</a></li>
           <li><a href="#lucca" className="text-[0.835rem] font-medium text-text-3 no-underline transition-colors hover:text-text-1">Nosso Diferencial</a></li>
-          <li><a href="#contato" className="text-[0.835rem] font-medium text-text-3 no-underline transition-colors hover:text-text-1">Entre em Contato</a></li>
           <li>
             <button 
               onClick={() => window.dispatchEvent(new CustomEvent('neuroads:open-chat'))}

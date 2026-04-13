@@ -26,7 +26,13 @@ export const metadata: Metadata = {
   title: "NeuroAds | Gestão de Tráfego de Alta Performance e Funis Automatizados",
   description: "Escale suas vendas com a NeuroAds. Gestão de tráfego focado em ROI, inteligência neural e funis preditivos para empresas que querem dominar seu mercado.",
   icons: {
-    icon: '/images/logo-icon.png',
+    icon: [
+      { url: '/images/icon_neuroads_transparente.png' },
+      { url: '/images/icon_neuroads_transparente.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/images/icon_neuroads_transparente.png' },
+    ],
   },
 };
 

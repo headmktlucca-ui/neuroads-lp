@@ -11,16 +11,19 @@ export default function Footer() {
           <Link href="/" className="group flex items-center gap-4">
             <div className="w-10 h-10 relative flex-shrink-0 group-hover:scale-110 transition-transform duration-500">
               <Image 
-                src="/images/logo-icon.png" 
+                src="/images/icon_neuroads_transparente.png" 
                 alt="NeuroAds Icon" 
                 fill 
-                className="object-contain mix-blend-screen"
+                className="object-contain"
               />
             </div>
             <div className="flex flex-col">
               <span className="font-head text-[1.5rem] font-extrabold tracking-tighter text-text-1">
                 Neuro<span className="grad-text italic">Ads</span>
               </span>
+              <p className="text-[0.65rem] text-text-4 font-bold tracking-[0.2em] uppercase -mt-1">
+                Insights Inteligentes
+              </p>
             </div>
           </Link>
           
