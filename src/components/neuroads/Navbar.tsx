@@ -117,8 +117,8 @@ export default function Navbar() {
                   >
                     <a 
                       href={link.href} 
-                      onClick={closeMenu}
-                      className="text-[1.1rem] font-medium text-text-2 hover:text-text-1 transition-colors"
+                      onClick={() => setTimeout(closeMenu, 150)}
+                      className="text-[1.1rem] font-medium text-text-2 hover:text-text-1 transition-colors block w-full"
                     >
                       {link.name}
                     </a>
@@ -135,7 +135,7 @@ export default function Navbar() {
                 <button 
                   onClick={() => {
                     window.dispatchEvent(new CustomEvent('neuroads:open-chat'));
-                    closeMenu();
+                    setTimeout(closeMenu, 150);
                   }}
                   className="w-full flex items-center justify-center gap-2 font-semibold text-[0.875rem] text-green-s bg-green-s/[0.08] border border-green-s/20 py-4 rounded-xl"
                 >
@@ -144,7 +144,7 @@ export default function Navbar() {
                 </button>
                 <a 
                   href="#contato" 
-                  onClick={closeMenu}
+                  onClick={() => setTimeout(closeMenu, 150)}
                   className="btn btn-primary w-full py-4 rounded-xl flex items-center justify-center text-[0.9rem]"
                 >
                   Diagnóstico Gratuito

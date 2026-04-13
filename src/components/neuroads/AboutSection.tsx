@@ -15,7 +15,7 @@ export default function AboutSection() {
   };
 
   return (
-    <section className="section bg-white/[0.02] border-y border-white/10 overflow-hidden" id="claudio">
+    <section className="section bg-white/[0.02] border-y border-white/10 overflow-hidden scroll-mt-24" id="claudio">
       <div className="wrap py-24 lg:py-32">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
           

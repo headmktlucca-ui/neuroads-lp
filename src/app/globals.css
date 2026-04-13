@@ -98,6 +98,11 @@
   }
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Height of the sticky navbar */
+}
+
 body {
   background: var(--bg-deep);
   color: var(--text-1);

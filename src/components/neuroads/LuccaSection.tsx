@@ -14,7 +14,7 @@ export default function LuccaSection() {
   };
 
   return (
-    <section className="section overflow-hidden" id="lucca">
+    <section className="section overflow-hidden scroll-mt-24" id="lucca">
       <div className="wrap py-24 lg:py-32">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           

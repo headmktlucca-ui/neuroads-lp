@@ -50,7 +50,7 @@ export default function CTASection() {
             <MotionDiv {...fadeUp} transition={{ delay: 0.7 }} className="mt-12 p-6 bg-white/[0.04] border border-white/[0.08] rounded-lg flex items-center gap-5">
               <div className="w-12 h-12 rounded-full border-2 border-white/10 overflow-hidden relative shadow-[0_0_16px_rgba(59,111,255,0.3)] flex-shrink-0">
                 <Image 
-                  src="/images/especialista.jpg" 
+                  src="/images/0599.jpeg" 
                   alt="Claudio Müller" 
                   fill 
                   className="object-cover"

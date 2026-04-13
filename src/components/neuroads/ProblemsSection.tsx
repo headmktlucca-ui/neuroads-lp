@@ -41,7 +41,7 @@ export default function ProblemsSection() {
   };
 
   return (
-    <section className="section py-24 lg:py-32" id="problemas">
+    <section className="section py-24 lg:py-32 scroll-mt-24" id="problemas">
       <div className="wrap">
         <MotionP {...fadeUp} className="s-badge">O diagnóstico</MotionP>
         <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title text-balance max-w-[800px]">
