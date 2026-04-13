@@ -82,7 +82,7 @@ export default function ServicesSection() {
               className="group bg-white/[0.04] border border-white/[0.08] rounded-xl overflow-hidden transition-all hover:border-blue-1/35 hover:shadow-[0_8px_48px_rgba(59,111,255,0.12)]"
             >
               <div className="p-8 lg:p-10 border-b border-white/10 bg-grad-card flex flex-col md:flex-row items-start gap-6 lg:gap-10">
-                <div className="font-head text-[2.5rem] font-extrabold bg-grad-main bg-clip-text text-transparent opacity-30 leading-none min-w-[48px] transition-opacity group-hover:opacity-100">
+                <div className="font-head text-[2.5rem] font-extrabold grad-text opacity-30 leading-none min-w-[48px] transition-opacity group-hover:opacity-100">
                   {svc.id}
                 </div>
                 <div>

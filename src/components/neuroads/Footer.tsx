@@ -9,7 +9,7 @@ export default function Footer() {
           
           <Link href="/" className="group">
             <span className="font-head text-[1.5rem] font-extrabold tracking-tighter text-text-1">
-              Neuro<span className="bg-grad-main bg-clip-text text-transparent italic">Ads</span>
+              Neuro<span className="grad-text italic">Ads</span>
             </span>
             <p className="text-[0.65rem] text-text-4 font-bold tracking-[0.2em] uppercase mt-1">
               Performance Intelligence

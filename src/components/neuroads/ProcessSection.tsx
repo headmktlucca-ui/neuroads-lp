@@ -56,7 +56,7 @@ export default function ProcessSection() {
               transition={{ delay: 0.3 + (i * 0.1) }}
               className="relative z-10"
             >
-              <div className="w-[80px] h-[80px] rounded-full bg-[#05060F] border border-white/10 mx-auto flex items-center justify-center font-head text-[1.5rem] font-extrabold bg-grad-main bg-clip-text text-transparent shadow-card mb-6">
+              <div className="w-[80px] h-[80px] rounded-full bg-[#05060F] border border-white/10 mx-auto flex items-center justify-center font-head text-[1.5rem] font-extrabold grad-text shadow-card mb-6">
                 {step.num}
               </div>
               <div className="mb-3"><span className="tag">{step.tag}</span></div>

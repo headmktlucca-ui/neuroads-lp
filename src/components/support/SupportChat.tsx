@@ -43,6 +43,12 @@ export default function SupportChat() {
     }
   }, [messages, isLoading]);
 
+  useEffect(() => {
+    const handleOpenChat = () => setIsOpen(true);
+    window.addEventListener('neuroads:open-chat', handleOpenChat);
+    return () => window.removeEventListener('neuroads:open-chat', handleOpenChat);
+  }, []);
+
   const handleSend = async (customInput?: string) => {
     const textToSend = customInput || input;
     if (!textToSend.trim() || isLoading) return;
@@ -224,45 +230,6 @@ export default function SupportChat() {
         )}
       </AnimatePresence>
 
-      {/* Main Floating Button - Brutalist Sharp */}
-      <motion.button
-        onClick={() => setIsOpen(!isOpen)}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        className={cn(
-          "relative h-14 px-6 shadow-[10px_10px_30px_rgba(22,15,8,0.15)] transition-all flex items-center justify-center overflow-hidden border-2",
-          isOpen 
-            ? "bg-ink text-cream border-ink" 
-            : "bg-green-brand text-ink border-ink hover:bg-green-medium"
-        )}
-      >
-        <AnimatePresence mode="wait">
-          {isOpen ? (
-            <motion.div
-              key="close"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <X size={24} />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="open"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="flex items-center gap-3"
-            >
-              <div className="relative">
-                <MessageSquare size={20} strokeWidth={2.5} />
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-ink border-2 border-green-brand rounded-full animate-pulse" />
-              </div>
-              <span className="text-xs font-black tracking-[0.2em] uppercase italic">IA Support</span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </motion.button>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
@@ -29,10 +30,10 @@ export default function HeroSection() {
               <span className="tag">Para PMEs</span>
             </MotionDiv>
 
-            <MotionH1 {...fadeUp(0.25)} className="font-head text-[clamp(2.4rem,4.5vw,4.4rem)] font-extrabold leading-[1.05] tracking-[-0.04em] text-text-1 mb-6 text-balance">
+            <MotionH1 {...fadeUp(0.25)} className="font-head text-[30px] font-extrabold leading-[1.1] tracking-[-0.03em] text-text-1 mb-6 text-balance">
               Sua empresa merece<br />
               um marketing que<br />
-              <span className="bg-grad-main bg-clip-text text-transparent italic">realmente funciona.</span>
+              <span className="grad-text italic">realmente funciona.</span>
             </MotionH1>
 
             <MotionP {...fadeUp(0.4)} className="text-[1.05rem] text-text-2 font-light leading-[1.8] max-w-[540px] mb-9">
@@ -71,8 +72,8 @@ export default function HeroSection() {
             className="relative hidden lg:block"
           >
             {/* Float Metrics */}
-            <div className="absolute -top-6 -left-12 bg-white/[0.04] border border-white/[0.08] backdrop-blur-md rounded-md p-[0.875rem_1.1rem] shadow-card z-20">
-              <div className="font-head text-[1.5rem] font-extrabold bg-grad-main bg-clip-text text-transparent leading-none">R$10M+</div>
+            <div className="absolute -top-16 -left-16 bg-white/[0.04] border border-white/[0.08] backdrop-blur-md rounded-md p-[0.875rem_1.1rem] shadow-card z-20">
+              <div className="font-head text-[1.5rem] font-extrabold grad-text leading-none">R$10M+</div>
               <div className="text-[0.65rem] text-text-4 uppercase tracking-[0.1em] mt-1">Investimento gerenciado</div>
               <div className="text-[0.7rem] text-green-s font-semibold mt-1">↑ Comprovado em campanhas reais</div>
             </div>
@@ -82,13 +83,18 @@ export default function HeroSection() {
               <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-1/60 to-transparent" />
               
               <div className="bg-grad-card p-8 border-b border-white/10 flex items-center gap-5">
-                <div className="w-16 h-16 rounded-full bg-grad-main flex items-center justify-center font-head font-extrabold text-[1.3rem] text-white shadow-[0_0_24px_rgba(59,111,255,0.4)] relative">
-                  CM
-                  <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-green-s border-2 border-[#090B18] animate-blink" />
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-1 shadow-[0_0_24px_rgba(59,111,255,0.4)] relative">
+                  <Image 
+                    src="/images/especialista.jpg" 
+                    alt="Claudio Müller" 
+                    fill
+                    className="object-cover"
+                  />
+                  <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-green-s border-2 border-[#090B18] z-20 animate-blink" />
                 </div>
                 <div>
                   <div className="font-head font-bold text-[1.05rem] text-text-1">Claudio Müller</div>
-                  <div className="text-[0.75rem] text-text-3 mt-1">Estrategista de Marketing & IA · NeuroAds</div>
+                  <div className="text-[0.75rem] text-text-3 mt-1">Analista em Marketing & Expert em Aplicações IA</div>
                 </div>
                 <div className="ml-auto text-green-s font-semibold text-[0.68rem] bg-green-s/10 border border-green-s/20 px-2.5 py-1 rounded-full whitespace-nowrap">
                    Online
@@ -107,7 +113,7 @@ export default function HeroSection() {
                     { val: '3em1', lbl: 'Soluções' }
                   ].map((s, i) => (
                     <div key={i} className="bg-[#090B18] p-4 text-center">
-                      <div className="font-head text-[1.3rem] font-extrabold bg-grad-main bg-clip-text text-transparent leading-none">{s.val}</div>
+                      <div className="font-head text-[1.3rem] font-extrabold grad-text leading-none">{s.val}</div>
                       <div className="text-[0.65rem] text-text-4 uppercase tracking-[0.08em] mt-1.5 leading-tight">{s.lbl}</div>
                     </div>
                   ))}
@@ -124,7 +130,7 @@ export default function HeroSection() {
             </div>
 
             <div className="absolute -bottom-6 -right-8 bg-white/[0.04] border border-white/[0.08] backdrop-blur-md rounded-md p-[0.875rem_1.1rem] shadow-card z-20">
-              <div className="font-head text-[1.5rem] font-extrabold bg-grad-main bg-clip-text text-transparent leading-none">5.2×</div>
+              <div className="font-head text-[1.5rem] font-extrabold grad-text leading-none">5.2×</div>
               <div className="text-[0.65rem] text-text-4 uppercase tracking-[0.1em] mt-1">ROAS médio</div>
               <div className="text-[0.7rem] text-green-s font-semibold mt-1">↑ +15% vs mês anterior</div>
             </div>

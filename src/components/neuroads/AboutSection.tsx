@@ -25,7 +25,7 @@ export default function AboutSection() {
             className="about-photo-wrap relative"
           >
             <div className="aspect-[3/4] rounded-xl bg-gradient-to-br from-blue-1/10 via-violet-1/[0.08] to-transparent border border-white/10 flex items-center justify-center overflow-hidden relative">
-              <div className="absolute inset-0 flex items-center justify-center font-head font-extrabold text-[7rem] bg-grad-main bg-clip-text text-transparent opacity-15 select-none">
+              <div className="absolute inset-0 flex items-center justify-center font-head font-extrabold text-[7rem] grad-text opacity-15 select-none">
                 CM
               </div>
               <Image 
@@ -54,14 +54,14 @@ export default function AboutSection() {
           <div>
             <MotionP {...fadeUp} className="s-badge">Quem está do outro lado</MotionP>
             <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title">
-              Não sou uma agência.<br />
-              <span className="g">Sou o Claudio.</span><br />
+              Não é sobre equipe grande.<br />
+              <span className="g">É sobre entrega real.</span><br />
               E isso faz toda a diferença.
             </MotionH2>
 
             <MotionDiv {...fadeUp} transition={{ delay: 0.2 }} className="bg-grad-card border border-blue-1/30 rounded-lg p-[1.5rem_1.75rem] my-8 relative overflow-hidden">
                {/* Quote mark background */}
-               <div className="absolute top-[-0.5rem] right-[1.25rem] font-head font-extrabold text-[5rem] bg-grad-main bg-clip-text text-transparent opacity-20 pointer-events-none">
+               <div className="absolute top-[-0.5rem] right-[1.25rem] font-head font-extrabold text-[5rem] grad-text opacity-20 pointer-events-none">
                 "
                </div>
                <p className="text-[0.95rem] text-text-2 italic font-light leading-[1.75] relative z-10">
@@ -88,7 +88,7 @@ export default function AboutSection() {
                 { val: '3em1', lbl: 'Soluções integradas' }
               ].map((s, i) => (
                 <div key={i} className="bg-[#090B18] p-[1.25rem_1rem] text-center">
-                  <div className="font-head text-[1.7rem] font-extrabold bg-grad-main bg-clip-text text-transparent leading-none">{s.val}</div>
+                  <div className="font-head text-[1.7rem] font-extrabold grad-text leading-none">{s.val}</div>
                   <div className="text-[0.68rem] text-text-4 uppercase tracking-[0.08em] mt-1.5 leading-tight">{s.lbl}</div>
                 </div>
               ))}

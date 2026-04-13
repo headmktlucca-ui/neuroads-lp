@@ -155,10 +155,14 @@ body::after {
   }
 
   .s-title {
-    @apply font-head text-[clamp(1.9rem,3.2vw,3rem)] font-extrabold leading-[1.1] tracking-[-0.03em] text-text-1;
+    @apply font-head text-[30px] font-extrabold leading-[1.1] tracking-[-0.03em] text-text-1;
   }
   .s-title .g {
-    @apply bg-grad-main bg-clip-text text-transparent;
+    background-image: var(--grad-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 
   .s-body {
@@ -178,8 +182,26 @@ body::after {
 
   .bg-grad-main { background: var(--grad-main); }
   .bg-grad-card { background: var(--grad-card); }
-  .bg-grad-glow { background: var(--grad-glow); }
-  .bg-grad-text { background: var(--grad-text); }
+  .grad-text {
+    background-image: var(--grad-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  .s-title .g {
+    background-image: var(--grad-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  ::selection {
+    background: rgba(59, 111, 255, 0.3);
+    color: white;
+  }
 
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

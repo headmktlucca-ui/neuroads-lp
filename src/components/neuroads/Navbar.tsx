@@ -30,10 +30,13 @@ export default function Navbar() {
           <li><a href="#lucca" className="text-[0.835rem] font-medium text-text-3 no-underline transition-colors hover:text-text-1">Lucca</a></li>
           <li><a href="#geo" className="text-[0.835rem] font-medium text-text-3 no-underline transition-colors hover:text-text-1">SEO & GEO</a></li>
           <li>
-            <span className="flex items-center gap-[0.45rem] font-semibold text-[0.72rem] text-green-s bg-green-s/[0.08] border border-green-s/20 px-[0.75rem] py-[0.3rem] rounded-full">
+            <button 
+              onClick={() => window.dispatchEvent(new CustomEvent('neuroads:open-chat'))}
+              className="flex items-center gap-[0.45rem] font-semibold text-[0.72rem] text-green-s bg-green-s/[0.08] border border-green-s/20 px-[0.75rem] py-[0.3rem] rounded-full hover:bg-green-s/20 transition-all cursor-pointer"
+            >
               <span className="w-[6px] h-[6px] rounded-full bg-green-s animate-blink" />
               Claudio Online
-            </span>
+            </button>
           </li>
           <li>
             <a href="#contato" className="btn btn-primary px-[1.1rem] py-[0.5rem] text-[0.8rem] no-underline">
