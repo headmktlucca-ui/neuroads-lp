@@ -16,11 +16,25 @@ interface Message {
   content: string;
 }
 
+const INITIAL_GREETING = "Olá! Sou o Estrategista Neural da NeuroAds. Minha missão é extrair o máximo de ROI da sua operação. Como posso te ajudar a escalar hoje?";
+
+const SUGGESTIONS = [
+  "Escalar meu tráfego pago",
+  "Criar um funil automático",
+  "Diagnosticar erros na minha conta"
+];
+
 export default function SupportChat() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    { role: 'assistant', content: INITIAL_GREETING }
+  ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showWhatsApp, setShowWhatsApp] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
+  const [clientName, setClientName] = useState<string | null>(null);
+  const [summary, setSummary] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -29,12 +43,15 @@ export default function SupportChat() {
     }
   }, [messages, isLoading]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isLoading) return;
+  const handleSend = async (customInput?: string) => {
+    const textToSend = customInput || input;
+    if (!textToSend.trim() || isLoading) return;
 
-    const userMessage: Message = { role: 'user', content: input };
+    if (showSuggestions) setShowSuggestions(false);
+
+    const userMessage: Message = { role: 'user', content: textToSend };
     setMessages((prev) => [...prev, userMessage]);
-    setInput('');
+    if (!customInput) setInput('');
     setIsLoading(true);
 
     try {
@@ -47,6 +64,13 @@ export default function SupportChat() {
 
       if (result.success && result.content) {
         setMessages((prev) => [...prev, { role: 'assistant', content: result.content! }]);
+        
+        if (result.clientName) setClientName(result.clientName);
+        if (result.summary) setSummary(result.summary);
+        
+        if (result.showHumanButton) {
+          setShowWhatsApp(true);
+        }
       } else {
         setMessages((prev) => [
           ...prev,
@@ -61,6 +85,16 @@ export default function SupportChat() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Generate dynamic WhatsApp URL
+  const getWhatsAppUrl = () => {
+    // IMPORTANT: Replace with your actual phone number in international format (e.g., 5511999999999)
+    const phoneNumber = "5551981758382"; 
+    
+    const baseMsg = `Olá, meu nome é ${clientName || 'visitante'}.\n\nAcabei de conversar com o NeuroBot e gostaria de suporte humano.\n\n*Resumo da Conversa:*\n${summary || 'O contato deseja falar com um especialista.'}`;
+    
+    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(baseMsg)}`;
   };
 
   return (
@@ -137,6 +171,24 @@ export default function SupportChat() {
                 </motion.div>
               ))}
 
+              {/* Conversations Suggestions */}
+              {showSuggestions && (
+                <div className="flex flex-wrap gap-2 mt-4">
+                  {SUGGESTIONS.map((suggestion, idx) => (
+                    <motion.button
+                      key={idx}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: idx * 0.1 }}
+                      onClick={() => handleSend(suggestion)}
+                      className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-[10px] font-bold text-white/70 hover:text-white transition-all uppercase tracking-wider"
+                    >
+                      {suggestion}
+                    </motion.button>
+                  ))}
+                </div>
+              )}
+
               {isLoading && (
                 <div className="flex items-center gap-2 text-white/30 font-mono text-[10px] italic animate-pulse">
                   <span className="w-2 h-2 rounded-full bg-[var(--color-brand-green)]" />
@@ -147,19 +199,23 @@ export default function SupportChat() {
 
             {/* Quick Actions & Input */}
             <div className="p-6 bg-black/60 border-t border-white/5 space-y-4">
-              {/* Persistent WhatsApp Button */}
-              <a
-                href="https://wa.me/5511999999999" // TODO: Atualizar com número real
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[var(--color-brand-green)]/30 transition-all rounded-xl flex items-center justify-center gap-2 group"
-              >
-                <Headset size={16} className="text-[var(--color-brand-green)] group-hover:scale-110 transition-transform" />
-                <span className="text-[10px] font-black tracking-[0.2em] text-white uppercase italic group-hover:text-[var(--color-brand-green)] transition-colors">
-                  Falar com Humano
-                </span>
-                <ExternalLink size={10} className="text-white/20" />
-              </a>
+              {/* Conditional WhatsApp Button */}
+              {showWhatsApp && (
+                <motion.a
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  href={getWhatsAppUrl()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[var(--color-brand-green)]/30 transition-all rounded-xl flex items-center justify-center gap-2 group"
+                >
+                  <Headset size={16} className="text-[var(--color-brand-green)] group-hover:scale-110 transition-transform" />
+                  <span className="text-[10px] font-black tracking-[0.2em] text-white uppercase italic group-hover:text-[var(--color-brand-green)] transition-colors">
+                    Falar com Humano
+                  </span>
+                  <ExternalLink size={10} className="text-white/20" />
+                </motion.a>
+              )}
 
               {/* Input field */}
               <div className="relative group">
@@ -190,12 +246,17 @@ export default function SupportChat() {
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className={cn(
-          "relative p-5 rounded-full shadow-[0_15px_30px_rgba(0,0,0,0.4)] transition-all flex items-center justify-center overflow-hidden border",
+          "relative p-4 rounded-full shadow-[0_20px_50px_rgba(249,166,32,0.3)] transition-all flex items-center justify-center overflow-hidden border",
           isOpen 
             ? "bg-white text-black border-white" 
-            : "bg-black text-white border-white/10 hover:border-[var(--color-brand-orange)]/50"
+            : "bg-[var(--color-brand-orange)] text-black border-white/20 hover:border-white/40"
         )}
       >
+        {/* Availability Pulse Effect */}
+        {!isOpen && (
+          <span className="absolute inset-0 rounded-full animate-ping bg-white/20 -z-10" />
+        )}
+
         <AnimatePresence mode="wait">
           {isOpen ? (
             <motion.div
@@ -212,18 +273,16 @@ export default function SupportChat() {
               initial={{ rotate: 90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
               exit={{ rotate: -90, opacity: 0 }}
-              className="flex items-center gap-3 px-2"
+              className="flex items-center gap-2.5 px-2"
             >
-              <MessageSquare size={24} className="text-[var(--color-brand-orange)]" />
-              <span className="text-xs font-black tracking-[0.3em] uppercase italic pr-2">Suporte</span>
+              <div className="relative">
+                <MessageSquare size={22} />
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[var(--color-brand-green)] border-2 border-[var(--color-brand-orange)] rounded-full animate-pulse" />
+              </div>
+              <span className="text-xs font-black tracking-[0.2em] uppercase italic pr-1">Chat Online</span>
             </motion.div>
           )}
         </AnimatePresence>
-        
-        {/* Animated background glow */}
-        {!isOpen && (
-          <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-brand-orange)]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-        )}
       </motion.button>
     </div>
   );
