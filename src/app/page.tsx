@@ -1,27 +1,57 @@
-import Navbar from '../components/layout/Navbar';
-import Footer from '../components/layout/Footer';
-import LabHero from '../components/sections/LabHero';
-import ToolGallery from '../components/sections/ToolGallery';
-import AIFeatures from '../components/sections/AIFeatures';
-import ExpertInfo from '../components/sections/ExpertInfo';
+'use client';
+import { useEffect } from 'react';
+import Topbar from '../components/neuroads/Topbar';
+import Navbar from '../components/neuroads/Navbar';
+import HeroSection from '../components/neuroads/HeroSection';
+import AboutSection from '../components/neuroads/AboutSection';
+import ProblemsSection from '../components/neuroads/ProblemsSection';
+import ServicesSection from '../components/neuroads/ServicesSection';
+import LuccaSection from '../components/neuroads/LuccaSection';
+import GeoSection from '../components/neuroads/GeoSection';
+import ProcessSection from '../components/neuroads/ProcessSection';
+import TestimonialsSection from '../components/neuroads/TestimonialsSection';
+import CTASection from '../components/neuroads/CTASection';
+import Footer from '../components/neuroads/Footer';
 
 export default function Home() {
+  useEffect(() => {
+    // Scroll reveal logic
+    const observerOptions = {
+      threshold: 0.08,
+      rootMargin: '0px 0px -40px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('up');
+        }
+      });
+    }, observerOptions);
+
+    const revealElements = document.querySelectorAll('.reveal');
+    revealElements.forEach(el => observer.observe(el));
+
+    return () => {
+      revealElements.forEach(el => observer.unobserve(el));
+    };
+  }, []);
+
   return (
-    <main className="flex flex-col min-h-screen bg-black">
+    <main className="min-h-screen">
+      <Topbar />
       <Navbar />
       
-      {/* Scrollable Content */}
-      <div className="flex-grow">
-        <LabHero />
-        
-        <div id="gallery">
-          <ToolGallery />
-        </div>
-        
-        <AIFeatures />
-        <ExpertInfo />
-      </div>
-
+      <HeroSection />
+      <AboutSection />
+      <ProblemsSection />
+      <ServicesSection />
+      <LuccaSection />
+      <GeoSection />
+      <ProcessSection />
+      <TestimonialsSection />
+      <CTASection />
+      
       <Footer />
     </main>
   );

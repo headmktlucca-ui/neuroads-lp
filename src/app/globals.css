@@ -1,24 +1,47 @@
 @import "tailwindcss";
 
 :root {
-  --background: #030303; /* Deep Pitch Black */
-  --foreground: #ffffff;
+  --background: #F9F6F0;
+  --foreground: #160F08;
+  
+  --cream:   #F9F6F0;
+  --cream2:  #F0EBE1;
+  --ink:     #160F08;
+  --ink2:    #32271C;
+  --ink3:    #7A6F63;
+  --green:   #0F5C3A;
+  --green-l: #E4F0EA;
+  --green-m: #1A7D52;
+  --green-b: #6EE2A8;
+  --amber:   #C47A0A;
+  --amber-l: #FDF3E0;
+  --rule:    rgba(22,15,8,0.09);
+  --shadow:  0 4px 32px rgba(22,15,8,0.07);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-sans-alt), var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-serif), Georgia, serif;
   --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   
-  --color-brand-orange: #F9A620; /* Signal Orange */
-  --color-brand-orange-hover: #FFB740;
-  --color-brand-green: #CCFF00; /* Acid Green (IA / Performance) */
-  --color-brand-green-hover: #ddff33;
+  --color-cream: var(--cream);
+  --color-cream2: var(--cream2);
+  --color-ink: var(--ink);
+  --color-ink2: var(--ink2);
+  --color-ink3: var(--ink3);
+  --color-green-brand: var(--green);
+  --color-green-light: var(--green-l);
+  --color-green-medium: var(--green-m);
+  --color-green-bright: var(--green-b);
+  --color-amber: var(--amber);
+  --color-amber-light: var(--amber-l);
   
-  --color-surface-card: #0a0a0a;
-  --color-surface-border: rgba(255, 255, 255, 0.1);
-  --color-surface-accent: rgba(249, 166, 32, 0.15);
+  --color-brand-orange: #F9A620;
+  --color-brand-orange-hover: #FFB740;
+  --color-brand-green: #CCFF00;
+  --color-brand-green-hover: #ddff33;
 }
 
 body {
@@ -27,6 +50,18 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* ── GRAIN OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.15;
 }
 
 @layer utilities {
@@ -79,14 +114,20 @@ body {
     animation: float 4s ease-in-out infinite;
   }
 
-  @keyframes wave {
-    0%, 100% { transform: scaleY(1) translateY(0); }
-    50% { transform: scaleY(1.1) translateY(-10px); }
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition: opacity 0.65s ease, transform 0.65s ease;
   }
 
-  .animate-wave {
-    animation: wave 8s ease-in-out infinite;
+  .reveal.up {
+    opacity: 1;
+    transform: translateY(0);
   }
+
+  .d1 { transition-delay: 0.1s; }
+  .d2 { transition-delay: 0.2s; }
+  .d3 { transition-delay: 0.3s; }
 }
 
 /* Custom Scrollbar for the future look */
