@@ -94,7 +94,7 @@ export default function HeroSection() {
         <div className="flex-1 flex items-center justify-center p-[3rem_2rem_1.5rem] relative">
           <div className="w-[260px] h-[340px] border border-white/10 rounded-[4px] relative overflow-hidden">
              <img 
-               src="/images/claudio-hero.jpg" 
+               src="/images/Eu Executivo.png" 
                alt="Claudio Müller" 
                className="w-full h-full object-cover"
              />

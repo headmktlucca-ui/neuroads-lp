@@ -9,7 +9,7 @@ export default function AboutSection() {
           <div className="hidden lg:block relative reveal">
             <div className="w-full aspect-[3/4] rounded-[4px] overflow-hidden relative">
               <img 
-                src="/images/claudio-about.jpg" 
+                src="/images/05.jpeg" 
                 alt="Claudio Müller Estrategista" 
                 className="w-full h-full object-cover"
               />
