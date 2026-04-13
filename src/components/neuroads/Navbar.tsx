@@ -22,7 +22,7 @@ export default function Navbar() {
               src="/images/logo-icon.png" 
               alt="NeuroAds Icon" 
               fill 
-              className="object-contain"
+              className="object-contain mix-blend-screen"
             />
           </div>
           <div className="flex flex-col">
