@@ -228,7 +228,7 @@ export default function SupportChat() {
                   className="w-full bg-black/40 border border-white/10 focus:border-[var(--color-brand-orange)]/50 rounded-2xl py-4 pl-5 pr-14 text-sm text-white placeholder:text-white/20 focus:outline-none transition-all"
                 />
                 <button
-                  onClick={handleSend}
+                  onClick={() => handleSend()}
                   disabled={isLoading || !input.trim()}
                   className="absolute right-2 top-2 bottom-2 px-3 bg-[var(--color-brand-orange)] hover:bg-[var(--color-brand-orange-hover)] text-black rounded-xl transition-all disabled:opacity-30 disabled:grayscale"
                 >
