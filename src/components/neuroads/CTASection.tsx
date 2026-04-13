@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
@@ -47,7 +48,14 @@ export default function CTASection() {
             </div>
 
             <MotionDiv {...fadeUp} transition={{ delay: 0.7 }} className="mt-12 p-6 bg-white/[0.04] border border-white/[0.08] rounded-lg flex items-center gap-5">
-              <div className="w-12 h-12 rounded-full bg-grad-main flex items-center justify-center font-bold text-white shadow-[0_0_16px_rgba(59,111,255,0.3)]">CM</div>
+              <div className="w-12 h-12 rounded-full border-2 border-white/10 overflow-hidden relative shadow-[0_0_16px_rgba(59,111,255,0.3)] flex-shrink-0">
+                <Image 
+                  src="/images/especialista.jpg" 
+                  alt="Claudio Müller" 
+                  fill 
+                  className="object-cover"
+                />
+              </div>
               <div>
                 <div className="text-[0.7rem] text-text-4 uppercase font-bold tracking-[0.1em]">Garantia de Atenção</div>
                 <div className="text-[0.85rem] text-text-2 mt-0.5">"Eu mesmo responderei seu contato em até 24h úteis."</div>
