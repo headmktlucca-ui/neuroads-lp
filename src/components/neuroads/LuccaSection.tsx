@@ -46,9 +46,20 @@ export default function LuccaSection() {
               ))}
             </div>
 
-            <MotionDiv {...fadeUp} transition={{ delay: 0.7 }} className="mt-10">
-               <a href="#contato" className="btn btn-ghost px-6 py-3">
-                 Saiba como o Lucca ajudará você →
+            <MotionDiv {...fadeUp} transition={{ delay: 0.7 }} className="mt-10 relative inline-block group">
+               {/* High-end Glow Effect */}
+               <div className="absolute -inset-1 bg-grad-main opacity-20 blur-xl group-hover:opacity-50 transition-opacity duration-500 rounded-lg pointer-events-none" />
+               
+               <a 
+                 href="https://www.luccaos.pro/" 
+                 target="_blank" 
+                 rel="noopener noreferrer" 
+                 className="btn btn-primary relative z-10 px-8 py-3.5 flex items-center gap-3 border border-white/10"
+               >
+                 <span className="font-bold tracking-tight">Conheça o Lucca</span>
+                 <svg className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                 </svg>
                </a>
             </MotionDiv>
           </div>
