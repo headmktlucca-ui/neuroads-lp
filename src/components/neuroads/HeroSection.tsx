@@ -44,7 +44,7 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 0.4 }}
           className="relative text-[1rem] text-ink2 leading-[1.8] max-w-[500px] font-light"
         >
-          Sou Claudio Müller. Há 25 anos ajudo empresas como a sua a crescerem de forma inteligente — com campanhas pagas que convertem, posicionamento orgânico (incluindo nas buscas por IA) e agentes automatizados que destravam o seu comercial.
+          Há 25 anos ajudo empresas como a sua a crescerem de forma inteligente — com campanhas pagas que convertem, posicionamento orgânico (incluindo nas buscas por IA) e agentes automatizados que destravam o seu comercial.
         </motion.p>
 
         <motion.div 
@@ -86,21 +86,21 @@ export default function HeroSection() {
         {/* Glow effect */}
         <div className="absolute top-[-100px] right-[-100px] w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(110,226,168,0.07)_0%,transparent_65%)] pointer-events-none" />
 
-        <div className="absolute top-10 right-6 bg-yellow-500/10 border border-yellow-500/20 p-[0.9rem_1.1rem] rounded-[4px] text-center max-w-[130px] backdrop-blur-md">
+        <div className="absolute top-10 left-6 bg-yellow-500/10 border border-yellow-500/20 p-[0.9rem_1.1rem] rounded-[4px] text-center max-w-[130px] backdrop-blur-md z-10">
           <div className="font-serif text-[2rem] font-bold text-[#F0C060] leading-none">R$10M<sup className="text-[0.55rem]">+</sup></div>
           <div className="text-[0.62rem] font-semibold text-[#F0C060] tracking-[0.07em] uppercase mt-1 opacity-75">Investimento gerenciado</div>
         </div>
 
-        <div className="flex-1 flex items-center justify-center p-[3rem_2rem_1.5rem] relative">
-          <div className="w-[260px] h-[340px] border border-white/10 rounded-[4px] relative overflow-hidden">
-             <img 
-               src="/images/Eu Executivo.png" 
-               alt="Claudio Müller" 
-               className="w-full h-full object-cover"
-             />
-          </div>
+        <div className="flex-1 relative overflow-hidden">
+          <img 
+            src="/images/Eu Executivo.png" 
+            alt="Claudio Müller" 
+            className="absolute inset-0 w-full h-full object-cover object-right opacity-80"
+          />
+          {/* Bottom Fade to blend with footer */}
+          <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent opacity-80" />
 
-          <div className="absolute bottom-24 left-6 bg-green-brand/10 border border-green-brand/20 p-[0.8rem_1.1rem] rounded-[4px] max-w-[150px] backdrop-blur-md">
+          <div className="absolute bottom-24 right-6 bg-green-brand/10 border border-green-brand/20 p-[0.8rem_1.1rem] rounded-[4px] max-w-[150px] backdrop-blur-md z-10">
             <div className="font-serif text-[1.6rem] font-bold text-green-bright leading-none">25+</div>
             <div className="text-[0.62rem] font-semibold text-green-bright tracking-[0.06em] uppercase mt-1 opacity-75">Anos em Growth</div>
           </div>

@@ -19,7 +19,7 @@ export default function Navbar() {
         <img 
           src="/images/logo-neuroads-premium - horizontal.png" 
           alt="NeuroAds" 
-          className="h-8 w-auto object-contain mix-blend-multiply"
+          className="h-[60px] w-auto object-contain mix-blend-multiply contrast-[1.1] brightness-[1.1] saturate-0"
         />
       </Link>
       
