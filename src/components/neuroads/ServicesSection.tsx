@@ -1,51 +1,120 @@
 'use client';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH2 = motion.h2;
 
-const services = [
+const agentCategories = [
   {
-    id: '01',
-    tag: 'Performance',
-    title: 'Campanhas Patrocinadas de Alta Performance',
-    desc: 'Google Ads e Meta Ads gerenciados com a plataforma Lucca — análise contínua, criativos validados por dados e foco total no custo por aquisição ideal para o seu negócio.',
-    items: [
-      'Gestão estratégica de Google Ads e Meta Ads',
-      'Otimização de lances e orçamento em tempo real',
-      'Criativos e copies gerados e testados com IA',
-      'Rastreamento server-side (100% das conversões)',
-      'Relatórios com foco em ROI, não em métricas de vaidade',
-      'Simulação de ROAS antes de escalar o investimento'
+    name: 'Performance & Criativos',
+    agents: [
+      { 
+        title: 'Analista de Tráfego', 
+        desc: 'Diagnóstico neural de campanhas com tomada de decisão automática baseada em ROI.',
+        image: '/images/tools/analista_trafego.png' 
+      },
+      { 
+        title: 'Gerador de Criativos', 
+        desc: 'Criação de copies e conceitos visuais de alto impacto validados por padrões de conversão.',
+        image: '/images/tools/gerador_criativos.png' 
+      },
+      { 
+        title: 'Gerador de Copies', 
+        desc: 'Motor rápido focado na geração expressa de headlines, CTAs chamativos e argumentos diretos.',
+        image: '/images/tools/gerador_copies.png' 
+      },
+      { 
+        title: 'Análise Viral', 
+        desc: 'Identificação de padrões de conteúdo com alto potencial de partilha e viralização no nicho.',
+        image: '/images/tools/analise_viral.png' 
+      },
     ]
   },
   {
-    id: '02',
-    tag: 'Visibilidade',
-    title: 'SEO Estratégico + GEO — Apareça no Google e na IA',
-    desc: 'Posicionamento nos resultados orgânicos do Google (SEO) e nas respostas geradas por IA como ChatGPT, Gemini e Perplexity (GEO). Em 2026, quem não está nos dois é invisível para metade do mercado.',
-    items: [
-      'SEO técnico e de conteúdo para buscas orgânicas',
-      'GEO: posicionamento nas respostas de IA generativa',
-      'Estruturação do site para AI Overviews do Google',
-      'Estratégia de conteúdo que atrai e converte',
-      'Monitoramento da presença da sua marca na IA',
-      'Integração com as campanhas pagas para maximizar ROI'
+    name: 'Estratégia & Projeção',
+    agents: [
+      { 
+        title: 'Preditor de Funil', 
+        desc: 'Simulação de cenários de escala e previsão de ROI antes de investir.',
+        image: '/images/tools/preditor_funil.png' 
+      },
+      { 
+        title: 'Simulador de ROAS', 
+        desc: 'Projeção de metas de faturação e cálculo de leads e investimento necessários.',
+        image: '/images/tools/simulador_roas.png' 
+      },
+      { 
+        title: 'Otimizador de Orçamento', 
+        desc: 'Redistribuição tática do orçamento, apontando onde cortar e onde alavancar.',
+        image: '/images/tools/otimizacao.png' 
+      },
+      { 
+        title: 'Gerador de Testes A/B', 
+        desc: 'Roteirizador inteligente que projeta variações ideais de público, oferta e peças gráficas.',
+        image: '/images/tools/testes.png' 
+      },
+      { 
+        title: 'Avaliador de Oferta', 
+        desc: 'Varrimento sistémico na estruturação de preço-valor e análise de lacunas de diferenciação.',
+        image: '/images/tools/analise.png' 
+      },
     ]
   },
   {
-    id: '03',
-    tag: 'Operação',
-    title: 'Agentes de IA no Seu Operacional Comercial',
-    desc: 'Identificamos onde sua operação perde tempo e dinheiro, e implantamos agentes de IA personalizados que resolvem esse gargalo — do primeiro contato ao fechamento.',
-    items: [
-      'Diagnóstico do gargalo operacional comercial',
-      'Agente de qualificação de leads 24h por dia',
-      'Automação de follow-up e nutrição de pipeline',
-      'Integração com CRM e ferramentas existentes',
-      'Atendimento automático via WhatsApp e site',
-      'Treinamento da equipe para trabalhar com IA'
+    name: 'Técnico & Auditoria',
+    agents: [
+      { 
+        title: 'Rastreador Cirúrgico', 
+        desc: 'Implementação de tracking Lado-Servidor para contornar bloqueios de cookies e iOS14+.',
+        image: '/images/tools/rastreador_cirurgico.png' 
+      },
+      { 
+        title: 'Diagnóstico de LP', 
+        desc: 'Análise de problemas de conversão, UX (experiência do utilizador) e clareza da oferta.',
+        image: '/images/tools/diagnostico_lp.png' 
+      },
+      { 
+        title: 'Diagnóstico de Funil', 
+        desc: 'Mapeamento visual de gargalos entre a navegação, o clique e a conversão.',
+        image: '/images/tools/diagnostico_funil.png' 
+      },
+      { 
+        title: 'Auditor de Desperdício', 
+        desc: 'Calculadora que faz o varrimento da conta para isolar gastos desnecessários.',
+        image: '/images/tools/auditor_desperdicio.png' 
+      },
+    ]
+  },
+  {
+    name: 'Inteligência de Mercado',
+    agents: [
+      { 
+        title: 'Analisador de Público', 
+        desc: 'Refinamento avançado com sugestões de segmentações prontas por nicho e produto.',
+        image: '/images/tools/analisador_publico.png' 
+      },
+      { 
+        title: 'Público-Alvo Ideal', 
+        desc: 'Pesquisa neural de segmentação, identificando o que o público consome e como interage.',
+        image: '/images/tools/publico_ideal.png' 
+      },
+      { 
+        title: 'Análise de Rivais', 
+        desc: 'Varrimento profundo via URL para identificar estratégias e pontos cegos dos concorrentes.',
+        image: '/images/tools/concorrentes.png' 
+      },
+      { 
+        title: 'Radar de Oportunidades', 
+        desc: 'Deteção contínua de canais subestimados na sua vertical de mercado.',
+        image: '/images/tools/mineracao.png' 
+      },
+      { 
+        title: 'DNA da Marca', 
+        desc: 'Documento estratégico completo com posicionamento, tom de voz e pilares da marca.',
+        image: '/images/tools/dna_marca.png' 
+      },
     ]
   }
 ];
@@ -59,55 +128,84 @@ export default function ServicesSection() {
   };
 
   return (
-    <section className="section bg-white/[0.02] border-y border-white/10" id="servicos">
+    <section className="section bg-white/[0.01] border-y border-white/10" id="servicos">
       <div className="wrap py-24 lg:py-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-end mb-14">
-          <div>
-            <MotionP {...fadeUp} className="s-badge">O que fazemos</MotionP>
-            <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title">
-              Três soluções.<br /><span className="g">Uma estratégia.</span><br />Um responsável.
-            </MotionH2>
-          </div>
-          <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="s-body !mt-0 !max-w-none">
-            Cada serviço da NeuroAds funciona sozinho — mas o poder real aparece quando os três trabalham juntos, alimentando um ao outro com dados e resultados.
+        
+        {/* HEADER */}
+        <div className="text-center mb-16 lg:mb-24">
+          <MotionP {...fadeUp} className="s-badge mx-auto">Arsenal de Agentes Neurais</MotionP>
+          <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title mx-auto text-balance mt-4">
+            Tecnologia sistêmica.<br />
+            <span className="g">Resultado humano.</span>
+          </MotionH2>
+          <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="text-text-3 max-w-[600px] mx-auto mt-6 font-light">
+            Não entregamos apenas serviços. Implantamos um ecossistema de agentes inteligentes que operam 24/7 para otimizar cada etapa do seu funil comercial.
           </MotionP>
         </div>
 
-        <div className="space-y-5">
-          {services.map((svc, i) => (
-            <MotionDiv 
-              key={i} 
-              {...fadeUp}
-              transition={{ delay: 0.3 + (i * 0.1) }}
-              className="group bg-white/[0.04] border border-white/[0.08] rounded-xl overflow-hidden transition-all hover:border-blue-1/35 hover:shadow-[0_8px_48px_rgba(59,111,255,0.12)]"
-            >
-              <div className="p-8 lg:p-10 border-b border-white/10 bg-grad-card flex flex-col md:flex-row items-start gap-6 lg:gap-10">
-                <div className="font-head text-[2.5rem] font-extrabold grad-text opacity-30 leading-none min-w-[48px] transition-opacity group-hover:opacity-100">
-                  {svc.id}
-                </div>
-                <div>
-                  <div className="mb-2"><span className="tag">{svc.tag}</span></div>
-                  <h3 className="font-head text-[1.15rem] font-bold text-text-1 mb-2 leading-tight transition-colors">
-                    {svc.title}
-                  </h3>
-                  <p className="text-[0.835rem] text-text-3 font-light leading-relaxed max-w-[700px]">
-                    {svc.desc}
-                  </p>
-                </div>
-              </div>
-              <div className="p-8 lg:p-10 grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-10">
-                {svc.items.map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-3 text-[0.82rem] text-text-2 leading-relaxed">
-                    <div className="w-4 h-4 rounded-full bg-green-s/[0.12] border border-green-s/[0.25] flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <span className="text-[0.6rem] font-extrabold text-green-s">✓</span>
+        {/* CATEGORIES GRID */}
+        <div className="space-y-20">
+          {agentCategories.map((cat, catIdx) => (
+            <div key={catIdx}>
+              <MotionH2 
+                {...fadeUp} 
+                className="text-[0.72rem] font-black tracking-[0.2em] uppercase text-text-4 mb-10 flex items-center gap-4"
+              >
+                <span className="w-8 h-px bg-white/10" />
+                {cat.name}
+              </MotionH2>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {cat.agents.map((agent, i) => (
+                  <MotionDiv
+                    key={i}
+                    {...fadeUp}
+                    transition={{ delay: 0.1 * i }}
+                    className="group relative bg-white/[0.03] border border-white/[0.06] rounded-xl p-6 hover:bg-white/[0.05] hover:border-blue-1/30 transition-all duration-300 overflow-hidden"
+                  >
+                    <div className="flex items-start gap-4 h-full">
+                      <div className="w-14 h-14 rounded-lg bg-white/[0.05] border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0 relative group-hover:border-blue-1/50 transition-all">
+                        <Image 
+                          src={agent.image} 
+                          alt={agent.title}
+                          fill
+                          className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
+                        />
+                      </div>
+                      <div className="flex flex-col">
+                        <h3 className="font-head text-[0.95rem] font-bold text-text-1 mb-2 group-hover:text-blue-1 transition-colors leading-tight">
+                          {agent.title}
+                        </h3>
+                        <p className="text-[0.78rem] text-text-3 font-light leading-relaxed">
+                          {agent.desc}
+                        </p>
+                      </div>
                     </div>
-                    {item}
-                  </div>
+                  </MotionDiv>
                 ))}
               </div>
-            </MotionDiv>
+            </div>
           ))}
         </div>
+
+        {/* BOTTOM CTA */}
+        <MotionDiv 
+          {...fadeUp} 
+          transition={{ delay: 0.4 }}
+          className="mt-24 p-10 bg-grad-card border border-blue-1/20 rounded-2xl text-center relative overflow-hidden"
+        >
+          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-1/5 blur-[100px] -z-10" />
+          <h3 className="font-head text-[1.4rem] font-bold text-text-1 mb-4">
+            Qual desses agentes sua operação precisa agora?
+          </h3>
+          <p className="text-text-3 text-[0.9rem] mb-8 font-light max-w-[500px] mx-auto">
+            Agende um diagnóstico gratuito e vamos identificar qual gargalo podemos resolver primeiro.
+          </p>
+          <a href="#contato" className="btn btn-primary">
+            Falar com o Claudio Müller →
+          </a>
+        </MotionDiv>
+
       </div>
     </section>
   );

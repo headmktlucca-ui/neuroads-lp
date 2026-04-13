@@ -108,37 +108,39 @@ export default function SupportChat() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="absolute bottom-20 right-0 w-[90vw] sm:w-[380px] h-[600px] max-h-[75vh] bg-cream flex flex-col shadow-[20px_20px_60px_rgba(22,15,8,0.15)] border border-ink/10 overflow-hidden rounded-none"
+            className="absolute bottom-20 right-0 w-[90vw] sm:w-[380px] h-[600px] max-h-[75vh] bg-bg-base/95 backdrop-blur-[20px] flex flex-col shadow-[0_20px_80px_rgba(0,0,0,0.5)] border border-white/10 overflow-hidden rounded-2xl"
           >
-            {/* Header - Brutalist Ink */}
-            <div className="p-6 bg-ink border-b border-white/10 flex items-center justify-between">
+            {/* Header - Glassmorphism */}
+            <div className="p-6 bg-white/[0.02] border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-brand flex items-center justify-center border border-white/10">
-                  <Bot size={20} className="text-ink" />
+                <div className="w-10 h-10 bg-grad-main flex items-center justify-center rounded-lg shadow-[0_0_15px_rgba(59,111,255,0.3)]">
+                  <Bot size={20} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="text-[0.75rem] font-black tracking-[0.2em] text-cream uppercase italic font-serif">Suporte Neural</h3>
+                  <h3 className="text-[0.8rem] font-black tracking-[0.15em] text-text-1 uppercase">
+                    Suporte <span className="grad-text italic">Neural</span>
+                  </h3>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-green-brand animate-pulse" />
-                    <span className="text-[9px] font-bold text-green-brand/60 tracking-wider uppercase">Bot Operacional</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-s animate-pulse" />
+                    <span className="text-[9px] font-bold text-text-3 tracking-wider uppercase">Operacional Ativo</span>
                   </div>
                 </div>
               </div>
               <button 
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-white/10 transition-colors text-white/50 hover:text-white"
+                className="p-2 hover:bg-white/10 transition-colors text-text-3 hover:text-text-1 rounded-full"
               >
                 <X size={20} />
               </button>
             </div>
 
-            {/* Messages Area - Cream with Grid */}
+            {/* Messages Area - Dark Space with Pattern */}
             <div 
               ref={scrollRef}
               className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide relative"
               style={{
-                backgroundImage: `radial-gradient(circle, rgba(22,15,8,0.03) 1px, transparent 1px)`,
-                backgroundSize: '20px 20px'
+                backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.02) 1px, transparent 1px)`,
+                backgroundSize: '24px 24px'
               }}
             >
               {messages.map((msg, idx) => (
@@ -147,41 +149,41 @@ export default function SupportChat() {
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className={cn(
-                    "flex flex-col max-w-[88%]",
+                    "flex flex-col max-w-[85%]",
                     msg.role === 'user' ? "ml-auto items-end" : "mr-auto items-start"
                   )}
                 >
                   <div className={cn(
-                    "px-5 py-4 text-[0.85rem] leading-[1.6] shadow-sm transition-all",
+                    "px-5 py-4 text-[0.82rem] leading-[1.6] shadow-sm transition-all",
                     msg.role === 'user' 
-                      ? "bg-green-brand text-ink font-semibold rounded-none border border-ink/5" 
-                      : "bg-white border border-ink/10 text-ink rounded-none"
+                      ? "bg-grad-main text-white font-medium rounded-2xl rounded-tr-none shadow-blue-1/10" 
+                      : "bg-white/[0.04] border border-white/10 text-text-2 rounded-2xl rounded-tl-none"
                   )}>
                     {msg.content}
                   </div>
-                  <span className="text-[10px] font-bold text-ink/40 mt-2 uppercase tracking-widest italic font-serif">
+                  <span className="text-[9px] font-bold text-text-4 mt-2 uppercase tracking-[0.2em]">
                     {msg.role === 'user' ? 'Visitante' : 'NeuroBot'}
                   </span>
                 </motion.div>
               ))}
 
               {isLoading && (
-                <div className="flex items-center gap-2 text-ink/30 font-bold text-[9px] italic tracking-widest animate-pulse">
-                  <span className="w-2 h-2 rounded-full bg-green-brand" />
+                <div className="flex items-center gap-2 text-text-4 font-bold text-[9px] italic tracking-widest animate-pulse ml-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-1" />
                   ANALISANDO SINAPSES...
                 </div>
               )}
             </div>
 
             {/* Quick Actions & Input - Fixed Bottom */}
-            <div className="p-6 bg-white border-t border-ink/5 space-y-4">
+            <div className="p-6 bg-white/[0.02] border-t border-white/05 space-y-4">
               {showSuggestions && (
                 <div className="flex flex-wrap gap-2">
                   {SUGGESTIONS.map((suggestion, idx) => (
                     <button
                       key={idx}
                       onClick={() => handleSend(suggestion)}
-                      className="px-3 py-1.5 border border-ink/10 hover:border-green-brand hover:bg-green-brand/5 text-[10px] font-bold text-ink/60 hover:text-ink transition-all uppercase tracking-wider"
+                      className="px-3 py-1.5 border border-white/05 bg-white/[0.03] hover:border-blue-1/30 hover:bg-blue-1/10 text-[10px] font-bold text-text-3 hover:text-blue-1 transition-all uppercase tracking-wider rounded-lg"
                     >
                       {suggestion}
                     </button>
@@ -197,30 +199,30 @@ export default function SupportChat() {
                   href={getWhatsAppUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3 bg-ink text-cream hover:bg-green-brand hover:text-ink transition-all flex items-center justify-center gap-3 group border border-ink"
+                  className="w-full py-3.5 bg-grad-main text-white hover:shadow-[0_0_20px_rgba(59,111,255,0.3)] transition-all flex items-center justify-center gap-3 group rounded-xl border border-white/10"
                 >
-                  <Headset size={16} className="text-green-brand group-hover:text-ink transition-colors" />
+                  <Headset size={16} className="text-white" />
                   <span className="text-[10px] font-black tracking-[0.2em] uppercase italic">
-                    Conectar Especialista
+                    Falar com Especialista
                   </span>
-                  <ExternalLink size={10} className="opacity-30" />
+                  <ExternalLink size={10} className="opacity-50" />
                 </motion.a>
               )}
 
-              {/* Input field - Brutalist */}
+              {/* Input field - Modern Glass */}
               <div className="relative group flex gap-2">
                 <input
                   type="text"
                   value={input}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Solicite um diagnóstico..."
-                  className="flex-1 bg-cream/50 border border-ink/10 focus:border-green-brand rounded-none py-3.5 px-5 text-sm text-ink placeholder:text-ink/30 focus:outline-none transition-all"
+                  placeholder="Escreva sua dúvida..."
+                  className="flex-1 bg-white/[0.03] border border-white/10 focus:border-blue-1/30 rounded-xl py-3.5 px-5 text-sm text-text-1 placeholder:text-text-4 focus:outline-none transition-all"
                 />
                 <button
                   onClick={() => handleSend()}
                   disabled={isLoading || !input.trim()}
-                  className="px-4 bg-ink hover:bg-green-brand text-cream hover:text-ink transition-all disabled:opacity-30"
+                  className="px-4 rounded-xl bg-blue-1 hover:bg-blue-2 text-white transition-all disabled:opacity-20 flex items-center justify-center shadow-lg shadow-blue-1/10"
                 >
                   <Send size={18} />
                 </button>
