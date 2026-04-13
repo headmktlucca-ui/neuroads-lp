@@ -29,7 +29,7 @@ export default function AboutSection() {
                 CM
               </div>
               <Image 
-                src="/images/especialista-sobre.jpg" 
+                src="/images/0599.jpeg" 
                 alt="Claudio Müller" 
                 fill
                 className="object-cover object-center relative z-10"

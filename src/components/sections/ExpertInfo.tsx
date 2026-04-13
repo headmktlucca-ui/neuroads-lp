@@ -54,7 +54,7 @@ export default function ExpertInfo() {
               className="relative aspect-square w-full max-w-sm mx-auto rounded-[2rem] overflow-hidden shadow-xl border-4 border-white/10"
             >
               <Image 
-                src="/images/especialista-sobre.jpg" 
+                src="/images/0599.jpeg" 
                 alt="Gestor Especialista NeuroAds" 
                 fill
                 className="object-cover object-center"
