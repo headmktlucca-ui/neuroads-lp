@@ -3,25 +3,36 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="bg-[#0A0806] py-12 px-10 border-t border-white/[0.05]">
-      <div className="max-w-[1160px] mx-auto flex flex-wrap items-center justify-between gap-6">
-        <Link href="/" className="flex items-center">
-          <img 
-            src="/images/logo-neuroads-premium.png" 
-            alt="NeuroAds" 
-            className="h-7 w-auto object-contain invert-[0.9] brightness-200 mix-blend-screen"
-          />
-        </Link>
-        
-        <ul className="flex flex-wrap gap-8 list-none">
-          <li><Link href="#claudio" className="text-[0.79rem] text-white/35 no-underline transition-colors hover:text-white/75">Quem sou</Link></li>
-          <li><Link href="#servicos" className="text-[0.79rem] text-white/35 no-underline transition-colors hover:text-white/75">Soluções</Link></li>
-          <li><Link href="#lucca" className="text-[0.79rem] text-white/35 no-underline transition-colors hover:text-white/75">Lucca</Link></li>
-          <li><Link href="#geo" className="text-[0.79rem] text-white/35 no-underline transition-colors hover:text-white/75">SEO & GEO</Link></li>
-          <li><a href="mailto:contato@neuroads.com.br" className="text-[0.79rem] text-white/35 no-underline transition-colors hover:text-white/75">contato@neuroads.com.br</a></li>
-        </ul>
+    <footer className="bg-bg-base py-16 px-10 border-t border-white/5">
+      <div className="max-w-[1160px] mx-auto">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-10">
+          
+          <Link href="/" className="group">
+            <span className="font-head text-[1.5rem] font-extrabold tracking-tighter text-text-1">
+              Neuro<span className="bg-grad-main bg-clip-text text-transparent italic">Ads</span>
+            </span>
+            <p className="text-[0.65rem] text-text-4 font-bold tracking-[0.2em] uppercase mt-1">
+              Performance Intelligence
+            </p>
+          </Link>
+          
+          <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 list-none m-0 p-0">
+            <li><Link href="#claudio" className="text-[0.78rem] font-medium text-text-3 no-underline transition-colors hover:text-blue-1">Quem sou</Link></li>
+            <li><Link href="#servicos" className="text-[0.78rem] font-medium text-text-3 no-underline transition-colors hover:text-blue-1">Soluções</Link></li>
+            <li><Link href="#lucca" className="text-[0.78rem] font-medium text-text-3 no-underline transition-colors hover:text-blue-1">Lucca</Link></li>
+            <li><Link href="#geo" className="text-[0.78rem] font-medium text-text-3 no-underline transition-colors hover:text-blue-1">SEO & GEO</Link></li>
+            <li><a href="mailto:contato@neuroads.com.br" className="text-[0.78rem] font-medium text-text-3 no-underline transition-colors hover:text-blue-1">Suporte</a></li>
+          </ul>
 
-        <p className="text-[0.73rem] text-white/20">© 2026 NeuroAds · Claudio Müller</p>
+          <div className="flex flex-col items-center md:items-end gap-2 text-center md:text-right">
+            <p className="text-[0.73rem] text-text-4">© 2026 NeuroAds · Claudio Müller</p>
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-blue-1" />
+              <span className="text-[0.65rem] text-text-4 font-bold uppercase tracking-widest">Powered by Lucca.os</span>
+            </div>
+          </div>
+
+        </div>
       </div>
     </footer>
   );

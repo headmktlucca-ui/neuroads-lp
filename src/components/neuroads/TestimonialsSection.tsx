@@ -1,51 +1,67 @@
 'use client';
+import { motion } from 'framer-motion';
 
 const testimonials = [
   {
     stars: '★★★★★',
-    text: '"Claudio é um profissional com grande entendimento da ferramenta. Trouxe muitos leads qualificados e ajudou na expansão da empresa em mercados que nem imaginávamos. A diferença antes e depois foi brutal, e o que mais valorizo é a comunicação direta — ele sempre explica o que está fazendo e por quê."',
+    text: '"Claudio é um profissional com grande entendimento técnico. Trouxe muitos leads qualificados e ajudou na expansão da empresa. A diferença foi brutal, e o que mais valorizo é a comunicação estratégica e direta."',
     author: 'Carlos Eduardo',
-    role: 'CEO — Empresa de Soluções Regulatórias',
-    delay: ''
+    role: 'CEO — Soluções Regulatórias'
   },
   {
     stars: '★★★★★',
-    text: '"Eu tinha tentado outras agências antes. Com a NeuroAds foi diferente desde o início — o Claudio olhou de verdade para o meu negócio, não fez proposta genérica. Hoje tenho clareza total do que está sendo feito com meu investimento, e os resultados aparecem todo mês."',
+    text: '"Eu tinha tentado outras agências. Com a NeuroAds foi diferente — o Claudio olhou de verdade para o meu negócio. Hoje tenho clareza total do que está sendo feito e os resultados aparecem todo mês."',
     author: 'Ana Paula',
-    role: 'Diretora Comercial — Empresa B2B',
-    delay: 'd1'
+    role: 'Diretora Comercial — B2B Digital'
   },
   {
     stars: '★★★★★',
-    text: '"O que mais me surpreendeu foi a integração entre os anúncios e a automação comercial. Nossa equipe de vendas passou a receber leads muito mais quentes — e o tempo de resposta caiu de horas para segundos. É a primeira vez que sinto que o marketing e o comercial trabalham juntos de verdade."',
+    text: '"A integração entre anúncios e agentes de IA surpreendeu. Nossa equipe de vendas passou a receber leads muito mais quentes — e o tempo de resposta caiu drasticamente. Marketing e comercial unidos."',
     author: 'Rodrigo Motta',
-    role: 'Sócio — Empresa de Serviços',
-    delay: 'd2'
+    role: 'Sócio — Serviços de Engenharia'
   }
 ];
 
 export default function TestimonialsSection() {
-  return (
-    <section className="py-20 lg:py-28">
-      <div className="max-w-[1160px] mx-auto px-10">
-        <p className="flex items-center gap-[0.65rem] text-[0.68rem] font-semibold tracking-[0.22em] uppercase text-green-brand mb-4 reveal">
-          <span className="w-[18px] h-[1.5px] bg-green-brand" />
-          O que dizem os clientes
-        </p>
-        <h2 className="font-serif text-[clamp(2.2rem,3.5vw,3.5rem)] font-bold leading-[1.1] tracking-[-0.01em] text-ink reveal">
-          Empresas que <em className="italic text-green-brand font-medium">cresceram</em><br />com a NeuroAds
-        </h2>
+  const fadeUp = {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.7 }
+  };
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[1.5px] bg-black/10 border border-black/10 rounded-[6px] overflow-hidden mt-16">
+  return (
+    <section className="bg-bg-base py-24 lg:py-32 relative border-b border-white/5">
+      <div className="max-w-[1160px] mx-auto px-10 relative z-10">
+        <motion.p {...fadeUp} className="flex items-center gap-3 text-[0.68rem] font-bold tracking-[0.2em] uppercase text-blue-2 mb-4">
+          <span className="w-5 h-[2px] bg-grad-main rounded-full" />
+          Provas de Performance
+        </motion.p>
+        
+        <motion.h2 {...fadeUp} transition={{ delay: 0.1 }} className="font-head text-[clamp(2rem,3.2vw,3.2rem)] font-extrabold leading-[1.1] tracking-tight text-text-1 mb-16">
+          Empresas que <span className="bg-grad-main bg-clip-text text-transparent italic">escalaram</span><br />com a nossa inteligência.
+        </motion.h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
-            <div key={i} className={`bg-cream2 p-9 transition-colors hover:bg-white reveal ${t.delay}`}>
-              <div className="text-amber text-[0.85rem] tracking-[0.05em] mb-4">{t.stars}</div>
-              <p className="font-serif text-[0.975rem] text-ink2 leading-[1.8] italic font-medium mb-6">
+            <motion.div 
+              key={i} 
+              {...fadeUp}
+              transition={{ delay: 0.1 * i + 0.3 }}
+              className="bg-bg-card border border-white/10 p-10 rounded-3xl relative hover:bg-bg-card-h transition-colors"
+            >
+              <div className="text-blue-1 text-[0.8rem] tracking-[0.1em] mb-6">{t.stars}</div>
+              <p className="font-head text-[1rem] text-text-2 leading-relaxed italic font-medium mb-10">
                 {t.text}
               </p>
-              <div className="font-semibold text-[0.86rem] text-ink">{t.author}</div>
-              <div className="text-[0.74rem] text-ink3 mt-1">{t.role}</div>
-            </div>
+              <div className="font-head font-bold text-[0.9rem] text-text-1">{t.author}</div>
+              <div className="text-[0.75rem] text-text-4 mt-1 font-bold tracking-wide uppercase">{t.role}</div>
+
+              {/* Decorative quote mark */}
+              <div className="absolute top-8 right-8 text-[3rem] font-serif leading-none text-white/[0.03] pointer-events-none select-none">
+                ”
+              </div>
+            </motion.div>
           ))}
         </div>
       </div>

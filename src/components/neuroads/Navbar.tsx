@@ -9,27 +9,34 @@ export default function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 30);
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   return (
-    <nav className={`sticky top-0 z-[100] transition-shadow duration-300 py-[1.1rem] px-10 flex items-center justify-between border-b border-black/10 backdrop-blur-2xl ${isScrolled ? 'shadow-[0_4px_40px_rgba(22,15,8,0.07)]' : ''}`} style={{ background: 'rgba(249, 246, 240, 0.95)' }}>
-      <Link href="/" className="flex items-center">
-        <img 
-          src="/images/logo-neuroads-premium - horizontal.png" 
-          alt="NeuroAds" 
-          className="h-[60px] w-auto object-contain mix-blend-multiply contrast-[1.1] brightness-[1.1] saturate-0"
-        />
-      </Link>
-      
-      <ul className="hidden md:flex items-center gap-8 list-none">
-        <li><Link href="#claudio" className="text-[0.84rem] font-medium text-ink3 no-underline transition-colors hover:text-ink tracking-[0.01em]">Quem sou</Link></li>
-        <li><Link href="#servicos" className="text-[0.84rem] font-medium text-ink3 no-underline transition-colors hover:text-ink tracking-[0.01em]">Soluções</Link></li>
-        <li><Link href="#lucca" className="text-[0.84rem] font-medium text-ink3 no-underline transition-colors hover:text-ink tracking-[0.01em]">Lucca</Link></li>
-        <li><Link href="#geo" className="text-[0.84rem] font-medium text-ink3 no-underline transition-colors hover:text-ink tracking-[0.01em]">SEO & GEO</Link></li>
-        <li><Link href="#contato" className="bg-green-brand text-white py-[0.55rem] px-[1.35rem] rounded-[3px] font-semibold text-[0.8rem] tracking-[0.02em] transition-colors hover:bg-green-medium">Falar com Claudio</Link></li>
-      </ul>
+    <nav className="sticky top-0 z-[200] border-b border-white/10 bg-[#05060F]/85 backdrop-blur-[20px] saturate-[1.4]">
+      <div className="max-w-[1160px] mx-auto px-10 py-4 flex items-center justify-between">
+        <a href="#" className="flex items-center gap-[0.65rem] no-underline">
+          <div className="w-[34px] h-[34px] rounded-lg bg-grad-main flex items-center justify-center font-head font-extrabold text-[0.85rem] text-white tracking-[-0.02em] shadow-[0_0_16px_rgba(59,111,255,0.4)]">
+            NA
+          </div>
+          <span className="font-head font-extrabold text-[1.05rem] text-text-1 tracking-[-0.02em]">
+            Neuro<span className="text-blue-2">Ads</span>
+          </span>
+        </a>
+
+        <ul className="hidden lg:flex items-center gap-7 list-none">
+          <li><a href="#claudio" className="text-[0.835rem] font-medium text-text-3 no-underline transition-colors hover:text-text-1">Sobre Claudio</a></li>
+          <li><a href="#servicos" className="text-[0.835rem] font-medium text-text-3 no-underline transition-colors hover:text-text-1">Soluções</a></li>
+          <li><a href="#lucca" className="text-[0.835rem] font-medium text-text-3 no-underline transition-colors hover:text-text-1">Lucca</a></li>
+          <li><a href="#geo" className="text-[0.835rem] font-medium text-text-3 no-underline transition-colors hover:text-text-1">SEO & GEO</a></li>
+          <li className="flex items-center gap-2 bg-green-s/10 border border-green-s/20 px-3 py-1 rounded-full text-[0.72rem] font-semibold text-green-s">
+            <span className="w-1.5 h-1.5 rounded-full bg-green-s animate-pulse" />
+            Claudio Online
+          </li>
+          <li>
+            <a href="#contato" className="btn-primary bg-grad-main text-white px-4 py-2 rounded-md font-semibold text-[0.8rem] no-underline transition-all hover:scale-[1.02] shadow-[0_4px_24px_rgba(59,111,255,0.4)]">
+              Diagnóstico Gratuito
+            </a>
+          </li>
+        </ul>
+      </div>
     </nav>
   );
 }

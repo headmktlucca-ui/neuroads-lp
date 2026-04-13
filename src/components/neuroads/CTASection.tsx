@@ -1,88 +1,123 @@
 'use client';
+import { motion } from 'framer-motion';
 
 export default function CTASection() {
+  const fadeUp = {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.7 }
+  };
+
   return (
-    <section className="bg-ink py-20 lg:py-28 relative overflow-hidden" id="contato">
-      {/* Background glow */}
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(110,226,168,0.04)_0%,transparent_70%)] pointer-events-none" />
+    <section className="bg-[#05060F] py-24 lg:py-32 relative overflow-hidden" id="contato">
+      {/* Background glow shadow */}
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-1/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="max-w-[1160px] mx-auto px-10 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
           
+          {/* LEFT CONTENT */}
           <div>
-            <p className="flex items-center gap-[0.6rem] text-[0.68rem] font-semibold tracking-[0.22em] uppercase text-green-bright mb-4">
-              <span className="w-[18px] h-[1.5px] bg-green-bright" />
-              Próximo passo
-            </p>
-            <h2 className="font-serif text-[clamp(2.2rem,3.8vw,3.4rem)] font-bold leading-[1.1] tracking-[-0.01em] text-cream mb-5">
-              Vamos conversar sobre<br />
-              o <em className="italic text-green-bright font-medium">crescimento real</em><br />
-              da sua empresa?
-            </h2>
-            <p className="text-[0.97rem] text-white/55 font-light leading-[1.8]">
-              O diagnóstico é gratuito, dura 30 minutos e já sai com clareza sobre o que está funcionando, o que está desperdiçando seu dinheiro e onde está a maior oportunidade de crescimento.
-            </p>
-            <ul className="list-none mt-8 flex flex-col gap-2.5">
+            <motion.p {...fadeUp} className="flex items-center gap-3 text-[0.68rem] font-bold tracking-[0.2em] uppercase text-blue-2 mb-4">
+              <span className="w-5 h-[2px] bg-grad-main rounded-full" />
+              Sua Próxima Decisão
+            </motion.p>
+            
+            <motion.h2 {...fadeUp} transition={{ delay: 0.1 }} className="font-head text-[clamp(2rem,3.2vw,3.2rem)] font-extrabold leading-[1.1] tracking-tight text-text-1 mb-8">
+              Vamos construir sua<br />
+              <span className="bg-grad-main bg-clip-text text-transparent italic">máquina de vendas?</span>
+            </motion.h2>
+
+            <motion.p {...fadeUp} transition={{ delay: 0.2 }} className="text-[1rem] text-text-3 font-light leading-relaxed mb-10 max-w-[500px]">
+              O diagnóstico é gratuito, direto e revela exatamente onde seu dinheiro está sendo desperdiçado e onde está a maior oportunidade de escala.
+            </motion.p>
+
+            <ul className="space-y-5 mb-12">
               {[
-                'Análise das suas campanhas atuais (se houver)',
-                'Diagnóstico da sua visibilidade no Google e nas IAs',
-                'Identificação do principal gargalo no seu comercial',
-                'Recomendações práticas que você pode usar agora'
+                'Análise profunda de campanhas atuais',
+                'Diagnóstico de visibilidade GEO (IA)',
+                'Identificação de gargalos no comercial',
+                'Roadmap personalizado de crescimento'
               ].map((item, i) => (
-                <li key={i} className="flex items-start gap-3 text-[0.87rem] text-white/60 leading-normal">
-                  <span className="text-green-bright font-bold flex-shrink-0">✓</span> {item}
-                </li>
+                <motion.li 
+                  key={i} 
+                  {...fadeUp}
+                  transition={{ delay: 0.1 * i + 0.3 }}
+                  className="flex items-start gap-4 text-[0.9rem] text-text-2"
+                >
+                  <div className="w-6 h-6 rounded-full bg-blue-1/10 flex items-center justify-center text-blue-1 flex-shrink-0 mt-0.5">
+                    <span className="text-[0.6rem]">✓</span>
+                  </div>
+                  {item}
+                </motion.li>
               ))}
             </ul>
 
-            <div className="flex items-center gap-4 mt-10 pt-8 border-t border-white/[0.07]">
-              <div className="w-[52px] h-[52px] rounded-full bg-green-bright/10 border border-green-bright/15 flex items-center justify-center font-serif font-bold text-green-bright text-[1.1rem] flex-shrink-0">
-                CM
+            <motion.div {...fadeUp} transition={{ delay: 0.7 }} className="flex items-center gap-5 pt-10 border-t border-white/5">
+              <div className="w-14 h-14 rounded-full bg-grad-main p-px">
+                <div className="w-full h-full rounded-full bg-bg-base flex items-center justify-center font-head font-extrabold text-[1.1rem] text-blue-1">
+                  CM
+                </div>
               </div>
               <div>
-                <div className="font-semibold text-[0.9rem] text-cream">Claudio Müller</div>
-                <div className="text-[0.74rem] text-white/40 mt-0.5">Você fala diretamente comigo. Sem intermediários.</div>
+                <div className="font-head font-bold text-[0.95rem] text-text-1">Claudio Müller</div>
+                <div className="text-[0.75rem] text-text-4 mt-0.5 font-medium italic">Fundador & Estrategista Master</div>
               </div>
-            </div>
+            </motion.div>
           </div>
 
-          <div className="bg-white rounded-[6px] p-8 lg:p-10 border border-white/5 shadow-2xl">
-            <h3 className="font-serif text-[1.4rem] font-bold text-ink mb-1.5">Solicite seu diagnóstico gratuito</h3>
-            <p className="text-[0.8rem] text-ink3 mb-7 leading-normal">Sem compromisso. Preencha abaixo e entrarei em contato em até 2 horas úteis.</p>
+          {/* FORM CARD */}
+          <motion.div 
+            {...fadeUp}
+            transition={{ delay: 0.4 }}
+            className="bg-bg-card border border-white/10 p-8 lg:p-12 rounded-[40px] shadow-2xl relative group overflow-hidden"
+          >
+            {/* Background pattern */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-1/5 blur-3xl rounded-full" />
+            
+            <h3 className="font-head text-[1.5rem] font-extrabold text-text-1 mb-2 relative z-10">Solicitar Diagnóstico</h3>
+            <p className="text-[0.82rem] text-text-3 mb-10 relative z-10">Entraremos em contato em até 2 horas úteis.</p>
 
-            <form onSubmit={(e) => e.preventDefault()} className="flex flex-col gap-3.5">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[0.72rem] font-semibold text-ink2 tracking-[0.05em] uppercase">Seu nome</label>
-                <input type="text" className="w-full p-[0.8rem_1rem] border-[1.5px] border-black/10 rounded-[3px] font-sans text-[0.88rem] text-ink bg-white outline-none focus:border-green-brand transition-colors placeholder:text-ink3/55" placeholder="Como prefere ser chamado?" />
+            <form onSubmit={(e) => e.preventDefault()} className="space-y-5 relative z-10">
+              <div className="space-y-2">
+                <label className="text-[0.62rem] font-bold text-text-4 uppercase tracking-[0.1em] px-1">Seu Nome</label>
+                <input type="text" className="w-full bg-white/[0.03] border border-white/10 rounded-2xl p-4 text-[0.9rem] text-text-1 outline-none focus:border-blue-1/50 focus:bg-white/[0.05] transition-all" placeholder="Como prefere ser chamado?" />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[0.72rem] font-semibold text-ink2 tracking-[0.05em] uppercase">Nome da empresa</label>
-                <input type="text" className="w-full p-[0.8rem_1rem] border-[1.5px] border-black/10 rounded-[3px] font-sans text-[0.88rem] text-ink bg-white outline-none focus:border-green-brand transition-colors placeholder:text-ink3/55" placeholder="Empresa ou nome do negócio" />
+              
+              <div className="space-y-2">
+                <label className="text-[0.62rem] font-bold text-text-4 uppercase tracking-[0.1em] px-1">Nome da Empresa</label>
+                <input type="text" className="w-full bg-white/[0.03] border border-white/10 rounded-2xl p-4 text-[0.9rem] text-text-1 outline-none focus:border-blue-1/50 focus:bg-white/[0.05] transition-all" placeholder="Nome do seu negócio" />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[0.72rem] font-semibold text-ink2 tracking-[0.05em] uppercase">Seu WhatsApp</label>
-                <input type="tel" className="w-full p-[0.8rem_1rem] border-[1.5px] border-black/10 rounded-[3px] font-sans text-[0.88rem] text-ink bg-white outline-none focus:border-green-brand transition-colors placeholder:text-ink3/55" placeholder="(00) 00000-0000" />
+
+              <div className="space-y-2">
+                <label className="text-[0.62rem] font-bold text-text-4 uppercase tracking-[0.1em] px-1">WhatsApp</label>
+                <input type="tel" className="w-full bg-white/[0.03] border border-white/10 rounded-2xl p-4 text-[0.9rem] text-text-1 outline-none focus:border-blue-1/50 focus:bg-white/[0.05] transition-all" placeholder="(00) 00000-0000" />
               </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[0.72rem] font-semibold text-ink2 tracking-[0.05em] uppercase">Seu maior desafio hoje</label>
-                <select className="w-full p-[0.8rem_1rem] border-[1.5px] border-black/10 rounded-[3px] font-sans text-[0.88rem] text-ink bg-white outline-none appearance-none cursor-pointer focus:border-green-brand transition-colors bg-[url('data:image/svg+xml,%3Csvg_xmlns=%22http://www.w3.org/2000/svg%22_width=%2212%22_height=%228%22_viewBox=%220_0_12_8%22%3E%3Cpath_d=%22M1_1l5_5_5-5%22_stroke=%22%237A6F63%22_stroke-width=%221.5%22_fill=%22none%22_stroke-linecap=%22round%22/%3E%3C/svg%3E')] bg-no-repeat bg-[right_1rem_center]">
-                  <option value="" disabled selected>Selecione a situação mais próxima</option>
-                  <option>Quero gerar mais leads com anúncios</option>
-                  <option>Preciso reduzir o custo por cliente</option>
-                  <option>Quero aparecer no Google e nas IAs</option>
-                  <option>Quero automatizar meu operacional comercial</option>
-                  <option>Preciso das três coisas</option>
+
+              <div className="space-y-2">
+                <label className="text-[0.62rem] font-bold text-text-4 uppercase tracking-[0.1em] px-1">Principal Desafio</label>
+                <select 
+                  defaultValue=""
+                  className="w-full bg-white/[0.03] border border-white/10 rounded-2xl p-4 text-[0.9rem] text-text-1 outline-none focus:border-blue-1/50 focus:bg-white/[0.05] transition-all appearance-none cursor-pointer"
+                >
+                  <option value="" disabled className="bg-bg-base">Selecione uma opção</option>
+                  <option value="leads" className="bg-bg-base text-black">Gerar mais leads qualificados</option>
+                  <option value="cpa" className="bg-bg-base text-black">Reduzir custo por aquisição (CPA)</option>
+                  <option value="geo" className="bg-bg-base text-black">Aparecer no topo do Google/IA</option>
+                  <option value="automate" className="bg-bg-base text-black">Automatizar processo comercial</option>
                 </select>
               </div>
-              <button type="submit" className="w-full bg-green-brand text-white font-sans font-bold text-[0.9rem] p-4 rounded-[3px] cursor-pointer mt-2 transition-all hover:bg-green-medium hover:-translate-y-[1px] tracking-[0.02em]">
-                Quero falar com o Claudio →
+
+              <button type="submit" className="w-full bg-grad-main text-white font-head font-extrabold text-[0.95rem] p-4 rounded-2xl cursor-pointer mt-4 shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all">
+                AGENDAR DIAGNÓSTICO →
               </button>
-              <p className="text-center text-[0.74rem] text-ink3 mt-4 leading-normal">
-                Prefere ir direto? <a href="#" className="color-green-brand no-underline font-semibold hover:underline">Chame no WhatsApp agora</a>.<br />
-                Sem spam. Suas informações são tratadas com sigilo.
+              
+              <p className="text-center text-[0.74rem] text-text-4 mt-6 leading-relaxed">
+                Prefere algo mais ágil? <a href="#" className="text-blue-1 hover:text-blue-2 transition-colors font-bold underline">Chame no WhatsApp</a>
               </p>
             </form>
-          </div>
+          </motion.div>
 
         </div>
       </div>

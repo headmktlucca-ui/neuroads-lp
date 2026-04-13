@@ -2,116 +2,154 @@
 import { motion } from 'framer-motion';
 
 export default function HeroSection() {
+  const fadeUp = {
+    initial: { opacity: 0, y: 22 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.8 }
+  };
+
   return (
-    <section className="relative grid grid-cols-1 lg:grid-cols-[1fr_400px] min-h-[92vh] items-stretch border-b border-black/10 overflow-hidden">
-      {/* Decorative vertical line (desktop) */}
-      <div className="hidden lg:block absolute top-0 right-[400px] w-[1px] h-full bg-black/10 z-10" />
+    <section className="relative pt-24 pb-16 min-h-[92vh] flex items-center overflow-hidden">
+      {/* Grid pattern background */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-40 z-0"
+        style={{
+          backgroundImage: `linear-gradient(rgba(59,111,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(59,111,255,0.06) 1px, transparent 1px)`,
+          backgroundSize: '52px 52px',
+          maskImage: 'radial-gradient(ellipse 80% 70% at 50% 30%, black 20%, transparent 80%)'
+        }}
+      />
 
-      <div className="relative flex flex-col justify-center py-28 px-6 lg:padding-l-10 lg:pl-10 lg:pr-20">
-        {/* Grid pattern background */}
-        <div 
-          className="absolute inset-0 pointer-events-none opacity-40"
-          style={{
-            backgroundImage: `linear-gradient(rgba(22,15,8,0.09) 1px, transparent 1px), linear-gradient(90deg, rgba(22,15,8,0.09) 1px, transparent 1px)`,
-            backgroundSize: '60px 60px'
-          }}
-        />
+      <div className="max-w-[1160px] mx-auto px-10 relative z-10 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-16 lg:gap-20 items-center">
+          
+          {/* LEFT CONTENT */}
+          <div className="flex flex-col">
+            <motion.div {...fadeUp} transition={{ delay: 0.1 }} className="flex items-center gap-3 mb-7 flex-wrap">
+              <span className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-1/30 bg-blue-1/10 font-sans font-semibold text-[0.7rem] text-blue-2 tracking-widest uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-1 animate-pulse" />
+                Machine Learning · IA · Automação
+              </span>
+              <span className="inline-flex items-center px-3 py-1.5 rounded-full border border-white/10 bg-white/5 font-sans font-semibold text-[0.68rem] text-text-3 tracking-widest uppercase">
+                Para PMEs
+              </span>
+            </motion.div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.1 }}
-          className="relative inline-flex items-center gap-[0.7rem] text-[0.7rem] font-semibold tracking-[0.22em] uppercase text-green-brand mb-8"
-        >
-          <span className="w-6 h-[1.5px] bg-green-brand" />
-          Para pequenas e médias empresas
-        </motion.div>
+            <motion.h1 
+              {...fadeUp} transition={{ delay: 0.25 }}
+              className="font-head text-[clamp(2.4rem,4.5vw,4.4rem)] font-extrabold leading-[1.05] tracking-tight text-text-1 mb-6"
+            >
+              Sua empresa merece<br />
+              um marketing que<br />
+              <span className="bg-grad-main bg-clip-text text-transparent">realmente funciona.</span>
+            </motion.h1>
 
-        <motion.h1 
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.25 }}
-          className="relative font-serif text-[clamp(2.8rem,5vw,5rem)] font-bold leading-[1.02] tracking-[-0.01em] text-ink mb-7"
-        >
-          Sua empresa merece<br />
-          um marketing que<br />
-          <em className="italic text-green-brand font-medium">realmente funciona.</em>
-        </motion.h1>
+            <motion.p 
+              {...fadeUp} transition={{ delay: 0.4 }}
+              className="text-[1.05rem] text-text-2 font-light leading-relaxed max-w-[540px] mb-9"
+            >
+              Sou Claudio Müller. Combinamos campanhas pagas de alta performance, posicionamento no Google e nas IAs de busca (GEO), e agentes inteligentes no seu operacional comercial — tudo integrado, tudo orientado a resultado mensurável.
+            </motion.p>
 
-        <motion.p 
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="relative text-[1rem] text-ink2 leading-[1.8] max-w-[500px] font-light"
-        >
-          Há 25 anos ajudo empresas como a sua a crescerem de forma inteligente — com campanhas pagas que convertem, posicionamento orgânico (incluindo nas buscas por IA) e agentes automatizados que destravam o seu comercial.
-        </motion.p>
+            <motion.div {...fadeUp} transition={{ delay: 0.55 }} className="flex flex-wrap gap-4 mb-10">
+              <a href="#contato" className="btn-primary bg-grad-main text-white px-8 py-3 rounded-md font-bold text-[0.875rem] no-underline shadow-[0_4px_24px_rgba(59,111,255,0.4)] transition-all hover:-translate-y-1 hover:shadow-[0_8px_32px_rgba(59,111,255,0.55)]">
+                Quero um diagnóstico gratuito →
+              </a>
+              <a href="#claudio" className="bg-white/5 border border-white/10 text-text-2 px-8 py-3 rounded-md font-semibold text-[0.875rem] no-underline transition-all hover:bg-white/10 hover:border-white/20 hover:text-white">
+                Conheça minha história
+              </a>
+            </motion.div>
 
-        <motion.div 
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.55 }}
-          className="relative flex flex-wrap gap-4 mt-11"
-        >
-          <a href="#contato" className="inline-flex items-center gap-2 bg-green-brand text-white font-sans font-semibold text-[0.875rem] py-[0.9rem] px-8 rounded-[3px] no-underline transition-all hover:bg-green-medium hover:-translate-y-[1px] cursor-pointer tracking-[0.01em]">
-            Quero um diagnóstico gratuito →
-          </a>
-          <a href="#claudio" className="inline-flex items-center gap-2 bg-transparent text-ink2 font-sans font-medium text-[0.875rem] py-[0.9rem] px-7 rounded-[3px] no-underline border border-black/10 transition-all hover:border-ink3 hover:text-ink">
-            Conheça minha história
-          </a>
-        </motion.div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.7 }}
-          className="relative flex items-center gap-4 mt-12 pt-10 border-t border-black/10 text-[0.8rem] text-ink3"
-        >
-          <div className="flex">
-            {['AS', 'RC', 'FM', 'JP'].map((initials, i) => (
-              <div key={i} className={`w-8 h-8 rounded-full border-2 border-cream bg-green-light flex items-center justify-center text-[0.58rem] font-bold text-green-brand flex-shrink-0 ${i > 0 ? '-ml-2.5' : ''}`}>
-                {initials}
+            <motion.div {...fadeUp} transition={{ delay: 0.7 }} className="flex items-center gap-4 pt-8 border-t border-white/10">
+              <div className="flex">
+                {['AS', 'RC', 'FM', 'JP'].map((initials, i) => (
+                  <div key={i} className={`w-7 h-7 rounded-full border-2 border-[#05060F] bg-grad-main flex items-center justify-center text-[0.6rem] font-bold text-white ${i > 0 ? '-ml-2' : ''}`}>
+                    {initials}
+                  </div>
+                ))}
               </div>
-            ))}
+              <div className="text-[0.78rem] text-text-3 leading-tight">
+                <span className="text-amber-s">★★★★★</span><br />
+                Avaliação 5 estrelas por clientes PME em todo o Brasil
+              </div>
+            </motion.div>
           </div>
-          <div>
-            <span className="text-amber tracking-[-0.05em] text-[0.9rem]">★★★★★</span><br />
-            <span>Avaliação 5 estrelas por clientes PME em todo o Brasil</span>
+
+          {/* RIGHT - Claudio Card */}
+          <div className="relative">
+            {/* Floating Metrics */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1 }}
+              className="absolute -top-6 -left-12 bg-[#090B18]/80 backdrop-blur-xl border border-white/10 p-4 pt-5 rounded-xl shadow-2xl z-20 hidden lg:block"
+            >
+              <div className="font-head text-[1.5rem] font-extrabold bg-grad-main bg-clip-text text-transparent leading-none">R$10M+</div>
+              <div className="text-[0.62rem] font-bold text-text-4 tracking-widest uppercase mt-2">Investimento gerido</div>
+              <div className="text-[0.7rem] font-semibold text-green-s mt-1">↑ Campanhas reais</div>
+            </motion.div>
+
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 1.2 }}
+              className="absolute -bottom-6 -right-8 bg-[#090B18]/80 backdrop-blur-xl border border-white/10 p-4 pt-5 rounded-xl shadow-2xl z-20 hidden lg:block"
+            >
+              <div className="font-head text-[1.5rem] font-extrabold bg-grad-main bg-clip-text text-transparent leading-none">5.2×</div>
+              <div className="text-[0.62rem] font-bold text-text-4 tracking-widest uppercase mt-2">ROAS Médio</div>
+              <div className="text-[0.7rem] font-semibold text-green-s mt-1">↑ +15% vs mês ant.</div>
+            </motion.div>
+
+            {/* Main Card */}
+            <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-2xl shadow-2xl relative">
+              {/* Top glow line */}
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-1/60 to-transparent" />
+              
+              <div className="bg-gradient-to-br from-[#3B6FFF]/10 to-[#7B5FFF]/05 p-8 border-b border-white/10 flex items-center gap-5">
+                <div className="w-16 h-16 rounded-full bg-grad-main flex items-center justify-center font-head font-extrabold text-[1.3rem] text-white shadow-[0_0_24px_rgba(59,111,255,0.4)] relative">
+                  CM
+                  <span className="absolute bottom-0 right-0 w-3.5 h-3.5 rounded-full bg-green-s border-2 border-[#090B18] animate-pulse" />
+                </div>
+                <div>
+                  <div className="font-head font-bold text-[1.05rem] text-text-1">Claudio Müller</div>
+                  <div className="text-[0.75rem] text-text-3 mt-1 uppercase tracking-wide">Estrategista de Marketing & IA</div>
+                </div>
+                <div className="ml-auto hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-green-s/10 border border-green-s/20 text-[0.68rem] font-bold text-green-s">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-s" /> ONLINE
+                </div>
+              </div>
+
+              <div className="p-8 pb-10">
+                <p className="text-[0.9rem] text-text-2 italic font-light leading-relaxed border-l-2 border-blue-1 pl-4 mb-7">
+                  "Não vendo campanhas. Construo sistemas que geram resultado enquanto você cuida do que sabe fazer de melhor."
+                </p>
+
+                <div className="grid grid-cols-3 gap-px bg-white/10 border border-white/10 rounded-xl overflow-hidden mb-7">
+                  <div className="bg-[#090B18] p-4 text-center">
+                    <div className="font-head text-[1.2rem] font-extrabold bg-grad-main bg-clip-text text-transparent truncate">R$10M+</div>
+                    <div className="text-[0.6rem] text-text-4 uppercase tracking-widest mt-1">Investido</div>
+                  </div>
+                  <div className="bg-[#090B18] p-4 text-center">
+                    <div className="font-head text-[1.2rem] font-extrabold bg-grad-main bg-clip-text text-transparent truncate">25+</div>
+                    <div className="text-[0.6rem] text-text-4 uppercase tracking-widest mt-1">Anos Exp</div>
+                  </div>
+                  <div className="bg-[#090B18] p-4 text-center">
+                    <div className="font-head text-[1.2rem] font-extrabold bg-grad-main bg-clip-text text-transparent truncate">3em1</div>
+                    <div className="text-[0.6rem] text-text-4 uppercase tracking-widest mt-1">Soluções</div>
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap gap-2 text-[0.68rem] font-medium">
+                  {['Google Ads', 'Meta Ads', 'Growth', 'AI Automation'].map(cert => (
+                    <span key={cert} className="px-2.5 py-1 rounded-full bg-blue-1/10 border border-blue-1/30 text-blue-2">
+                      {cert}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
-        </motion.div>
-      </div>
 
-      {/* Right Column - Desktop Photo Content */}
-      <div className="hidden lg:flex relative bg-ink flex-col justify-end overflow-hidden">
-        {/* Glow effect */}
-        <div className="absolute top-[-100px] right-[-100px] w-[400px] h-[400px] bg-[radial-gradient(circle,rgba(110,226,168,0.07)_0%,transparent_65%)] pointer-events-none" />
-
-        <div className="absolute top-10 left-6 bg-yellow-500/10 border border-yellow-500/20 p-[0.9rem_1.1rem] rounded-[4px] text-center max-w-[130px] backdrop-blur-md z-10">
-          <div className="font-serif text-[2rem] font-bold text-[#F0C060] leading-none">R$10M<sup className="text-[0.55rem]">+</sup></div>
-          <div className="text-[0.62rem] font-semibold text-[#F0C060] tracking-[0.07em] uppercase mt-1 opacity-75">Investimento gerenciado</div>
-        </div>
-
-        <div className="flex-1 relative overflow-hidden">
-          <img 
-            src="/images/Eu Executivo.png" 
-            alt="Claudio Müller" 
-            className="absolute inset-0 w-full h-full object-cover object-right opacity-80"
-          />
-          {/* Bottom Fade to blend with footer */}
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent opacity-80" />
-
-          <div className="absolute bottom-24 right-6 bg-green-brand/10 border border-green-brand/20 p-[0.8rem_1.1rem] rounded-[4px] max-w-[150px] backdrop-blur-md z-10">
-            <div className="font-serif text-[1.6rem] font-bold text-green-bright leading-none">25+</div>
-            <div className="text-[0.62rem] font-semibold text-green-bright tracking-[0.06em] uppercase mt-1 opacity-75">Anos em Growth</div>
-          </div>
-        </div>
-
-        <div className="bg-white/5 border-t border-white/10 p-[1.75rem_2rem]">
-          <div className="font-serif text-[1.25rem] font-bold text-cream mb-1 tracking-[0.01em]">Claudio Müller</div>
-          <div className="text-[0.75rem] text-white/35 tracking-[0.05em] uppercase font-medium">Estrategista de Marketing & IA · NeuroAds</div>
-          <p className="text-[1rem] text-white/50 mt-[0.85rem] leading-[1.6] italic font-light font-serif">
-            "Não vendo campanhas. Construo sistemas que geram resultado enquanto você cuida do que sabe fazer de melhor."
-          </p>
         </div>
       </div>
     </section>

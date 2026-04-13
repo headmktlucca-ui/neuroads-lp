@@ -1,47 +1,57 @@
 @import "tailwindcss";
 
 :root {
-  --background: #F9F6F0;
-  --foreground: #160F08;
+  --background: #05060F;
+  --foreground: #F0F2FF;
   
-  --cream:   #F9F6F0;
-  --cream2:  #F0EBE1;
-  --ink:     #160F08;
-  --ink2:    #32271C;
-  --ink3:    #7A6F63;
-  --green:   #0F5C3A;
-  --green-l: #E4F0EA;
-  --green-m: #1A7D52;
-  --green-b: #6EE2A8;
-  --amber:   #C47A0A;
-  --amber-l: #FDF3E0;
-  --rule:    rgba(22,15,8,0.09);
-  --shadow:  0 4px 32px rgba(22,15,8,0.07);
+  --bg-deep:     #05060F;
+  --bg-base:     #090B18;
+  --bg-card:     rgba(255,255,255,0.04);
+  --bg-card-h:   rgba(255,255,255,0.07);
+  --bg-input:    rgba(255,255,255,0.06);
+
+  --blue-1:      #3B6FFF;
+  --blue-2:      #5B8FFF;
+  --violet-1:    #7B5FFF;
+  --violet-2:    #9B7FFF;
+  --cyan-1:      #00D4FF;
+  --green-s:     #00C896;
+  --amber-s:     #FFB020;
+  --red-s:       #FF4D6A;
+
+  --grad-main:   linear-gradient(135deg, #3B6FFF 0%, #7B5FFF 100%);
+  --grad-glow:   linear-gradient(135deg, rgba(59,111,255,.18) 0%, rgba(123,95,255,.12) 100%);
+  --grad-card:   linear-gradient(145deg, rgba(59,111,255,.08) 0%, rgba(123,95,255,.05) 100%);
+
+  --border:      rgba(255,255,255,0.08);
+  --border-h:    rgba(255,255,255,0.14);
+  --border-blue: rgba(59,111,255,0.35);
+
+  --text-1:  #F0F2FF;
+  --text-2:  rgba(240,242,255,0.7);
+  --text-3:  rgba(240,242,255,0.42);
+  --text-4:  rgba(240,242,255,0.25);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans-alt), var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-serif), Georgia, serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-head: 'Manrope', ui-sans-serif, system-ui, sans-serif;
   
-  --color-cream: var(--cream);
-  --color-cream2: var(--cream2);
-  --color-ink: var(--ink);
-  --color-ink2: var(--ink2);
-  --color-ink3: var(--ink3);
-  --color-green-brand: var(--green);
-  --color-green-light: var(--green-l);
-  --color-green-medium: var(--green-m);
-  --color-green-bright: var(--green-b);
-  --color-amber: var(--amber);
-  --color-amber-light: var(--amber-l);
+  --color-bg-base: var(--bg-base);
+  --color-bg-card: var(--bg-card);
+  --color-blue-1: var(--blue-1);
+  --color-blue-2: var(--blue-2);
+  --color-violet-1: var(--violet-1);
+  --color-violet-2: var(--violet-2);
+  --color-green-s: var(--green-s);
+  --color-amber-s: var(--amber-s);
   
-  --color-brand-orange: #F9A620;
-  --color-brand-orange-hover: #FFB740;
-  --color-brand-green: #CCFF00;
-  --color-brand-green-hover: #ddff33;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
 }
 
 body {
