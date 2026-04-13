@@ -1,24 +1,25 @@
 'use client';
 import { motion } from 'framer-motion';
 
+const MotionDiv = motion.div;
+const MotionP = motion.p;
+const MotionH2 = motion.h2;
+
 const testimonials = [
   {
-    stars: '★★★★★',
-    text: '"Claudio é um profissional com grande entendimento técnico. Trouxe muitos leads qualificados e ajudou na expansão da empresa. A diferença foi brutal, e o que mais valorizo é a comunicação estratégica e direta."',
-    author: 'Carlos Eduardo',
-    role: 'CEO — Soluções Regulatórias'
+    q: 'O que me impressionou na NeuroAds foi a clareza. Pela primeira vez, eu entendo onde cada centavo do meu investimento está indo e vejo o ROAS subir mês a mês.',
+    a: 'Luiz F.',
+    s: 'Proprietário, Construtora L.'
   },
   {
-    stars: '★★★★★',
-    text: '"Eu tinha tentado outras agências. Com a NeuroAds foi diferente — o Claudio olhou de verdade para o meu negócio. Hoje tenho clareza total do que está sendo feito e os resultados aparecem todo mês."',
-    author: 'Ana Paula',
-    role: 'Diretora Comercial — B2B Digital'
+    q: 'A implementação dos agentes de IA no nosso WhatsApp mudou o jogo. Meus vendedores agora só pegam os leads prontos para comprar. Ganhamos 2h por dia cada um.',
+    a: 'Mariana S.',
+    s: 'Diretora Comercial, TecSol'
   },
   {
-    stars: '★★★★★',
-    text: '"A integração entre anúncios e agentes de IA surpreendeu. Nossa equipe de vendas passou a receber leads muito mais quentes — e o tempo de resposta caiu drasticamente. Marketing e comercial unidos."',
-    author: 'Rodrigo Motta',
-    role: 'Sócio — Serviços de Engenharia'
+    q: 'Eu achava que SEO era só colocar palavra-chave. O Claudio me mostrou que GEO é o que vai manter a gente vivo no ChatGPT. Já estamos sendo citados lá!',
+    a: 'Ricardo M.',
+    s: 'Sócio, Advocacia M.'
   }
 ];
 
@@ -31,37 +32,37 @@ export default function TestimonialsSection() {
   };
 
   return (
-    <section className="bg-bg-base py-24 lg:py-32 relative border-b border-white/5">
-      <div className="max-w-[1160px] mx-auto px-10 relative z-10">
-        <motion.p {...fadeUp} className="flex items-center gap-3 text-[0.68rem] font-bold tracking-[0.2em] uppercase text-blue-2 mb-4">
-          <span className="w-5 h-[2px] bg-grad-main rounded-full" />
-          Provas de Performance
-        </motion.p>
-        
-        <motion.h2 {...fadeUp} transition={{ delay: 0.1 }} className="font-head text-[clamp(2rem,3.2vw,3.2rem)] font-extrabold leading-[1.1] tracking-tight text-text-1 mb-16">
-          Empresas que <span className="bg-grad-main bg-clip-text text-transparent italic">escalaram</span><br />com a nossa inteligência.
-        </motion.h2>
+    <section className="section bg-white/[0.02] border-y border-white/10" id="depoimentos">
+      <div className="wrap py-24 lg:py-32">
+        <div className="text-center mb-16">
+          <MotionP {...fadeUp} className="s-badge mx-auto">Feedback dos Clientes</MotionP>
+          <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title mx-auto text-balance">
+            O que dizem os parceiros<br />que já <span className="g">escalaram com o Lucca</span>
+          </MotionH2>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
-            <motion.div 
-              key={i} 
+            <MotionDiv
+              key={i}
               {...fadeUp}
-              transition={{ delay: 0.1 * i + 0.3 }}
-              className="bg-bg-card border border-white/10 p-10 rounded-3xl relative hover:bg-bg-card-h transition-colors"
+              transition={{ delay: 0.2 + (i * 0.1) }}
+              className="bg-white/04 border border-white/08 rounded-lg p-8 relative hover:border-blue-1/30 transition-all"
             >
-              <div className="text-blue-1 text-[0.8rem] tracking-[0.1em] mb-6">{t.stars}</div>
-              <p className="font-head text-[1rem] text-text-2 leading-relaxed italic font-medium mb-10">
-                {t.text}
+              <div className="text-amber-s mb-5 text-[0.8rem]">★★★★★</div>
+              <p className="text-[0.935rem] text-text-2 italic font-light leading-[1.8] mb-8 relative z-10">
+                "{t.q}"
               </p>
-              <div className="font-head font-bold text-[0.9rem] text-text-1">{t.author}</div>
-              <div className="text-[0.75rem] text-text-4 mt-1 font-bold tracking-wide uppercase">{t.role}</div>
-
-              {/* Decorative quote mark */}
-              <div className="absolute top-8 right-8 text-[3rem] font-serif leading-none text-white/[0.03] pointer-events-none select-none">
-                ”
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-grad-main flex items-center justify-center font-bold text-white text-[0.75rem]">
+                  {t.a.split(' ')[0][0]}{t.a.split(' ')[1] ? t.a.split(' ')[1][0] : ''}
+                </div>
+                <div>
+                  <div className="font-head font-bold text-[0.85rem] text-text-1">{t.a}</div>
+                  <div className="text-[0.65rem] text-text-4 uppercase tracking-[0.1em] mt-0.5">{t.s}</div>
+                </div>
               </div>
-            </motion.div>
+            </MotionDiv>
           ))}
         </div>
       </div>

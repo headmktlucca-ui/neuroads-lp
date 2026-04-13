@@ -1,27 +1,52 @@
 'use client';
 import { motion } from 'framer-motion';
 
+const MotionDiv = motion.div;
+const MotionP = motion.p;
+const MotionH2 = motion.h2;
+
 const services = [
   {
-    num: '01',
-    title: 'Campanhas de Alta Performance',
-    desc: 'Gestão de tráfego pago no Google e Meta Ads com foco total em ROI. Utilizamos o ecossistema Lucca para monitorar cada conversão e otimizar seu investimento em tempo real.',
-    items: ['Dashboard Exclusivo (Lucca)', 'Rastreamento Server-Side', 'Otimização Diária de ROI'],
-    grad: 'from-blue-1/20 to-blue-2/05'
+    id: '01',
+    tag: 'Performance',
+    title: 'Campanhas Patrocinadas de Alta Performance',
+    desc: 'Google Ads e Meta Ads gerenciados com a plataforma Lucca — análise contínua, criativos validados por dados e foco total no custo por aquisição ideal para o seu negócio.',
+    items: [
+      'Gestão estratégica de Google Ads e Meta Ads',
+      'Otimização de lances e orçamento em tempo real',
+      'Criativos e copies gerados e testados com IA',
+      'Rastreamento server-side (100% das conversões)',
+      'Relatórios com foco em ROI, não em métricas de vaidade',
+      'Simulação de ROAS antes de escalar o investimento'
+    ]
   },
   {
-    num: '02',
-    title: 'Posicionamento SEO & GEO',
-    desc: 'Sua marca visível onde as decisões são tomadas. Dominamos o Google tradicional e as novas IAs de busca (ChatGPT, Gemini, Perplexity) para que você seja a resposta número 1.',
-    items: ['SEO Técnico Avançado', 'Otimização para IAs (GEO)', 'Autoridade de Domínio'],
-    grad: 'from-violet-1/20 to-violet-2/05'
+    id: '02',
+    tag: 'Visibilidade',
+    title: 'SEO Estratégico + GEO — Apareça no Google e na IA',
+    desc: 'Posicionamento nos resultados orgânicos do Google (SEO) e nas respostas geradas por IA como ChatGPT, Gemini e Perplexity (GEO). Em 2026, quem não está nos dois é invisível para metade do mercado.',
+    items: [
+      'SEO técnico e de conteúdo para buscas orgânicas',
+      'GEO: posicionamento nas respostas de IA generativa',
+      'Estruturação do site para AI Overviews do Google',
+      'Estratégia de conteúdo que atrai e converte',
+      'Monitoramento da presença da sua marca na IA',
+      'Integração com as campanhas pagas para maximizar ROI'
+    ]
   },
   {
-    num: '03',
-    title: 'Agentes de Automação IA',
-    desc: 'Escalamos seu atendimento comercial sem aumentar sua folha de pagamento. Implementamos agentes inteligentes que qualificam leads e agendam reuniões 24h por dia.',
-    items: ['Qualificação de Leads IA', 'Agendamento Automático', 'Integração com CRM'],
-    grad: 'from-cyan-1/20 to-blue-1/05'
+    id: '03',
+    tag: 'Operação',
+    title: 'Agentes de IA no Seu Operacional Comercial',
+    desc: 'Identificamos onde sua operação perde tempo e dinheiro, e implantamos agentes de IA personalizados que resolvem esse gargalo — do primeiro contato ao fechamento.',
+    items: [
+      'Diagnóstico do gargalo operacional comercial',
+      'Agente de qualificação de leads 24h por dia',
+      'Automação de follow-up e nutrição de pipeline',
+      'Integração com CRM e ferramentas existentes',
+      'Atendimento automático via WhatsApp e site',
+      'Treinamento da equipe para trabalhar com IA'
+    ]
   }
 ];
 
@@ -34,67 +59,55 @@ export default function ServicesSection() {
   };
 
   return (
-    <section className="bg-[#05060F] py-24 lg:py-32 relative overflow-hidden" id="servicos">
-      {/* Glow highlight */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-grad-glow blur-[120px] opacity-20 pointer-events-none" />
-
-      <div className="max-w-[1160px] mx-auto px-10 relative z-10">
-        <div className="text-center max-w-[800px] mx-auto mb-20 lg:mb-28">
-          <motion.p {...fadeUp} className="flex items-center justify-center gap-3 text-[0.68rem] font-bold tracking-[0.2em] uppercase text-blue-2 mb-4">
-            <span className="w-5 h-[2px] bg-grad-main rounded-full" />
-            Nossa Entrega
-            <span className="w-5 h-[2px] bg-grad-main rounded-full" />
-          </motion.p>
-          <motion.h2 {...fadeUp} transition={{ delay: 0.1 }} className="font-head text-[clamp(2.5rem,4vw,4rem)] font-extrabold leading-[1.05] tracking-tight text-text-1">
-            Três pilares para sua<br />
-            <span className="bg-grad-main bg-clip-text text-transparent italic">escala acelerada.</span>
-          </motion.h2>
-          <motion.p {...fadeUp} transition={{ delay: 0.2 }} className="text-[1.1rem] text-text-3 font-light leading-relaxed mt-7 mx-auto max-w-[600px]">
-            Unimos o melhor do tráfego pago, autoridade orgânica e automação operacional em um sistema único.
-          </motion.p>
+    <section className="section bg-white/[0.02] border-y border-white/10" id="servicos">
+      <div className="wrap py-24 lg:py-32">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-32 items-end mb-14">
+          <div>
+            <MotionP {...fadeUp} className="s-badge">O que fazemos</MotionP>
+            <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title">
+              Três soluções.<br /><span className="g">Uma estratégia.</span><br />Um responsável.
+            </MotionH2>
+          </div>
+          <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="s-body !mt-0 !max-w-none">
+            Cada serviço da NeuroAds funciona sozinho — mas o poder real aparece quando os três trabalham juntos, alimentando um ao outro com dados e resultados.
+          </MotionP>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {services.map((s, i) => (
-            <motion.div 
-              key={i}
+        <div className="space-y-5">
+          {services.map((svc, i) => (
+            <MotionDiv 
+              key={i} 
               {...fadeUp}
-              transition={{ delay: 0.1 * i + 0.3 }}
-              className={`bg-bg-card border border-white/10 rounded-3xl p-10 flex flex-col h-full hover:bg-bg-card-h hover:border-white/20 transition-all group relative overflow-hidden`}
+              transition={{ delay: 0.3 + (i * 0.1) }}
+              className="group bg-white/[0.04] border border-white/[0.08] rounded-xl overflow-hidden transition-all hover:border-blue-1/35 hover:shadow-[0_8px_48px_rgba(59,111,255,0.12)]"
             >
-              {/* Card gradient glow */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${s.grad} opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
-              
-              <div className="font-head text-[2.8rem] font-extrabold text-blue-1/10 mb-8 leading-none relative z-10">
-                {s.num}
+              <div className="p-8 lg:p-10 border-b border-white/10 bg-grad-card flex flex-col md:flex-row items-start gap-6 lg:gap-10">
+                <div className="font-head text-[2.5rem] font-extrabold bg-grad-main bg-clip-text text-transparent opacity-30 leading-none min-w-[48px] transition-opacity group-hover:opacity-100">
+                  {svc.id}
+                </div>
+                <div>
+                  <div className="mb-2"><span className="tag">{svc.tag}</span></div>
+                  <h3 className="font-head text-[1.15rem] font-bold text-text-1 mb-2 leading-tight transition-colors">
+                    {svc.title}
+                  </h3>
+                  <p className="text-[0.835rem] text-text-3 font-light leading-relaxed max-w-[700px]">
+                    {svc.desc}
+                  </p>
+                </div>
               </div>
-              <h3 className="font-head text-[1.4rem] font-extrabold text-text-1 mb-5 leading-tight group-hover:text-blue-2 transition-colors relative z-10">
-                {s.title}
-              </h3>
-              <p className="text-[0.9rem] text-text-3 font-light leading-relaxed mb-10 relative z-10">
-                {s.desc}
-              </p>
-              
-              <ul className="mt-auto space-y-4 relative z-10">
-                {s.items.map((item, idx) => (
-                  <li key={idx} className="flex items-center gap-3 text-[0.8rem] text-text-2 font-medium">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-1" />
+              <div className="p-8 lg:p-10 grid grid-cols-1 md:grid-cols-2 gap-y-3 gap-x-10">
+                {svc.items.map((item, idx) => (
+                  <div key={idx} className="flex items-start gap-3 text-[0.82rem] text-text-2 leading-relaxed">
+                    <div className="w-4 h-4 rounded-full bg-green-s/[0.12] border border-green-s/[0.25] flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <span className="text-[0.6rem] font-extrabold text-green-s">✓</span>
+                    </div>
                     {item}
-                  </li>
+                  </div>
                 ))}
-              </ul>
-
-              {/* Bottom line glow */}
-              <div className="absolute bottom-0 left-0 right-0 h-1 bg-grad-main opacity-0 group-hover:opacity-100 transition-opacity translate-y-1 group-hover:translate-y-0 duration-500" />
-            </motion.div>
+              </div>
+            </MotionDiv>
           ))}
         </div>
-
-        <motion.div {...fadeUp} transition={{ delay: 0.8 }} className="mt-20 text-center">
-          <p className="text-[0.85rem] text-text-3 opacity-60">
-            Cada solução é integrada ao seu ecossistema comercial existente.
-          </p>
-        </motion.div>
       </div>
     </section>
   );

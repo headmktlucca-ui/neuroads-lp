@@ -1,6 +1,5 @@
 'use client';
 import { useEffect } from 'react';
-import Topbar from '../components/neuroads/Topbar';
 import Navbar from '../components/neuroads/Navbar';
 import HeroSection from '../components/neuroads/HeroSection';
 import AboutSection from '../components/neuroads/AboutSection';
@@ -15,7 +14,7 @@ import Footer from '../components/neuroads/Footer';
 
 export default function Home() {
   useEffect(() => {
-    // Scroll reveal logic
+    // Scroll reveal logic for any element using the .reveal class
     const observerOptions = {
       threshold: 0.08,
       rootMargin: '0px 0px -40px 0px'
@@ -39,7 +38,6 @@ export default function Home() {
 
   return (
     <main className="min-h-screen">
-      <Topbar />
       <Navbar />
       
       <HeroSection />

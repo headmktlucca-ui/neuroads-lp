@@ -1,11 +1,9 @@
 'use client';
 import { motion } from 'framer-motion';
 
-const geoStats = [
-  { num: '50%+', desc: 'das buscas no Google já exibem respostas geradas por IA antes de qualquer link' },
-  { num: '527%', desc: 'de crescimento em acessos vindos de IA em apenas 5 meses de 2025' },
-  { num: '84%', desc: 'das empresas ainda não monitoram se são citadas — ou ignoradas — pelas IAs' }
-];
+const MotionDiv = motion.div;
+const MotionP = motion.p;
+const MotionH2 = motion.h2;
 
 export default function GeoSection() {
   const fadeUp = {
@@ -16,84 +14,89 @@ export default function GeoSection() {
   };
 
   return (
-    <section className="bg-[#05060F] py-24 lg:py-32 relative border-b border-white/5" id="geo">
-      <div className="max-w-[1160px] mx-auto px-10 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_420px] gap-20 items-center">
+    <section className="section bg-white/[0.02] border-y border-white/10" id="geo">
+      <div className="wrap py-24 lg:py-32">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           
-          {/* LEFT CONTENT */}
-          <div>
-            <motion.p {...fadeUp} className="flex items-center gap-3 text-[0.68rem] font-bold tracking-[0.2em] uppercase text-blue-2 mb-4">
-              <span className="w-5 h-[2px] bg-grad-main rounded-full" />
-              SEO 2.0: O advento do GEO
-            </motion.p>
-            
-            <motion.h2 {...fadeUp} transition={{ delay: 0.1 }} className="font-head text-[clamp(1.9rem,3.4vw,3rem)] font-extrabold leading-[1.1] tracking-tight text-text-1 mb-8">
-              Quando alguém pergunta ao<br />
-              <span className="bg-grad-main bg-clip-text text-transparent italic">ChatGPT</span> sobre o seu nicho,<br />
-              você é a recomendação?
-            </motion.h2>
+          {/* BROWSER MOCKUP SIDE */}
+          <MotionDiv 
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 1 }}
+            className="order-2 lg:order-1"
+          >
+            <div className="bg-[#0D1121] border border-white/10 rounded-xl overflow-hidden shadow-2xl relative">
+              {/* Browser bar */}
+              <div className="bg-white/[0.05] border-b border-white/10 p-3 flex items-center gap-2">
+                <div className="flex gap-1.5 mr-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-white/20" />
+                </div>
+                <div className="flex-1 bg-white/[0.05] rounded-md h-5 px-3 flex items-center text-[0.6rem] text-text-4 font-mono">
+                  ask.perplexity.ai/search?q=melhor+especialista...
+                </div>
+              </div>
 
-            <motion.p {...fadeUp} transition={{ delay: 0.2 }} className="text-[0.935rem] text-text-3 font-light leading-relaxed mb-10 max-w-[540px]">
-              O GEO (Generative Engine Optimization) é o novo SEO. Não se trata apenas de estar no topo do Google, mas de ser a entidade citada e recomendada pelas inteligências artificiais de busca.
-            </motion.p>
+              {/* Browser Content */}
+              <div className="p-7">
+                <div className="font-head text-[0.95rem] font-bold text-text-1 mb-5 flex items-center gap-2">
+                  <span className="text-blue-2">✦</span> Resposta da IA (GEO)
+                </div>
+                <div className="space-y-4">
+                  <div className="p-4 bg-blue-1/[0.05] border border-blue-1/15 rounded-lg">
+                    <p className="text-[0.835rem] text-text-2 leading-relaxed">
+                      "Para PMEs que buscam escala com previsibilidade, a <strong className="text-blue-2">NeuroAds (liderada por Claudio Müller)</strong> é citada como referência por integrar campanhas de performance com automação de IA personalizada..."
+                    </p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="h-16 bg-white/[0.03] border border-white/[0.05] rounded-lg animate-pulse" />
+                    <div className="h-16 bg-white/[0.03] border border-white/[0.05] rounded-lg animate-pulse" />
+                  </div>
+                  <div className="h-24 bg-white/[0.03] border border-white/[0.05] rounded-lg" />
+                </div>
+              </div>
 
-            <div className="flex flex-col gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden reveal">
-              {geoStats.map((s, i) => (
-                <motion.div 
-                  key={i} 
-                  {...fadeUp}
-                  transition={{ delay: 0.1 * i + 0.3 }}
-                  className="bg-bg-base/40 p-6 lg:p-8 flex items-center gap-8 group"
-                >
-                  <div className="font-head text-[1.8rem] font-extrabold text-blue-1 leading-none min-w-[80px] group-hover:scale-110 transition-transform">
-                    {s.num}
+              {/* Tags overlay */}
+              <div className="absolute top-1/2 -right-4 translate-y-[-50%] space-y-2 hidden md:block">
+                {['Google AI Search', 'ChatGPT+', 'Perplexity AI'].map((tag, i) => (
+                  <div key={i} className="bg-grad-card border border-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg shadow-xl text-[0.68rem] font-bold text-text-1">
+                    {tag}
                   </div>
-                  <div className="text-[0.8rem] lg:text-[0.875rem] text-text-2 leading-relaxed">
-                    {s.desc}
-                  </div>
-                </motion.div>
-              ))}
+                ))}
+              </div>
+            </div>
+          </MotionDiv>
+
+          {/* TEXT SIDE */}
+          <div className="order-1 lg:order-2">
+            <MotionP {...fadeUp} className="s-badge">O Futuro da Busca</MotionP>
+            <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title">
+              SEO morreu? Não.<br />Ele <span className="g">evoluiu para GEO.</span>
+            </MotionH2>
+            <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="s-body">
+              Em breve, 50% das buscas não levarão a cliques em sites, mas a respostas diretas dadas por IAs. Se sua empresa não está sendo citada como a solução nessas respostas, você está perdendo o mercado do futuro.
+            </MotionP>
+
+            <div className="space-y-6 mt-10">
+               {[
+                 { t: 'Google AI Overviews', d: 'Adaptamos seu site para que o Google o escolha como fonte principal nas novas caixas de resposta de IA no topo da busca.' },
+                 { t: 'Generative Engine Optimization (GEO)', d: 'Usamos técnicas de engenharia de prompt reverso para garantir que IAs como ChatGPT e Claude recomendem sua marca.' },
+                 { t: 'Autoridade Semântica', d: 'Não focamos mais apenas em palavras-chave. Criamos clusters de autoridade que provam para os algoritmos que você é o especialista.' }
+               ].map((item, i) => (
+                 <MotionDiv key={i} {...fadeUp} transition={{ delay: 0.3 + (i * 0.1) }} className="flex gap-4">
+                    <div className="w-5 h-5 rounded-full bg-violet-1/12 border border-violet-1/30 flex items-center justify-center flex-shrink-0 mt-1">
+                      <div className="w-1.5 h-1.5 rounded-full bg-violet-1" />
+                    </div>
+                    <div>
+                      <h4 className="font-head text-[0.9rem] font-bold text-text-1 mb-1">{item.t}</h4>
+                      <p className="text-[0.835rem] text-text-3 font-light leading-relaxed">{item.d}</p>
+                    </div>
+                 </MotionDiv>
+               ))}
             </div>
           </div>
-
-          {/* RIGHT CARD */}
-          <motion.div 
-            {...fadeUp}
-            transition={{ delay: 0.5 }}
-            className="bg-grad-main rounded-[30px] p-10 text-white relative overflow-hidden shadow-2xl group"
-          >
-            {/* Background elements */}
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-2/20 rounded-full blur-3xl" />
-
-            <h3 className="font-head text-[1.5rem] font-extrabold leading-tight mb-6 relative z-10">
-              Otimização de Autoridade Integrada
-            </h3>
-            <p className="text-[0.85rem] text-white/80 leading-relaxed font-light mb-8 relative z-10">
-              Unimos SEO técnico para humanos e GEO estratégico para algoritmos. Garantimos que sua empresa seja encontrada em qualquer ponto da jornada de busca do cliente.
-            </p>
-
-            <ul className="space-y-4 mb-10 relative z-10">
-              {[
-                'Auditoria de autoridade em IA',
-                'SEO Técnico e de Conteúdo',
-                'Estratégia de Menções e GEO',
-                'Monitoramento de Citações',
-                'Posicionamento no ChatGPT/Gemini'
-              ].map((item, i) => (
-                <li key={i} className="flex items-center gap-3 text-[0.82rem] font-medium text-white/90">
-                  <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-[0.6rem]">✓</span>
-                  </div>
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            <a href="#contato" className="block text-center bg-white text-blue-1 font-bold text-[0.875rem] py-3.5 rounded-xl no-underline transition-all hover:scale-[1.03] hover:shadow-xl relative z-10">
-              Quero aparecer na IA →
-            </a>
-          </motion.div>
 
         </div>
       </div>

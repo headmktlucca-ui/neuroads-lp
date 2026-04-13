@@ -1,30 +1,34 @@
 'use client';
 import { motion } from 'framer-motion';
 
+const MotionDiv = motion.div;
+const MotionP = motion.p;
+const MotionH2 = motion.h2;
+
 const problems = [
   {
-    num: '01',
-    q: '"Invisto em anúncios, mas não sei o que volta."',
-    a: 'O dinheiro sai, o painel do Meta parece bom, mas no final do mês você não sabe qual real investido gerou qual venda. Falta integração e transparência nos dados.',
-    tag: 'Solução: Campanhas com Lucca'
+    icon: '💸',
+    q: '"Invisto em anúncios todo mês, mas não sei se está dando resultado de verdade."',
+    a: 'O dinheiro sai, os números do painel parecem bons, mas as vendas não batem. Isso acontece quando campanhas não têm rastreamento correto nem otimização contínua orientada por dados reais.',
+    sol: 'Campanhas com Lucca'
   },
   {
-    num: '02',
-    q: '"Meus concorrentes aparecem no Google. Eu não."',
-    a: 'E agora nem é só o Google. ChatGPT e outras IAs de busca já respondem seus clientes. Se sua marca não está nas respostas, você está fora de metade do mercado digital.',
-    tag: 'Solução: SEO + GEO'
+    icon: '🔍',
+    q: '"Meu concorrente aparece no Google. Eu não. E agora tem essa tal IA de busca..."',
+    a: 'A visibilidade mudou. Além do Google, o ChatGPT, Gemini e Perplexity já respondem perguntas dos seus clientes sem mostrar links. Se você não está nessas respostas, é invisível para metade do mercado.',
+    sol: 'SEO + GEO'
   },
   {
-    num: '03',
-    q: '"Minha equipe comercial perde tempo com leads ruins."',
-    a: 'Vendedores qualificados perdendo horas em follow-up de curiosos. A IA pode filtrar, qualificar e até agendar reuniões, liberando seu time para fechar negócio.',
-    tag: 'Solução: Agentes de IA'
+    icon: '⏳',
+    q: '"Minha equipe perde horas com follow-up e tarefas que poderiam ser automáticas."',
+    a: 'Cada hora que um vendedor passa respondendo FAQ ou preenchendo planilha é uma hora que ele não está fechando venda. A IA não substitui sua equipe — ela libera as pessoas para o que importa.',
+    sol: 'Agentes de IA'
   },
   {
-    num: '04',
-    q: '"Ninguém conversa com ninguém na minha estratégia."',
-    a: 'Tráfego pago num lado, conteúdo no outro, CRM no terceiro. Quando as pontas não se unem, o resultado é ineficiência e desperdício de verba.',
-    tag: 'Solução: NeuroAds 3 em 1'
+    icon: '🧩',
+    q: '"Tenho agência de tráfego, SEO e um cara de tecnologia que não conversam."',
+    a: 'Quando cada fornecedor defende seu território, o resultado são dados contraditórios e ninguém responsável pelo único número que importa: sua receita. Uma estratégia integrada muda tudo.',
+    sol: 'NeuroAds 3 em 1'
   }
 ];
 
@@ -37,43 +41,43 @@ export default function ProblemsSection() {
   };
 
   return (
-    <section className="bg-bg-base py-24 lg:py-32 relative border-b border-white/5">
-      <div className="max-w-[1160px] mx-auto px-10">
-        <motion.p {...fadeUp} className="flex items-center gap-3 text-[0.68rem] font-bold tracking-[0.2em] uppercase text-blue-2 mb-4">
-          <span className="w-5 h-[2px] bg-grad-main rounded-full" />
-          O que ouço todo dia
-        </motion.p>
-        
-        <motion.h2 {...fadeUp} transition={{ delay: 0.1 }} className="font-head text-[clamp(2.2rem,3.5vw,3.5rem)] font-extrabold leading-[1.1] tracking-tight text-text-1 max-w-[800px]">
-          Fases comuns de <span className="bg-grad-main bg-clip-text text-transparent italic">estagnação digital</span> em PMEs
-        </motion.h2>
+    <section className="section py-24 lg:py-32" id="problemas">
+      <div className="wrap">
+        <MotionP {...fadeUp} className="s-badge">O diagnóstico</MotionP>
+        <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title text-balance max-w-[800px]">
+          Quatro situações que vejo<br />
+          todo dia em empresas <span className="g">como a sua</span>
+        </MotionH2>
+        <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="s-body">
+          Depois de trabalhar com centenas de PMEs, os problemas se repetem. Veja se algum te parece familiar.
+        </MotionP>
 
-        <motion.p {...fadeUp} transition={{ delay: 0.2 }} className="text-[1rem] text-text-3 font-light leading-relaxed max-w-[540px] mt-6">
-          Depois de trabalhar com centenas de empresas, percebi que os gargalos costumam ser os mesmos. Algum destes te impede de crescer hoje?
-        </motion.p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-12">
           {problems.map((p, i) => (
-            <motion.div 
+            <MotionDiv 
               key={i} 
               {...fadeUp}
-              transition={{ delay: 0.1 * i + 0.3 }}
-              className="bg-bg-card border border-white/10 p-10 rounded-2xl hover:bg-bg-card-h hover:border-blue-1/40 transition-all group"
+              transition={{ delay: 0.3 + (i * 0.1) }}
+              className="group relative bg-white/[0.04] border border-white/[0.08] rounded-lg p-7 transition-all hover:border-blue-1/35 hover:-translate-y-1 overflow-hidden"
             >
-              <div className="font-head text-[2.5rem] font-extrabold text-blue-1/20 group-hover:text-blue-1/40 transition-colors leading-none mb-6">
-                {p.num}
+              {/* Card top border glow effect */}
+              <div className="absolute inset-0 bg-grad-card opacity-0 group-hover:opacity-100 transition-opacity" />
+              
+              <div className="relative z-10">
+                <div className="w-11 h-11 rounded-sm bg-blue-1/12 border border-blue-1/35 flex items-center justify-center text-[1.1rem] mb-5">
+                  {p.icon}
+                </div>
+                <h3 className="font-head text-[0.95rem] font-bold text-text-1 mb-2.5 leading-tight">
+                  {p.q}
+                </h3>
+                <p className="text-[0.835rem] text-text-3 font-light leading-relaxed">
+                  {p.a}
+                </p>
+                <div className="inline-flex items-center gap-1.5 mt-4 text-[0.7rem] font-semibold text-blue-2 tracking-[0.08em] uppercase">
+                  <span className="text-[0.75rem]">→</span> Solução: {p.sol}
+                </div>
               </div>
-              <h3 className="font-head text-[1.15rem] font-bold text-text-1 mb-4 leading-relaxed group-hover:text-blue-2 transition-colors">
-                {p.q}
-              </h3>
-              <p className="text-[0.9rem] text-text-2 leading-relaxed font-light mb-8">
-                {p.a}
-              </p>
-              <div className="flex items-center gap-2 text-[0.7rem] font-bold text-blue-2 tracking-widest uppercase">
-                <span className="w-4 h-px bg-blue-2" />
-                {p.tag}
-              </div>
-            </motion.div>
+            </MotionDiv>
           ))}
         </div>
       </div>
