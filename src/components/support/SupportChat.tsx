@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, User, Bot, ExternalLink, Headset } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, ExternalLink, Headset } from 'lucide-react';
 import { chatWithSupport } from '../../app/actions/chat-support';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -87,13 +87,9 @@ export default function SupportChat() {
     }
   };
 
-  // Generate dynamic WhatsApp URL
   const getWhatsAppUrl = () => {
-    // IMPORTANT: Replace with your actual phone number in international format (e.g., 5511999999999)
     const phoneNumber = "5551981758382"; 
-    
     const baseMsg = `Olá, meu nome é ${clientName || 'visitante'}.\n\nAcabei de conversar com o NeuroBot e gostaria de suporte humano.\n\n*Resumo da Conversa:*\n${summary || 'O contato deseja falar com um especialista.'}`;
-    
     return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(baseMsg)}`;
   };
 
@@ -102,104 +98,92 @@ export default function SupportChat() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20, filter: 'blur(10px)' }}
-            animate={{ opacity: 1, scale: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, scale: 0.9, y: 20, filter: 'blur(10px)' }}
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 30, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="absolute bottom-20 right-0 w-[90vw] sm:w-[400px] h-[600px] max-h-[70vh] glass-card rounded-3xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col border border-white/10"
+            className="absolute bottom-20 right-0 w-[90vw] sm:w-[380px] h-[600px] max-h-[75vh] bg-cream flex flex-col shadow-[20px_20px_60px_rgba(22,15,8,0.15)] border border-ink/10 overflow-hidden rounded-none"
           >
-            {/* Header */}
-            <div className="p-6 bg-gradient-to-r from-black/80 to-[var(--color-surface-accent)] border-b border-white/5 flex items-center justify-between">
+            {/* Header - Brutalist Ink */}
+            <div className="p-6 bg-ink border-b border-white/10 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[var(--color-brand-orange)]/20 flex items-center justify-center border border-[var(--color-brand-orange)]/30 animate-pulse">
-                  <Bot size={20} className="text-[var(--color-brand-orange)]" />
+                <div className="w-10 h-10 bg-green-brand flex items-center justify-center border border-white/10">
+                  <Bot size={20} className="text-ink" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-black tracking-widest text-white uppercase italic">Suporte Neural</h3>
+                  <h3 className="text-[0.75rem] font-black tracking-[0.2em] text-cream uppercase italic font-serif">Suporte Neural</h3>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-brand-green)] animate-pulse" />
-                    <span className="text-[10px] font-mono text-[var(--color-brand-green)]/70 tracking-tighter uppercase">Agente IA Ativo</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-brand animate-pulse" />
+                    <span className="text-[9px] font-bold text-green-brand/60 tracking-wider uppercase">Bot Operacional</span>
                   </div>
                 </div>
               </div>
               <button 
                 onClick={() => setIsOpen(false)}
-                className="p-2 hover:bg-white/5 rounded-full transition-colors text-white/50 hover:text-white"
+                className="p-2 hover:bg-white/10 transition-colors text-white/50 hover:text-white"
               >
                 <X size={20} />
               </button>
             </div>
 
-            {/* Messages Area */}
+            {/* Messages Area - Cream with Grid */}
             <div 
               ref={scrollRef}
-              className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-hide bg-black/40"
+              className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-hide relative"
+              style={{
+                backgroundImage: `radial-gradient(circle, rgba(22,15,8,0.03) 1px, transparent 1px)`,
+                backgroundSize: '20px 20px'
+              }}
             >
-              {messages.length === 0 && (
-                <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-50">
-                  <div className="w-16 h-16 rounded-3xl bg-white/5 flex items-center justify-center border border-white/10">
-                    <MessageSquare size={32} className="text-white/20" />
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-xs font-black tracking-widest text-white uppercase italic">Inicie uma conversa</p>
-                    <p className="text-[10px] text-white/40 max-w-[200px]">Tire dúvidas sobre tráfego pago, funis e IA.</p>
-                  </div>
-                </div>
-              )}
-
               {messages.map((msg, idx) => (
                 <motion.div
                   key={idx}
-                  initial={{ opacity: 0, x: msg.role === 'user' ? 20 : -20 }}
-                  animate={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
                   className={cn(
-                    "flex flex-col max-w-[85%]",
+                    "flex flex-col max-w-[88%]",
                     msg.role === 'user' ? "ml-auto items-end" : "mr-auto items-start"
                   )}
                 >
                   <div className={cn(
-                    "px-4 py-3 rounded-2xl text-sm leading-relaxed",
+                    "px-5 py-4 text-[0.85rem] leading-[1.6] shadow-sm transition-all",
                     msg.role === 'user' 
-                      ? "bg-[var(--color-brand-orange)] text-black font-medium rounded-tr-none shadow-[0_10px_20px_rgba(249,166,32,0.1)]" 
-                      : "bg-white/5 border border-white/10 text-white/90 rounded-tl-none"
+                      ? "bg-green-brand text-ink font-semibold rounded-none border border-ink/5" 
+                      : "bg-white border border-ink/10 text-ink rounded-none"
                   )}>
                     {msg.content}
                   </div>
-                  <span className="text-[9px] font-mono text-white/30 mt-1 uppercase tracking-tighter">
-                    {msg.role === 'user' ? 'Você' : 'NeuroBot'}
+                  <span className="text-[10px] font-bold text-ink/40 mt-2 uppercase tracking-widest italic font-serif">
+                    {msg.role === 'user' ? 'Visitante' : 'NeuroBot'}
                   </span>
                 </motion.div>
               ))}
 
-              {/* Conversations Suggestions */}
-              {showSuggestions && (
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {SUGGESTIONS.map((suggestion, idx) => (
-                    <motion.button
-                      key={idx}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: idx * 0.1 }}
-                      onClick={() => handleSend(suggestion)}
-                      className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full text-[10px] font-bold text-white/70 hover:text-white transition-all uppercase tracking-wider"
-                    >
-                      {suggestion}
-                    </motion.button>
-                  ))}
-                </div>
-              )}
-
               {isLoading && (
-                <div className="flex items-center gap-2 text-white/30 font-mono text-[10px] italic animate-pulse">
-                  <span className="w-2 h-2 rounded-full bg-[var(--color-brand-green)]" />
-                  PROCESSANDO SINAPSES...
+                <div className="flex items-center gap-2 text-ink/30 font-bold text-[9px] italic tracking-widest animate-pulse">
+                  <span className="w-2 h-2 rounded-full bg-green-brand" />
+                  ANALISANDO SINAPSES...
                 </div>
               )}
             </div>
 
-            {/* Quick Actions & Input */}
-            <div className="p-6 bg-black/60 border-t border-white/5 space-y-4">
-              {/* Conditional WhatsApp Button */}
+            {/* Quick Actions & Input - Fixed Bottom */}
+            <div className="p-6 bg-white border-t border-ink/5 space-y-4">
+              {showSuggestions && (
+                <div className="flex flex-wrap gap-2">
+                  {SUGGESTIONS.map((suggestion, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handleSend(suggestion)}
+                      className="px-3 py-1.5 border border-ink/10 hover:border-green-brand hover:bg-green-brand/5 text-[10px] font-bold text-ink/60 hover:text-ink transition-all uppercase tracking-wider"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Conditional WhatsApp Call */}
               {showWhatsApp && (
                 <motion.a
                   initial={{ opacity: 0, y: 10 }}
@@ -207,30 +191,30 @@ export default function SupportChat() {
                   href={getWhatsAppUrl()}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-[var(--color-brand-green)]/30 transition-all rounded-xl flex items-center justify-center gap-2 group"
+                  className="w-full py-3 bg-ink text-cream hover:bg-green-brand hover:text-ink transition-all flex items-center justify-center gap-3 group border border-ink"
                 >
-                  <Headset size={16} className="text-[var(--color-brand-green)] group-hover:scale-110 transition-transform" />
-                  <span className="text-[10px] font-black tracking-[0.2em] text-white uppercase italic group-hover:text-[var(--color-brand-green)] transition-colors">
-                    Falar com Humano
+                  <Headset size={16} className="text-green-brand group-hover:text-ink transition-colors" />
+                  <span className="text-[10px] font-black tracking-[0.2em] uppercase italic">
+                    Conectar Especialista
                   </span>
-                  <ExternalLink size={10} className="text-white/20" />
+                  <ExternalLink size={10} className="opacity-30" />
                 </motion.a>
               )}
 
-              {/* Input field */}
-              <div className="relative group">
+              {/* Input field - Brutalist */}
+              <div className="relative group flex gap-2">
                 <input
                   type="text"
                   value={input}
                   onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Digite sua dúvida neural..."
-                  className="w-full bg-black/40 border border-white/10 focus:border-[var(--color-brand-orange)]/50 rounded-2xl py-4 pl-5 pr-14 text-sm text-white placeholder:text-white/20 focus:outline-none transition-all"
+                  placeholder="Solicite um diagnóstico..."
+                  className="flex-1 bg-cream/50 border border-ink/10 focus:border-green-brand rounded-none py-3.5 px-5 text-sm text-ink placeholder:text-ink/30 focus:outline-none transition-all"
                 />
                 <button
                   onClick={() => handleSend()}
                   disabled={isLoading || !input.trim()}
-                  className="absolute right-2 top-2 bottom-2 px-3 bg-[var(--color-brand-orange)] hover:bg-[var(--color-brand-orange-hover)] text-black rounded-xl transition-all disabled:opacity-30 disabled:grayscale"
+                  className="px-4 bg-ink hover:bg-green-brand text-cream hover:text-ink transition-all disabled:opacity-30"
                 >
                   <Send size={18} />
                 </button>
@@ -240,46 +224,41 @@ export default function SupportChat() {
         )}
       </AnimatePresence>
 
-      {/* Main Floating Button */}
+      {/* Main Floating Button - Brutalist Sharp */}
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         className={cn(
-          "relative p-4 rounded-full shadow-[0_20px_50px_rgba(249,166,32,0.3)] transition-all flex items-center justify-center overflow-hidden border",
+          "relative h-14 px-6 shadow-[10px_10px_30px_rgba(22,15,8,0.15)] transition-all flex items-center justify-center overflow-hidden border-2",
           isOpen 
-            ? "bg-white text-black border-white" 
-            : "bg-[var(--color-brand-orange)] text-black border-white/20 hover:border-white/40"
+            ? "bg-ink text-cream border-ink" 
+            : "bg-green-brand text-ink border-ink hover:bg-green-medium"
         )}
       >
-        {/* Availability Pulse Effect */}
-        {!isOpen && (
-          <span className="absolute inset-0 rounded-full animate-ping bg-white/20 -z-10" />
-        )}
-
         <AnimatePresence mode="wait">
           {isOpen ? (
             <motion.div
               key="close"
-              initial={{ rotate: -90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: 90, opacity: 0 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
               <X size={24} />
             </motion.div>
           ) : (
             <motion.div
               key="open"
-              initial={{ rotate: 90, opacity: 0 }}
-              animate={{ rotate: 0, opacity: 1 }}
-              exit={{ rotate: -90, opacity: 0 }}
-              className="flex items-center gap-2.5 px-2"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex items-center gap-3"
             >
               <div className="relative">
-                <MessageSquare size={22} />
-                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-[var(--color-brand-green)] border-2 border-[var(--color-brand-orange)] rounded-full animate-pulse" />
+                <MessageSquare size={20} strokeWidth={2.5} />
+                <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-ink border-2 border-green-brand rounded-full animate-pulse" />
               </div>
-              <span className="text-xs font-black tracking-[0.2em] uppercase italic pr-1">Chat Online</span>
+              <span className="text-xs font-black tracking-[0.2em] uppercase italic">IA Support</span>
             </motion.div>
           )}
         </AnimatePresence>
