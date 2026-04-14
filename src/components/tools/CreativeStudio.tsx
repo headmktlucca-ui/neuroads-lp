@@ -13,10 +13,13 @@ export default function CreativeStudio() {
 
   const handleGenerate = async () => {
     if (!productInfo.trim()) return;
+
     setLoading(true);
+
     try {
       const res = await generateCreativeSuiteResult(productInfo);
-      if (res.success && res.data) {
+
+      if (res.success && res.data && typeof res.data !== 'string') {
         setResult(res.data);
       } else {
         alert(res.error || 'Falha ao processar comando neural.');
@@ -27,6 +30,7 @@ export default function CreativeStudio() {
       setLoading(false);
     }
   };
+
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -105,32 +109,32 @@ export default function CreativeStudio() {
                 </div>
               </div>
               <div className="mt-auto pt-4 flex items-center gap-2 text-[10px] text-slate-500 font-mono tracking-wider">
-                 <ArrowRight size={10} /> FOCO EM RETENÇÃO EXTREMA
+                <ArrowRight size={10} /> FOCO EM RETENÇÃO EXTREMA
               </div>
             </div>
 
             {/* Full Copy PAS */}
             <div className="lg:col-span-2 glass-card p-8 border-white/10 relative">
-               <div className="flex items-center justify-between mb-6">
-                 <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-6 bg-[var(--color-brand-orange)] rounded-full" />
-                    <h4 className="text-xs font-black tracking-widest uppercase italic">Neuro-Copy Master (PAS)</h4>
-                 </div>
-                 <button 
-                  onClick={() => copyToClipboard(result.adCopy, 'copy')} 
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-2">
+                  <div className="w-1.5 h-6 bg-[var(--color-brand-orange)] rounded-full" />
+                  <h4 className="text-xs font-black tracking-widest uppercase italic">Neuro-Copy Master (PAS)</h4>
+                </div>
+                <button
+                  onClick={() => copyToClipboard(result.adCopy, 'copy')}
                   className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg text-[10px] font-bold tracking-widest hover:bg-white/10 transition-all border border-white/10"
-                 >
-                    {copied === 'copy' ? <Check size={12} className="text-[var(--color-brand-green)]" /> : <Copy size={12} />}
-                    {copied === 'copy' ? 'COPIADO' : 'COPIAR TUDO'}
-                 </button>
-               </div>
-               <div className="bg-black/20 p-8 rounded-3xl border border-white/5 whitespace-pre-wrap text-slate-300 text-sm leading-[1.8] font-light">
-                  {result.adCopy}
-               </div>
-               <div className="mt-8 p-6 bg-white/5 rounded-2xl border-l-4 border-[var(--color-brand-green)]">
-                  <h5 className="text-[10px] font-black tracking-widest uppercase italic mb-3 text-[var(--color-brand-green)]">Por que funciona? (Estratégia Neural)</h5>
-                  <p className="text-xs text-slate-400 italic leading-relaxed">{result.strategy}</p>
-               </div>
+                >
+                  {copied === 'copy' ? <Check size={12} className="text-[var(--color-brand-green)]" /> : <Copy size={12} />}
+                  {copied === 'copy' ? 'COPIADO' : 'COPIAR TUDO'}
+                </button>
+              </div>
+              <div className="bg-black/20 p-8 rounded-3xl border border-white/5 whitespace-pre-wrap text-slate-300 text-sm leading-[1.8] font-light">
+                {result.adCopy}
+              </div>
+              <div className="mt-8 p-6 bg-white/5 rounded-2xl border-l-4 border-[var(--color-brand-green)]">
+                <h5 className="text-[10px] font-black tracking-widest uppercase italic mb-3 text-[var(--color-brand-green)]">Por que funciona? (Estratégia Neural)</h5>
+                <p className="text-xs text-slate-400 italic leading-relaxed">{result.strategy}</p>
+              </div>
             </div>
           </motion.div>
         ) : (
@@ -140,7 +144,7 @@ export default function CreativeStudio() {
             className="flex-grow flex flex-col items-center justify-center p-12 text-center"
           >
             <div className="w-20 h-20 rounded-full bg-white/5 flex items-center justify-center mb-6 animate-pulse">
-               <Sparkles className="text-slate-600" size={32} />
+              <Sparkles className="text-slate-600" size={32} />
             </div>
             <h3 className="text-xl font-bold mb-2 tracking-tight text-slate-400 italic">Pronto para criar o impossível?</h3>
             <p className="text-sm text-slate-600 max-w-sm">
