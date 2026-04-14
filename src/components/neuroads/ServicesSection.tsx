@@ -151,18 +151,22 @@ export default function ServicesSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus('idle');
     
     try {
       // 1. Sync to Hostinger Reach
-      await syncToHostingerReach({
+      const reachResult = await syncToHostingerReach({
         email: formData.email,
         name: formData.name,
         website: formData.website,
         tags: ["Planejamento Inicial"]
       });
+      if (!reachResult.success) {
+        console.warn('Hostinger Reach sync failed:', reachResult.error);
+      }
 
       // 2. Send Email
-      await sendStrategyRequestAction(
+      const mailResult = await sendStrategyRequestAction(
         "avante@neuroads.com.br",
         formData.name,
         formData.email,
@@ -171,6 +175,9 @@ export default function ServicesSection() {
         '', // userSituation
         Array.from(selectedAgents)
       );
+      if (!mailResult.success) {
+        throw new Error('Falha ao enviar e-mail: ' + JSON.stringify(mailResult.error));
+      }
 
       setSubmitStatus('success');
       setTimeout(() => {
@@ -182,6 +189,7 @@ export default function ServicesSection() {
     } catch (error) {
       console.error('Submit failed:', error);
       setSubmitStatus('error');
+      setTimeout(() => setSubmitStatus('idle'), 5000);
     } finally {
       setIsSubmitting(false);
     }
@@ -375,6 +383,11 @@ export default function ServicesSection() {
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-4">
+                    {submitStatus === 'error' && (
+                      <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-md text-red-400 text-xs">
+                        Erro ao enviar. Verifique sua conexão e tente novamente.
+                      </div>
+                    )}
                     <div>
                       <label className="block text-[0.65rem] font-bold text-text-2 uppercase tracking-widest mb-2">Seu Nome</label>
                       <input 
@@ -417,6 +430,7 @@ export default function ServicesSection() {
                         Cancelar
                       </button>
                       <button 
+                        type="submit"
                         disabled={isSubmitting}
                         className="flex-[2] btn btn-primary flex items-center justify-center gap-2"
                       >

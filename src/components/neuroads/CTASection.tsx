@@ -10,11 +10,23 @@ const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH2 = motion.h2;
 
+// Phone mask: (00) 00000-0000
+function maskPhone(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (digits.length === 0) return '';
+  if (digits.length <= 2) return `(${digits}`;
+  if (digits.length <= 7) return `(${digits.slice(0,2)}) ${digits.slice(2)}`;
+  return `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
+}
+
+const SITE_PREFIX = 'https://';
+
 export default function CTASection() {
   const [formData, setFormData] = useState({
     name: '',
     whatsapp: '',
     email: '',
+    website: SITE_PREFIX,
     situation: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -30,32 +42,40 @@ export default function CTASection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus('idle');
     
     try {
       // 1. Sync to Hostinger Reach
-      await syncToHostingerReach({
+      const reachResult = await syncToHostingerReach({
         email: formData.email,
         name: formData.name,
         phone: formData.whatsapp,
         tags: ["Planejamento Inicial"]
       });
+      if (!reachResult.success) {
+        console.warn('Hostinger Reach sync failed:', reachResult.error);
+      }
 
       // 2. Send Email
-      await sendStrategyRequestAction(
+      const mailResult = await sendStrategyRequestAction(
         "avante@neuroads.com.br",
         formData.name,
         formData.email,
-        '', // website not in this form
+        formData.website !== SITE_PREFIX ? formData.website : '',
         formData.whatsapp,
         formData.situation
       );
+      if (!mailResult.success) {
+        throw new Error('Falha ao enviar e-mail: ' + JSON.stringify(mailResult.error));
+      }
 
       setSubmitStatus('success');
-      setFormData({ name: '', whatsapp: '', email: '', situation: '' });
+      setFormData({ name: '', whatsapp: '', email: '', website: SITE_PREFIX, situation: '' });
       setTimeout(() => setSubmitStatus('idle'), 5000);
     } catch (error) {
       console.error('CTA Submit failed:', error);
       setSubmitStatus('error');
+      setTimeout(() => setSubmitStatus('idle'), 5000);
     } finally {
       setIsSubmitting(false);
     }
@@ -143,6 +163,11 @@ export default function CTASection() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-5">
+                {submitStatus === 'error' && (
+                  <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-md text-red-400 text-xs">
+                    Erro ao enviar. Verifique sua conexão e tente novamente.
+                  </div>
+                )}
                 <div className="space-y-1.5">
                   <label className="text-[0.72rem] font-semibold text-text-3 uppercase tracking-[0.1em]">Nome Completo</label>
                   <input 
@@ -161,8 +186,9 @@ export default function CTASection() {
                     required
                     type="tel" 
                     value={formData.whatsapp}
-                    onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
-                    placeholder="(00) 00000-0000" 
+                    onChange={(e) => setFormData({...formData, whatsapp: maskPhone(e.target.value)})}
+                    placeholder="(00) 00000-0000"
+                    maxLength={15}
                     className="w-full bg-white/[0.06] border border-white/10 rounded-md p-3 text-[0.9rem] text-text-1 outline-none focus:border-blue-1 transition-colors"
                   />
                 </div>
@@ -180,19 +206,52 @@ export default function CTASection() {
                 </div>
 
                 <div className="space-y-1.5">
+                  <label className="text-[0.72rem] font-semibold text-text-3 uppercase tracking-[0.1em]">Site</label>
+                  <div className="flex items-center bg-white/[0.06] border border-white/10 rounded-md focus-within:border-blue-1 transition-colors overflow-hidden">
+                    <span className="pl-3 pr-1 text-[0.9rem] text-text-4 select-none whitespace-nowrap">https://</span>
+                    <input
+                      type="text"
+                      value={formData.website.replace(/^https:\/\//, '')}
+                      onChange={(e) => {
+                        const raw = e.target.value.replace(/^https:\/\//, '');
+                        setFormData({...formData, website: SITE_PREFIX + raw});
+                      }}
+                      onKeyDown={(e) => {
+                        // prevent deleting the prefix
+                        const selStart = (e.target as HTMLInputElement).selectionStart ?? 0;
+                        if ((e.key === 'Backspace' || e.key === 'Delete') && selStart === 0) {
+                          e.preventDefault();
+                        }
+                      }}
+                      placeholder="seusite.com.br"
+                      className="flex-1 bg-transparent py-3 pr-3 text-[0.9rem] text-text-1 outline-none placeholder:text-white/20"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-1.5">
                   <label className="text-[0.72rem] font-semibold text-text-3 uppercase tracking-[0.1em]">Situação do Marketing</label>
-                  <select 
-                    required
-                    value={formData.situation}
-                    onChange={(e) => setFormData({...formData, situation: e.target.value})}
-                    className="w-full bg-white/[0.06] border border-white/10 rounded-md p-3 text-[0.9rem] text-text-1 outline-none focus:border-blue-1 transition-colors appearance-none"
-                  >
-                    <option value="" disabled>Selecione a situação</option>
-                    <option value="Quero gerar mais leads com anúncios">Quero gerar mais leads com anúncios</option>
-                    <option value="Preciso reduzir o custo por cliente">Preciso reduzir o custo por cliente</option>
-                    <option value="Quero aparecer no Google e nas IAs">Quero aparecer no Google e nas IAs</option>
-                    <option value="Preciso de automação com IA">Preciso de automação com IA</option>
-                  </select>
+                  <div className="relative">
+                    <select 
+                      required
+                      value={formData.situation}
+                      onChange={(e) => setFormData({...formData, situation: e.target.value})}
+                      className="w-full bg-[#0d1117] border border-white/10 rounded-md p-3 text-[0.9rem] text-white outline-none focus:border-blue-1 transition-colors appearance-none cursor-pointer"
+                      style={{ colorScheme: 'dark' }}
+                    >
+                      <option value="" disabled style={{ background: '#0d1117', color: '#94a3b8' }}>Selecione a situação</option>
+                      <option value="Quero gerar mais leads com anúncios" style={{ background: '#0d1117', color: '#f1f5f9' }}>Quero gerar mais leads com anúncios</option>
+                      <option value="Preciso reduzir o custo por cliente" style={{ background: '#0d1117', color: '#f1f5f9' }}>Preciso reduzir o custo por cliente</option>
+                      <option value="Quero aparecer no Google e nas IAs" style={{ background: '#0d1117', color: '#f1f5f9' }}>Quero aparecer no Google e nas IAs</option>
+                      <option value="Preciso de automação com IA" style={{ background: '#0d1117', color: '#f1f5f9' }}>Preciso de automação com IA</option>
+                    </select>
+                    {/* Custom chevron */}
+                    <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                      <svg className="w-4 h-4 text-text-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
 
                 <button 
