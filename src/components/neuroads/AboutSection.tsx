@@ -1,12 +1,14 @@
 'use client';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { agents } from '../../data/agents';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH2 = motion.h2;
 
 export default function AboutSection() {
+  const agentsCount = agents.length;
   const fadeUp = {
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
@@ -107,7 +109,7 @@ export default function AboutSection() {
               {[
                 { val: 'R$10M+', lbl: 'Em campanhas gerenciadas' },
                 { val: '25+', lbl: 'Anos de experiência' },
-                { val: '3em1', lbl: 'Soluções integradas' }
+                { val: agentsCount, lbl: 'Agentes de IA' }
               ].map((s, i) => (
                 <div key={i} className="bg-[#090B18] p-[1.25rem_1rem] text-center">
                   <div className="font-head text-[1.7rem] font-extrabold grad-text leading-none">{s.val}</div>

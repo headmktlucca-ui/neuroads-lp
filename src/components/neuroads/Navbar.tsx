@@ -39,23 +39,13 @@ export default function Navbar() {
   return (
     <nav className={`sticky top-0 z-[200] border-b border-white/10 transition-all duration-300 ${isScrolled ? 'bg-[#05060F]/85 py-2' : 'bg-transparent py-4'} backdrop-blur-[20px] saturate-[1.4]`}>
       <div className="max-w-[1160px] mx-auto px-8 flex items-center justify-between">
-        <a href="#" className="flex items-center gap-4 no-underline group" onClick={closeMenu}>
-          <div className="w-10 h-10 relative flex-shrink-0 group-hover:scale-110 transition-transform duration-500">
-            <Image 
-              src="/images/icon_neuroads_transparente.png" 
-              alt="NeuroAds Icon" 
-              fill 
-              className="object-contain"
-            />
-          </div>
-          <div className="flex flex-col">
-            <span className="font-head text-[1.25rem] font-extrabold tracking-tighter text-text-1">
-              Neuro<span className="grad-text italic">Ads</span>
-            </span>
-            <span className="text-[0.55rem] text-text-4 font-bold tracking-[0.2em] uppercase -mt-1 hidden sm:block">
-              Insights Inteligentes
-            </span>
-          </div>
+        <a href="#" className="flex flex-col no-underline group" onClick={closeMenu}>
+          <span className="font-head text-[1.45rem] font-extrabold tracking-tighter text-text-1 leading-none">
+            Neuro<span className="grad-text italic">Ads</span>
+          </span>
+          <span className="text-[0.65rem] text-text-2 font-bold tracking-[0.2em] uppercase mt-1 hidden sm:block">
+            Insights Inteligentes
+          </span>
         </a>
 
         {/* MOBILE TOGGLE */}
@@ -71,7 +61,7 @@ export default function Navbar() {
         <ul className="hidden lg:flex items-center gap-[1.75rem] list-none">
           {navLinks.map((link) => (
             <li key={link.name}>
-              <a href={link.href} className="text-[0.835rem] font-medium text-text-2 no-underline transition-colors hover:text-text-1">
+              <a href={link.href} className="text-[0.835rem] font-medium text-text-1 no-underline transition-colors hover:scale-105">
                 {link.name}
               </a>
             </li>
@@ -118,7 +108,7 @@ export default function Navbar() {
                     <a 
                       href={link.href} 
                       onClick={() => setTimeout(closeMenu, 150)}
-                      className="text-[1.1rem] font-medium text-text-2 hover:text-text-1 transition-colors block w-full"
+                      className="text-[1.1rem] font-medium text-text-1 hover:grad-text transition-colors block w-full"
                     >
                       {link.name}
                     </a>

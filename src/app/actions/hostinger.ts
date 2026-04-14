@@ -27,11 +27,8 @@ export async function syncToHostingerReach(contact: ReachContact) {
       body: JSON.stringify({
         email: contact.email,
         name: contact.name,
-        // Hostinger Reach often uses individual fields for tags or a specific structure
-        // Based on typical Reach API patterns, we include the tag requested
         note: "Adicionado via NeuroAds LP",
-        // We'll try to include tags if supported by the endpoint
-        tags: ["Usuários Ativos"]
+        tags: contact.tags || ["Usuários Ativos"]
       }),
     });
 

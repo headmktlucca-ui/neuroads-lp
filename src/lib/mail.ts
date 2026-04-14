@@ -51,3 +51,65 @@ export async function sendDiagnosisEmail(to: string, userName: string, platform:
     return { success: false, error };
   }
 }
+
+export async function sendStrategyRequestEmail(to: string, userName: string, userEmail: string, selectedAgents: string[]) {
+  const emailUser = process.env.EMAIL_USER;
+  const emailPass = process.env.EMAIL_PASS;
+
+  if (!emailUser || !emailPass) {
+    console.warn('Configurações de E-mail (EMAIL_USER/EMAIL_PASS) não configuradas.');
+    return { success: false, error: 'Configuração ausente' };
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: emailUser,
+        pass: emailPass,
+      },
+    });
+
+    const html = `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0b; color: #ffffff; padding: 40px; border: 1px solid #1e293b; border-radius: 12px;">
+        <div style="text-align: center; margin-bottom: 30px;">
+          <h1 style="color: #3b82f6; text-transform: uppercase; letter-spacing: 2px; font-size: 24px; margin: 0;">NeuroAds</h1>
+          <p style="color: #64748b; font-size: 12px; margin-top: 5px;">STRATEGIC PLANNING REQUEST</p>
+        </div>
+
+        <div style="background: #111827; padding: 25px; border-radius: 8px; margin-bottom: 25px; border: 1px solid #1e293b;">
+          <h2 style="color: #f1f5f9; font-size: 18px; margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 10px;">Dados do Lead</h2>
+          <p style="margin: 10px 0; color: #cbd5e1;"><strong>Nome:</strong> ${userName}</p>
+          <p style="margin: 10px 0; color: #cbd5e1;"><strong>E-mail:</strong> ${userEmail}</p>
+          <p style="margin: 10px 0; color: #cbd5e1;"><strong>Tag:</strong> <span style="background: #1e3a8a; color: #60a5fa; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Planejamento Inicial</span></p>
+        </div>
+
+        <div style="margin-bottom: 30px;">
+          <h2 style="color: #f1f5f9; font-size: 18px; margin-bottom: 15px;">Ações/Agentes Selecionados:</h2>
+          <ul style="padding-left: 20px; color: #cbd5e1;">
+            ${selectedAgents.map(agent => `<li style="margin-bottom: 8px;">${agent}</li>`).join('')}
+          </ul>
+        </div>
+
+        <div style="background: #1e293b; padding: 15px; border-radius: 6px; text-align: center; border: 1px solid #334155;">
+          <p style="color: #94a3b8; font-size: 13px; margin: 0;">Este lead foi capturado através do Arsenal de Agentes na Landing Page.</p>
+        </div>
+        
+        <p style="color: #475569; font-size: 10px; margin-top: 30px; text-align: center;">© 2026 NeuroAds - Insights Inteligentes. Todos os direitos reservados.</p>
+      </div>
+    `;
+
+    await transporter.sendMail({
+      from: `"NeuroAds Lead" <${emailUser}>`,
+      to: to,
+      replyTo: userEmail,
+      subject: `[LEAD] Planejamento Estratégico: ${userName}`,
+      html: html,
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error('Erro ao enviar e-mail de planejamento:', error);
+    return { success: false, error };
+  }
+}

@@ -1,12 +1,14 @@
 'use client';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { agents } from '../../data/agents';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH1 = motion.h1;
 
 export default function HeroSection() {
+  const agentsCount = agents.length;
   const fadeUp = (delay = 0) => ({
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -26,10 +28,8 @@ export default function HeroSection() {
           {/* LEFT CONTENT */}
           <div className="hero-left">
 
-            <MotionH1 {...fadeUp(0.25)} className="font-head text-[40px] font-extrabold leading-[1.1] tracking-[-0.03em] text-text-1 mb-6 text-balance">
-              Sua empresa merece<br />
-              um marketing que<br />
-              <span className="grad-text italic">realmente funciona.</span>
+            <MotionH1 {...fadeUp(0.25)} className="font-head text-[32px] font-extrabold leading-[1.15] tracking-[-0.03em] text-text-1 mb-7 text-balance uppercase">
+              Desbloqueie o Potencial Oculto do Seu Negócio: <span className="grad-text italic">Marketing de Alta Performance</span> com IA Agêntica.
             </MotionH1>
 
             <MotionP {...fadeUp(0.4)} className="text-[1.05rem] text-text-2 font-light leading-[1.8] max-w-[540px] mb-9">
@@ -45,19 +45,6 @@ export default function HeroSection() {
               </a>
             </MotionDiv>
 
-            <MotionDiv {...fadeUp(0.7)} className="flex items-center gap-[0.875rem] mt-10 pt-8 border-t border-white/10">
-              <div className="flex">
-                {['AS', 'RC', 'FM', 'JP'].map((initials, i) => (
-                  <div key={i} className={`w-7 h-7 rounded-full bg-grad-main border-2 border-[#05060F] flex items-center justify-center font-bold text-[0.6rem] text-white ${i > 0 ? '-ml-2' : ''}`}>
-                    {initials}
-                  </div>
-                ))}
-              </div>
-              <div className="text-[0.78rem] text-text-3 leading-tight">
-                <span className="text-amber-s">★★★★★</span><br />
-                Avaliação 5 estrelas por clientes PMEs em todo o Brasil
-              </div>
-            </MotionDiv>
           </div>
 
           {/* RIGHT — CLAUDIO CARD */}
@@ -106,7 +93,7 @@ export default function HeroSection() {
                   {[
                     { val: 'R$10M+', lbl: 'Investimento' },
                     { val: '25+', lbl: 'Anos Growth' },
-                    { val: '3em1', lbl: 'Soluções' }
+                    { val: agentsCount, lbl: 'Agentes de IA' }
                   ].map((s, i) => (
                     <div key={i} className="bg-[#090B18] p-4 text-center">
                       <div className="font-head text-[1.3rem] font-extrabold grad-text leading-none">{s.val}</div>

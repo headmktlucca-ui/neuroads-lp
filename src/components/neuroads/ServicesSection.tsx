@@ -1,10 +1,15 @@
 'use client';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Check, X, Loader2 } from 'lucide-react';
 import Image from 'next/image';
+import { syncToHostingerReach } from '../../app/actions/hostinger';
+import { sendStrategyRequestAction } from '../../app/actions/mail';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH2 = motion.h2;
+const MotionH3 = motion.h3;
 
 const agentCategories = [
   {
@@ -120,11 +125,62 @@ const agentCategories = [
 ];
 
 export default function ServicesSection() {
+  const [selectedAgents, setSelectedAgents] = useState<Set<string>>(new Set());
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [formData, setFormData] = useState({ name: '', email: '' });
+
   const fadeUp = {
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true },
     transition: { duration: 0.7 }
+  };
+
+  const toggleAgent = (title: string) => {
+    const newSelected = new Set(selectedAgents);
+    if (newSelected.has(title)) {
+      newSelected.delete(title);
+    } else {
+      newSelected.add(title);
+    }
+    setSelectedAgents(newSelected);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // 1. Sync to Hostinger Reach
+      await syncToHostingerReach({
+        email: formData.email,
+        name: formData.name,
+        tags: ["Planejamento Inicial"]
+      });
+
+      // 2. Send Email
+      await sendStrategyRequestAction(
+        "avante@neuroads.com.br",
+        formData.name,
+        formData.email,
+        Array.from(selectedAgents)
+      );
+
+      setSubmitStatus('success');
+      setTimeout(() => {
+        setIsModalOpen(false);
+        setSubmitStatus('idle');
+        setSelectedAgents(new Set());
+        setFormData({ name: '', email: '' });
+      }, 3000);
+    } catch (error) {
+      console.error('Submit failed:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -138,8 +194,11 @@ export default function ServicesSection() {
             Tecnologia sistêmica.<br />
             <span className="g">Resultado humano.</span>
           </MotionH2>
-          <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="text-text-3 max-w-[600px] mx-auto mt-6 font-light">
+          <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="text-text-2 max-w-[600px] mx-auto mt-6 font-light">
             Não entregamos apenas serviços. Implantamos um ecossistema de agentes inteligentes que operam 24/7 para otimizar cada etapa do seu funil comercial.
+          </MotionP>
+          <MotionP {...fadeUp} transition={{ delay: 0.3 }} className="text-text-1 text-[1.1rem] font-medium mt-8 mb-[-1rem]">
+            Selecione as funções que fazem sentido para sua operação:
           </MotionP>
         </div>
 
@@ -161,22 +220,40 @@ export default function ServicesSection() {
                     key={i}
                     {...fadeUp}
                     transition={{ delay: 0.1 * i }}
-                    className="group relative bg-white/[0.03] border border-white/[0.06] rounded-xl p-6 hover:bg-white/[0.05] hover:border-blue-1/30 transition-all duration-300 overflow-hidden"
+                    onClick={() => toggleAgent(agent.title)}
+                    className={`group relative bg-white/[0.03] border rounded-xl p-6 transition-all duration-300 overflow-hidden cursor-pointer ${
+                      selectedAgents.has(agent.title) 
+                        ? 'border-blue-1/50 bg-blue-1/5 shadow-[0_0_20px_rgba(59,111,255,0.1)]' 
+                        : 'border-white/[0.06] hover:bg-white/[0.05] hover:border-blue-1/30'
+                    }`}
                   >
+                    {/* CHECKBOX INDICATOR */}
+                    <div className={`absolute top-4 right-4 w-5 h-5 rounded-full border flex items-center justify-center transition-all ${
+                      selectedAgents.has(agent.title)
+                        ? 'bg-blue-1 border-blue-1'
+                        : 'border-white/20 bg-black/20'
+                    }`}>
+                      {selectedAgents.has(agent.title) && <Check size={12} className="text-white" />}
+                    </div>
+
                     <div className="flex items-start gap-4 h-full">
                       <div className="w-14 h-14 rounded-lg bg-white/[0.05] border border-white/10 flex items-center justify-center overflow-hidden flex-shrink-0 relative group-hover:border-blue-1/50 transition-all">
                         <Image 
                           src={agent.image} 
                           alt={agent.title}
                           fill
-                          className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500"
+                          className={`object-cover transition-all duration-500 ${
+                            selectedAgents.has(agent.title) ? 'opacity-100 scale-110' : 'opacity-80 group-hover:opacity-100 group-hover:scale-110'
+                          }`}
                         />
                       </div>
                       <div className="flex flex-col">
-                        <h3 className="font-head text-[0.95rem] font-bold text-text-1 mb-2 group-hover:text-blue-1 transition-colors leading-tight">
+                        <h3 className={`font-head text-[0.95rem] font-bold mb-2 transition-colors leading-tight ${
+                          selectedAgents.has(agent.title) ? 'text-blue-1' : 'text-text-1 group-hover:text-blue-1'
+                        }`}>
                           {agent.title}
                         </h3>
-                        <p className="text-[0.78rem] text-text-3 font-light leading-relaxed">
+                        <p className="text-[0.78rem] text-text-2 font-light leading-relaxed">
                           {agent.desc}
                         </p>
                       </div>
@@ -192,21 +269,156 @@ export default function ServicesSection() {
         <MotionDiv 
           {...fadeUp} 
           transition={{ delay: 0.4 }}
-          className="mt-24 p-10 bg-grad-card border border-blue-1/20 rounded-2xl text-center relative overflow-hidden"
+          className="mt-24 p-10 lg:p-16 bg-grad-card border border-blue-1/20 rounded-3xl text-center relative overflow-hidden"
         >
-          <div className="absolute top-0 right-0 w-64 h-64 bg-blue-1/5 blur-[100px] -z-10" />
-          <h3 className="font-head text-[1.4rem] font-bold text-text-1 mb-4">
-            Qual desses agentes sua operação precisa agora?
+          {/* TEXTURE LAYERS */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none" 
+               style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")` }} />
+          
+          <div className="absolute inset-0 opacity-[0.1] pointer-events-none"
+               style={{ backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.15) 1px, transparent 0)`, backgroundSize: '32px 32px' }} />
+
+          <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-blue-1/10 blur-[120px] -z-10" />
+          <div className="absolute bottom-0 left-0 w-[300px] h-[300px] bg-violet-1/5 blur-[100px] -z-10" />
+          <h3 className="font-head font-bold text-text-1 mb-10 max-w-[1000px] mx-auto leading-tight flex flex-col items-center gap-1">
+            <span className="text-[0.75rem] uppercase tracking-[0.4em] text-blue-2 font-black mb-4 border border-blue-1/20 bg-blue-1/5 px-4 py-1.5 rounded-full">
+              Dê o primeiro passo
+            </span>
+            <span className="text-[1.1rem] lg:text-[1.25rem] font-light opacity-80 tracking-wide">
+              envie seus recursos selecionados e receba
+            </span>
+            <span className="text-[1.5rem] lg:text-[1.7rem] font-extrabold tracking-tight mt-1">
+              um Planejamento Estratégico de 30 dias
+            </span>
+            <span className="text-[1.8rem] lg:text-[2.3rem] font-black grad-text italic tracking-tighter py-1">
+              EXCLUSIVO PARA A SUA MARCA
+            </span>
+            <span className="text-[1rem] lg:text-[1.1rem] font-light opacity-70 mt-2">
+              com insights e ações de
+            </span>
+            <span className="text-[2.2rem] lg:text-[3rem] font-black grad-text tracking-[-0.05em] leading-none mb-4">
+              ALTO IMPACTO
+            </span>
           </h3>
-          <p className="text-text-3 text-[0.9rem] mb-8 font-light max-w-[500px] mx-auto">
-            Agende um diagnóstico gratuito e vamos identificar qual gargalo podemos resolver primeiro.
-          </p>
-          <a href="#contato" className="btn btn-primary">
-            Falar com o Claudio Müller →
-          </a>
+
+          <div className="max-w-[780px] mx-auto mb-12">
+            <p className="text-text-1 text-[0.92rem] font-light leading-relaxed opacity-90">
+              Público ideal, conteúdo e temas com maior relevância e oportunidades pouco exploradas são apresentadas e utilizadas para geração de conteúdo para suas redes sociais. Além de identificar termos em alta que podem contribuir para a otimização de suas campanhas patrocinadas.
+            </p>
+          </div>
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            disabled={selectedAgents.size === 0}
+            className={`btn ${selectedAgents.size === 0 ? 'opacity-50 cursor-not-allowed' : 'btn-primary'}`}
+          >
+            {selectedAgents.size === 0 ? 'Selecione pelo menos um agente' : 'EU QUERO'}
+          </button>
         </MotionDiv>
 
       </div>
+
+      {/* MODAL OVERLAY */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <MotionDiv
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            />
+            
+            <MotionDiv
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-xl bg-[#090B18] border border-white/10 rounded-2xl shadow-2xl overflow-hidden"
+            >
+              <div className="p-8">
+                <div className="flex justify-between items-start mb-6">
+                  <div>
+                    <h3 className="font-head text-2xl font-bold text-white">Solicitar Planejamento</h3>
+                    <p className="text-text-2 text-sm mt-1">Confirme seus dados para receber o relatório.</p>
+                  </div>
+                  <button onClick={() => setIsModalOpen(false)} className="text-white/40 hover:text-white transition-colors">
+                    <X size={24} />
+                  </button>
+                </div>
+
+                <div className="mb-8 p-4 bg-white/5 border border-white/10 rounded-lg">
+                  <span className="text-[0.65rem] font-bold text-text-2 uppercase tracking-widest block mb-3">Recursos Selecionados ({selectedAgents.size})</span>
+                  <div className="flex flex-wrap gap-2">
+                    {Array.from(selectedAgents).map(title => (
+                      <span key={title} className="text-[0.7rem] bg-blue-1/10 text-blue-2 border border-blue-1/20 px-2 py-1 rounded">
+                        {title}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {submitStatus === 'success' ? (
+                  <div className="py-12 text-center">
+                    <div className="w-16 h-16 bg-blue-1/20 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-2">
+                      <Check size={32} />
+                    </div>
+                    <h4 className="text-xl font-bold text-white mb-2">Pedido Enviado!</h4>
+                    <p className="text-text-2 text-sm">O Claudio Müller entrará em contato em breve.</p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                      <label className="block text-[0.65rem] font-bold text-text-2 uppercase tracking-widest mb-2">Seu Nome</label>
+                      <input 
+                        required
+                        type="text" 
+                        value={formData.name}
+                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        placeholder="Como podemos te chamar?"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/20 focus:border-blue-1/50 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[0.65rem] font-bold text-text-2 uppercase tracking-widest mb-2">Seu Melhor E-mail</label>
+                      <input 
+                        required
+                        type="email" 
+                        value={formData.email}
+                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        placeholder="Para onde enviamos o planejamento?"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/20 focus:border-blue-1/50 focus:outline-none transition-all"
+                      />
+                    </div>
+
+                    <div className="flex gap-3 mt-8">
+                      <button 
+                        type="button"
+                        onClick={() => setIsModalOpen(false)}
+                        className="flex-1 px-6 py-4 rounded-lg font-bold text-sm text-white/80 bg-white/5 hover:bg-white/10 border border-white/10 transition-all"
+                      >
+                        Cancelar
+                      </button>
+                      <button 
+                        disabled={isSubmitting}
+                        className="flex-[2] btn btn-primary flex items-center justify-center gap-2"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <Loader2 size={18} className="animate-spin" />
+                            Enviando...
+                          </>
+                        ) : (
+                          'SOLICITAR'
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </MotionDiv>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
