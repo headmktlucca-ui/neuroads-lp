@@ -1,39 +1,33 @@
 @import "tailwindcss";
 
 :root {
-  /* Core palette — from Lucca.os Visual Language */
-  --bg-deep:     #05060F;
-  --bg-base:     #090B18;
-  --bg-card:     rgba(255,255,255,0.04);
-  --bg-card-h:   rgba(255,255,255,0.07);
-  --bg-input:    rgba(255,255,255,0.06);
+  /* Core palette — standard CSS variables */
+  --bg-deep: #05060F;
+  --bg-base: #090B18;
+  --bg-card: rgba(255, 255, 255, 0.04);
+  --bg-card-h: rgba(255, 255, 255, 0.07);
+  --bg-input: rgba(255, 255, 255, 0.06);
 
-  --blue-1:      #3B6FFF;
-  --blue-2:      #5B8FFF;
-  --violet-1:    #7B5FFF;
-  --violet-2:    #9B7FFF;
-  --cyan-1:      #00D4FF;
-  --cyan-2:      #40E8FF;
-  --green-s:     #00C896;
-  --green-d:     #00A878;
-  --amber-s:     #FFB020;
-  --red-s:       #FF4D6A;
+  --blue-1: #3B6FFF;
+  --blue-2: #5B8FFF;
+  --violet-1: #7B5FFF;
+  --violet-2: #9B7FFF;
+  --cyan-1: #00D4FF;
+  --cyan-2: #40E8FF;
+  --green-s: #00C896;
+  --green-d: #00A878;
+  --amber-s: #FFB020;
+  --red-s: #FF4D6A;
 
-  --grad-main:   linear-gradient(135deg, #3B6FFF 0%, #7B5FFF 100%);
-  --grad-glow:   linear-gradient(135deg, rgba(59,111,255,.18) 0%, rgba(123,95,255,.12) 100%);
-  --grad-card:   linear-gradient(145deg, rgba(59,111,255,.08) 0%, rgba(123,95,255,.05) 100%);
-  --grad-text:   linear-gradient(135deg, #6B9FFF 0%, #AB8FFF 100%);
+  --border: rgba(255, 255, 255, 0.08);
+  --border-h: rgba(255, 255, 255, 0.14);
 
-  --border:      rgba(255,255,255,0.08);
-  --border-h:    rgba(255,255,255,0.14);
-  --border-blue: rgba(59,111,255,0.35);
+  --text-1: #F0F2FF;
+  --text-2: rgba(240, 242, 255, 0.7);
+  --text-3: rgba(240, 242, 255, 0.42);
+  --text-4: rgba(240, 242, 255, 0.25);
 
-  --text-1:  #F0F2FF;
-  --text-2:  rgba(240,242,255,0.7);
-  --text-3:  rgba(240,242,255,0.42);
-  --text-4:  rgba(240,242,255,0.25);
-
-  --font-ui:   'Inter', sans-serif;
+  --font-ui: 'Inter', sans-serif;
   --font-head: 'Manrope', sans-serif;
 
   --radius-sm: 8px;
@@ -41,21 +35,24 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
 
-  --shadow-card: 0 4px 32px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.06) inset;
-  --shadow-glow: 0 0 60px rgba(59,111,255,0.15), 0 0 120px rgba(123,95,255,0.08);
-  --shadow-btn:  0 4px 24px rgba(59,111,255,0.4);
+  /* Dynamic Gradients & Utility Variables */
+  --grad-main: linear-gradient(135deg, #3B6FFF 0%, #7B5FFF 100%);
+  --grad-glow: linear-gradient(135deg, rgba(59, 111, 255, .18) 0%, rgba(123, 95, 255, .12) 100%);
+  --grad-card: linear-gradient(145deg, rgba(59, 111, 255, .08) 0%, rgba(123, 95, 255, .05) 100%);
+  --grad-text: linear-gradient(135deg, #6B9FFF 0%, #AB8FFF 100%);
+
+  --shadow-card: 0 4px 32px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.06) inset;
+  --shadow-glow: 0 0 60px rgba(59, 111, 255, 0.15), 0 0 120px rgba(123, 95, 255, 0.08);
+  --shadow-btn: 0 4px 24px rgba(59, 111, 255, 0.4);
 
   /* Next.js Defaults Compatibility */
   --background: var(--bg-deep);
   --foreground: var(--text-1);
 }
 
-@theme inline {
-  --color-background: var(--bg-deep);
-  --color-foreground: var(--text-1);
-  --font-sans: var(--font-ui);
-  --font-head: var(--font-head);
-  
+@theme {
+  /* Sync Tailwind tokens with :root variables */
+  --color-bg-deep: var(--bg-deep);
   --color-bg-base: var(--bg-base);
   --color-bg-card: var(--bg-card);
   --color-bg-card-h: var(--bg-card-h);
@@ -72,11 +69,6 @@
   --color-amber-s: var(--amber-s);
   --color-red-s: var(--red-s);
 
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
-
   --color-border: var(--border);
   --color-border-h: var(--border-h);
 
@@ -85,10 +77,13 @@
   --color-text-3: var(--text-3);
   --color-text-4: var(--text-4);
 
-  --background-image-grad-main: var(--grad-main);
-  --background-image-grad-card: var(--grad-card);
-  --background-image-grad-glow: var(--grad-glow);
-  --background-image-grad-text: var(--grad-text);
+  --font-sans: var(--font-ui);
+  --font-head: var(--font-head);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
 
   --animate-blink: blink 2s ease-in-out infinite;
 
@@ -156,7 +151,8 @@ body::after {
   }
   .s-badge::before {
     content: '';
-    @apply block w-[18px] h-[2px] rounded-full bg-grad-main;
+    background: var(--grad-main);
+    @apply block w-[18px] h-[2px] rounded-full;
   }
 
   .s-title {
@@ -179,7 +175,8 @@ body::after {
     @apply inline-flex items-center gap-2 font-semibold text-[0.875rem] px-[1.6rem] py-[0.75rem] rounded-md transition-all whitespace-nowrap;
   }
   .btn-primary {
-    @apply bg-grad-main text-white shadow-[0_4px_24px_rgba(59,111,255,0.4)] hover:translate-y-[-2px] hover:shadow-[0_8px_32px_rgba(59,111,255,0.55)];
+    background: var(--grad-main);
+    @apply text-white shadow-[0_4px_24px_rgba(59,111,255,0.4)] hover:translate-y-[-2px] hover:shadow-[0_8px_32px_rgba(59,111,255,0.55)];
   }
   .btn-ghost {
     @apply bg-bg-card text-text-2 border border-border hover:bg-bg-card-h hover:border-border-h hover:text-text-1;
