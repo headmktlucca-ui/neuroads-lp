@@ -79,7 +79,7 @@ export default function AboutSection() {
             <MotionP {...fadeUp} className="s-badge">Quem está do outro lado</MotionP>
             <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title">
               Não é sobre equipe grande.<br />
-              <span className="g">É sobre entrega real.</span><br />
+              <span className="g">É sobre resultados reais.</span><br />
               E isso faz toda a diferença.
             </MotionH2>
 
