@@ -129,7 +129,7 @@ export default function ServicesSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [formData, setFormData] = useState({ name: '', email: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', website: '' });
 
   const fadeUp = {
     initial: { opacity: 0, y: 20 },
@@ -157,6 +157,7 @@ export default function ServicesSection() {
       await syncToHostingerReach({
         email: formData.email,
         name: formData.name,
+        website: formData.website,
         tags: ["Planejamento Inicial"]
       });
 
@@ -165,6 +166,7 @@ export default function ServicesSection() {
         "avante@neuroads.com.br",
         formData.name,
         formData.email,
+        formData.website,
         Array.from(selectedAgents)
       );
 
@@ -173,7 +175,7 @@ export default function ServicesSection() {
         setIsModalOpen(false);
         setSubmitStatus('idle');
         setSelectedAgents(new Set());
-        setFormData({ name: '', email: '' });
+        setFormData({ name: '', email: '', website: '' });
       }, 3000);
     } catch (error) {
       console.error('Submit failed:', error);
@@ -390,6 +392,16 @@ export default function ServicesSection() {
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
                         placeholder="Para onde enviamos o planejamento?"
+                        className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/20 focus:border-blue-1/50 focus:outline-none transition-all"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[0.65rem] font-bold text-text-2 uppercase tracking-widest mb-2">Site da sua marca (Opcional)</label>
+                      <input 
+                        type="text" 
+                        value={formData.website}
+                        onChange={(e) => setFormData({...formData, website: e.target.value})}
+                        placeholder="URL do seu site atual"
                         className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/20 focus:border-blue-1/50 focus:outline-none transition-all"
                       />
                     </div>

@@ -1,17 +1,64 @@
 'use client';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
+import { useState } from 'react';
+import { Loader2, CheckCircle2 } from 'lucide-react';
+import { syncToHostingerReach } from '../../app/actions/hostinger';
+import { sendStrategyRequestAction } from '../../app/actions/mail';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH2 = motion.h2;
 
 export default function CTASection() {
+  const [formData, setFormData] = useState({
+    name: '',
+    whatsapp: '',
+    email: '',
+    situation: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+
   const fadeUp = {
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true },
     transition: { duration: 0.7 }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      // 1. Sync to Hostinger Reach
+      await syncToHostingerReach({
+        email: formData.email,
+        name: formData.name,
+        phone: formData.whatsapp,
+        tags: ["Planejamento Inicial"]
+      });
+
+      // 2. Send Email
+      await sendStrategyRequestAction(
+        "avante@neuroads.com.br",
+        formData.name,
+        formData.email,
+        '', // website not in this form
+        formData.whatsapp,
+        formData.situation
+      );
+
+      setSubmitStatus('success');
+      setFormData({ name: '', whatsapp: '', email: '', situation: '' });
+      setTimeout(() => setSubmitStatus('idle'), 5000);
+    } catch (error) {
+      console.error('CTA Submit failed:', error);
+      setSubmitStatus('error');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -74,56 +121,100 @@ export default function CTASection() {
             {/* Top border glow */}
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-1/50 to-transparent" />
             
-            <form className="space-y-5">
-              <div className="space-y-1.5">
-                <label className="text-[0.72rem] font-semibold text-text-3 uppercase tracking-[0.1em]">Nome Completo</label>
-                <input 
-                  type="text" 
-                  placeholder="Seu nome" 
-                  className="w-full bg-white/[0.06] border border-white/10 rounded-md p-3 text-[0.9rem] text-text-1 outline-none focus:border-blue-1 transition-colors"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[0.72rem] font-semibold text-text-3 uppercase tracking-[0.1em]">WhatsApp</label>
-                <input 
-                  type="tel" 
-                  placeholder="(00) 00000-0000" 
-                  className="w-full bg-white/[0.06] border border-white/10 rounded-md p-3 text-[0.9rem] text-text-1 outline-none focus:border-blue-1 transition-colors"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[0.72rem] font-semibold text-text-3 uppercase tracking-[0.1em]">E-mail Corporativo</label>
-                <input 
-                  type="email" 
-                  placeholder="seu@email.com" 
-                  className="w-full bg-white/[0.06] border border-white/10 rounded-md p-3 text-[0.9rem] text-text-1 outline-none focus:border-blue-1 transition-colors"
-                />
-              </div>
-
-              <div className="space-y-1.5">
-                <label className="text-[0.72rem] font-semibold text-text-3 uppercase tracking-[0.1em]">Situação do Marketing</label>
-                <select 
-                  defaultValue=""
-                  className="w-full bg-white/[0.06] border border-white/10 rounded-md p-3 text-[0.9rem] text-text-1 outline-none focus:border-blue-1 transition-colors appearance-none"
+            {submitStatus === 'success' ? (
+              <div className="py-20 text-center space-y-4">
+                <MotionDiv 
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="w-16 h-16 bg-green-s/20 rounded-full flex items-center justify-center mx-auto text-green-s"
                 >
-                  <option value="" disabled>Selecione a situação</option>
-                  <option value="leads">Quero gerar mais leads com anúncios</option>
-                  <option value="cost">Preciso reduzir o custo por cliente</option>
-                  <option value="geo">Quero aparecer no Google e nas IAs</option>
-                  <option value="automation">Preciso de automação com IA</option>
-                </select>
+                  <CheckCircle2 size={32} />
+                </MotionDiv>
+                <h3 className="text-xl font-bold text-white">Solicitação Enviada!</h3>
+                <p className="text-text-2 text-sm max-w-[200px] mx-auto">
+                  Claudio Müller entrará em contato em breve para o diagnóstico.
+                </p>
+                <button 
+                  onClick={() => setSubmitStatus('idle')}
+                  className="text-blue-1 text-xs font-bold uppercase tracking-widest hover:underline"
+                >
+                  Enviar outra solicitação
+                </button>
               </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-1.5">
+                  <label className="text-[0.72rem] font-semibold text-text-3 uppercase tracking-[0.1em]">Nome Completo</label>
+                  <input 
+                    required
+                    type="text" 
+                    value={formData.name}
+                    onChange={(e) => setFormData({...formData, name: e.target.value})}
+                    placeholder="Seu nome" 
+                    className="w-full bg-white/[0.06] border border-white/10 rounded-md p-3 text-[0.9rem] text-text-1 outline-none focus:border-blue-1 transition-colors"
+                  />
+                </div>
 
-              <button type="submit" className="btn btn-primary w-full py-4 mt-4 cursor-pointer">
-                Solicitar Diagnóstico Agora
-              </button>
-              
-              <div className="text-center text-[0.68rem] text-text-4 mt-6">
-                Sua privacidade é prioridade. Não enviamos spam.
-              </div>
-            </form>
+                <div className="space-y-1.5">
+                  <label className="text-[0.72rem] font-semibold text-text-3 uppercase tracking-[0.1em]">WhatsApp</label>
+                  <input 
+                    required
+                    type="tel" 
+                    value={formData.whatsapp}
+                    onChange={(e) => setFormData({...formData, whatsapp: e.target.value})}
+                    placeholder="(00) 00000-0000" 
+                    className="w-full bg-white/[0.06] border border-white/10 rounded-md p-3 text-[0.9rem] text-text-1 outline-none focus:border-blue-1 transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[0.72rem] font-semibold text-text-3 uppercase tracking-[0.1em]">E-mail Corporativo</label>
+                  <input 
+                    required
+                    type="email" 
+                    value={formData.email}
+                    onChange={(e) => setFormData({...formData, email: e.target.value})}
+                    placeholder="seu@email.com" 
+                    className="w-full bg-white/[0.06] border border-white/10 rounded-md p-3 text-[0.9rem] text-text-1 outline-none focus:border-blue-1 transition-colors"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-[0.72rem] font-semibold text-text-3 uppercase tracking-[0.1em]">Situação do Marketing</label>
+                  <select 
+                    required
+                    value={formData.situation}
+                    onChange={(e) => setFormData({...formData, situation: e.target.value})}
+                    className="w-full bg-white/[0.06] border border-white/10 rounded-md p-3 text-[0.9rem] text-text-1 outline-none focus:border-blue-1 transition-colors appearance-none"
+                  >
+                    <option value="" disabled>Selecione a situação</option>
+                    <option value="Quero gerar mais leads com anúncios">Quero gerar mais leads com anúncios</option>
+                    <option value="Preciso reduzir o custo por cliente">Preciso reduzir o custo por cliente</option>
+                    <option value="Quero aparecer no Google e nas IAs">Quero aparecer no Google e nas IAs</option>
+                    <option value="Preciso de automação com IA">Preciso de automação com IA</option>
+                  </select>
+                </div>
+
+                <button 
+                  disabled={isSubmitting}
+                  type="submit" 
+                  className="btn btn-primary w-full py-4 mt-4 cursor-pointer flex items-center justify-center gap-2"
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin" />
+                      Enviando...
+                    </>
+                  ) : (
+                    'Solicitar Diagnóstico Agora'
+                  )}
+                </button>
+                
+                <div className="text-center text-[0.68rem] text-text-4 mt-6">
+                  Sua privacidade é prioridade. Não enviamos spam.
+                </div>
+              </form>
+            )}
           </MotionDiv>
 
         </div>

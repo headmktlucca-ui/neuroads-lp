@@ -52,7 +52,7 @@ export async function sendDiagnosisEmail(to: string, userName: string, platform:
   }
 }
 
-export async function sendStrategyRequestEmail(to: string, userName: string, userEmail: string, selectedAgents: string[]) {
+export async function sendStrategyRequestEmail(to: string, userName: string, userEmail: string, userWebsite: string, userPhone: string = '', userSituation: string = '', selectedAgents: string[] = []) {
   const emailUser = process.env.EMAIL_USER;
   const emailPass = process.env.EMAIL_PASS;
 
@@ -81,6 +81,9 @@ export async function sendStrategyRequestEmail(to: string, userName: string, use
           <h2 style="color: #f1f5f9; font-size: 18px; margin-top: 0; border-bottom: 1px solid #334155; padding-bottom: 10px;">Dados do Lead</h2>
           <p style="margin: 10px 0; color: #cbd5e1;"><strong>Nome:</strong> ${userName}</p>
           <p style="margin: 10px 0; color: #cbd5e1;"><strong>E-mail:</strong> ${userEmail}</p>
+          ${userPhone ? `<p style="margin: 10px 0; color: #cbd5e1;"><strong>WhatsApp:</strong> ${userPhone}</p>` : ''}
+          ${userWebsite ? `<p style="margin: 10px 0; color: #cbd5e1;"><strong>Site:</strong> <a href="${userWebsite.startsWith('http') ? userWebsite : `https://${userWebsite}`}" style="color: #3b82f6;">${userWebsite}</a></p>` : ''}
+          ${userSituation ? `<p style="margin: 10px 0; color: #cbd5e1;"><strong>Situação Atual:</strong> ${userSituation}</p>` : ''}
           <p style="margin: 10px 0; color: #cbd5e1;"><strong>Tag:</strong> <span style="background: #1e3a8a; color: #60a5fa; padding: 2px 8px; border-radius: 4px; font-size: 11px;">Planejamento Inicial</span></p>
         </div>
 
@@ -103,7 +106,7 @@ export async function sendStrategyRequestEmail(to: string, userName: string, use
       from: `"NeuroAds Lead" <${emailUser}>`,
       to: to,
       replyTo: userEmail,
-      subject: `[LEAD] Planejamento Estratégico: ${userName}`,
+      subject: `Solicitação de Planejamento: ${userName}`,
       html: html,
     });
 

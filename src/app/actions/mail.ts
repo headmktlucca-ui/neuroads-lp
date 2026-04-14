@@ -9,6 +9,14 @@ export async function sendDiagnosisEmailAction(to: string, userName: string, pla
   return await sendEmailUtil(to, userName, platform, diagnosisMarkdown);
 }
 
-export async function sendStrategyRequestAction(to: string, userName: string, userEmail: string, selectedAgents: string[]) {
-  return await sendStrategyUtil(to, userName, userEmail, selectedAgents);
+export async function sendStrategyRequestAction(
+  to: string, 
+  userName: string, 
+  userEmail: string, 
+  userWebsite: string = '', 
+  userPhone: string = '', 
+  userSituation: string = '', 
+  selectedAgents: string[] = []
+) {
+  return await sendStrategyUtil(to, userName, userEmail, userWebsite, userPhone, userSituation, selectedAgents);
 }

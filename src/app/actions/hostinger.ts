@@ -4,6 +4,8 @@ interface ReachContact {
   email: string;
   name?: string;
   surname?: string;
+  website?: string;
+  phone?: string;
   tags?: string[];
 }
 
@@ -27,7 +29,8 @@ export async function syncToHostingerReach(contact: ReachContact) {
       body: JSON.stringify({
         email: contact.email,
         name: contact.name,
-        note: "Adicionado via NeuroAds LP",
+        phone: contact.phone,
+        note: `Adicionado via NeuroAds LP${contact.website ? ` - Site: ${contact.website}` : ''}`,
         tags: contact.tags || ["Usuários Ativos"]
       }),
     });
