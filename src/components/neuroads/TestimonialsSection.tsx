@@ -1,25 +1,30 @@
 'use client';
 import { motion } from 'framer-motion';
 
+import Image from 'next/image';
+
 const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH2 = motion.h2;
 
 const testimonials = [
   {
-    q: 'O que me impressionou na NeuroAds foi a clareza. Pela primeira vez, eu entendo onde cada centavo do meu investimento está indo e vejo o ROAS subir mês a mês.',
-    a: 'Luiz F.',
-    s: 'Proprietário, Construtora L.'
+    q: 'Essencial para impulsionar sua empresa, recomendo!!',
+    a: 'Flávio Almeida',
+    s: 'CEO, FJR Teleprompter',
+    img: '/images/image (2).png'
   },
   {
-    q: 'A implementação dos agentes de IA no nosso WhatsApp mudou o jogo. Meus vendedores agora só pegam os leads prontos para comprar. Ganhamos 2h por dia cada um.',
-    a: 'Mariana S.',
-    s: 'Diretora Comercial, TecSol'
+    q: 'Excelente profissional de tráfego pago! Sempre muito estratégico, atencioso e focado em performance.',
+    a: 'Bruno Ribeiro',
+    s: 'CEO, Voar Estúdio Criativo',
+    img: '/images/image (1).png'
   },
   {
-    q: 'Eu achava que SEO era só colocar palavra-chave. O Claudio me mostrou que GEO é o que vai manter a gente vivo no ChatGPT. Já estamos sendo citados lá!',
-    a: 'Ricardo M.',
-    s: 'Sócio, Advocacia M.'
+    q: 'Excelente agência, muito profissional e comprometida sempre buscando melhorar as atividades. Recomendo bastante!',
+    a: 'Emanuel Silva',
+    s: 'Consultor Financeiro',
+    img: '/images/image.png'
   }
 ];
 
@@ -54,8 +59,14 @@ export default function TestimonialsSection() {
                 "{t.q}"
               </p>
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-grad-main flex items-center justify-center font-bold text-white text-[0.75rem]">
-                  {t.a.split(' ')[0][0]}{t.a.split(' ')[1] ? t.a.split(' ')[1][0] : ''}
+                <div className="w-10 h-10 rounded-full bg-grad-main flex items-center justify-center font-bold text-white text-[0.75rem] overflow-hidden relative">
+                  {(t as any).img ? (
+                    <Image src={(t as any).img} alt={t.a} fill className="object-cover" />
+                  ) : (
+                    <>
+                      {t.a.split(' ')[0][0]}{t.a.split(' ')[1] ? t.a.split(' ')[1][0] : ''}
+                    </>
+                  )}
                 </div>
                 <div>
                   <div className="font-head font-bold text-[0.85rem] text-text-1">{t.a}</div>
