@@ -197,9 +197,13 @@ export default function ServicesSection() {
           <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="text-text-2 max-w-[600px] mx-auto mt-6 font-light">
             Não entregamos apenas serviços. Implantamos um ecossistema de agentes inteligentes que operam 24/7 para otimizar cada etapa do seu funil comercial.
           </MotionP>
-          <MotionP {...fadeUp} transition={{ delay: 0.3 }} className="text-text-1 text-[1.1rem] font-medium mt-8 mb-[-1rem]">
-            Selecione as funções que fazem sentido para sua operação:
-          </MotionP>
+          <MotionP 
+          {...fadeUp} 
+          transition={{ delay: 0.15 }} 
+          className="text-[1.2rem] text-text-1 font-medium mb-12 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+        >
+          Selecione as funções que fazem sentido para sua operação:
+        </MotionP>
         </div>
 
         {/* CATEGORIES GRID */}

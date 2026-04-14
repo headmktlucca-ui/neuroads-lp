@@ -1,5 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
@@ -56,12 +57,22 @@ export default function ProcessSection() {
               transition={{ delay: 0.3 + (i * 0.1) }}
               className="relative z-10"
             >
-              <div className="w-[80px] h-[80px] rounded-full bg-[#05060F] border border-white/10 mx-auto flex items-center justify-center font-head text-[1.5rem] font-extrabold grad-text shadow-card mb-6">
-                {step.num}
+              <div className="w-[120px] h-[120px] rounded-full bg-grad-card border border-white/10 mx-auto flex items-center justify-center shadow-[0_0_30px_rgba(59,111,255,0.2)] mb-8 overflow-hidden relative group">
+                <Image 
+                  src={`/images/process/phase${i+1}.png`} 
+                  alt={step.tag} 
+                  fill 
+                  className="object-cover scale-110 group-hover:scale-125 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#05060F]/40 to-transparent" />
               </div>
-              <div className="mb-3"><span className="tag">{step.tag}</span></div>
+              <div className="mb-4">
+                <span className="font-head text-[1.4rem] font-extrabold grad-text uppercase tracking-wider">
+                  {step.tag}
+                </span>
+              </div>
               <h3 className="font-head text-[1.1rem] font-bold text-text-1 mb-3">{step.title}</h3>
-              <p className="text-[0.85rem] text-text-3 font-light leading-relaxed max-w-[280px] mx-auto">
+              <p className="text-[0.85rem] text-text-2 font-light leading-relaxed max-w-[280px] mx-auto">
                 {step.desc}
               </p>
             </MotionDiv>

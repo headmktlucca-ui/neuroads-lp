@@ -30,15 +30,15 @@ export default function CTASection() {
               Comece a <span className="g">escalar com inteligência.</span>
             </MotionH2>
             <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="s-body">
-              Se você fatura mais de R$ 50k/mês e quer sair do amadorismo no marketing, preencha o formulário abaixo. Vou analisar seu caso pessoalmente e agendaremos um diagnóstico gratuito.
+              Se você fatura acima de R$ 30k/mês e está com dificuldades em aumentar suas vendas sem extourar seu investimento com operacional, solicite um diagnóstico sem compromisso. 
             </MotionP>
 
             <div className="space-y-4 mt-10">
                {[
-                 'Análise completa do seu tráfego atual',
+                 'Análise completa do seu posicionamento atual',
                  'Simulação de potencial de escala com o Lucca',
                  'Plano de ação para GEO e Agentes de IA',
-                 'Conversa direta com Claudio Müller (sem intermediários)'
+                 'Converse diretamente com o Analista'
                ].map((benefit, i) => (
                  <MotionDiv key={i} {...fadeUp} transition={{ delay: 0.3 + (i * 0.1) }} className="flex items-center gap-3 text-[0.9rem] text-text-1">
                     <div className="w-5 h-5 rounded-full bg-green-s border border-green-s flex items-center justify-center text-[0.65rem] text-white">✓</div>
