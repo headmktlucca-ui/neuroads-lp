@@ -3,6 +3,8 @@ import { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
+import CreativeStudio from '../tools/CreativeStudio';
+import LPAuditor from '../tools/LPAuditor';
 
 interface Tool {
   title: string;
@@ -304,11 +306,25 @@ export default function ToolGallery() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-2xl bg-[#0A0A0A] border border-white/10 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)]"
+              className={`relative w-full ${
+                ['Gerador de Criativos', 'Gerador de Copies de Conversão', 'Diagnóstico de Landing Page'].includes(selectedTool.title) 
+                ? 'max-w-5xl' 
+                : 'max-w-2xl'
+              } bg-[#0A0A0A] border border-white/10 rounded-3xl overflow-hidden shadow-[0_0_50px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto`}
             >
-              <div className="relative h-48 bg-gradient-to-br from-[var(--color-brand-orange)]/20 to-transparent flex items-center justify-center">
-                <div className="relative w-24 h-24 rounded-2xl overflow-hidden shadow-2xl ring-2 ring-white/10">
-                   <Image src={selectedTool.icon} alt={selectedTool.title} fill className="object-cover" />
+              <div className="relative h-32 bg-gradient-to-br from-[var(--color-brand-orange)]/20 to-transparent flex items-center px-12">
+                <div className="flex items-center gap-6">
+                  <div className="relative w-16 h-16 rounded-xl overflow-hidden shadow-2xl ring-2 ring-white/10">
+                     <Image src={selectedTool.icon} alt={selectedTool.title} fill className="object-cover" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-black tracking-tight uppercase text-white">
+                      {selectedTool.title}
+                    </h3>
+                    <p className="text-[var(--color-brand-orange)] font-mono text-[10px] uppercase tracking-[0.2em]">
+                      Sistemas Neurais Ativos
+                    </p>
+                  </div>
                 </div>
                 <button 
                   onClick={() => setSelectedTool(null)}
@@ -319,34 +335,37 @@ export default function ToolGallery() {
               </div>
 
               <div className="p-8 md:p-12">
-                <h3 className="text-3xl font-black mb-4 tracking-tight uppercase text-white">
-                  {selectedTool.title}
-                </h3>
-                <p className="text-[var(--color-brand-orange)] font-mono text-xs uppercase tracking-[0.2em] mb-8">
-                  Estratégia Neural Avançada
-                </p>
-                <p className="text-slate-300 text-lg leading-relaxed mb-10">
-                  {selectedTool.longDescription}
-                </p>
+                {/* Interactive Tools Content */}
+                {['Gerador de Criativos', 'Gerador de Copies de Conversão'].includes(selectedTool.title) ? (
+                   <CreativeStudio />
+                ) : selectedTool.title === 'Diagnóstico de Landing Page' ? (
+                   <LPAuditor />
+                ) : (
+                  <>
+                    <p className="text-slate-300 text-lg leading-relaxed mb-10">
+                      {selectedTool.longDescription}
+                    </p>
 
-                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-white/5">
-                  <a 
-                    href="https://wa.me/5511999999999"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-grow bg-[var(--color-brand-orange)] text-black px-8 py-4 font-black tracking-widest uppercase italic flex items-center justify-center gap-3 hover:bg-[var(--color-brand-green)] transition-all skew-x-[-12deg]"
-                  >
-                    <span className="skew-x-[12deg] flex items-center gap-2">
-                       <MessageSquare size={18} /> ENTRAR EM CONTATO
-                    </span>
-                  </a>
-                  <button 
-                    onClick={() => setSelectedTool(null)}
-                    className="px-8 py-4 font-black tracking-widest uppercase italic border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 transition-all skew-x-[-12deg]"
-                  >
-                    <span className="skew-x-[12deg]">FECHAR</span>
-                  </button>
-                </div>
+                    <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-white/5">
+                      <a 
+                        href="https://wa.me/5511999999999"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-grow bg-[var(--color-brand-orange)] text-black px-8 py-4 font-black tracking-widest uppercase italic flex items-center justify-center gap-3 hover:bg-[var(--color-brand-green)] transition-all skew-x-[-12deg]"
+                      >
+                        <span className="skew-x-[12deg] flex items-center gap-2">
+                           <MessageSquare size={18} /> ENTRAR EM CONTATO
+                        </span>
+                      </a>
+                      <button 
+                        onClick={() => setSelectedTool(null)}
+                        className="px-8 py-4 font-black tracking-widest uppercase italic border border-white/10 text-slate-400 hover:text-white hover:bg-white/5 transition-all skew-x-[-12deg]"
+                      >
+                        <span className="skew-x-[12deg]">FECHAR</span>
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </motion.div>
           </div>

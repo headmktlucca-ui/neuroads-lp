@@ -17,7 +17,7 @@ export default function CopyGeneratorContainer() {
     const res = await generateCreativeSuiteResult('copy', links);
     
     if (res.success && res.data) {
-      setResult(res.data);
+      setResult(res.data as string);
       setStep('results');
     } else {
       setError(res.error || 'Erro na geração de copy.');

@@ -1,63 +1,82 @@
 'use server';
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { 
-  KnowledgeLinks, 
-  generateCreativePrompt, 
-  generateCopyPrompt, 
-  generateViralPrompt 
-} from "../../lib/creative-suite-prompts";
+import OpenAI from 'openai';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY || '',
+});
 
-export async function generateCreativeSuiteResult(type: 'creative' | 'copy' | 'viral', links: KnowledgeLinks) {
-  if (!process.env.GEMINI_API_KEY) {
-    return { success: false, error: 'GEMINI_API_KEY is not set in environment variables' };
+export interface CreativeResult {
+  headlines: string[];
+  videoHook: string;
+  adCopy: string;
+  strategy: string;
+}
+
+export async function generateCreativeSuiteResult(
+  input: string | 'creative' | 'copy' | 'viral', 
+  links?: any
+) {
+  if (!process.env.OPENAI_API_KEY) {
+    return { success: false, error: 'OPENAI_API_KEY não configurada no servidor.' };
+  }
+
+  // Handle legacy signature (type, links) or new signature (productInfo)
+  let productInfo = '';
+  if (typeof input === 'string' && links) {
+    // Legacy mode: Convert links object to a string for the AI
+    productInfo = `Nicho/Tipo: ${input}. Contexto: ${JSON.stringify(links)}`;
+  } else if (typeof input === 'string') {
+    // New mode: direct string input
+    productInfo = input;
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content: `Você é o Diretor Criativo e Copywriter Master da NeuroAds. 
+          Sua missão é criar anúncios de alta performance baseados em neuro-marketing e resposta direta.
+          Sempre responda em formato JSON estruturado com os seguintes campos:
+          - headlines: Array com 3 headlines magnéticas (máximo 40 caracteres cada).
+          - videoHook: Um gancho explosivo para os primeiros 3 segundos de um vídeo.
+          - adCopy: Uma copy completa seguindo o framework PAS (Problema, Agitação, Solução).
+          - strategy: Uma breve explicação da estratégia neuro-cognitiva utilizada.`
+        },
+        {
+          role: "user",
+          content: `Crie uma estratégia de anúncios para o seguinte produto/serviço: ${productInfo}`
+        }
+      ],
+      response_format: { type: "json_object" }
+    });
 
-    let prompt = '';
-    let systemInstruction = '';
+    const content = response.choices[0].message.content;
+    if (!content) throw new Error('Falha na resposta da IA.');
 
-    switch (type) {
-      case 'creative':
-        prompt = generateCreativePrompt(links);
-        systemInstruction = "Você é o Diretor de Arte Sênior da NeuroAds. Gere conceitos visuais e copies baseados em dados neurais.";
-        break;
-      case 'copy':
-        prompt = generateCopyPrompt(links);
-        systemInstruction = "Você é o Copywriter Master da NeuroAds. Transforme links em argumentos de vendas imbatíveis.";
-        break;
-      case 'viral':
-        prompt = generateViralPrompt(links);
-        systemInstruction = "Você é o Estrategista de Viralização da NeuroAds. Identifique padrões de retenção e ganchos explosivos.";
-        break;
-    }
+    const result = JSON.parse(content) as CreativeResult;
 
-    const result = await model.generateContent([
-      { text: systemInstruction },
-      { text: prompt }
-    ]);
-
-    const response = await result.response;
-    const text = response.text();
-
-    if (!text) {
-      throw new Error('A IA não retornou um conteúdo válido.');
-    }
-
+    // LEGACY COMPATIBILITY: 
+    // If called with links, return the copy string in 'data' to avoid breaking 
+    // components like CopyGeneratorContainer which expect a string.
+    // If called without links (new CreativeStudio), return the full object.
     return {
       success: true,
-      data: text,
+      data: links ? result.adCopy : result,
+      // Provide the other fields in case anyone needs them
+      headlines: result.headlines,
+      videoHook: result.videoHook,
+      adCopy: result.adCopy,
+      strategy: result.strategy,
       timestamp: new Date().toISOString(),
     };
   } catch (error: any) {
-    console.error(`Error in ${type} analysis:`, error);
+    console.error(`Error in Creative analysis:`, error);
     return {
       success: false,
-      error: error.message || 'Falha na conexão com os sistemas neurais do Gemini.',
+      error: error.message || 'Falha na conexão com os sistemas neurais da OpenAI.',
     };
   }
 }
