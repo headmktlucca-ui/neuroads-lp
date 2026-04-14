@@ -70,7 +70,7 @@ export default function ProblemsSection() {
                 <h3 className="font-head text-[0.95rem] font-bold text-text-1 mb-2.5 leading-tight">
                   {p.q}
                 </h3>
-                <p className="text-[0.835rem] text-text-3 font-light leading-relaxed">
+                <p className="text-[0.835rem] text-text-2 font-light leading-relaxed">
                   {p.a}
                 </p>
                 <div className="inline-flex items-center gap-1.5 mt-4 text-[0.7rem] font-semibold text-blue-2 tracking-[0.08em] uppercase">

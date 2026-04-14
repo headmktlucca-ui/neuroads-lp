@@ -28,10 +28,10 @@ export default function Footer() {
           </Link>
           
           <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 list-none m-0 p-0">
-            <li><Link href="#claudio" className="text-[0.78rem] font-medium text-text-3 no-underline transition-colors hover:text-blue-1">Sobre Nós</Link></li>
-            <li><Link href="#problemas" className="text-[0.78rem] font-medium text-text-3 no-underline transition-colors hover:text-blue-1">Desafios e Soluções</Link></li>
-            <li><Link href="#lucca" className="text-[0.78rem] font-medium text-text-3 no-underline transition-colors hover:text-blue-1">Nosso Diferencial</Link></li>
-            <li><Link href="#contato" className="text-[0.78rem] font-medium text-text-3 no-underline transition-colors hover:text-blue-1">Entre em Contato</Link></li>
+            <li><Link href="#claudio" className="text-[0.78rem] font-medium text-text-2 no-underline transition-colors hover:text-blue-1">Sobre Nós</Link></li>
+            <li><Link href="#problemas" className="text-[0.78rem] font-medium text-text-2 no-underline transition-colors hover:text-blue-1">Desafios e Soluções</Link></li>
+            <li><Link href="#lucca" className="text-[0.78rem] font-medium text-text-2 no-underline transition-colors hover:text-blue-1">Nosso Diferencial</Link></li>
+            <li><Link href="#contato" className="text-[0.78rem] font-medium text-text-2 no-underline transition-colors hover:text-blue-1">Entre em Contato</Link></li>
           </ul>
 
           <div className="flex flex-col items-center md:items-end gap-2 text-center md:text-right">

@@ -22,26 +22,48 @@ export default function AboutSection() {
           {/* PHOTO COLUMN */}
           <MotionDiv 
             {...fadeUp}
-            className="about-photo-wrap relative"
+            className="about-photo-wrap"
           >
-            <div className="aspect-[3/4] rounded-xl bg-gradient-to-br from-blue-1/10 via-violet-1/[0.08] to-transparent border border-white/10 flex items-center justify-center overflow-hidden relative">
-              <div className="absolute inset-0 flex items-center justify-center font-head font-extrabold text-[7rem] grad-text opacity-15 select-none">
-                CM
+            <div className="relative">
+              <div className="aspect-[3/4] rounded-xl bg-gradient-to-br from-blue-1/10 via-violet-1/[0.08] to-transparent border border-white/10 flex items-center justify-center overflow-hidden relative">
+                <div className="absolute inset-0 flex items-center justify-center font-head font-extrabold text-[7rem] grad-text opacity-15 select-none">
+                  CM
+                </div>
+                <Image 
+                  src="/images/0599.jpeg" 
+                  alt="Claudio Müller" 
+                  fill
+                  className="object-cover object-center relative z-10"
+                />
               </div>
-              <Image 
-                src="/images/0599.jpeg" 
-                alt="Claudio Müller" 
-                fill
-                className="object-cover object-center relative z-10"
-              />
+
+              <div className="absolute -top-4 -right-4 bg-grad-main rounded-md p-[0.875rem_1.1rem] text-center shadow-[0_4px_24px_rgba(59,111,255,0.4)] z-20">
+                <div className="font-head text-[1.7rem] font-extrabold text-white leading-none">25+</div>
+                <div className="text-[0.62rem] font-bold text-white/70 uppercase tracking-[0.1em] mt-1">Anos em Growth</div>
+              </div>
+
+              {/* EXPERT PROFILE CARD */}
+              <div className="absolute bottom-6 left-6 right-6 z-20 bg-white/10 backdrop-blur-xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] rounded-2xl p-6 border border-white/20">
+                <div>
+                  <h4 className="text-text-1 font-head font-extrabold text-xl leading-none">Claudio Müller</h4>
+                  <p className="text-[0.7rem] font-bold text-violet-2 uppercase tracking-[0.15em] mt-2 leading-none">Analista de Marketing & IA Comercial</p>
+                </div>
+                
+                <div className="flex items-center gap-4 mt-5">
+                  <a href="https://www.instagram.com/claudiomullermkt/" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-all duration-300 hover:brightness-125">
+                    <Image src="/images/instagram-final.png" alt="Instagram" width={32} height={32} className="relative z-10" />
+                  </a>
+                  <a href="https://www.linkedin.com/in/claudiomullerneto/" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-all duration-300 hover:brightness-125">
+                    <Image src="/images/linkedin-3d.png" alt="LinkedIn" width={32} height={32} className="relative z-10" />
+                  </a>
+                  <a href="https://www.youtube.com/@claudiomullermkt" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-all duration-300 hover:brightness-125">
+                    <Image src="/images/youtube-final.png" alt="YouTube" width={32} height={32} className="relative z-10" />
+                  </a>
+                </div>
+              </div>
             </div>
 
-            <div className="absolute -top-4 -right-4 bg-grad-main rounded-md p-[0.875rem_1.1rem] text-center shadow-[0_4px_24px_rgba(59,111,255,0.4)] z-20">
-              <div className="font-head text-[1.7rem] font-extrabold text-white leading-none">25+</div>
-              <div className="text-[0.62rem] font-bold text-white/70 uppercase tracking-[0.1em] mt-1">Anos em Growth</div>
-            </div>
-
-            <div className="flex flex-wrap gap-2 mt-6">
+            <div className="flex flex-wrap gap-2 mt-8">
               {['Google Ads Certified', 'Meta Blueprint', 'Growth Methodology', 'AI Automation'].map((cert, i) => (
                 <span key={i} className="text-[0.68rem] font-medium text-blue-2 bg-blue-1/10 border border-blue-1/30 px-3 py-1 rounded-full">
                   {cert}
@@ -71,11 +93,11 @@ export default function AboutSection() {
 
             <div className="space-y-4">
               {[
-                'Comecei no marketing digital há mais de 25 anos, quando "tráfego pago" sequer era um conceito consolidado no Brasil. Trabalhei com empresas de todos os tamanhos e aprendi que o problema raramente é falta de verba — é falta de estratégia, de dados confiáveis e de um sistema que funcione sem depender de achismo.',
+                '"Comecei no marketing digital há mais de 25 anos, quando "tráfego pago" sequer era um conceito consolidado no Brasil. Trabalhei com empresas de todos os tamanhos e aprendi que o problema raramente é falta de verba — é falta de estratégia, de dados confiáveis e de um sistema que funcione sem depender de achismo.',
                 'Ao longo dessa trajetória, gerenciei mais de R$ 10 milhões em investimentos no Google e Meta. Mas o que mais me move hoje é ver uma PME — que sempre dependeu de indicação ou sorte — começar a crescer de forma previsível, todos os meses, porque construímos juntos o sistema certo.',
-                'Por isso criei a NeuroAds: para trazer às PMEs a mesma inteligência estratégica que grandes empresas têm acesso — sem burocracia, sem custo exorbitante, e com alguém que fala a sua língua.'
+                'Por isso criei a NeuroAds: para trazer às PMEs a mesma inteligência estratégica que grandes empresas têm acesso — sem burocracia, sem custo exorbitante, e com alguém que fala a sua língua."'
               ].map((text, i) => (
-                <MotionP key={i} {...fadeUp} transition={{ delay: 0.3 + (i * 0.1) }} className="text-[0.935rem] text-text-2 font-light leading-[1.85]">
+                <MotionP key={i} {...fadeUp} transition={{ delay: 0.3 + (i * 0.1) }} className="text-[0.935rem] text-text-1 font-light leading-[1.85]">
                   {text}
                 </MotionP>
               ))}

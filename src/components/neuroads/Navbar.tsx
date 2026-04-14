@@ -71,7 +71,7 @@ export default function Navbar() {
         <ul className="hidden lg:flex items-center gap-[1.75rem] list-none">
           {navLinks.map((link) => (
             <li key={link.name}>
-              <a href={link.href} className="text-[0.835rem] font-medium text-text-3 no-underline transition-colors hover:text-text-1">
+              <a href={link.href} className="text-[0.835rem] font-medium text-text-2 no-underline transition-colors hover:text-text-1">
                 {link.name}
               </a>
             </li>
