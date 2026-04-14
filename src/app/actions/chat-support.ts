@@ -20,27 +20,58 @@ export async function chatWithSupport(messages: ChatMessage[]) {
   }
 
   try {
+    // Get current time in Brasilia (UTC-3)
+    const now = new Date();
+    const utcOffset = now.getTimezoneOffset(); // offset in minutes
+    // Adjust for BRT (UTC-3) regardless of server location
+    const brtTime = new Date(now.getTime() + (utcOffset - 180) * 60000);
+    
+    const day = brtTime.getDay(); // 0 (Sun) to 6 (Sat)
+    const hour = brtTime.getHours();
+    
+    const isWeekday = day >= 1 && day <= 5;
+    const isSupportHours = isWeekday && ((hour >= 8 && hour < 12) || (hour >= 14 && hour < 18));
+    
+    // Status message for the prompt
+    const supportStatus = isSupportHours 
+      ? "ATENDIMENTO HUMANO DISPONÍVEL (VIA WHATSAPP)" 
+      : "ATENDIMENTO HUMANO INDISPONÍVEL (SOMENTE AGENDAMENTO VIA CAL.COM)";
+
     const systemPrompt: ChatMessage = {
       role: 'system',
-      content: `Você é o Estrategista de Suporte da NeuroAds. Sua missão é ATUAR COMO UM SDR DE ALTA PERFORMANCE.
+      content: `Você é o Lucca, um Secretário Executivo com alta experiência na NeuroAds. 
+Sua postura é impecável, profissional, proativa e extremamente resolutiva.
 
-FLUXO OBRIGATÓRIO (Siga RIGOROSAMENTE):
-1. DESCOBERTA: Identifique as dores do cliente (Orçamentos Drenados, Leads Frios, etc.). "showHumanButton" deve ser false.
-2. CAPTURA DE NOME: Somente APÓS identificar a dor, diga que precisa conectá-lo ao especialista certo e PERGUNTE O NOME do cliente. "showHumanButton" deve ser false.
-3. FINALIZAÇÃO: Assim que tiver o nome, defina "showHumanButton": true. Você deve então gerar um "summary" (resumo técnico da conversa) para o atendente humano.
+ESTADO ATUAL DO SUPORTE: ${supportStatus}
+
+SUA MISSÃO:
+1. COMPREENSÃO PROFUNDA: Entenda exatamente o problema, dificuldade ou motivo do contato do usuário.
+2. RESOLUÇÃO PROATIVA: Use todo seu conhecimento para RESOLVER o atendimento ali mesmo. Não transfira o usuário sem antes tentar solucionar a dúvida de forma técnica e consultiva.
+3. FILTRO DE QUALIDADE (SDR): Se a questão for complexa ou exigir intervenção humana, siga o fluxo:
+   - Capte o NOME do usuário.
+   - Gere o "summary" (resumo técnico) da necessidade.
+   - Ofereça o direcionamento correto baseado no horário.
+
+REGRAS DE DIRECIONAMENTO:
+- SE ${isSupportHours ? 'VERDADEIRO' : 'FALSO'} (Atendimento Online): Ofereça o botão "Falar com Especialista" (WhatsApp).
+- SE ${isSupportHours ? 'FALSO' : 'VERDADEIRO'} (Atendimento Offline): Explique que o time está em pausa ou fora do horário e ofereça o botão "Agendar Horário" com o Cláudio Müller.
+
+REGRAS PARA LINKS E BOTÕES:
+- NUNCA envie links (URLs) diretamente no campo "message".
+- Sempre use o campo "buttons".
+- Link da agenda: https://cal.com/atendimento-neuroads/atendimento
+- O botão de WhatsApp deve ser ativado via "showHumanButton": true E também pode ser um botão manual no array "buttons" se você julgar pertinente.
 
 VOCÊ DEVE RESPONDER SEMPRE NO SEGUINTE FORMATO JSON:
 {
-  "message": "Sua resposta amigável para o cliente",
-  "clientName": "O nome capturado (se já fornecido)",
-  "summary": "Um resumo curto e profissional da dor e do contexto do cliente para o atendente (apenas quando pronto para o humano)",
-  "showHumanButton": true/false
-}
-
-DIRETRIZES:
-- Se o usuário perguntar preços, mantenha a política de "soluções customizadas" e volte para a Descoberta.
-- Se o usuário já informou o nome antes de você pedir, pule para a Finalização.
-- O resumo deve ser objetivo (ex: "Cliente com baixo ROI em Meta Ads e leads desqualificados. Busca automação de funil.")`,
+  "message": "Sua resposta executiva e resolutiva (SEM links no texto!)",
+  "clientName": "O nome capturado",
+  "summary": "Resumo objetivo da dor/contexto",
+  "showHumanButton": ${isSupportHours ? 'true/false' : 'false'},
+  "buttons": [
+    { "label": "Texto do Botão", "url": "URL_AQUI" }
+  ]
+}`,
     };
 
     const response = await openai.chat.completions.create({
@@ -56,6 +87,7 @@ DIRETRIZES:
     const showHumanButton = assistantData.showHumanButton || false;
     const clientName = assistantData.clientName || null;
     const summary = assistantData.summary || null;
+    const buttons = assistantData.buttons || [];
 
     if (!assistantMessage) {
       throw new Error('Sem resposta da IA.');
@@ -67,12 +99,41 @@ DIRETRIZES:
       showHumanButton: showHumanButton,
       clientName: clientName,
       summary: summary,
+      buttons: buttons,
     };
   } catch (error: any) {
     console.error('Support Chat Error:', error);
     return {
       success: false,
       error: 'Ocorreu um erro na conexão com os sistemas neurais. Tente novamente em instantes.',
+    };
+  }
+}
+
+export async function transcribeAudio(formData: FormData) {
+  if (!process.env.OPENAI_API_KEY) {
+    return { success: false, error: 'API Key não configurada.' };
+  }
+
+  try {
+    const file = formData.get('audio') as File;
+    if (!file) throw new Error('Nenhum arquivo de áudio enviado.');
+
+    const transcription = await openai.audio.transcriptions.create({
+      file: file,
+      model: 'whisper-1',
+      language: 'pt',
+    });
+
+    return {
+      success: true,
+      text: transcription.text,
+    };
+  } catch (error: any) {
+    console.error('Transcription Error:', error);
+    return {
+      success: false,
+      error: 'Falha ao processar áudio.',
     };
   }
 }

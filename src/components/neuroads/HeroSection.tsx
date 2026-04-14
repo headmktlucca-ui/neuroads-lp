@@ -25,19 +25,15 @@ export default function HeroSection() {
           
           {/* LEFT CONTENT */}
           <div className="hero-left">
-            <MotionDiv {...fadeUp(0.1)} className="flex items-center gap-3 mb-7">
-              <span className="badge"><span className="w-1.5 h-1.5 rounded-full bg-cyan-1 animate-blink" />Machine Learning · IA · Automação</span>
-              <span className="tag">Para PMEs</span>
-            </MotionDiv>
 
-            <MotionH1 {...fadeUp(0.25)} className="font-head text-[30px] font-extrabold leading-[1.1] tracking-[-0.03em] text-text-1 mb-6 text-balance">
+            <MotionH1 {...fadeUp(0.25)} className="font-head text-[40px] font-extrabold leading-[1.1] tracking-[-0.03em] text-text-1 mb-6 text-balance">
               Sua empresa merece<br />
               um marketing que<br />
               <span className="grad-text italic">realmente funciona.</span>
             </MotionH1>
 
             <MotionP {...fadeUp(0.4)} className="text-[1.05rem] text-text-2 font-light leading-[1.8] max-w-[540px] mb-9">
-              Sou Claudio Müller. Combinamos campanhas pagas de alta performance, posicionamento no Google e nas IAs de busca (GEO), e agentes inteligentes no seu operacional comercial — tudo integrado, tudo orientado a resultado mensurável.
+              Capturamos a atenção no momento ideal e construímos a sua autoridade: nossa solução integra anúncios otimizados, presença dominante no Google e IAs (GEO), com agentes IA e automações integradas no comercial. Um ecossistema desenhado para lucro previsível.
             </MotionP>
 
             <MotionDiv {...fadeUp(0.55)} className="flex flex-wrap gap-[0.875rem]">
@@ -45,7 +41,7 @@ export default function HeroSection() {
                 Quero um diagnóstico gratuito →
               </a>
               <a href="#claudio" className="btn btn-ghost no-underline">
-                Conheça minha história
+                Conheça nossa origem
               </a>
             </MotionDiv>
 

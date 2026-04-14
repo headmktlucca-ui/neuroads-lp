@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Bot, ExternalLink, Headset } from 'lucide-react';
-import { chatWithSupport } from '../../app/actions/chat-support';
+import { MessageSquare, X, Send, Bot, ExternalLink, Headset, Mic, Square, Trash2 } from 'lucide-react';
+import { chatWithSupport, transcribeAudio } from '../../app/actions/chat-support';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -15,6 +15,7 @@ function cn(...inputs: ClassValue[]) {
 interface Message {
   role: 'user' | 'assistant';
   content: string;
+  buttons?: Array<{ label: string; url: string }>;
 }
 
 const getGreeting = () => {
@@ -24,7 +25,7 @@ const getGreeting = () => {
   return "Boa noite";
 };
 
-const INITIAL_GREETING = `${getGreeting()}! \n\nAqui é o Lucca! Eu atuo orquestrando as operações dos agentes IA e automações na NeuroAds.\n\nMinha missão aqui é apresentar para você o caminho ideal para atender sua necessidade.\n\nComo posso ajudar?`;
+const INITIAL_GREETING = `${getGreeting()}! \n\nAqui é o Lucca, Secretário Executivo da NeuroAds.\n\nMinha missão é compreender sua necessidade e orquestrar a melhor solução técnica ou humana para você.\n\nEm que posso ser útil hoje?`;
 
 const SUGGESTIONS = [
   "Escalar meu tráfego pago",
@@ -44,6 +45,11 @@ export default function SupportChat() {
   const [clientName, setClientName] = useState<string | null>(null);
   const [summary, setSummary] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -84,11 +90,15 @@ export default function SupportChat() {
 
       const result = await chatWithSupport(chatMessages);
 
-      if (result.success && result.content) {
-        setMessages((prev) => [...prev, { role: 'assistant', content: result.content! }]);
-
-        if (result.clientName) setClientName(result.clientName);
-        if (result.summary) setSummary(result.summary);
+        if (result.success && result.content) {
+          setMessages((prev) => [...prev, { 
+            role: 'assistant', 
+            content: result.content!,
+            buttons: result.buttons
+          }]);
+  
+          if (result.clientName) setClientName(result.clientName);
+          if (result.summary) setSummary(result.summary);
 
         if (result.showHumanButton) {
           setShowWhatsApp(true);
@@ -108,10 +118,78 @@ export default function SupportChat() {
       setIsLoading(false);
     }
   };
+  
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      chunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) chunksRef.current.push(e.data);
+      };
+
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(chunksRef.current, { type: 'audio/webm' });
+        if (audioBlob.size > 0) {
+          await handleAudioSubmit(audioBlob);
+        }
+        stream.getTracks().forEach(track => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+      setRecordingSeconds(0);
+      timerRef.current = setInterval(() => {
+        setRecordingSeconds(prev => prev + 1);
+      }, 1000);
+    } catch (err) {
+      console.error('Mic Error:', err);
+      alert('Não foi possível acessar o microfone.');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      if (timerRef.current) clearInterval(timerRef.current);
+    }
+  };
+
+  const cancelRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.onstop = null;
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
+      if (timerRef.current) clearInterval(timerRef.current);
+      mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
+    }
+  };
+
+  const handleAudioSubmit = async (blob: Blob) => {
+    setIsLoading(true);
+    const formData = new FormData();
+    formData.append('audio', blob, 'recording.webm');
+
+    try {
+      const result = await transcribeAudio(formData);
+      if (result.success && result.text) {
+        await handleSend(result.text);
+      } else {
+        alert(result.error || 'Erro na transcrição');
+      }
+    } catch (err) {
+      console.error('Transcribe Error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const getWhatsAppUrl = () => {
     const phoneNumber = "5551981758382";
-    const baseMsg = `Olá, meu nome é ${clientName || 'visitante'}.\n\nAcabei de conversar com o NeuroBot e gostaria de suporte humano.\n\n*Resumo da Conversa:*\n${summary || 'O contato deseja falar com um especialista.'}`;
+    const baseMsg = `Olá, meu nome é ${clientName || 'visitante'}.\n\nAcabei de conversar com o Lucca, seu Secretário Executivo, e gostaria de suporte humano.\n\n*Resumo da Necessidade:*\n${summary || 'O contato deseja falar com um especialista.'}`;
     return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(baseMsg)}`;
   };
 
@@ -190,6 +268,27 @@ export default function SupportChat() {
                   )}>
                     {msg.content}
                   </div>
+
+                  {/* Dynamic Buttons */}
+                  {msg.buttons && msg.buttons.length > 0 && (
+                    <div className="flex flex-col gap-2 w-full mt-3">
+                      {msg.buttons.map((btn, btnIdx) => (
+                        <a
+                          key={btnIdx}
+                          href={btn.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between gap-3 px-4 py-3 bg-white/[0.05] border border-white/10 hover:bg-white/10 hover:border-blue-1/30 transition-all rounded-xl group"
+                        >
+                          <span className="text-[10px] font-bold text-text-2 tracking-widest uppercase group-hover:text-text-1">
+                            {btn.label}
+                          </span>
+                          <ExternalLink size={12} className="text-blue-1 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        </a>
+                      ))}
+                    </div>
+                  )}
+
                   <span className="text-[9px] font-bold text-text-4 mt-2 uppercase tracking-[0.2em]">
                     {msg.role === 'user' ? 'Visitante' : 'LUCCA'}
                   </span>
@@ -240,21 +339,52 @@ export default function SupportChat() {
 
               {/* Input field - Modern Glass */}
               <div className="relative group flex gap-2">
-                <input
-                  type="text"
-                  value={input}
-                  onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-                  onChange={(e) => setInput(e.target.value)}
-                  placeholder="Escreva sua dúvida..."
-                  className="flex-1 bg-white/[0.03] border border-white/10 focus:border-blue-1/30 rounded-xl py-3.5 px-5 text-sm text-text-1 placeholder:text-text-4 focus:outline-none transition-all"
-                />
-                <button
-                  onClick={() => handleSend()}
-                  disabled={isLoading || !input.trim()}
-                  className="px-4 rounded-xl bg-blue-1 hover:bg-blue-2 text-white transition-all disabled:opacity-20 flex items-center justify-center shadow-lg shadow-blue-1/10"
-                >
-                  <Send size={18} />
-                </button>
+                {isRecording ? (
+                  <div className="flex-1 flex items-center gap-3 bg-red-s/5 border border-red-s/20 rounded-xl px-4 py-2 animate-pulse">
+                    <div className="w-2 h-2 rounded-full bg-red-s animate-ping" />
+                    <span className="text-[10px] font-bold text-red-s tracking-widest uppercase flex-1">
+                      Gravando... {Math.floor(recordingSeconds / 60)}:{(recordingSeconds % 60).toString().padStart(2, '0')}
+                    </span>
+                    <button 
+                      onClick={cancelRecording}
+                      className="p-2 text-text-4 hover:text-red-s transition-colors"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                    <button 
+                      onClick={stopRecording}
+                      className="w-10 h-10 bg-red-s text-white rounded-full flex items-center justify-center hover:scale-105 transition-transform"
+                    >
+                      <Square size={16} fill="white" />
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <input
+                      type="text"
+                      value={input}
+                      onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+                      onChange={(e) => setInput(e.target.value)}
+                      placeholder="Escreva ou envie um áudio..."
+                      className="flex-1 bg-white/[0.03] border border-white/10 focus:border-blue-1/30 rounded-xl py-3.5 px-5 text-sm text-text-1 placeholder:text-text-4 focus:outline-none transition-all"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={startRecording}
+                        className="w-12 rounded-xl bg-white/[0.05] border border-white/10 text-text-3 hover:text-blue-1 hover:border-blue-1/30 transition-all flex items-center justify-center group"
+                      >
+                        <Mic size={20} className="group-hover:scale-110 transition-transform" />
+                      </button>
+                      <button
+                        onClick={() => handleSend()}
+                        disabled={isLoading || !input.trim()}
+                        className="w-12 rounded-xl bg-blue-1 hover:bg-blue-2 text-white transition-all disabled:opacity-20 flex items-center justify-center shadow-lg shadow-blue-1/10"
+                      >
+                        <Send size={18} />
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </motion.div>
