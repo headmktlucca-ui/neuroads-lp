@@ -1,10 +1,12 @@
 'use client';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
-import ToolGallery from '../../components/sections/ToolGallery';
+import AgentGrid from '../../components/dashboard/AgentGrid';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Activity, Zap, TrendingUp } from 'lucide-react';
 
 export default function HubPage() {
   const { user, loading } = useAuth();
@@ -19,7 +21,7 @@ export default function HubPage() {
   if (loading || !user) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-[var(--color-brand-orange)] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-[#7BFBF0] border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -27,47 +29,57 @@ export default function HubPage() {
   return (
     <main className="flex flex-col min-h-screen bg-black">
       <Navbar />
-      
-      <div className="flex-grow pt-24">
-        {/* Dashboard Exclusive Header */}
-        <div className="max-w-full mx-auto px-6 md:px-12 lg:px-16 mb-12">
-          <div className="glass-card p-8 rounded-3xl border-white/5 bg-gradient-to-br from-white/5 to-transparent flex flex-wrap gap-12 items-center">
-            <div>
-              <div className="text-slate-500 text-[10px] font-mono tracking-widest uppercase mb-2">Status da Conta</div>
+
+      <div className="flex-grow pt-20 md:pt-28">
+        {/* Dashboard Status Header */}
+        <div className="max-w-7xl mx-auto px-6 md:px-8 lg:px-12 mb-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-1 md:grid-cols-3 gap-4"
+          >
+            {/* Account Status Card */}
+            <div className="p-6 rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-xl hover:border-white/[0.15] transition-all">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg bg-[#7BFBF0]/10 border border-[#7BFBF0]/20">
+                  <Activity size={18} className="text-[#7BFBF0]" />
+                </div>
+                <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">Status da Conta</span>
+              </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[var(--color-brand-green)] animate-pulse" />
-                <span className="text-white font-black italic tracking-wider">ACTIVE CLIENT</span>
+                <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
+                <span className="text-white font-black tracking-tight">ACTIVE CLIENT</span>
               </div>
             </div>
-            
-            <div className="h-12 w-px bg-white/10 hidden md:block" />
-            
-            <div>
-              <div className="text-slate-500 text-[10px] font-mono tracking-widest uppercase mb-2">IA Engine</div>
-              <div className="text-white font-black italic tracking-wider uppercase">Gemini 1.5 Flash <span className="text-[var(--color-brand-green)]">●</span></div>
-            </div>
 
-            <div className="h-12 w-px bg-white/10 hidden md:block" />
-
-            <div>
-              <div className="text-slate-500 text-[10px] font-mono tracking-widest uppercase mb-2">Créditos Semanais</div>
-              <div className="text-white font-black italic tracking-wider uppercase">Ilimitado <span className="text-[var(--color-brand-orange)]">PRO</span></div>
-            </div>
-
-            <div className="h-12 w-px bg-white/10 hidden md:block" />
-
-            <div className="group cursor-pointer">
-              <div className="text-slate-500 text-[10px] font-mono tracking-widest uppercase mb-2 group-hover:text-[var(--color-brand-green)] transition-colors">Inteligência</div>
-              <div className="text-white font-black italic tracking-wider uppercase flex items-center gap-2 group-hover:text-[var(--color-brand-orange)] transition-colors">
-                HISTÓRICO & INSIGHTS
-                <span className="text-xs group-hover:translate-x-1 transition-transform">→</span>
+            {/* IA Engine Card */}
+            <div className="p-6 rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-xl hover:border-white/[0.15] transition-all">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg bg-[#7BFBF0]/10 border border-[#7BFBF0]/20">
+                  <Zap size={18} className="text-[#7BFBF0]" />
+                </div>
+                <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">IA Engine</span>
               </div>
+              <div className="text-white font-black tracking-tight">Gemini 1.5 Flash <span className="text-[#7BFBF0]">●</span></div>
             </div>
-          </div>
+
+            {/* Credits Card */}
+            <div className="p-6 rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-xl hover:border-white/[0.15] transition-all">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg bg-[#7BFBF0]/10 border border-[#7BFBF0]/20">
+                  <TrendingUp size={18} className="text-[#7BFBF0]" />
+                </div>
+                <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">Créditos</span>
+              </div>
+              <div className="text-white font-black tracking-tight">Ilimitado <span className="text-green-400">PRO</span></div>
+            </div>
+          </motion.div>
         </div>
 
-        <div id="gallery">
-          <ToolGallery />
+        {/* Agent Grid Section */}
+        <div id="agent-grid">
+          <AgentGrid />
         </div>
       </div>
 
