@@ -14,25 +14,36 @@ const agentCategories = [
   {
     name: 'Vendas & Atendimento',
     agents: [
-      { title: 'SDR Elite', desc: 'Qualificação instantânea de leads e agendamento automático 24/7.', image: '/images/tools/sdr.png' },
-      { title: 'Customer Success AI', desc: 'Gestão proativa de LTV, NPS e retenção inteligente de clientes.', image: '/images/tools/cs.png' },
-      { title: 'Agente de Suporte', desc: 'Atendimento consultivo especializado em resolução rápida de dúvidas.', image: '/images/tools/suporte.png' },
+      { title: 'SDR Elite', desc: 'Qualificação instantânea de leads e agendamento automático 24/7.', image: '/images/tools/automacao.png' },
+      { title: 'Customer Success AI', desc: 'Gestão proativa de LTV, NPS e retenção inteligente de clientes.', image: '/images/tools/analise.png' },
+      { title: 'Agente de Suporte', desc: 'Atendimento consultivo especializado em resolução rápida de dúvidas.', image: '/images/tools/testes.png' },
+      { title: 'Analisador de Público', desc: 'Clusterização avançada de audiências frias e quentes.', image: '/images/tools/analisador_publico.png' },
+      { title: 'ICP Profiler', desc: 'Definição cirúrgica do avatar de alta conversão para o seu nicho.', image: '/images/tools/publico_ideal.png' },
     ]
   },
   {
     name: 'Performance & Growth',
     agents: [
-      { title: 'Media Buyer Pro', desc: 'Otimização neural de lances e audiências em Meta e Google Ads.', image: '/images/tools/media_buyer.png' },
-      { title: 'Growth Manager', desc: 'Análise de funil ponta a ponta e identificação de gargalos de escala.', image: '/images/tools/growth.png' },
-      { title: 'Data Scientist', desc: 'Modelagem preditiva de ROAS e atribuição avançada de conversões.', image: '/images/tools/data.png' },
+      { title: 'Media Buyer Pro', desc: 'Otimização neural de lances e audiências em Meta e Google Ads.', image: '/images/tools/analista_trafego.png' },
+      { title: 'Growth Manager', desc: 'Análise de funil ponta a ponta e identificação de gargalos de escala.', image: '/images/tools/diagnostico_funil.png' },
+      { title: 'Data Scientist', desc: 'Modelagem preditiva de ROAS e atribuição avançada de conversões.', image: '/images/tools/simulador_roas.png' },
+      { title: 'Alocador de Verba', desc: 'Otimização cross-channel de investimentos para maximizar o lucro.', image: '/images/tools/alocacao.png' },
+      { title: 'Auditor de Desperdício', desc: 'Identificação imediata de cliques e impressões inválidas ou caras.', image: '/images/tools/auditor_desperdicio.png' },
+      { title: 'Rastreador Cirúrgico', desc: 'Atribuição avançada de vendas offline e multicanal em tempo real.', image: '/images/tools/rastreador_cirurgico.png' },
+      { title: 'Preditor de Funil', desc: 'Simulação de cenários de escala e previsão de resultados futuros.', image: '/images/tools/preditor_funil.png' },
     ]
   },
   {
     name: 'Criativo & Conteúdo',
     agents: [
-      { title: 'Copywriter Sênior', desc: 'Criação de anúncios, VSLs e páginas de alta conversão validadas.', image: '/images/tools/copy.png' },
-      { title: 'Creative Director', desc: 'Geração de conceitos visuais e análise de padrões de viralização.', image: '/images/tools/creative.png' },
-      { title: 'SEO Master', desc: 'Otimização técnica e semântica para dominar buscas orgânicas.', image: '/images/tools/seo.png' },
+      { title: 'Copywriter Sênior', desc: 'Criação de anúncios, VSLs e páginas de alta conversão validadas.', image: '/images/tools/gerador_copies.png' },
+      { title: 'Creative Director', desc: 'Geração de conceitos visuais e análise de padrões de viralização.', image: '/images/tools/gerador_criativos.png' },
+      { title: 'SEO Master', desc: 'Otimização técnica e semântica para dominar buscas orgânicas.', image: '/images/tools/otimizacao.png' },
+      { title: 'Viral Trend Scanner', desc: 'Monitoramento de padrões de viralização globais em tempo real.', image: '/images/tools/analise_viral.png' },
+      { title: 'Spy Master AI', desc: 'Monitoramento contínuo de ofertas e criativos da concorrência.', image: '/images/tools/concorrentes.png' },
+      { title: 'Brand DNA Guard', desc: 'Garantia de tom de voz e identidade em todas as peças de marketing.', image: '/images/tools/dna_marca.png' },
+      { title: 'Data Miner', desc: 'Extração de insights profundos de planilhas e bases de dados CRMs.', image: '/images/tools/mineracao.png' },
+      { title: 'LP Auditor', desc: 'Diagnóstico de UX e taxa de conversão focado em landing pages.', image: '/images/tools/diagnostico_lp.png' },
     ]
   }
 ];
@@ -97,7 +108,7 @@ export default function ServicesSection() {
                 <span className="w-8 h-px bg-border" />
                 {cat.name}
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
                 {cat.agents.map((agent, i) => (
                   <MotionDiv
                     key={i}
@@ -127,18 +138,38 @@ export default function ServicesSection() {
           ))}
         </div>
 
-        <MotionDiv {...fadeUp} className="mt-20 premium-card p-12 lg:p-16 text-center border-primary/20 bg-orange-light/20">
+        <MotionDiv 
+          {...fadeUp} 
+          className="mt-20 bg-white border border-border rounded-[32px] shadow-xl p-12 lg:p-20 text-center"
+        >
           <div className="max-w-[800px] mx-auto">
-            <h3 className="text-3xl font-bold text-text-main mb-6">Pronto para Ativar sua Escala?</h3>
-            <p className="text-lg text-text-muted mb-10">Envie seus recursos selecionados e receba um planejamento estratégico exclusivo de 30 dias para a sua marca.</p>
-            <button 
-              onClick={() => setIsModalOpen(true)}
-              className="btn btn-primary px-10 py-5 text-base"
-              disabled={selectedAgents.size === 0}
-            >
-              <Send size={18} />
-              Solicitar Planejamento
-            </button>
+            <h3 className="text-3xl lg:text-4xl font-bold text-text-main mb-6">
+              Pronto para Ativar sua Escala?
+            </h3>
+            <p className="text-lg text-text-muted mb-10 leading-relaxed">
+              Envie seus recursos selecionados e receba um planejamento estratégico exclusivo de 30 dias para a sua marca.
+            </p>
+            
+            <div className="flex flex-col items-center gap-4">
+              <button 
+                onClick={() => setIsModalOpen(true)}
+                className={`px-10 py-5 text-base rounded-full font-semibold flex items-center gap-3 transition-all ${
+                  selectedAgents.size === 0
+                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
+                    : 'btn btn-primary active:scale-95 hover:shadow-lg'
+                }`}
+                disabled={selectedAgents.size === 0}
+              >
+                <Send size={18} className="-rotate-45" />
+                Solicitar Planejamento
+              </button>
+              
+              {selectedAgents.size === 0 && (
+                <p className="text-sm text-text-muted animate-pulse">
+                  Selecione pelo menos um agente acima
+                </p>
+              )}
+            </div>
           </div>
         </MotionDiv>
       </div>
