@@ -81,7 +81,7 @@ export default function AboutSection() {
           {/* TEXT COLUMN */}
           <div className="premium-card p-10 lg:p-12 bg-white/60 backdrop-blur-3xl ring-1 ring-border shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] relative z-20">
             <MotionP {...fadeUp} className="s-badge">Especialista Fundador</MotionP>
-            <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title !text-[35px]">
+            <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title !text-[30px]">
               Não é sobre equipe grande.<br />
               <span className="text-primary italic">É sobre inteligência.</span>
             </MotionH2>

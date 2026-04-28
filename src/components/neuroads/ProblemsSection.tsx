@@ -53,13 +53,13 @@ export default function ProblemsSection() {
           </MotionP>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 mt-16 border border-white rounded-2xl overflow-hidden bg-border gap-px shadow-sm">
           {problems.map((p, i) => (
             <MotionDiv 
               key={i} 
               {...fadeUp}
               transition={{ delay: 0.3 + (i * 0.1) }}
-              className="premium-card p-10 group"
+              className="bg-white p-10 lg:p-14 group hover:bg-bg-secondary/50 transition-colors"
             >
               <div className="w-12 h-12 rounded-2xl bg-bg-secondary flex items-center justify-center text-2xl mb-8 group-hover:scale-110 transition-transform">
                 {p.icon}
@@ -70,7 +70,7 @@ export default function ProblemsSection() {
               <p className="text-text-muted mb-8 text-[15px] leading-relaxed">
                 {p.a}
               </p>
-              <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest bg-primary/5 px-4 py-2 rounded-full w-fit">
+              <div className="flex items-center gap-2 text-[11px] font-bold text-primary uppercase tracking-widest border border-primary/10 bg-primary/5 px-4 py-2 rounded-full w-fit">
                 <span>→</span> Solução: {p.sol}
               </div>
             </MotionDiv>

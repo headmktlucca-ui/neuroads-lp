@@ -36,68 +36,96 @@ export default function HeroSection() {
 
           </div>
 
-          <MotionDiv 
-            initial={{ opacity: 0, x: 60, y: 20 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            transition={{ duration: 1.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className="relative hidden lg:block"
-          >
-            {/* FLOATING AGENT CARD */}
-            <motion.div 
-              animate={{ y: [0, -15, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-              className="premium-card p-10 bg-white/60 backdrop-blur-3xl ring-1 ring-border shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] relative z-20"
-            >
-              <div className="flex items-center gap-5 mb-10">
-                <div className="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center shadow-[0_10px_20px_rgba(255,107,31,0.3)]">
-                  <Zap size={28} />
-                </div>
-                <div>
-                  <h3 className="font-black text-[22px] text-text-main leading-none mb-1">Optimization Agent</h3>
-                  <p className="text-[12px] font-bold text-text-dim uppercase tracking-widest">Status: active_running</p>
-                </div>
-              </div>
-
-              <div className="p-6 bg-orange-light/30 border border-primary/10 rounded-2xl mb-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <Sparkles size={16} className="text-primary animate-pulse" />
-                  <span className="text-[13px] font-black text-text-main uppercase tracking-wider">Syncing Data...</span>
-                </div>
-                <div className="h-1.5 bg-white rounded-full overflow-hidden">
-                  <motion.div 
-                    initial={{ width: "0%" }}
-                    animate={{ width: "85%" }}
-                    transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
-                    className="h-full bg-primary"
-                  />
-                </div>
-              </div>
-
-              <p className="text-[15px] text-text-muted leading-relaxed mb-10 font-medium italic">
-                Otimizando headlines e bids em tempo real com base no comportamento preditivo do usuário.
-              </p>
-
-              <div className="h-px bg-border w-full mb-8" />
-
-              <div className="flex items-center justify-between">
-                <div className="flex -space-x-3">
-                  {[1,2,3,4].map(i => (
-                    <div key={i} className="w-10 h-10 rounded-full border-4 border-white bg-bg-secondary overflow-hidden">
-                      <div className="w-full h-full bg-primary/10" />
+            {/* NEW DARK PROFILE CARD */}
+            <div className="relative w-full max-w-[480px] mx-auto z-20 hidden lg:block">
+              {/* Main Card */}
+              <motion.div 
+                animate={{ y: [0, -15, 0] }}
+                transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                className="bg-[#0b0c10]/95 backdrop-blur-2xl border border-white/10 rounded-[24px] p-8 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.5)] relative z-20"
+              >
+                {/* Header */}
+                <div className="flex items-center gap-5 mb-8">
+                  <div className="relative w-16 h-16 rounded-full p-0.5 bg-gradient-to-tr from-[#2563EB] to-[#4F46E5] shadow-[0_0_25px_rgba(37,99,235,0.4)] flex-shrink-0">
+                    <div className="w-full h-full rounded-full overflow-hidden relative">
+                      <Image src="/images/0599.jpeg" alt="Claudio Müller" fill className="object-cover" />
                     </div>
+                    {/* Online Dot */}
+                    <div className="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-[#0b0c10] rounded-full"></div>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-2xl text-white mb-1">Claudio Müller</h3>
+                    <p className="text-[13px] text-gray-400 font-medium">Analista em Marketing & Expert em Aplicações IA</p>
+                  </div>
+                  <div className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full text-[10px] font-bold text-emerald-400 uppercase tracking-widest flex-shrink-0">
+                    Online
+                  </div>
+                </div>
+
+                {/* Quote */}
+                <div className="border-l-2 border-[#3b82f6] pl-5 mb-8 py-1">
+                  <p className="text-[15px] text-gray-300 italic font-medium leading-relaxed">
+                    "Não vendo campanhas. Construo sistemas que geram resultado enquanto você cuida do que sabe fazer de melhor."
+                  </p>
+                </div>
+
+                {/* Stats */}
+                <div className="grid grid-cols-3 mb-8 border border-white/5 rounded-[16px] p-5 bg-[#12141A]">
+                  <div className="text-center border-r border-white/5">
+                    <div className="text-[22px] font-black text-[#8A9CFF] mb-1 leading-none">R$10M+</div>
+                    <div className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-2">Investimento</div>
+                  </div>
+                  <div className="text-center border-r border-white/5">
+                    <div className="text-[22px] font-black text-[#8A9CFF] mb-1 leading-none">25+</div>
+                    <div className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-2">Anos Growth</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-[22px] font-black text-[#8A9CFF] mb-1 leading-none">18</div>
+                    <div className="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-2">Agentes de IA</div>
+                  </div>
+                </div>
+
+                {/* Badges */}
+                <div className="flex flex-wrap gap-2.5">
+                  {['Google Ads', 'Meta Blueprint', 'Growth Methodology'].map(badge => (
+                    <span key={badge} className="px-3.5 py-1.5 rounded-full bg-[#141B33] border border-[#232F5C] text-[11px] font-medium text-[#8A9CFF]">
+                      {badge}
+                    </span>
                   ))}
                 </div>
-                <button className="text-primary font-black text-[13px] uppercase tracking-widest flex items-center gap-2 group">
-                  View Logs 
-                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
-                </button>
-              </div>
-            </motion.div>
+              </motion.div>
 
-            {/* LIGHT DECOR CARDS */}
-            <div className="absolute top-[-20px] right-[-20px] w-64 h-80 bg-primary/5 border border-primary/10 rounded-[40px] -z-10 transform rotate-6 scale-105" />
-            <div className="absolute top-10 left-[-40px] w-72 h-32 bg-white/50 backdrop-blur-md border border-white rounded-[32px] shadow-2xl z-10 transform -rotate-12" />
-          </MotionDiv>
+              {/* Floating Top Left Card */}
+              <motion.div 
+                initial={{ opacity: 0, x: -20, y: 10 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.8 }}
+                className="absolute -top-10 -left-16 bg-[#12141A] border border-white/10 rounded-[20px] p-6 shadow-2xl z-30"
+              >
+                <div className="text-[26px] font-black text-[#8A9CFF] mb-1 leading-none">R$10M+</div>
+                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">Investimento Gerenciado</div>
+                <div className="text-[12px] font-semibold text-emerald-400 flex items-center gap-1">
+                  <span className="text-lg leading-none">↑</span> Comprovado em campanhas reais
+                </div>
+              </motion.div>
+
+              {/* Floating Bottom Right Card */}
+              <motion.div 
+                initial={{ opacity: 0, x: 20, y: -10 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ duration: 0.8, delay: 1 }}
+                className="absolute -bottom-10 -right-12 bg-[#12141A] border border-white/10 rounded-[20px] p-6 shadow-2xl z-30"
+              >
+                <div className="flex items-baseline gap-1 mb-1">
+                  <div className="text-[32px] font-black text-[#8A9CFF] leading-none">5.2</div>
+                  <div className="text-[20px] font-black text-[#8A9CFF]">×</div>
+                </div>
+                <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-4">ROAS Médio</div>
+                <div className="text-[12px] font-semibold text-emerald-400 flex items-center gap-1">
+                  <span className="text-lg leading-none">↑</span> +15% vs mês anterior
+                </div>
+              </motion.div>
+            </div>
 
         </div>
       </div>
