@@ -96,3 +96,7 @@
 [browser] Image with src "/images/image (2).png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [browser] Image with src "/images/image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 ✓ Compiled in 185ms
+✓ Compiled in 153ms
+✓ Compiled in 93ms
+✓ Compiled in 161ms
+✓ Compiled in 153ms

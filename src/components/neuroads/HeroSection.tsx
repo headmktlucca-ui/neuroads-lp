@@ -32,17 +32,11 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-16 items-center">
           
           <div className="flex flex-col items-start lg:pr-10">
-            <MotionDiv {...fadeUp(0.1)} className="flex items-center gap-2 bg-text-main text-white rounded-full px-5 py-2 mb-10 shadow-xl">
-              <span className="text-[10px] font-black tracking-widest uppercase bg-primary px-3 py-1 rounded-full">New Research</span>
-              <span className="text-[12px] font-bold opacity-90">IA Generativa & Performance 2026</span>
-              <ArrowRight size={14} className="text-primary ml-1" />
-            </MotionDiv>
-
-            <MotionH1 {...fadeUp(0.25)} className="text-[54px] sm:text-[72px] font-black leading-[1] tracking-tight text-text-main mb-8 max-w-[800px]">
+            <MotionH1 {...fadeUp(0.25)} className="text-[64px] font-bold leading-[1.1] tracking-tight text-text-main mb-8 max-w-[800px]">
               Onde o Tráfego encontra a <span className="text-primary italic">Inteligência.</span>
             </MotionH1>
 
-            <MotionP {...fadeUp(0.4)} className="text-[20px] text-text-muted leading-relaxed max-w-[620px] mb-12 font-medium">
+            <MotionP {...fadeUp(0.4)} className="text-[18px] text-text-muted leading-relaxed max-w-[620px] mb-12 font-normal">
               Orquestre Agentes de IA que rodam fluxos de marketing de ponta a ponta. Velocidade, controle total e escala previsível.
             </MotionP>
 
