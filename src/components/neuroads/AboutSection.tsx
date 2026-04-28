@@ -17,7 +17,7 @@ export default function AboutSection() {
   };
 
   return (
-    <section className="py-24 lg:py-32 bg-bg-secondary border-y border-border" id="claudio">
+    <section className="py-24 lg:py-32 border-y border-border relative z-10" id="claudio">
       <div className="wrap">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           
@@ -43,9 +43,9 @@ export default function AboutSection() {
               </div>
 
               {/* EXPERTISE BADGE */}
-              <div className="absolute -top-4 -right-4 bg-grad-main rounded-xl p-4 text-center shadow-orange z-20">
-                <div className="font-head text-2xl font-extrabold text-white leading-none">25+</div>
-                <div className="text-[10px] font-bold text-white/80 uppercase tracking-widest mt-1">Anos em Growth</div>
+              <div className="absolute -top-4 -right-4 premium-card bg-white/60 backdrop-blur-3xl ring-1 ring-border shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] rounded-xl p-4 text-center z-20">
+                <div className="font-head text-2xl font-extrabold text-primary leading-none">25+</div>
+                <div className="text-[10px] font-bold text-text-main uppercase tracking-widest mt-1">Anos em Growth</div>
               </div>
 
               {/* EXPERT PROFILE CARD */}
@@ -79,15 +79,15 @@ export default function AboutSection() {
           </MotionDiv>
 
           {/* TEXT COLUMN */}
-          <div>
+          <div className="premium-card p-10 lg:p-12 bg-white/60 backdrop-blur-3xl ring-1 ring-border shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] relative z-20">
             <MotionP {...fadeUp} className="s-badge">Especialista Fundador</MotionP>
-            <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title">
+            <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title !text-[35px]">
               Não é sobre equipe grande.<br />
               <span className="text-primary italic">É sobre inteligência.</span>
             </MotionH2>
 
-            <MotionDiv {...fadeUp} transition={{ delay: 0.2 }} className="premium-card p-8 my-8 relative overflow-hidden bg-white/50">
-               <div className="absolute top-2 right-6 font-head font-extrabold text-[5rem] text-primary/5 pointer-events-none italic">
+            <MotionDiv {...fadeUp} transition={{ delay: 0.2 }} className="p-8 my-8 relative overflow-hidden bg-white/40 rounded-2xl border border-white/50 shadow-sm">
+               <div className="absolute top-2 right-6 font-head font-extrabold text-[5rem] text-primary/10 pointer-events-none italic">
                 "
                </div>
                <p className="text-base text-text-muted italic font-medium leading-relaxed relative z-10">

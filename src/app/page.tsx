@@ -1,5 +1,6 @@
 'use client';
 import { useEffect } from 'react';
+import Image from 'next/image';
 import Navbar from '../components/neuroads/Navbar';
 import HeroSection from '../components/neuroads/HeroSection';
 import AboutSection from '../components/neuroads/AboutSection';
@@ -40,8 +41,23 @@ export default function Home() {
     <main className="min-h-screen">
       <Navbar />
       
-      <HeroSection />
-      <AboutSection />
+      <div className="relative">
+        {/* BACKGROUND CONTINUES TO ABOUT SECTION */}
+        <div className="absolute top-[10vh] left-0 right-0 bottom-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-b from-bg-main via-transparent to-transparent z-10 h-32" />
+          <Image 
+            src="/images/background_neuroads_26.png" 
+            alt="NeuroAds Background" 
+            fill
+            className="object-cover object-top"
+            priority
+          />
+        </div>
+        <div className="relative z-10">
+          <HeroSection />
+          <AboutSection />
+        </div>
+      </div>
       <ProblemsSection />
       <ServicesSection />
       <LuccaSection />

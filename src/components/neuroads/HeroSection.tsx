@@ -17,16 +17,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-[90vh] flex items-center pt-32 pb-20 overflow-hidden">
-      {/* BACKGROUND IMAGE */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <Image 
-          src="/images/background_neuroads_26.png" 
-          alt="NeuroAds Background" 
-          fill
-          className="object-cover"
-          priority
-        />
-      </div>
+      {/* BACKGROUND IMAGE REMOVED - NOW IN PAGE WRAPPER */}
 
       <div className="wrap relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-16 items-center">
@@ -40,24 +31,9 @@ export default function HeroSection() {
               Orquestre Agentes de IA que rodam fluxos de marketing de ponta a ponta. Velocidade, controle total e escala previsível.
             </MotionP>
 
-            <MotionDiv {...fadeUp(0.55)} className="flex flex-wrap gap-5 mb-16">
-              <a href="#contato" className="btn btn-primary text-base px-10 py-5 rounded-full shadow-[0_20px_40px_-10px_rgba(255,107,31,0.4)]">
-                Começar Escala
-                <Sparkles size={20} />
-              </a>
-              <a href="#servicos" className="btn btn-ghost border-border bg-transparent text-base px-10 py-5 rounded-full hover:bg-bg-secondary">
-                Explorar Soluções
-              </a>
-            </MotionDiv>
 
-            <MotionDiv {...fadeUp(0.7)} className="flex flex-col gap-5">
-              <span className="text-[11px] font-black tracking-[0.25em] uppercase text-text-dim">Cross-Platform Sync</span>
-              <div className="flex gap-8 text-text-dim opacity-40">
-                <Smartphone size={24} />
-                <Monitor size={24} />
-                <Laptop size={24} />
-              </div>
-            </MotionDiv>
+
+
           </div>
 
           <MotionDiv 

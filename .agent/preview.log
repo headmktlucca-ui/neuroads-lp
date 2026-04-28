@@ -100,3 +100,7 @@
 ✓ Compiled in 93ms
 ✓ Compiled in 161ms
 ✓ Compiled in 153ms
+✓ Compiled in 95ms
+✓ Compiled in 642ms
+ GET / 200 in 1232ms (next.js: 927ms, application-code: 306ms)
+ GET / 200 in 105ms (next.js: 13ms, application-code: 92ms)
