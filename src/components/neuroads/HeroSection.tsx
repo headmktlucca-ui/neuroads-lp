@@ -16,21 +16,16 @@ export default function HeroSection() {
   });
 
   return (
-    <section className="relative min-h-[90vh] flex items-center pt-32 pb-20 overflow-hidden bg-white">
-      {/* 3D RIBBON BACKGROUND */}
-      <div className="absolute right-[-10%] bottom-[-10%] w-[120%] h-[120%] pointer-events-none z-0 opacity-80 select-none">
+    <section className="relative min-h-[90vh] flex items-center pt-32 pb-20 overflow-hidden">
+      {/* BACKGROUND IMAGE */}
+      <div className="absolute inset-0 z-0 pointer-events-none">
         <Image 
-          src="/neuroads_hero_ribbon_1777352465504.png" 
-          alt="Abstract 3D Ribbon" 
+          src="/images/background_neuroads_26.png" 
+          alt="NeuroAds Background" 
           fill
-          className="object-contain object-right-bottom transform rotate-[-5deg] scale-110"
+          className="object-cover"
           priority
         />
-      </div>
-
-      {/* GRID OVERLAY */}
-      <div className="absolute inset-0 pointer-events-none z-0 opacity-[0.03]">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:60px_60px]" />
       </div>
 
       <div className="wrap relative z-10 w-full">
