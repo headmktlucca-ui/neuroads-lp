@@ -255,3 +255,8 @@ FirebaseError: Failed to get document because the client is offline. (src/contex
 [browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
  POST / 200 in 4.3s (next.js: 11ms, application-code: 4.2s)
   └─ ƒ chatWithSupport([{"content":"Bom dia! \n\nAqui é o Lucca, Secretário Executivo da NeuroAds.\n\nMinha missão é compreender sua necessidade e orquestrar a melhor solução técnica ou humana para você.\n\nEm que posso ser útil hoje?","role":"assistant"},{"content":"Escalar meu tráfego pago","role":"user"}]) in 4138ms src/app/actions/chat-support.ts
+✓ Compiled in 1449ms
+✓ Compiled in 705ms
+✓ Compiled in 988ms
+ GET / 200 in 1034ms (next.js: 752ms, application-code: 282ms)
+ GET / 200 in 122ms (next.js: 12ms, application-code: 109ms)
