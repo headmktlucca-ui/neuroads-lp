@@ -1,122 +1,137 @@
 'use client';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { agents } from '../../data/agents';
+import { ArrowRight, Sparkles, Zap, Smartphone, Monitor, Laptop } from 'lucide-react';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH1 = motion.h1;
 
 export default function HeroSection() {
-  const agentsCount = agents.length;
-  const fadeUp = (delay = 0) => ({
+  const fadeUp = (delay = 0): any => ({
     initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.8, delay, ease: [0.21, 0.47, 0.32, 0.98] as const }
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.8, delay, ease: "circOut" }
   });
 
   return (
-    <section className="hero relative min-h-[92vh] flex items-center py-24 lg:py-0 overflow-hidden">
-      {/* Grid Background with Mask */}
-      <div className="absolute inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(59,111,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(59,111,255,0.06)_1px,transparent_1px)] bg-[size:52px_52px] [mask-image:radial-gradient(ellipse_80%_70%_at_50%_30%,black_20%,transparent_80%)]" />
+    <section className="relative min-h-[90vh] flex items-center pt-32 pb-20 overflow-hidden bg-white">
+      {/* 3D RIBBON BACKGROUND */}
+      <div className="absolute right-[-10%] bottom-[-10%] w-[120%] h-[120%] pointer-events-none z-0 opacity-80 select-none">
+        <Image 
+          src="/neuroads_hero_ribbon_1777352465504.png" 
+          alt="Abstract 3D Ribbon" 
+          fill
+          className="object-contain object-right-bottom transform rotate-[-5deg] scale-110"
+          priority
+        />
+      </div>
+
+      {/* GRID OVERLAY */}
+      <div className="absolute inset-0 pointer-events-none z-0 opacity-[0.03]">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#000_1px,transparent_1px),linear-gradient(to_bottom,#000_1px,transparent_1px)] bg-[size:60px_60px]" />
       </div>
 
       <div className="wrap relative z-10 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_480px] gap-16 lg:gap-32 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-16 items-center">
           
-          {/* LEFT CONTENT */}
-          <div className="hero-left">
+          <div className="flex flex-col items-start lg:pr-10">
+            <MotionDiv {...fadeUp(0.1)} className="flex items-center gap-2 bg-text-main text-white rounded-full px-5 py-2 mb-10 shadow-xl">
+              <span className="text-[10px] font-black tracking-widest uppercase bg-primary px-3 py-1 rounded-full">New Research</span>
+              <span className="text-[12px] font-bold opacity-90">IA Generativa & Performance 2026</span>
+              <ArrowRight size={14} className="text-primary ml-1" />
+            </MotionDiv>
 
-            <MotionH1 {...fadeUp(0.25)} className="font-head text-[32px] font-extrabold leading-[1.15] tracking-[-0.03em] text-text-1 mb-7 text-balance uppercase">
-              Desbloqueie o Potencial Oculto do Seu Negócio: <span className="grad-text italic">Marketing de Alta Performance</span> com IA Agêntica.
+            <MotionH1 {...fadeUp(0.25)} className="text-[54px] sm:text-[72px] font-black leading-[1] tracking-tight text-text-main mb-8 max-w-[800px]">
+              Onde o Tráfego encontra a <span className="text-primary italic">Inteligência.</span>
             </MotionH1>
 
-            <MotionP {...fadeUp(0.4)} className="text-[1.05rem] text-text-2 font-light leading-[1.8] max-w-[540px] mb-9">
-              Capturamos a atenção no momento ideal e construímos a sua autoridade: nossa solução integra anúncios otimizados, presença dominante no Google e IAs (GEO), com agentes IA e automações integradas no comercial. Um ecossistema desenhado para lucro previsível.
+            <MotionP {...fadeUp(0.4)} className="text-[20px] text-text-muted leading-relaxed max-w-[620px] mb-12 font-medium">
+              Orquestre Agentes de IA que rodam fluxos de marketing de ponta a ponta. Velocidade, controle total e escala previsível.
             </MotionP>
 
-            <MotionDiv {...fadeUp(0.55)} className="flex flex-wrap gap-[0.875rem]">
-              <a href="#contato" className="btn btn-primary no-underline">
-                Quero um diagnóstico gratuito →
+            <MotionDiv {...fadeUp(0.55)} className="flex flex-wrap gap-5 mb-16">
+              <a href="#contato" className="btn btn-primary text-base px-10 py-5 rounded-full shadow-[0_20px_40px_-10px_rgba(255,107,31,0.4)]">
+                Começar Escala
+                <Sparkles size={20} />
               </a>
-              <a href="#claudio" className="btn btn-ghost no-underline">
-                Conheça nossa origem
+              <a href="#servicos" className="btn btn-ghost border-border bg-transparent text-base px-10 py-5 rounded-full hover:bg-bg-secondary">
+                Explorar Soluções
               </a>
             </MotionDiv>
 
+            <MotionDiv {...fadeUp(0.7)} className="flex flex-col gap-5">
+              <span className="text-[11px] font-black tracking-[0.25em] uppercase text-text-dim">Cross-Platform Sync</span>
+              <div className="flex gap-8 text-text-dim opacity-40">
+                <Smartphone size={24} />
+                <Monitor size={24} />
+                <Laptop size={24} />
+              </div>
+            </MotionDiv>
           </div>
 
-          {/* RIGHT — CLAUDIO CARD */}
           <MotionDiv 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1, delay: 0.5 }}
+            initial={{ opacity: 0, x: 60, y: 20 }}
+            animate={{ opacity: 1, x: 0, y: 0 }}
+            transition={{ duration: 1.5, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
             className="relative hidden lg:block"
           >
-            {/* Float Metrics */}
-            <div className="absolute -top-16 -left-16 bg-white/[0.04] border border-white/[0.08] backdrop-blur-md rounded-md p-[0.875rem_1.1rem] shadow-card z-20">
-              <div className="font-head text-[1.5rem] font-extrabold grad-text leading-none">R$10M+</div>
-              <div className="text-[0.65rem] text-text-4 uppercase tracking-[0.1em] mt-1">Investimento gerenciado</div>
-              <div className="text-[0.7rem] text-green-s font-semibold mt-1">↑ Comprovado em campanhas reais</div>
-            </div>
-
-            <div className="bg-white/[0.04] border border-white/[0.08] rounded-xl overflow-hidden backdrop-blur-lg shadow-[var(--shadow-card),_var(--shadow-glow)] relative z-10">
-              {/* Top border glow */}
-              <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-1/60 to-transparent" />
-              
-              <div className="bg-grad-card p-8 border-b border-white/10 flex items-start gap-5 relative">
-                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-1 shadow-[0_0_24px_rgba(59,111,255,0.4)] relative flex-shrink-0">
-                  <Image 
-                    src="/images/especialista.jpg" 
-                    alt="Claudio Müller" 
-                    fill
-                    className="object-cover"
-                  />
-                  <span className="absolute bottom-1 right-1 w-3.5 h-3.5 rounded-full bg-green-s border-2 border-[#090B18] z-20 animate-blink" />
+            {/* FLOATING AGENT CARD */}
+            <motion.div 
+              animate={{ y: [0, -15, 0] }}
+              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+              className="premium-card p-10 bg-white/60 backdrop-blur-3xl ring-1 ring-border shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] relative z-20"
+            >
+              <div className="flex items-center gap-5 mb-10">
+                <div className="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center shadow-[0_10px_20px_rgba(255,107,31,0.3)]">
+                  <Zap size={28} />
                 </div>
-                <div className="flex-1">
-                  <div className="font-head font-bold text-[1.05rem] text-text-1">Claudio Müller</div>
-                  <div className="text-[0.72rem] text-text-3 mt-1 whitespace-nowrap">Analista em Marketing & Expert em Aplicações IA</div>
-                </div>
-                <div className="absolute top-6 right-6 text-green-s font-bold text-[0.62rem] tracking-wider uppercase bg-green-s/10 border border-green-s/20 px-2.5 py-1 rounded-full">
-                   Online
+                <div>
+                  <h3 className="font-black text-[22px] text-text-main leading-none mb-1">Optimization Agent</h3>
+                  <p className="text-[12px] font-bold text-text-dim uppercase tracking-widest">Status: active_running</p>
                 </div>
               </div>
 
-              <div className="p-8">
-                <p className="text-[0.9rem] text-text-2 italic font-light leading-[1.7] pl-4 border-l-2 border-blue-1 mb-6">
-                  "Não vendo campanhas. Construo sistemas que geram resultado enquanto você cuida do que sabe fazer de melhor."
-                </p>
+              <div className="p-6 bg-orange-light/30 border border-primary/10 rounded-2xl mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <Sparkles size={16} className="text-primary animate-pulse" />
+                  <span className="text-[13px] font-black text-text-main uppercase tracking-wider">Syncing Data...</span>
+                </div>
+                <div className="h-1.5 bg-white rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: "0%" }}
+                    animate={{ width: "85%" }}
+                    transition={{ duration: 2, repeat: Infinity, repeatType: "reverse" }}
+                    className="h-full bg-primary"
+                  />
+                </div>
+              </div>
 
-                <div className="grid grid-cols-3 gap-px bg-white/10 border border-white/10 rounded-md overflow-hidden mb-6">
-                  {[
-                    { val: 'R$10M+', lbl: 'Investimento' },
-                    { val: '25+', lbl: 'Anos Growth' },
-                    { val: agentsCount, lbl: 'Agentes de IA' }
-                  ].map((s, i) => (
-                    <div key={i} className="bg-[#090B18] p-4 text-center">
-                      <div className="font-head text-[1.3rem] font-extrabold grad-text leading-none">{s.val}</div>
-                      <div className="text-[0.65rem] text-text-4 uppercase tracking-[0.08em] mt-1.5 leading-tight">{s.lbl}</div>
+              <p className="text-[15px] text-text-muted leading-relaxed mb-10 font-medium italic">
+                Otimizando headlines e bids em tempo real com base no comportamento preditivo do usuário.
+              </p>
+
+              <div className="h-px bg-border w-full mb-8" />
+
+              <div className="flex items-center justify-between">
+                <div className="flex -space-x-3">
+                  {[1,2,3,4].map(i => (
+                    <div key={i} className="w-10 h-10 rounded-full border-4 border-white bg-bg-secondary overflow-hidden">
+                      <div className="w-full h-full bg-primary/10" />
                     </div>
                   ))}
                 </div>
-
-                <div className="flex flex-wrap gap-2">
-                  {['Google Ads', 'Meta Blueprint', 'Growth Methodology', 'AI Automation'].map((cert, i) => (
-                    <span key={i} className="text-[0.68rem] font-medium text-blue-2 bg-blue-1/10 border border-blue-1/30 px-2.5 py-1 rounded-full">
-                      {cert}
-                    </span>
-                  ))}
-                </div>
+                <button className="text-primary font-black text-[13px] uppercase tracking-widest flex items-center gap-2 group">
+                  View Logs 
+                  <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
+                </button>
               </div>
-            </div>
+            </motion.div>
 
-            <div className="absolute -bottom-6 -right-8 bg-white/[0.04] border border-white/[0.08] backdrop-blur-md rounded-md p-[0.875rem_1.1rem] shadow-card z-20">
-              <div className="font-head text-[1.5rem] font-extrabold grad-text leading-none">5.2×</div>
-              <div className="text-[0.65rem] text-text-4 uppercase tracking-[0.1em] mt-1">ROAS médio</div>
-              <div className="text-[0.7rem] text-green-s font-semibold mt-1">↑ +15% vs mês anterior</div>
-            </div>
+            {/* LIGHT DECOR CARDS */}
+            <div className="absolute top-[-20px] right-[-20px] w-64 h-80 bg-primary/5 border border-primary/10 rounded-[40px] -z-10 transform rotate-6 scale-105" />
+            <div className="absolute top-10 left-[-40px] w-72 h-32 bg-white/50 backdrop-blur-md border border-white rounded-[32px] shadow-2xl z-10 transform -rotate-12" />
           </MotionDiv>
 
         </div>

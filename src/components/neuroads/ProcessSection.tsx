@@ -1,6 +1,5 @@
 'use client';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
@@ -9,70 +8,61 @@ const MotionH2 = motion.h2;
 const steps = [
   {
     num: '01',
-    title: 'Diagnóstico & Estratégia',
-    desc: 'Analisamos seus dados atuais, concorrentes e operacional. Definimos o plano de ataque: onde investir, o que automatizar e como se posicionar.',
-    tag: 'Fase 1'
+    title: 'Integração de Dados',
+    desc: 'Ligue suas contas de anúncio e canais de vendas para que nossa IA entenda seu ecossistema em tempo real.'
   },
   {
     num: '02',
-    title: 'Implementação do Ecossistema',
-    desc: 'Ativamos o Lucca nas suas campanhas, estruturamos o GEO do seu site e implantamos os primeiros agentes de IA nos seus canais de atendimento.',
-    tag: 'Fase 2'
+    title: 'Customização de Agentes',
+    desc: 'Selecionamos e treinamos os agentes de IA específicos para seus desafios de marketing e conversão.'
   },
   {
     num: '03',
-    title: 'Escala & Otimização Contínua',
-    desc: 'Com o sistema rodando, focamos em baixar o custo por lead e aumentar o ROAS. Você recebe relatórios em tempo real e suporte direto do Claudio.',
-    tag: 'Fase 3'
+    title: 'Automação & Escala',
+    desc: 'A IA assume as tarefas operacionais pesadas, otimizando ROAS e liberando seu time para estratégia.'
+  },
+  {
+    num: '04',
+    title: 'Crescimento Contínuo',
+    desc: 'Ajustamos os modelos conforme o mercado evolui, garantindo que sua vantagem competitiva cresça.'
   }
 ];
 
 export default function ProcessSection() {
-  const fadeUp = {
-    initial: { opacity: 0, y: 20 },
+  const fadeUp: any = {
+    initial: { opacity: 0, y: 30 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true },
-    transition: { duration: 0.7 }
+    transition: { duration: 0.8, ease: "circOut" }
   };
 
   return (
-    <section className="section py-24 lg:py-32" id="processo">
-      <div className="wrap text-center">
-        <MotionP {...fadeUp} className="s-badge mx-auto">Como Funciona</MotionP>
-        <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title mx-auto">
-          O caminho para sua<br /><span className="g">escala previsível</span>
-        </MotionH2>
-        <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="s-body mx-auto">
-          Sem enrolação. Um processo claro, focado em colocar sua empresa no topo do mercado utilizando o que há de mais avançado em IA.
-        </MotionP>
+    <section className="py-24 lg:py-32 bg-bg-secondary" id="processo">
+      <div className="wrap">
+        <div className="text-center max-w-[800px] mx-auto mb-20">
+          <MotionP {...fadeUp} className="s-badge justify-center">Nossa Metodologia</MotionP>
+          <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title mb-6">
+            Construa sua própria solução de <span className="text-primary italic">IA Marketing</span> impecável
+          </MotionH2>
+          <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="text-lg text-text-muted">
+            Um sistema desenhado para quem precisa de performance, não apenas relatórios. 
+            Quatro passos para o futuro da sua automação.
+          </MotionP>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 relative">
-          {/* Connector line background (visible on md+) */}
-          <div className="absolute top-[40px] left-[15%] right-[15%] h-px bg-gradient-to-r from-transparent via-white/10 to-transparent hidden md:block" />
-
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {steps.map((step, i) => (
             <MotionDiv 
               key={i} 
               {...fadeUp}
-              transition={{ delay: 0.3 + (i * 0.1) }}
-              className="relative z-10"
+              transition={{ delay: 0.2 + (i * 0.1) }}
+              className="premium-card p-8 group hover:scale-[1.02]"
             >
-              <div className="w-[120px] h-[120px] rounded-full bg-grad-card border border-white/10 mx-auto flex items-center justify-center shadow-[0_0_30px_rgba(59,111,255,0.2)] mb-8 overflow-hidden relative group">
-                <Image 
-                  src={`/images/process/phase${i+1}.png`} 
-                  alt={step.tag} 
-                  fill 
-                  className="object-cover scale-110 group-hover:scale-125 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#05060F]/40 to-transparent" />
+              <div className="text-4xl font-bold text-primary mb-6 opacity-30 group-hover:opacity-100 transition-opacity">
+                {step.num}
               </div>
-              <div className="mb-4">
-                <span className="font-head text-[1.4rem] font-extrabold grad-text uppercase tracking-wider">
-                  {step.tag}
-                </span>
-              </div>
-              <h3 className="font-head text-[1.1rem] font-bold text-text-1 mb-3">{step.title}</h3>
-              <p className="text-[0.85rem] text-text-2 font-light leading-relaxed max-w-[280px] mx-auto">
+              <h3 className="text-xl font-bold text-text-main mb-4">{step.title}</h3>
+              <p className="text-text-muted leading-relaxed">
                 {step.desc}
               </p>
             </MotionDiv>

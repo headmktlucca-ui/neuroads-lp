@@ -1,149 +1,120 @@
 'use client';
 import { useState, useEffect } from 'react';
-import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ArrowRight } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { loginWithGoogle } = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 30);
-    };
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isMenuOpen]);
-
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
 
+  const handleAccessHub = async () => {
+    try {
+      await loginWithGoogle();
+      router.push('/hub');
+      closeMenu();
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+    }
+  };
+
   const navLinks = [
-    { name: 'Sobre Nós', href: '#claudio' },
-    { name: 'Desafios e Soluções', href: '#problemas' },
-    { name: 'Nosso Diferencial', href: '#lucca' },
+    { name: 'Plataforma', href: '#problemas' },
+    { name: 'Soluções', href: '#servicos' },
+    { name: 'Metodologia', href: '#lucca' },
+    { name: 'Cases', href: '#depoimentos' },
   ];
 
   return (
-    <nav className={`sticky top-0 z-[200] border-b border-white/10 transition-all duration-300 ${isScrolled ? 'bg-[#05060F]/85 py-2' : 'bg-transparent py-4'} backdrop-blur-[20px] saturate-[1.4]`}>
-      <div className="max-w-[1160px] mx-auto px-8 flex items-center justify-between">
-        <a href="#" className="flex flex-col no-underline group" onClick={closeMenu}>
-          <span className="font-head text-[1.45rem] font-extrabold tracking-tighter text-text-1 leading-none">
-            Neuro<span className="grad-text italic">Ads</span>
-          </span>
-          <span className="text-[0.65rem] text-text-2 font-bold tracking-[0.2em] uppercase mt-1 hidden sm:block">
-            Insights Inteligentes
-          </span>
-        </a>
+    <header className="fixed top-0 left-0 w-full z-[200] pt-6 px-6">
+      <nav className={`mx-auto max-w-[1200px] transition-all duration-700`}>
+        <div className={`glass-pill px-8 py-3 flex items-center justify-between transition-all duration-500 shadow-2xl ${isScrolled ? 'bg-white/80 border-border/80' : 'bg-white/40 border-white/20'}`}>
+          
+          <a href="#" className="flex items-center group transition-transform hover:scale-[1.02]" onClick={closeMenu}>
+            <img 
+              src="/images/logo2026.png" 
+              alt="NeuroAds Logo" 
+              className="h-10 lg:h-12 w-auto object-contain"
+            />
+          </a>
 
-        {/* MOBILE TOGGLE */}
-        <button 
-          onClick={toggleMenu}
-          className="lg:hidden w-10 h-10 flex items-center justify-center text-text-1 bg-white/5 border border-white/10 rounded-lg active:scale-95 transition-all z-[210]"
-          aria-label="Toggle Menu"
-        >
-          {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
-
-        {/* DESKTOP LINKS */}
-        <ul className="hidden lg:flex items-center gap-[1.75rem] list-none">
-          {navLinks.map((link) => (
-            <li key={link.name}>
-              <a href={link.href} className="text-[0.835rem] font-medium text-text-1 no-underline transition-colors hover:scale-105">
-                {link.name}
+          <div className="hidden lg:flex items-center gap-10">
+            <ul className="flex items-center gap-8 list-none m-0 p-0">
+              {navLinks.map((link) => (
+                <li key={link.name}>
+                  <a href={link.href} className="text-[14px] font-bold text-text-dim hover:text-primary transition-all">
+                    {link.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            
+            <div className="flex items-center gap-6 pl-10 border-l border-border/50">
+              <button 
+                onClick={handleAccessHub}
+                className="text-[14px] font-black text-text-main hover:text-primary transition-colors"
+              >
+                Sign In
+              </button>
+              <a href="#contato" className="btn btn-primary px-6 py-2.5 text-[13px] rounded-full">
+                Acessar Hub
+                <ArrowRight size={14} className="ml-2" />
               </a>
-            </li>
-          ))}
-          <li>
-            <button 
-              onClick={() => {
-                window.dispatchEvent(new CustomEvent('neuroads:open-chat'));
-                closeMenu();
-              }}
-              className="flex items-center gap-[0.45rem] font-semibold text-[0.72rem] text-green-s bg-green-s/[0.08] border border-green-s/20 px-[0.75rem] py-[0.3rem] rounded-full hover:bg-green-s/20 transition-all cursor-pointer"
-            >
-              <span className="w-[6px] h-[6px] rounded-full bg-green-s animate-blink" />
-              Atendimento Online
-            </button>
-          </li>
-          <li>
-            <a href="#contato" className="btn btn-primary px-[1.1rem] py-[0.5rem] text-[0.8rem] no-underline">
-              Diagnóstico Gratuito
-            </a>
-          </li>
-        </ul>
-      </div>
+            </div>
+          </div>
 
-      {/* MOBILE MENU OVERLAY */}
+          <button 
+            onClick={toggleMenu}
+            className="lg:hidden w-10 h-10 flex items-center justify-center text-text-main bg-bg-secondary rounded-full"
+          >
+            {isMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+      </nav>
+
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
-            className="lg:hidden absolute top-full left-0 w-full bg-[#05060F]/95 backdrop-blur-[32px] border-b border-white/10 overflow-hidden"
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="lg:hidden absolute top-24 left-6 right-6 bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] rounded-[32px] p-8 z-[210] overflow-hidden"
           >
-            <div className="px-8 py-10 flex flex-col gap-8">
-              <ul className="flex flex-col gap-6 list-none p-0 m-0">
-                {navLinks.map((link, i) => (
-                  <motion.li 
-                    key={link.name}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.1 + (i * 0.05) }}
-                  >
-                    <a 
-                      href={link.href} 
-                      onClick={() => setTimeout(closeMenu, 150)}
-                      className="text-[1.1rem] font-medium text-text-1 hover:grad-text transition-colors block w-full"
-                    >
+            <div className="flex flex-col gap-8">
+              <ul className="flex flex-col gap-5 list-none m-0 p-0">
+                {navLinks.map((link) => (
+                  <li key={link.name}>
+                    <a href={link.href} onClick={() => setTimeout(closeMenu, 150)} className="text-[20px] font-black text-text-main block">
                       {link.name}
                     </a>
-                  </motion.li>
+                  </li>
                 ))}
               </ul>
 
-              <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="pt-6 border-t border-white/5 flex flex-col gap-4"
-              >
-                <button 
-                  onClick={() => {
-                    window.dispatchEvent(new CustomEvent('neuroads:open-chat'));
-                    setTimeout(closeMenu, 150);
-                  }}
-                  className="w-full flex items-center justify-center gap-2 font-semibold text-[0.875rem] text-green-s bg-green-s/[0.08] border border-green-s/20 py-4 rounded-xl"
-                >
-                  <span className="w-2 h-2 rounded-full bg-green-s animate-blink" />
-                  Atendimento Online
+              <div className="pt-8 border-t border-border flex flex-col gap-4">
+                <button onClick={handleAccessHub} className="w-full py-5 font-black text-text-main bg-bg-secondary rounded-2xl">
+                  Entrar no Hub
                 </button>
-                <a 
-                  href="#contato" 
-                  onClick={() => setTimeout(closeMenu, 150)}
-                  className="btn btn-primary w-full py-4 rounded-xl flex items-center justify-center text-[0.9rem]"
-                >
+                <a href="#contato" onClick={() => setTimeout(closeMenu, 150)} className="btn btn-primary w-full py-5 rounded-2xl text-[16px]">
                   Diagnóstico Gratuito
                 </a>
-              </motion.div>
+              </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </header>
   );
 }

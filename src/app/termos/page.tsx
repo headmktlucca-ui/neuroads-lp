@@ -3,10 +3,10 @@ import LegalLayout from '@/components/neuroads/LegalLayout';
 import { motion } from 'framer-motion';
 
 export default function TermsPage() {
-  const fadeUp = {
+  const fadeUp: any = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.7 }
+    transition: { duration: 0.7, ease: "circOut" }
   };
 
   return (
@@ -24,7 +24,7 @@ export default function TermsPage() {
           {/* 1. Aceitação dos Termos */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">1.</span> Aceitação
+              <span className="text-primary">1.</span> Aceitação
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               O acesso a este site confirma sua aceitação destes termos. Se você não concorda com qualquer parte destes documentos, não está autorizado a utilizar nossos serviços ou navegar em nossa plataforma.
@@ -34,7 +34,7 @@ export default function TermsPage() {
           {/* 2. Descrição dos Serviços */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">2.</span> Serviços NeuroAds
+              <span className="text-primary">2.</span> Serviços NeuroAds
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               A NeuroAds fornece consultoria estratégica de marketing, gestão de tráfego pago de alta performance e implementações de inteligência artificial através do ecossistema Lucca.os. O conteúdo deste site é meramente informativo sobre nossas competências e metodologias.
@@ -44,7 +44,7 @@ export default function TermsPage() {
           {/* 3. Propriedade Intelectual */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">3.</span> Propriedade Intelectual
+              <span className="text-primary">3.</span> Propriedade Intelectual
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               Todo o conteúdo, design, logotipos, ícones (incluindo os ícones 3D de metodologia) e o sistema Lucca.os são de propriedade exclusiva da NeuroAds ou de seus licenciadores e são protegidos por leis de direitos autorais e propriedade intelectual. É proibida a reprodução total ou parcial sem autorização prévia por escrito.
@@ -54,7 +54,7 @@ export default function TermsPage() {
           {/* 4. Uso do Site e Conduta */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">4.</span> Conduta do Usuário
+              <span className="text-primary">4.</span> Conduta do Usuário
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               Você concorda em fornecer informações verdadeiras e atualizadas em nossos formulários de diagnóstico. Reservamo-nos o direito de recusar diagnósticos gratuitos para solicitações que não atendam aos critérios de qualificação mínima ou que pareçam fraudulentas.
@@ -64,7 +64,7 @@ export default function TermsPage() {
           {/* 5. Isenção de Garantias de Resultados */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">5.</span> Resultados Estimados
+              <span className="text-primary">5.</span> Resultados Estimados
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               Embora nossa metodologia seja baseada em dados e IA de alta performance, o marketing possui variáveis externas. Assim, a NeuroAds não garante resultados financeiros específicos ou lucros imediatos, sendo os diagnósticos baseados em potenciais estatísticos e análises de mercado.
@@ -74,7 +74,7 @@ export default function TermsPage() {
           {/* 6. Limitação de Responsabilidade */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">6.</span> Limitação de Responsabilidade
+              <span className="text-primary">6.</span> Limitação de Responsabilidade
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               A NeuroAds não será responsável por quaisquer danos diretos, indiretos ou consequentes resultantes do uso ou da incapacidade de usar as informações contidas neste site.
@@ -84,7 +84,7 @@ export default function TermsPage() {
           {/* 7. Alterações nos Termos */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">7.</span> Modificações
+              <span className="text-primary">7.</span> Modificações
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               Podemos revisar estes termos a qualquer momento, sem aviso prévio. Ao utilizar este site, você concorda em ficar vinculado à versão atual desses termos.

@@ -3,10 +3,10 @@ import LegalLayout from '@/components/neuroads/LegalLayout';
 import { motion } from 'framer-motion';
 
 export default function PrivacyPage() {
-  const fadeUp = {
+  const fadeUp: any = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.7 }
+    transition: { duration: 0.7, ease: "circOut" }
   };
 
   return (
@@ -24,7 +24,7 @@ export default function PrivacyPage() {
           {/* 1. Introdução */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">1.</span> Introdução
+              <span className="text-primary">1.</span> Introdução
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               A NeuroAds ("nós", "nosso") está comprometida em proteger a privacidade e os dados pessoais de nossos clientes e visitantes do site. Em conformidade com a Lei Geral de Proteção de Dados (LGPD), detalhamos aqui nossas práticas de tratamento de dados.
@@ -34,7 +34,7 @@ export default function PrivacyPage() {
           {/* 2. Coleta de Dados */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">2.</span> Dados que Coletamos
+              <span className="text-primary">2.</span> Dados que Coletamos
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               Coletamos informações voluntariamente fornecidas por você através de nossos formulários de diagnóstico, incluindo:
@@ -49,7 +49,7 @@ export default function PrivacyPage() {
           {/* 3. Finalidade do Tratamento */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">3.</span> Finalidade do Uso
+              <span className="text-primary">3.</span> Finalidade do Uso
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               Utilizamos seus dados para:
@@ -65,7 +65,7 @@ export default function PrivacyPage() {
           {/* 4. Segurança de Dados */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">4.</span> Segurança e Retenção
+              <span className="text-primary">4.</span> Segurança e Retenção
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               Adotamos medidas técnicas e administrativas rigorosas para proteger seus dados contra acessos não autorizados. Seus dados são mantidos apenas pelo tempo necessário para cumprir as finalidades para as quais foram coletados ou conforme exigido por lei.
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
           {/* 5. Cookies e Tecnologias de Rastreamento */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">5.</span> Cookies
+              <span className="text-primary">5.</span> Cookies
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               Utilizamos cookies e tecnologias similares para analisar tendências, administrar o site e rastrear os movimentos dos usuários ao redor do site para melhorar a performance de nossas campanhas de tráfego pago.
@@ -85,7 +85,7 @@ export default function PrivacyPage() {
           {/* 6. Seus Direitos (LGPD) */}
           <div className="space-y-4">
             <h2 className="text-[1.25rem] font-bold text-text-1 flex items-center gap-3">
-              <span className="text-blue-1">6.</span> Seus Direitos
+              <span className="text-primary">6.</span> Seus Direitos
             </h2>
             <p className="text-text-2 text-[0.875rem] leading-relaxed">
               De acordo com a LGPD, você tem direito de acessar, corrigir, anonimizar ou excluir seus dados pessoais de nossa base. Para exercer esses direitos, entre em contato através do e-mail abaixo.
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
             <p className="text-text-2 text-[0.85rem] mb-6">
               Nossa equipe de proteção de dados está à disposição para esclarecer qualquer ponto desta política.
             </p>
-            <a href="mailto:avante@neuroads.com.br" className="text-blue-1 font-bold hover:underline">
+            <a href="mailto:avante@neuroads.com.br" className="text-primary font-bold hover:underline">
               avante@neuroads.com.br
             </a>
           </div>

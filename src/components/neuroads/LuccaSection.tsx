@@ -1,145 +1,127 @@
 'use client';
 import { motion } from 'framer-motion';
+import { TrendingUp, Activity, ShieldCheck, Zap } from 'lucide-react';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH2 = motion.h2;
 
+const features = [
+  { icon: <TrendingUp size={18} />, t: 'Decisão em Tempo Real', d: 'O Lucca analisa o desempenho de cada anúncio a cada 60 minutos e redistribui a verba para o que gera lucro.' },
+  { icon: <Zap size={18} />, t: 'Criativos Contextuais via IA', d: 'Testamos dezenas de variações de imagem e texto simultaneamente, geradas com base no comportamento real.' },
+  { icon: <ShieldCheck size={18} />, t: 'Transparência nos Dados', d: 'Um painel exclusivo onde você vê exatamente quanto investiu e quanto retornou. Sem maquiagem.' }
+];
+
 export default function LuccaSection() {
-  const fadeUp = {
+  const fadeUp: any = {
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true },
-    transition: { duration: 0.7 }
+    transition: { duration: 0.8, ease: "circOut" }
   };
 
   return (
-    <section className="section overflow-hidden scroll-mt-24" id="lucca">
-      <div className="wrap py-24 lg:py-32">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
+    <section className="py-24 lg:py-32 bg-white" id="lucca">
+      <div className="wrap">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           
-          {/* TEXT SIDE */}
-          <div>
-            <MotionP {...fadeUp} className="s-badge">Nossa Diferenciação Tech</MotionP>
+          <div className="max-w-[540px]">
+            <MotionP {...fadeUp} className="s-badge">Sistema Propriatário</MotionP>
             <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title">
-              O cérebro por trás<br />da performance: <span className="g">Lucca</span>
+              O cérebro da nossa<br />performance: <span className="text-primary italic">Lucca</span>
             </MotionH2>
-            <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="s-body">
-              Esqueça as agências que tomam decisões baseadas no "feeling" do gestor junior. Nós usamos o Lucca, nosso sistema proprietário que centraliza dados, gera criativos e otimiza campanhas 24h por dia.
+            <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="s-body mb-12">
+              Esqueça as decisões baseadas no "feeling". O Lucca é nosso sistema agêntico que orquestra tráfego, criativos e automações em um único ecossistema.
             </MotionP>
 
-            <div className="space-y-6 mt-10">
-              {[
-                { t: 'Decisão em Tempo Real', d: 'O Lucca analisa o desempenho de cada anúncio a cada 60 minutos e redistribui a verba para o que está gerando lucro agora.' },
-                { t: 'Criativos Contextuais via IA', d: 'Testamos dezenas de variações de imagem e texto simultaneamente, geradas com base no que o seu cliente realmente clica.' },
-                { t: 'Transparência nos Dados', d: 'Um painel exclusivo onde você vê exatamente quanto investiu e quanto retornou — sem planilhas confusas ou dados maquiados.' }
-              ].map((item, i) => (
-                <MotionDiv key={i} {...fadeUp} transition={{ delay: 0.3 + (i * 0.1) }} className="flex gap-4">
-                  <div className="w-5 h-5 rounded-full bg-blue-1/12 border border-blue-1/30 flex items-center justify-center flex-shrink-0 mt-1">
-                    <div className="w-1.5 h-1.5 rounded-full bg-blue-1" />
+            <div className="space-y-8 mt-10">
+              {features.map((item, i) => (
+                <MotionDiv key={i} {...fadeUp} transition={{ delay: 0.3 + (i * 0.1) }} className="flex gap-5">
+                  <div className="w-10 h-10 rounded-xl bg-orange-light flex items-center justify-center text-primary flex-shrink-0">
+                    {item.icon}
                   </div>
                   <div>
-                    <h4 className="font-head text-[0.9rem] font-bold text-text-1 mb-1">{item.t}</h4>
-                    <p className="text-[0.835rem] text-text-3 font-light leading-relaxed">{item.d}</p>
+                    <h4 className="font-bold text-text-main mb-1 text-[15px]">{item.t}</h4>
+                    <p className="text-[14px] text-text-muted leading-relaxed">{item.d}</p>
                   </div>
                 </MotionDiv>
               ))}
             </div>
 
-            <MotionDiv {...fadeUp} transition={{ delay: 0.7 }} className="mt-10 relative inline-block group">
-               {/* High-end Glow Effect */}
-               <div className="absolute -inset-1 bg-grad-main opacity-20 blur-xl group-hover:opacity-50 transition-opacity duration-500 rounded-lg pointer-events-none" />
-               
+            <MotionDiv {...fadeUp} transition={{ delay: 0.7 }} className="mt-12">
                <a 
                  href="https://www.luccaos.pro/" 
                  target="_blank" 
                  rel="noopener noreferrer" 
-                 className="btn btn-primary relative z-10 px-8 py-3.5 flex items-center gap-3 border border-white/10"
+                 className="btn btn-primary px-8"
                >
-                 <span className="font-bold tracking-tight">Conheça o Lucca</span>
-                 <svg className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                 </svg>
+                 Acessar Lucca.os
                </a>
             </MotionDiv>
           </div>
 
-          {/* DASHBOARD PREVIEW SIDE */}
           <MotionDiv 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 1 }}
-            className="relative"
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="relative lg:ml-10"
           >
-            {/* Dashboard Mockup */}
-            <div className="bg-white/[0.04] border border-white/[0.08] rounded-xl overflow-hidden backdrop-blur-lg shadow-[var(--shadow-card),_var(--shadow-glow)]">
-              {/* UI Header */}
-              <div className="bg-grad-card border-b border-white/10 p-[0.75rem_1.25rem] flex items-center justify-between">
+            {/* DASHBOARD MOCKUP LIGHT */}
+            <div className="premium-card p-0 overflow-hidden ring-1 ring-border shadow-2xl">
+              <div className="bg-bg-secondary px-6 py-4 border-b border-border flex items-center justify-between">
                 <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-red-s/30" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-amber-s/30" />
-                  <div className="w-2.5 h-2.5 rounded-full bg-green-s/30" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-border" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-border" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-border" />
                 </div>
-                <div className="text-[0.65rem] font-bold tracking-[0.1em] text-text-4 uppercase">Lucca Performance · v2.4</div>
-                <div className="w-6 h-6 rounded-full bg-blue-1/20 border border-blue-1/30" />
+                <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-text-dim">Lucca Dashboard v2.5</div>
+                <div className="w-6 h-6 rounded-full bg-white border border-border" />
               </div>
-
-              {/* UI Content */}
-              <div className="p-6">
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-[#090B18] border border-white/[0.08] rounded-lg p-4">
-                    <div className="text-[0.65rem] text-text-4 uppercase">Custo por Lead (AVG)</div>
-                    <div className="font-head text-[1.4rem] font-extrabold text-blue-2 mt-1">R$ 4,82</div>
-                    <div className="text-[0.62rem] text-green-s font-semibold flex items-center gap-1 mt-1">
-                      <span>↓ 18.2%</span> vs last month
-                    </div>
+              
+              <div className="p-8 space-y-6">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-white border border-border rounded-2xl p-6 shadow-sm">
+                    <p className="text-[10px] uppercase tracking-wider font-bold text-text-dim mb-2">ROI Real Time</p>
+                    <p className="text-3xl font-black text-primary">6.8x</p>
+                    <p className="text-[10px] text-green-600 font-bold mt-1">↑ +14% vs ontem</p>
                   </div>
-                  <div className="bg-[#090B18] border border-white/[0.08] rounded-lg p-4">
-                    <div className="text-[0.65rem] text-text-4 uppercase">Conversão Média</div>
-                    <div className="font-head text-[1.4rem] font-extrabold text-green-s mt-1">6.42%</div>
-                    <div className="text-[0.62rem] text-green-s font-semibold flex items-center gap-1 mt-1">
-                      <span>↑ 2.4%</span> optimized by IA
-                    </div>
+                  <div className="bg-white border border-border rounded-2xl p-6 shadow-sm">
+                    <p className="text-[10px] uppercase tracking-wider font-bold text-text-dim mb-2">Leads Gerados</p>
+                    <p className="text-3xl font-black text-text-main">1,284</p>
+                    <p className="text-[10px] text-green-600 font-bold mt-1">↑ +8% optimized</p>
                   </div>
                 </div>
 
-                <div className="bg-[#090B18] border border-white/[0.08] rounded-lg p-4 overflow-hidden">
-                  <div className="flex items-center justify-between mb-4 border-b border-white/[0.05] pb-2">
-                    <div className="text-[0.68rem] font-bold text-text-3">Anúncios em Processamento</div>
-                    <div className="text-[0.6rem] text-green-s/60 bg-green-s/[0.05] px-2 py-0.5 rounded border border-green-s/20 animate-pulse">Live Scan</div>
+                <div className="bg-white border border-border rounded-2xl p-6 shadow-sm">
+                  <div className="flex items-center justify-between mb-4 border-b border-border pb-4">
+                    <p className="text-xs font-bold text-text-main">Agentes Ativos</p>
+                    <div className="flex items-center gap-1.5 bg-green-50 px-2 py-1 rounded text-[10px] font-bold text-green-600">
+                      <div className="w-1 h-1 rounded-full bg-green-600 animate-pulse" />
+                      Otimizando
+                    </div>
                   </div>
-                  <div className="space-y-3">
-                    {[
-                      { l: 'Creative_V4_Meta', s: 'Ativo', c: 'green-s' },
-                      { l: 'Search_GEO_Intent', s: 'Otimizando', c: 'blue-1' },
-                      { l: 'Boring_Ad_Copy', s: 'A/B Test', c: 'amber-s' }
-                    ].map((ad, i) => (
-                      <div key={i} className="flex items-center justify-between text-[0.7rem] text-text-2 group/ad">
-                        <div className="flex items-center gap-2">
-                          <div className={`w-1.5 h-1.5 rounded-full bg-${ad.c}`} />
-                          {ad.l}
+                  <div className="space-y-4">
+                    {[1, 2].map((_, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-2 h-2 rounded-full bg-primary" />
+                          <div className="w-32 h-2 bg-bg-secondary rounded-full overflow-hidden">
+                            <motion.div initial={{ width: 0 }} whileInView={{ width: '80%' }} className="h-full bg-primary" />
+                          </div>
                         </div>
-                        <div className="font-mono opacity-50">98.2% relevância</div>
+                        <span className="text-[10px] font-bold text-text-dim">98% Match</span>
                       </div>
                     ))}
                   </div>
                 </div>
-
-                {/* Graph placeholder */}
-                <div className="mt-6 flex items-end justify-between h-16 px-2">
-                   {[40, 65, 52, 85, 95, 75, 100].map((h, i) => (
-                      <div key={i} className="w-1.5 bg-grad-main rounded-t-sm" style={{ height: `${h}%` }}>
-                        <div className="absolute w-1.5 h-1.5 rounded-full bg-white shadow-[0_0_8px_white] -top-1 left-0 hidden group-hover:block" />
-                      </div>
-                   ))}
-                </div>
               </div>
             </div>
 
-            {/* Glowing background behind dashboard */}
-            <div className="absolute -inset-10 bg-blue-1/[0.08] blur-[80px] -z-10 rounded-full" />
+            {/* Glowing background */}
+            <div className="absolute -inset-20 bg-primary/5 blur-[100px] -z-10 rounded-full" />
           </MotionDiv>
+
         </div>
       </div>
     </section>
