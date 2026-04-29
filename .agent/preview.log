@@ -4801,3 +4801,13 @@ FirebaseError: Failed to get document because the client is offline. (src/contex
 [browser] Image with src "/images/tools/dna_marca.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [browser] Image with src "/images/tools/concorrentes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [browser] Image with src "/images/tools/publico_ideal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 15.8s
+[browser] Image with src "/images/tools/analise.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/dna_marca.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/publico_ideal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/concorrentes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ POST /hub/agente/seo-geo 200 in 15.5s (next.js: 396ms, application-code: 15.2s)
+  └─ ƒ generateSeoGeoAudit({"businessContext":"","websiteUrl":"https://shiftmc.com.br"}) in 14604ms src/app/actions/seo-geo-audit.ts
+✓ Compiled in 2.5s
+ GET /hub 200 in 976ms (next.js: 461ms, application-code: 515ms)
+ GET / 200 in 197ms (next.js: 163ms, application-code: 33ms)
