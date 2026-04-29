@@ -20,11 +20,6 @@ export default function AgentGrid() {
   return (
     <>
       <section className="relative w-full overflow-hidden">
-        {/* Background Grid Pattern */}
-        <div className="absolute inset-0 z-0 pointer-events-none">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,77,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,77,0,0.08)_1px,transparent_1px)] bg-[size:56px_56px] opacity-40 [mask-image:radial-gradient(ellipse_110%_90%_at_50%_30%,#000_35%,transparent_100%)]" />
-        </div>
-
         <div className="relative z-10 wrap py-8 md:py-12">
           {/* Header */}
           <div className="mb-12">
@@ -35,7 +30,7 @@ export default function AgentGrid() {
               className="mb-8"
             >
               <h2 className="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight text-text-main mb-4">
-                Hub de <span className="text-primary italic">Agentes Neurais</span>
+                Hub de <span className="grad-text-animated">Agentes Neurais</span>
               </h2>
               <p className="text-base md:text-lg text-text-muted leading-relaxed max-w-2xl">
                 Acesse uma suite completa de ferramentas de inteligência autônoma projetadas para escalar suas operações e maximizar ROI.

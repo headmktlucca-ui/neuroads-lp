@@ -22,8 +22,8 @@ export default function Navbar() {
   const { user, logout } = useAuth();
 
   const navLinks = [
-    { name: 'HOME', href: '/' },
-    { name: 'HUB ESTRATÉGICO', href: '#gallery' },
+    { name: 'Home', href: '/' },
+    { name: 'Hub Estratégico', href: '#gallery' },
   ];
 
   return (
@@ -54,13 +54,12 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                  className="relative px-6 py-3 group overflow-hidden border border-border hover:border-primary/40 bg-white rounded-full transition-all flex items-center gap-2 shadow-sm"
+                  className="relative px-8 py-3.5 group overflow-hidden rounded-full transition-all flex items-center gap-3 bg-gradient-to-r from-[#FF6B00] to-[#FF7A00] text-white shadow-[0_12px_30px_rgba(255,107,0,0.35)] hover:brightness-105 active:scale-[0.98]"
                 >
-                  <div className="absolute inset-0 bg-transparent group-hover:bg-orange-light/50 transition-all" />
-                  <span className="relative z-10 text-text-main text-[14px] font-black tracking-[0.08em] uppercase italic">
+                  <span className="relative z-10 text-white text-[14px] font-black tracking-[0.02em]">
                     {getGreeting()}, {getFirstName(user.displayName || user.email)}!
                   </span>
-                  <ChevronDown size={14} className={`relative z-10 transition-transform duration-300 ${isSettingsOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={14} className={`relative z-10 text-white transition-transform duration-300 ${isSettingsOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* Submenu */}
@@ -111,7 +110,7 @@ export default function Navbar() {
               key={link.name}
               href={link.href}
               onClick={() => setIsMenuOpen(false)}
-              className="text-lg font-black tracking-[0.3em] text-text-main hover:text-primary transition-colors uppercase italic"
+              className="text-lg font-black tracking-[0.08em] text-text-main hover:text-primary transition-colors"
             >
               {link.name}
             </Link>
