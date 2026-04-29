@@ -6,6 +6,7 @@ import {
   type AgentPricingProfile,
 } from '../data/agent-pricing';
 import stripeCatalog from '../data/stripe-agent-price-ids.json';
+const ENABLED_AGENT_TITLE = 'SEO & GEO';
 
 export interface AgentContractStatus {
   isActive: boolean;
@@ -162,7 +163,25 @@ export function getAgentBySlug(slug: string): Agent | undefined {
 }
 
 export function getContractedAgentsFromProfile(profile: unknown): Map<string, AgentContractStatus> {
-  if (!profile || typeof profile !== 'object') return new Map<string, AgentContractStatus>();
+  const forceEnabledAgent = (sourceMap: Map<string, AgentContractStatus>) => {
+    const result = new Map<string, AgentContractStatus>();
+    const fromSource = sourceMap.get(ENABLED_AGENT_TITLE);
+    const pricing = getAgentPricingProfile(ENABLED_AGENT_TITLE);
+    const growthPlan = pricing.plans.find((plan) => plan.name === 'Growth') ?? pricing.plans[0];
+
+    result.set(ENABLED_AGENT_TITLE, {
+      isActive: true,
+      planName: fromSource?.planName ?? growthPlan.name,
+      monthlyPrice: fromSource?.monthlyPrice ?? growthPlan.monthlyPrice,
+      monthlyLimit: fromSource?.monthlyLimit ?? growthPlan.monthlyLimit,
+      usageUsed: fromSource?.usageUsed,
+      nextPaymentAt: fromSource?.nextPaymentAt,
+    });
+
+    return result;
+  };
+
+  if (!profile || typeof profile !== 'object') return forceEnabledAgent(new Map<string, AgentContractStatus>());
 
   const dynamicProfile = profile as Record<string, unknown>;
   const possibleSources: unknown[] = [
@@ -176,11 +195,11 @@ export function getContractedAgentsFromProfile(profile: unknown): Map<string, Ag
   for (const source of possibleSources) {
     const normalized = normalizeContractedAgents(source);
     if (normalized.size > 0) {
-      return normalized;
+      return forceEnabledAgent(normalized);
     }
   }
 
-  return new Map<string, AgentContractStatus>();
+  return forceEnabledAgent(new Map<string, AgentContractStatus>());
 }
 
 export function getAgentContractStatus(

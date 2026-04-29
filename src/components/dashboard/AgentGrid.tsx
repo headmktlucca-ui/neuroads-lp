@@ -11,7 +11,6 @@ import { useAuth } from '../../context/AuthContext';
 import { formatBRL, getAgentPricingProfile } from '../../data/agent-pricing';
 import {
   type AgentContractStatus,
-  getAgentCheckoutPriceId,
   getContractedAgentsFromProfile,
   getDefaultPlanName,
   slugifyAgentTitle,
@@ -21,6 +20,7 @@ import { useRouter } from 'next/navigation';
 const CATEGORIES = ['Todos', 'Performance', 'Inteligência', 'Criativos', 'Técnico', 'Ativos'];
 
 const ACTIVE_CATEGORY = 'Ativos';
+const ENABLED_AGENT_TITLE = 'SEO & GEO';
 
 function formatDate(dateString?: string): string {
   if (!dateString) return 'A confirmar';
@@ -30,22 +30,59 @@ function formatDate(dateString?: string): string {
 }
 
 export default function AgentGrid() {
-  const { profile, user } = useAuth();
+  const { profile } = useAuth();
   const router = useRouter();
   const [activeCategory, setActiveCategory] = useState('Todos');
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   const [selectedPlan, setSelectedPlan] = useState<AgentPlanName>('Growth');
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const contractedAgents = useMemo(() => {
     return getContractedAgentsFromProfile(profile);
   }, [profile]);
 
-  const activeAgentTitles = useMemo(() => new Set(contractedAgents.keys()), [contractedAgents]);
+  const statusByTitle = useMemo(() => {
+    const map = new Map<string, AgentContractStatus>();
+
+    agents.forEach((agent) => {
+      if (agent.title !== ENABLED_AGENT_TITLE) {
+        map.set(agent.title, { isActive: false });
+        return;
+      }
+
+      const fromProfile = contractedAgents.get(agent.title);
+      if (fromProfile?.isActive) {
+        map.set(agent.title, fromProfile);
+        return;
+      }
+
+      const pricing = getAgentPricingProfile(agent.title);
+      const growthPlan = pricing.plans.find((plan) => plan.name === 'Growth') ?? pricing.plans[0];
+      map.set(agent.title, {
+        isActive: true,
+        planName: growthPlan.name,
+        monthlyPrice: growthPlan.monthlyPrice,
+        monthlyLimit: growthPlan.monthlyLimit,
+      });
+    });
+
+    return map;
+  }, [contractedAgents]);
+
+  const activeAgentTitles = useMemo(() => {
+    const titles = new Set<string>();
+    statusByTitle.forEach((status, title) => {
+      if (status.isActive) titles.add(title);
+    });
+    return titles;
+  }, [statusByTitle]);
 
   const filteredAgents = useMemo(() => {
     if (activeCategory === 'Todos') {
-      return agents;
+      return [...agents].sort((a, b) => {
+        const aPriority = activeAgentTitles.has(a.title) ? 1 : 0;
+        const bPriority = activeAgentTitles.has(b.title) ? 1 : 0;
+        return bPriority - aPriority;
+      });
     }
 
     if (activeCategory === ACTIVE_CATEGORY) {
@@ -57,12 +94,9 @@ export default function AgentGrid() {
 
   const selectedAgentPricing = selectedAgent ? getAgentPricingProfile(selectedAgent.title) : null;
   const selectedAgentContract = selectedAgent
-    ? contractedAgents.get(selectedAgent.title) ?? { isActive: false }
+    ? statusByTitle.get(selectedAgent.title) ?? { isActive: false }
     : { isActive: false };
   const selectedAgentSlug = selectedAgent ? slugifyAgentTitle(selectedAgent.title) : null;
-  const selectedPlanFromStatus: AgentPlanName = selectedAgent && selectedAgentPricing
-    ? getDefaultPlanName(selectedAgentContract, selectedAgentPricing)
-    : 'Growth';
 
   useEffect(() => {
     if (selectedAgent && selectedAgentPricing) {
@@ -70,48 +104,12 @@ export default function AgentGrid() {
     }
   }, [selectedAgent, selectedAgentContract, selectedAgentPricing]);
 
-  const handlePrimaryAction = async () => {
+  const handlePrimaryAction = () => {
     if (!selectedAgent || !selectedAgentPricing) return;
 
     if (selectedAgentContract.isActive) {
       if (!selectedAgentSlug) return;
       router.push(`/hub/agente/${selectedAgentSlug}`);
-      return;
-    }
-
-    const planToCheckout = selectedPlan || selectedPlanFromStatus;
-    const priceId = getAgentCheckoutPriceId(selectedAgent.title, planToCheckout);
-
-    if (!priceId) {
-      alert('Não foi possível localizar o plano selecionado para contratação. Tente novamente.');
-      return;
-    }
-
-    try {
-      setCheckoutLoading(true);
-      const response = await fetch('/api/stripe/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          priceId,
-          userId: user?.uid,
-          email: user?.email,
-          returnUrl: `${window.location.origin}/hub`,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-        return;
-      }
-
-      throw new Error(data.error || 'Erro ao iniciar checkout');
-    } catch (error) {
-      console.error(error);
-      alert('Não foi possível iniciar a contratação agora. Tente novamente em instantes.');
-    } finally {
-      setCheckoutLoading(false);
     }
   };
 
@@ -175,7 +173,7 @@ export default function AgentGrid() {
             <AnimatePresence mode="popLayout">
               {filteredAgents.map((agent, index) => {
                 const pricingProfile = getAgentPricingProfile(agent.title);
-                const contractStatus = contractedAgents.get(agent.title) ?? { isActive: false };
+                const contractStatus = statusByTitle.get(agent.title) ?? { isActive: false };
                 return (
                 <AgentCard
                   key={agent.title}
@@ -319,12 +317,13 @@ export default function AgentGrid() {
                                 <button
                                   key={plan.name}
                                   type="button"
+                                  disabled={!selectedAgentContract.isActive}
                                   onClick={() => setSelectedPlan(plan.name)}
                                   className={`rounded-xl border bg-white p-3 text-left transition-all ${
                                     selectedPlan === plan.name
                                       ? 'border-[#FF8D46] shadow-[0_0_0_1px_rgba(255,141,70,0.35)]'
                                       : 'border-[#FFDCC7]'
-                                  }`}
+                                  } ${!selectedAgentContract.isActive ? 'opacity-60 cursor-not-allowed' : ''}`}
                                 >
                                   <p className="text-[11px] uppercase tracking-widest text-text-dim font-bold mb-1">{plan.name}</p>
                                   <p className="text-base font-black text-text-main mb-1">{formatBRL(plan.monthlyPrice)}/mês</p>
@@ -352,18 +351,14 @@ export default function AgentGrid() {
                         <button
                           type="button"
                           onClick={handlePrimaryAction}
-                          disabled={checkoutLoading}
+                          disabled={!selectedAgentContract.isActive}
                           className={`flex-grow hover:brightness-105 text-white px-6 py-3 font-bold rounded-lg uppercase tracking-widest transition-all text-sm flex items-center justify-center gap-2 ${
                             selectedAgentContract.isActive
                               ? 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] shadow-[0_10px_24px_rgba(8,183,96,0.3)]'
-                              : 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] shadow-[0_10px_24px_rgba(8,183,96,0.3)] disabled:opacity-70'
+                              : 'bg-gradient-to-br from-[#E2E8F0] to-[#CBD5E1] text-[#64748B] shadow-[0_8px_18px_rgba(148,163,184,0.25)] cursor-not-allowed'
                           }`}
                         >
-                          {checkoutLoading
-                            ? 'Processando...'
-                            : selectedAgentContract.isActive
-                              ? 'Acessar Agente →'
-                              : 'Contratar Agente →'}
+                          {selectedAgentContract.isActive ? 'Acessar Agente →' : 'Em desenvolvimento'}
                         </button>
                         <button
                           onClick={() => setSelectedAgent(null)}

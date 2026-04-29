@@ -51,7 +51,7 @@ export default function AgentEntryPage() {
       <div className="flex-grow pt-20 md:pt-28 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <Image
-            src="/images/background_hub.png"
+            src="/images/background_agents_execution_v3.png"
             alt="Hub Background"
             fill
             className="object-cover object-top opacity-90"
@@ -91,50 +91,62 @@ export default function AgentEntryPage() {
             </div>
           ) : (
             <div className="max-w-6xl mx-auto space-y-6">
-              <div className="rounded-3xl border border-border bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)] p-6 md:p-8">
-                <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-primary font-bold mb-2">{entry.category}</p>
-                    <h1 className="text-3xl md:text-4xl font-black text-text-main">{entry.title}</h1>
+              <div className="rounded-[34px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_24px_56px_-28px_rgba(255,107,0,0.45)]">
+                <div className="rounded-[32px] bg-white/85 p-[1px]">
+                  <div className="rounded-[30px] border border-[#FFF1E8] bg-white p-6 md:p-8">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                      <div>
+                        <p className="text-xs uppercase tracking-widest text-primary font-bold mb-2">{entry.category}</p>
+                        <h1 className="text-3xl md:text-4xl font-black text-text-main">{entry.title}</h1>
+                      </div>
+                      <button
+                        onClick={() => router.push('/hub')}
+                        className="px-6 py-3 rounded-full border border-[#FFE1CF] text-text-main font-bold tracking-widest text-sm uppercase hover:bg-[#FFF8F3] transition-colors"
+                      >
+                        Voltar ao Hub
+                      </button>
+                    </div>
                   </div>
-                  <button
-                    onClick={() => router.push('/hub')}
-                    className="px-6 py-3 rounded-full border border-[#FFE1CF] text-text-main font-bold tracking-widest text-sm uppercase hover:bg-[#FFF8F3] transition-colors"
-                  >
-                    Voltar ao Hub
-                  </button>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-1 rounded-3xl border border-[#FFE4D1] bg-white p-6 shadow-[0_12px_32px_rgba(255,107,0,0.08)]">
-                  <h2 className="text-xs uppercase tracking-widest text-primary font-bold mb-4">Resumo Comercial</h2>
-                  <div className="space-y-3">
-                    <p className="text-sm text-text-muted">
-                      Plano: <span className="font-bold text-text-main">{entry.planSummary?.planName ?? 'A confirmar'}</span>
-                    </p>
-                    <p className="text-sm text-text-muted">
-                      Valor: <span className="font-bold text-text-main">{formatBRL(entry.planSummary?.monthlyPrice ?? 0)}/mês</span>
-                    </p>
-                    <p className="text-sm text-text-muted">
-                      Limite: <span className="font-bold text-text-main">{entry.planSummary?.monthlyLimit ?? 0} execuções/mês</span>
-                    </p>
-                    <p className="text-sm text-text-muted">
-                      Em uso: <span className="font-bold text-text-main">{entry.planSummary?.usageUsed ?? 0}</span>
-                    </p>
-                    <p className="text-sm text-text-muted">
-                      Próximo pagamento:{' '}
-                      <span className="font-bold text-text-main">{formatDate(entry.planSummary?.nextPaymentAt)}</span>
-                    </p>
+                <div className="lg:col-span-1 rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_20px_44px_-28px_rgba(255,107,0,0.38)]">
+                  <div className="rounded-[28px] bg-white/85 p-[1px]">
+                    <div className="rounded-[26px] border border-[#FFF1E8] bg-white p-6 h-full">
+                      <h2 className="text-xs uppercase tracking-widest text-primary font-bold mb-4">Resumo Comercial</h2>
+                      <div className="space-y-3">
+                        <p className="text-sm text-text-muted">
+                          Plano: <span className="font-bold text-text-main">{entry.planSummary?.planName ?? 'A confirmar'}</span>
+                        </p>
+                        <p className="text-sm text-text-muted">
+                          Valor: <span className="font-bold text-text-main">{formatBRL(entry.planSummary?.monthlyPrice ?? 0)}/mês</span>
+                        </p>
+                        <p className="text-sm text-text-muted">
+                          Limite: <span className="font-bold text-text-main">{entry.planSummary?.monthlyLimit ?? 0} execuções/mês</span>
+                        </p>
+                        <p className="text-sm text-text-muted">
+                          Em uso: <span className="font-bold text-text-main">{entry.planSummary?.usageUsed ?? 0}</span>
+                        </p>
+                        <p className="text-sm text-text-muted">
+                          Próximo pagamento:{' '}
+                          <span className="font-bold text-text-main">{formatDate(entry.planSummary?.nextPaymentAt)}</span>
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="lg:col-span-2 rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_36px_rgba(15,23,42,0.07)]">
-                  <h2 className="text-sm uppercase tracking-widest text-primary font-bold mb-4">Área de implantação</h2>
-                  <div className="min-h-[420px] rounded-2xl border-2 border-dashed border-[#FFD9C0] bg-gradient-to-br from-[#FFF8F3] to-white p-6">
-                    <p className="text-sm text-text-muted">
-                      Espaço reservado para implementação das atividades e componentes específicos do agente <strong>{entry.title}</strong>.
-                    </p>
+                <div className="lg:col-span-2 rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_24px_52px_-30px_rgba(255,107,0,0.42)]">
+                  <div className="rounded-[28px] bg-white/85 p-[1px]">
+                    <div className="rounded-[26px] border border-[#FFF1E8] bg-white p-6 md:p-8 h-full">
+                      <h2 className="text-sm uppercase tracking-widest text-primary font-bold mb-4">Área de implantação</h2>
+                      <div className="min-h-[420px] rounded-2xl border-2 border-dashed border-[#FFD9C0] bg-gradient-to-br from-[#FFF8F3] to-white p-6">
+                        <p className="text-sm text-text-muted">
+                          Espaço reservado para implementação das atividades e componentes específicos do agente <strong>{entry.title}</strong>.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>

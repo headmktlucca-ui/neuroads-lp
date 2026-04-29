@@ -4544,3 +4544,10 @@ FirebaseError: Failed to get document because the client is offline. (src/contex
  GET / 200 in 278ms (next.js: 78ms, application-code: 200ms)
  GET /hub 200 in 287ms (next.js: 17ms, application-code: 270ms)
  GET / 200 in 109ms (next.js: 18ms, application-code: 91ms)
+✓ Compiled in 128ms
+✓ Compiled in 125ms
+✓ Compiled in 112ms
+✓ Compiled in 107ms
+✓ Compiled in 133ms
+✓ Compiled in 81ms
+✓ Compiled in 110ms
