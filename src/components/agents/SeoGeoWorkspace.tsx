@@ -368,11 +368,21 @@ function downloadReportPdf(params: {
   URL.revokeObjectURL(link.href);
 }
 
-function StatCard({ label, value, helper }: { label: string; value: string; helper: string }) {
+function StatCard({
+  label,
+  value,
+  helper,
+  valueClassName,
+}: {
+  label: string;
+  value: string;
+  helper: string;
+  valueClassName?: string;
+}) {
   return (
     <div className="rounded-2xl border border-[#FFE1CF] bg-white p-4 shadow-[0_10px_28px_rgba(255,107,0,0.08)]">
       <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">{label}</p>
-      <p className="mt-2 text-2xl font-black text-text-main">{value}</p>
+      <p className={`mt-2 text-2xl font-black text-text-main ${valueClassName ?? ''}`}>{value}</p>
       <p className="mt-1 text-xs text-text-muted">{helper}</p>
     </div>
   );
@@ -532,7 +542,12 @@ export default function SeoGeoWorkspace({ agentTitle }: SeoGeoWorkspaceProps) {
               value={geoScore !== null ? `${geoScore}/100` : 'N/A'}
               helper="Prontidão para IA generativa"
             />
-            <StatCard label="Site analisado" value={reportState.websiteUrl.replace(/^https?:\/\//, '')} helper="Domínio auditado" />
+            <StatCard
+              label="Site analisado"
+              value={reportState.websiteUrl.replace(/^https?:\/\//, '')}
+              helper="Domínio auditado"
+              valueClassName="text-lg md:text-xl leading-tight break-all"
+            />
             <StatCard label="Gerado em" value={formattedDate} helper="Relatório atualizado" />
           </div>
 
