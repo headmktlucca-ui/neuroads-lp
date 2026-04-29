@@ -4711,3 +4711,72 @@ FirebaseError: Failed to get document because the client is offline. (src/app/hu
 ✓ Compiled in 588ms
  GET /hub/agente/seo-geo 200 in 1230ms (next.js: 438ms, application-code: 792ms)
  GET /hub/agente/seo-geo 200 in 193ms (next.js: 21ms, application-code: 171ms)
+ GET /hub/agente/analista-de-trafego 200 in 338ms (next.js: 111ms, application-code: 227ms)
+ GET /hub 200 in 196ms (next.js: 91ms, application-code: 106ms)
+[browser] Erro ao carregar automação persistida: FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/app/hub/agente/[slug]/page.tsx:177:17)
+[browser] Erro ao carregar automação persistida: FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/app/hub/agente/[slug]/page.tsx:177:17)
+[browser] Erro ao carregar automação persistida: FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/app/hub/agente/[slug]/page.tsx:177:17)
+[browser] Erro ao carregar automação persistida: FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/app/hub/agente/[slug]/page.tsx:177:17)
+ GET / 200 in 2.1s (next.js: 581ms, application-code: 1533ms)
+[browser] Image with src "/images/0599.jpeg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Firestore getDoc failed (offline?): FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/context/AuthContext.tsx:70:19)
+✓ Compiled in 436ms
+ GET / 200 in 985ms (next.js: 345ms, application-code: 640ms)
+ GET / 200 in 634ms (next.js: 484ms, application-code: 150ms)
+ GET /hub/agente/seo-geo 200 in 639ms (next.js: 388ms, application-code: 251ms)
+ GET /hub/agente/seo-geo 200 in 94ms (next.js: 10ms, application-code: 83ms)
+✓ Compiled in 1258ms
+ GET / 200 in 2.9s (next.js: 563ms, application-code: 2.4s)
+ GET / 200 in 2.2s (next.js: 19ms, application-code: 2.1s)
+ GET /hub/agente/seo-geo 200 in 2.3s (next.js: 934ms, application-code: 1403ms)
+ GET / 200 in 988ms (next.js: 52ms, application-code: 936ms)
+ GET / 200 in 974ms (next.js: 576ms, application-code: 398ms)
+ GET / 200 in 987ms (next.js: 420ms, application-code: 568ms)
+ GET / 200 in 442ms (next.js: 42ms, application-code: 400ms)
+ GET /hub/agente/seo-geo 200 in 423ms (next.js: 15ms, application-code: 408ms)
+ GET /hub/agente/seo-geo 200 in 823ms (next.js: 18ms, application-code: 805ms)
+ GET /hub/agente/seo-geo 200 in 679ms (next.js: 24ms, application-code: 655ms)
+ GET /hub/agente/seo-geo 200 in 681ms (next.js: 212ms, application-code: 469ms)
+ GET /hub/agente/seo-geo 200 in 681ms (next.js: 360ms, application-code: 321ms)
+ GET /hub 200 in 742ms (next.js: 632ms, application-code: 109ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/tools/otimizacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analista_trafego.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/rastreador_cirurgico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/preditor_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_lp.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/simulador_roas.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analisador_publico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/auditor_desperdicio.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/testes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/mineracao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 502ms
+ GET /hub 200 in 1334ms (next.js: 331ms, application-code: 1003ms)
+ GET /hub 200 in 845ms (next.js: 294ms, application-code: 551ms)
+ GET /hub/agente/seo-geo 200 in 846ms (next.js: 99ms, application-code: 747ms)
+ GET /hub 200 in 625ms (next.js: 41ms, application-code: 583ms)
+ GET /hub/agente/seo-geo 200 in 434ms (next.js: 82ms, application-code: 351ms)
+ GET /hub/agente/seo-geo 200 in 259ms (next.js: 39ms, application-code: 220ms)
+ GET / 200 in 1501ms (next.js: 636ms, application-code: 865ms)
+[browser] Image with src "/images/0599.jpeg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /hub 200 in 100ms (next.js: 11ms, application-code: 89ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+✓ Compiled in 535ms
+ GET /hub 200 in 1224ms (next.js: 270ms, application-code: 954ms)
+ GET /hub 200 in 1226ms (next.js: 436ms, application-code: 791ms)
+ GET /hub/agente/seo-geo 200 in 919ms (next.js: 233ms, application-code: 686ms)
+ GET /hub 200 in 918ms (next.js: 18ms, application-code: 899ms)
+ GET /hub 200 in 925ms (next.js: 391ms, application-code: 534ms)
+ GET /hub/agente/seo-geo 200 in 295ms (next.js: 31ms, application-code: 263ms)

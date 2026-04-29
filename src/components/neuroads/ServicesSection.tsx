@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { syncToHostingerReach } from '../../app/actions/hostinger';
 import { sendStrategyRequestAction } from '../../app/actions/mail';
 import { agents } from '../../data/agents';
+import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
@@ -37,7 +38,7 @@ export default function ServicesSection() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [formData, setFormData] = useState({ name: '', email: '', website: '' });
+  const [formData, setFormData] = useState({ name: '', email: '', website: HTTPS_PREFIX });
 
   const fadeUp: any = {
     initial: { opacity: 0, y: 20 },
@@ -60,12 +61,13 @@ export default function ServicesSection() {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      await syncToHostingerReach({ email: formData.email, name: formData.name, website: formData.website, tags: ["Planejamento Inicial"] });
-      await sendStrategyRequestAction("avante@neuroads.com.br", formData.name, formData.email, formData.website, '', '', Array.from(selectedAgents));
+      const website = !isHttpsPlaceholderOnly(formData.website) ? formData.website : '';
+      await syncToHostingerReach({ email: formData.email, name: formData.name, website, tags: ["Planejamento Inicial"] });
+      await sendStrategyRequestAction("avante@neuroads.com.br", formData.name, formData.email, website, '', '', Array.from(selectedAgents));
       setSubmitStatus('success');
       setIsModalOpen(false);
       setSelectedAgents(new Set());
-      setFormData({ name: '', email: '', website: '' });
+      setFormData({ name: '', email: '', website: HTTPS_PREFIX });
     } catch (err) {
       setSubmitStatus('error');
     } finally {
@@ -214,7 +216,13 @@ export default function ServicesSection() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input required placeholder="Seu Nome" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} />
                 <input required type="email" placeholder="Seu Melhor E-mail" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} />
-                <input placeholder="Site/Instagram" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" value={formData.website} onChange={e => setFormData({...formData, website: e.target.value})} />
+                <input
+                  placeholder="Site/Instagram"
+                  className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none"
+                  value={formData.website}
+                  onChange={e => setFormData({...formData, website: normalizeHttpsMaskedUrlInput(e.target.value)})}
+                  onBlur={e => setFormData({...formData, website: normalizeHttpsMaskedUrlInput(e.target.value)})}
+                />
                 
                 <div className="pt-6 flex gap-4">
                   <button type="button" onClick={() => setIsModalOpen(false)} className="flex-1 btn btn-ghost py-4">Voltar</button>

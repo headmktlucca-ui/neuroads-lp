@@ -70,7 +70,7 @@ function renderInlineStrong(text: string): ReactNode {
 
 function MarkdownSection({ content }: { content: string }) {
   const lines = content.split('\n');
-  const nodes: React.ReactNode[] = [];
+  const nodes: ReactNode[] = [];
   let codeBuffer: string[] = [];
   let inCode = false;
 
