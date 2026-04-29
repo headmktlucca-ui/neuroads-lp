@@ -1,100 +1,47 @@
 'use client';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import Image from 'next/image';
 import AgentCard from './AgentCard';
 import { agents } from '../../data/agents';
 import type { Agent } from '../../data/agents';
+import type { AgentPlanName } from '../../data/agent-pricing';
 import { useAuth } from '../../context/AuthContext';
+import { formatBRL, getAgentPricingProfile } from '../../data/agent-pricing';
+import {
+  type AgentContractStatus,
+  getAgentCheckoutPriceId,
+  getContractedAgentsFromProfile,
+  getDefaultPlanName,
+  slugifyAgentTitle,
+} from '../../lib/hub-agents';
+import { useRouter } from 'next/navigation';
 
 const CATEGORIES = ['Todos', 'Performance', 'Inteligência', 'Criativos', 'Técnico', 'Ativos'];
 
 const ACTIVE_CATEGORY = 'Ativos';
 
-function normalizeActiveAgentTitles(input: unknown): Set<string> {
-  const titles = new Set<string>();
-
-  if (Array.isArray(input)) {
-    for (const item of input) {
-      if (typeof item === 'string' && item.trim()) {
-        titles.add(item.trim());
-        continue;
-      }
-
-      if (item && typeof item === 'object') {
-        const maybeRecord = item as Record<string, unknown>;
-        const isActive = maybeRecord.isActive !== false;
-        const name = typeof maybeRecord.title === 'string'
-          ? maybeRecord.title
-          : typeof maybeRecord.name === 'string'
-            ? maybeRecord.name
-            : typeof maybeRecord.agentTitle === 'string'
-              ? maybeRecord.agentTitle
-              : null;
-
-        if (isActive && name && name.trim()) {
-          titles.add(name.trim());
-        }
-      }
-    }
-    return titles;
-  }
-
-  if (input && typeof input === 'object') {
-    for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
-      if (typeof value === 'boolean') {
-        if (value && key.trim()) {
-          titles.add(key.trim());
-        }
-        continue;
-      }
-
-      if (value && typeof value === 'object') {
-        const maybeRecord = value as Record<string, unknown>;
-        const isActive = maybeRecord.isActive !== false;
-        const name = typeof maybeRecord.title === 'string'
-          ? maybeRecord.title
-          : typeof maybeRecord.name === 'string'
-            ? maybeRecord.name
-            : key;
-
-        if (isActive && name.trim()) {
-          titles.add(name.trim());
-        }
-      }
-    }
-  }
-
-  return titles;
+function formatDate(dateString?: string): string {
+  if (!dateString) return 'A confirmar';
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return 'A confirmar';
+  return date.toLocaleDateString('pt-BR');
 }
 
 export default function AgentGrid() {
-  const { profile } = useAuth();
+  const { profile, user } = useAuth();
+  const router = useRouter();
   const [activeCategory, setActiveCategory] = useState('Todos');
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<AgentPlanName>('Growth');
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  const activeAgentTitles = useMemo(() => {
-    if (!profile) return new Set<string>();
-
-    const dynamicProfile = profile as unknown as Record<string, unknown>;
-    const possibleSources: unknown[] = [
-      dynamicProfile.activeAgents,
-      dynamicProfile.contractedAgents,
-      dynamicProfile.hiredAgents,
-      dynamicProfile.selectedAgents,
-      dynamicProfile.userAgents
-    ];
-
-    for (const source of possibleSources) {
-      const normalized = normalizeActiveAgentTitles(source);
-      if (normalized.size > 0) {
-        return normalized;
-      }
-    }
-
-    return new Set<string>();
+  const contractedAgents = useMemo(() => {
+    return getContractedAgentsFromProfile(profile);
   }, [profile]);
+
+  const activeAgentTitles = useMemo(() => new Set(contractedAgents.keys()), [contractedAgents]);
 
   const filteredAgents = useMemo(() => {
     if (activeCategory === 'Todos') {
@@ -107,6 +54,66 @@ export default function AgentGrid() {
 
     return agents.filter(agent => agent.category === activeCategory);
   }, [activeCategory, activeAgentTitles]);
+
+  const selectedAgentPricing = selectedAgent ? getAgentPricingProfile(selectedAgent.title) : null;
+  const selectedAgentContract = selectedAgent
+    ? contractedAgents.get(selectedAgent.title) ?? { isActive: false }
+    : { isActive: false };
+  const selectedAgentSlug = selectedAgent ? slugifyAgentTitle(selectedAgent.title) : null;
+  const selectedPlanFromStatus: AgentPlanName = selectedAgent && selectedAgentPricing
+    ? getDefaultPlanName(selectedAgentContract, selectedAgentPricing)
+    : 'Growth';
+
+  useEffect(() => {
+    if (selectedAgent && selectedAgentPricing) {
+      setSelectedPlan(getDefaultPlanName(selectedAgentContract, selectedAgentPricing));
+    }
+  }, [selectedAgent, selectedAgentContract, selectedAgentPricing]);
+
+  const handlePrimaryAction = async () => {
+    if (!selectedAgent || !selectedAgentPricing) return;
+
+    if (selectedAgentContract.isActive) {
+      if (!selectedAgentSlug) return;
+      router.push(`/hub/agente/${selectedAgentSlug}`);
+      return;
+    }
+
+    const planToCheckout = selectedPlan || selectedPlanFromStatus;
+    const priceId = getAgentCheckoutPriceId(selectedAgent.title, planToCheckout);
+
+    if (!priceId) {
+      alert('Não foi possível localizar o plano selecionado para contratação. Tente novamente.');
+      return;
+    }
+
+    try {
+      setCheckoutLoading(true);
+      const response = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          priceId,
+          userId: user?.uid,
+          email: user?.email,
+          returnUrl: `${window.location.origin}/hub`,
+        }),
+      });
+
+      const data = await response.json();
+      if (data.url) {
+        window.location.href = data.url;
+        return;
+      }
+
+      throw new Error(data.error || 'Erro ao iniciar checkout');
+    } catch (error) {
+      console.error(error);
+      alert('Não foi possível iniciar a contratação agora. Tente novamente em instantes.');
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
 
   return (
     <>
@@ -142,7 +149,9 @@ export default function AgentGrid() {
                   onClick={() => setActiveCategory(category)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`px-4 md:px-6 py-2.5 rounded-2xl font-bold text-xs md:text-sm uppercase tracking-widest transition-all duration-300 ${
+                  className={`px-4 md:px-6 py-2.5 rounded-2xl font-bold text-xs md:text-sm tracking-widest transition-all duration-300 ${
+                    category === 'Todos' ? 'uppercase' : 'normal-case'
+                  } ${
                     category === ACTIVE_CATEGORY
                       ? activeCategory === category
                         ? 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] text-white border border-[#6EE7A9] shadow-[0_10px_24px_rgba(8,183,96,0.35)]'
@@ -164,14 +173,20 @@ export default function AgentGrid() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             <AnimatePresence mode="popLayout">
-              {filteredAgents.map((agent, index) => (
+              {filteredAgents.map((agent, index) => {
+                const pricingProfile = getAgentPricingProfile(agent.title);
+                const contractStatus = contractedAgents.get(agent.title) ?? { isActive: false };
+                return (
                 <AgentCard
                   key={agent.title}
                   agent={agent}
                   onClick={() => setSelectedAgent(agent)}
                   index={index}
+                  startingPrice={pricingProfile.startingPrice}
+                  contractStatus={contractStatus}
                 />
-              ))}
+                );
+              })}
             </AnimatePresence>
           </motion.div>
 
@@ -195,7 +210,7 @@ export default function AgentGrid() {
       {/* Agent Detail Modal */}
       <AnimatePresence>
         {selectedAgent && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -211,10 +226,10 @@ export default function AgentGrid() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-2xl bg-white border border-border rounded-3xl overflow-hidden shadow-2xl max-h-[85vh] overflow-y-auto"
+              className="relative w-full max-w-[1120px] bg-white border border-border rounded-3xl overflow-hidden shadow-2xl max-h-[92vh]"
             >
               {/* Header with gradient */}
-              <div className="relative h-40 bg-gradient-to-br from-orange-light to-white flex items-end p-8 border-b border-border">
+              <div className="relative h-36 bg-gradient-to-br from-orange-light to-white flex items-end p-6 md:p-7 border-b border-border">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/20 to-transparent rounded-full blur-3xl" />
 
                 <div className="relative z-10 flex items-end gap-6 w-full">
@@ -235,14 +250,14 @@ export default function AgentGrid() {
                         {selectedAgent.category}
                       </span>
                     </div>
-                    <h2 className="text-3xl font-black text-text-main tracking-tight">
+                    <h2 className="text-2xl md:text-4xl font-black text-text-main tracking-tight">
                       {selectedAgent.title}
                     </h2>
                   </div>
 
                   <button
                     onClick={() => setSelectedAgent(null)}
-                    className="absolute top-6 right-6 p-2 bg-white hover:bg-bg-secondary text-text-main rounded-full transition-all border border-border"
+                    className="absolute top-5 right-5 p-2 bg-white hover:bg-bg-secondary text-text-main rounded-full transition-all border border-border"
                   >
                     <X size={20} />
                   </button>
@@ -250,52 +265,113 @@ export default function AgentGrid() {
               </div>
 
               {/* Content */}
-              <div className="p-8">
-                <div className="mb-8">
-                  <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">
-                    Descrição Completa
-                  </h3>
-                  <p className="text-base text-text-muted leading-relaxed">
-                    {selectedAgent.longDescription}
-                  </p>
-                </div>
+              <div className="p-5 md:p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  <div className="space-y-5">
+                    <div>
+                      <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-2">
+                        Descrição Completa
+                      </h3>
+                      <p className="text-[15px] text-text-muted leading-relaxed">
+                        {selectedAgent.longDescription}
+                      </p>
+                    </div>
 
-                {/* Benefits */}
-                <div className="mb-8 p-6 rounded-xl bg-bg-secondary border border-border">
-                  <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-4">
-                    Capacidades Principais
-                  </h3>
-                  <ul className="space-y-2">
-                    <li className="flex items-start gap-3">
-                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <span className="text-sm text-text-muted">Análise em tempo real com atualização de dados</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <span className="text-sm text-text-muted">Sugestões inteligentes baseadas em IA neural</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <span className="text-sm text-text-muted">Integração automática com suas ferramentas</span>
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <span className="text-sm text-text-muted">Relatórios e insights acionáveis</span>
-                    </li>
-                  </ul>
-                </div>
+                    <div className="p-5 rounded-xl bg-bg-secondary border border-border">
+                      <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">
+                        Capacidades Principais
+                      </h3>
+                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <li className="flex items-start gap-2">
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                          <span className="text-sm text-text-muted">Análise em tempo real com atualização de dados</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                          <span className="text-sm text-text-muted">Sugestões inteligentes baseadas em IA neural</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                          <span className="text-sm text-text-muted">Integração automática com suas ferramentas</span>
+                        </li>
+                        <li className="flex items-start gap-2">
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                          <span className="text-sm text-text-muted">Relatórios e insights acionáveis</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
 
-                {/* CTA Buttons */}
-                <div className="flex flex-col sm:flex-row gap-3 pt-6 border-t border-border">
-                  <button className="flex-grow bg-gradient-to-br from-[#FF6B00] to-[#FF9D00] hover:brightness-105 text-white px-6 py-3 font-bold rounded-lg uppercase tracking-widest transition-all text-sm flex items-center justify-center gap-2 shadow-[0_10px_24px_rgba(255,107,0,0.3)]">
-                    Acessar Agent →
-                  </button>
-                  <button
-                    onClick={() => setSelectedAgent(null)}
-                    className="px-6 py-3 font-bold rounded-lg text-text-muted hover:text-text-main hover:bg-bg-secondary border border-border uppercase tracking-widest transition-all text-sm"
-                  >
-                    Fechar
-                  </button>
+                  <div className="space-y-5">
+                    <div className="p-5 rounded-xl bg-[#FFF8F3] border border-[#FFE4D1]">
+                      <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">
+                        Opções de Valores e Limites
+                      </h3>
+
+                      {!selectedAgentContract.isActive ? (
+                        <>
+                          <p className="text-sm text-text-muted mb-3">
+                            a partir de <span className="font-bold text-primary">{formatBRL(selectedAgentPricing?.startingPrice ?? 29.9)}/mês</span>
+                          </p>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-2">
+                            {selectedAgentPricing?.plans.map((plan) => (
+                              <button
+                                key={plan.name}
+                                type="button"
+                                onClick={() => setSelectedPlan(plan.name)}
+                                className={`rounded-xl border bg-white p-3 text-left transition-all ${
+                                  selectedPlan === plan.name
+                                    ? 'border-[#FF8D46] shadow-[0_0_0_1px_rgba(255,141,70,0.35)]'
+                                    : 'border-[#FFDCC7]'
+                                }`}
+                              >
+                                <p className="text-[11px] uppercase tracking-widest text-text-dim font-bold mb-1">{plan.name}</p>
+                                <p className="text-base font-black text-text-main mb-1">{formatBRL(plan.monthlyPrice)}/mês</p>
+                                <p className="text-xs text-text-muted">{plan.monthlyLimit} execuções/mês</p>
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      ) : (
+                        <div className="rounded-xl border border-[#B9EBD1] bg-white p-4 space-y-2">
+                          <p className="text-sm font-bold text-[#0A9D57]">
+                            {selectedAgentContract.planName || 'Plano ativo'} • {formatBRL(selectedAgentContract.monthlyPrice ?? selectedAgentPricing?.startingPrice ?? 29.9)}/mês
+                          </p>
+                          <p className="text-xs text-text-muted">
+                            Limite: {selectedAgentContract.monthlyLimit ?? 'A confirmar'} exec./mês • Em uso: {selectedAgentContract.usageUsed ?? 'A confirmar'}
+                          </p>
+                          <p className="text-xs text-text-muted">
+                            Próximo pagamento: {formatDate(selectedAgentContract.nextPaymentAt)}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 pt-1">
+                      <button
+                        type="button"
+                        onClick={handlePrimaryAction}
+                        disabled={checkoutLoading}
+                        className={`flex-grow hover:brightness-105 text-white px-6 py-3 font-bold rounded-lg uppercase tracking-widest transition-all text-sm flex items-center justify-center gap-2 ${
+                          selectedAgentContract.isActive
+                            ? 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] shadow-[0_10px_24px_rgba(8,183,96,0.3)]'
+                            : 'bg-gradient-to-br from-[#FF6B00] to-[#FF9D00] shadow-[0_10px_24px_rgba(255,107,0,0.3)] disabled:opacity-70'
+                        }`}
+                      >
+                        {checkoutLoading
+                          ? 'Processando...'
+                          : selectedAgentContract.isActive
+                            ? 'Acessar Agente →'
+                            : 'Contratar Agente →'}
+                      </button>
+                      <button
+                        onClick={() => setSelectedAgent(null)}
+                        className="px-6 py-3 font-bold rounded-lg text-text-muted hover:text-text-main hover:bg-bg-secondary border border-border uppercase tracking-widest transition-all text-sm"
+                      >
+                        Fechar
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </motion.div>

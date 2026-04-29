@@ -3,14 +3,32 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Agent } from '../../data/agents';
 import { Zap } from 'lucide-react';
+import { formatBRL } from '../../data/agent-pricing';
+import type { AgentContractStatus } from '../../lib/hub-agents';
 
 interface AgentCardProps {
   agent: Agent;
   onClick: () => void;
   index: number;
+  startingPrice: number;
+  contractStatus: AgentContractStatus;
 }
 
-export default function AgentCard({ agent, onClick, index }: AgentCardProps) {
+function formatDate(dateString?: string): string {
+  if (!dateString) return 'A confirmar';
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return 'A confirmar';
+  return date.toLocaleDateString('pt-BR');
+}
+
+export default function AgentCard({ agent, onClick, index, startingPrice, contractStatus }: AgentCardProps) {
+  const isContractActive = contractStatus.isActive;
+  const planName = contractStatus.planName || 'Plano ativo';
+  const planPrice = contractStatus.monthlyPrice ?? startingPrice;
+  const monthlyLimit = contractStatus.monthlyLimit;
+  const usageUsed = contractStatus.usageUsed;
+  const nextPaymentLabel = formatDate(contractStatus.nextPaymentAt);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -51,16 +69,37 @@ export default function AgentCard({ agent, onClick, index }: AgentCardProps) {
             {agent.description}
           </p>
 
+          {/* Commercial info */}
+          <div className="relative z-10 mb-4 p-4 rounded-xl border border-[#FFE8D6] bg-[#FFF8F3]">
+            {!isContractActive ? (
+              <p className="text-xs md:text-sm font-semibold text-[#B94A00] tracking-wide">
+                a partir de {formatBRL(startingPrice)}/mês
+              </p>
+            ) : (
+              <div className="space-y-1">
+                <p className="text-xs md:text-sm font-bold text-[#0A9D57]">
+                  {planName} • {formatBRL(planPrice)}/mês
+                </p>
+                <p className="text-[11px] md:text-xs text-text-muted">
+                  Limite: {monthlyLimit ?? 'A confirmar'} exec./mês • Em uso: {usageUsed ?? 'A confirmar'}
+                </p>
+                <p className="text-[11px] md:text-xs text-text-muted">
+                  Próximo pagamento: {nextPaymentLabel}
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* Footer CTA */}
           <div className="relative z-10 pt-4 border-t border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Zap size={14} className="text-primary" />
-              <span className="text-xs font-bold text-primary tracking-[0.08em]">
-                Contratar
+              <Zap size={14} className={isContractActive ? 'text-[#0A9D57]' : 'text-primary'} />
+              <span className={`text-xs font-bold tracking-[0.08em] ${isContractActive ? 'text-[#0A9D57]' : 'text-primary'}`}>
+                {isContractActive ? 'Contratado' : 'Contratar'}
               </span>
             </div>
-            <button className="text-xs font-bold text-text-dim group-hover:text-primary transition-colors flex items-center gap-1 uppercase tracking-widest">
-              Acessar <span className="group-hover:translate-x-1 transition-transform">→</span>
+            <button className="text-xs font-bold text-text-dim group-hover:text-primary transition-colors flex items-center gap-1 tracking-widest">
+              + detalhes <span className="group-hover:translate-x-1 transition-transform">→</span>
             </button>
           </div>
         </div>

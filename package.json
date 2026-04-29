@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "node server.js",
-    "lint": "eslint"
+    "lint": "eslint",
+    "stripe:sync-agents": "node scripts/stripe/sync-agent-catalog.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
