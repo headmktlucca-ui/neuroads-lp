@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X, Loader2, Sparkles, Send } from 'lucide-react';
+import { Check, Loader2, Send, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { syncToHostingerReach } from '../../app/actions/hostinger';
 import { sendStrategyRequestAction } from '../../app/actions/mail';
@@ -79,7 +79,9 @@ export default function ServicesSection() {
       await syncToHostingerReach({ email: formData.email, name: formData.name, website: formData.website, tags: ["Planejamento Inicial"] });
       await sendStrategyRequestAction("avante@neuroads.com.br", formData.name, formData.email, formData.website, '', '', Array.from(selectedAgents));
       setSubmitStatus('success');
-      setTimeout(() => { setIsModalOpen(false); setSubmitStatus('idle'); setSelectedAgents(new Set()); setFormData({ name: '', email: '', website: '' }); }, 3000);
+      setIsModalOpen(false);
+      setSelectedAgents(new Set());
+      setFormData({ name: '', email: '', website: '' });
     } catch (err) {
       setSubmitStatus('error');
     } finally {
@@ -131,8 +133,10 @@ export default function ServicesSection() {
                   >
                     <div className="bg-white/90 rounded-[22px] p-[3px] h-full">
                       <div className="bg-white rounded-[19px] p-6 flex items-start gap-5 relative overflow-hidden h-full group">
-                        <div className="w-14 h-14 bg-bg-secondary rounded-xl flex-shrink-0 relative overflow-hidden">
-                          <Image src={agent.image} alt={agent.title} fill className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+                        <div className="w-14 h-14 rounded-[14px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_10px_20px_rgba(255,107,0,0.25)] flex-shrink-0">
+                          <div className="w-full h-full rounded-[12px] bg-white overflow-hidden relative">
+                            <Image src={agent.image} alt={agent.title} fill className="object-cover opacity-85 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+                          </div>
                         </div>
                         <div className="flex-1">
                           <h4 className="font-bold text-text-main mb-1 text-[15px]">{agent.title}</h4>
@@ -161,33 +165,53 @@ export default function ServicesSection() {
           <div className="bg-white/80 rounded-[36px] p-2">
             <div className="bg-white rounded-[28px] p-12 lg:p-20 text-center shadow-sm">
               <div className="max-w-[800px] mx-auto">
-                <h3 className="text-3xl lg:text-4xl font-bold text-text-main mb-6">
-                  Pronto para Ativar sua Escala?
-                </h3>
-                <p className="text-lg text-text-muted mb-10 leading-relaxed">
-                  Envie seus recursos selecionados e receba um planejamento estratégico exclusivo de 30 dias para a sua marca.
-                </p>
-                
-                <div className="flex flex-col items-center gap-4">
-                  <button 
-                    onClick={() => setIsModalOpen(true)}
-                    className={`px-10 py-5 text-base rounded-full font-semibold flex items-center gap-3 transition-all ${
-                      selectedAgents.size === 0
-                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
-                        : 'btn btn-primary active:scale-95 hover:shadow-lg'
-                    }`}
-                    disabled={selectedAgents.size === 0}
-                  >
-                    <Send size={18} className="-rotate-45" />
-                    Solicitar Planejamento
-                  </button>
-                  
-                  {selectedAgents.size === 0 && (
-                    <p className="text-sm text-text-muted animate-pulse">
-                      Selecione pelo menos um agente acima
+                {submitStatus === 'success' ? (
+                  <>
+                    <h3 className="text-3xl lg:text-4xl font-bold text-text-main mb-6">
+                      Solicitação enviada com sucesso
+                    </h3>
+                    <p className="text-lg text-text-muted mb-10 leading-relaxed">
+                      Recebemos seus dados e nossa equipe vai analisar sua operação. Enquanto isso, clique em
+                      <span className="font-bold text-text-main"> Acessar Hub</span> para conhecer em detalhes os melhores agentes que você pode contratar conforme suas necessidades.
                     </p>
-                  )}
-                </div>
+                    <div className="flex flex-col items-center gap-4">
+                      <a href="/hub" className="btn btn-primary px-6 py-2.5 text-[13px] rounded-full">
+                        Acessar Hub
+                        <ArrowRight size={14} className="ml-2" />
+                      </a>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="text-3xl lg:text-4xl font-bold text-text-main mb-6">
+                      <span className="grad-text-animated">Pronto para Ativar sua Escala?</span>
+                    </h3>
+                    <p className="text-lg text-text-muted mb-10 leading-relaxed">
+                      Envie seus recursos selecionados e receba um planejamento estratégico exclusivo de 30 dias para a sua marca.
+                    </p>
+                    
+                    <div className="flex flex-col items-center gap-4">
+                      <button 
+                        onClick={() => setIsModalOpen(true)}
+                        className={`px-10 py-5 text-base rounded-full font-semibold flex items-center gap-3 transition-all ${
+                          selectedAgents.size === 0
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
+                            : 'btn btn-primary active:scale-95 hover:shadow-lg'
+                        }`}
+                        disabled={selectedAgents.size === 0}
+                      >
+                        <Send size={18} className="-rotate-45" />
+                        Solicitar Planejamento
+                      </button>
+                      
+                      {selectedAgents.size === 0 && (
+                        <p className="text-sm text-text-muted animate-pulse">
+                          Selecione pelo menos um agente acima
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -214,6 +238,11 @@ export default function ServicesSection() {
                     {isSubmitting ? <Loader2 className="animate-spin" /> : 'Enviar Agora'}
                   </button>
                 </div>
+                {submitStatus === 'error' && (
+                  <p className="text-sm text-red-500 text-center pt-2">
+                    Não foi possível enviar agora. Tente novamente em instantes.
+                  </p>
+                )}
               </form>
             </motion.div>
           </div>

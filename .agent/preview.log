@@ -3657,3 +3657,568 @@ FirebaseError: Failed to get document because the client is offline. (src/contex
 [browser] Image with src "/images/tools/analise.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [browser] Image with src "/images/tools/mineracao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 ✓ Compiled in 113ms
+[browser] Image with src "/images/tools/dna_marca.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/concorrentes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/publico_ideal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 62ms
+✓ Compiled in 299ms
+ GET / 200 in 863ms (next.js: 233ms, application-code: 629ms)
+ GET /hub 200 in 869ms (next.js: 639ms, application-code: 230ms)
+ GET / 200 in 151ms (next.js: 16ms, application-code: 136ms)
+ GET /hub 200 in 147ms (next.js: 74ms, application-code: 73ms)
+✓ Compiled in 403ms
+✓ Compiled in 181ms
+✓ Compiled in 207ms
+✓ Compiled in 182ms
+✓ Compiled in 65ms
+✓ Compiled in 188ms
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+✓ Compiled in 142ms
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+[browser] ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  1 | 'use client';
+  2 | import Navbar from '../../components/layout/Navbar';
+> 3 | import Footer from '../../components/layout/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import AgentGrid from '../../components/dashboard/AgentGrid';
+  5 | import { useAuth } from '../../context/AuthContext';
+  6 | import { useRouter } from 'next/navigation';
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found 
+[browser] ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  1 | 'use client';
+  2 | import Navbar from '../../components/layout/Navbar';
+> 3 | import Footer from '../../components/layout/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import AgentGrid from '../../components/dashboard/AgentGrid';
+  5 | import { useAuth } from '../../context/AuthContext';
+  6 | import { useRouter } from 'next/navigation';
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found 
+ GET / 500 in 126ms (next.js: 72ms, application-code: 54ms)
+ GET /hub 500 in 124ms (next.js: 107ms, application-code: 17ms)
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET / 500 in 25ms (next.js: 14ms, application-code: 12ms)
+[browser] ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  1 | 'use client';
+  2 | import Navbar from '../../components/layout/Navbar';
+> 3 | import Footer from '../../components/layout/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import AgentGrid from '../../components/dashboard/AgentGrid';
+  5 | import { useAuth } from '../../context/AuthContext';
+  6 | import { useRouter } from 'next/navigation';
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found 
+ GET /hub 500 in 43ms (next.js: 27ms, application-code: 16ms)
+⨯ ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  [90m1 |[0m [32m'use client'[0m;
+  [90m2 |[0m [36mimport[0m [33mNavbar[0m [36mfrom[0m [32m'../../components/layout/Navbar'[0m;
+[31m[1m>[0m [90m3 |[0m [36mimport[0m [33mFooter[0m [36mfrom[0m [32m'../../components/layout/Footer'[0m;
+  [90m  |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m4 |[0m [36mimport[0m [33mAgentGrid[0m [36mfrom[0m [32m'../../components/dashboard/AgentGrid'[0m;
+  [90m5 |[0m [36mimport[0m { useAuth } [36mfrom[0m [32m'../../context/AuthContext'[0m;
+  [90m6 |[0m [36mimport[0m { useRouter } [36mfrom[0m [32m'next/navigation'[0m;
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+ GET /hub 500 in 37ms (next.js: 16ms, application-code: 20ms)
+ GET / 500 in 34ms (next.js: 25ms, application-code: 9ms)
+[browser] Uncaught Error: ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  1 | 'use client';
+  2 | import Navbar from '../../components/layout/Navbar';
+> 3 | import Footer from '../../components/layout/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import AgentGrid from '../../components/dashboard/AgentGrid';
+  5 | import { useAuth } from '../../context/AuthContext';
+  6 | import { useRouter } from 'next/navigation';
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./src/app/hub/page.tsx:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (Error: (./src/app/hub/page.tsx:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+[browser] Uncaught Error: ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  1 | 'use client';
+  2 | import Navbar from '../../components/layout/Navbar';
+> 3 | import Footer from '../../components/layout/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import AgentGrid from '../../components/dashboard/AgentGrid';
+  5 | import { useAuth } from '../../context/AuthContext';
+  6 | import { useRouter } from 'next/navigation';
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (Error: ./src/app/hub/page.tsx:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (Error: (./src/app/hub/page.tsx:3:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+[browser] ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  1 | 'use client';
+  2 | import Navbar from '../../components/layout/Navbar';
+> 3 | import Footer from '../../components/layout/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import AgentGrid from '../../components/dashboard/AgentGrid';
+  5 | import { useAuth } from '../../context/AuthContext';
+  6 | import { useRouter } from 'next/navigation';
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found 
+[browser] ./src/app/hub/page.tsx:3:1
+Module not found: Can't resolve '../../components/layout/Footer'
+  1 | 'use client';
+  2 | import Navbar from '../../components/layout/Navbar';
+> 3 | import Footer from '../../components/layout/Footer';
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  4 | import AgentGrid from '../../components/dashboard/AgentGrid';
+  5 | import { useAuth } from '../../context/AuthContext';
+  6 | import { useRouter } from 'next/navigation';
+
+Import traces:
+  Client Component Browser:
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found 
+✓ Compiled in 143ms
+ GET / 200 in 870ms (next.js: 129ms, application-code: 741ms)
+ GET /hub 200 in 350ms (next.js: 97ms, application-code: 253ms)
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Firestore getDoc failed (offline?): FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/context/AuthContext.tsx:70:19)
+[browser] Image with src "/images/tools/analista_trafego.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/preditor_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/rastreador_cirurgico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_lp.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/simulador_roas.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/auditor_desperdicio.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/testes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analisador_publico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/mineracao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/dna_marca.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/concorrentes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/publico_ideal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 133ms

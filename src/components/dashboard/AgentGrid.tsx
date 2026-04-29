@@ -1,21 +1,112 @@
 'use client';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import Image from 'next/image';
 import AgentCard from './AgentCard';
 import { agents } from '../../data/agents';
 import type { Agent } from '../../data/agents';
+import { useAuth } from '../../context/AuthContext';
 
-const CATEGORIES = ['Todos', 'Performance', 'Inteligência', 'Criativos', 'Técnico'];
+const CATEGORIES = ['Todos', 'Performance', 'Inteligência', 'Criativos', 'Técnico', 'Ativos'];
+
+const ACTIVE_CATEGORY = 'Ativos';
+
+function normalizeActiveAgentTitles(input: unknown): Set<string> {
+  const titles = new Set<string>();
+
+  if (Array.isArray(input)) {
+    for (const item of input) {
+      if (typeof item === 'string' && item.trim()) {
+        titles.add(item.trim());
+        continue;
+      }
+
+      if (item && typeof item === 'object') {
+        const maybeRecord = item as Record<string, unknown>;
+        const isActive = maybeRecord.isActive !== false;
+        const name = typeof maybeRecord.title === 'string'
+          ? maybeRecord.title
+          : typeof maybeRecord.name === 'string'
+            ? maybeRecord.name
+            : typeof maybeRecord.agentTitle === 'string'
+              ? maybeRecord.agentTitle
+              : null;
+
+        if (isActive && name && name.trim()) {
+          titles.add(name.trim());
+        }
+      }
+    }
+    return titles;
+  }
+
+  if (input && typeof input === 'object') {
+    for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
+      if (typeof value === 'boolean') {
+        if (value && key.trim()) {
+          titles.add(key.trim());
+        }
+        continue;
+      }
+
+      if (value && typeof value === 'object') {
+        const maybeRecord = value as Record<string, unknown>;
+        const isActive = maybeRecord.isActive !== false;
+        const name = typeof maybeRecord.title === 'string'
+          ? maybeRecord.title
+          : typeof maybeRecord.name === 'string'
+            ? maybeRecord.name
+            : key;
+
+        if (isActive && name.trim()) {
+          titles.add(name.trim());
+        }
+      }
+    }
+  }
+
+  return titles;
+}
 
 export default function AgentGrid() {
+  const { profile } = useAuth();
   const [activeCategory, setActiveCategory] = useState('Todos');
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
 
-  const filteredAgents = activeCategory === 'Todos'
-    ? agents
-    : agents.filter(agent => agent.category === activeCategory);
+  const activeAgentTitles = useMemo(() => {
+    if (!profile) return new Set<string>();
+
+    const dynamicProfile = profile as unknown as Record<string, unknown>;
+    const possibleSources: unknown[] = [
+      dynamicProfile.activeAgents,
+      dynamicProfile.contractedAgents,
+      dynamicProfile.hiredAgents,
+      dynamicProfile.selectedAgents,
+      dynamicProfile.userAgents
+    ];
+
+    for (const source of possibleSources) {
+      const normalized = normalizeActiveAgentTitles(source);
+      if (normalized.size > 0) {
+        return normalized;
+      }
+    }
+
+    return new Set<string>();
+  }, [profile]);
+
+  const filteredAgents = useMemo(() => {
+    if (activeCategory === 'Todos') {
+      return agents;
+    }
+
+    if (activeCategory === ACTIVE_CATEGORY) {
+      return agents.filter(agent => activeAgentTitles.has(agent.title));
+    }
+
+    return agents.filter(agent => agent.category === activeCategory);
+  }, [activeCategory, activeAgentTitles]);
 
   return (
     <>
@@ -51,10 +142,14 @@ export default function AgentGrid() {
                   onClick={() => setActiveCategory(category)}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className={`px-4 md:px-6 py-2.5 rounded-lg font-bold text-xs md:text-sm uppercase tracking-widest transition-all duration-300 ${
-                    activeCategory === category
-                      ? 'bg-gradient-to-br from-[#FF6B00] to-[#FF9D00] text-white shadow-[0_10px_24px_rgba(255,107,0,0.35)]'
-                      : 'bg-white text-text-muted hover:text-text-main hover:bg-bg-secondary border border-border hover:border-border-h'
+                  className={`px-4 md:px-6 py-2.5 rounded-2xl font-bold text-xs md:text-sm uppercase tracking-widest transition-all duration-300 ${
+                    category === ACTIVE_CATEGORY
+                      ? activeCategory === category
+                        ? 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] text-white border border-[#6EE7A9] shadow-[0_10px_24px_rgba(8,183,96,0.35)]'
+                        : 'bg-white text-[#0A9D57] hover:text-[#067A43] border border-[#78D9A8] hover:border-[#0A9D57] shadow-[0_6px_14px_rgba(8,183,96,0.18)]'
+                      : activeCategory === category
+                        ? 'bg-gradient-to-br from-[#FF6B00] to-[#FF9D00] text-white border border-[#FFC8A6] shadow-[0_10px_24px_rgba(255,107,0,0.35)]'
+                        : 'bg-white text-text-muted hover:text-text-main border border-[#FFE1CF] hover:border-[#FFBE94] shadow-[0_6px_14px_rgba(255,107,0,0.08)]'
                   }`}
                 >
                   {category}
@@ -88,7 +183,9 @@ export default function AgentGrid() {
               className="text-center py-20"
             >
               <p className="text-text-muted text-lg">
-                Nenhum agente encontrado nesta categoria.
+                {activeCategory === ACTIVE_CATEGORY
+                  ? 'Você ainda não possui agentes ativos para exibição.'
+                  : 'Nenhum agente encontrado nesta categoria.'}
               </p>
             </motion.div>
           )}
@@ -121,13 +218,15 @@ export default function AgentGrid() {
                 <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/20 to-transparent rounded-full blur-3xl" />
 
                 <div className="relative z-10 flex items-end gap-6 w-full">
-                  <div className="relative w-24 h-24 rounded-2xl overflow-hidden shadow-xl ring-2 ring-primary/15">
-                    <Image
-                      src={selectedAgent.icon}
-                      alt={selectedAgent.title}
-                      fill
-                      className="object-cover"
-                    />
+                  <div className="w-24 h-24 rounded-[20px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_14px_26px_rgba(255,107,0,0.24)]">
+                    <div className="relative w-full h-full rounded-[18px] overflow-hidden bg-white">
+                      <Image
+                        src={selectedAgent.icon}
+                        alt={selectedAgent.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
                   </div>
 
                   <div className="flex-grow">
