@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "node server.js",
+    "start": "next start",
     "lint": "eslint",
     "stripe:sync-agents": "node scripts/stripe/sync-agent-catalog.mjs"
   },
