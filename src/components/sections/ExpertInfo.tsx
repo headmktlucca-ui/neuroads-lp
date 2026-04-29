@@ -70,7 +70,7 @@ export default function ExpertInfo() {
               className="mt-8 max-w-sm mx-auto w-full flex flex-col items-start px-2"
             >
               <h3 className="text-3xl font-bold text-white tracking-tight">Claudio Müller</h3>
-              <p className="text-indigo-500 font-medium text-lg mt-1 mb-6">Analista de Marketing Sênior</p>
+              <p className="text-primary font-medium text-lg mt-1 mb-6">Marketing Specialist & IA Expert</p>
               
               <div className="flex gap-4">
                 <a href="https://www.instagram.com/claudiomullermkt/" target="_blank" rel="noopener noreferrer" className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white hover:scale-110 transition-transform shadow-lg">
@@ -102,7 +102,7 @@ export default function ExpertInfo() {
                 no Marketing Moderno.
               </h2>
               <p className="text-xl italic text-slate-400 mb-8 leading-relaxed">
-                &quot;A escala real só acontece quando substituímos o esforço manual por sistemas inteligentes. Com base em mais de 25 anos de experiência em Growth, venho redefinindo as operações que envolvem Marketing e Vendas, utilizando recursos avançados em IA, Automações e Insights. O resultado dessa evolução são soluções que entregam uma inteligência centralizada que simplifica o complexo.&quot;
+                &quot;Não vendo campanhas. Construo sistemas que geram resultado enquanto você cuida do que sabe fazer de melhor.&quot;
               </p>
 
               <div className="flex flex-wrap sm:flex-nowrap items-start justify-center gap-6 pt-4 border-t border-white/5">

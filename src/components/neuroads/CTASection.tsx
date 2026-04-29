@@ -94,53 +94,57 @@ export default function CTASection() {
             initial={{ opacity: 0, scale: 0.98 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="premium-card p-10 lg:p-12 relative bg-white ring-1 ring-border shadow-2xl"
+            className="p-1 rounded-[40px] bg-gradient-to-br from-white/40 via-orange-300 to-[#FF6B00] shadow-[0_30px_80px_-20px_rgba(255,107,0,0.3)] relative z-20 w-full"
           >
-            {submitStatus === 'success' ? (
-              <div className="py-20 text-center">
-                <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto text-green-600 mb-6">
-                  <CheckCircle2 size={40} />
-                </div>
-                <h3 className="text-2xl font-bold text-text-main mb-2">Solicitação Enviada!</h3>
-                <p className="text-text-muted mb-8 italic">Claudio Müller entrará em contato em breve.</p>
-                <button onClick={() => setSubmitStatus('idle')} className="text-primary font-bold text-sm uppercase tracking-widest hover:underline">Novo Diagnóstico</button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">Nome Completo</label>
-                  <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Seu nome" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">WhatsApp</label>
-                  <input required value={formData.whatsapp} onChange={e => setFormData({...formData, whatsapp: maskPhone(e.target.value)})} placeholder="(00) 00000-0000" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">E-mail</label>
-                  <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="seu@email.com" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">Site/Negócio</label>
-                  <input value={formData.website} onChange={e => setFormData({...formData, website: e.target.value})} placeholder="seusite.com.br" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">Objetivo</label>
-                  <div className="relative">
-                    <select required value={formData.situation} onChange={e => setFormData({...formData, situation: e.target.value})} className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none appearance-none cursor-pointer">
-                      <option value="" disabled>Selecione a situação</option>
-                      <option value="Escala de Anúncios">Quero mais leads/vendas</option>
-                      <option value="Redução de Custo">Preciso reduzir o CAC</option>
-                      <option value="SEO/GEO">Quero aparecer nas buscas IA</option>
-                      <option value="Automação">Preciso de Agentes de IA</option>
-                    </select>
-                    <ChevronDown size={18} className="absolute right-5 top-1/2 -translate-y-1/2 text-text-dim pointer-events-none" />
+            <div className="bg-white/60 backdrop-blur-3xl rounded-[36px] p-2">
+              <div className="bg-white rounded-[28px] p-10 lg:p-12 shadow-sm w-full">
+                {submitStatus === 'success' ? (
+                  <div className="py-20 text-center">
+                    <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto text-green-600 mb-6">
+                      <CheckCircle2 size={40} />
+                    </div>
+                    <h3 className="text-2xl font-bold text-text-main mb-2">Solicitação Enviada!</h3>
+                    <p className="text-text-muted mb-8 italic">Claudio Müller entrará em contato em breve.</p>
+                    <button onClick={() => setSubmitStatus('idle')} className="text-primary font-bold text-sm uppercase tracking-widest hover:underline">Novo Diagnóstico</button>
                   </div>
-                </div>
-                <button disabled={isSubmitting} type="submit" className="w-full btn btn-primary py-5 text-base mt-6">
-                  {isSubmitting ? <Loader2 className="animate-spin" /> : 'Solicitar Diagnóstico Agora'}
-                </button>
-              </form>
-            )}
+                ) : (
+                  <form onSubmit={handleSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">Nome Completo</label>
+                      <input required value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} placeholder="Seu nome" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">WhatsApp</label>
+                      <input required value={formData.whatsapp} onChange={e => setFormData({...formData, whatsapp: maskPhone(e.target.value)})} placeholder="(00) 00000-0000" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">E-mail</label>
+                      <input required type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} placeholder="seu@email.com" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">Site/Negócio</label>
+                      <input value={formData.website} onChange={e => setFormData({...formData, website: e.target.value})} placeholder="seusite.com.br" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">Objetivo</label>
+                      <div className="relative">
+                        <select required value={formData.situation} onChange={e => setFormData({...formData, situation: e.target.value})} className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none appearance-none cursor-pointer">
+                          <option value="" disabled>Selecione a situação</option>
+                          <option value="Escala de Anúncios">Quero mais leads/vendas</option>
+                          <option value="Redução de Custo">Preciso reduzir o CAC</option>
+                          <option value="SEO/GEO">Quero aparecer nas buscas IA</option>
+                          <option value="Automação">Preciso de Agentes de IA</option>
+                        </select>
+                        <ChevronDown size={18} className="absolute right-5 top-1/2 -translate-y-1/2 text-text-dim pointer-events-none" />
+                      </div>
+                    </div>
+                    <button disabled={isSubmitting} type="submit" className="w-full btn btn-primary py-5 text-base mt-6">
+                      {isSubmitting ? <Loader2 className="animate-spin" /> : 'Solicitar Diagnóstico Agora'}
+                    </button>
+                  </form>
+                )}
+              </div>
+            </div>
           </MotionDiv>
 
         </div>

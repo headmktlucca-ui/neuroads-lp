@@ -1,8 +1,39 @@
 'use client';
 import Link from 'next/link';
-import { ArrowUpRight } from 'lucide-react';
 
 export default function Footer() {
+  const renderSocialIcon = (name: string) => {
+    if (name === 'Instagram') {
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#E1306C]" fill="none" aria-hidden="true">
+          <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="1.8" />
+          <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.8" />
+          <circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" />
+        </svg>
+      );
+    }
+
+    if (name === 'LinkedIn') {
+      return (
+        <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#0A66C2]" fill="currentColor" aria-hidden="true">
+          <path d="M6.8 8.6a1.8 1.8 0 1 1 0-3.6 1.8 1.8 0 0 1 0 3.6ZM5.3 10h3V19h-3v-9Zm5 0h2.9v1.2h.1c.4-.8 1.4-1.5 2.9-1.5 3.1 0 3.7 2 3.7 4.7V19h-3v-4c0-1 0-2.3-1.4-2.3s-1.6 1.1-1.6 2.2V19h-3v-9Z" />
+        </svg>
+      );
+    }
+
+    return (
+      <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#FF0000]" fill="currentColor" aria-hidden="true">
+        <path d="M21.6 8.8a3 3 0 0 0-2.1-2.1C17.6 6.2 12 6.2 12 6.2s-5.6 0-7.5.5a3 3 0 0 0-2.1 2.1C2 10.7 2 12 2 12s0 1.3.4 3.2a3 3 0 0 0 2.1 2.1c1.9.5 7.5.5 7.5.5s5.6 0 7.5-.5a3 3 0 0 0 2.1-2.1c.4-1.9.4-3.2.4-3.2s0-1.3-.4-3.2ZM10.2 15.2v-6.4L15.8 12l-5.6 3.2Z" />
+      </svg>
+    );
+  };
+
+  const socialLinks = [
+    { name: 'Instagram', href: 'https://www.instagram.com/neuroads.oficial/' },
+    { name: 'LinkedIn', href: 'https://www.linkedin.com/company/neuroads' },
+    { name: 'YouTube', href: 'https://www.youtube.com/@claudiomullermkt' }
+  ];
+
   return (
     <footer className="bg-bg-secondary py-20 px-6 border-t border-border">
       <div className="wrap">
@@ -20,12 +51,20 @@ export default function Footer() {
               Orquestrando o futuro do marketing com inteligência agêntica e performance real.
             </p>
             <div className="flex gap-4">
-              {/* Simple Social Icons */}
-              {[1,2,3].map(i => (
-                <div key={i} className="w-9 h-9 bg-white border border-border rounded-full flex items-center justify-center text-text-dim hover:text-primary hover:border-primary transition-all cursor-pointer">
-                  <ArrowUpRight size={16} />
-                </div>
-              ))}
+              {socialLinks.map((social) => {
+                return (
+                  <a
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.name}
+                    className="w-9 h-9 bg-white border border-border rounded-full flex items-center justify-center hover:border-primary transition-all"
+                  >
+                    {renderSocialIcon(social.name)}
+                  </a>
+                );
+              })}
             </div>
           </div>
           

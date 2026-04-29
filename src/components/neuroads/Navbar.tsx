@@ -62,16 +62,10 @@ export default function Navbar() {
             </ul>
             
             <div className="flex items-center gap-6 pl-10 border-l border-border/50">
-              <button 
-                onClick={handleAccessHub}
-                className="text-[14px] font-black text-text-main hover:text-primary transition-colors"
-              >
-                Sign In
-              </button>
-              <a href="#contato" className="btn btn-primary px-6 py-2.5 text-[13px] rounded-full">
+              <button onClick={handleAccessHub} className="btn btn-primary px-6 py-2.5 text-[13px] rounded-full">
                 Acessar Hub
                 <ArrowRight size={14} className="ml-2" />
-              </a>
+              </button>
             </div>
           </div>
 

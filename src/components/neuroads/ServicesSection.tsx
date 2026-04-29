@@ -88,8 +88,16 @@ export default function ServicesSection() {
   };
 
   return (
-    <section className="py-24 lg:py-32 bg-white" id="servicos">
-      <div className="wrap">
+    <section 
+      className="py-24 lg:py-32 relative overflow-hidden bg-white" 
+      id="servicos"
+    >
+      <div className="absolute inset-0 z-0 pointer-events-none">
+        <div className="absolute inset-0 bg-[url('/images/background_grade.jpg')] bg-center bg-no-repeat bg-[length:1100px_auto] sm:bg-[length:1400px_auto] lg:bg-cover opacity-45" />
+        <div className="absolute inset-0 bg-gradient-to-b from-white/88 via-white/82 to-white/90 sm:from-white/84 sm:via-white/76 sm:to-white/86 lg:from-white/78 lg:via-white/70 lg:to-white/82" />
+      </div>
+
+      <div className="wrap relative z-10">
         <div className="max-w-[700px] mb-20 text-left">
           <MotionP {...fadeUp} className="s-badge">Arsenal de Agentes IA</MotionP>
           <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title">
@@ -115,22 +123,30 @@ export default function ServicesSection() {
                     {...fadeUp}
                     transition={{ delay: 0.1 * i }}
                     onClick={() => toggleAgent(agent.title)}
-                    className={`premium-card p-6 flex items-start gap-5 cursor-pointer relative overflow-hidden group ${
-                      selectedAgents.has(agent.title) ? 'border-primary ring-1 ring-primary shadow-orange bg-orange-light/30' : 'hover:border-primary/30'
+                    className={`p-[2px] rounded-[24px] cursor-pointer relative z-20 transition-all duration-300 ${
+                      selectedAgents.has(agent.title) 
+                        ? 'bg-gradient-to-br from-white/40 via-orange-300 to-[#FF6B00] shadow-[0_15px_30px_-5px_rgba(255,107,0,0.3)] scale-[1.02]' 
+                        : 'bg-white hover:bg-gradient-to-br hover:from-white/40 hover:via-orange-300/60 hover:to-[#FF6B00]/60 shadow-sm hover:shadow-md'
                     }`}
                   >
-                    <div className="w-14 h-14 bg-bg-secondary rounded-xl flex-shrink-0 relative overflow-hidden">
-                      <Image src={agent.image} alt={agent.title} fill className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
-                    </div>
-                    <div className="flex-1">
-                      <h4 className="font-bold text-text-main mb-1 text-[15px]">{agent.title}</h4>
-                      <p className="text-[13px] text-text-muted leading-relaxed">{agent.desc}</p>
-                    </div>
-                    {selectedAgents.has(agent.title) && (
-                      <div className="absolute top-4 right-4 w-5 h-5 bg-primary rounded-full flex items-center justify-center text-white">
-                        <Check size={12} />
+                    <div className="bg-white/90 rounded-[22px] p-[3px] h-full">
+                      <div className="bg-white rounded-[19px] p-6 flex items-start gap-5 relative overflow-hidden h-full group">
+                        <div className="w-14 h-14 bg-bg-secondary rounded-xl flex-shrink-0 relative overflow-hidden">
+                          <Image src={agent.image} alt={agent.title} fill className="object-cover opacity-80 group-hover:opacity-100 group-hover:scale-110 transition-all duration-500" />
+                        </div>
+                        <div className="flex-1">
+                          <h4 className="font-bold text-text-main mb-1 text-[15px]">{agent.title}</h4>
+                          <p className="text-[13px] text-text-muted leading-relaxed">{agent.desc}</p>
+                        </div>
+                        <div className={`absolute top-4 right-4 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300 ${
+                          selectedAgents.has(agent.title)
+                            ? 'bg-primary text-white shadow-sm'
+                            : 'bg-gray-50 border border-gray-200 text-gray-300 group-hover:border-primary/40 group-hover:text-primary/40'
+                        }`}>
+                          <Check size={12} strokeWidth={selectedAgents.has(agent.title) ? 3 : 2} />
+                        </div>
                       </div>
-                    )}
+                    </div>
                   </MotionDiv>
                 ))}
               </div>
@@ -140,35 +156,39 @@ export default function ServicesSection() {
 
         <MotionDiv 
           {...fadeUp} 
-          className="mt-20 bg-white border border-border rounded-[32px] shadow-xl p-12 lg:p-20 text-center"
+          className="mt-20 p-1 rounded-[40px] bg-gradient-to-br from-white/40 via-orange-300 to-[#FF6B00] shadow-[0_30px_80px_-20px_rgba(255,107,0,0.3)] relative z-20"
         >
-          <div className="max-w-[800px] mx-auto">
-            <h3 className="text-3xl lg:text-4xl font-bold text-text-main mb-6">
-              Pronto para Ativar sua Escala?
-            </h3>
-            <p className="text-lg text-text-muted mb-10 leading-relaxed">
-              Envie seus recursos selecionados e receba um planejamento estratégico exclusivo de 30 dias para a sua marca.
-            </p>
-            
-            <div className="flex flex-col items-center gap-4">
-              <button 
-                onClick={() => setIsModalOpen(true)}
-                className={`px-10 py-5 text-base rounded-full font-semibold flex items-center gap-3 transition-all ${
-                  selectedAgents.size === 0
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
-                    : 'btn btn-primary active:scale-95 hover:shadow-lg'
-                }`}
-                disabled={selectedAgents.size === 0}
-              >
-                <Send size={18} className="-rotate-45" />
-                Solicitar Planejamento
-              </button>
-              
-              {selectedAgents.size === 0 && (
-                <p className="text-sm text-text-muted animate-pulse">
-                  Selecione pelo menos um agente acima
+          <div className="bg-white/80 rounded-[36px] p-2">
+            <div className="bg-white rounded-[28px] p-12 lg:p-20 text-center shadow-sm">
+              <div className="max-w-[800px] mx-auto">
+                <h3 className="text-3xl lg:text-4xl font-bold text-text-main mb-6">
+                  Pronto para Ativar sua Escala?
+                </h3>
+                <p className="text-lg text-text-muted mb-10 leading-relaxed">
+                  Envie seus recursos selecionados e receba um planejamento estratégico exclusivo de 30 dias para a sua marca.
                 </p>
-              )}
+                
+                <div className="flex flex-col items-center gap-4">
+                  <button 
+                    onClick={() => setIsModalOpen(true)}
+                    className={`px-10 py-5 text-base rounded-full font-semibold flex items-center gap-3 transition-all ${
+                      selectedAgents.size === 0
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
+                        : 'btn btn-primary active:scale-95 hover:shadow-lg'
+                    }`}
+                    disabled={selectedAgents.size === 0}
+                  >
+                    <Send size={18} className="-rotate-45" />
+                    Solicitar Planejamento
+                  </button>
+                  
+                  {selectedAgents.size === 0 && (
+                    <p className="text-sm text-text-muted animate-pulse">
+                      Selecione pelo menos um agente acima
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </MotionDiv>

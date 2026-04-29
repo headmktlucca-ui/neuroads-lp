@@ -1,18 +1,43 @@
 'use client';
 import { motion } from 'framer-motion';
-import { TrendingUp, Activity, ShieldCheck, Zap } from 'lucide-react';
+import { Users, Crosshair, Layers } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useRouter } from 'next/navigation';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH2 = motion.h2;
-
 const features = [
-  { icon: <TrendingUp size={18} />, t: 'Decisão em Tempo Real', d: 'O Lucca analisa o desempenho de cada anúncio a cada 60 minutos e redistribui a verba para o que gera lucro.' },
-  { icon: <Zap size={18} />, t: 'Criativos Contextuais via IA', d: 'Testamos dezenas de variações de imagem e texto simultaneamente, geradas com base no comportamento real.' },
-  { icon: <ShieldCheck size={18} />, t: 'Transparência nos Dados', d: 'Um painel exclusivo onde você vê exatamente quanto investiu e quanto retornou. Sem maquiagem.' }
+  { 
+    icon: <Users size={18} />, 
+    t: 'Contratação On-Demand', 
+    d: 'Ative apenas os especialistas que sua operação precisa no momento, escalando resultados sem custos fixos desnecessários.' 
+  },
+  { 
+    icon: <Crosshair size={18} />, 
+    t: 'Público Ideal Estratégico', 
+    d: 'Agentes treinados para identificar e posicionar sua marca exatamente onde o seu cliente ideal toma decisões.' 
+  },
+  { 
+    icon: <Layers size={18} />, 
+    t: 'Ecossistema Integrado', 
+    d: 'Diferente de freelancers isolados, nossos agentes trabalham em sintonia total dentro de um único ecossistema agêntico.' 
+  }
 ];
 
 export default function LuccaSection() {
+  const { loginWithGoogle } = useAuth();
+  const router = useRouter();
+
+  const handleSignIn = async () => {
+    try {
+      await loginWithGoogle();
+      router.push('/hub');
+    } catch (error) {
+      console.error('Erro ao fazer login:', error);
+    }
+  };
+
   const fadeUp: any = {
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
@@ -26,12 +51,12 @@ export default function LuccaSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           
           <div className="max-w-[540px]">
-            <MotionP {...fadeUp} className="s-badge">Sistema Propriatário</MotionP>
+            <MotionP {...fadeUp} className="s-badge">Ecossistema Agêntico</MotionP>
             <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title">
-              O cérebro da nossa<br />performance: <span className="text-primary italic">Lucca</span>
+              O cérebro da sua<br />operação: <span className="text-primary italic">Hub de Agentes</span>
             </MotionH2>
             <MotionP {...fadeUp} transition={{ delay: 0.2 }} className="s-body mb-12">
-              Esqueça as decisões baseadas no "feeling". O Lucca é nosso sistema agêntico que orquestra tráfego, criativos e automações em um único ecossistema.
+              Contrate de forma individual os agentes que mais fazem sentido para sua operação. O resultado: desbloqueio de oportunidades que posicionam sua marca de forma estratégica para o público ideal.
             </MotionP>
 
             <div className="space-y-8 mt-10">
@@ -48,15 +73,13 @@ export default function LuccaSection() {
               ))}
             </div>
 
-            <MotionDiv {...fadeUp} transition={{ delay: 0.7 }} className="mt-12">
-               <a 
-                 href="https://www.luccaos.pro/" 
-                 target="_blank" 
-                 rel="noopener noreferrer" 
+            <MotionDiv {...fadeUp} transition={{ delay: 0.7 }} className="mt-12 flex items-center gap-8">
+               <button
+                 onClick={handleSignIn}
                  className="btn btn-primary px-8"
                >
-                 Acessar Lucca.os
-               </a>
+                 Acessar Hub
+               </button>
             </MotionDiv>
           </div>
 
@@ -75,7 +98,7 @@ export default function LuccaSection() {
                   <div className="w-2.5 h-2.5 rounded-full bg-border" />
                   <div className="w-2.5 h-2.5 rounded-full bg-border" />
                 </div>
-                <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-text-dim">Lucca Dashboard v2.5</div>
+                <div className="text-[10px] uppercase tracking-[0.2em] font-bold text-text-dim">NeuroAds Agent Hub v2.5</div>
                 <div className="w-6 h-6 rounded-full bg-white border border-border" />
               </div>
               

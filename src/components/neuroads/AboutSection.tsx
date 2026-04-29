@@ -17,7 +17,7 @@ export default function AboutSection() {
   };
 
   return (
-    <section className="py-24 lg:py-32 border-y border-border relative z-10" id="claudio">
+    <section className="py-24 lg:py-32 relative z-10" id="claudio">
       <div className="wrap">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-center">
           
@@ -30,6 +30,8 @@ export default function AboutSection() {
               {/* Decorative Frame */}
               <div className="absolute -inset-4 bg-primary/5 rounded-2xl -z-10 blur-xl group-hover:bg-primary/10 transition-all duration-500" />
               
+              {/* EXPERTISE BADGE - R$10M+ (Top Left) */}
+
               <div className="aspect-[3/4] rounded-xl bg-white border border-border shadow-lg flex items-center justify-center overflow-hidden relative">
                 <div className="absolute inset-0 flex items-center justify-center font-head font-extrabold text-[7rem] text-primary/5 select-none">
                   CM
@@ -42,83 +44,86 @@ export default function AboutSection() {
                 />
               </div>
 
-              {/* EXPERTISE BADGE */}
-              <div className="absolute -top-4 -right-4 premium-card bg-white/60 backdrop-blur-3xl ring-1 ring-border shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] rounded-xl p-4 text-center z-20">
-                <div className="font-head text-2xl font-extrabold text-primary leading-none">25+</div>
-                <div className="text-[10px] font-bold text-text-main uppercase tracking-widest mt-1">Anos em Growth</div>
-              </div>
+              {/* ROAS BADGE (Bottom Right) */}
 
               {/* EXPERT PROFILE CARD */}
-              <div className="absolute -bottom-8 left-8 right-8 z-20 bg-white/90 backdrop-blur-xl shadow-xl rounded-2xl p-6 border border-border">
-                <div>
-                  <h4 className="text-text-main font-head font-extrabold text-xl leading-none">Claudio Müller</h4>
-                  <p className="text-[11px] font-bold text-primary uppercase tracking-[0.15em] mt-2 leading-none">Analista de Marketing & IA Comercial</p>
-                </div>
-                
-                <div className="flex items-center gap-4 mt-5">
-                  <a href="https://www.instagram.com/claudiomullermkt/" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-all duration-300 opacity-70 hover:opacity-100">
-                    <Image src="/images/instagram-final.png" alt="Instagram" width={28} height={28} />
-                  </a>
-                  <a href="https://www.linkedin.com/in/claudiomullerneto/" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-all duration-300 opacity-70 hover:opacity-100">
-                    <Image src="/images/linkedin-3d.png" alt="LinkedIn" width={28} height={28} />
-                  </a>
-                  <a href="https://www.youtube.com/@claudiomullermkt" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-all duration-300 opacity-70 hover:opacity-100">
-                    <Image src="/images/youtube-final.png" alt="YouTube" width={28} height={28} />
-                  </a>
+              <div className="absolute -bottom-16 left-8 right-8 z-20 p-1 rounded-[24px] bg-gradient-to-br from-white/40 via-orange-300 to-[#FF6B00] shadow-[0_20px_40px_-10px_rgba(255,107,0,0.3)]">
+                <div className="bg-white/60 backdrop-blur-3xl rounded-[20px] p-1.5">
+                  <div className="bg-white rounded-[14px] p-6 shadow-sm">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-text-main font-head font-extrabold text-xl leading-none">Claudio Müller</h4>
+                        <p className="text-[11px] font-bold text-primary uppercase tracking-[0.15em] mt-2 leading-none">Marketing Specialist & IA Expert</p>
+                      </div>
+                      <div className="flex items-center gap-1.5 bg-green-50 px-2.5 py-1 rounded-full text-[10px] font-bold text-green-600 border border-green-100">
+                        <div className="w-1.5 h-1.5 rounded-full bg-green-600 animate-pulse" />
+                        ONLINE
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center gap-4 mt-5">
+                      <a href="https://www.instagram.com/claudiomullermkt/" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-all duration-300 opacity-70 hover:opacity-100">
+                        <Image src="/images/instagram-final.png" alt="Instagram" width={28} height={28} />
+                      </a>
+                      <a href="https://www.linkedin.com/in/claudiomullerneto/" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-all duration-300 opacity-70 hover:opacity-100">
+                        <Image src="/images/linkedin-3d.png" alt="LinkedIn" width={28} height={28} />
+                      </a>
+                      <a href="https://www.youtube.com/@claudiomullermkt" target="_blank" rel="noopener noreferrer" className="hover:scale-110 transition-all duration-300 opacity-70 hover:opacity-100">
+                        <Image src="/images/youtube-final.png" alt="YouTube" width={28} height={28} />
+                      </a>
+                    </div>
+                  </div>
                 </div>
               </div>
+
             </div>
 
-            <div className="flex flex-wrap gap-2 mt-16 lg:mt-20">
-              {['Google Ads Certified', 'Meta Blueprint', 'Growth Methodology', 'AI Automation'].map((cert, i) => (
-                <span key={i} className="text-[11px] font-bold text-primary bg-primary/5 border border-primary/10 px-4 py-1.5 rounded-full uppercase tracking-wider">
-                  {cert}
-                </span>
-              ))}
-            </div>
           </MotionDiv>
 
           {/* TEXT COLUMN */}
-          <div className="premium-card p-10 lg:p-12 bg-white/60 backdrop-blur-3xl ring-1 ring-border shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] relative z-20">
-            <MotionP {...fadeUp} className="s-badge">Especialista Fundador</MotionP>
-            <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title !text-[30px]">
-              Não é sobre equipe grande.<br />
-              <span className="text-primary italic">É sobre inteligência.</span>
-            </MotionH2>
+          <div className="p-1 rounded-[36px] bg-gradient-to-br from-white/40 via-orange-300 to-[#FF6B00] shadow-[0_30px_80px_-20px_rgba(255,107,0,0.3)] relative z-20">
+            <div className="bg-white/60 backdrop-blur-3xl rounded-[32px] p-2">
+              <div className="bg-white rounded-[24px] p-10 lg:p-12 shadow-sm">
+                <MotionP {...fadeUp} className="s-badge">Especialista Fundador</MotionP>
+                <MotionH2 {...fadeUp} transition={{ delay: 0.1 }} className="s-title !text-[30px]">
+                  Não é sobre equipe grande.<br />
+                  <span className="text-primary italic">É sobre inteligência.</span>
+                </MotionH2>
 
-            <MotionDiv {...fadeUp} transition={{ delay: 0.2 }} className="p-8 my-8 relative overflow-hidden bg-white/40 rounded-2xl border border-white/50 shadow-sm">
-               <div className="absolute top-2 right-6 font-head font-extrabold text-[5rem] text-primary/10 pointer-events-none italic">
-                "
-               </div>
-               <p className="text-base text-text-muted italic font-medium leading-relaxed relative z-10">
-                 "Na NeuroAds, você fala diretamente comigo. Sem intermediários, sem gestores juniores. Estratégia de nível Master aplicada ao seu negócio."
-               </p>
-            </MotionDiv>
+                <MotionDiv {...fadeUp} transition={{ delay: 0.2 }} className="p-8 my-8 relative overflow-hidden bg-bg-secondary/50 rounded-2xl border border-border shadow-sm">
+                   <div className="absolute top-2 right-6 font-head font-extrabold text-[5rem] text-primary/10 pointer-events-none italic">
+                    "
+                   </div>
+                   <p className="text-base text-text-muted italic font-medium leading-relaxed relative z-10">
+                     "A performance real nasce onde a IA encontra a estratégia. Tenha um ecossistema inteligente atuando em operações que transformam dados em lucro previsível."
+                   </p>
+                </MotionDiv>
 
-            <div className="space-y-6">
-              {[
-                'Com mais de 25 anos de estrada no marketing digital, vi o mercado nascer e se transformar. Gerenciei mais de R$ 10 milhões em mídia paga, mas aprendi que o segredo não é apenas "comprar tráfego" — é construir um ecossistema que converte.',
-                'A NeuroAds nasceu da necessidade de democratizar a IA corporativa para PMEs. Hoje, usamos agentes autônomos para liberar seu time do operacional e focar no que realmente importa: fechar vendas de alto valor.',
-                'Meu compromisso é com a transparência e o resultado na última linha do balanço. Se você busca escala previsível e autoridade semântica, você está no lugar certo.'
-              ].map((text, i) => (
-                <MotionP key={i} {...fadeUp} transition={{ delay: 0.3 + (i * 0.1) }} className="text-base text-text-muted leading-relaxed">
-                  {text}
-                </MotionP>
-              ))}
-            </div>
-
-            <MotionDiv {...fadeUp} transition={{ delay: 0.6 }} className="grid grid-cols-3 gap-px bg-border border border-border rounded-xl overflow-hidden mt-12 bg-white shadow-sm">
-              {[
-                { val: 'R$10M+', lbl: 'Gerenciados' },
-                { val: '25+', lbl: 'Anos de Exp.' },
-                { val: agentsCount, lbl: 'Agentes de IA' }
-              ].map((s, i) => (
-                <div key={i} className="bg-white p-6 text-center">
-                  <div className="font-head text-2xl font-extrabold text-primary leading-none">{s.val}</div>
-                  <div className="text-[10px] text-text-dim uppercase tracking-widest mt-2">{s.lbl}</div>
+                <div className="space-y-6">
+                  {[
+                    '"Com mais de 25 anos de estrada no marketing digital, vi o mercado nascer e se transformar. Gerenciei mais de R$ 10 milhões em mídia paga, mas aprendi que o segredo não é apenas \"comprar tráfego\" — é construir um ecossistema que converte."',
+                    '"A NeuroAds nasceu da necessidade de democratizar a IA corporativa para PMEs. Hoje, usamos agentes autônomos para liberar seu time do operacional e focar no que realmente importa: fechar vendas de alto valor."'
+                  ].map((text, i) => (
+                    <MotionP key={i} {...fadeUp} transition={{ delay: 0.3 + (i * 0.1) }} className="text-base text-text-muted leading-relaxed">
+                      {text}
+                    </MotionP>
+                  ))}
                 </div>
-              ))}
-            </MotionDiv>
+
+                <MotionDiv {...fadeUp} transition={{ delay: 0.6 }} className="grid grid-cols-3 gap-px bg-border border border-border rounded-xl overflow-hidden mt-12 bg-white shadow-sm">
+                  {[
+                    { val: 'R$10M+', lbl: 'Investimento' },
+                    { val: '25+', lbl: 'Anos Growth' },
+                    { val: agentsCount, lbl: 'Agentes de IA' }
+                  ].map((s, i) => (
+                    <div key={i} className="bg-white p-6 text-center">
+                      <div className="font-head text-2xl font-extrabold text-primary leading-none">{s.val}</div>
+                      <div className="text-[10px] text-text-dim uppercase tracking-widest mt-2">{s.lbl}</div>
+                    </div>
+                  ))}
+                </MotionDiv>
+              </div>
+            </div>
           </div>
 
         </div>

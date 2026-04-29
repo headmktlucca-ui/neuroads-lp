@@ -11,6 +11,7 @@ import GeoSection from '../components/neuroads/GeoSection';
 import ProcessSection from '../components/neuroads/ProcessSection';
 import TestimonialsSection from '../components/neuroads/TestimonialsSection';
 import CTASection from '../components/neuroads/CTASection';
+import FAQSection from '../components/neuroads/FAQSection';
 import Footer from '../components/neuroads/Footer';
 
 export default function Home() {
@@ -65,6 +66,7 @@ export default function Home() {
       <ProcessSection />
       <TestimonialsSection />
       <CTASection />
+      <FAQSection />
       
       <Footer />
     </main>

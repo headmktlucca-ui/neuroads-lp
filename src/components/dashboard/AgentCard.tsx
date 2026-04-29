@@ -2,7 +2,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { Agent } from '../../data/agents';
-import { BarChart3, TrendingUp, Zap } from 'lucide-react';
+import { TrendingUp, Zap } from 'lucide-react';
 
 interface AgentCardProps {
   agent: Agent;
@@ -44,17 +44,17 @@ export default function AgentCard({ agent, onClick, index }: AgentCardProps) {
       onClick={onClick}
       className="group relative h-full cursor-pointer"
     >
-      <div className="relative h-full p-6 rounded-2xl border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-white/[0.02] backdrop-blur-xl hover:border-white/[0.15] transition-all duration-500 overflow-hidden flex flex-col">
+      <div className="relative h-full p-6 rounded-2xl border border-border bg-white hover:border-border-h hover:shadow-md transition-all duration-500 overflow-hidden flex flex-col">
 
         {/* Background gradient on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#7BFBF0]/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
         {/* Top accent */}
-        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-[#7BFBF0]/15 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+        <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-bl from-primary/15 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
         {/* Icon & Title Section */}
         <div className="relative z-10 mb-5">
-          <div className="relative w-14 h-14 rounded-xl overflow-hidden mb-4 shadow-lg ring-1 ring-white/10 group-hover:ring-[#7BFBF0]/30 transition-all">
+          <div className="relative w-14 h-14 rounded-xl overflow-hidden mb-4 shadow-md ring-1 ring-border group-hover:ring-primary/30 transition-all">
             <Image
               src={agent.icon}
               alt={agent.title}
@@ -62,20 +62,20 @@ export default function AgentCard({ agent, onClick, index }: AgentCardProps) {
               className="object-cover group-hover:scale-110 transition-transform duration-500"
             />
           </div>
-          <h3 className="text-base font-bold text-white tracking-tight group-hover:text-[#7BFBF0] transition-colors duration-300">
+          <h3 className="text-base font-bold text-text-main tracking-tight group-hover:text-primary transition-colors duration-300">
             {agent.title}
           </h3>
         </div>
 
         {/* Description */}
-        <p className="relative z-10 text-sm text-slate-300 leading-relaxed mb-6 flex-grow line-clamp-3">
+        <p className="relative z-10 text-sm text-text-muted leading-relaxed mb-6 flex-grow line-clamp-3">
           {agent.description}
         </p>
 
         {/* Results Section */}
-        <div className="relative z-10 p-4 rounded-lg bg-white/[0.03] border border-white/[0.05] backdrop-blur-sm mb-5">
+        <div className="relative z-10 p-4 rounded-lg bg-bg-secondary border border-border mb-5">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-mono text-slate-400 uppercase tracking-widest">
+            <span className="text-[11px] font-bold text-text-dim uppercase tracking-widest">
               {results.metric}
             </span>
             <div className="flex items-center gap-1">
@@ -89,20 +89,20 @@ export default function AgentCard({ agent, onClick, index }: AgentCardProps) {
               </span>
             </div>
           </div>
-          <div className="text-2xl font-black text-white tracking-tighter">
+          <div className="text-2xl font-black text-text-main tracking-tighter">
             {results.value}
           </div>
         </div>
 
         {/* Footer CTA */}
-        <div className="relative z-10 pt-4 border-t border-white/[0.05] flex items-center justify-between">
+        <div className="relative z-10 pt-4 border-t border-border flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Zap size={14} className="text-[#7BFBF0]" />
-            <span className="text-xs font-bold text-[#7BFBF0] uppercase tracking-widest">
+            <Zap size={14} className="text-primary" />
+            <span className="text-xs font-bold text-primary uppercase tracking-widest">
               Ativo
             </span>
           </div>
-          <button className="text-xs font-bold text-white/60 group-hover:text-[#7BFBF0] transition-colors flex items-center gap-1 uppercase tracking-widest">
+          <button className="text-xs font-bold text-text-dim group-hover:text-primary transition-colors flex items-center gap-1 uppercase tracking-widest">
             Acessar <span className="group-hover:translate-x-1 transition-transform">→</span>
           </button>
         </div>
