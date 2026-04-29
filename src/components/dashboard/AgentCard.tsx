@@ -94,7 +94,7 @@ export default function AgentCard({ agent, onClick, index, startingPrice, contra
           <div className="relative z-10 pt-4 border-t border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Zap size={14} className={isContractActive ? 'text-[#0A9D57]' : 'text-primary'} />
-              <span className={`text-xs font-bold tracking-[0.08em] ${isContractActive ? 'text-[#0A9D57]' : 'text-primary'}`}>
+              <span className="text-xs font-bold tracking-[0.08em] text-[#0A9D57]">
                 {isContractActive ? 'Contratado' : 'Contratar'}
               </span>
             </div>

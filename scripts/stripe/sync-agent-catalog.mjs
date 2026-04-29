@@ -46,6 +46,7 @@ const AGENTS = [
   { title: 'Gerador de Testes A/B', category: 'Técnico', tier: 'Avancado' },
   { title: 'Avaliador de Oferta', category: 'Inteligência', tier: 'Simples' },
   { title: 'Radar de Oportunidades', category: 'Inteligência', tier: 'Intermediario' },
+  { title: 'SEO & GEO', category: 'Inteligência', tier: 'Intermediario' },
   { title: 'DNA da Marca', category: 'Inteligência', tier: 'Simples' },
   { title: 'Análise de Concorrentes', category: 'Inteligência', tier: 'Simples' },
   { title: 'Público-Alvo Ideal', category: 'Inteligência', tier: 'Simples' },

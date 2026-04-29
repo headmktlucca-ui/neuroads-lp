@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-29T10:26:19.655Z",
+  "generatedAt": "2026-04-29T11:33:44.241Z",
   "mode": "live",
   "currency": "brl",
   "interval": "month",
@@ -389,6 +389,32 @@
         "Pro": {
           "priceId": "price_1TRVKTFeN6QA274kdObDtzQE",
           "lookupKey": "neuroads_agent_radar-de-oportunidades_pro_month_brl",
+          "monthlyPrice": 79.9,
+          "monthlyLimit": 40
+        }
+      }
+    },
+    "SEO & GEO": {
+      "productId": "prod_UQN7p5sgdC5egc",
+      "productName": "Agente IA • SEO & GEO",
+      "category": "Inteligência",
+      "tier": "Intermediario",
+      "plans": {
+        "Lite": {
+          "priceId": "price_1TRWNVFeN6QA274kWsflmwZU",
+          "lookupKey": "neuroads_agent_seo-geo_lite_month_brl",
+          "monthlyPrice": 39.9,
+          "monthlyLimit": 8
+        },
+        "Growth": {
+          "priceId": "price_1TRWNVFeN6QA274kEbcsEKIk",
+          "lookupKey": "neuroads_agent_seo-geo_growth_month_brl",
+          "monthlyPrice": 59.9,
+          "monthlyLimit": 20
+        },
+        "Pro": {
+          "priceId": "price_1TRWNWFeN6QA274kdOTWXozK",
+          "lookupKey": "neuroads_agent_seo-geo_pro_month_brl",
           "monthlyPrice": 79.9,
           "monthlyLimit": 40
         }

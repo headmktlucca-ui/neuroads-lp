@@ -226,150 +226,152 @@ export default function AgentGrid() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-[1120px] bg-white border border-border rounded-3xl overflow-hidden shadow-2xl max-h-[92vh]"
+              className="relative w-full max-w-[1120px] rounded-[34px] p-[3px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_18px_46px_rgba(255,107,0,0.2)] max-h-[92vh]"
             >
-              {/* Header with gradient */}
-              <div className="relative h-36 bg-gradient-to-br from-orange-light to-white flex items-end p-6 md:p-7 border-b border-border">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/20 to-transparent rounded-full blur-3xl" />
+              <div className="relative rounded-[30px] border border-[#FFF1E8] bg-white overflow-hidden">
+                {/* Header with gradient */}
+                <div className="relative h-36 bg-gradient-to-br from-orange-light to-white flex items-end p-6 md:p-7 border-b border-border">
+                  <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/20 to-transparent rounded-full blur-3xl" />
 
-                <div className="relative z-10 flex items-end gap-6 w-full">
-                  <div className="w-24 h-24 rounded-[20px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_14px_26px_rgba(255,107,0,0.24)]">
-                    <div className="relative w-full h-full rounded-[18px] overflow-hidden bg-white">
-                      <Image
-                        src={selectedAgent.icon}
-                        alt={selectedAgent.title}
-                        fill
-                        className="object-cover"
-                      />
+                  <div className="relative z-10 flex items-end gap-6 w-full">
+                    <div className="w-24 h-24 rounded-[20px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_14px_26px_rgba(255,107,0,0.24)]">
+                      <div className="relative w-full h-full rounded-[18px] overflow-hidden bg-white">
+                        <Image
+                          src={selectedAgent.icon}
+                          alt={selectedAgent.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="flex-grow">
-                    <div className="inline-block px-3 py-1 rounded-lg bg-primary/10 border border-primary/20 mb-3">
-                      <span className="text-xs font-bold text-primary uppercase tracking-widest">
-                        {selectedAgent.category}
-                      </span>
+                    <div className="flex-grow">
+                      <div className="inline-block px-3 py-1 rounded-lg bg-primary/10 border border-primary/20 mb-3">
+                        <span className="text-xs font-bold text-primary uppercase tracking-widest">
+                          {selectedAgent.category}
+                        </span>
+                      </div>
+                      <h2 className="text-2xl md:text-4xl font-black text-text-main tracking-tight">
+                        {selectedAgent.title}
+                      </h2>
                     </div>
-                    <h2 className="text-2xl md:text-4xl font-black text-text-main tracking-tight">
-                      {selectedAgent.title}
-                    </h2>
-                  </div>
 
-                  <button
-                    onClick={() => setSelectedAgent(null)}
-                    className="absolute top-5 right-5 p-2 bg-white hover:bg-bg-secondary text-text-main rounded-full transition-all border border-border"
-                  >
-                    <X size={20} />
-                  </button>
+                    <button
+                      onClick={() => setSelectedAgent(null)}
+                      className="absolute top-5 right-5 p-2 bg-white hover:bg-bg-secondary text-text-main rounded-full transition-all border border-border"
+                    >
+                      <X size={20} />
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Content */}
-              <div className="p-5 md:p-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-                  <div className="space-y-5">
-                    <div>
-                      <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-2">
-                        Descrição Completa
-                      </h3>
-                      <p className="text-[15px] text-text-muted leading-relaxed">
-                        {selectedAgent.longDescription}
-                      </p>
+                {/* Content */}
+                <div className="p-5 md:p-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                    <div className="space-y-5">
+                      <div>
+                        <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-2">
+                          Descrição Completa
+                        </h3>
+                        <p className="text-[15px] text-text-muted leading-relaxed">
+                          {selectedAgent.longDescription}
+                        </p>
+                      </div>
+
+                      <div className="p-5 rounded-xl bg-bg-secondary border border-border">
+                        <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">
+                          Capacidades Principais
+                        </h3>
+                        <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <li className="flex items-start gap-2">
+                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                            <span className="text-sm text-text-muted">Análise em tempo real com atualização de dados</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                            <span className="text-sm text-text-muted">Sugestões inteligentes baseadas em IA neural</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                            <span className="text-sm text-text-muted">Integração automática com suas ferramentas</span>
+                          </li>
+                          <li className="flex items-start gap-2">
+                            <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
+                            <span className="text-sm text-text-muted">Relatórios e insights acionáveis</span>
+                          </li>
+                        </ul>
+                      </div>
                     </div>
 
-                    <div className="p-5 rounded-xl bg-bg-secondary border border-border">
-                      <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">
-                        Capacidades Principais
-                      </h3>
-                      <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        <li className="flex items-start gap-2">
-                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                          <span className="text-sm text-text-muted">Análise em tempo real com atualização de dados</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                          <span className="text-sm text-text-muted">Sugestões inteligentes baseadas em IA neural</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                          <span className="text-sm text-text-muted">Integração automática com suas ferramentas</span>
-                        </li>
-                        <li className="flex items-start gap-2">
-                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                          <span className="text-sm text-text-muted">Relatórios e insights acionáveis</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
+                    <div className="space-y-5">
+                      <div className="p-5 rounded-xl bg-[#FFF8F3] border border-[#FFE4D1]">
+                        <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">
+                          Opções de Valores e Limites
+                        </h3>
 
-                  <div className="space-y-5">
-                    <div className="p-5 rounded-xl bg-[#FFF8F3] border border-[#FFE4D1]">
-                      <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">
-                        Opções de Valores e Limites
-                      </h3>
-
-                      {!selectedAgentContract.isActive ? (
-                        <>
-                          <p className="text-sm text-text-muted mb-3">
-                            a partir de <span className="font-bold text-primary">{formatBRL(selectedAgentPricing?.startingPrice ?? 29.9)}/mês</span>
-                          </p>
-                          <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-2">
-                            {selectedAgentPricing?.plans.map((plan) => (
-                              <button
-                                key={plan.name}
-                                type="button"
-                                onClick={() => setSelectedPlan(plan.name)}
-                                className={`rounded-xl border bg-white p-3 text-left transition-all ${
-                                  selectedPlan === plan.name
-                                    ? 'border-[#FF8D46] shadow-[0_0_0_1px_rgba(255,141,70,0.35)]'
-                                    : 'border-[#FFDCC7]'
-                                }`}
-                              >
-                                <p className="text-[11px] uppercase tracking-widest text-text-dim font-bold mb-1">{plan.name}</p>
-                                <p className="text-base font-black text-text-main mb-1">{formatBRL(plan.monthlyPrice)}/mês</p>
-                                <p className="text-xs text-text-muted">{plan.monthlyLimit} execuções/mês</p>
-                              </button>
-                            ))}
+                        {!selectedAgentContract.isActive ? (
+                          <>
+                            <p className="text-sm text-text-muted mb-3">
+                              a partir de <span className="font-bold text-primary">{formatBRL(selectedAgentPricing?.startingPrice ?? 29.9)}/mês</span>
+                            </p>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-2">
+                              {selectedAgentPricing?.plans.map((plan) => (
+                                <button
+                                  key={plan.name}
+                                  type="button"
+                                  onClick={() => setSelectedPlan(plan.name)}
+                                  className={`rounded-xl border bg-white p-3 text-left transition-all ${
+                                    selectedPlan === plan.name
+                                      ? 'border-[#FF8D46] shadow-[0_0_0_1px_rgba(255,141,70,0.35)]'
+                                      : 'border-[#FFDCC7]'
+                                  }`}
+                                >
+                                  <p className="text-[11px] uppercase tracking-widest text-text-dim font-bold mb-1">{plan.name}</p>
+                                  <p className="text-base font-black text-text-main mb-1">{formatBRL(plan.monthlyPrice)}/mês</p>
+                                  <p className="text-xs text-text-muted">{plan.monthlyLimit} execuções/mês</p>
+                                </button>
+                              ))}
+                            </div>
+                          </>
+                        ) : (
+                          <div className="rounded-xl border border-[#B9EBD1] bg-white p-4 space-y-2">
+                            <p className="text-sm font-bold text-[#0A9D57]">
+                              {selectedAgentContract.planName || 'Plano ativo'} • {formatBRL(selectedAgentContract.monthlyPrice ?? selectedAgentPricing?.startingPrice ?? 29.9)}/mês
+                            </p>
+                            <p className="text-xs text-text-muted">
+                              Limite: {selectedAgentContract.monthlyLimit ?? 'A confirmar'} exec./mês • Em uso: {selectedAgentContract.usageUsed ?? 'A confirmar'}
+                            </p>
+                            <p className="text-xs text-text-muted">
+                              Próximo pagamento: {formatDate(selectedAgentContract.nextPaymentAt)}
+                            </p>
                           </div>
-                        </>
-                      ) : (
-                        <div className="rounded-xl border border-[#B9EBD1] bg-white p-4 space-y-2">
-                          <p className="text-sm font-bold text-[#0A9D57]">
-                            {selectedAgentContract.planName || 'Plano ativo'} • {formatBRL(selectedAgentContract.monthlyPrice ?? selectedAgentPricing?.startingPrice ?? 29.9)}/mês
-                          </p>
-                          <p className="text-xs text-text-muted">
-                            Limite: {selectedAgentContract.monthlyLimit ?? 'A confirmar'} exec./mês • Em uso: {selectedAgentContract.usageUsed ?? 'A confirmar'}
-                          </p>
-                          <p className="text-xs text-text-muted">
-                            Próximo pagamento: {formatDate(selectedAgentContract.nextPaymentAt)}
-                          </p>
-                        </div>
-                      )}
-                    </div>
+                        )}
+                      </div>
 
-                    <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 pt-1">
-                      <button
-                        type="button"
-                        onClick={handlePrimaryAction}
-                        disabled={checkoutLoading}
-                        className={`flex-grow hover:brightness-105 text-white px-6 py-3 font-bold rounded-lg uppercase tracking-widest transition-all text-sm flex items-center justify-center gap-2 ${
-                          selectedAgentContract.isActive
-                            ? 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] shadow-[0_10px_24px_rgba(8,183,96,0.3)]'
-                            : 'bg-gradient-to-br from-[#FF6B00] to-[#FF9D00] shadow-[0_10px_24px_rgba(255,107,0,0.3)] disabled:opacity-70'
-                        }`}
-                      >
-                        {checkoutLoading
-                          ? 'Processando...'
-                          : selectedAgentContract.isActive
-                            ? 'Acessar Agente →'
-                            : 'Contratar Agente →'}
-                      </button>
-                      <button
-                        onClick={() => setSelectedAgent(null)}
-                        className="px-6 py-3 font-bold rounded-lg text-text-muted hover:text-text-main hover:bg-bg-secondary border border-border uppercase tracking-widest transition-all text-sm"
-                      >
-                        Fechar
-                      </button>
+                      <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 pt-1">
+                        <button
+                          type="button"
+                          onClick={handlePrimaryAction}
+                          disabled={checkoutLoading}
+                          className={`flex-grow hover:brightness-105 text-white px-6 py-3 font-bold rounded-lg uppercase tracking-widest transition-all text-sm flex items-center justify-center gap-2 ${
+                            selectedAgentContract.isActive
+                              ? 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] shadow-[0_10px_24px_rgba(8,183,96,0.3)]'
+                              : 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] shadow-[0_10px_24px_rgba(8,183,96,0.3)] disabled:opacity-70'
+                          }`}
+                        >
+                          {checkoutLoading
+                            ? 'Processando...'
+                            : selectedAgentContract.isActive
+                              ? 'Acessar Agente →'
+                              : 'Contratar Agente →'}
+                        </button>
+                        <button
+                          onClick={() => setSelectedAgent(null)}
+                          className="px-6 py-3 font-bold rounded-lg text-text-muted hover:text-text-main hover:bg-bg-secondary border border-border uppercase tracking-widest transition-all text-sm"
+                        >
+                          Fechar
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

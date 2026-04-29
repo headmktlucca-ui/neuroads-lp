@@ -129,6 +129,14 @@ export const agents: Agent[] = [
     category: 'Inteligência'
   },
   {
+    title: 'SEO & GEO',
+    description: 'Especialista em posicionamento orgânico em buscadores e em recomendações de chats de IA.',
+    longDescription: 'Agente dedicado à otimização completa de presença digital para dois ambientes críticos: mecanismos de busca tradicionais (SEO) e motores generativos (GEO). Estrutura conteúdo, autoridade semântica, entidades e arquitetura técnica para elevar relevância no Google/Bing e aumentar a probabilidade de citação em respostas de ChatGPT, Gemini, Claude, Manus e outras IAs. Inclui diagnóstico técnico, plano editorial orientado por intenção de busca e ajustes de marca para ganho de visibilidade recorrente.',
+    icon: '/images/tools/otimizacao.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Inteligência'
+  },
+  {
     title: 'DNA da Marca',
     description: 'Elaboração de documento estratégico com tom de voz e pilares.',
     longDescription: 'Define a identidade neural da sua marca para anúncios. Cria um guia de comunicação que garante unidade visual e verbal através de todos os canais, aumentando a lembrança de marca e a confiança mútua entre cliente e empresa.',

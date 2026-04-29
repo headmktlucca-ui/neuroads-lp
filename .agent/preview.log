@@ -4402,3 +4402,145 @@ FirebaseError: Failed to get document because the client is offline. (src/contex
 Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
 [browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
  GET / 200 in 831ms (next.js: 18ms, application-code: 812ms)
+[browser] Firestore getDoc failed (offline?): FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/context/AuthContext.tsx:70:19)
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/0599.jpeg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /hub 200 in 113ms (next.js: 12ms, application-code: 101ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/tools/analista_trafego.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/rastreador_cirurgico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/preditor_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_lp.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/simulador_roas.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analisador_publico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/auditor_desperdicio.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/testes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/mineracao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Firestore getDoc failed (offline?): FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/context/AuthContext.tsx:70:19)
+[browser] Image with src "/images/tools/publico_ideal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 569ms
+[browser] Image with src "/images/tools/concorrentes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/dna_marca.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 1369ms
+ GET /hub 200 in 1227ms (next.js: 669ms, application-code: 558ms)
+ GET /hub 200 in 599ms (next.js: 18ms, application-code: 581ms)
+ GET /hub 200 in 462ms (next.js: 18ms, application-code: 444ms)
+ GET /hub 200 in 464ms (next.js: 94ms, application-code: 370ms)
+ GET /hub 200 in 537ms (next.js: 167ms, application-code: 370ms)
+ GET /hub 200 in 474ms (next.js: 16ms, application-code: 458ms)
+ GET /hub 200 in 463ms (next.js: 11ms, application-code: 452ms)
+ GET /hub 200 in 503ms (next.js: 18ms, application-code: 485ms)
+ GET /hub 200 in 412ms (next.js: 15ms, application-code: 397ms)
+ GET /hub 200 in 412ms (next.js: 87ms, application-code: 326ms)
+ GET /hub 200 in 336ms (next.js: 14ms, application-code: 322ms)
+ GET /hub 200 in 400ms (next.js: 12ms, application-code: 388ms)
+ GET /hub 200 in 424ms (next.js: 11ms, application-code: 413ms)
+ GET /hub 200 in 518ms (next.js: 17ms, application-code: 500ms)
+ GET /hub 200 in 437ms (next.js: 82ms, application-code: 354ms)
+ GET /hub 200 in 441ms (next.js: 15ms, application-code: 426ms)
+ GET /hub 200 in 377ms (next.js: 29ms, application-code: 348ms)
+ GET /hub 200 in 444ms (next.js: 12ms, application-code: 432ms)
+ GET /hub 200 in 437ms (next.js: 14ms, application-code: 423ms)
+ GET /hub 200 in 503ms (next.js: 17ms, application-code: 486ms)
+ GET /hub 200 in 408ms (next.js: 16ms, application-code: 392ms)
+ GET /hub 200 in 408ms (next.js: 88ms, application-code: 320ms)
+ GET /hub 200 in 345ms (next.js: 17ms, application-code: 328ms)
+ GET /hub 200 in 427ms (next.js: 14ms, application-code: 413ms)
+ GET /hub 200 in 426ms (next.js: 11ms, application-code: 415ms)
+ GET /hub 200 in 418ms (next.js: 13ms, application-code: 405ms)
+ GET /hub 200 in 347ms (next.js: 18ms, application-code: 329ms)
+ GET /hub 200 in 349ms (next.js: 91ms, application-code: 258ms)
+ GET /hub 200 in 208ms (next.js: 14ms, application-code: 194ms)
+ GET /hub 200 in 145ms (next.js: 12ms, application-code: 133ms)
+○ Compiling /dashboard ...
+ GET /dashboard 200 in 3.9s (next.js: 3.7s, application-code: 186ms)
+✓ Compiled in 440ms
+ GET /hub 200 in 337ms (next.js: 302ms, application-code: 36ms)
+ GET /hub 200 in 90ms (next.js: 9ms, application-code: 81ms)
+ GET /dashboard 200 in 413ms (next.js: 326ms, application-code: 87ms)
+✓ Compiled in 444ms
+ GET /dashboard 200 in 341ms (next.js: 197ms, application-code: 143ms)
+ GET /dashboard 200 in 108ms (next.js: 4ms, application-code: 104ms)
+ GET /dashboard 200 in 75ms (next.js: 6ms, application-code: 69ms)
+ GET /dashboard 200 in 74ms (next.js: 34ms, application-code: 41ms)
+ GET /hub 200 in 236ms (next.js: 167ms, application-code: 69ms)
+✓ Compiled in 168ms
+[browser] Image with src "/images/tools/otimizacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 95ms
+ GET /hub 200 in 1718ms (next.js: 471ms, application-code: 1248ms)
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Firestore getDoc failed (offline?): FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/context/AuthContext.tsx:70:19)
+[browser] Image with src "/images/tools/analista_trafego.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/preditor_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/rastreador_cirurgico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_lp.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/simulador_roas.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analisador_publico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/auditor_desperdicio.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/testes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/mineracao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/otimizacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/concorrentes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/dna_marca.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/publico_ideal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET / 200 in 743ms (next.js: 235ms, application-code: 508ms)
+[browser] Image with src "/images/0599.jpeg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Firestore getDoc failed (offline?): FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/context/AuthContext.tsx:70:19)
+✓ Compiled in 145ms
+✓ Compiled in 93ms
+✓ Compiled in 276ms
+[browser] Image with src "/images/tools/automacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/testes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analisador_publico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/publico_ideal.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analista_trafego.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/simulador_roas.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/auditor_desperdicio.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/rastreador_cirurgico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/preditor_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/otimizacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/concorrentes.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/dna_marca.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/mineracao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_lp.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 398ms
+✓ Compiled in 96ms
+✓ Compiled in 235ms
+[browser] Image with src "/images/image (1).png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/image (2).png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/image.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+✓ Compiled in 163ms
+✓ Compiled in 428ms
+ GET / 200 in 2.1s (next.js: 1640ms, application-code: 436ms)
+ GET /hub 200 in 2.1s (next.js: 610ms, application-code: 1478ms)
+ GET /hub 200 in 509ms (next.js: 14ms, application-code: 495ms)
+ GET / 200 in 369ms (next.js: 19ms, application-code: 349ms)
+ GET /hub 200 in 377ms (next.js: 15ms, application-code: 363ms)
+ GET / 200 in 278ms (next.js: 78ms, application-code: 200ms)
+ GET /hub 200 in 287ms (next.js: 17ms, application-code: 270ms)
+ GET / 200 in 109ms (next.js: 18ms, application-code: 91ms)

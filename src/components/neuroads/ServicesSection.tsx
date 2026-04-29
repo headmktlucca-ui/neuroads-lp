@@ -5,48 +5,32 @@ import { Check, Loader2, Send, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { syncToHostingerReach } from '../../app/actions/hostinger';
 import { sendStrategyRequestAction } from '../../app/actions/mail';
+import { agents } from '../../data/agents';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
 const MotionH2 = motion.h2;
 
-const agentCategories = [
-  {
-    name: 'Vendas & Atendimento',
-    agents: [
-      { title: 'SDR Elite', desc: 'Qualificação instantânea de leads e agendamento automático 24/7.', image: '/images/tools/automacao.png' },
-      { title: 'Customer Success AI', desc: 'Gestão proativa de LTV, NPS e retenção inteligente de clientes.', image: '/images/tools/analise.png' },
-      { title: 'Agente de Suporte', desc: 'Atendimento consultivo especializado em resolução rápida de dúvidas.', image: '/images/tools/testes.png' },
-      { title: 'Analisador de Público', desc: 'Clusterização avançada de audiências frias e quentes.', image: '/images/tools/analisador_publico.png' },
-      { title: 'ICP Profiler', desc: 'Definição cirúrgica do avatar de alta conversão para o seu nicho.', image: '/images/tools/publico_ideal.png' },
-    ]
-  },
-  {
-    name: 'Performance & Growth',
-    agents: [
-      { title: 'Media Buyer Pro', desc: 'Otimização neural de lances e audiências em Meta e Google Ads.', image: '/images/tools/analista_trafego.png' },
-      { title: 'Growth Manager', desc: 'Análise de funil ponta a ponta e identificação de gargalos de escala.', image: '/images/tools/diagnostico_funil.png' },
-      { title: 'Data Scientist', desc: 'Modelagem preditiva de ROAS e atribuição avançada de conversões.', image: '/images/tools/simulador_roas.png' },
-      { title: 'Alocador de Verba', desc: 'Otimização cross-channel de investimentos para maximizar o lucro.', image: '/images/tools/alocacao.png' },
-      { title: 'Auditor de Desperdício', desc: 'Identificação imediata de cliques e impressões inválidas ou caras.', image: '/images/tools/auditor_desperdicio.png' },
-      { title: 'Rastreador Cirúrgico', desc: 'Atribuição avançada de vendas offline e multicanal em tempo real.', image: '/images/tools/rastreador_cirurgico.png' },
-      { title: 'Preditor de Funil', desc: 'Simulação de cenários de escala e previsão de resultados futuros.', image: '/images/tools/preditor_funil.png' },
-    ]
-  },
-  {
-    name: 'Criativo & Conteúdo',
-    agents: [
-      { title: 'Copywriter Sênior', desc: 'Criação de anúncios, VSLs e páginas de alta conversão validadas.', image: '/images/tools/gerador_copies.png' },
-      { title: 'Creative Director', desc: 'Geração de conceitos visuais e análise de padrões de viralização.', image: '/images/tools/gerador_criativos.png' },
-      { title: 'SEO Master', desc: 'Otimização técnica e semântica para dominar buscas orgânicas.', image: '/images/tools/otimizacao.png' },
-      { title: 'Viral Trend Scanner', desc: 'Monitoramento de padrões de viralização globais em tempo real.', image: '/images/tools/analise_viral.png' },
-      { title: 'Spy Master AI', desc: 'Monitoramento contínuo de ofertas e criativos da concorrência.', image: '/images/tools/concorrentes.png' },
-      { title: 'Brand DNA Guard', desc: 'Garantia de tom de voz e identidade em todas as peças de marketing.', image: '/images/tools/dna_marca.png' },
-      { title: 'Data Miner', desc: 'Extração de insights profundos de planilhas e bases de dados CRMs.', image: '/images/tools/mineracao.png' },
-      { title: 'LP Auditor', desc: 'Diagnóstico de UX e taxa de conversão focado em landing pages.', image: '/images/tools/diagnostico_lp.png' },
-    ]
-  }
-];
+const CATEGORY_ORDER = ['Performance', 'Inteligência', 'Criativos', 'Técnico'] as const;
+
+const categoryLabels: Record<string, string> = {
+  Performance: 'Performance',
+  Inteligência: 'Inteligência',
+  Criativos: 'Criativos',
+  Técnico: 'Técnico',
+};
+
+const agentCategories = CATEGORY_ORDER.map((category) => ({
+  name: categoryLabels[category],
+  agents: agents
+    .filter((agent) => agent.category === category)
+    .map((agent) => ({
+      title: agent.title,
+      // Mantém o mesmo sentido da descrição principal do Hub, com copy mais enxuta para grade da home.
+      desc: agent.description,
+      image: agent.icon,
+    })),
+}));
 
 export default function ServicesSection() {
   const [selectedAgents, setSelectedAgents] = useState<Set<string>>(new Set());
