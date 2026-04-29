@@ -4,6 +4,7 @@ import { useMemo, useState, useTransition } from 'react';
 import type { ReactNode } from 'react';
 import { Download, Globe, Loader2, Sparkles } from 'lucide-react';
 import { generateSeoGeoAudit } from '../../app/actions/seo-geo-audit';
+import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 
 interface SeoGeoWorkspaceProps {
   agentTitle: string;
@@ -378,7 +379,7 @@ function StatCard({ label, value, helper }: { label: string; value: string; help
 }
 
 export default function SeoGeoWorkspace({ agentTitle }: SeoGeoWorkspaceProps) {
-  const [websiteUrl, setWebsiteUrl] = useState('');
+  const [websiteUrl, setWebsiteUrl] = useState(HTTPS_PREFIX);
   const [businessContext, setBusinessContext] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [reportState, setReportState] = useState<SeoGeoReportState | null>(null);
@@ -399,6 +400,11 @@ export default function SeoGeoWorkspace({ agentTitle }: SeoGeoWorkspaceProps) {
     : '';
 
   const handleGenerate = () => {
+    if (isHttpsPlaceholderOnly(websiteUrl)) {
+      setError('Informe a URL completa do site para análise.');
+      return;
+    }
+
     setError(null);
 
     startTransition(async () => {
@@ -438,7 +444,8 @@ export default function SeoGeoWorkspace({ agentTitle }: SeoGeoWorkspaceProps) {
                   id="seo-url"
                   type="text"
                   value={websiteUrl}
-                  onChange={(event) => setWebsiteUrl(event.target.value)}
+                  onChange={(event) => setWebsiteUrl(normalizeHttpsMaskedUrlInput(event.target.value))}
+                  onBlur={(event) => setWebsiteUrl(normalizeHttpsMaskedUrlInput(event.target.value))}
                   placeholder="https://seudominio.com.br"
                   className="w-full rounded-xl border border-[#E3E8EF] bg-white px-4 py-3 text-sm text-text-main outline-none transition-all focus:border-[#FFB485] focus:shadow-[0_0_0_3px_rgba(255,107,0,0.12)]"
                 />
@@ -462,9 +469,9 @@ export default function SeoGeoWorkspace({ agentTitle }: SeoGeoWorkspaceProps) {
               <button
                 type="button"
                 onClick={handleGenerate}
-                disabled={isPending || !websiteUrl.trim()}
+                disabled={isPending || isHttpsPlaceholderOnly(websiteUrl)}
                 className={`inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-bold tracking-wide transition-all ${
-                  isPending || !websiteUrl.trim()
+                  isPending || isHttpsPlaceholderOnly(websiteUrl)
                     ? 'cursor-not-allowed bg-[#E2E8F0] text-[#64748B]'
                     : 'bg-gradient-to-br from-[#FF6B00] to-[#FF9D00] text-white shadow-[0_10px_24px_rgba(255,107,0,0.34)] hover:brightness-105'
                 }`}

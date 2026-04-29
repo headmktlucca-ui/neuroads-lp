@@ -4,14 +4,15 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Globe, AlertTriangle, CheckCircle, Lightbulb, Zap, ArrowUpRight } from 'lucide-react';
 import { analyzeLandingPage, DiagnosticResult } from '../../app/actions/lp-diagnostic';
+import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 
 export default function LPAuditor() {
-  const [url, setUrl] = useState('');
+  const [url, setUrl] = useState(HTTPS_PREFIX);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<DiagnosticResult | null>(null);
 
   const handleAudit = async () => {
-    if (!url.trim()) return;
+    if (isHttpsPlaceholderOnly(url)) return;
     setLoading(true);
     try {
       const res = await analyzeLandingPage(url);
@@ -40,14 +41,15 @@ export default function LPAuditor() {
              <input
                 type="text"
                 value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                onChange={(e) => setUrl(normalizeHttpsMaskedUrlInput(e.target.value))}
+                onBlur={(e) => setUrl(normalizeHttpsMaskedUrlInput(e.target.value))}
                 placeholder="https://seusite.com.br/oferta-principal"
                 className="w-full bg-white/5 border border-white/10 rounded-xl py-4 pl-12 pr-6 text-white placeholder:text-slate-600 focus:outline-none focus:border-[var(--color-brand-orange)]/50 transition-all font-mono text-sm"
              />
           </div>
           <button
             onClick={handleAudit}
-            disabled={loading || !url.trim()}
+            disabled={loading || isHttpsPlaceholderOnly(url)}
             className="bg-white text-black px-8 rounded-xl font-black italic tracking-widest uppercase hover:bg-[var(--color-brand-green)] transition-all flex items-center justify-center gap-2 disabled:opacity-50"
           >
             {loading ? <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" /> : 'ESCANEAR'}

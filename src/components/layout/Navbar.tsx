@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { ChevronDown, User, CreditCard, LogOut, X, Building2 } from 'lucide-react';
+import { HTTPS_PREFIX, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -25,7 +26,7 @@ export default function Navbar() {
   const [companySaved, setCompanySaved] = useState(false);
   const [companyForm, setCompanyForm] = useState({
     companyName: '',
-    site: '',
+    site: HTTPS_PREFIX,
     instagram: '',
     linkedin: '',
     facebook: '',
@@ -64,7 +65,7 @@ export default function Navbar() {
         const parsed = JSON.parse(companyRaw) as typeof companyForm;
         setCompanyForm({
           companyName: parsed.companyName || '',
-          site: parsed.site || '',
+          site: parsed.site ? normalizeHttpsMaskedUrlInput(parsed.site) : HTTPS_PREFIX,
           instagram: parsed.instagram || '',
           linkedin: parsed.linkedin || '',
           facebook: parsed.facebook || '',
@@ -364,7 +365,12 @@ export default function Navbar() {
                   <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">Site</label>
                   <input
                     value={companyForm.site}
-                    onChange={(e) => setCompanyForm((prev) => ({ ...prev, site: e.target.value }))}
+                    onChange={(e) =>
+                      setCompanyForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))
+                    }
+                    onBlur={(e) =>
+                      setCompanyForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))
+                    }
                     className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
                     placeholder="https://..."
                   />

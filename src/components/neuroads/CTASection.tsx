@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { Loader2, CheckCircle2, ChevronDown } from 'lucide-react';
 import { syncToHostingerReach } from '../../app/actions/hostinger';
 import { sendStrategyRequestAction } from '../../app/actions/mail';
+import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
@@ -18,10 +19,8 @@ function maskPhone(value: string): string {
   return `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
 }
 
-const SITE_PREFIX = 'https://';
-
 export default function CTASection() {
-  const [formData, setFormData] = useState({ name: '', whatsapp: '', email: '', website: SITE_PREFIX, situation: '' });
+  const [formData, setFormData] = useState({ name: '', whatsapp: '', email: '', website: HTTPS_PREFIX, situation: '' });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -37,9 +36,16 @@ export default function CTASection() {
     setIsSubmitting(true);
     try {
       await syncToHostingerReach({ email: formData.email, name: formData.name, phone: formData.whatsapp, tags: ["Planejamento Inicial"] });
-      await sendStrategyRequestAction("avante@neuroads.com.br", formData.name, formData.email, formData.website !== SITE_PREFIX ? formData.website : '', formData.whatsapp, formData.situation);
+      await sendStrategyRequestAction(
+        "avante@neuroads.com.br",
+        formData.name,
+        formData.email,
+        !isHttpsPlaceholderOnly(formData.website) ? formData.website : '',
+        formData.whatsapp,
+        formData.situation
+      );
       setSubmitStatus('success');
-      setFormData({ name: '', whatsapp: '', email: '', website: SITE_PREFIX, situation: '' });
+      setFormData({ name: '', whatsapp: '', email: '', website: HTTPS_PREFIX, situation: '' });
     } catch (err) {
       setSubmitStatus('error');
     } finally {
@@ -123,7 +129,13 @@ export default function CTASection() {
                     </div>
                     <div className="space-y-2">
                       <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">Site/Negócio</label>
-                      <input value={formData.website} onChange={e => setFormData({...formData, website: e.target.value})} placeholder="seusite.com.br" className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none" />
+                      <input
+                        value={formData.website}
+                        onChange={e => setFormData({...formData, website: normalizeHttpsMaskedUrlInput(e.target.value)})}
+                        onBlur={e => setFormData({...formData, website: normalizeHttpsMaskedUrlInput(e.target.value)})}
+                        placeholder="seusite.com.br"
+                        className="w-full bg-bg-secondary border border-border rounded-xl px-5 py-4 focus:border-primary outline-none"
+                      />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[11px] font-bold text-text-dim uppercase tracking-wider">Objetivo</label>

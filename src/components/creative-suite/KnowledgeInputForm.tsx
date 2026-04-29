@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Globe, Camera, Share2, Link, ArrowRight, BrainCircuit } from 'lucide-react';
+import { HTTPS_PREFIX, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 
 interface KnowledgeInputFormProps {
   onComplete: (links: Record<string, string>) => void;
@@ -11,10 +12,10 @@ interface KnowledgeInputFormProps {
 
 export default function KnowledgeInputForm({ onComplete, appName, requiredFields = ['site', 'instagram', 'facebook', 'linkedin'] }: KnowledgeInputFormProps) {
   const [links, setLinks] = useState({
-    site: 'https://',
-    instagram: 'https://',
-    facebook: 'https://',
-    linkedin: 'https://'
+    site: HTTPS_PREFIX,
+    instagram: HTTPS_PREFIX,
+    facebook: HTTPS_PREFIX,
+    linkedin: HTTPS_PREFIX
   });
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -29,14 +30,7 @@ export default function KnowledgeInputForm({ onComplete, appName, requiredFields
   };
 
   const handleUrlChange = (field: string, value: string) => {
-    let val = value;
-    if (val.includes('https://https://')) {
-      val = val.replace('https://https://', 'https://');
-    }
-    if (val.includes('http://https://')) {
-      val = val.replace('http://https://', 'http://');
-    }
-    setLinks(prev => ({ ...prev, [field]: val }));
+    setLinks(prev => ({ ...prev, [field]: normalizeHttpsMaskedUrlInput(value) }));
   };
 
   return (
