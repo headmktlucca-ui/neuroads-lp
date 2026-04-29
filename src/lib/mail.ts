@@ -1,20 +1,35 @@
 import nodemailer from 'nodemailer';
 
-function createTransporter() {
-  const emailUser = process.env.EMAIL_USER;
-  const emailPass = process.env.EMAIL_PASS;
+function getMailEnv() {
+  const smtpHost = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const smtpPort = Number(process.env.SMTP_PORT || 465);
+  const smtpUser = process.env.SMTP_USER || process.env.EMAIL_USER;
+  const smtpPass = process.env.SMTP_PASS || process.env.EMAIL_PASS;
+  const smtpFrom = process.env.SMTP_FROM || (smtpUser ? `"NeuroAds AI" <${smtpUser}>` : undefined);
 
-  if (!emailUser || !emailPass) {
+  return {
+    smtpHost,
+    smtpPort,
+    smtpUser,
+    smtpPass,
+    smtpFrom,
+  };
+}
+
+function createTransporter() {
+  const { smtpHost, smtpPort, smtpUser, smtpPass } = getMailEnv();
+
+  if (!smtpUser || !smtpPass) {
     return null;
   }
 
   return nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // SSL
+    host: smtpHost,
+    port: smtpPort,
+    secure: smtpPort === 465, // SSL default
     auth: {
-      user: emailUser,
-      pass: emailPass,
+      user: smtpUser,
+      pass: smtpPass,
     },
     tls: {
       rejectUnauthorized: false,
@@ -23,11 +38,11 @@ function createTransporter() {
 }
 
 export async function sendDiagnosisEmail(to: string, userName: string, platform: string, diagnosisMarkdown: string) {
-  const emailUser = process.env.EMAIL_USER;
+  const { smtpUser, smtpFrom } = getMailEnv();
   const transporter = createTransporter();
 
-  if (!transporter || !emailUser) {
-    console.warn('[Mail] EMAIL_USER/EMAIL_PASS não configurados.');
+  if (!transporter || !smtpUser) {
+    console.warn('[Mail] SMTP_USER/SMTP_PASS (ou EMAIL_USER/EMAIL_PASS) não configurados.');
     return { success: false, error: 'Configuração ausente' };
   }
 
@@ -53,7 +68,7 @@ export async function sendDiagnosisEmail(to: string, userName: string, platform:
 
   try {
     await transporter.sendMail({
-      from: `"NeuroAds AI" <${emailUser}>`,
+      from: smtpFrom || `"NeuroAds AI" <${smtpUser}>`,
       to,
       subject: `[NeuroAds] Novo Diagnóstico Neural: ${platform}`,
       html,
@@ -75,11 +90,11 @@ export async function sendStrategyRequestEmail(
   userSituation: string = '',
   selectedAgents: string[] = []
 ) {
-  const emailUser = process.env.EMAIL_USER;
+  const { smtpUser, smtpFrom } = getMailEnv();
   const transporter = createTransporter();
 
-  if (!transporter || !emailUser) {
-    console.warn('[Mail] EMAIL_USER/EMAIL_PASS não configurados.');
+  if (!transporter || !smtpUser) {
+    console.warn('[Mail] SMTP_USER/SMTP_PASS (ou EMAIL_USER/EMAIL_PASS) não configurados.');
     return { success: false, error: 'Configuração ausente' };
   }
 
@@ -121,7 +136,7 @@ export async function sendStrategyRequestEmail(
 
   try {
     await transporter.sendMail({
-      from: `"NeuroAds Lead" <${emailUser}>`,
+      from: smtpFrom || `"NeuroAds Lead" <${smtpUser}>`,
       to,
       replyTo: userEmail,
       subject: `🎯 Solicitação de Planejamento: ${userName}`,

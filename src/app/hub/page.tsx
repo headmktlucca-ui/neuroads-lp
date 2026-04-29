@@ -5,7 +5,6 @@ import AgentGrid from '../../components/dashboard/AgentGrid';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import Image from 'next/image';
 
 export default function HubPage() {
   const { user, loading } = useAuth();
@@ -30,16 +29,11 @@ export default function HubPage() {
       <Navbar />
 
       <div className="flex-grow pt-20 md:pt-28 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <Image
-            src="/images/background_agents_execution_v3.png"
-            alt="Hub Background"
-            fill
-            className="object-cover object-[center_top] opacity-90"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-white/40 to-white/70" />
-        </div>
+        <div
+          className="absolute inset-0 pointer-events-none bg-top bg-repeat-y bg-[length:100%_auto]"
+          style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
+        />
+        <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none bg-gradient-to-b from-transparent via-[#f7f8fa]/75 to-bg-main" />
 
         {/* Agent Grid Section */}
         <div id="agent-grid" className="relative z-10">
