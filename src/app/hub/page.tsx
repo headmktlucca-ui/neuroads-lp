@@ -49,21 +49,6 @@ export default function HubPage() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-10"
-          >
-            <p className="s-badge">Área Logada</p>
-            <h1 className="s-title">
-              Hub de <span className="text-primary italic">Agentes</span>
-            </h1>
-            <p className="text-text-muted text-base md:text-lg leading-relaxed max-w-2xl mt-4">
-              Gerencie sua operação inteligente em um ambiente visual unificado com o padrão NeuroAds.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
             className="grid grid-cols-1 md:grid-cols-3 gap-4"
           >
             {/* Account Status Card */}

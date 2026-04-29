@@ -2204,3 +2204,1375 @@ FirebaseError: Failed to get document because the client is offline. (src/contex
 ✓ Compiled in 147ms
 ✓ Compiled in 210ms
 ✓ Compiled in 137ms
+ GET /hub 200 in 136ms (next.js: 123ms, application-code: 13ms)
+✓ Compiled in 69ms
+✓ Compiled in 244ms
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+⨯ ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  [90m102 |[0m           </div>
+  [90m103 |[0m         </div>
+[31m[1m>[0m [90m104 |[0m         </div>
+  [90m    |[0m               [31m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m105 |[0m       </nav>
+  [90m    |[0m [31m[1m^^^^^^[0m
+  [90m106 |[0m
+  [90m107 |[0m       {[90m/* Mobile Menu */[0m}
+  [90m108 |[0m       <div className={[32m`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...[0m
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+
+ GET /hub 500 in 221ms (next.js: 155ms, application-code: 66ms)
+[browser] Uncaught Error: ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component]
+
+
+    at <unknown> (Error: ./src/components/layout/Navbar.tsx:104:15)
+    at <unknown> (Error: (./src/components/layout/Navbar.tsx:104:15)
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+[browser] ./src/components/layout/Navbar.tsx:104:15
+Expected '</', got 'jsx text'
+  102 |           </div>
+  103 |         </div>
+> 104 |         </div>
+      |               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 105 |       </nav>
+      | ^^^^^^
+  106 |
+  107 |       {/* Mobile Menu */}
+  108 |       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-bo...
+
+Parsing ecmascript source code failed
+
+Import traces:
+  Client Component Browser:
+    ./src/components/layout/Navbar.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Client Component Browser]
+    ./src/app/hub/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/layout/Navbar.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Client Component SSR]
+    ./src/app/hub/page.tsx [Server Component] 
+ GET /hub 200 in 457ms (next.js: 154ms, application-code: 302ms)
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Firestore getDoc failed (offline?): FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/context/AuthContext.tsx:70:19)
+[browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analista_trafego.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/rastreador_cirurgico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/preditor_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_lp.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/simulador_roas.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analisador_publico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/auditor_desperdicio.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /hub 200 in 69ms (next.js: 5ms, application-code: 64ms)
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" was detected as the Largest Contentful Paint (LCP). Please add the `loading="eager"` property if this image is above the fold.
+Read more: https://nextjs.org/docs/app/api-reference/components/image#loading
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Firestore getDoc failed (offline?): FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/context/AuthContext.tsx:70:19)
+[browser] Image with src "/images/tools/analista_trafego.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/rastreador_cirurgico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/preditor_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_lp.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/simulador_roas.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/diagnostico_funil.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/analisador_publico.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/auditor_desperdicio.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/alocacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET / 200 in 143ms (next.js: 9ms, application-code: 134ms)
+[browser] Image with src "/images/0599.jpeg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/Avatar_Lucca_1000x1000.jpg" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Firestore getDoc failed (offline?): FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/context/AuthContext.tsx:70:19)
+✓ Compiled in 327ms

@@ -27,31 +27,24 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed w-full z-50 bg-white/75 backdrop-blur-xl border-b border-border text-text-main">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-20">
+    <header className="fixed top-0 left-0 w-full z-[200] pt-6 px-6">
+      <nav className="mx-auto max-w-[1200px] transition-all duration-700">
+        <div className="glass-pill px-8 py-3 flex items-center justify-between transition-all duration-500 shadow-2xl bg-white/80 border-border/80">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center gap-3 group">
-              <div className="relative flex items-center">
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-primary group-hover:scale-110 transition-transform duration-500">
-                  <path d="M16 4C11.5817 4 8 7.58172 8 12C8 14.42 9.07 16.59 10.77 18.07C10.77 18.07 11.5 19.5 11.5 21C11.5 22.5 12.5 24 14.5 24H17.5C19.5 24 20.5 22.5 20.5 21C20.5 19.5 21.23 18.07 21.23 18.07C22.93 16.59 24 14.42 24 12C24 7.58172 20.4183 4 16 4Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                  <path d="M12 11H20" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeDasharray="2 2"/>
-                  <path d="M12 15H20" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeDasharray="2 2"/>
-                  <path d="M16 4V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                  <path d="M16 24V28" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
-                </svg>
-                <span className="ml-2 text-xl font-black tracking-tighter text-text-main uppercase italic">
-                  NEURO<span className="text-primary font-light">ADS</span>
-                </span>
-              </div>
+            <Link href="/" className="flex items-center group transition-transform hover:scale-[1.02]">
+              <img
+                src="/images/logo2026.png"
+                alt="NeuroAds Logo"
+                className="h-10 lg:h-12 w-auto object-contain"
+              />
             </Link>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-10">
+          <div className="hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
-              <Link key={link.name} href={link.href} className="text-xs font-bold tracking-widest text-text-dim hover:text-primary transition-colors">
+              <Link key={link.name} href={link.href} className="text-[14px] font-bold text-text-dim hover:text-primary transition-all">
                 {link.name}
               </Link>
             ))}
@@ -61,10 +54,10 @@ export default function Navbar() {
               <div className="relative">
                 <button
                   onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                  className="relative px-6 py-2 group overflow-hidden border border-border hover:border-primary/40 bg-white rounded-full transition-all flex items-center gap-2"
+                  className="relative px-6 py-3 group overflow-hidden border border-border hover:border-primary/40 bg-white rounded-full transition-all flex items-center gap-2 shadow-sm"
                 >
                   <div className="absolute inset-0 bg-transparent group-hover:bg-orange-light/50 transition-all" />
-                  <span className="relative z-10 text-text-main text-xs font-black tracking-widest uppercase italic">
+                  <span className="relative z-10 text-text-main text-[14px] font-black tracking-[0.08em] uppercase italic">
                     {getGreeting()}, {getFirstName(user.displayName || user.email)}!
                   </span>
                   <ChevronDown size={14} className={`relative z-10 transition-transform duration-300 ${isSettingsOpen ? 'rotate-180' : ''}`} />
@@ -72,19 +65,19 @@ export default function Navbar() {
 
                 {/* Submenu */}
                 {isSettingsOpen && (
-                  <div className="absolute top-full right-0 mt-3 w-56 bg-white backdrop-blur-2xl border border-border rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.15)] py-2 z-[60]">
-                    <button className="w-full px-6 py-4 text-left text-[11px] font-black tracking-[0.2em] text-text-muted hover:text-text-main hover:bg-bg-secondary transition-all flex items-center gap-3">
-                      <User size={14} /> MEU PERFIL
+                  <div className="absolute top-full right-0 mt-4 w-[290px] bg-white border border-border rounded-[18px] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.14)] py-3 z-[60]">
+                    <button className="w-full px-7 py-4 text-left text-[11px] font-black tracking-[0.2em] text-text-muted hover:text-text-main hover:bg-bg-secondary transition-all flex items-center gap-4 uppercase">
+                      <User size={15} /> Meu Perfil
                     </button>
-                    <button className="w-full px-6 py-4 text-left text-[11px] font-black tracking-[0.2em] text-text-muted hover:text-text-main hover:bg-bg-secondary transition-all flex items-center gap-3">
-                      <CreditCard size={14} /> ASSINATURA
+                    <button className="w-full px-7 py-4 text-left text-[11px] font-black tracking-[0.2em] text-text-muted hover:text-text-main hover:bg-bg-secondary transition-all flex items-center gap-4 uppercase">
+                      <CreditCard size={15} /> Assinatura
                     </button>
-                    <div className="h-px bg-border mx-4 my-1" />
+                    <div className="h-px bg-border mx-7 my-2" />
                     <button
                       onClick={() => { logout(); setIsSettingsOpen(false); }}
-                      className="w-full px-6 py-4 text-left text-[11px] font-black tracking-[0.2em] text-red-500 hover:bg-red-50 transition-all flex items-center gap-3"
+                      className="w-full px-7 py-4 text-left text-[11px] font-black tracking-[0.2em] text-red-500 hover:bg-red-50 transition-all flex items-center gap-4 uppercase"
                     >
-                      <LogOut size={14} /> SAIR
+                      <LogOut size={15} /> Sair
                     </button>
                   </div>
                 )}
@@ -108,10 +101,10 @@ export default function Navbar() {
             </button>
           </div>
         </div>
-      </div>
+      </nav>
 
       {/* Mobile Menu */}
-      <div className={`md:hidden absolute top-20 left-0 w-full bg-white/98 backdrop-blur-3xl border-b border-border transition-all duration-300 ${isMenuOpen ? 'opacity-100 visible max-h-screen py-10' : 'opacity-0 invisible max-h-0'}`}>
+      <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] rounded-[32px] p-8 z-[210] overflow-hidden transition-all duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
         <div className="flex flex-col items-center gap-10 px-6">
           {navLinks.map((link) => (
             <Link
@@ -137,12 +130,12 @@ export default function Navbar() {
                 onClick={() => { logout(); setIsMenuOpen(false); }}
                 className="w-full py-5 text-sm font-black text-red-500 tracking-widest uppercase border border-red-200 rounded-xl bg-red-50 flex items-center justify-center gap-3"
               >
-                <LogOut size={18} /> SAIR DA CONTA
+                <LogOut size={18} /> SAIR
               </button>
             </div>
           )}
         </div>
       </div>
-    </nav>
+    </header>
   );
 }
