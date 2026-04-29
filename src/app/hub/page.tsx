@@ -32,10 +32,10 @@ export default function HubPage() {
       <div className="flex-grow pt-20 md:pt-28 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none">
           <Image
-            src="/images/background_hub.png"
+            src="/images/background_agents_execution_v3.png"
             alt="Hub Background"
             fill
-            className="object-cover object-top opacity-90"
+            className="object-cover object-[center_top] opacity-90"
             priority
           />
           <div className="absolute inset-0 bg-gradient-to-b from-white/25 via-white/40 to-white/70" />

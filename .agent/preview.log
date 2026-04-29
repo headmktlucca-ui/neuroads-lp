@@ -4551,3 +4551,14 @@ FirebaseError: Failed to get document because the client is offline. (src/contex
 ✓ Compiled in 133ms
 ✓ Compiled in 81ms
 ✓ Compiled in 110ms
+✓ Compiled in 202ms
+ GET /hub/agente/seo-geo 200 in 4.7s (next.js: 4.5s, application-code: 247ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+✓ Compiled in 117ms
+✓ Compiled in 130ms
+✓ Compiled in 72ms
+✓ Compiled in 105ms
+✓ Compiled in 131ms
+ GET /hub 200 in 299ms (next.js: 256ms, application-code: 42ms)
+✓ Compiled in 206ms
+✓ Compiled in 230ms
