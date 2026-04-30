@@ -1,0 +1,50 @@
+
+added 456 packages, and audited 457 packages in 21s
+
+150 packages are looking for funding
+  run `npm fund` for details
+
+3 vulnerabilities (1 moderate, 1 high, 1 critical)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues, run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm notice
+npm notice New major version of npm available! 10.9.3 -> 11.13.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.13.0
+npm notice To update run: npm install -g npm@11.13.0
+npm notice
+
+> temp-app@0.1.0 build
+> next build
+
+▲ Next.js 16.2.1 (Turbopack)
+- Environments: .env.production
+- Experiments (use with caution):
+  · serverActions
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 5.8s
+  Running TypeScript ...
+Failed to type check.
+
+./src/components/agents/SeoGeoWorkspace.tsx:360:26
+Type error: Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'BlobPart'.
+  Type 'Uint8Array<ArrayBufferLike>' is not assignable to type 'ArrayBufferView<ArrayBuffer>'.
+    Types of property 'buffer' are incompatible.
+      Type 'ArrayBufferLike' is not assignable to type 'ArrayBuffer'.
+        Type 'SharedArrayBuffer' is missing the following properties from type 'ArrayBuffer': resizable, resize, detached, transfer, transferToFixedLength
+
+  [90m358 |[0m }) {
+  [90m359 |[0m   [36mconst[0m bytes = buildPdfBinary(params);
+[31m[1m>[0m [90m360 |[0m   [36mconst[0m blob = [36mnew[0m [33mBlob[0m([bytes], { [36mtype[0m: [32m'application/pdf'[0m });
+  [90m    |[0m                          [31m[1m^[0m
+  [90m361 |[0m   [36mconst[0m link = document.createElement([32m'a'[0m);
+  [90m362 |[0m   [36mconst[0m safeHost = params.websiteUrl.replace([35m/^https?:\/\//i[0m, [32m''[0m).replace([35m/[^\w.-]+/g[0m, [32m'-'[0m);
+  [90m363 |[0m   link.href = [33mURL[0m.createObjectURL(blob);
+Next.js build worker exited with code: 1 and signal: null
+[31mERROR: Failed to build the application[0m
