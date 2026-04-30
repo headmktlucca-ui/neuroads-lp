@@ -1,13 +1,21 @@
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 
-// Initialize Stripe with the secret key from environment variables
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2026-03-25.dahlia',
-});
+function getStripeClient() {
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+  if (!stripeSecretKey) {
+    throw new Error('STRIPE_SECRET_KEY não configurada.');
+  }
+
+  return new Stripe(stripeSecretKey, {
+    apiVersion: '2026-03-25.dahlia',
+  });
+}
 
 export async function POST(req: Request) {
   try {
+    const stripe = getStripeClient();
     const body = await req.json();
     const { priceId, userId, email, returnUrl } = body;
 

@@ -4,13 +4,40 @@ import Stripe from 'stripe';
 import { db } from '../../../../lib/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2026-03-25.dahlia',
-});
+function getStripeConfig() {
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
+  if (!stripeSecretKey) {
+    throw new Error('STRIPE_SECRET_KEY não configurada.');
+  }
+
+  if (!webhookSecret) {
+    throw new Error('STRIPE_WEBHOOK_SECRET não configurada.');
+  }
+
+  return {
+    stripe: new Stripe(stripeSecretKey, {
+      apiVersion: '2026-03-25.dahlia',
+    }),
+    webhookSecret,
+  };
+}
 
 export async function POST(req: Request) {
+  let stripe: Stripe;
+  let webhookSecret: string;
+
+  try {
+    const config = getStripeConfig();
+    stripe = config.stripe;
+    webhookSecret = config.webhookSecret;
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Configuração Stripe inválida.';
+    console.error(message);
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
+
   const body = await req.text();
   const signature = (await headers()).get('stripe-signature') as string;
 
