@@ -74,8 +74,8 @@ export default function CTASection() {
             <div className="space-y-4 mb-12">
                {[
                  'Análise completa do posicionamento atual',
-                 'Simulação de potencial de retorno (Lucca)',
-                 'Planejamento de GEO e Agentes de IA',
+                 'Mapa dos agentes necessários para sua operação',
+                 'Plano de implantação sem dependência mensal',
                  'Diálogo direto com o especialista'
                ].map((benefit, i) => (
                  <MotionDiv key={i} {...fadeUp} transition={{ delay: 0.3 + (i * 0.1) }} className="flex items-center gap-3 text-[15px] font-medium text-text-main">

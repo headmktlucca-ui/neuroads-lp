@@ -21,12 +21,16 @@ const faqItems = [
     a: 'Não. Você pode ativar apenas os agentes mais relevantes para o seu momento. A proposta é modular, permitindo começar com o essencial e evoluir conforme metas e maturidade da operação.'
   },
   {
+    q: 'Preciso manter contrato mensal com a NeuroAds para usar os agentes?',
+    a: 'Não. Implantamos os agentes necessários para sua operação sem vínculo mensal obrigatório. Se você quiser suporte contínuo, evolução ou novos agentes, isso pode ser contratado separadamente.'
+  },
+  {
     q: 'Em quanto tempo começo a ver resultados?',
     a: 'Depende do cenário atual, do orçamento e da velocidade de implementação. Em geral, já é possível observar ganhos iniciais de organização e performance nas primeiras semanas, com evolução consistente nos ciclos seguintes.'
   },
   {
     q: 'Vocês também cuidam da parte estratégica, além da execução?',
-    a: 'Sim. A entrega inclui diagnóstico, estratégia e execução orientada por dados. Não é apenas rodar campanha: estruturamos o funil e as prioridades para escalar com sustentabilidade.'
+    a: 'Sim. No modelo de implantação, começamos com diagnóstico e estratégia para definir prioridades e colocar os agentes certos em produção. Depois disso, serviços recorrentes ficam como opção, não como obrigação.'
   },
   {
     q: 'Como funciona o diagnóstico inicial?',

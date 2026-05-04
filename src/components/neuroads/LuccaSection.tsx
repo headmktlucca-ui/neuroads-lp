@@ -1,8 +1,6 @@
 'use client';
 import { motion } from 'framer-motion';
 import { Users, Crosshair, Layers } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/navigation';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
@@ -26,18 +24,6 @@ const features = [
 ];
 
 export default function LuccaSection() {
-  const { loginWithGoogle } = useAuth();
-  const router = useRouter();
-
-  const handleSignIn = async () => {
-    try {
-      await loginWithGoogle();
-      router.push('/hub');
-    } catch (error) {
-      console.error('Erro ao fazer login:', error);
-    }
-  };
-
   const fadeUp = {
     initial: { opacity: 0, y: 20 },
     whileInView: { opacity: 1, y: 0 },
@@ -74,12 +60,9 @@ export default function LuccaSection() {
             </div>
 
             <MotionDiv {...fadeUp} transition={{ delay: 0.7 }} className="mt-12 flex items-center gap-8">
-               <button
-                 onClick={handleSignIn}
-                 className="btn btn-primary px-8"
-               >
-                 Acessar Hub
-               </button>
+               <a href="/#contato" className="btn btn-primary px-8">
+                 Contato
+               </a>
             </MotionDiv>
           </div>
 

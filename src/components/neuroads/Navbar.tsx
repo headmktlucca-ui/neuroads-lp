@@ -2,15 +2,11 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
-import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { loginWithGoogle } = useAuth();
-  const router = useRouter();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -20,16 +16,6 @@ export default function Navbar() {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
-
-  const handleAccessHub = async () => {
-    try {
-      await loginWithGoogle();
-      router.push('/hub');
-      closeMenu();
-    } catch (error) {
-      console.error('Erro ao fazer login:', error);
-    }
-  };
 
   const navLinks = [
     { name: 'Agentes Neurais', href: '#servicos' },
@@ -64,10 +50,10 @@ export default function Navbar() {
             </ul>
             
             <div className="flex items-center gap-6 pl-10 border-l border-border/50">
-              <button onClick={handleAccessHub} className="btn btn-primary px-6 py-2.5 text-[13px] rounded-full">
-                Acessar Hub
+              <a href="/#contato" className="btn btn-primary px-6 py-2.5 text-[13px] rounded-full">
+                Contato
                 <ArrowRight size={14} className="ml-2" />
-              </button>
+              </a>
             </div>
           </div>
 

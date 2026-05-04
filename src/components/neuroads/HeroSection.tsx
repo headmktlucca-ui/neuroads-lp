@@ -37,10 +37,10 @@ export default function HeroSection() {
 
             <MotionDiv {...fadeUp(0.5)}>
               <a
-                href="/hub"
+                href="/#contato"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-black text-white font-bold text-sm hover:bg-black/90 transition-all"
               >
-                Acessar Hub
+                Contato
                 <ArrowRight size={16} />
               </a>
             </MotionDiv>
