@@ -32,7 +32,7 @@ export default function LuccaSection() {
   };
 
   return (
-    <section className="py-24 lg:py-32 bg-white" id="lucca">
+    <section className="py-24 lg:py-32 bg-transparent" id="lucca">
       <div className="wrap">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           

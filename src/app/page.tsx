@@ -1,6 +1,5 @@
 'use client';
 import { useEffect } from 'react';
-import Image from 'next/image';
 import Navbar from '../components/neuroads/Navbar';
 import HeroSection from '../components/neuroads/HeroSection';
 import AboutSection from '../components/neuroads/AboutSection';
@@ -39,51 +38,27 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen">
-      <Navbar />
-      
-      <div className="relative">
-        {/* BACKGROUND CONTINUES TO ABOUT SECTION */}
-        <div className="absolute top-[10vh] left-0 right-0 bottom-0 z-0 pointer-events-none overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-b from-bg-main via-transparent to-transparent z-10 h-32" />
-          <div className="hero-bg-image-wrap">
-            <Image 
-              src="/images/background_neuroads_26_hd_3840.png" 
-              alt="NeuroAds Background" 
-              fill
-              sizes="100vw"
-              quality={100}
-              className="object-cover object-top hero-bg-image"
-              priority
-            />
-          </div>
-          <div className="hero-bg-orb hero-bg-orb--one" />
-          <div className="hero-bg-orb hero-bg-orb--two" />
-          <div className="hero-bg-sheen" />
-        </div>
-        {/* Long, smooth fade to avoid any visible hard cut between sections */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-44 sm:h-56 lg:h-64 pointer-events-none z-20"
-          style={{
-            background:
-              'linear-gradient(to bottom, rgba(247,247,248,0) 0%, rgba(247,247,248,0.45) 45%, rgba(247,247,248,0.85) 75%, #f7f7f8 100%)',
-          }}
-        />
-        <div className="relative z-10">
-          <HeroSection />
-          <AboutSection />
-        </div>
+    <main className="min-h-screen site-bg">
+      <div className="site-bg-media" aria-hidden="true" />
+      <div className="site-bg-depth" aria-hidden="true" />
+      <div className="site-bg-overlay" aria-hidden="true" />
+      <div className="site-bg-sheen" aria-hidden="true" />
+      <div className="site-bg-noise" aria-hidden="true" />
+
+      <div className="relative z-10">
+        <Navbar />
+        <HeroSection />
+        <AboutSection />
+        <ProblemsSection />
+        <ServicesSection />
+        <LuccaSection />
+        <GeoSection />
+        <ProcessSection />
+        <TestimonialsSection />
+        <CTASection />
+        <FAQSection />
+        <Footer />
       </div>
-      <ProblemsSection />
-      <ServicesSection />
-      <LuccaSection />
-      <GeoSection />
-      <ProcessSection />
-      <TestimonialsSection />
-      <CTASection />
-      <FAQSection />
-      
-      <Footer />
     </main>
   );
 }

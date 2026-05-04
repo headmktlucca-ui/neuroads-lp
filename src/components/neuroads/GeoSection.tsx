@@ -16,7 +16,7 @@ export default function GeoSection() {
   };
 
   return (
-    <section className="py-24 lg:py-32 bg-bg-secondary" id="geo">
+    <section className="py-24 lg:py-32 bg-transparent" id="geo">
       <div className="wrap">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           

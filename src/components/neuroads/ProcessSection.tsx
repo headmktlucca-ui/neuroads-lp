@@ -37,7 +37,7 @@ export default function ProcessSection() {
   };
 
   return (
-    <section className="py-24 lg:py-32 bg-bg-secondary" id="processo">
+    <section className="py-24 lg:py-32 bg-transparent" id="processo">
       <div className="wrap">
         <div className="text-center max-w-[800px] mx-auto mb-20">
           <MotionP {...fadeUp} className="s-badge justify-center">Nossa Metodologia</MotionP>

@@ -142,7 +142,7 @@ export default function ServicesSection() {
 
   return (
     <section 
-      className="py-24 lg:py-32 relative overflow-hidden bg-white" 
+      className="py-24 lg:py-32 relative overflow-hidden bg-transparent" 
       id="servicos"
     >
       <div className="absolute inset-0 z-0 pointer-events-none">
@@ -200,7 +200,7 @@ export default function ServicesSection() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.24, ease: [0.16, 1, 0.3, 1] }}
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
           >
             {activeCategoryAgents.map((agent, i) => (
               <MotionDiv

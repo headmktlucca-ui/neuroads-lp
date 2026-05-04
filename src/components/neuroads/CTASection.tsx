@@ -54,7 +54,7 @@ export default function CTASection() {
   };
 
   return (
-    <section className="py-24 lg:py-32 bg-white relative overflow-hidden" id="contato">
+    <section className="py-24 lg:py-32 bg-transparent relative overflow-hidden" id="contato">
       {/* Background decoration */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 blur-[120px] -z-10" />
 

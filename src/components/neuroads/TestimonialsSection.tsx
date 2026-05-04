@@ -22,14 +22,14 @@ export default function TestimonialsSection() {
   };
 
   return (
-    <section className="py-24 lg:py-32 bg-white relative overflow-hidden" id="depoimentos">
+    <section className="py-24 lg:py-32 bg-transparent relative overflow-hidden" id="depoimentos">
       {/* BACKGROUND IMAGE WITH SMOOTH TRANSITION */}
       <div className="absolute inset-0 z-0 pointer-events-none">
         {/* Top Fade Mask: From Superior Section Color */}
-        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-bg-secondary via-bg-secondary/50 to-transparent z-10" />
+        <div className="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-white/55 via-white/35 to-transparent z-10" />
         
         {/* Bottom Fade Mask: To Next Section Color (White) */}
-        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-white via-white/50 to-transparent z-10" />
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-white/60 via-white/35 to-transparent z-10" />
         
         <Image 
           src="/images/back000.png" 

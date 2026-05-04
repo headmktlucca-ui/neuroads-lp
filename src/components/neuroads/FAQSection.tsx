@@ -65,7 +65,7 @@ export default function FAQSection() {
   };
 
   return (
-    <section className="py-24 lg:py-32 bg-bg-secondary" id="faq">
+    <section className="py-24 lg:py-32 bg-transparent" id="faq">
       <div className="wrap">
         <div className="max-w-[900px] mx-auto">
           <div className="text-center mb-14">

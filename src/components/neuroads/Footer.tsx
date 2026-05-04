@@ -36,7 +36,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="bg-bg-secondary py-20 px-6 border-t border-border">
+    <footer className="bg-white/65 backdrop-blur-sm py-20 px-6 border-t border-border">
       <div className="wrap">
         <div className="flex flex-col md:flex-row items-start justify-between gap-12">
           

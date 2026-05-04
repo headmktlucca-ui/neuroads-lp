@@ -41,8 +41,8 @@ export default function ProblemsSection() {
   };
 
   return (
-    <section className="relative py-24 lg:py-32 bg-[#f7f7f8]" id="problemas">
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-white" />
+    <section className="relative py-24 lg:py-32 bg-transparent" id="problemas">
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-b from-transparent to-white/45" />
       <div className="wrap">
         <div className="max-w-[800px]">
           <MotionP {...fadeUp} className="s-badge">O diagnóstico</MotionP>
