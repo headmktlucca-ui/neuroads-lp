@@ -16,6 +16,10 @@ export default function Navbar() {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const closeMenu = () => setIsMenuOpen(false);
+  const handleAccessHub = () => {
+    closeMenu();
+    window.location.href = '/hub';
+  };
 
   const navLinks = [
     { name: 'Agentes Neurais', href: '#servicos' },
