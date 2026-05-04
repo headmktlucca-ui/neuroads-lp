@@ -91,11 +91,65 @@ body {
   overflow-x: hidden;
 }
 
+/* Full-page fixed video background */
+.page-bg {
+  position: relative;
+  min-height: 100vh;
+  isolation: isolate;
+  background: #f6f7f8;
+}
+
+.page-bg-image,
+.page-bg-overlay,
+.page-bg-vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.page-bg-image {
+  z-index: 0;
+  background-image: url('/images/backgrounds/neuroads-flow-option1.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: saturate(1.04) contrast(1.04) brightness(1.01);
+}
+
+.page-bg-overlay {
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.64) 0%,
+    rgba(255, 255, 255, 0.56) 40%,
+    rgba(255, 255, 255, 0.68) 100%
+  );
+}
+
+.page-bg-vignette {
+  z-index: 2;
+  background:
+    radial-gradient(circle at 80% 18%, rgba(255, 125, 0, 0.12) 0%, rgba(255, 125, 0, 0) 45%),
+    radial-gradient(circle at 15% 88%, rgba(255, 95, 0, 0.1) 0%, rgba(255, 95, 0, 0) 48%);
+}
+
 /* Global continuous background (image + subtle effects) */
 .site-bg {
   position: relative;
   min-height: 100vh;
   isolation: isolate;
+}
+
+.site-bg-video {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  pointer-events: none;
+  z-index: -5;
+  filter: saturate(1.02) contrast(1.03);
 }
 
 .site-bg-media,
@@ -111,7 +165,7 @@ body {
 .site-bg-media {
   z-index: -4;
   background-color: #f7f7f8;
-  background-image: url('/images/backgrounds/neuroads-flow-option1.png');
+  background-image: none;
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center top;
@@ -309,6 +363,25 @@ body::before {
 }
 
 @media (max-width: 768px) {
+  .page-bg-image {
+    background-position: 62% center;
+    filter: saturate(1.02) contrast(1.03) brightness(1.01);
+  }
+
+  .page-bg-overlay {
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.64) 40%,
+      rgba(255, 255, 255, 0.74) 100%
+    );
+  }
+
+  .site-bg-video {
+    object-position: 65% center;
+    filter: saturate(1) contrast(1.02);
+  }
+
   .site-bg-media {
     animation: none;
     background-size: auto 100%;
@@ -338,9 +411,14 @@ body::before {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .page-bg-image {
+    animation: none;
+  }
+
   .hero-bg-image,
   .hero-bg-orb,
   .hero-bg-sheen,
+  .site-bg-video,
   .site-bg-media,
   .site-bg-depth,
   .site-bg-sheen {

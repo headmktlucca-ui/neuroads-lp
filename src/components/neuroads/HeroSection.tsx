@@ -17,8 +17,6 @@ export default function HeroSection() {
 
   return (
     <section className="relative min-h-[90vh] flex items-center pt-32 pb-20 overflow-hidden">
-      {/* BACKGROUND IMAGE REMOVED - NOW IN PAGE WRAPPER */}
-
       <div className="wrap relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-16 items-center">
           

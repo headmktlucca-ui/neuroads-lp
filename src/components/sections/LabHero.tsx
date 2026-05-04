@@ -26,14 +26,20 @@ export default function LabHero() {
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-24 pb-20 overflow-hidden bg-black">
-      {/* Correct Neural Mesh Background Image - Static */}
+      {/* Background Video */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-[#030303] bg-cover bg-center bg-no-repeat opacity-90"
-          style={{ backgroundImage: `url('/images/hero-correct.jpg')` }}
-        />
-        
-        {/* Static Glow Overlay for Subtle Depth (No Motion) */}
+        <video
+          className="absolute inset-0 w-full h-full object-cover opacity-85"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+        >
+          <source src="/videos/fundovideo.mp4" type="video/mp4" />
+        </video>
+
+        {/* Glow Overlay for Subtle Depth */}
         <div className="absolute inset-0 bg-gradient-to-tr from-[var(--color-brand-orange)]/5 via-transparent to-[var(--color-brand-green)]/5 opacity-50" />
 
         {/* Strategic Vignette for Readability */}
@@ -43,7 +49,7 @@ export default function LabHero() {
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 relative z-10 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
-          
+
           {/* Left Column: Strategic Content */}
           <motion.div
             variants={containerVariants}
@@ -51,7 +57,7 @@ export default function LabHero() {
             animate="visible"
             className="flex flex-col items-start"
           >
-            <motion.div 
+            <motion.div
               variants={itemVariants}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-6"
             >
@@ -61,7 +67,7 @@ export default function LabHero() {
               </span>
             </motion.div>
 
-            <motion.h1 
+            <motion.h1
               variants={itemVariants}
               className="text-4xl md:text-6xl font-bold leading-[1.2] mb-8 tracking-tight text-white"
             >
@@ -71,7 +77,7 @@ export default function LabHero() {
               </span>
             </motion.h1>
 
-            <motion.p 
+            <motion.p
               variants={itemVariants}
               className="text-lg md:text-xl text-slate-300 font-light leading-relaxed max-w-xl mb-12"
             >
@@ -87,7 +93,7 @@ export default function LabHero() {
           </motion.div>
 
           {/* Right Side: Features Cards */}
-          <motion.div 
+          <motion.div
             initial="hidden"
             animate="visible"
             variants={{

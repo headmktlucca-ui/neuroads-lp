@@ -38,12 +38,10 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="min-h-screen site-bg">
-      <div className="site-bg-media" aria-hidden="true" />
-      <div className="site-bg-depth" aria-hidden="true" />
-      <div className="site-bg-overlay" aria-hidden="true" />
-      <div className="site-bg-sheen" aria-hidden="true" />
-      <div className="site-bg-noise" aria-hidden="true" />
+    <main className="min-h-screen page-bg">
+      <div className="page-bg-image" aria-hidden="true" />
+      <div className="page-bg-overlay" aria-hidden="true" />
+      <div className="page-bg-vignette" aria-hidden="true" />
 
       <div className="relative z-10">
         <Navbar />
