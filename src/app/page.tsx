@@ -46,15 +46,19 @@ export default function Home() {
         {/* BACKGROUND CONTINUES TO ABOUT SECTION */}
         <div className="absolute top-[10vh] left-0 right-0 bottom-0 z-0 pointer-events-none overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-b from-bg-main via-transparent to-transparent z-10 h-32" />
-          <Image 
-            src="/images/background_neuroads_26_hd_3840.png" 
-            alt="NeuroAds Background" 
-            fill
-            sizes="100vw"
-            quality={100}
-            className="object-cover object-top"
-            priority
-          />
+          <div className="hero-bg-image-wrap">
+            <Image 
+              src="/images/background_neuroads_26_hd_3840.png" 
+              alt="NeuroAds Background" 
+              fill
+              sizes="100vw"
+              quality={100}
+              className="object-cover object-top hero-bg-image"
+              priority
+            />
+          </div>
+          <div className="hero-bg-orb hero-bg-orb--one" />
+          <div className="hero-bg-orb hero-bg-orb--two" />
         </div>
         {/* Long, smooth fade to avoid any visible hard cut between sections */}
         <div

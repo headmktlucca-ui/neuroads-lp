@@ -15,3 +15,10 @@ Creating turbopack project {
   · serverActions
 
  GET / 200 in 1014ms (next.js: 199ms, application-code: 815ms)
+ GET / 200 in 111ms (next.js: 6ms, application-code: 106ms)
+ GET /hub 200 in 154ms (next.js: 98ms, application-code: 55ms)
+ GET /hub/agente/seo-geo 200 in 805ms (next.js: 761ms, application-code: 44ms)
+ POST /hub/agente/seo-geo 200 in 17.1s (next.js: 14ms, application-code: 17.1s)
+  └─ ƒ generateSeoGeoAudit({"businessContext":"","websiteUrl":"https://neuroads.com.br"}) in 16841ms src/app/actions/seo-geo-audit.ts
+ GET / 200 in 24ms (next.js: 5ms, application-code: 19ms)
+✓ Compiled in 2.3s

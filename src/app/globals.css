@@ -104,6 +104,80 @@ body::before {
   z-index: 0;
 }
 
+.hero-bg-image-wrap {
+  position: absolute;
+  inset: -2%;
+}
+
+.hero-bg-image {
+  transform-origin: center top;
+  will-change: transform, filter;
+  animation: heroBgDrift 24s ease-in-out infinite alternate;
+}
+
+.hero-bg-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(42px);
+  opacity: 0.38;
+  will-change: transform, opacity;
+  animation: heroOrbFloat 18s ease-in-out infinite;
+}
+
+.hero-bg-orb--one {
+  top: 8%;
+  right: -10%;
+  width: clamp(260px, 32vw, 460px);
+  height: clamp(260px, 32vw, 460px);
+  background: radial-gradient(circle at 30% 30%, rgba(255, 122, 0, 0.24) 0%, rgba(255, 122, 0, 0) 72%);
+}
+
+.hero-bg-orb--two {
+  bottom: 6%;
+  left: -12%;
+  width: clamp(220px, 28vw, 380px);
+  height: clamp(220px, 28vw, 380px);
+  background: radial-gradient(circle at 65% 65%, rgba(255, 77, 0, 0.2) 0%, rgba(255, 77, 0, 0) 70%);
+  animation-delay: -7s;
+}
+
+@keyframes heroBgDrift {
+  0% {
+    transform: scale(1.02) translate3d(-0.8%, 0, 0);
+    filter: saturate(1) brightness(1);
+  }
+  50% {
+    transform: scale(1.06) translate3d(0.4%, -0.5%, 0);
+    filter: saturate(1.06) brightness(1.02);
+  }
+  100% {
+    transform: scale(1.08) translate3d(1.2%, -1.1%, 0);
+    filter: saturate(1.1) brightness(1.03);
+  }
+}
+
+@keyframes heroOrbFloat {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.34;
+  }
+  50% {
+    transform: translate3d(-2.5%, -3%, 0) scale(1.06);
+    opacity: 0.45;
+  }
+  100% {
+    transform: translate3d(2.5%, 2%, 0) scale(0.98);
+    opacity: 0.34;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg-image,
+  .hero-bg-orb {
+    animation: none;
+  }
+}
+
 @layer utilities {
   .wrap { @apply max-w-[1240px] mx-auto px-8 md:px-12 relative z-10; }
   
