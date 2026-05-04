@@ -59,6 +59,7 @@ export default function Home() {
           </div>
           <div className="hero-bg-orb hero-bg-orb--one" />
           <div className="hero-bg-orb hero-bg-orb--two" />
+          <div className="hero-bg-sheen" />
         </div>
         {/* Long, smooth fade to avoid any visible hard cut between sections */}
         <div

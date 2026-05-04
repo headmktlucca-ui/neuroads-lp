@@ -22,3 +22,11 @@ Creating turbopack project {
   └─ ƒ generateSeoGeoAudit({"businessContext":"","websiteUrl":"https://neuroads.com.br"}) in 16841ms src/app/actions/seo-geo-audit.ts
  GET / 200 in 24ms (next.js: 5ms, application-code: 19ms)
 ✓ Compiled in 2.3s
+ GET / 200 in 1571ms (next.js: 380ms, application-code: 1191ms)
+✓ Compiled in 261ms
+✓ Compiled in 1484ms
+ GET / 200 in 546ms (next.js: 113ms, application-code: 433ms)
+ GET /hub 200 in 55ms (next.js: 8ms, application-code: 47ms)
+ GET / 200 in 20ms (next.js: 3ms, application-code: 17ms)
+ GET / 200 in 238ms (next.js: 3ms, application-code: 235ms)
+ GET / 200 in 594ms (next.js: 41ms, application-code: 554ms)
