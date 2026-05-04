@@ -101,10 +101,10 @@ export default function AboutSection() {
 
                 <div className="space-y-6">
                   {[
-                    'Com mais de 25 anos de estrada no marketing digital, vi o mercado nascer e se transformar. Gerenciei mais de R$ 10 milhões em mídia paga, mas aprendi que o segredo não é apenas comprar tráfego: é construir um ecossistema que converte.',
-                    'A NeuroAds nasceu da necessidade de democratizar a IA corporativa para PMEs. Hoje, usamos agentes autônomos para liberar seu time do operacional e focar no que realmente importa: fechar vendas de alto valor.'
+                    '"Com mais de 25 anos de estrada no marketing digital, vi o mercado nascer e se transformar. Gerenciei mais de R$ 10 milhões em mídia paga, mas aprendi que o segredo não é apenas comprar tráfego: é construir um ecossistema que converte.',
+                    'A NeuroAds nasceu da necessidade de democratizar a IA corporativa para PMEs. Hoje, usamos agentes autônomos para liberar seu time do operacional e focar no que realmente importa: fechar vendas de alto valor."'
                   ].map((text, i) => (
-                    <MotionP key={i} {...fadeUp} transition={{ delay: 0.3 + (i * 0.1) }} className="text-base text-text-muted leading-relaxed">
+                    <MotionP key={i} {...fadeUp} transition={{ delay: 0.3 + (i * 0.1) }} className="text-base text-text-muted leading-relaxed italic">
                       {text}
                     </MotionP>
                   ))}

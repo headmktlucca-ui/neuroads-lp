@@ -23,7 +23,7 @@ import { useAuth } from '../../context/AuthContext';
 import AuthOverlay from '../auth/AuthOverlay';
 import { Clock, Key } from 'lucide-react';
 import { FacebookAuthProvider, signInWithPopup } from 'firebase/auth';
-import { auth } from '../../lib/firebase';
+import { getFirebaseAuth } from '../../lib/firebase';
 import { syncTrafficData } from '../../app/actions/traffic-sync';
 import { saveConnection, removeConnection } from '../../app/actions/ad-accounts';
 import { scheduleAutomation, saveToHistory } from '../../app/actions/automations';
@@ -198,6 +198,7 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
       let token = '';
 
       if (data.plataforma === 'Meta Ads') {
+        const auth = getFirebaseAuth();
         const provider = new FacebookAuthProvider();
         provider.addScope('ads_read');
         provider.addScope('read_insights');

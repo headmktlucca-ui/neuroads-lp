@@ -1,6 +1,6 @@
 'use server';
 
-import { db } from '../../lib/firebase';
+import { getFirebaseDb } from '../../lib/firebase';
 import { collection, addDoc, query, where, getDocs, orderBy, doc, updateDoc } from 'firebase/firestore';
 
 function getErrorMessage(error: unknown, fallback: string): string {
@@ -10,6 +10,7 @@ function getErrorMessage(error: unknown, fallback: string): string {
 
 export async function scheduleAutomation(userId: string, config: { platform: string, frequency: string, accountId: string, email: string }) {
   try {
+    const db = getFirebaseDb();
     const userRef = doc(db, 'users', userId);
     
     // Save or update schedule
@@ -31,6 +32,7 @@ export async function scheduleAutomation(userId: string, config: { platform: str
 
 export async function getHistory(userId: string) {
   try {
+    const db = getFirebaseDb();
     const historyRef = collection(db, 'history');
     const q = query(historyRef, where('userId', '==', userId), orderBy('timestamp', 'desc'));
     const querySnapshot = await getDocs(q);
@@ -49,6 +51,7 @@ export async function getHistory(userId: string) {
 
 export async function saveToHistory(userId: string, data: Record<string, unknown>) {
   try {
+    const db = getFirebaseDb();
     const historyRef = collection(db, 'history');
     await addDoc(historyRef, {
       userId,

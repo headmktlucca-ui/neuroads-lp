@@ -2,36 +2,60 @@ import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, Auth } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+type FirebaseConfig = {
+  apiKey: string;
+  authDomain: string;
+  projectId: string;
+  storageBucket: string;
+  messagingSenderId: string;
+  appId: string;
 };
 
-// Initialize Firebase
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+function getFirebaseConfig(): FirebaseConfig {
+  const requireEnv = (name: string, value: string | undefined): string => {
+    if (!value) {
+      throw new Error(`Firebase env ausente: ${name}`);
+    }
+    return value;
+  };
 
-// Lazy initialization to prevent server-side crashes with client SDK
-let auth: Auth;
-let db: Firestore;
+  // Use static env access so Next/Turbopack can inline NEXT_PUBLIC vars in client bundles.
+  const apiKey = requireEnv('NEXT_PUBLIC_FIREBASE_API_KEY', process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
+  const authDomain = requireEnv('NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN', process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
+  const projectId = requireEnv('NEXT_PUBLIC_FIREBASE_PROJECT_ID', process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
+  const storageBucket = requireEnv('NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET', process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET);
+  const messagingSenderId = requireEnv(
+    'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
+    process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  );
+  const appId = requireEnv('NEXT_PUBLIC_FIREBASE_APP_ID', process.env.NEXT_PUBLIC_FIREBASE_APP_ID);
+
+  return {
+    apiKey,
+    authDomain,
+    projectId,
+    storageBucket,
+    messagingSenderId,
+    appId,
+  };
+}
+
+let auth: Auth | undefined;
+let db: Firestore | undefined;
+
+function getFirebaseApp() {
+  if (getApps().length > 0) return getApp();
+  return initializeApp(getFirebaseConfig());
+}
 
 const getFirebaseAuth = () => {
-  if (!auth) auth = getAuth(app);
+  if (!auth) auth = getAuth(getFirebaseApp());
   return auth;
 };
 
 const getFirebaseDb = () => {
-  if (!db) db = getFirestore(app);
+  if (!db) db = getFirestore(getFirebaseApp());
   return db;
 };
 
-// Maintain original exports for client components (with safety checks)
-if (typeof window !== 'undefined') {
-  auth = getAuth(app);
-  db = getFirestore(app);
-}
-
-export { app, auth, db, getFirebaseAuth, getFirebaseDb };
+export { getFirebaseApp, getFirebaseAuth, getFirebaseDb };

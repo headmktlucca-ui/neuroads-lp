@@ -17,7 +17,7 @@ import {
   getContractedAgentsFromProfile,
   slugifyAgentTitle,
 } from '../../../../lib/hub-agents';
-import { db } from '../../../../lib/firebase';
+import { getFirebaseDb } from '../../../../lib/firebase';
 
 function formatDate(dateString?: string): string {
   if (!dateString) return 'A confirmar';
@@ -158,10 +158,10 @@ export default function AgentEntryPage() {
   useEffect(() => {
     const loadPersistedAutomation = async () => {
       if (!user || !entry || !agentAutomationKey) return;
-      if (!db) return;
 
       setIsLoadingAutomation(true);
       try {
+        const db = getFirebaseDb();
         const userRef = doc(db, 'users', user.uid);
         const snapshot = await getDoc(userRef);
         const userData = snapshot.data() as
@@ -455,14 +455,11 @@ export default function AgentEntryPage() {
                     disabled={!selectedSuggestion}
                     onClick={async () => {
                       if (!selectedSuggestion || !user || !entry || !agentAutomationKey) return;
-                      if (!db) {
-                        setAutomationNotice('Não foi possível salvar a automação no momento.');
-                        return;
-                      }
 
                       setIsSavingAutomation(true);
                       setAutomationNotice(null);
                       try {
+                        const db = getFirebaseDb();
                         const userRef = doc(db, 'users', user.uid);
                         const payload = {
                           [`automations.${agentAutomationKey}`]: {

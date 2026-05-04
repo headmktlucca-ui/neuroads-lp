@@ -8,7 +8,7 @@ import {
   GoogleAuthProvider,
   signOut 
 } from 'firebase/auth';
-import { auth, db } from '../lib/firebase';
+import { getFirebaseAuth, getFirebaseDb } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { syncToHostingerReach } from '../app/actions/hostinger';
 
@@ -40,6 +40,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const auth = getFirebaseAuth();
+    const db = getFirebaseDb();
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
 
@@ -82,11 +84,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 
   const loginWithGoogle = async () => {
+    const auth = getFirebaseAuth();
     const provider = new GoogleAuthProvider();
     await signInWithPopup(auth, provider);
   };
 
   const logout = async () => {
+    const auth = getFirebaseAuth();
     await signOut(auth);
   };
 

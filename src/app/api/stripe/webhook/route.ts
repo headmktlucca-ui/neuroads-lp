@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { db } from '../../../../lib/firebase';
+import { getFirebaseDb } from '../../../../lib/firebase';
 import { doc, updateDoc } from 'firebase/firestore';
 
 function getStripeConfig() {
@@ -59,6 +59,7 @@ export async function POST(req: Request) {
         const userId = session.client_reference_id;
 
         if (userId) {
+          const db = getFirebaseDb();
           // Update Firebase User to Premium
           const userRef = doc(db, 'users', userId);
           await updateDoc(userRef, {
