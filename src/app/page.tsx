@@ -1,5 +1,5 @@
 'use client';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import Navbar from '../components/neuroads/Navbar';
 import HeroSection from '../components/neuroads/HeroSection';
 import AboutSection from '../components/neuroads/AboutSection';
@@ -48,7 +48,9 @@ export default function Home() {
         <HeroSection />
         <AboutSection />
         <ProblemsSection />
-        <ServicesSection />
+        <Suspense fallback={null}>
+          <ServicesSection />
+        </Suspense>
         <LuccaSection />
         <GeoSection />
         <ProcessSection />
