@@ -16,6 +16,8 @@ import {
 } from 'firebase/firestore';
 import { BriefcaseBusiness, CircleDollarSign, KanbanSquare, Trash2, UserRoundCog } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
+import LuccaExecutiveDesk from './LuccaExecutiveDesk';
+import CustomCrmSuite from './CustomCrmSuite';
 
 const CRM_STAGES = ['Prospect', 'Lead Qualificado', 'Proposta', 'Cliente Ativo'] as const;
 const ACTIVITY_PRIORITIES = ['Baixa', 'Media', 'Alta'] as const;
@@ -361,6 +363,9 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
 
   return (
     <div className="space-y-8">
+      <LuccaExecutiveDesk userId={userId} />
+      <CustomCrmSuite userId={userId} />
+
       <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         {stats.map((stat) => (
           <article key={stat.label} className="rounded-3xl border border-border bg-white p-5 shadow-sm">

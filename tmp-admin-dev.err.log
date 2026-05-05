@@ -1,35 +1,5288 @@
-
-[2m[1297.01ms][22m [@tailwindcss/postcss] src\app\globals.css
-[2m[   0.30ms][22m  [2m ↳ [22mQuick bail check
-[2m[ 215.65ms][22m  [2m ↳ [22mSetup compiler
-[2m[   2.01ms][22m    [2m ↳ [22mPostCSS AST -> Tailwind CSS AST
-[2m[ 213.52ms][22m    [2m ↳ [22mCreate compiler
-[2m[   1.23ms][22m  [2m ↳ [22mRegister full rebuild paths
-[2m[  14.72ms][22m  [2m ↳ [22mSetup scanner
-[2m[ 443.91ms][22m  [2m ↳ [22mScan for candidates
-[2m[ 132.92ms][22m  [2m ↳ [22mRegister dependency messages
-[2m[ 429.95ms][22m  [2m ↳ [22mBuild utilities
-[2m[  41.92ms][22m  [2m ↳ [22mTransform Tailwind CSS AST into PostCSS AST
-[2m[  14.58ms][22m  [2m ↳ [22mUpdate PostCSS AST
-
-
-[2m[305.76ms][22m [@tailwindcss/postcss] src\app\globals.css
-[2m[  0.02ms][22m  [2m ↳ [22mQuick bail check
-[2m[  0.77ms][22m  [2m ↳ [22mRegister full rebuild paths
-[2m[189.67ms][22m  [2m ↳ [22mScan for candidates
-[2m[  6.44ms][22m  [2m ↳ [22mRegister dependency messages
-[2m[ 86.80ms][22m  [2m ↳ [22mBuild utilities
-[2m[ 21.33ms][22m  [2m ↳ [22mUpdate PostCSS AST
-
-⚠ Fast Refresh had to perform a full reload when ./src/context/AuthContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-⚠ Fast Refresh had to perform a full reload when ./src/context/AuthContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
-
-[2m[317.28ms][22m [@tailwindcss/postcss] src\app\globals.css
-[2m[  0.02ms][22m  [2m ↳ [22mQuick bail check
-[2m[  0.89ms][22m  [2m ↳ [22mRegister full rebuild paths
-[2m[264.00ms][22m  [2m ↳ [22mScan for candidates
-[2m[  3.82ms][22m  [2m ↳ [22mRegister dependency messages
-[2m[ 31.73ms][22m  [2m ↳ [22mBuild utilities
-[2m[ 16.46ms][22m  [2m ↳ [22mUpdate PostCSS AST
-
+[browser] Image with src "/images/template-match/hero-orbit-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+
+[2m[170.95ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.05ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 26.27ms][22m  [2m ↳ [22mSetup compiler
+[2m[  0.36ms][22m    [2m ↳ [22mPostCSS AST -> Tailwind CSS AST
+[2m[ 25.88ms][22m    [2m ↳ [22mCreate compiler
+[2m[  0.17ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[  2.91ms][22m  [2m ↳ [22mSetup scanner
+[2m[ 45.82ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 29.95ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 50.84ms][22m  [2m ↳ [22mBuild utilities
+[2m[  6.47ms][22m  [2m ↳ [22mTransform Tailwind CSS AST into PostCSS AST
+[2m[  8.11ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[67.43ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.20ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[50.11ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.71ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[11.72ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.47ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/template-match/hero-orbit-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/hero-orbit-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+
+[2m[444.92ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.08ms][22m  [2m ↳ [22mQuick bail check
+[2m[  2.50ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[150.95ms][22m  [2m ↳ [22mScan for candidates
+[2m[  8.89ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[220.40ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 45.94ms][22m  [2m ↳ [22mTransform Tailwind CSS AST into PostCSS AST
+[2m[ 15.46ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+⨯ ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+⨯ ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+⨯ ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+⨯ ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+
+./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+  [90m 2 |[0m
+  [90m 3 |[0m [36mimport[0m [33mImage[0m [36mfrom[0m [32m'next/image'[0m;
+[31m[1m>[0m [90m 4 |[0m [36mimport[0m {
+  [90m   |[0m [31m[1m^^^^^^^[0m
+[31m[1m>[0m [90m 5 |[0m   [33mArrowRight[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 6 |[0m   [33mBot[0m,
+  [90m   |[0m [31m[1m^^^^^^[0m
+[31m[1m>[0m [90m 7 |[0m   [33mCheckCircle2[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 8 |[0m   [33mChevronDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m 9 |[0m   [33mCircleGauge[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m10 |[0m   [33mHeadphones[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m11 |[0m   [33mInstagram[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m12 |[0m   [33mLayoutTemplate[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m13 |[0m   [33mLinkedin[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m14 |[0m   [33mRadio[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m15 |[0m   [33mSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m16 |[0m   [33mSparkles[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^[0m
+[31m[1m>[0m [90m17 |[0m   [33mTarget[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^[0m
+[31m[1m>[0m [90m18 |[0m   [33mTrendingDown[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m19 |[0m   [33mUserRoundSearch[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^[0m
+[31m[1m>[0m [90m20 |[0m   [33mUsers[0m,
+  [90m   |[0m [31m[1m^^^^^^^^[0m
+[31m[1m>[0m [90m21 |[0m   [33mYoutube[0m,
+  [90m   |[0m [31m[1m^^^^^^^^^^[0m
+[31m[1m>[0m [90m22 |[0m } [36mfrom[0m [32m'lucide-react'[0m;
+  [90m   |[0m [31m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m23 |[0m
+  [90m24 |[0m [36mconst[0m quickPoints = [
+  [90m25 |[0m   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+[browser] Uncaught Error: ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+    at <unknown> (Error: ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1)
+    at <unknown> (Error: (./src/components/neuroads/Suggestion3LandingPage.tsx:4:1)
+[browser] Uncaught Error: ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component]
+
+
+    at <unknown> (Error: ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1)
+    at <unknown> (Error: (./src/components/neuroads/Suggestion3LandingPage.tsx:4:1)
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Instagram doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Instagram was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Star?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Linkedin doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Linkedin was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Link?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-client] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+[browser] ./src/components/neuroads/Suggestion3LandingPage.tsx:4:1
+Export Youtube doesn't exist in target module
+   2 |
+   3 | import Image from 'next/image';
+>  4 | import {
+     | ^^^^^^^
+>  5 |   ArrowRight,
+     | ^^^^^^^^^^^^^
+>  6 |   Bot,
+     | ^^^^^^
+>  7 |   CheckCircle2,
+     | ^^^^^^^^^^^^^^^
+>  8 |   ChevronDown,
+     | ^^^^^^^^^^^^^^
+>  9 |   CircleGauge,
+     | ^^^^^^^^^^^^^^
+> 10 |   Headphones,
+     | ^^^^^^^^^^^^^
+> 11 |   Instagram,
+     | ^^^^^^^^^^^^
+> 12 |   LayoutTemplate,
+     | ^^^^^^^^^^^^^^^^^
+> 13 |   Linkedin,
+     | ^^^^^^^^^^^
+> 14 |   Radio,
+     | ^^^^^^^^
+> 15 |   Search,
+     | ^^^^^^^^^
+> 16 |   Sparkles,
+     | ^^^^^^^^^^^
+> 17 |   Target,
+     | ^^^^^^^^^
+> 18 |   TrendingDown,
+     | ^^^^^^^^^^^^^^^
+> 19 |   UserRoundSearch,
+     | ^^^^^^^^^^^^^^^^^^
+> 20 |   Users,
+     | ^^^^^^^^
+> 21 |   Youtube,
+     | ^^^^^^^^^^
+> 22 | } from 'lucide-react';
+     | ^^^^^^^^^^^^^^^^^^^^^^
+  23 |
+  24 | const quickPoints = [
+  25 |   {
+
+The export Youtube was not found in module [project]/node_modules/lucide-react/dist/esm/lucide-react.js [app-ssr] (ecmascript).
+Did you mean to import Route?
+All exports of the module are statically known (It doesn't have dynamic exports). So it's known statically that the requested export doesn't exist.
+
+Import traces:
+  Client Component Browser:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component Browser]
+    ./src/app/page.tsx [Client Component Browser]
+    ./src/app/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/neuroads/Suggestion3LandingPage.tsx [Client Component SSR]
+    ./src/app/page.tsx [Client Component SSR]
+    ./src/app/page.tsx [Server Component] 
+
+[2m[44.66ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.40ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[33.50ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.17ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 6.40ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.01ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/template-match/hero-orbit-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/hero-orbit-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes

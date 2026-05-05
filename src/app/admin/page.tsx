@@ -105,7 +105,7 @@ export default function AdminPage() {
             <p className="text-xs font-black tracking-[0.14em] uppercase text-primary">Painel administrativo</p>
             <h1 className="text-3xl md:text-4xl font-black text-text-main mt-3">Administração total NeuroAds</h1>
             <p className="text-sm md:text-base text-text-muted mt-3 max-w-4xl">
-              Controle operacional integrado do CRM, agentes de IA e financeiro, com foco em previsibilidade comercial e impacto direto no caixa.
+              Lucca atua como Secretário Executivo da operação: centraliza Comercial, Pós-venda, Captação e Suporte com prioridade por impacto financeiro no caixa.
             </p>
           </section>
 

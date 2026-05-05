@@ -37,6 +37,38 @@ function createTransporter() {
   });
 }
 
+export async function sendLuccaOperationalEmail(input: {
+  to: string;
+  subject: string;
+  html: string;
+  textFallback?: string;
+  replyTo?: string;
+}) {
+  const { smtpUser, smtpFrom } = getMailEnv();
+  const transporter = createTransporter();
+
+  if (!transporter || !smtpUser) {
+    return { success: false, error: 'Configuração SMTP ausente (SMTP_USER/SMTP_PASS).' };
+  }
+
+  try {
+    const result = await transporter.sendMail({
+      from: smtpFrom || `"Lucca" <${smtpUser}>`,
+      to: input.to,
+      replyTo: input.replyTo,
+      subject: input.subject,
+      html: input.html,
+      text: input.textFallback,
+    });
+    return { success: true, messageId: result.messageId };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Falha ao enviar email operacional do Lucca.',
+    };
+  }
+}
+
 export async function sendDiagnosisEmail(to: string, userName: string, platform: string, diagnosisMarkdown: string) {
   const { smtpUser, smtpFrom } = getMailEnv();
   const transporter = createTransporter();
