@@ -16,3 +16,21 @@ export function isAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false;
   return normalizeGmailAddress(email) === normalizeGmailAddress(ADMIN_ALLOWED_EMAIL);
 }
+
+type ProviderDataLike = { email?: string | null } | null | undefined;
+
+export function getPrimaryAuthEmail(
+  email: string | null | undefined,
+  providerData?: ProviderDataLike[]
+): string | null {
+  if (email && email.trim()) return email.trim();
+
+  if (providerData?.length) {
+    for (const provider of providerData) {
+      const providerEmail = provider?.email?.trim();
+      if (providerEmail) return providerEmail;
+    }
+  }
+
+  return null;
+}

@@ -11,7 +11,7 @@ import {
 import { getFirebaseAuth, getFirebaseDb } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { syncToHostingerReach } from '../app/actions/hostinger';
-import { isAdminEmail } from '../lib/admin-auth';
+import { getPrimaryAuthEmail, isAdminEmail } from '../lib/admin-auth';
 
 interface UserProfile {
   isPremium: boolean;
@@ -26,6 +26,7 @@ interface UserProfile {
 
 interface AuthContextType {
   user: User | null;
+  userEmail: string | null;
   profile: UserProfile | null;
   loading: boolean;
   isAdmin: boolean;
@@ -35,9 +36,51 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AUTH_EMAIL_CACHE_PREFIX = 'neuroads_auth_email_';
+
+function isFirestoreOfflineError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') return false;
+
+  const code = 'code' in error ? String((error as { code?: string }).code ?? '') : '';
+  if (code === 'unavailable') return true;
+
+  const message = 'message' in error ? String((error as { message?: string }).message ?? '').toLowerCase() : '';
+  return message.includes('client is offline') || message.includes('offline');
+}
+
+function getCachedAuthEmail(uid: string): string | null {
+  if (typeof window === 'undefined') return null;
+  const value = window.localStorage.getItem(`${AUTH_EMAIL_CACHE_PREFIX}${uid}`);
+  return value?.trim() || null;
+}
+
+function cacheAuthEmail(uid: string, email: string | null): void {
+  if (typeof window === 'undefined' || !email?.trim()) return;
+  window.localStorage.setItem(`${AUTH_EMAIL_CACHE_PREFIX}${uid}`, email.trim());
+}
+
+async function resolvePrimaryAuthEmail(firebaseUser: User | null): Promise<string | null> {
+  if (!firebaseUser) return null;
+
+  const directEmail = getPrimaryAuthEmail(firebaseUser.email, firebaseUser.providerData);
+  if (directEmail) return directEmail;
+
+  try {
+    const token = await firebaseUser.getIdTokenResult();
+    const claimEmail = token?.claims?.email;
+    if (typeof claimEmail === 'string' && claimEmail.trim()) {
+      return claimEmail.trim();
+    }
+  } catch {
+    // Ignore token inspection failures and continue with cache fallback.
+  }
+
+  return getCachedAuthEmail(firebaseUser.uid);
+}
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -46,6 +89,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const db = getFirebaseDb();
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       setUser(firebaseUser);
+      const primaryEmail = await resolvePrimaryAuthEmail(firebaseUser);
+      setUserEmail(primaryEmail);
+      if (firebaseUser && primaryEmail) {
+        cacheAuthEmail(firebaseUser.uid, primaryEmail);
+      }
 
       if (firebaseUser) {
         try {
@@ -57,13 +105,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             try {
               await setDoc(doc(db, 'users', firebaseUser.uid), newProfile);
             } catch (writeErr) {
-              console.warn('Firestore write failed (offline?):', writeErr);
+              if (isFirestoreOfflineError(writeErr)) {
+                console.info('Firestore temporariamente offline. Prosseguindo com perfil local.');
+              } else {
+                console.warn('Firestore write failed:', writeErr);
+              }
             }
             setProfile(newProfile);
 
-            if (firebaseUser.email) {
+            if (primaryEmail) {
               syncToHostingerReach({
-                email: firebaseUser.email,
+                email: primaryEmail,
                 name: firebaseUser.displayName || 'Usuário NeuroAds',
                 tags: ['Usuários Ativos'],
               }).catch(err => console.error('Reach sync failed:', err));
@@ -71,11 +123,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
         } catch (err) {
           // Firestore offline or quota error — set minimal profile so the app still opens
-          console.warn('Firestore getDoc failed (offline?):', err);
+          if (isFirestoreOfflineError(err)) {
+            console.info('Firestore temporariamente offline. Abrindo app com fallback local.');
+          } else {
+            console.warn('Firestore getDoc failed:', err);
+          }
           setProfile({ isPremium: false, usageStats: {} });
         }
       } else {
         setProfile(null);
+        setUserEmail(null);
       }
 
       setLoading(false);
@@ -88,7 +145,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const loginWithGoogle = async () => {
     const auth = getFirebaseAuth();
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    provider.addScope('email');
+    provider.addScope('profile');
+    provider.setCustomParameters({ prompt: 'select_account' });
+
+    const result = await signInWithPopup(auth, provider);
+    const primaryEmail = await resolvePrimaryAuthEmail(result.user);
+    if (primaryEmail) {
+      setUserEmail(primaryEmail);
+      cacheAuthEmail(result.user.uid, primaryEmail);
+    }
   };
 
   const logout = async () => {
@@ -115,7 +181,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, isAdmin: isAdminEmail(user?.email), loginWithGoogle, logout, checkUsageLimit }}>
+    <AuthContext.Provider value={{ user, userEmail, profile, loading, isAdmin: isAdminEmail(userEmail), loginWithGoogle, logout, checkUsageLimit }}>
       {children}
     </AuthContext.Provider>
   );

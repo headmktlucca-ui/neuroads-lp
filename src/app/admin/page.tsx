@@ -3,11 +3,28 @@
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { useAuth } from '../../context/AuthContext';
-import { isAdminEmail } from '../../lib/admin-auth';
 import AdminControlCenter from '../../components/admin/AdminControlCenter';
 
 export default function AdminPage() {
-  const { user, loading, isAdmin, loginWithGoogle, logout } = useAuth();
+  const { user, userEmail, loading, isAdmin, loginWithGoogle, logout } = useAuth();
+
+  const resetLocalSession = async () => {
+    await logout();
+    if (typeof window !== 'undefined') {
+      const keysToRemove = Object.keys(window.localStorage).filter((key) =>
+        key.startsWith('firebase:') || key.startsWith('neuroads_auth_email_')
+      );
+      for (const key of keysToRemove) {
+        window.localStorage.removeItem(key);
+      }
+      try {
+        window.indexedDB.deleteDatabase('firebaseLocalStorageDb');
+      } catch {
+        // no-op
+      }
+      window.location.reload();
+    }
+  };
 
   if (loading) {
     return (
@@ -38,7 +55,7 @@ export default function AdminPage() {
     );
   }
 
-  if (!isAdmin || !isAdminEmail(user.email)) {
+  if (!isAdmin) {
     return (
       <main className="min-h-screen bg-bg-main flex items-center justify-center px-4">
         <section className="w-full max-w-lg rounded-3xl border border-[#FFD3D3] bg-[#FFF5F5] p-8 shadow-sm">
@@ -48,7 +65,7 @@ export default function AdminPage() {
             Este ambiente aceita apenas o e-mail <span className="font-bold text-text-main">contato.neuroads@gmail.com</span>.
           </p>
           <p className="text-sm text-text-muted mt-2">
-            Conta atual: <span className="font-bold text-text-main">{user.email || 'não identificado'}</span>
+            Conta atual: <span className="font-bold text-text-main">{userEmail || 'não identificado'}</span>
           </p>
           <button
             type="button"
@@ -66,6 +83,13 @@ export default function AdminPage() {
             className="mt-3 rounded-xl border border-red-200 bg-white px-5 py-3 text-xs font-black tracking-widest uppercase text-[#D14343]"
           >
             Sair da conta atual
+          </button>
+          <button
+            type="button"
+            onClick={resetLocalSession}
+            className="mt-3 rounded-xl border border-border bg-white px-5 py-3 text-xs font-black tracking-widest uppercase text-text-muted"
+          >
+            Resetar sessão local
           </button>
         </section>
       </main>

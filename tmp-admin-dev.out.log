@@ -1,0 +1,26 @@
+
+> temp-app@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.21.32.1:3000
+- Environments: .env.local
+✓ Ready in 2.5s
+Creating turbopack project {
+  dir: 'C:\\Users\\claud\\OneDrive\\Documentos\\NeuroAds\\LP',
+  testMode: true
+}
+- Experiments (use with caution):
+  · serverActions
+
+○ Compiling / ...
+ GET / 200 in 9.3s (next.js: 4.6s, application-code: 4.7s)
+ GET /admin 200 in 9.3s (next.js: 7.6s, application-code: 1678ms)
+ GET /admin 200 in 816ms (next.js: 173ms, application-code: 642ms)
+ GET /admin 200 in 169ms (next.js: 10ms, application-code: 159ms)
+✓ Compiled in 744ms
+ GET /admin 200 in 1742ms (next.js: 25ms, application-code: 1717ms)
+ GET / 200 in 1602ms (next.js: 447ms, application-code: 1155ms)
+✓ Compiled in 693ms
+ GET /admin 200 in 3.5s (next.js: 1313ms, application-code: 2.2s)

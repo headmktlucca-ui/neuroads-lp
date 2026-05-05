@@ -1,0 +1,35 @@
+
+[2m[1297.01ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[   0.30ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 215.65ms][22m  [2m ↳ [22mSetup compiler
+[2m[   2.01ms][22m    [2m ↳ [22mPostCSS AST -> Tailwind CSS AST
+[2m[ 213.52ms][22m    [2m ↳ [22mCreate compiler
+[2m[   1.23ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[  14.72ms][22m  [2m ↳ [22mSetup scanner
+[2m[ 443.91ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 132.92ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 429.95ms][22m  [2m ↳ [22mBuild utilities
+[2m[  41.92ms][22m  [2m ↳ [22mTransform Tailwind CSS AST into PostCSS AST
+[2m[  14.58ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[305.76ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.02ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.77ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[189.67ms][22m  [2m ↳ [22mScan for candidates
+[2m[  6.44ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 86.80ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 21.33ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+⚠ Fast Refresh had to perform a full reload when ./src/context/AuthContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+⚠ Fast Refresh had to perform a full reload when ./src/context/AuthContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+
+[2m[317.28ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.02ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.89ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[264.00ms][22m  [2m ↳ [22mScan for candidates
+[2m[  3.82ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 31.73ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 16.46ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
