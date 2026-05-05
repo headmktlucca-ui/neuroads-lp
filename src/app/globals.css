@@ -217,18 +217,8 @@ body {
   background-size: 3px 3px;
 }
 
-/* ── PREMIUM LIGHT GLOW ── */
-body::before {
-  content: '';
-  position: fixed;
-  top: -10%;
-  right: -5%;
-  width: 800px;
-  height: 800px;
-  background: radial-gradient(circle, rgba(255, 77, 0, 0.03) 0%, transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
+/* Disabled extra global glow to preserve template fidelity */
+body::before { content: none; }
 
 .hero-bg-image-wrap {
   position: absolute;

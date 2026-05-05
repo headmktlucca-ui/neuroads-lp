@@ -84,12 +84,13 @@ export default function Navbar() {
   const [connectorStatus, setConnectorStatus] = useState<ConnectorStatus>(DEFAULT_CONNECTOR_STATUS);
   const [connectorConfig, setConnectorConfig] = useState(DEFAULT_CONNECTOR_CONFIG);
   const [whatsApp, setWhatsApp] = useState('');
-  const { user, profile, logout } = useAuth();
+  const { user, profile, logout, isAdmin } = useAuth();
   const pathname = usePathname();
 
   const navLinks = [
     { name: 'Hub de Agentes', href: '/hub' },
     { name: 'Dashboard', href: '/dashboard' },
+    ...(isAdmin ? [{ name: 'Admin', href: '/admin' }] : []),
   ];
 
   const isLinkActive = (href: string): boolean => {

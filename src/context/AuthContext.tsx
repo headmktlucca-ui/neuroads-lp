@@ -11,6 +11,7 @@ import {
 import { getFirebaseAuth, getFirebaseDb } from '../lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { syncToHostingerReach } from '../app/actions/hostinger';
+import { isAdminEmail } from '../lib/admin-auth';
 
 interface UserProfile {
   isPremium: boolean;
@@ -27,6 +28,7 @@ interface AuthContextType {
   user: User | null;
   profile: UserProfile | null;
   loading: boolean;
+  isAdmin: boolean;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   checkUsageLimit: (appName: string) => Promise<boolean>;
@@ -113,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, loginWithGoogle, logout, checkUsageLimit }}>
+    <AuthContext.Provider value={{ user, profile, loading, isAdmin: isAdminEmail(user?.email), loginWithGoogle, logout, checkUsageLimit }}>
       {children}
     </AuthContext.Provider>
   );

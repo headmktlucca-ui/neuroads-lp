@@ -1,7 +1,19 @@
 import type { Metadata } from "next";
+import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
-import SupportChat from "../components/support/SupportChat";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-ui",
+  display: "swap",
+});
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-head",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "NeuroAds | Gestão de Tráfego de Alta Performance e Funis Automatizados",
@@ -28,10 +40,9 @@ export default function RootLayout({
       suppressHydrationWarning
       className="h-full antialiased scroll-smooth"
     >
-      <body className="min-h-full flex flex-col font-sans bg-[var(--background)] text-[var(--foreground)]">
+      <body className={`${inter.variable} ${manrope.variable} min-h-full flex flex-col font-sans bg-[var(--background)] text-[var(--foreground)]`}>
         <AuthProvider>
           {children}
-          <SupportChat />
         </AuthProvider>
       </body>
     </html>
