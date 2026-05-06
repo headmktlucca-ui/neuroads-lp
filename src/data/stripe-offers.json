@@ -1,0 +1,113 @@
+{
+  "generatedAt": "2026-05-05T21:38:31.749Z",
+  "currency": "brl",
+  "stripeApiVersion": "2026-02-25.clover",
+  "deactivation": {
+    "deactivatedProducts": 1,
+    "deactivatedPrices": 0,
+    "skippedPrices": 0
+  },
+  "plans": [
+    {
+      "slug": "starter-5",
+      "name": "Starter 5 Agentes",
+      "amount": 29900,
+      "description": "Plano mensal com 5 agentes e limite operacional de 1.000 execuções/mês.",
+      "limits": {
+        "agents": 5,
+        "includedExecutions": 1000,
+        "extraCreditUnitPrice": 0.45
+      },
+      "productId": "prod_USmEgemQ27B1KL",
+      "priceId": "price_1TTqffFeN6QA274k4Qm7LThW",
+      "mode": "subscription",
+      "trialDays": 14
+    },
+    {
+      "slug": "growth-10",
+      "name": "Growth 10 Agentes",
+      "amount": 39900,
+      "description": "Plano mensal com 10 agentes e limite operacional de 2.500 execuções/mês.",
+      "limits": {
+        "agents": 10,
+        "includedExecutions": 2500,
+        "extraCreditUnitPrice": 0.39
+      },
+      "productId": "prod_USmE6FjYEle7B1",
+      "priceId": "price_1TTqfgFeN6QA274kVJ3UhZYr",
+      "mode": "subscription",
+      "trialDays": 14
+    },
+    {
+      "slug": "scale-15",
+      "name": "Scale 15 Agentes",
+      "amount": 49900,
+      "description": "Plano mensal com 15 agentes e limite operacional de 4.500 execuções/mês.",
+      "limits": {
+        "agents": 15,
+        "includedExecutions": 4500,
+        "extraCreditUnitPrice": 0.34
+      },
+      "productId": "prod_USmEgX65PQ9qKa",
+      "priceId": "price_1TTqfgFeN6QA274krKyHCg3n",
+      "mode": "subscription",
+      "trialDays": 14
+    },
+    {
+      "slug": "performance-20",
+      "name": "Performance 20 Agentes",
+      "amount": 59900,
+      "description": "Plano mensal com 20 agentes e limite operacional de 7.000 execuções/mês.",
+      "limits": {
+        "agents": 20,
+        "includedExecutions": 7000,
+        "extraCreditUnitPrice": 0.3
+      },
+      "productId": "prod_USmE7eAxjT4ckj",
+      "priceId": "price_1TTqfhFeN6QA274kaVCzpVLo",
+      "mode": "subscription",
+      "trialDays": 14
+    }
+  ],
+  "creditPacks": [
+    {
+      "slug": "credit-pack-100",
+      "name": "Créditos Avulsos 100 Execuções",
+      "amount": 4500,
+      "description": "Pacote avulso com 100 execuções adicionais.",
+      "limits": {
+        "includedExecutions": 100,
+        "unitPrice": 0.45
+      },
+      "productId": "prod_USmEcFeLBuX3ZC",
+      "priceId": "price_1TTqfhFeN6QA274k0IsocB6l",
+      "mode": "payment"
+    },
+    {
+      "slug": "credit-pack-500",
+      "name": "Créditos Avulsos 500 Execuções",
+      "amount": 19000,
+      "description": "Pacote avulso com 500 execuções adicionais.",
+      "limits": {
+        "includedExecutions": 500,
+        "unitPrice": 0.38
+      },
+      "productId": "prod_USmEuKmjJ9GukG",
+      "priceId": "price_1TTqfiFeN6QA274ko4YwLnvN",
+      "mode": "payment"
+    },
+    {
+      "slug": "credit-pack-1000",
+      "name": "Créditos Avulsos 1000 Execuções",
+      "amount": 33000,
+      "description": "Pacote avulso com 1.000 execuções adicionais.",
+      "limits": {
+        "includedExecutions": 1000,
+        "unitPrice": 0.33
+      },
+      "productId": "prod_USmErlnwPGBKt8",
+      "priceId": "price_1TTqfjFeN6QA274kf7wloBwd",
+      "mode": "payment"
+    }
+  ]
+}

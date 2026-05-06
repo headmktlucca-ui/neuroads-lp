@@ -133,7 +133,7 @@ export default function AgentEntryPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/');
+      router.replace('/login?next=/hub');
     }
   }, [loading, router, user]);
 

@@ -16,7 +16,7 @@ import {
   updateDoc,
   type DocumentData,
 } from 'firebase/firestore';
-import { Building2, CircleUserRound, Handshake, ListChecks, MessageSquareText, Trash2 } from 'lucide-react';
+import { Building2, CircleHelp, CircleUserRound, Handshake, ListChecks, MessageSquareText, Trash2 } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
 
 interface CustomCrmSuiteProps {
@@ -81,6 +81,27 @@ function formatCurrency(value: number): string {
 
 function formatDate(value: number): string {
   return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(value);
+}
+
+function normalizeText(value: string): string {
+  return value.replace(/\s+/g, ' ').trim();
+}
+
+function InfoTooltip({ label, content }: { label: string; content: string }) {
+  return (
+    <span className="relative inline-flex items-center group">
+      <button
+        type="button"
+        aria-label={label}
+        className="inline-flex items-center justify-center rounded-full text-text-dim hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary/30"
+      >
+        <CircleHelp size={14} />
+      </button>
+      <span className="pointer-events-none absolute left-1/2 top-[calc(100%+10px)] z-20 w-64 -translate-x-1/2 rounded-xl border border-[#FFE0C2] bg-white px-3 py-2 text-[11px] font-semibold leading-relaxed text-text-main shadow-[0_10px_24px_rgba(15,23,42,0.14)] opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:translate-y-0">
+        {content}
+      </span>
+    </span>
+  );
 }
 
 export default function CustomCrmSuite({ userId }: CustomCrmSuiteProps) {
@@ -245,11 +266,14 @@ export default function CustomCrmSuite({ userId }: CustomCrmSuiteProps) {
 
     const db = getFirebaseDb();
     await addDoc(collection(db, 'admin_workspaces', userId, 'crm_accounts'), {
-      name: accountForm.name.trim(),
-      segment: accountForm.segment.trim(),
+      name: normalizeText(accountForm.name),
+      normalizedName: normalizeText(accountForm.name).toLowerCase(),
+      segment: normalizeText(accountForm.segment),
       monthlyRevenue,
-      owner: accountForm.owner.trim(),
+      owner: normalizeText(accountForm.owner),
       status: accountForm.status,
+      source: 'admin-ui',
+      createdBy: 'admin-ui',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
@@ -263,10 +287,13 @@ export default function CustomCrmSuite({ userId }: CustomCrmSuiteProps) {
 
     await addDoc(collection(db, 'admin_workspaces', userId, 'crm_contacts'), {
       accountId: contactForm.accountId,
-      name: contactForm.name.trim(),
-      email: contactForm.email.trim(),
-      whatsapp: contactForm.whatsapp.trim(),
-      role: contactForm.role.trim(),
+      name: normalizeText(contactForm.name),
+      normalizedName: normalizeText(contactForm.name).toLowerCase(),
+      email: contactForm.email.trim().toLowerCase(),
+      whatsapp: contactForm.whatsapp.replace(/\D/g, ''),
+      role: normalizeText(contactForm.role),
+      source: 'admin-ui',
+      createdBy: 'admin-ui',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
@@ -282,12 +309,14 @@ export default function CustomCrmSuite({ userId }: CustomCrmSuiteProps) {
     const db = getFirebaseDb();
     await addDoc(collection(db, 'admin_workspaces', userId, 'crm_pipeline_deals'), {
       accountId: dealForm.accountId,
-      title: dealForm.title.trim(),
+      title: normalizeText(dealForm.title),
       stage: pipelineStages[0] || DEFAULT_PIPELINE[0],
       amount,
       probability: Number.isFinite(probability) ? probability : 30,
       expectedCloseDate: dealForm.expectedCloseDate,
-      owner: dealForm.owner.trim(),
+      owner: normalizeText(dealForm.owner),
+      source: 'admin-ui',
+      createdBy: 'admin-ui',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
@@ -314,13 +343,13 @@ export default function CustomCrmSuite({ userId }: CustomCrmSuiteProps) {
     await deleteDoc(doc(db, 'admin_workspaces', userId, collectionName, id));
   }
 
-  const getAccountName = (accountId: string) => accounts.find((account) => account.id === accountId)?.name || 'Conta não encontrada';
+  const getAccountName = (accountId: string) => accounts.find((account) => account.id === accountId)?.name || 'Empresa não encontrada';
 
   return (
-    <section className="rounded-3xl border border-border bg-white p-6 space-y-6">
+    <section id="crm-custom" className="rounded-3xl border border-[#FFB37A] bg-white p-6 space-y-6 scroll-mt-32 shadow-[0_14px_34px_rgba(255,107,0,0.14)]">
       <div>
-        <p className="text-xs font-black tracking-[0.14em] uppercase text-primary">CRM NeuroAds Personalizado</p>
-        <h2 className="text-2xl font-black text-text-main mt-2">Contas, contatos, pipeline e interações do Lucca</h2>
+        <p className="text-xs font-black tracking-[0.14em] uppercase text-primary">CRM</p>
+        <h2 className="text-2xl font-black text-text-main mt-2">Empresas, contatos, pipeline e interações do Lucca</h2>
         <p className="text-sm text-text-muted mt-1">
           Modelo focado em previsibilidade comercial, com visão única entre operação e comunicação dos canais.
         </p>
@@ -328,7 +357,7 @@ export default function CustomCrmSuite({ userId }: CustomCrmSuiteProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
         <article className="rounded-2xl border border-border bg-bg-secondary p-4">
-          <p className="text-xs text-text-dim font-bold">Contas</p>
+          <p className="text-xs text-text-dim font-bold">Empresas</p>
           <p className="text-2xl font-black text-text-main mt-1">{totals.accounts}</p>
         </article>
         <article className="rounded-2xl border border-border bg-bg-secondary p-4">
@@ -345,7 +374,7 @@ export default function CustomCrmSuite({ userId }: CustomCrmSuiteProps) {
         </article>
       </div>
 
-      <div className="rounded-2xl border border-border bg-bg-secondary p-4 space-y-3">
+      <div id="canais" className="rounded-2xl border border-border bg-bg-secondary p-4 space-y-3 scroll-mt-32">
         <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-dim">
           <ListChecks size={14} /> Estágios do pipeline
         </div>
@@ -372,8 +401,14 @@ export default function CustomCrmSuite({ userId }: CustomCrmSuiteProps) {
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         <article className="rounded-2xl border border-border bg-bg-secondary p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-dim"><Building2 size={14} /> Contas</div>
-          <input value={accountForm.name} onChange={(e) => setAccountForm((p) => ({ ...p, name: e.target.value }))} placeholder="Nome da conta" className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold" />
+          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-dim">
+            <Building2 size={14} /> Empresas
+            <InfoTooltip
+              label="Ajuda sobre empresas"
+              content="Empresa representa o cliente no CRM. Aqui você registra segmento, faturamento mensal, responsável e status para priorizar ações por impacto financeiro."
+            />
+          </div>
+          <input value={accountForm.name} onChange={(e) => setAccountForm((p) => ({ ...p, name: e.target.value }))} placeholder="Nome da empresa" className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold" />
           <input value={accountForm.segment} onChange={(e) => setAccountForm((p) => ({ ...p, segment: e.target.value }))} placeholder="Segmento" className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold" />
           <input value={accountForm.monthlyRevenue} onChange={(e) => setAccountForm((p) => ({ ...p, monthlyRevenue: e.target.value }))} placeholder="Faturamento mensal" type="number" className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold" />
           <input value={accountForm.owner} onChange={(e) => setAccountForm((p) => ({ ...p, owner: e.target.value }))} placeholder="Responsável" className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold" />
@@ -382,7 +417,7 @@ export default function CustomCrmSuite({ userId }: CustomCrmSuiteProps) {
             <option value="Ativo">Ativo</option>
             <option value="Risco">Risco</option>
           </select>
-          <button type="button" onClick={createAccount} className="rounded-xl bg-gradient-to-r from-[#FF6B00] to-[#FF8B2D] px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white">Salvar conta</button>
+          <button type="button" onClick={createAccount} className="rounded-xl bg-gradient-to-r from-[#FF6B00] to-[#FF8B2D] px-4 py-2 text-[11px] font-bold uppercase tracking-wider text-white">Salvar empresa</button>
 
           <div className="space-y-2">
             {accounts.map((account) => (
@@ -397,9 +432,15 @@ export default function CustomCrmSuite({ userId }: CustomCrmSuiteProps) {
         </article>
 
         <article className="rounded-2xl border border-border bg-bg-secondary p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-dim"><CircleUserRound size={14} /> Contatos</div>
+          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-dim">
+            <CircleUserRound size={14} /> Contatos
+            <InfoTooltip
+              label="Ajuda sobre contatos"
+              content="Contato é a pessoa-chave dentro da empresa. Email e WhatsApp permitem que o Lucca registre e execute comunicações de comercial, pós-venda, captação e suporte."
+            />
+          </div>
           <select value={contactForm.accountId} onChange={(e) => setContactForm((p) => ({ ...p, accountId: e.target.value }))} className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold">
-            <option value="">Selecione a conta</option>
+            <option value="">Selecione a empresa</option>
             {accounts.map((account) => (
               <option key={account.id} value={account.id}>{account.name}</option>
             ))}
@@ -423,9 +464,15 @@ export default function CustomCrmSuite({ userId }: CustomCrmSuiteProps) {
         </article>
 
         <article className="rounded-2xl border border-border bg-bg-secondary p-4 space-y-3">
-          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-dim"><Handshake size={14} /> Negócios</div>
+          <div className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-text-dim">
+            <Handshake size={14} /> Negócios
+            <InfoTooltip
+              label="Ajuda sobre negócios"
+              content="Negócio é uma oportunidade comercial em andamento. Valor, probabilidade e etapa do funil permitem prever receita e identificar gargalos na conversão."
+            />
+          </div>
           <select value={dealForm.accountId} onChange={(e) => setDealForm((p) => ({ ...p, accountId: e.target.value }))} className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold">
-            <option value="">Selecione a conta</option>
+            <option value="">Selecione a empresa</option>
             {accounts.map((account) => (
               <option key={account.id} value={account.id}>{account.name}</option>
             ))}

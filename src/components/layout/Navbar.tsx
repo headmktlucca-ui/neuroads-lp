@@ -1,10 +1,10 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
-import { ChevronDown, User, CreditCard, LogOut, X, Building2, PlugZap, CheckCircle2, Database, Gauge } from 'lucide-react';
+import { ChevronDown, User, LogOut, X, PlugZap, CheckCircle2, Database, Gauge } from 'lucide-react';
 import { HTTPS_PREFIX, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 
 function getGreeting(): string {
@@ -52,7 +52,8 @@ const DEFAULT_COMPANY_FORM = {
   site: HTTPS_PREFIX,
   instagram: '',
   linkedin: '',
-  facebook: '',
+  tiktok: '',
+  blog: '',
 };
 
 const DEFAULT_CONNECTOR_CONFIG = {
@@ -86,17 +87,163 @@ export default function Navbar() {
   const [whatsApp, setWhatsApp] = useState('');
   const { user, profile, logout, isAdmin } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [currentHash, setCurrentHash] = useState('');
+  const settingsMenuRef = useRef<HTMLDivElement | null>(null);
 
-  const navLinks = [
-    { name: 'Hub de Agentes', href: '/hub' },
-    { name: 'Dashboard', href: '/dashboard' },
-    ...(isAdmin ? [{ name: 'Admin', href: '/admin' }] : []),
-  ];
+  useEffect(() => {
+    if (!isSettingsOpen) return;
+
+    const handleOutsidePointerDown = (event: PointerEvent) => {
+      const target = event.target as Node | null;
+      if (!target) return;
+      if (settingsMenuRef.current && !settingsMenuRef.current.contains(target)) {
+        setIsSettingsOpen(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', handleOutsidePointerDown);
+    return () => {
+      document.removeEventListener('pointerdown', handleOutsidePointerDown);
+    };
+  }, [isSettingsOpen]);
+
+  useEffect(() => {
+    const syncHash = () => {
+      if (typeof window !== 'undefined') {
+        setCurrentHash(window.location.hash || '');
+      }
+    };
+
+    syncHash();
+    if (typeof window !== 'undefined') {
+      window.addEventListener('hashchange', syncHash);
+    }
+
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('hashchange', syncHash);
+      }
+    };
+  }, [pathname]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    if (!pathname?.startsWith('/admin')) return;
+
+    const sectionIds = [
+      'operacao-lucca',
+      'crm-custom',
+      'crm-funil',
+      'gestao-agentes',
+      'gestao-financeira',
+      'canais',
+    ];
+
+    const resolveActiveSection = () => {
+      const anchorY = 170;
+      let candidate: string | null = null;
+      let nearestAbove: { id: string; distance: number } | null = null;
+      let nearestBelow: { id: string; distance: number } | null = null;
+
+      for (const id of sectionIds) {
+        const element = document.getElementById(id);
+        if (!element) continue;
+
+        const rect = element.getBoundingClientRect();
+
+        if (rect.top <= anchorY && rect.bottom >= anchorY) {
+          candidate = id;
+          break;
+        }
+
+        if (rect.top < anchorY) {
+          const distance = anchorY - rect.top;
+          if (!nearestAbove || distance < nearestAbove.distance) {
+            nearestAbove = { id, distance };
+          }
+        } else {
+          const distance = rect.top - anchorY;
+          if (!nearestBelow || distance < nearestBelow.distance) {
+            nearestBelow = { id, distance };
+          }
+        }
+      }
+
+      if (!candidate) {
+        candidate = nearestBelow?.id || nearestAbove?.id || null;
+      }
+
+      if (candidate) {
+        const nextHash = `#${candidate}`;
+        setCurrentHash((prev) => (prev === nextHash ? prev : nextHash));
+      }
+    };
+
+    resolveActiveSection();
+    window.addEventListener('scroll', resolveActiveSection, { passive: true });
+    window.addEventListener('resize', resolveActiveSection);
+
+    return () => {
+      window.removeEventListener('scroll', resolveActiveSection);
+      window.removeEventListener('resize', resolveActiveSection);
+    };
+  }, [pathname]);
+
+  const isConnectorsModalOpen = isConnectorsOpen || searchParams.get('connectors') === '1';
+  const isCompanyModalOpen = isCompanyOpen || searchParams.get('brand') === '1';
+
+  const closeConnectorsModal = () => {
+    setIsConnectorsOpen(false);
+    if (searchParams.get('connectors') === '1') {
+      router.replace(pathname || '/hub', { scroll: false });
+    }
+  };
+
+  const closeCompanyModal = () => {
+    setIsCompanyOpen(false);
+    if (searchParams.get('brand') === '1') {
+      router.replace(pathname || '/hub', { scroll: false });
+    }
+  };
+
+  const navLinks = pathname?.startsWith('/admin') && isAdmin
+    ? [
+        { name: 'Administrativo', href: '/admin#operacao-lucca' },
+        { name: 'Cadastros', href: '/admin#crm-custom' },
+        { name: 'CRM Funil', href: '/admin#crm-funil' },
+        { name: 'Agentes', href: '/admin#gestao-agentes' },
+        { name: 'Financeiro', href: '/admin#gestao-financeira' },
+      ]
+      : [
+        { name: 'Hub Estratégico', href: '/hub' },
+        { name: 'Performance', href: '/hub/performance' },
+        { name: 'Criativos', href: '/hub/criativos' },
+        { name: 'Técnico', href: '/hub/tecnico' },
+        { name: 'Inteligência', href: '/hub/inteligencia' },
+      ];
+  const desktopNavClass = pathname?.startsWith('/admin')
+    ? 'hidden md:flex items-center gap-9'
+    : 'hidden md:flex items-center gap-10';
 
   const isLinkActive = (href: string): boolean => {
     if (!pathname) return false;
-    if (href === '/hub') return pathname === '/hub' || pathname.startsWith('/hub/');
-    return pathname === href || pathname.startsWith(`${href}/`);
+    const [basePath, hash] = href.split('#');
+    if (basePath === '/hub') {
+      return pathname === '/hub' || pathname.startsWith('/hub/agente') || pathname.startsWith('/hub/laboratorio-agentes');
+    }
+    if (basePath === '/admin' && hash) {
+      return pathname === '/admin' && currentHash === `#${hash}`;
+    }
+    return pathname === basePath || pathname.startsWith(`${basePath}/`);
+  };
+
+  const handleNavLinkClick = (href: string) => {
+    const [basePath, hash] = href.split('#');
+    if (basePath === '/admin' && hash) {
+      setCurrentHash(`#${hash}`);
+    }
   };
 
   const usageCount = profile?.usageStats ? Object.keys(profile.usageStats).length : 0;
@@ -132,7 +279,8 @@ export default function Navbar() {
           site: parsed.site ? normalizeHttpsMaskedUrlInput(parsed.site) : HTTPS_PREFIX,
           instagram: parsed.instagram || '',
           linkedin: parsed.linkedin || '',
-          facebook: parsed.facebook || '',
+          tiktok: parsed.tiktok || '',
+          blog: parsed.blog || '',
         };
       }
 
@@ -203,47 +351,48 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-[200] pt-6 px-6">
-      <nav className="mx-auto max-w-[1200px] transition-all duration-700">
-        <div className="glass-pill px-8 py-3 flex items-center justify-between transition-all duration-500 shadow-2xl bg-white/80 border-border/80">
+    <header className="fixed top-0 left-0 w-full z-[200] pt-3 px-4 lg:px-6">
+      <nav className="mx-auto max-w-[1240px] transition-all duration-700">
+        <div className="rounded-[32px] border border-[#E7EAF0] bg-white px-6 lg:px-10 py-3 flex items-center justify-between transition-all duration-500 shadow-[0_10px_28px_rgba(15,23,42,0.06)]">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center group transition-transform hover:scale-[1.02]">
+            <Link href="/" className="flex items-center group transition-transform duration-300 hover:scale-[1.01]">
               <Image
                 src="/images/logo2026.png"
                 alt="NeuroAds Logo"
                 width={192}
                 height={48}
-                className="h-10 lg:h-12 w-auto object-contain"
+                className="h-9 lg:h-10 w-auto object-contain"
               />
             </Link>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center gap-10">
+          <div className={`${desktopNavClass} flex-1 justify-center px-8`}>
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-[14px] font-bold transition-all ${
-                  isLinkActive(link.href) ? 'text-[#0A9D57]' : 'text-text-dim hover:text-primary'
+                onClick={() => handleNavLinkClick(link.href)}
+                className={`text-[15px] leading-none font-semibold transition-colors duration-200 ${
+                  isLinkActive(link.href) ? 'text-[#0A9D57]' : 'text-[#344054] hover:text-[#111827]'
                 }`}
               >
                 {link.name}
               </Link>
             ))}
+          </div>
 
-            {/* User greeting + submenu (only when logged in) */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* User menu (only when logged in) */}
             {user && (
-              <div className="relative">
+              <div ref={settingsMenuRef} className="relative">
                 <button
                   onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                  className="relative px-8 py-3.5 group overflow-hidden rounded-full transition-all flex items-center gap-3 bg-gradient-to-r from-[#FF6B00] to-[#FF7A00] text-white shadow-[0_12px_30px_rgba(255,107,0,0.35)] hover:brightness-105 active:scale-[0.98]"
+                  className="relative size-11 group overflow-hidden rounded-full transition-all flex items-center justify-center border border-[#E5E7EB] bg-white text-[#344054] hover:text-[#111827]"
                 >
-                  <span className="relative z-10 text-white text-[14px] font-black tracking-[0.02em]">
-                    {getGreeting()}, {getFirstName(user.displayName || user.email)}!
-                  </span>
-                  <ChevronDown size={14} className={`relative z-10 text-white transition-transform duration-300 ${isSettingsOpen ? 'rotate-180' : ''}`} />
+                  <User size={16} className="relative z-10" />
+                  <ChevronDown size={12} className={`relative z-10 transition-transform duration-300 ${isSettingsOpen ? 'rotate-180' : ''}`} />
                 </button>
 
                 {/* Submenu */}
@@ -258,9 +407,6 @@ export default function Navbar() {
                       className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-text-main hover:text-primary hover:bg-[#FFF8F3] transition-all flex items-center gap-4 normal-case"
                     >
                       <User size={15} className="text-text-dim" /> Meu perfil
-                    </button>
-                    <button className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-text-main hover:text-primary hover:bg-[#FFF8F3] transition-all flex items-center gap-4 normal-case">
-                      <CreditCard size={15} className="text-text-dim" /> Assinatura
                     </button>
                     <button
                       onClick={() => {
@@ -278,7 +424,7 @@ export default function Navbar() {
                       }}
                       className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-text-main hover:text-primary hover:bg-[#FFF8F3] transition-all flex items-center gap-4 normal-case"
                     >
-                      <Building2 size={15} className="text-text-dim" /> Sobre a Empresa
+                      <User size={15} className="text-text-dim" /> Sua Empresa
                     </button>
                     <div className="h-px bg-border mx-7 my-2" />
                     <button
@@ -319,7 +465,10 @@ export default function Navbar() {
             <Link
               key={link.name}
               href={link.href}
-              onClick={() => setIsMenuOpen(false)}
+              onClick={() => {
+                handleNavLinkClick(link.href);
+                setIsMenuOpen(false);
+              }}
               className={`text-lg font-black tracking-[0.08em] transition-colors ${
                 isLinkActive(link.href) ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
               }`}
@@ -344,7 +493,6 @@ export default function Navbar() {
               >
                 MEU PERFIL
               </button>
-              <button className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary">ASSINATURA</button>
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
@@ -353,15 +501,6 @@ export default function Navbar() {
                 className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
               >
                 CONECTORES
-              </button>
-              <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  setIsCompanyOpen(true);
-                }}
-                className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
-              >
-                SOBRE A EMPRESA
               </button>
               <button
                 onClick={() => { logout(); setIsMenuOpen(false); }}
@@ -454,20 +593,20 @@ export default function Navbar() {
       )}
 
       {/* Company Modal */}
-      {isCompanyOpen && user && (
+      {isCompanyModalOpen && user && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div
-            onClick={() => setIsCompanyOpen(false)}
+            onClick={closeCompanyModal}
             className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
           />
 
           <div className="relative w-full max-w-2xl rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)]">
             <div className="rounded-[28px] bg-white border border-[#FFF1E8] overflow-hidden">
               <div className="relative px-6 py-5 border-b border-border bg-gradient-to-br from-orange-light to-white">
-                <h3 className="text-2xl font-black text-text-main tracking-tight">Sobre a Empresa</h3>
+                <h3 className="text-2xl font-black text-text-main tracking-tight">Sobre sua Marca</h3>
                 <p className="text-sm text-text-muted mt-1">Cadastro das informações institucionais</p>
                 <button
-                  onClick={() => setIsCompanyOpen(false)}
+                  onClick={closeCompanyModal}
                   className="absolute top-4 right-4 p-2 rounded-full bg-white border border-border hover:bg-bg-secondary transition-colors"
                 >
                   <X size={18} className="text-text-main" />
@@ -520,13 +659,23 @@ export default function Navbar() {
                   />
                 </div>
 
-                <div className="sm:col-span-2">
-                  <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">Facebook</label>
+                <div>
+                  <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">TikTok</label>
                   <input
-                    value={companyForm.facebook}
-                    onChange={(e) => setCompanyForm((prev) => ({ ...prev, facebook: e.target.value }))}
+                    value={companyForm.tiktok}
+                    onChange={(e) => setCompanyForm((prev) => ({ ...prev, tiktok: e.target.value }))}
                     className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
-                    placeholder="facebook.com/..."
+                    placeholder="tiktok.com/@perfil"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">Blog</label>
+                  <input
+                    value={companyForm.blog}
+                    onChange={(e) => setCompanyForm((prev) => ({ ...prev, blog: e.target.value }))}
+                    className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                    placeholder="blog.seudominio.com"
                   />
                 </div>
               </div>
@@ -538,7 +687,7 @@ export default function Navbar() {
                 <div className="flex gap-3">
                   <button
                     type="button"
-                    onClick={() => setIsCompanyOpen(false)}
+                    onClick={closeCompanyModal}
                     className="px-5 py-3 rounded-xl border border-border text-text-muted text-xs font-bold tracking-widest uppercase hover:bg-bg-secondary"
                   >
                     Fechar
@@ -558,10 +707,10 @@ export default function Navbar() {
       )}
 
       {/* Connectors Modal */}
-      {isConnectorsOpen && user && (
+      {isConnectorsModalOpen && user && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <div
-            onClick={() => setIsConnectorsOpen(false)}
+            onClick={closeConnectorsModal}
             className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
           />
 
@@ -573,7 +722,7 @@ export default function Navbar() {
                   Configure as integrações e parâmetros essenciais para exibir dados reais e corretos no Dashboard.
                 </p>
                 <button
-                  onClick={() => setIsConnectorsOpen(false)}
+                  onClick={closeConnectorsModal}
                   className="absolute top-4 right-4 p-2 rounded-full bg-white border border-border hover:bg-bg-secondary transition-colors"
                 >
                   <X size={18} className="text-text-main" />
@@ -718,7 +867,7 @@ export default function Navbar() {
                 <div className="flex gap-3">
                   <button
                     type="button"
-                    onClick={() => setIsConnectorsOpen(false)}
+                    onClick={closeConnectorsModal}
                     className="px-5 py-3 rounded-xl border border-border text-text-muted text-xs font-bold tracking-widest uppercase hover:bg-bg-secondary"
                   >
                     Fechar

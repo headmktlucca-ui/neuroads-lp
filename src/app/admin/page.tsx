@@ -37,7 +37,7 @@ export default function AdminPage() {
   if (!user) {
     return (
       <main className="min-h-screen bg-bg-main flex items-center justify-center px-4">
-        <section className="w-full max-w-lg rounded-3xl border border-border bg-white p-8 shadow-sm">
+        <section className="w-full max-w-lg rounded-3xl border border-[#FFB37A] bg-white p-8 shadow-[0_14px_34px_rgba(255,107,0,0.14)]">
           <p className="text-xs font-black tracking-[0.14em] uppercase text-primary">NeuroAds Admin</p>
           <h1 className="text-3xl font-black text-text-main mt-3">Acesso administrativo restrito</h1>
           <p className="text-sm text-text-muted mt-3">
@@ -101,9 +101,8 @@ export default function AdminPage() {
       <Navbar />
       <div className="flex-grow pt-24 md:pt-28 px-4 md:px-6 pb-12">
         <div className="mx-auto max-w-[1320px] space-y-6">
-          <section className="rounded-3xl border border-border bg-white p-6 md:p-8">
-            <p className="text-xs font-black tracking-[0.14em] uppercase text-primary">Painel administrativo</p>
-            <h1 className="text-3xl md:text-4xl font-black text-text-main mt-3">Administração total NeuroAds</h1>
+          <section className="rounded-3xl border border-[#FFB37A] bg-white p-6 md:p-8 shadow-[0_14px_34px_rgba(255,107,0,0.14)]">
+            <h1 className="text-3xl md:text-4xl font-black text-text-main mt-3">Hub Administrativo</h1>
             <p className="text-sm md:text-base text-text-muted mt-3 max-w-4xl">
               Lucca atua como Secretário Executivo da operação: centraliza Comercial, Pós-venda, Captação e Suporte com prioridade por impacto financeiro no caixa.
             </p>

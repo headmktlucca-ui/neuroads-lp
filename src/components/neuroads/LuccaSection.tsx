@@ -1,6 +1,7 @@
 'use client';
 import { motion } from 'framer-motion';
 import { Users, Crosshair, Layers } from 'lucide-react';
+import Link from 'next/link';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
@@ -60,9 +61,9 @@ export default function LuccaSection() {
             </div>
 
             <MotionDiv {...fadeUp} transition={{ delay: 0.7 }} className="mt-12 flex items-center gap-8">
-               <a href="/#contato" className="btn btn-primary px-8">
+               <Link href="/#contato" className="btn btn-primary px-8">
                  Contato
-               </a>
+               </Link>
             </MotionDiv>
           </div>
 

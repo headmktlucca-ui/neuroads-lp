@@ -16,6 +16,7 @@ import {
 } from 'firebase/firestore';
 import { BriefcaseBusiness, CircleDollarSign, KanbanSquare, Trash2, UserRoundCog } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
+import { agents } from '../../data/agents';
 import LuccaExecutiveDesk from './LuccaExecutiveDesk';
 import CustomCrmSuite from './CustomCrmSuite';
 
@@ -24,6 +25,26 @@ const ACTIVITY_PRIORITIES = ['Baixa', 'Media', 'Alta'] as const;
 const ACTIVITY_STATUS = ['Planejada', 'Em andamento', 'Concluida', 'Bloqueada'] as const;
 const FINANCE_TYPES = ['Receita', 'Custo'] as const;
 const FINANCE_STATUS = ['Previsto', 'Pago', 'Atrasado'] as const;
+const FINANCE_CATEGORIES = [
+  'Tráfego pago',
+  'Mensalidade de gestão',
+  'Setup inicial',
+  'Consultoria estratégica',
+  'Implantação de CRM',
+  'Licença Lucca',
+  'Comissão comercial',
+  'Produção de criativos',
+  'Ferramentas e software',
+  'Equipe operacional',
+  'Suporte e atendimento',
+  'Treinamento',
+  'Infraestrutura',
+  'Reembolso',
+  'Outros',
+] as const;
+const AGENT_OPTIONS = Array.from(new Set(agents.map((agent) => agent.title))).sort((first, second) =>
+  first.localeCompare(second, 'pt-BR'),
+);
 
 type CrmStage = (typeof CRM_STAGES)[number];
 type ActivityPriority = (typeof ACTIVITY_PRIORITIES)[number];
@@ -58,6 +79,7 @@ interface FinanceEntry {
   id: string;
   type: FinanceType;
   category: string;
+  relatedDealId: string;
   description: string;
   amount: number;
   dueDate: string;
@@ -109,10 +131,15 @@ function formatDateTime(value: number): string {
   return new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(value);
 }
 
+function normalizeText(value: string): string {
+  return value.replace(/\s+/g, ' ').trim();
+}
+
 export default function AdminControlCenter({ userId }: AdminControlCenterProps) {
   const [crmDeals, setCrmDeals] = useState<CrmDeal[]>([]);
   const [agentActivities, setAgentActivities] = useState<AgentActivity[]>([]);
   const [financeEntries, setFinanceEntries] = useState<FinanceEntry[]>([]);
+  const [crmClients, setCrmClients] = useState<string[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
   const [dealForm, setDealForm] = useState({
@@ -136,6 +163,7 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
   const [financeForm, setFinanceForm] = useState({
     type: 'Receita' as FinanceType,
     category: '',
+    relatedDealId: '',
     description: '',
     amount: '',
     dueDate: '',
@@ -146,6 +174,7 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
     const db = getFirebaseDb();
 
     const crmQuery = query(collection(db, 'admin_workspaces', userId, 'crm_deals'), orderBy('updatedAt', 'desc'));
+    const clientsQuery = query(collection(db, 'admin_workspaces', userId, 'crm_accounts'), orderBy('updatedAt', 'desc'));
     const activitiesQuery = query(collection(db, 'admin_workspaces', userId, 'agent_activities'), orderBy('updatedAt', 'desc'));
     const financeQuery = query(collection(db, 'admin_workspaces', userId, 'finance_entries'), orderBy('updatedAt', 'desc'));
 
@@ -185,6 +214,17 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
       setAgentActivities(parsed);
     });
 
+    const unsubscribeClients = onSnapshot(clientsQuery, (snapshot) => {
+      const names = Array.from(
+        new Set(
+          snapshot.docs
+            .map((snapshotDoc) => String((snapshotDoc.data() as DocumentData).name ?? '').trim())
+            .filter(Boolean),
+        ),
+      ).sort((first, second) => first.localeCompare(second, 'pt-BR'));
+      setCrmClients(names);
+    });
+
     const unsubscribeFinance = onSnapshot(financeQuery, (snapshot) => {
       const parsed = snapshot.docs.map((snapshotDoc) => {
         const data = snapshotDoc.data() as DocumentData;
@@ -192,6 +232,7 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
           id: snapshotDoc.id,
           type: parseFinanceType(data.type),
           category: String(data.category ?? ''),
+          relatedDealId: String(data.relatedDealId ?? ''),
           description: String(data.description ?? ''),
           amount: Number(data.amount ?? 0),
           dueDate: String(data.dueDate ?? ''),
@@ -204,6 +245,7 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
 
     return () => {
       unsubscribeCrm();
+      unsubscribeClients();
       unsubscribeActivities();
       unsubscribeFinance();
     };
@@ -228,13 +270,14 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
 
     const db = getFirebaseDb();
     await addDoc(collection(db, 'admin_workspaces', userId, 'crm_deals'), {
-      name: dealForm.name.trim(),
-      company: dealForm.company.trim(),
+      name: normalizeText(dealForm.name),
+      company: normalizeText(dealForm.company),
       stage: 'Prospect',
       estimatedValue,
-      source: dealForm.source.trim(),
-      owner: dealForm.owner.trim(),
-      nextAction: dealForm.nextAction.trim(),
+      source: normalizeText(dealForm.source),
+      owner: normalizeText(dealForm.owner),
+      nextAction: normalizeText(dealForm.nextAction),
+      createdBy: 'admin-ui',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
@@ -264,12 +307,13 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
 
     const db = getFirebaseDb();
     await addDoc(collection(db, 'admin_workspaces', userId, 'agent_activities'), {
-      clientName: activityForm.clientName.trim(),
-      agentName: activityForm.agentName.trim(),
-      objective: activityForm.objective.trim(),
+      clientName: normalizeText(activityForm.clientName),
+      agentName: normalizeText(activityForm.agentName),
+      objective: normalizeText(activityForm.objective),
       priority: activityForm.priority,
       status: activityForm.status,
       dueDate: activityForm.dueDate,
+      createdBy: 'admin-ui',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
@@ -302,20 +346,23 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
   async function createFinanceEntry() {
     const amount = Number(financeForm.amount);
     if (!financeForm.category.trim() || !financeForm.description.trim() || !Number.isFinite(amount)) return;
+    if (financeForm.type === 'Receita' && !financeForm.relatedDealId) return;
 
     const db = getFirebaseDb();
     await addDoc(collection(db, 'admin_workspaces', userId, 'finance_entries'), {
       type: financeForm.type,
-      category: financeForm.category.trim(),
-      description: financeForm.description.trim(),
+      category: normalizeText(financeForm.category),
+      relatedDealId: financeForm.type === 'Receita' ? financeForm.relatedDealId : '',
+      description: normalizeText(financeForm.description),
       amount,
       dueDate: financeForm.dueDate,
       status: financeForm.status,
+      createdBy: 'admin-ui',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
     });
 
-    setFinanceForm({ type: 'Receita', category: '', description: '', amount: '', dueDate: '', status: 'Previsto' });
+    setFinanceForm({ type: 'Receita', category: '', relatedDealId: '', description: '', amount: '', dueDate: '', status: 'Previsto' });
   }
 
   async function cycleFinanceStatus(entry: FinanceEntry) {
@@ -333,6 +380,20 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
     const db = getFirebaseDb();
     await deleteDoc(doc(db, 'admin_workspaces', userId, 'finance_entries', id));
   }
+
+  const getDealLabel = (dealId: string): string => {
+    const deal = crmDeals.find((item) => item.id === dealId);
+    if (!deal) return 'Negócio não encontrado';
+    return `${deal.name} • ${deal.company}`;
+  };
+
+  const operationalAlerts = useMemo(() => {
+    const orphanRevenueCount = financeEntries.filter(
+      (entry) => entry.type === 'Receita' && (!entry.relatedDealId || !crmDeals.some((deal) => deal.id === entry.relatedDealId)),
+    ).length;
+    const duePendingCount = financeEntries.filter((entry) => entry.status !== 'Pago' && entry.dueDate).length;
+    return { orphanRevenueCount, duePendingCount };
+  }, [financeEntries, crmDeals]);
 
   const stats = [
     {
@@ -366,9 +427,18 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
       <LuccaExecutiveDesk userId={userId} />
       <CustomCrmSuite userId={userId} />
 
+      {(operationalAlerts.orphanRevenueCount > 0 || operationalAlerts.duePendingCount > 0) && (
+        <section className="rounded-2xl border border-[#FFE4D1] bg-[#FFF8F3] p-4">
+          <p className="text-xs font-black uppercase tracking-widest text-primary">Alertas operacionais</p>
+          <p className="mt-2 text-sm font-semibold text-[#7C2D12]">
+            Receitas sem negócio vinculado: {operationalAlerts.orphanRevenueCount} • Pendências com vencimento: {operationalAlerts.duePendingCount}
+          </p>
+        </section>
+      )}
+
       <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         {stats.map((stat) => (
-          <article key={stat.label} className="rounded-3xl border border-border bg-white p-5 shadow-sm">
+          <article key={stat.label} className="rounded-3xl border border-[#FFB37A] bg-white p-5 shadow-[0_14px_34px_rgba(255,107,0,0.14)]">
             <div className="mb-3 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#FFF5EE] border border-[#FFE3CC]">
               {stat.icon}
             </div>
@@ -379,19 +449,28 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
         ))}
       </section>
 
-      <section className="rounded-3xl border border-border bg-white p-6 space-y-6">
+      <section id="crm-funil" className="rounded-3xl border border-[#FFB37A] bg-white p-6 space-y-6 scroll-mt-32 shadow-[0_14px_34px_rgba(255,107,0,0.14)]">
         <div>
-          <h2 className="text-2xl font-black text-text-main">CRM com funil de vendas</h2>
+          <h2 className="text-2xl font-black text-text-main">Funil de vendas</h2>
           <p className="text-sm text-text-muted mt-1">Gerencie prospects, leads qualificados, propostas e clientes ativos em uma única visão.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-          <input
+          <select
             value={dealForm.name}
-            onChange={(event) => setDealForm((prev) => ({ ...prev, name: event.target.value }))}
-            placeholder="Nome do contato"
+            onChange={(event) =>
+              setDealForm((prev) => ({ ...prev, name: event.target.value, company: event.target.value || prev.company }))
+            }
             className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none focus:border-primary"
-          />
+          >
+            <option value="">Selecione o cliente</option>
+            {!crmClients.includes(dealForm.name) && dealForm.name && <option value={dealForm.name}>{dealForm.name}</option>}
+            {crmClients.map((clientName) => (
+              <option key={clientName} value={clientName}>
+                {clientName}
+              </option>
+            ))}
+          </select>
           <input
             value={dealForm.company}
             onChange={(event) => setDealForm((prev) => ({ ...prev, company: event.target.value }))}
@@ -491,25 +570,43 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
         </div>
       </section>
 
-      <section className="rounded-3xl border border-border bg-white p-6 space-y-6">
+      <section id="gestao-agentes" className="rounded-3xl border border-[#FFB37A] bg-white p-6 space-y-6 scroll-mt-32 shadow-[0_14px_34px_rgba(255,107,0,0.14)]">
         <div>
           <h2 className="text-2xl font-black text-text-main">Gestão de Agentes e atividades dos clientes</h2>
           <p className="text-sm text-text-muted mt-1">Monitore agentes ativos, prioridades e entregas em andamento por cliente.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-          <input
+          <select
             value={activityForm.clientName}
             onChange={(event) => setActivityForm((prev) => ({ ...prev, clientName: event.target.value }))}
-            placeholder="Cliente"
             className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none focus:border-primary"
-          />
-          <input
+          >
+            <option value="">Selecione o cliente</option>
+            {!crmClients.includes(activityForm.clientName) && activityForm.clientName && (
+              <option value={activityForm.clientName}>{activityForm.clientName}</option>
+            )}
+            {crmClients.map((clientName) => (
+              <option key={clientName} value={clientName}>
+                {clientName}
+              </option>
+            ))}
+          </select>
+          <select
             value={activityForm.agentName}
             onChange={(event) => setActivityForm((prev) => ({ ...prev, agentName: event.target.value }))}
-            placeholder="Agente"
             className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none focus:border-primary"
-          />
+          >
+            <option value="">Selecione o Agente IA</option>
+            {!AGENT_OPTIONS.includes(activityForm.agentName) && activityForm.agentName && (
+              <option value={activityForm.agentName}>{activityForm.agentName}</option>
+            )}
+            {AGENT_OPTIONS.map((agentName) => (
+              <option key={agentName} value={agentName}>
+                {agentName}
+              </option>
+            ))}
+          </select>
           <input
             value={activityForm.objective}
             onChange={(event) => setActivityForm((prev) => ({ ...prev, objective: event.target.value }))}
@@ -591,7 +688,7 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
         </div>
       </section>
 
-      <section className="rounded-3xl border border-border bg-white p-6 space-y-6">
+      <section id="gestao-financeira" className="rounded-3xl border border-[#FFB37A] bg-white p-6 space-y-6 scroll-mt-32 shadow-[0_14px_34px_rgba(255,107,0,0.14)]">
         <div>
           <h2 className="text-2xl font-black text-text-main">Gestão Financeira</h2>
           <p className="text-sm text-text-muted mt-1">Acompanhe receitas, custos, pendências e o impacto direto no caixa.</p>
@@ -600,7 +697,13 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           <select
             value={financeForm.type}
-            onChange={(event) => setFinanceForm((prev) => ({ ...prev, type: event.target.value as FinanceType }))}
+            onChange={(event) =>
+              setFinanceForm((prev) => ({
+                ...prev,
+                type: event.target.value as FinanceType,
+                relatedDealId: event.target.value === 'Receita' ? prev.relatedDealId : '',
+              }))
+            }
             className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none focus:border-primary"
           >
             {FINANCE_TYPES.map((type) => (
@@ -608,12 +711,32 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
             ))}
           </select>
 
-          <input
+          <select
             value={financeForm.category}
             onChange={(event) => setFinanceForm((prev) => ({ ...prev, category: event.target.value }))}
-            placeholder="Categoria"
             className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none focus:border-primary"
-          />
+          >
+            <option value="">Selecione a categoria</option>
+            {FINANCE_CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={financeForm.relatedDealId}
+            onChange={(event) => setFinanceForm((prev) => ({ ...prev, relatedDealId: event.target.value }))}
+            disabled={financeForm.type !== 'Receita'}
+            className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none focus:border-primary disabled:opacity-60"
+          >
+            <option value="">{financeForm.type === 'Receita' ? 'Selecione o negócio relacionado' : 'Não aplicável para custo'}</option>
+            {crmDeals.map((deal) => (
+              <option key={deal.id} value={deal.id}>
+                {deal.name} • {deal.company}
+              </option>
+            ))}
+          </select>
 
           <input
             value={financeForm.description}
@@ -682,6 +805,7 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                 <div>
                   <p className="text-sm font-black text-text-main">{entry.category} • {entry.description}</p>
+                  {entry.relatedDealId && <p className="text-xs text-text-muted">Negócio: {getDealLabel(entry.relatedDealId)}</p>}
                   <p className="text-xs text-text-muted">Vencimento: {entry.dueDate || 'Sem data'} • Atualizado: {formatDateTime(entry.updatedAt)}</p>
                 </div>
                 <p className={`text-sm font-black ${entry.type === 'Receita' ? 'text-[#0A9D57]' : 'text-[#D14343]'}`}>

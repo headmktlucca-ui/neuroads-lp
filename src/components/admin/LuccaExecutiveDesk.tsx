@@ -15,7 +15,7 @@ import {
   writeBatch,
   type DocumentData,
 } from 'firebase/firestore';
-import { Bot, CheckCircle2, Clock3, Filter, Siren, Trash2, Users } from 'lucide-react';
+import { Bot, Clock3, Filter, Siren, Trash2, Users } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
 import { sendLuccaChannelMessageAction } from '../../app/actions/lucca-channels';
 
@@ -160,10 +160,11 @@ function formatDateTime(value: number): string {
 
 export default function LuccaExecutiveDesk({ userId }: LuccaExecutiveDeskProps) {
   const [tasks, setTasks] = useState<ExecutiveTask[]>([]);
+  const [crmClients, setCrmClients] = useState<string[]>([]);
   const [frontFilter, setFrontFilter] = useState<OperationFront | 'Todos'>('Todos');
   const [statusFilter, setStatusFilter] = useState<ExecStatus | 'Todos'>('Todos');
   const [composerTaskId, setComposerTaskId] = useState<string | null>(null);
-  const [composerChannel, setComposerChannel] = useState<'email' | 'whatsapp'>('whatsapp');
+  const [composerChannel, setComposerChannel] = useState<'email'>('email');
   const [composerTo, setComposerTo] = useState('');
   const [composerSubject, setComposerSubject] = useState('');
   const [composerMessage, setComposerMessage] = useState('');
@@ -178,13 +179,14 @@ export default function LuccaExecutiveDesk({ userId }: LuccaExecutiveDeskProps) 
     clientName: '',
     title: '',
     details: '',
-    channel: 'WhatsApp',
+    channel: 'Email',
     dueDate: '',
   });
 
   useEffect(() => {
     const db = getFirebaseDb();
     const execQuery = query(collection(db, 'admin_workspaces', userId, 'executive_tasks'), orderBy('updatedAt', 'desc'));
+    const clientsQuery = query(collection(db, 'admin_workspaces', userId, 'crm_accounts'), orderBy('updatedAt', 'desc'));
 
     const unsubscribe = onSnapshot(execQuery, (snapshot) => {
       const parsed = snapshot.docs.map((snapshotDoc) => {
@@ -209,7 +211,21 @@ export default function LuccaExecutiveDesk({ userId }: LuccaExecutiveDeskProps) 
       setTasks(parsed);
     });
 
-    return () => unsubscribe();
+    const unsubscribeClients = onSnapshot(clientsQuery, (snapshot) => {
+      const names = Array.from(
+        new Set(
+          snapshot.docs
+            .map((snapshotDoc) => String((snapshotDoc.data() as DocumentData).name ?? '').trim())
+            .filter(Boolean),
+        ),
+      ).sort((first, second) => first.localeCompare(second, 'pt-BR'));
+      setCrmClients(names);
+    });
+
+    return () => {
+      unsubscribe();
+      unsubscribeClients();
+    };
   }, [userId]);
 
   const openTasks = useMemo(() => tasks.filter((task) => isOpenStatus(task.status)), [tasks]);
@@ -266,7 +282,7 @@ export default function LuccaExecutiveDesk({ userId }: LuccaExecutiveDeskProps) 
       clientName: '',
       title: '',
       details: '',
-      channel: 'WhatsApp',
+      channel: 'Email',
       dueDate: '',
     });
   }
@@ -363,7 +379,7 @@ export default function LuccaExecutiveDesk({ userId }: LuccaExecutiveDeskProps) 
   }
 
   return (
-    <section className="rounded-3xl border border-border bg-white p-6 space-y-6">
+    <section id="operacao-lucca" className="rounded-3xl border border-[#FFB37A] bg-white p-6 space-y-6 scroll-mt-32 shadow-[0_14px_34px_rgba(255,107,0,0.14)]">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
           <p className="text-xs font-black tracking-[0.14em] uppercase text-primary">Lucca Secretário Executivo</p>
@@ -412,16 +428,23 @@ export default function LuccaExecutiveDesk({ userId }: LuccaExecutiveDeskProps) 
             <option key={front} value={front}>{front}</option>
           ))}
         </select>
-        <input
+        <select
           value={form.clientName}
           onChange={(event) => setForm((prev) => ({ ...prev, clientName: event.target.value }))}
-          placeholder="Cliente"
           className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none focus:border-primary"
-        />
+        >
+          <option value="">Selecione o cliente</option>
+          {!crmClients.includes(form.clientName) && form.clientName && <option value={form.clientName}>{form.clientName}</option>}
+          {crmClients.map((clientName) => (
+            <option key={clientName} value={clientName}>
+              {clientName}
+            </option>
+          ))}
+        </select>
         <input
           value={form.channel}
           onChange={(event) => setForm((prev) => ({ ...prev, channel: event.target.value }))}
-          placeholder="Canal (WhatsApp, Email, Reunião...)"
+          placeholder="Canal (Email, Reunião...)"
           className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none focus:border-primary"
         />
         <input
@@ -566,29 +589,26 @@ export default function LuccaExecutiveDesk({ userId }: LuccaExecutiveDeskProps) 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   <select
                     value={composerChannel}
-                    onChange={(event) => setComposerChannel(event.target.value as 'email' | 'whatsapp')}
+                    onChange={(event) => setComposerChannel(event.target.value as 'email')}
                     className="rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold text-text-main outline-none focus:border-primary"
                   >
-                    <option value="whatsapp">WhatsApp</option>
                     <option value="email">Email</option>
                   </select>
 
                   <input
                     value={composerTo}
                     onChange={(event) => setComposerTo(event.target.value)}
-                    placeholder={composerChannel === 'email' ? 'cliente@dominio.com' : '5511999998888'}
+                    placeholder="cliente@dominio.com"
                     className="rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold text-text-main outline-none focus:border-primary"
                   />
                 </div>
 
-                {composerChannel === 'email' && (
-                  <input
-                    value={composerSubject}
-                    onChange={(event) => setComposerSubject(event.target.value)}
-                    placeholder="Assunto do email"
-                    className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold text-text-main outline-none focus:border-primary"
-                  />
-                )}
+                <input
+                  value={composerSubject}
+                  onChange={(event) => setComposerSubject(event.target.value)}
+                  placeholder="Assunto do email"
+                  className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold text-text-main outline-none focus:border-primary"
+                />
 
                 <textarea
                   value={composerMessage}

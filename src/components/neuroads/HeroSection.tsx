@@ -2,6 +2,7 @@
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
@@ -34,13 +35,13 @@ export default function HeroSection() {
             </MotionP>
 
             <MotionDiv {...fadeUp(0.5)}>
-              <a
+              <Link
                 href="/#contato"
                 className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-black text-white font-bold text-sm hover:bg-black/90 transition-all"
               >
                 Contato
                 <ArrowRight size={16} />
-              </a>
+              </Link>
             </MotionDiv>
 
           </div>

@@ -18,7 +18,7 @@ function getStripeConfig() {
 
   return {
     stripe: new Stripe(stripeSecretKey, {
-      apiVersion: '2026-03-25.dahlia',
+      apiVersion: '2026-02-25.clover' as never,
     }),
     webhookSecret,
   };
@@ -57,8 +57,9 @@ export async function POST(req: Request) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         const userId = session.client_reference_id;
+        const isSubscriptionCheckout = session.mode === 'subscription';
 
-        if (userId) {
+        if (userId && isSubscriptionCheckout) {
           const db = getFirebaseDb();
           // Update Firebase User to Premium
           const userRef = doc(db, 'users', userId);

@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -32,7 +33,7 @@ export default function Navbar() {
       <nav className={`mx-auto max-w-[1200px] transition-all duration-700`}>
         <div className={`glass-pill px-8 py-3 flex items-center justify-between transition-all duration-500 shadow-2xl ${isScrolled ? 'bg-white/80 border-border/80' : 'bg-white/40 border-white/20'}`}>
           
-          <a href="#" className="flex items-center group transition-transform hover:scale-[1.02]" onClick={closeMenu}>
+          <Link href="/" className="flex items-center group transition-transform hover:scale-[1.02]" onClick={closeMenu}>
             <Image
               src="/images/logo2026.png" 
               alt="NeuroAds Logo" 
@@ -40,7 +41,7 @@ export default function Navbar() {
               height={48}
               className="h-10 lg:h-12 w-auto object-contain"
             />
-          </a>
+          </Link>
 
           <div className="hidden lg:flex items-center gap-10">
             <ul className="flex items-center gap-8 list-none m-0 p-0">
@@ -54,10 +55,10 @@ export default function Navbar() {
             </ul>
             
             <div className="flex items-center gap-6 pl-10 border-l border-border/50">
-              <a href="/#contato" className="btn btn-primary px-6 py-2.5 text-[13px] rounded-full">
+              <Link href="/#contato" className="btn btn-primary px-6 py-2.5 text-[13px] rounded-full">
                 Contato
                 <ArrowRight size={14} className="ml-2" />
-              </a>
+              </Link>
             </div>
           </div>
 

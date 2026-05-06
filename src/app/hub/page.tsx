@@ -1,7 +1,7 @@
 'use client';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
-import AgentGrid from '../../components/dashboard/AgentGrid';
+import StrategicHubOverview from '../../components/dashboard/StrategicHubOverview';
 import { useAuth } from '../../context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -12,7 +12,7 @@ export default function HubPage() {
 
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/');
+      router.replace('/login?next=/hub');
     }
   }, [user, loading, router]);
 
@@ -28,16 +28,9 @@ export default function HubPage() {
     <main className="flex flex-col min-h-screen bg-bg-main">
       <Navbar />
 
-      <div className="flex-grow pt-20 md:pt-28 relative overflow-hidden">
-        <div
-          className="absolute inset-0 pointer-events-none bg-top bg-repeat-y bg-[length:100%_auto]"
-          style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
-        />
-        <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none bg-gradient-to-b from-transparent via-[#f7f8fa]/75 to-bg-main" />
-
-        {/* Agent Grid Section */}
-        <div id="agent-grid" className="relative z-10">
-          <AgentGrid />
+      <div className="flex-grow pt-20 md:pt-28">
+        <div id="hub-overview" className="relative">
+          <StrategicHubOverview />
         </div>
       </div>
 
