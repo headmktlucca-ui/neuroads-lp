@@ -227,13 +227,13 @@ export default function ValuesResourcesSection() {
           <span className="inline-flex items-center rounded-full border border-[#ffceb0] bg-white px-6 py-2 text-[13px] font-extrabold uppercase tracking-[0.22em] text-[#ff5a00]">
             Valores & Recursos
           </span>
-          <h2 className="mt-4 text-[38px] font-black leading-[1.08] tracking-[-0.02em] text-[#090f2a] md:text-[62px]">
+          <h2 className="mt-8 text-[38px] font-black leading-[1.08] tracking-[-0.02em] text-[#090f2a] md:text-[62px]">
             Escolha seu plano e escale com previsibilidade
           </h2>
-          <p className="mt-3 text-[17px] text-[#47506a]">Comece com 14 dias de demonstração grátis. Cancele quando quiser.</p>
+          <p className="mt-6 text-[17px] text-[#47506a]">Comece com 14 dias de demonstração grátis. Cancele quando quiser.</p>
         </div>
 
-        <div className="mt-8 grid gap-4 md:grid-cols-3 lg:gap-8">
+        <div className="mt-16 grid gap-8 md:grid-cols-3 lg:gap-8">
           {journeySteps.map((step, index) => (
             <div key={step.title} className="relative rounded-2xl px-2 py-2">
               <div className="flex items-center gap-4">
@@ -257,7 +257,7 @@ export default function ValuesResourcesSection() {
           ))}
         </div>
 
-        <div className="mt-6 grid gap-4 xl:grid-cols-4">
+        <div className="mt-12 grid gap-4 xl:grid-cols-4">
           {planOffers.map((plan, index) => {
             const visual = planVisuals[index] ?? planVisuals[planVisuals.length - 1];
             const isRecommended = plan.slug === recommendedPlanSlug;
@@ -361,7 +361,7 @@ export default function ValuesResourcesSection() {
           })}
         </div>
 
-        <div className="mt-6 rounded-[14px] border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-3 shadow-[0_18px_32px_rgba(2,8,22,0.35)]">
+        <div className="mt-12 rounded-[14px] border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-3 shadow-[0_18px_32px_rgba(2,8,22,0.35)]">
           <div className="grid gap-2 lg:grid-cols-[1.45fr_1fr_1fr_1fr]">
             <article className="rounded-[10px] border border-[#173c6e] bg-[#081a38] px-4 py-3">
               <div className="flex items-center gap-3">
@@ -411,7 +411,7 @@ export default function ValuesResourcesSection() {
           </div>
         </div>
 
-        <div className="mt-5 grid gap-3 rounded-[18px] border border-[#e6ebf3] bg-white p-5 md:grid-cols-3">
+        <div className="mt-10 grid gap-3 rounded-[18px] border border-[#e6ebf3] bg-white p-5 md:grid-cols-3">
           <div className="flex items-center gap-3">
             <ShieldCheck size={24} className="text-[#18223e]" />
             <div>

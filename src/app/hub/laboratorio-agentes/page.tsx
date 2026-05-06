@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { Suspense, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Wrench } from 'lucide-react';
 import Navbar from '../../../components/layout/Navbar';
 import Footer from '../../../components/layout/Footer';
+import LuccaHubSupportWidget from '../../../components/hub/LuccaHubSupportWidget';
 import { useAuth } from '../../../context/AuthContext';
 import { agents } from '../../../data/agents';
 import { slugifyAgentTitle } from '../../../lib/hub-agents';
@@ -16,7 +18,10 @@ const categories = [
   { slug: 'inteligencia', label: 'Inteligência' },
 ];
 
-export default function LaboratorioAgentesPage() {
+const HUB_CONNECTOR_BUTTON_CLASS =
+  'inline-flex h-11 items-center justify-center gap-2 rounded-[12px] bg-[#FF6B00] px-6 text-[14px] font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFBE94]';
+
+function LaboratorioAgentesContent() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -74,8 +79,9 @@ export default function LaboratorioAgentesPage() {
                   <h2 className="text-2xl font-black text-text-main">{category.label}</h2>
                   <Link
                     href={`/hub/${category.slug}`}
-                    className="inline-flex items-center justify-center rounded-full border border-[#FFBE94] bg-white px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.08em] text-primary transition hover:bg-[#FFF3EA]"
+                    className={HUB_CONNECTOR_BUTTON_CLASS}
                   >
+                    <Wrench className="h-4 w-4" />
                     Gerenciar categoria
                   </Link>
                 </div>
@@ -88,8 +94,9 @@ export default function LaboratorioAgentesPage() {
                       <div className="mt-3">
                         <Link
                           href={`/hub/agente/${slugifyAgentTitle(agent.title)}`}
-                          className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-[11px] font-extrabold uppercase tracking-[0.08em] text-white transition hover:brightness-110"
+                          className={HUB_CONNECTOR_BUTTON_CLASS}
                         >
+                          <Wrench className="h-4 w-4" />
                           Ver agente
                         </Link>
                       </div>
@@ -103,7 +110,21 @@ export default function LaboratorioAgentesPage() {
       </div>
 
       <Footer />
+      <LuccaHubSupportWidget />
     </main>
   );
 }
 
+export default function LaboratorioAgentesPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-bg-main flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <LaboratorioAgentesContent />
+    </Suspense>
+  );
+}

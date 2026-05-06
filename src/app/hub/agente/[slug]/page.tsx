@@ -7,6 +7,7 @@ import { CheckCircle2, Sparkles, X } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Navbar from '../../../../components/layout/Navbar';
 import Footer from '../../../../components/layout/Footer';
+import LuccaHubSupportWidget from '../../../../components/hub/LuccaHubSupportWidget';
 import SeoGeoWorkspace from '../../../../components/agents/SeoGeoWorkspace';
 import { useAuth } from '../../../../context/AuthContext';
 import { agents } from '../../../../data/agents';
@@ -522,6 +523,7 @@ export default function AgentEntryPage() {
       )}
 
       <Footer />
+      <LuccaHubSupportWidget />
     </main>
   );
 }

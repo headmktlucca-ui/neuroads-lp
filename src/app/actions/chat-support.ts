@@ -11,12 +11,27 @@ interface ChatMessage {
   content: string;
 }
 
+type SupportClientContext = {
+  clientId: string;
+  clientName: string;
+  companyName: string;
+  site: string;
+  planName: string;
+  activePage?: string;
+  kpis?: Array<{ label: string; value: string; trend?: string }>;
+  connectors?: {
+    connectedRequired: number;
+    requiredTotal: number;
+    readinessPercent: number;
+  };
+};
+
 function getErrorMessage(error: unknown, fallback: string): string {
   if (error instanceof Error && error.message) return error.message;
   return fallback;
 }
 
-export async function chatWithSupport(messages: ChatMessage[]) {
+export async function chatWithSupport(messages: ChatMessage[], clientContext?: SupportClientContext) {
   if (!process.env.OPENAI_API_KEY) {
     return {
       success: false,
@@ -42,11 +57,18 @@ export async function chatWithSupport(messages: ChatMessage[]) {
       ? "ATENDIMENTO HUMANO DISPONÍVEL (VIA WHATSAPP)" 
       : "ATENDIMENTO HUMANO INDISPONÍVEL (SOMENTE AGENDAMENTO VIA CAL.COM)";
 
+    const activeClientContext = clientContext
+      ? JSON.stringify(clientContext, null, 2)
+      : '{"status":"contexto_nao_informado"}';
+
     const systemPrompt: ChatMessage = {
       role: 'system',
       content: `Você é o Lucca, Secretário Executivo da NeuroAds.
 
 ESTADO DO SUPORTE HUMANO: ${supportStatus}
+
+CONTEXTO DO CLIENTE ATIVO (ESCOPO EXCLUSIVO)
+${activeClientContext}
 
 OBJETIVO DE NEGÓCIO
 - Converter conversa em oportunidade qualificada no CRM.
@@ -78,6 +100,9 @@ REGRAS DE SEGURANÇA
 - Não invente números, cases ou integrações inexistentes.
 - Não exponha chaves, credenciais ou detalhes internos.
 - Não colete dados além do necessário para atendimento comercial.
+- Responda exclusivamente com base no CONTEXTO DO CLIENTE ATIVO acima.
+- Nunca traga, compare ou cite dados de outros clientes.
+- Se o usuário solicitar informações de outro cliente, recuse objetivamente e explique que o acesso é restrito ao cliente autenticado.
 
 SAÍDA OBRIGATÓRIA (JSON)
 {

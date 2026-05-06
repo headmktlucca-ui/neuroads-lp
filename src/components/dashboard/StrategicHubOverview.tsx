@@ -148,7 +148,7 @@ export default function StrategicHubOverview() {
   const firstName = getFirstName(user?.displayName || user?.email);
 
   return (
-    <section className="w-full bg-[#F3F4F6] pb-10 md:pb-12">
+    <section className="w-full pb-10 md:pb-12">
       <div className="mx-auto w-full max-w-[1536px] px-4 md:px-6">
         <div className="space-y-6 pt-4 md:pt-6">
           <section className="grid grid-cols-1 gap-4 lg:grid-cols-[1.1fr_1fr]">

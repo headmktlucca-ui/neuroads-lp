@@ -21,6 +21,12 @@ type SubmitLuccaLeadInput = {
   email?: string;
   whatsapp?: string;
   message?: string;
+  pageSlug?: string;
+  serviceContext?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  timestamp?: string;
 };
 
 function normalize(value: string | undefined): string {
@@ -76,6 +82,12 @@ export async function submitLuccaLeadAction(input: SubmitLuccaLeadInput) {
   const whatsapp = normalizePhone(normalize(input.whatsapp));
   const message = normalize(input.message);
   const flow = input.flow;
+  const pageSlug = normalize(input.pageSlug);
+  const serviceContext = normalize(input.serviceContext);
+  const utmSource = normalize(input.utmSource);
+  const utmMedium = normalize(input.utmMedium);
+  const utmCampaign = normalize(input.utmCampaign);
+  const inboundTimestamp = normalize(input.timestamp);
 
   if (!clientName) {
     return { success: false, error: 'Nome do cliente é obrigatório.' };
@@ -198,6 +210,12 @@ export async function submitLuccaLeadAction(input: SubmitLuccaLeadInput) {
       slaHours: 24,
       statusHistory: [{ status: 'Novo', by: 'lucca-chat', note: 'Tarefa criada automaticamente', at: new Date().toISOString() }],
       source: 'Lucca Chat',
+      pageSlug,
+      serviceContext,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+      inboundTimestamp,
       createdBy: 'lucca-chat',
       dueDate: '',
       createdAt: serverTimestamp(),
@@ -215,6 +233,12 @@ export async function submitLuccaLeadAction(input: SubmitLuccaLeadInput) {
       message: message || 'Lead registrado via chat inicial do Lucca.',
       deliveryStatus: 'received',
       source: 'Lucca Chat',
+      pageSlug,
+      serviceContext,
+      utmSource,
+      utmMedium,
+      utmCampaign,
+      inboundTimestamp,
       createdBy: 'lucca-chat',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),

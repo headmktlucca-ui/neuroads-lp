@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '../layout/Navbar';
 import Footer from '../layout/Footer';
+import LuccaHubSupportWidget from '../hub/LuccaHubSupportWidget';
 import CategoryAgentManagementSection, { type AgentCategorySlug } from './CategoryAgentManagementSection';
 import { useAuth } from '../../context/AuthContext';
 
@@ -42,7 +43,7 @@ export default function CategoryHubPageShell({ categorySlug }: { categorySlug: A
       </div>
 
       <Footer />
+      <LuccaHubSupportWidget />
     </main>
   );
 }
-

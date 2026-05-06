@@ -75,6 +75,7 @@ const CONNECTOR_DEFINITIONS: ConnectorDefinition[] = [
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isLabSubmenuOpen, setIsLabSubmenuOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCompanyOpen, setIsCompanyOpen] = useState(false);
@@ -218,20 +219,33 @@ export default function Navbar() {
       ]
       : [
         { name: 'Hub Estratégico', href: '/hub' },
-        { name: 'Performance', href: '/hub/performance' },
-        { name: 'Criativos', href: '/hub/criativos' },
-        { name: 'Técnico', href: '/hub/tecnico' },
-        { name: 'Inteligência', href: '/hub/inteligencia' },
+        { name: 'Laboratório de Agentes', href: '/hub/laboratorio-agentes?agente=auditor-de-desperdicio' },
       ];
+  const laboratorySubLinks = [
+    { name: 'Performance', href: '/hub/performance' },
+    { name: 'Criativos', href: '/hub/criativos' },
+    { name: 'Técnico', href: '/hub/tecnico' },
+    { name: 'Inteligência', href: '/hub/inteligencia' },
+  ];
   const desktopNavClass = pathname?.startsWith('/admin')
     ? 'hidden md:flex items-center gap-9'
     : 'hidden md:flex items-center gap-10';
 
   const isLinkActive = (href: string): boolean => {
     if (!pathname) return false;
-    const [basePath, hash] = href.split('#');
+    const [pathWithQuery, hash] = href.split('#');
+    const [basePath] = pathWithQuery.split('?');
     if (basePath === '/hub') {
-      return pathname === '/hub' || pathname.startsWith('/hub/agente') || pathname.startsWith('/hub/laboratorio-agentes');
+      return pathname === '/hub' || pathname.startsWith('/hub/agente');
+    }
+    if (basePath === '/hub/laboratorio-agentes') {
+      return (
+        pathname.startsWith('/hub/laboratorio-agentes') ||
+        pathname.startsWith('/hub/performance') ||
+        pathname.startsWith('/hub/criativos') ||
+        pathname.startsWith('/hub/tecnico') ||
+        pathname.startsWith('/hub/inteligencia')
+      );
     }
     if (basePath === '/admin' && hash) {
       return pathname === '/admin' && currentHash === `#${hash}`;
@@ -369,18 +383,57 @@ export default function Navbar() {
 
           {/* Desktop Menu */}
           <div className={`${desktopNavClass} flex-1 justify-center px-8`}>
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={() => handleNavLinkClick(link.href)}
-                className={`text-[15px] leading-none font-semibold transition-colors duration-200 ${
-                  isLinkActive(link.href) ? 'text-[#0A9D57]' : 'text-[#344054] hover:text-[#111827]'
-                }`}
-              >
-                {link.name}
-              </Link>
-            ))}
+            {pathname?.startsWith('/admin') && isAdmin ? (
+              navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => handleNavLinkClick(link.href)}
+                  className={`text-[15px] leading-none font-semibold transition-colors duration-200 ${
+                    isLinkActive(link.href) ? 'text-[#0A9D57]' : 'text-[#344054] hover:text-[#111827]'
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))
+            ) : (
+              <>
+                <Link
+                  href="/hub"
+                  className={`text-[15px] leading-none font-semibold transition-colors duration-200 ${
+                    isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-[#344054] hover:text-[#111827]'
+                  }`}
+                >
+                  Hub Estratégico
+                </Link>
+                <div className="relative group">
+                  <Link
+                    href="/hub/laboratorio-agentes?agente=auditor-de-desperdicio"
+                    className={`inline-flex items-center gap-1 text-[15px] leading-none font-semibold transition-colors duration-200 ${
+                      isLinkActive('/hub/laboratorio-agentes?agente=auditor-de-desperdicio')
+                        ? 'text-[#0A9D57]'
+                        : 'text-[#344054] group-hover:text-[#111827]'
+                    }`}
+                  >
+                    Laboratório de Agentes
+                    <ChevronDown size={14} />
+                  </Link>
+                  <div className="invisible absolute left-1/2 top-full z-[120] mt-3 w-56 -translate-x-1/2 rounded-2xl border border-[#E7EAF0] bg-white p-2 opacity-0 shadow-[0_14px_30px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:opacity-100">
+                    {laboratorySubLinks.map((link) => (
+                      <Link
+                        key={link.name}
+                        href={link.href}
+                        className={`block rounded-xl px-3 py-2 text-[14px] font-semibold transition-colors ${
+                          isLinkActive(link.href) ? 'bg-[#F0FFF7] text-[#0A9D57]' : 'text-[#344054] hover:bg-[#F8FAFC]'
+                        }`}
+                      >
+                        {link.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="hidden md:flex items-center gap-3">
@@ -461,21 +514,64 @@ export default function Navbar() {
       {/* Mobile Menu */}
       <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] rounded-[32px] p-8 z-[210] overflow-hidden transition-all duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
         <div className="flex flex-col items-center gap-10 px-6">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={() => {
-                handleNavLinkClick(link.href);
-                setIsMenuOpen(false);
-              }}
-              className={`text-lg font-black tracking-[0.08em] transition-colors ${
-                isLinkActive(link.href) ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
-              }`}
-            >
-              {link.name}
-            </Link>
-          ))}
+          {pathname?.startsWith('/admin') && isAdmin ? (
+            navLinks.map((link) => (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => {
+                  handleNavLinkClick(link.href);
+                  setIsMenuOpen(false);
+                }}
+                className={`text-lg font-black tracking-[0.08em] transition-colors ${
+                  isLinkActive(link.href) ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
+                }`}
+              >
+                {link.name}
+              </Link>
+            ))
+          ) : (
+            <>
+              <Link
+                href="/hub"
+                onClick={() => setIsMenuOpen(false)}
+                className={`text-lg font-black tracking-[0.08em] transition-colors ${
+                  isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
+                }`}
+              >
+                Hub Estratégico
+              </Link>
+
+              <div className="w-full">
+                <button
+                  type="button"
+                  onClick={() => setIsLabSubmenuOpen((prev) => !prev)}
+                  className={`mx-auto flex items-center gap-2 text-lg font-black tracking-[0.08em] transition-colors ${
+                    isLinkActive('/hub/laboratorio-agentes?agente=auditor-de-desperdicio')
+                      ? 'text-[#0A9D57]'
+                      : 'text-text-main hover:text-primary'
+                  }`}
+                >
+                  Laboratório de Agentes
+                  <ChevronDown size={16} className={`transition-transform ${isLabSubmenuOpen ? 'rotate-180' : ''}`} />
+                </button>
+                <div className={`mt-3 space-y-2 ${isLabSubmenuOpen ? 'block' : 'hidden'}`}>
+                  {laboratorySubLinks.map((link) => (
+                    <Link
+                      key={link.name}
+                      href={link.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`block rounded-xl px-4 py-2 text-center text-sm font-bold tracking-wide transition-colors ${
+                        isLinkActive(link.href) ? 'bg-[#F0FFF7] text-[#0A9D57]' : 'text-text-muted hover:bg-[#F8FAFC]'
+                      }`}
+                    >
+                      {link.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
 
           <div className="w-full h-px bg-border" />
 
