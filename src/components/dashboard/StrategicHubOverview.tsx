@@ -246,13 +246,13 @@ export default function StrategicHubOverview() {
                 </p>
               </div>
 
-              <div className="pointer-events-none absolute bottom-0 right-0 w-[49%]">
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex w-[49%] items-center justify-end pr-2">
                 <Image
                   src="/images/hub/hero-centro-decisao-bg-exact.png"
                   alt=""
                   width={340}
                   height={220}
-                  className="h-auto w-full object-contain"
+                  className="h-auto max-h-[94%] w-full object-contain object-center"
                   priority
                 />
               </div>

@@ -823,7 +823,7 @@ function ZapIcon({ size, className }: { size?: number, className?: string }) {
   );
 }
 
-function SocialIcon({ icon: Icon, href }: { icon: React.ElementType<any>, href: string }) {
+function SocialIcon({ icon: Icon, href }: { icon: React.ComponentType<{ size?: number; className?: string }>, href: string }) {
   return (
     <a 
       href={href} 

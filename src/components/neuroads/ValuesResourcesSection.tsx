@@ -361,49 +361,54 @@ export default function ValuesResourcesSection() {
           })}
         </div>
 
-        <div className="mt-6 grid gap-3 lg:grid-cols-[1.2fr_1fr_1fr_1fr]">
-          <article className="rounded-[20px] border border-[#e6ebf3] bg-white p-5">
-            <div className="flex items-start gap-4">
-              <span className="inline-flex h-[88px] w-[88px] shrink-0 items-center justify-center rounded-full border border-[#ffd9c5] bg-[#fff8f3] text-[#ff5a00]">
-                <Database size={38} />
-              </span>
-              <div>
-                <h3 className="text-[22px] font-extrabold leading-[1.1] text-[#0f1733]">Créditos avulsos para expansão</h3>
-                <p className="mt-3 text-[16px] leading-[1.35] text-[#4b566f]">
-                  Aumente sua capacidade imediatamente sem alterar o plano atual.
-                </p>
-              </div>
-            </div>
-          </article>
-
-          {creditOffers.map((credit) => (
-            <article key={credit.slug} className="rounded-[20px] border border-[#e6ebf3] bg-white p-4">
-              <div className="flex items-center justify-between gap-3">
+        <div className="mt-6 rounded-[14px] border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-3 shadow-[0_18px_32px_rgba(2,8,22,0.35)]">
+          <div className="grid gap-2 lg:grid-cols-[1.45fr_1fr_1fr_1fr]">
+            <article className="rounded-[10px] border border-[#173c6e] bg-[#081a38] px-4 py-3">
+              <div className="flex items-center gap-3">
+                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#ff6a00]/55 bg-[#0b1d3f] text-[#ff6a00]">
+                  <Database size={21} />
+                </span>
                 <div>
-                  <span className="inline-flex rounded-full bg-[#f4f6fb] px-3 py-1 text-[12px] font-bold text-[#334160]">
-                    {getCreditPackShortName(credit.limits.includedExecutions)}
-                  </span>
-                  <p className="mt-2 text-[40px] font-black leading-none text-[#ff5a00]">{formatCurrencyFromCents(credit.amount)}</p>
-                  <p className="mt-2 text-[14px] text-[#2e3a57]">{credit.limits.includedExecutions.toLocaleString('pt-BR')} execuções</p>
-                  <p className="text-[14px] text-[#4f5b76]">{formatUnitPrice(credit.limits.unitPrice)} por execução</p>
+                  <h3 className="text-[22px] font-extrabold leading-[1.06] text-white">Créditos avulsos para expansão imediata</h3>
+                  <p className="mt-1 text-[13px] leading-[1.35] text-[#b7c4df]">
+                    Quando seu consumo ultrapassar o limite do plano, adicione créditos sem precisar trocar de assinatura.
+                  </p>
                 </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleCheckout(credit)}
-                  disabled={loadingId === credit.slug}
-                  className="inline-flex min-h-[86px] min-w-[86px] items-center justify-center rounded-2xl border border-[#ff6a00] bg-white px-4 py-3 text-[13px] font-extrabold text-[#ff5a00] transition hover:bg-[#fff4ee] disabled:opacity-60"
-                >
-                  <span className="text-center leading-[1.1]">
-                    {loadingId === credit.slug ? 'Processando...' : 'Comprar créditos'}
-                    <span className="mt-2 block">
-                      <ShoppingCart size={20} className="mx-auto" />
-                    </span>
-                  </span>
-                </button>
               </div>
             </article>
-          ))}
+
+            {creditOffers.map((credit) => (
+              <article key={credit.slug} className="rounded-[10px] border border-[#173c6e] bg-[#081a38] px-3 py-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <div className="mb-1 flex items-center gap-2">
+                      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#ff6a00]/60 bg-[#0b1d3f] text-[#ff6a00]">
+                        <Database size={15} />
+                      </span>
+                      <span className="text-[13px] font-bold text-white">{getCreditPackShortName(credit.limits.includedExecutions)}</span>
+                    </div>
+                    <p className="text-[40px] font-black leading-none text-[#ff6a00]">{formatCurrencyFromCents(credit.amount)}</p>
+                    <p className="mt-1 text-[13px] text-white">{credit.limits.includedExecutions.toLocaleString('pt-BR')} execuções</p>
+                    <p className="text-[13px] text-[#c6d3e9]">{formatUnitPrice(credit.limits.unitPrice)} por execução</p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleCheckout(credit)}
+                    disabled={loadingId === credit.slug}
+                    className="inline-flex h-[84px] w-[92px] shrink-0 items-center justify-center rounded-[12px] border border-[#ff6a00] bg-transparent px-2 py-2 text-[12px] font-extrabold text-[#ff6a00] transition hover:bg-[#ff6a00]/10 disabled:opacity-60"
+                  >
+                    <span className="text-center leading-[1.05]">
+                      {loadingId === credit.slug ? 'Processando...' : 'Comprar créditos'}
+                      <span className="mt-1.5 block">
+                        <ShoppingCart size={18} className="mx-auto" />
+                      </span>
+                    </span>
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
 
         <div className="mt-5 grid gap-3 rounded-[18px] border border-[#e6ebf3] bg-white p-5 md:grid-cols-3">
