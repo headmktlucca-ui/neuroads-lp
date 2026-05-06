@@ -703,7 +703,7 @@ export default function Suggestion3LandingPage() {
                               <button
                                 type="button"
                                 onClick={() => setDetailsAgent(agent)}
-                                className="inline-flex items-center gap-2 rounded-full border border-[#ffbd93] bg-white px-4 py-2 text-[12px] font-extrabold uppercase tracking-[0.04em] text-[#ff6a00] transition hover:bg-[#fff3ea]"
+                                className="inline-flex items-center gap-2 rounded-full border border-[#ffbd93] bg-white px-4 py-2 text-[12px] font-extrabold uppercase tracking-[0.04em] text-[#ff6a00] transition hover:bg-[#fff3ea] whitespace-nowrap"
                               >
                                 Mais detalhes
                                 <ArrowRight size={12} className="[animation:neuroadsFlowArrowPulse_1.2s_ease-in-out_infinite]" />

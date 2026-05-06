@@ -1,0 +1,120 @@
+                <p className="mt-1 text-[14px] text-[#4B5563]">4 KPIs financeiros essenciais</p>
+              </article>
+
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-5">
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
+                    <UserRound className="h-6 w-6" />
+                  </span>
+                  <div>
+                    <p className="text-[15px] font-semibold leading-none text-[#111827]">CPL Médio</p>
+                    <p className="mt-1 text-[44px] leading-none font-black text-[#111827]">R$ 4,82</p>
+                  </div>
+                </div>
+                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
+                  <TrendingDown className="h-3.5 w-3.5" />
+                  -18,2% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
+                </p>
+              </article>
+
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-5">
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
+                    <HandCoins className="h-6 w-6" />
+                  </span>
+                  <div>
+                    <p className="text-[15px] font-semibold leading-none text-[#111827]">CAC</p>
+                    <p className="mt-1 text-[44px] leading-none font-black text-[#111827]">R$ 38,11</p>
+                  </div>
+                </div>
+                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
+                  <TrendingDown className="h-3.5 w-3.5" />
+                  -12,4% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
+                </p>
+              </article>
+
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-5">
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
+                    <CircleDollarSign className="h-6 w-6" />
+                  </span>
+                  <div>
+                    <p className="text-[15px] font-semibold leading-none text-[#111827]">Receita Atribuída</p>
+                    <p className="mt-1 text-[44px] leading-none font-black text-[#111827]">R$ 1.243.000</p>
+                  </div>
+                </div>
+                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
+                  <TrendingUp className="h-3.5 w-3.5" />
+                  +15,6% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
+                </p>
+              </article>
+
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-5">
+                <div className="mb-3 flex items-center gap-3">
+                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
+                    <ChartNoAxesCombined className="h-6 w-6" />
+                  </span>
+                  <div>
+                    <p className="text-[15px] font-semibold leading-none text-[#111827]">ROAS</p>
+                    <p className="mt-1 text-[44px] leading-none font-black text-[#111827]">5,2x</p>
+                  </div>
+                </div>
+                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
+                  <TrendingUp className="h-3.5 w-3.5" />
+                  +15% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
+                </p>
+              </article>
+            </div>
+          </section>
+
+          <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1.33fr]">
+            <article className="rounded-[24px] border border-[#E8ECF1] bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
+              <header className="mb-4 border-b border-[#EEF1F5] pb-4">
+                <h2 className="flex items-center gap-3 text-[18px] font-black tracking-tight text-[#FF5A00]">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
+                    <CalendarClock className="h-6 w-6" />
+                  </span>
+                  Ações de Hoje
+                </h2>
+                <p className="text-[14px] text-[#4B5563]">Prioridades operacionais do dia</p>
+              </header>
+
+              <div className="space-y-3">
+                {ACTIONS.map((item) => (
+                  <article key={item.id} className="rounded-[14px] border border-[#ECEFF4] bg-white p-4">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <div className="flex gap-3">
+                        <span className="inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[12px] bg-[#FFF3EC] text-[24px] font-black text-[#FF5A00]">
+                          {item.order}
+                        </span>
+                        <div>
+                          <h3 className="text-[16px] font-black leading-tight text-[#111827]">{item.title}</h3>
+                          <p className="mt-1 text-[14px] leading-tight text-[#4B5563]">{item.description}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <PriorityBadge value={item.priority} />
+                        <span className="inline-flex items-center gap-1 text-[13px] text-[#4B5563]">
+                          <CalendarClock className="h-4 w-4" />
+                          Hoje
+                        </span>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              <div className="mt-5 text-center">
+                <Link
+                  href="/hub/performance"
+                  className="inline-flex items-center gap-2 text-[16px] font-bold text-[#FF5A00] transition hover:text-[#E14B00]"
+                >
+                  Ver todas as ações <span aria-hidden>→</span>
+                </Link>
+              </div>
+            </article>
+
+            <article className="rounded-[24px] border border-[#E8ECF1] bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
+              <header className="mb-4 border-b border-[#EEF1F5] pb-4">
+                <h2 className="flex items-center gap-3 text-[18px] font-black tracking-tight text-[#FF5A00]">
+                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">

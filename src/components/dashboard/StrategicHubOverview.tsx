@@ -231,7 +231,7 @@ export default function StrategicHubOverview() {
             </div>
 
             <article className="relative overflow-hidden rounded-[24px] border border-[#E8ECF1] bg-white p-6 shadow-[0_12px_24px_rgba(15,23,42,0.06)]">
-              <div className="relative z-10 max-w-[53%]">
+              <div className="relative z-10 max-w-[55%]">
                 <span className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
                   <Target className="h-8 w-8" />
                 </span>
@@ -246,86 +246,86 @@ export default function StrategicHubOverview() {
                 </p>
               </div>
 
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex w-[49%] items-center justify-end pr-2">
+              <div className="pointer-events-none absolute bottom-0 right-0 flex h-[78%] w-[54%] items-end justify-end">
                 <Image
-                  src="/images/hub/hero-centro-decisao-bg-exact.png"
-                  alt=""
+                  src="/images/img_table.png"
+                  alt="Tabela de Performance"
                   width={340}
                   height={220}
-                  className="h-auto max-h-[94%] w-full object-contain object-center"
+                  className="h-full w-full object-contain object-bottom-right"
                   priority
                 />
               </div>
             </article>
           </section>
 
-          <section className="rounded-[24px] border border-[#FFD7BF] bg-white/90 p-4 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.08fr_repeat(4,1fr)]">
-              <article className="rounded-[16px] bg-white px-6 py-5">
-                <h3 className="text-[18px] font-black leading-tight tracking-tight text-[#FF5A00]">Painel Executivo do Caixa</h3>
+          <section className="rounded-[24px] border border-[#FFD7BF] bg-white/95 p-4 shadow-[0_10px_22px_rgba(15,23,42,0.04)]">
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-[0.95fr_repeat(4,1fr)]">
+              <article className="rounded-[16px] bg-[#FBFBFC] px-6 py-5">
+                <h3 className="text-[17px] font-black leading-tight tracking-tight text-[#FF5A00]">Painel Executivo do Caixa</h3>
                 <p className="mt-1 text-[14px] text-[#4B5563]">4 KPIs financeiros essenciais</p>
               </article>
 
-              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-4">
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-[#FCFCFD] px-5 py-5 shadow-[0_6px_16px_rgba(14,20,36,0.03)]">
                 <div className="mb-3 flex items-center gap-3">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                    <UserRound className="h-6 w-6" />
+                    <UserRound className="h-5 w-5" />
                   </span>
                   <div>
-                    <p className="text-[15px] font-semibold text-[#111827]">CPL Médio</p>
-                    <p className="text-[38px] leading-none font-black text-[#111827]">R$ 4,82</p>
+                    <p className="text-[15px] font-semibold leading-none text-[#111827]">CPL Médio</p>
+                    <p className="mt-1 whitespace-nowrap text-[42px] leading-none font-black tracking-[-0.01em] text-[#111827]">R$ 4,82</p>
                   </div>
                 </div>
-                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#0A9D57]">
-                  <TrendingDown className="h-4 w-4" />
+                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
+                  <TrendingDown className="h-3.5 w-3.5" />
                   -18,2% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
                 </p>
               </article>
 
-              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-4">
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-[#FCFCFD] px-5 py-5 shadow-[0_6px_16px_rgba(14,20,36,0.03)]">
                 <div className="mb-3 flex items-center gap-3">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                    <HandCoins className="h-6 w-6" />
+                    <HandCoins className="h-5 w-5" />
                   </span>
                   <div>
-                    <p className="text-[15px] font-semibold text-[#111827]">CAC</p>
-                    <p className="text-[38px] leading-none font-black text-[#111827]">R$ 38,11</p>
+                    <p className="text-[15px] font-semibold leading-none text-[#111827]">CAC</p>
+                    <p className="mt-1 whitespace-nowrap text-[42px] leading-none font-black tracking-[-0.01em] text-[#111827]">R$ 38,11</p>
                   </div>
                 </div>
-                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#0A9D57]">
-                  <TrendingDown className="h-4 w-4" />
+                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
+                  <TrendingDown className="h-3.5 w-3.5" />
                   -12,4% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
                 </p>
               </article>
 
-              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-4">
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-[#FCFCFD] px-5 py-5 shadow-[0_6px_16px_rgba(14,20,36,0.03)]">
                 <div className="mb-3 flex items-center gap-3">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                    <CircleDollarSign className="h-6 w-6" />
+                    <CircleDollarSign className="h-5 w-5" />
                   </span>
                   <div>
-                    <p className="text-[15px] font-semibold text-[#111827]">Receita Atribuída</p>
-                    <p className="text-[38px] leading-none font-black text-[#111827]">R$ 1.243.000</p>
+                    <p className="text-[15px] font-semibold leading-none text-[#111827]">Receita Atribuída</p>
+                    <p className="mt-1 whitespace-nowrap text-[42px] leading-none font-black tracking-[-0.01em] text-[#111827]">R$ 1.243.000</p>
                   </div>
                 </div>
-                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#0A9D57]">
-                  <TrendingUp className="h-4 w-4" />
+                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
+                  <TrendingUp className="h-3.5 w-3.5" />
                   +15,6% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
                 </p>
               </article>
 
-              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-4">
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-[#FCFCFD] px-5 py-5 shadow-[0_6px_16px_rgba(14,20,36,0.03)]">
                 <div className="mb-3 flex items-center gap-3">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                    <ChartNoAxesCombined className="h-6 w-6" />
+                    <ChartNoAxesCombined className="h-5 w-5" />
                   </span>
                   <div>
-                    <p className="text-[15px] font-semibold text-[#111827]">ROAS</p>
-                    <p className="text-[38px] leading-none font-black text-[#111827]">5,2x</p>
+                    <p className="text-[15px] font-semibold leading-none text-[#111827]">ROAS</p>
+                    <p className="mt-1 whitespace-nowrap text-[42px] leading-none font-black tracking-[-0.01em] text-[#111827]">5,2x</p>
                   </div>
                 </div>
-                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#0A9D57]">
-                  <TrendingUp className="h-4 w-4" />
+                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
+                  <TrendingUp className="h-3.5 w-3.5" />
                   +15% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
                 </p>
               </article>
