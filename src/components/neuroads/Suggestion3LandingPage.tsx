@@ -11,6 +11,7 @@ import {
   CircleGauge,
   Funnel,
   Headphones,
+  Menu,
   Target,
   TrendingUp,
   X,
@@ -172,21 +173,6 @@ const faq = [
   },
 ];
 
-const footerCols = [
-  {
-    title: 'Soluções',
-    links: ['Agentes IA', 'Gestão de Mídia', 'Criação & Testes', 'SEO & Conteúdo'],
-  },
-  {
-    title: 'Recursos',
-    links: ['Materiais', 'Blog', 'Webinars', 'Guias'],
-  },
-  {
-    title: 'Empresa',
-    links: ['Sobre nós', 'Cases', 'Carreiras', 'Contato'],
-  },
-];
-
 type HeaderMenuGroup = {
   label: string;
   href: string;
@@ -260,6 +246,8 @@ export default function Suggestion3LandingPage() {
   const [isLuccaChatOpen, setIsLuccaChatOpen] = useState(false);
   const [luccaAutoMessage, setLuccaAutoMessage] = useState<string | null>(null);
   const [openMenuGroup, setOpenMenuGroup] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
   const closeMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const layoutAgents = useMemo(() => {
@@ -280,11 +268,13 @@ export default function Suggestion3LandingPage() {
   }, [layoutAgents]);
 
   const handleOpenSpecialistChat = () => {
+    setIsMobileMenuOpen(false);
     setLuccaAutoMessage(null);
     setIsLuccaChatOpen(true);
   };
 
   const handleRequestDemo = () => {
+    setIsMobileMenuOpen(false);
     setLuccaAutoMessage(
       'Solicito Demonstração. Quero enviar meus dados cadastrais iniciais (Nome, Email, WhatsApp e Site da Empresa). Aguardo por email as instruções de acesso e detalhes para implantação.',
     );
@@ -354,13 +344,13 @@ export default function Suggestion3LandingPage() {
       `}</style>
       <section className="relative overflow-hidden pt-5">
         <div className="mx-auto max-w-[1260px] px-5 md:px-8">
-          <header className="fixed left-1/2 top-4 z-[80] flex w-[min(calc(100%-2.5rem),1196px)] -translate-x-1/2 items-center justify-between rounded-full border border-black/[0.06] bg-white px-5 py-3 shadow-[0_8px_26px_rgba(10,18,30,0.04)] md:px-7">
+          <header className="fixed left-1/2 top-4 z-[90] flex w-[min(calc(100%-2.5rem),1196px)] -translate-x-1/2 items-center justify-between gap-3 rounded-full border border-black/[0.06] bg-white px-4 py-3 shadow-[0_8px_26px_rgba(10,18,30,0.04)] sm:px-5 md:px-7">
             <a href="#" className="flex items-center">
               <Image src="/images/logo2026.png" alt="NeuroAds" width={156} height={34} className="h-8 w-auto" priority />
             </a>
 
             <nav
-              className="hidden items-center gap-5 text-[13px] font-semibold text-[#5f6572] lg:flex"
+              className="hidden items-center gap-5 text-[13px] font-semibold text-[#5f6572] xl:flex"
               onMouseEnter={clearMenuCloseTimeout}
               onMouseLeave={() => closeMenuWithDelay(220)}
             >
@@ -406,10 +396,10 @@ export default function Suggestion3LandingPage() {
               )})}
             </nav>
 
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2">
               <Link
                 href="/login?next=/hub"
-                className="inline-flex items-center gap-2 rounded-full border border-[#d7dce5] bg-white px-5 py-2.5 text-[12px] font-extrabold text-[#2b3240]"
+                className="hidden items-center gap-2 rounded-full border border-[#d7dce5] bg-white px-5 py-2.5 text-[12px] font-extrabold text-[#2b3240] lg:inline-flex"
               >
                 Acessar meu Hub
                 <ArrowRight size={13} />
@@ -417,19 +407,101 @@ export default function Suggestion3LandingPage() {
               <button
                 type="button"
                 onClick={handleOpenSpecialistChat}
-                className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-5 py-2.5 text-[12px] font-extrabold text-white"
+                className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-4 py-2.5 text-[11px] font-extrabold text-white sm:px-5 sm:text-[12px]"
               >
                 Fale com o especialista
                 <ArrowRight size={13} />
               </button>
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#dbe2ee] bg-white text-[#2b3240] transition hover:border-[#ffc8a5] hover:text-[#ff6a00] xl:hidden"
+                aria-label={isMobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+              >
+                {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+              </button>
             </div>
           </header>
+
+          {isMobileMenuOpen ? (
+            <button
+              type="button"
+              aria-label="Fechar menu mobile"
+              className="fixed inset-0 z-[85] bg-[#0e1830]/35 xl:hidden"
+              onClick={() => setIsMobileMenuOpen(false)}
+            />
+          ) : null}
+
+          <div
+            className={`fixed left-1/2 top-[84px] z-[95] w-[min(calc(100%-2.5rem),460px)] -translate-x-1/2 overflow-hidden rounded-[20px] border border-[#e5eaf3] bg-white p-4 shadow-[0_20px_44px_rgba(12,22,38,0.16)] transition xl:hidden ${
+              isMobileMenuOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-2 opacity-0'
+            }`}
+          >
+            <div className="space-y-2">
+              {headerMenuGroups.map((group) => {
+                const isGroupOpen = openMobileGroup === group.label;
+                return (
+                  <div key={group.label} className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff]">
+                    <div className="flex items-center gap-2 px-3.5 py-3">
+                      <Link
+                        href={group.href}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="grow text-[14px] font-black text-[#1f2a44]"
+                      >
+                        {group.label}
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => setOpenMobileGroup(isGroupOpen ? null : group.label)}
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#dde4ee] text-[#7d889d]"
+                        aria-label={`Abrir submenu ${group.label}`}
+                      >
+                        <ChevronDown size={15} className={`shrink-0 transition ${isGroupOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                    </div>
+                    {isGroupOpen ? (
+                      <div className="border-t border-[#edf1f7] px-2 py-2">
+                        {group.submenu.map((item) => (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="block rounded-xl px-2.5 py-2 text-[13px] font-semibold text-[#42506a] transition hover:bg-[#fff5ee] hover:text-[#ff6a00]"
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                );
+              })}
+            </div>
+            <div className="mt-3 grid gap-2">
+              <Link
+                href="/login?next=/hub"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d8deea] bg-white px-4 py-2.5 text-[12px] font-extrabold text-[#2b3240]"
+              >
+                Acessar meu Hub
+                <ArrowRight size={13} />
+              </Link>
+              <button
+                type="button"
+                onClick={handleRequestDemo}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d8deea] bg-white px-4 py-2.5 text-[12px] font-extrabold text-[#2b3240] transition hover:border-[#ffc8a5] hover:text-[#ff6a00]"
+              >
+                Solicite Demonstração
+                <ArrowRight size={13} />
+              </button>
+            </div>
+          </div>
 
           <div className="h-[84px]" aria-hidden="true" />
 
           <div className="relative grid items-center gap-8 pb-10 pt-12 lg:grid-cols-[1.02fr_0.98fr]">
             <div className="relative z-10 max-w-[560px] lg:pr-14">
-              <h1 className="mt-4 text-[32px] font-extrabold leading-[1.08] tracking-[-0.02em] text-[#111317]">
+              <h1 className="mt-4 text-[30px] font-extrabold leading-[1.08] tracking-[-0.02em] text-[#111317] sm:text-[34px] lg:text-[34px]">
                 Desbloqueie o Potencial Oculto:
                 <br />
                 Marketing & Vendas de
@@ -470,7 +542,7 @@ export default function Suggestion3LandingPage() {
               </div>
             </div>
 
-            <div className="relative z-30 h-[470px] w-full overflow-hidden bg-white sm:h-[520px] lg:-ml-[140px] lg:h-[560px] lg:w-[calc(100%+140px)] lg:pointer-events-none">
+            <div className="relative z-30 h-[360px] w-full overflow-hidden bg-white sm:h-[470px] lg:-ml-[140px] lg:h-[560px] lg:w-[calc(100%+140px)] lg:pointer-events-none">
               <Image
                 src="/images/template-match/hero-orbit-white-v1.png"
                 alt="Anel de energia da NeuroAds"
@@ -479,21 +551,21 @@ export default function Suggestion3LandingPage() {
                 priority
               />
 
-              <div className="absolute right-[14px] top-[14px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-4 py-3 shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
+              <div className="absolute right-[10px] top-[10px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:right-[14px] sm:top-[14px] sm:px-4 sm:py-3">
                 <p className="text-[10px] font-semibold text-[#7b8291]">ROAS</p>
-                <p className="mt-1 text-[37px] font-extrabold leading-none text-[#ff6b00]">+320%</p>
+                <p className="mt-1 text-[30px] font-extrabold leading-none text-[#ff6b00] sm:text-[37px]">+320%</p>
                 <p className="mt-1 text-[10px] text-[#9197a4]">vs. período anterior</p>
               </div>
 
-              <div className="absolute left-[18px] top-[182px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-4 py-3 shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
+              <div className="absolute left-[12px] top-[132px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:left-[18px] sm:top-[182px] sm:px-4 sm:py-3">
                 <p className="text-[10px] font-semibold text-[#7b8291]">Conversão</p>
-                <p className="mt-1 text-[37px] font-extrabold leading-none text-[#ff6b00]">+68%</p>
+                <p className="mt-1 text-[30px] font-extrabold leading-none text-[#ff6b00] sm:text-[37px]">+68%</p>
                 <p className="mt-1 text-[10px] text-[#9197a4]">vs. período anterior</p>
               </div>
 
-              <div className="absolute bottom-[24px] right-[8px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-4 py-3 shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
+              <div className="absolute bottom-[14px] right-[6px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:bottom-[24px] sm:right-[8px] sm:px-4 sm:py-3">
                 <p className="text-[10px] font-semibold text-[#7b8291]">CPL</p>
-                <p className="mt-1 text-[37px] font-extrabold leading-none text-[#ff6b00]">-45%</p>
+                <p className="mt-1 text-[30px] font-extrabold leading-none text-[#ff6b00] sm:text-[37px]">-45%</p>
                 <p className="mt-1 text-[10px] text-[#9197a4]">vs. período anterior</p>
               </div>
             </div>
@@ -569,12 +641,12 @@ export default function Suggestion3LandingPage() {
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,8,18,0.70)_0%,rgba(2,8,18,0.82)_100%)]" />
 
           <div className="relative">
-            <h2 className="text-center text-[35px] font-extrabold leading-[1.08] tracking-[-0.01em] text-white">
+            <h2 className="text-center text-[24px] font-extrabold leading-[1.08] tracking-[-0.01em] text-white sm:text-[30px] lg:text-[35px]">
               <span className="bg-[linear-gradient(90deg,#ffb36a_0%,#ff8a2b_45%,#d55a00_100%)] bg-clip-text text-transparent">
                 Posicionamento inteligente e aprendizado contínuo.
               </span>
             </h2>
-            <p className="mt-2 text-center text-[25px] font-medium text-white/82">
+            <p className="mt-2 text-center text-[16px] font-medium text-white/82 sm:text-[20px] lg:text-[25px]">
               Agentes que transformam dados em oportunidades.
             </p>
 
@@ -585,7 +657,7 @@ export default function Suggestion3LandingPage() {
               </span>
 
               <div className="p-7 sm:p-8 lg:pr-12">
-                <h3 className="text-[36px] font-bold leading-none text-white sm:text-[42px]">Antes</h3>
+                <h3 className="text-[24px] font-bold leading-none text-white sm:text-[32px] md:text-[36px] lg:text-[42px]">Antes</h3>
                 <ul className="mt-6 space-y-3.5 text-[16px] font-medium leading-[1.2] text-white/86 sm:text-[16px]">
                   {beforeItems.map((item) => (
                     <li key={item} className="flex items-center gap-3">
@@ -597,7 +669,7 @@ export default function Suggestion3LandingPage() {
               </div>
 
               <div className="relative rounded-r-[22px] border-y border-r border-white/10 border-l-0 bg-[linear-gradient(180deg,rgba(255,122,33,0.04)_0%,rgba(255,122,33,0.01)_100%)] p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),inset_0_-1px_0_rgba(255,255,255,0.04),8px_0_24px_rgba(7,12,22,0.45),2px_0_10px_rgba(255,255,255,0.05)] sm:p-8 lg:-ml-px lg:rounded-l-none lg:pl-12">
-                <h3 className="bg-[linear-gradient(90deg,#ffb065_0%,#ff8f3a_45%,#ff6a00_100%)] bg-clip-text text-[36px] font-bold leading-none text-transparent sm:text-[42px]">
+                <h3 className="bg-[linear-gradient(90deg,#ffb065_0%,#ff8f3a_45%,#ff6a00_100%)] bg-clip-text text-[24px] font-bold leading-none text-transparent sm:text-[32px] md:text-[36px] lg:text-[42px]">
                   Depois com NeuroAds
                 </h3>
                 <ul className="mt-6 space-y-3.5 text-[16px] font-medium leading-[1.2] text-white sm:text-[16px]">
@@ -618,7 +690,7 @@ export default function Suggestion3LandingPage() {
         <div className="rounded-[28px] border border-[#e7ebf1] bg-white px-5 py-8 shadow-[0_16px_34px_rgba(20,28,40,0.04)] md:px-8">
           <div className="flex flex-wrap items-end justify-between gap-5">
             <div className="max-w-[760px]">
-              <h2 className="text-[34px] font-extrabold leading-[1.08] tracking-[-0.02em] text-[#111827] md:text-[44px]">
+              <h2 className="text-[28px] font-extrabold leading-[1.08] tracking-[-0.02em] text-[#111827] sm:text-[34px] md:text-[44px]">
                 Ecossistema de Agentes IA <span className="text-[#ff6a00]">em ação.</span>
               </h2>
               <p className="mt-4 text-[16px] leading-[1.55] text-[#5f6778] md:text-[18px]">
@@ -660,7 +732,7 @@ export default function Suggestion3LandingPage() {
                       <span className="inline-flex h-14 w-14 items-center justify-center rounded-[14px] border border-[#ff8b39]/45 bg-[#091427] text-[#ff7a21]">
                         <StageIcon size={28} strokeWidth={2.1} />
                       </span>
-                      <h3 className="mt-4 text-[30px] font-extrabold leading-none text-[#ff7a21]">
+                      <h3 className="mt-4 text-[24px] font-extrabold leading-none text-[#ff7a21] sm:text-[28px] md:text-[30px]">
                         {row.stage}
                       </h3>
                       <p className="mt-3 text-[14px] leading-[1.45] text-white/90 md:text-[15px]">{row.stageDescription}</p>
@@ -783,11 +855,11 @@ export default function Suggestion3LandingPage() {
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,15,0.9)_0%,rgba(3,8,15,0.92)_40%,rgba(3,8,15,0.14)_100%)]" />
 
           <div className="relative">
-            <h2 className="text-center text-[42px] font-extrabold leading-tight text-white">Métricas que importam. Impacto que fica.</h2>
+            <h2 className="text-center text-[28px] font-extrabold leading-tight text-white sm:text-[34px] lg:text-[42px]">Métricas que importam. Impacto que fica.</h2>
             <div className="mx-auto mt-5 grid max-w-[1150px] gap-4 md:grid-cols-2 xl:grid-cols-4">
               {metrics.map((metric) => (
                 <article key={metric.label} className="min-h-[190px] rounded-[20px] border border-[#20324b] bg-[#091423]/76 px-6 pb-3 pt-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
-                  <p className="text-[48px] font-extrabold leading-none text-[#ff6a00]">{metric.value}</p>
+                  <p className="text-[38px] font-extrabold leading-none text-[#ff6a00] sm:text-[44px] lg:text-[48px]">{metric.value}</p>
                   <p className="mt-2 text-[15px] leading-snug text-white/88">{metric.label}</p>
                   <div className="mt-4">
                     <Sparkline d={metric.path} />
@@ -800,7 +872,7 @@ export default function Suggestion3LandingPage() {
       </section>
 
       <section id="depoimentos" className="mx-auto max-w-[1260px] px-5 pb-4 pt-14 md:px-8">
-        <h2 className="text-center text-[42px] font-extrabold text-[#1a1c22]">Quem cresce com a gente, recomenda.</h2>
+        <h2 className="text-center text-[28px] font-extrabold text-[#1a1c22] sm:text-[34px] lg:text-[42px]">Quem cresce com a gente, recomenda.</h2>
 
         <div className="mt-8 grid gap-4 lg:grid-cols-3">
           {testimonials.map((item) => (
@@ -830,7 +902,7 @@ export default function Suggestion3LandingPage() {
 
       <section className="mx-auto grid max-w-[1260px] gap-5 px-5 pb-10 pt-8 lg:grid-cols-[1.08fr_0.92fr] md:px-8">
         <div>
-          <h3 className="text-[34px] font-extrabold text-[#1d2028]">Perguntas frequentes</h3>
+          <h3 className="text-[28px] font-extrabold text-[#1d2028] sm:text-[34px]">Perguntas frequentes</h3>
           <div className="mt-4 overflow-hidden rounded-[16px] border border-[#eceef2] bg-white">
             {faq.map((item, idx) => {
               const isOpen = openFaqIndex === idx;
@@ -863,7 +935,7 @@ export default function Suggestion3LandingPage() {
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_88%_42%,rgba(255,123,34,0.32)_0%,rgba(255,123,34,0)_52%),radial-gradient(circle_at_15%_-5%,rgba(255,124,38,0.16)_0%,rgba(255,124,38,0)_45%)]" />
           <div className="relative z-10 grid items-center gap-5 sm:grid-cols-[1fr_auto]">
             <div className="max-w-[355px]">
-              <h3 className="text-[42px] font-extrabold leading-tight text-white">Ainda com dúvidas?</h3>
+              <h3 className="text-[30px] font-extrabold leading-tight text-white sm:text-[36px] lg:text-[42px]">Ainda com dúvidas?</h3>
               <p className="mt-2 text-[15px] leading-relaxed text-white/86">
                 Fale com um especialista e descubra como podemos acelerar seus resultados.
               </p>
@@ -895,7 +967,7 @@ export default function Suggestion3LandingPage() {
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(4,9,16,0.94)_0%,rgba(4,9,16,0.9)_42%,rgba(4,9,16,0.42)_100%)]" />
 
           <div className="relative max-w-[700px]">
-            <h2 className="text-[40px] font-extrabold leading-[1.12] text-white">
+            <h2 className="text-[30px] font-extrabold leading-[1.12] text-white sm:text-[34px] lg:text-[40px]">
               Pronto para transformar dados
               <br />
               em{' '}
@@ -923,7 +995,7 @@ export default function Suggestion3LandingPage() {
       </section>
 
       <footer id="rodape" className="mx-auto max-w-[1260px] px-5 pb-8 pt-2 md:px-8">
-        <div className="grid gap-8 border-b border-[#eceef2] pb-8 md:grid-cols-[1.35fr_0.9fr_0.9fr_0.9fr]">
+        <div className="grid gap-8 border-b border-[#eceef2] pb-8 md:grid-cols-2 xl:grid-cols-[1.25fr_repeat(4,minmax(0,1fr))]">
           <div>
             <Image src="/images/logo2026.png" alt="NeuroAds" width={150} height={32} className="h-8 w-auto" />
             <p className="mt-3 max-w-[280px] text-[13px] text-[#707887]">IA agêntica para marketing de alta performance.</p>
@@ -940,12 +1012,18 @@ export default function Suggestion3LandingPage() {
             </div>
           </div>
 
-          {footerCols.map((col) => (
-            <div key={col.title}>
-              <p className="text-[14px] font-extrabold text-[#242934]">{col.title}</p>
+          {headerMenuGroups.map((group) => (
+            <div key={group.label}>
+              <Link href={group.href} className="text-[14px] font-extrabold text-[#242934] transition hover:text-[#ff6a00]">
+                {group.label}
+              </Link>
               <ul className="mt-3 space-y-2 text-[13px] text-[#656d7c]">
-                {col.links.map((link) => (
-                  <li key={link}>{link}</li>
+                {group.submenu.map((item) => (
+                  <li key={item.href}>
+                    <Link href={item.href} className="transition hover:text-[#ff6a00]">
+                      {item.label}
+                    </Link>
+                  </li>
                 ))}
               </ul>
             </div>

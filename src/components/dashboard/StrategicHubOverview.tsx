@@ -5,21 +5,20 @@ import { useMemo } from 'react';
 import Image from 'next/image';
 import {
   Building2,
+  CheckCircle2,
   CalendarClock,
   ChartNoAxesCombined,
   CircleDollarSign,
   Cog,
-  Crown,
-  Gauge,
+  Funnel,
+  Gem,
   Globe,
   HandCoins,
-  Megaphone,
-  Search,
   Sparkles,
   Target,
   TrendingDown,
   TrendingUp,
-  UserRound,
+  UsersRound,
   Wrench,
   type LucideIcon,
 } from 'lucide-react';
@@ -76,7 +75,7 @@ function PriorityBadge({ value }: { value: ActionPriority }) {
   const isHigh = value === 'Alta prioridade';
   return (
     <span
-      className={`inline-flex items-center rounded-full px-3 py-1 text-[12px] font-semibold ${
+      className={`inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-[12px] font-semibold ${
         isHigh ? 'bg-[#FFF0E6] text-[#E66100]' : 'bg-[#FFF6DA] text-[#C98500]'
       }`}
     >
@@ -109,20 +108,20 @@ function TrailCard({
   const Icon = icon;
 
   return (
-    <article className={`rounded-[16px] border ${palette.border} bg-white p-5`}>
+    <article className={`flex h-full flex-col rounded-[16px] border ${palette.border} bg-white p-5`}>
       <div className="mb-3 flex items-center gap-3">
         <span className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl ${palette.iconBg}`}>
           <Icon className={`h-6 w-6 ${palette.iconColor}`} />
         </span>
-        <h3 className={`text-[30px] leading-none font-black tracking-tight ${palette.iconColor}`}>{title}</h3>
+        <h3 className={`text-[24px] leading-none font-black tracking-tight ${palette.iconColor}`}>{title}</h3>
       </div>
 
-      <p className="mb-4 text-[18px] leading-6 font-semibold tracking-tight text-[#111827]">{subtitle}</p>
+      <p className="mb-4 text-[16px] leading-[1.4] font-semibold tracking-tight text-[#111827]">{subtitle}</p>
 
       <ul className="mb-5 space-y-2">
         {points.map((point) => (
-          <li key={point} className="flex items-start gap-2 text-[15px] leading-6 text-[#4B5563]">
-            <span className="mt-2 inline-block h-1.5 w-1.5 rounded-full bg-[#FF5A00]" />
+          <li key={point} className="flex items-start gap-2 text-[14px] leading-[1.4] text-[#4B5563]">
+            <CheckCircle2 className={`mt-0.5 h-5 w-5 ${palette.iconColor}`} />
             {point}
           </li>
         ))}
@@ -130,7 +129,7 @@ function TrailCard({
 
       <Link
         href={href}
-        className={`inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] border ${palette.buttonBorder} px-4 text-[15px] font-bold ${palette.buttonText} transition hover:brightness-95`}
+        className={`mt-auto inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] border ${palette.buttonBorder} px-4 text-[15px] font-bold ${palette.buttonText} transition hover:brightness-95`}
       >
         Acessar trilha
         <span aria-hidden>→</span>
@@ -155,13 +154,6 @@ export default function StrategicHubOverview() {
             <div className="rounded-[24px] border border-[#FFD7BF] bg-white/90 p-4 shadow-[0_12px_24px_rgba(15,23,42,0.06)]">
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <article className="rounded-[16px] border border-[#EEF1F5] bg-[#FCFCFD] p-5">
-                  <h2 className="mb-4 flex items-center gap-2 text-[18px] font-black tracking-tight text-[#FF5A00]">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                      <Building2 className="h-6 w-6" />
-                    </span>
-                    Contexto da Conta
-                  </h2>
-
                   <p className="mb-5 flex items-center gap-2 text-[20px] font-black tracking-tight text-[#111827]">
                     <Sparkles className="h-7 w-7 text-[#FFB100]" />
                     {greeting}, <span className="text-[#FF5A00]">{firstName}</span>
@@ -190,30 +182,25 @@ export default function StrategicHubOverview() {
                 </article>
 
                 <article className="rounded-[16px] border border-[#EEF1F5] bg-[#FCFCFD] p-5">
-                  <h2 className="mb-4 flex items-center gap-2 text-[18px] font-black tracking-tight text-[#FF5A00]">
-                    <Crown className="h-7 w-7" />
-                    Plano Ativo
-                  </h2>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="rounded-xl border border-[#E6EAF0] bg-white p-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div>
                       <p className="text-[13px] text-[#6B7280]">Plano</p>
-                      <p className="mt-1 flex items-center gap-2 text-[17px] font-black text-[#111827]">
-                        <Sparkles className="h-4 w-4 text-[#FF5A00]" />
+                      <p className="mt-1 flex items-center gap-2 text-[20px] font-black text-[#111827]">
+                        <Gem className="h-5 w-5 text-[#FF5A00]" />
                         Pro Scale
                       </p>
                     </div>
-                    <div className="rounded-xl border border-[#E6EAF0] bg-white p-3">
+                    <div>
                       <p className="text-[13px] text-[#6B7280]">Status</p>
-                      <p className="mt-1 text-[17px] font-black text-[#0A9D57]">● Ativo</p>
+                      <p className="mt-1 text-[20px] font-black text-[#0A9D57]">● Ativo</p>
                     </div>
-                    <div className="rounded-xl border border-[#E6EAF0] bg-white p-3">
+                    <div>
                       <p className="text-[13px] text-[#6B7280]">Capacidade Mensal</p>
-                      <p className="mt-1 text-[17px] font-black text-[#111827]">250.000 execuções</p>
+                      <p className="mt-1 text-[20px] font-black text-[#111827]">250.000 execuções</p>
                     </div>
-                    <div className="rounded-xl border border-[#E6EAF0] bg-white p-3">
+                    <div>
                       <p className="text-[13px] text-[#6B7280]">Próxima Renovação</p>
-                      <p className="mt-1 text-[17px] font-black text-[#111827]">28/05/2026</p>
+                      <p className="mt-1 text-[20px] font-black text-[#111827]">28/05/2026</p>
                     </div>
                   </div>
 
@@ -231,10 +218,7 @@ export default function StrategicHubOverview() {
             </div>
 
             <article className="relative overflow-hidden rounded-[24px] border border-[#E8ECF1] bg-white p-6 shadow-[0_12px_24px_rgba(15,23,42,0.06)]">
-              <div className="relative z-10 max-w-[55%]">
-                <span className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                  <Target className="h-8 w-8" />
-                </span>
+              <div className="relative z-10 max-w-full md:max-w-[53%]">
                 <h2 className="text-[26px] font-black leading-[1.08] tracking-tight text-[#111827]">
                   Centro de decisão da sua operação
                 </h2>
@@ -246,12 +230,23 @@ export default function StrategicHubOverview() {
                 </p>
               </div>
 
-              <div className="pointer-events-none absolute bottom-0 right-0 flex h-[78%] w-[54%] items-end justify-end">
+              <div className="mt-4 md:hidden">
                 <Image
                   src="/images/img_table.png"
-                  alt="Tabela de Performance"
-                  width={340}
-                  height={220}
+                  alt="Dashboard de performance"
+                  width={520}
+                  height={360}
+                  className="h-auto w-full object-contain"
+                  priority
+                />
+              </div>
+
+              <div className="pointer-events-none absolute bottom-0 right-0 hidden h-[78%] w-[50%] items-end justify-end md:flex">
+                <Image
+                  src="/images/img_table.png"
+                  alt="Dashboard de performance"
+                  width={520}
+                  height={360}
                   className="h-full w-full object-contain object-bottom-right"
                   priority
                 />
@@ -259,73 +254,75 @@ export default function StrategicHubOverview() {
             </article>
           </section>
 
-          <section className="rounded-[24px] border border-[#FFD7BF] bg-white/95 p-4 shadow-[0_10px_22px_rgba(15,23,42,0.04)]">
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-[0.95fr_repeat(4,1fr)]">
-              <article className="rounded-[16px] bg-[#FBFBFC] px-6 py-5">
-                <h3 className="text-[17px] font-black leading-tight tracking-tight text-[#FF5A00]">Painel Executivo do Caixa</h3>
+          <section className="rounded-[24px] border border-[#FFD7BF] bg-white/90 p-4 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.08fr_repeat(4,1fr)]">
+              <article className="rounded-[16px] bg-white px-6 py-5">
+                <h3 className="text-[17px] font-black leading-tight tracking-tight text-[#FF5A00]">
+                  Painel Executivo do Caixa
+                </h3>
                 <p className="mt-1 text-[14px] text-[#4B5563]">4 KPIs financeiros essenciais</p>
               </article>
 
-              <article className="rounded-[16px] border border-[#EEF1F5] bg-[#FCFCFD] px-5 py-5 shadow-[0_6px_16px_rgba(14,20,36,0.03)]">
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-4">
                 <div className="mb-3 flex items-center gap-3">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                    <UserRound className="h-5 w-5" />
+                    <UsersRound className="h-6 w-6" />
                   </span>
                   <div>
-                    <p className="text-[15px] font-semibold leading-none text-[#111827]">CPL Médio</p>
-                    <p className="mt-1 whitespace-nowrap text-[42px] leading-none font-black tracking-[-0.01em] text-[#111827]">R$ 4,82</p>
+                    <p className="text-[15px] font-semibold text-[#111827]">CPL Médio</p>
+                    <p className="text-[26px] leading-none font-black text-[#111827]">R$ 4,82</p>
                   </div>
                 </div>
-                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
-                  <TrendingDown className="h-3.5 w-3.5" />
+                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#0A9D57]">
+                  <TrendingDown className="h-4 w-4" />
                   -18,2% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
                 </p>
               </article>
 
-              <article className="rounded-[16px] border border-[#EEF1F5] bg-[#FCFCFD] px-5 py-5 shadow-[0_6px_16px_rgba(14,20,36,0.03)]">
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-4">
                 <div className="mb-3 flex items-center gap-3">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                    <HandCoins className="h-5 w-5" />
+                    <HandCoins className="h-6 w-6" />
                   </span>
                   <div>
-                    <p className="text-[15px] font-semibold leading-none text-[#111827]">CAC</p>
-                    <p className="mt-1 whitespace-nowrap text-[42px] leading-none font-black tracking-[-0.01em] text-[#111827]">R$ 38,11</p>
+                    <p className="text-[15px] font-semibold text-[#111827]">CAC</p>
+                    <p className="text-[26px] leading-none font-black text-[#111827]">R$ 38,11</p>
                   </div>
                 </div>
-                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
-                  <TrendingDown className="h-3.5 w-3.5" />
+                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#0A9D57]">
+                  <TrendingDown className="h-4 w-4" />
                   -12,4% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
                 </p>
               </article>
 
-              <article className="rounded-[16px] border border-[#EEF1F5] bg-[#FCFCFD] px-5 py-5 shadow-[0_6px_16px_rgba(14,20,36,0.03)]">
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-4">
                 <div className="mb-3 flex items-center gap-3">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                    <CircleDollarSign className="h-5 w-5" />
+                    <CircleDollarSign className="h-6 w-6" />
                   </span>
                   <div>
-                    <p className="text-[15px] font-semibold leading-none text-[#111827]">Receita Atribuída</p>
-                    <p className="mt-1 whitespace-nowrap text-[42px] leading-none font-black tracking-[-0.01em] text-[#111827]">R$ 1.243.000</p>
+                    <p className="text-[15px] font-semibold text-[#111827]">Receita Atribuída</p>
+                    <p className="text-[26px] leading-none font-black text-[#111827]">R$ 1.243.000</p>
                   </div>
                 </div>
-                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
-                  <TrendingUp className="h-3.5 w-3.5" />
+                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#0A9D57]">
+                  <TrendingUp className="h-4 w-4" />
                   +15,6% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
                 </p>
               </article>
 
-              <article className="rounded-[16px] border border-[#EEF1F5] bg-[#FCFCFD] px-5 py-5 shadow-[0_6px_16px_rgba(14,20,36,0.03)]">
+              <article className="rounded-[16px] border border-[#EEF1F5] bg-white px-5 py-4">
                 <div className="mb-3 flex items-center gap-3">
                   <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                    <ChartNoAxesCombined className="h-5 w-5" />
+                    <ChartNoAxesCombined className="h-6 w-6" />
                   </span>
                   <div>
-                    <p className="text-[15px] font-semibold leading-none text-[#111827]">ROAS</p>
-                    <p className="mt-1 whitespace-nowrap text-[42px] leading-none font-black tracking-[-0.01em] text-[#111827]">5,2x</p>
+                    <p className="text-[15px] font-semibold text-[#111827]">ROAS</p>
+                    <p className="text-[26px] leading-none font-black text-[#111827]">5,2x</p>
                   </div>
                 </div>
-                <p className="flex items-center gap-1 text-[13px] font-semibold text-[#0A9D57]">
-                  <TrendingUp className="h-3.5 w-3.5" />
+                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#0A9D57]">
+                  <TrendingUp className="h-4 w-4" />
                   +15% <span className="font-normal text-[#4B5563]">vs mês anterior</span>
                 </p>
               </article>
@@ -335,12 +332,7 @@ export default function StrategicHubOverview() {
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1.33fr]">
             <article className="rounded-[24px] border border-[#E8ECF1] bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
               <header className="mb-4 border-b border-[#EEF1F5] pb-4">
-                <h2 className="flex items-center gap-3 text-[18px] font-black tracking-tight text-[#FF5A00]">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                    <CalendarClock className="h-6 w-6" />
-                  </span>
-                  Ações de Hoje
-                </h2>
+                <h2 className="text-[18px] font-black tracking-tight text-[#FF5A00]">Ações de Hoje</h2>
                 <p className="text-[14px] text-[#4B5563]">Prioridades operacionais do dia</p>
               </header>
 
@@ -381,12 +373,7 @@ export default function StrategicHubOverview() {
 
             <article className="rounded-[24px] border border-[#E8ECF1] bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
               <header className="mb-4 border-b border-[#EEF1F5] pb-4">
-                <h2 className="flex items-center gap-3 text-[18px] font-black tracking-tight text-[#FF5A00]">
-                  <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF5A00]">
-                    <Gauge className="h-6 w-6" />
-                  </span>
-                  Trilhas de Valor
-                </h2>
+                <h2 className="text-[18px] font-black tracking-tight text-[#FF5A00]">Trilhas de Valor</h2>
                 <p className="text-[14px] text-[#4B5563]">Aquisição, Conversão e Operação</p>
               </header>
 
@@ -401,7 +388,7 @@ export default function StrategicHubOverview() {
                     'Controle de Investimento',
                   ]}
                   href="/hub/performance"
-                  icon={Megaphone}
+                  icon={Target}
                   palette={{
                     iconBg: 'bg-[#EAFBF0]',
                     iconColor: 'text-[#0A9D57]',
@@ -421,7 +408,7 @@ export default function StrategicHubOverview() {
                     'Automação de Follow-up',
                   ]}
                   href="/hub/criativos"
-                  icon={Search}
+                  icon={Funnel}
                   palette={{
                     iconBg: 'bg-[#EEF4FF]',
                     iconColor: 'text-[#2F6CF6]',
@@ -441,7 +428,7 @@ export default function StrategicHubOverview() {
                     'Integrações e Conectores',
                   ]}
                   href="/hub/tecnico"
-                  icon={Wrench}
+                  icon={Cog}
                   palette={{
                     iconBg: 'bg-[#FFF4EE]',
                     iconColor: 'text-[#FF5A00]',

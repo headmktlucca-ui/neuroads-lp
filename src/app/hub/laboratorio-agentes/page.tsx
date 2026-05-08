@@ -1,15 +1,18 @@
 'use client';
 
-import { Suspense, useEffect, useMemo } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Wrench } from 'lucide-react';
+import { CheckCircle2, ExternalLink, Info, Power, Wrench, X } from 'lucide-react';
+import { doc, setDoc } from 'firebase/firestore';
 import Navbar from '../../../components/layout/Navbar';
 import Footer from '../../../components/layout/Footer';
 import LuccaHubSupportWidget from '../../../components/hub/LuccaHubSupportWidget';
 import { useAuth } from '../../../context/AuthContext';
 import { agents } from '../../../data/agents';
-import { slugifyAgentTitle } from '../../../lib/hub-agents';
+import { getAgentEntryDefinition, getContractedAgentsFromProfile, slugifyAgentTitle } from '../../../lib/hub-agents';
+import { getFirebaseDb } from '../../../lib/firebase';
 
 const categories = [
   { slug: 'performance', label: 'Performance' },
@@ -19,13 +22,48 @@ const categories = [
 ];
 
 const HUB_CONNECTOR_BUTTON_CLASS =
-  'inline-flex h-11 items-center justify-center gap-2 rounded-[12px] bg-[#FF6B00] px-6 text-[14px] font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFBE94]';
+  'inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#FF6B00] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFBE94]';
+
+const PLAN_AGENT_CAPACITY: Record<string, number> = {
+  Lite: 5,
+  Start: 10,
+  Growth: 15,
+  'Pro Scale': 20,
+  Enterprise: 50,
+};
+
+type AgentDetailsContent = {
+  activities: string[];
+  howItWorks: string;
+  deliveries: string;
+  effectiveResult: string;
+};
+
+const AGENT_DETAILS_MAP: Record<string, AgentDetailsContent> = {
+  'Analista de Tráfego': {
+    activities: [
+      'Uma inteligência artificial avançada que se conecta diretamente às suas contas de anúncios (Google e Meta) para realizar diagnósticos em tempo real.',
+      'Identifica desperdícios de orçamento, campanhas com fadiga de criativo e sugere ajustes automáticos de lances baseados no seu ROI alvo, otimizando cada centavo do seu investimento.',
+    ],
+    howItWorks:
+      'Cruza sinais de campanha, audiência e conversão para priorizar ajustes de maior impacto financeiro em ciclos contínuos de otimização.',
+    deliveries:
+      'Checklist de otimização, recomendações de investimento e alertas operacionais para correção rápida de perdas.',
+    effectiveResult:
+      'Mais previsibilidade no caixa, menor custo por aquisição e ganho real de eficiência na operação de mídia.',
+  },
+};
 
 function LaboratorioAgentesContent() {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryFilter = searchParams.get('categoria');
+  const contractedAgents = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
+  const [activatingSlug, setActivatingSlug] = useState<string | null>(null);
+  const [selectedDetailsSlug, setSelectedDetailsSlug] = useState<string | null>(null);
+  const [pendingActivationSlug, setPendingActivationSlug] = useState<string | null>(null);
+  const [pendingDeactivateSlug, setPendingDeactivateSlug] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -46,6 +84,94 @@ function LaboratorioAgentesContent() {
     );
   }
 
+  const activeAgentsCount = Array.from(contractedAgents.values()).filter((entry) => entry.isActive).length;
+  const activePlanName = Array.from(contractedAgents.values()).find((entry) => entry.isActive)?.planName ?? 'Growth';
+  const planCapacity = PLAN_AGENT_CAPACITY[activePlanName] ?? 15;
+  const nextActiveCount = activeAgentsCount + 1;
+
+  const pendingAgent = pendingActivationSlug
+    ? agents.find((agent) => slugifyAgentTitle(agent.title) === pendingActivationSlug)
+    : null;
+
+  const detailsAgent = selectedDetailsSlug
+    ? agents.find((agent) => slugifyAgentTitle(agent.title) === selectedDetailsSlug)
+    : null;
+  const pendingDeactivateAgent = pendingDeactivateSlug
+    ? agents.find((agent) => slugifyAgentTitle(agent.title) === pendingDeactivateSlug)
+    : null;
+
+  const detailsContent = detailsAgent
+    ? AGENT_DETAILS_MAP[detailsAgent.title] ?? {
+        activities: [
+          `Mapeia sinais críticos da frente de ${detailsAgent.category.toLowerCase()} para reduzir ineficiências da operação.`,
+          'Transforma dados em recomendações objetivas para acelerar decisões com foco em resultado financeiro.',
+        ],
+        howItWorks:
+          'Analisa indicadores da operação, prioriza alertas e sugere ações práticas orientadas a crescimento previsível.',
+        deliveries:
+          'Relatórios acionáveis, prioridades táticas e checklist de execução para o time implementar no dia a dia.',
+        effectiveResult:
+          'Mais consistência de performance, menor desperdício e aumento de escala com controle.',
+      }
+    : null;
+
+  const activateAgent = async (agentTitle: string, agentSlug: string) => {
+    if (!user) return;
+    setActivatingSlug(agentSlug);
+    try {
+      const db = getFirebaseDb();
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(
+        userRef,
+        {
+          activeAgents: {
+            [agentTitle]: {
+              isActive: true,
+              planName: 'Growth',
+              monthlyLimit: 15,
+              usageUsed: 0,
+              updatedAt: Date.now(),
+            },
+          },
+        },
+        { merge: true }
+      );
+      setPendingActivationSlug(null);
+      router.refresh();
+    } catch (error) {
+      console.error('Erro ao ativar agente:', error);
+    } finally {
+      setActivatingSlug(null);
+    }
+  };
+
+  const deactivateAgent = async (agentTitle: string, agentSlug: string) => {
+    if (!user) return;
+    setActivatingSlug(agentSlug);
+    try {
+      const db = getFirebaseDb();
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(
+        userRef,
+        {
+          activeAgents: {
+            [agentTitle]: {
+              isActive: false,
+              updatedAt: Date.now(),
+            },
+          },
+        },
+        { merge: true }
+      );
+      setPendingDeactivateSlug(null);
+      router.refresh();
+    } catch (error) {
+      console.error('Erro ao desativar agente:', error);
+    } finally {
+      setActivatingSlug(null);
+    }
+  };
+
   return (
     <main className="flex flex-col min-h-screen bg-bg-main">
       <Navbar />
@@ -59,9 +185,8 @@ function LaboratorioAgentesContent() {
 
         <section className="relative z-10 wrap py-8 md:py-12 space-y-6">
           <header className="rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
-            <p className="text-xs font-bold uppercase tracking-widest text-primary">Laboratório de Agentes</p>
             <h1 className="mt-2 text-3xl md:text-4xl font-black tracking-tight text-text-main">
-              Gestão de contratação por categoria
+              Laboratório de Agentes
             </h1>
             <p className="mt-3 max-w-3xl text-sm md:text-base text-text-muted leading-relaxed">
               Esta área centraliza a ativação dos agentes da sua operação, com foco em coerência estratégica, previsibilidade e impacto financeiro real.
@@ -76,38 +201,267 @@ function LaboratorioAgentesContent() {
                 className="rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_14px_34px_rgba(15,23,42,0.05)]"
               >
                 <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-2xl font-black text-text-main">{category.label}</h2>
-                  <Link
-                    href={`/hub/${category.slug}`}
-                    className={HUB_CONNECTOR_BUTTON_CLASS}
-                  >
-                    <Wrench className="h-4 w-4" />
-                    Gerenciar categoria
-                  </Link>
+                  <h2 className="text-2xl font-black text-text-main">
+                    {category.label}
+                  </h2>
                 </div>
 
                 <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
-                  {categoryAgents.map((agent) => (
-                    <article key={agent.title} className="rounded-xl border border-border bg-bg-secondary p-4">
-                      <p className="text-sm font-black text-text-main">{agent.title}</p>
-                      <p className="mt-1 text-xs text-text-muted">{agent.description}</p>
-                      <div className="mt-3">
-                        <Link
-                          href={`/hub/agente/${slugifyAgentTitle(agent.title)}`}
-                          className={HUB_CONNECTOR_BUTTON_CLASS}
-                        >
-                          <Wrench className="h-4 w-4" />
-                          Ver agente
-                        </Link>
-                      </div>
-                    </article>
-                  ))}
+                  {categoryAgents.map((agent) => {
+                    const entry = getAgentEntryDefinition(agent, contractedAgents);
+                    const isActive = entry.isActive;
+                    const agentSlug = slugifyAgentTitle(agent.title);
+
+                    const isSeoGeo = agentSlug === 'seo-geo';
+
+                    return (
+                      <article key={agent.title} className="rounded-xl border border-border bg-bg-secondary p-4">
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-sm font-black text-text-main">{agent.title}</p>
+                          {isActive ? (
+                            <button
+                              type="button"
+                              onClick={() => setPendingDeactivateSlug(agentSlug)}
+                              disabled={activatingSlug === agentSlug}
+                              className="inline-flex items-center gap-1 text-[12px] font-black text-[#B42318] hover:text-[#912018] disabled:opacity-60"
+                            >
+                              <Power className="h-3.5 w-3.5" />
+                              {activatingSlug === agentSlug ? 'Desativando...' : 'Desativar Agente'}
+                            </button>
+                          ) : null}
+                        </div>
+                        <p className="mt-1 text-xs text-text-muted">{agent.description}</p>
+
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {isActive ? (
+                            <>
+                              <button
+                                type="button"
+                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#0A9D57] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(10,157,87,0.30)]"
+                              >
+                                <CheckCircle2 className="h-4 w-4" />
+                                Ativo
+                              </button>
+                              <Link
+                                href={`/hub/agente/${agentSlug}`}
+                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#2563EB] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(37,99,235,0.30)] transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
+                              >
+                                <ExternalLink className="h-4 w-4" />
+                                Acessar Agente
+                              </Link>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedDetailsSlug(agentSlug)}
+                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#D3DAE6] bg-white px-6 text-[14px] leading-none font-black text-[#344054] shadow-[0_8px_16px_rgba(15,23,42,0.08)] transition hover:bg-[#F8FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D3DAE6]"
+                              >
+                                <Info className="h-4 w-4" />
+                                Mais detalhes
+                              </button>
+                            </>
+                          ) : isSeoGeo ? (
+                            <>
+                              <button
+                                type="button"
+                                onClick={() => setPendingActivationSlug(agentSlug)}
+                                disabled={activatingSlug === agentSlug}
+                                className={`${HUB_CONNECTOR_BUTTON_CLASS} disabled:opacity-60`}
+                              >
+                                <Wrench className="h-4 w-4" />
+                                {activatingSlug === agentSlug ? 'Ativando...' : 'Ativar Agente'}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedDetailsSlug(agentSlug)}
+                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#D3DAE6] bg-white px-6 text-[14px] leading-none font-black text-[#344054] shadow-[0_8px_16px_rgba(15,23,42,0.08)] transition hover:bg-[#F8FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D3DAE6]"
+                              >
+                                <Info className="h-4 w-4" />
+                                Mais detalhes
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                type="button"
+                                disabled
+                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#D1D5DB] px-6 text-[14px] leading-none font-black text-[#6B7280] shadow-none"
+                              >
+                                em breve
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedDetailsSlug(agentSlug)}
+                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#D3DAE6] bg-white px-6 text-[14px] leading-none font-black text-[#344054] shadow-[0_8px_16px_rgba(15,23,42,0.08)] transition hover:bg-[#F8FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D3DAE6]"
+                              >
+                                <Info className="h-4 w-4" />
+                                Mais detalhes
+                              </button>
+                            </>
+                          )}
+                        </div>
+                      </article>
+                    );
+                  })}
                 </div>
               </section>
             );
           })}
         </section>
       </div>
+
+      {pendingDeactivateAgent ? (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <button
+            type="button"
+            onClick={() => setPendingDeactivateSlug(null)}
+            className="absolute inset-0 bg-[#101828]/45 backdrop-blur-[2px]"
+            aria-label="Fechar confirmação"
+          />
+          <section className="relative w-full max-w-2xl rounded-[24px] border border-border bg-white p-6 md:p-8 shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
+            <button
+              type="button"
+              onClick={() => setPendingDeactivateSlug(null)}
+              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-[#667085] hover:text-text-main"
+              aria-label="Fechar"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <p className="text-xs font-black uppercase tracking-[0.12em] text-[#B42318]">Confirmar desativação</p>
+            <h3 className="mt-1 text-3xl font-black tracking-tight text-text-main">{pendingDeactivateAgent.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-text-muted">
+              Ao confirmar, o agente será desativado e deixará de aparecer como ativo até uma nova ativação.
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setPendingDeactivateSlug(null)}
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-border bg-white px-5 text-sm font-black text-[#344054]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() =>
+                  deactivateAgent(pendingDeactivateAgent.title, slugifyAgentTitle(pendingDeactivateAgent.title))
+                }
+                disabled={activatingSlug === slugifyAgentTitle(pendingDeactivateAgent.title)}
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#B42318] bg-[#B42318] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(180,35,24,0.30)] disabled:opacity-60"
+              >
+                <Power className="h-4 w-4" />
+                {activatingSlug === slugifyAgentTitle(pendingDeactivateAgent.title)
+                  ? 'Desativando...'
+                  : 'Confirmar desativação'}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
+
+      {detailsAgent && detailsContent ? (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <button
+            type="button"
+            onClick={() => setSelectedDetailsSlug(null)}
+            className="absolute inset-0 bg-[#0B1324]/55 backdrop-blur-[2px]"
+            aria-label="Fechar detalhes do agente"
+          />
+          <section className="relative w-full max-w-[780px] rounded-[24px] border border-[#D9DEE8] bg-[#F8FAFD] p-6 md:p-7 shadow-[0_30px_70px_rgba(2,12,27,0.32)]">
+            <button
+              type="button"
+              onClick={() => setSelectedDetailsSlug(null)}
+              className="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#CBD5E1] bg-[#F8FAFD] text-[#667085] hover:text-text-main"
+              aria-label="Fechar"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <div className="flex items-start gap-4 pr-14">
+              <div className="relative h-[76px] w-[76px] shrink-0 overflow-hidden rounded-[16px] border-2 border-[#FF6B00] shadow-[0_10px_24px_rgba(2,12,27,0.18)]">
+                <Image src={detailsAgent.icon} alt={detailsAgent.title} fill className="object-cover" sizes="76px" />
+              </div>
+              <div>
+                <p className="pt-1 text-[11px] font-black uppercase tracking-[0.12em] text-primary">Agente de IA</p>
+                <h3 className="mt-1 text-[30px] leading-[1.05] font-black tracking-tight text-[#1C2538] sm:text-[38px] md:text-[44px]">{detailsAgent.title}</h3>
+                <p className="mt-3 max-w-3xl text-[15px] leading-[1.45] text-[#4B5568] sm:text-[16px]">{detailsAgent.description}</p>
+              </div>
+            </div>
+
+            <article className="mt-7 rounded-[18px] border border-[#D8DEEA] bg-[#EEF2F8] p-5 md:p-6">
+              <h4 className="text-[13px] font-black uppercase tracking-[0.08em] text-primary">Atividades relacionadas</h4>
+              <ul className="mt-4 space-y-4 text-[15px] leading-[1.5] text-[#445064] sm:text-[16px]">
+                {detailsContent.activities.map((item) => (
+                  <li key={item} className="flex items-start gap-2">
+                    <span className="mt-[0.62em] inline-flex h-[7px] w-[7px] shrink-0 rounded-full bg-primary" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </section>
+        </div>
+      ) : null}
+
+      {pendingAgent ? (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <button
+            type="button"
+            onClick={() => setPendingActivationSlug(null)}
+            className="absolute inset-0 bg-[#101828]/45 backdrop-blur-[2px]"
+            aria-label="Fechar confirmação"
+          />
+          <section className="relative w-full max-w-2xl rounded-[24px] border border-border bg-white p-6 md:p-8 shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
+            <button
+              type="button"
+              onClick={() => setPendingActivationSlug(null)}
+              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-[#667085] hover:text-text-main"
+              aria-label="Fechar"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <p className="text-xs font-black uppercase tracking-[0.12em] text-primary">Confirmar ativação</p>
+            <h3 className="mt-1 text-3xl font-black tracking-tight text-text-main">{pendingAgent.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-text-muted">
+              Você está prestes a ativar este agente. Confira como ficará a capacidade do plano ativo.
+            </p>
+
+            <div className="mt-5 rounded-2xl border border-border bg-[#F8FAFC] p-4 text-sm text-text-main space-y-1">
+              <p>
+                <strong>Plano ativo:</strong> {activePlanName}
+              </p>
+              <p>
+                <strong>Capacidade do plano:</strong> {planCapacity} agentes
+              </p>
+              <p>
+                <strong>Ativos atualmente:</strong> {activeAgentsCount}
+              </p>
+              <p>
+                <strong>Após confirmação:</strong> {nextActiveCount} de {planCapacity}
+              </p>
+            </div>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setPendingActivationSlug(null)}
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-border bg-white px-5 text-sm font-black text-[#344054]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => activateAgent(pendingAgent.title, slugifyAgentTitle(pendingAgent.title))}
+                disabled={activatingSlug === slugifyAgentTitle(pendingAgent.title)}
+                className={`${HUB_CONNECTOR_BUTTON_CLASS} disabled:opacity-60`}
+              >
+                <Wrench className="h-4 w-4" />
+                {activatingSlug === slugifyAgentTitle(pendingAgent.title) ? 'Ativando...' : 'Confirmar ativação'}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
 
       <Footer />
       <LuccaHubSupportWidget />

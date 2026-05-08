@@ -227,7 +227,7 @@ export default function ValuesResourcesSection() {
           <span className="inline-flex items-center rounded-full border border-[#ffceb0] bg-white px-6 py-2 text-[13px] font-extrabold uppercase tracking-[0.22em] text-[#ff5a00]">
             Valores & Recursos
           </span>
-          <h2 className="mt-8 text-[38px] font-black leading-[1.08] tracking-[-0.02em] text-[#090f2a] md:text-[62px]">
+          <h2 className="mt-8 text-[30px] font-black leading-[1.08] tracking-[-0.02em] text-[#090f2a] sm:text-[38px] md:text-[62px]">
             Escolha seu plano e escale com previsibilidade
           </h2>
           <p className="mt-6 text-[17px] text-[#47506a]">Comece com 14 dias de demonstração grátis. Cancele quando quiser.</p>
@@ -293,11 +293,11 @@ export default function ValuesResourcesSection() {
                 </div>
 
                 <div className="mt-6 flex items-end gap-2 border-b border-[#e7ebf2] pb-4">
-                  <span className={`text-[36px] font-black ${isRecommended ? 'text-[#ff5a00]' : 'text-[#0f1733]'}`}>R$</span>
-                  <span className={`text-[56px] font-black leading-none ${isRecommended ? 'text-[#ff5a00]' : 'text-[#0f1733]'}`}>
+                  <span className={`text-[24px] font-black sm:text-[30px] lg:text-[36px] ${isRecommended ? 'text-[#ff5a00]' : 'text-[#0f1733]'}`}>R$</span>
+                  <span className={`text-[42px] font-black leading-none sm:text-[48px] lg:text-[56px] ${isRecommended ? 'text-[#ff5a00]' : 'text-[#0f1733]'}`}>
                     {formatPriceNumberFromCents(plan.amount)}
                   </span>
-                  <span className="mb-1 text-[30px] text-[#47506a]">/mês</span>
+                  <span className="mb-1 text-[20px] text-[#47506a] sm:text-[24px] lg:text-[30px]">/mês</span>
                 </div>
 
                 <ul className="mt-4 space-y-2">
@@ -387,7 +387,7 @@ export default function ValuesResourcesSection() {
                       </span>
                       <span className="text-[13px] font-bold text-white">{getCreditPackShortName(credit.limits.includedExecutions)}</span>
                     </div>
-                    <p className="text-[40px] font-black leading-none text-[#ff6a00]">{formatCurrencyFromCents(credit.amount)}</p>
+                    <p className="text-[30px] font-black leading-none text-[#ff6a00] sm:text-[34px] lg:text-[40px]">{formatCurrencyFromCents(credit.amount)}</p>
                     <p className="mt-1 text-[13px] text-white">{credit.limits.includedExecutions.toLocaleString('pt-BR')} execuções</p>
                     <p className="text-[13px] text-[#c6d3e9]">{formatUnitPrice(credit.limits.unitPrice)} por execução</p>
                   </div>

@@ -10,8 +10,10 @@ import {
   CircleGauge,
   Headphones,
   HelpCircle,
+  Menu,
   ShieldCheck,
   Target,
+  X,
   Wallet,
 } from 'lucide-react';
 import LuccaSpecialistChatModal from './LuccaSpecialistChatModal';
@@ -235,6 +237,8 @@ function MediaLoopBlock({ slug, media }: MediaLoopBlockProps) {
 export default function SubmenuPageShell({ content }: { content: SubmenuPageContent }) {
   const [openFaq, setOpenFaq] = useState(0);
   const [openMenuGroup, setOpenMenuGroup] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
   const closeMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [isLuccaChatOpen, setIsLuccaChatOpen] = useState(false);
   const [luccaAutoMessage, setLuccaAutoMessage] = useState<string | null>(null);
@@ -308,6 +312,7 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
   }, []);
 
   const openLuccaFromCta = (ctaContext: string) => {
+    setIsMobileMenuOpen(false);
     trackSubmenuEvent('submenu_cta_lucca_click', {
       pageSlug: content.slug,
       serviceContext: content.serviceContext,
@@ -320,6 +325,7 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
   };
 
   const openSpecialistChat = () => {
+    setIsMobileMenuOpen(false);
     trackSubmenuEvent('submenu_cta_lucca_click', {
       pageSlug: content.slug,
       serviceContext: content.serviceContext,
@@ -393,12 +399,12 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
   return (
     <main className="min-h-screen bg-[#f4f6fa] text-[#1a2234]">
       <section className="mx-auto max-w-[1260px] px-5 pb-16 pt-5 md:px-8">
-        <header className="fixed left-1/2 top-4 z-[80] flex w-[min(calc(100%-2.5rem),1196px)] -translate-x-1/2 items-center justify-between rounded-full border border-black/[0.06] bg-white px-5 py-3 shadow-[0_8px_26px_rgba(10,18,30,0.04)] md:px-7">
+        <header className="fixed left-1/2 top-4 z-[90] flex w-[min(calc(100%-2.5rem),1196px)] -translate-x-1/2 items-center justify-between gap-3 rounded-full border border-black/[0.06] bg-white px-4 py-3 shadow-[0_8px_26px_rgba(10,18,30,0.04)] sm:px-5 md:px-7">
           <Link href="/" className="flex items-center" aria-label="Voltar para Home">
             <Image src="/images/logo2026.png" alt="NeuroAds" width={156} height={34} className="h-8 w-auto" priority />
           </Link>
 
-          <nav className="hidden items-center gap-3 md:flex">
+          <nav className="hidden items-center gap-3 lg:flex">
             {headerMenuGroups.map((group) => {
               const isOpen = openMenuGroup === group.label;
               return (
@@ -439,7 +445,7 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
             <button
               type="button"
               onClick={() => openLuccaFromCta('header')}
-              className="hidden rounded-full border border-[#d8deea] bg-white px-5 py-2.5 text-[12px] font-extrabold text-[#2b3240] transition hover:border-[#ffc8a5] hover:text-[#ff6a00] md:inline-flex md:items-center md:gap-2"
+              className="hidden rounded-full border border-[#d8deea] bg-white px-5 py-2.5 text-[12px] font-extrabold text-[#2b3240] transition hover:border-[#ffc8a5] hover:text-[#ff6a00] lg:inline-flex lg:items-center lg:gap-2"
             >
               Solicite Demonstração
               <ArrowRight size={14} />
@@ -447,13 +453,87 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
             <button
               type="button"
               onClick={openSpecialistChat}
-              className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-5 py-2.5 text-[12px] font-extrabold text-white shadow-[0_10px_24px_rgba(255,106,0,0.34)] transition hover:bg-[#e95f00]"
+              className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-4 py-2.5 text-[11px] font-extrabold text-white shadow-[0_10px_24px_rgba(255,106,0,0.34)] transition hover:bg-[#e95f00] sm:px-5 sm:text-[12px]"
             >
               Fale com o especialista
               <ArrowRight size={14} />
             </button>
+            <button
+              type="button"
+              onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#dbe2ee] bg-white text-[#2b3240] transition hover:border-[#ffc8a5] hover:text-[#ff6a00] lg:hidden"
+              aria-label={isMobileMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+            >
+              {isMobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
+            </button>
           </div>
         </header>
+
+        {isMobileMenuOpen ? (
+          <button
+            type="button"
+            aria-label="Fechar menu mobile"
+            className="fixed inset-0 z-[85] bg-[#0e1830]/35 lg:hidden"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+        ) : null}
+
+        <div
+          className={`fixed left-1/2 top-[84px] z-[95] w-[min(calc(100%-2.5rem),460px)] -translate-x-1/2 overflow-hidden rounded-[20px] border border-[#e5eaf3] bg-white p-4 shadow-[0_20px_44px_rgba(12,22,38,0.16)] transition lg:hidden ${
+            isMobileMenuOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-2 opacity-0'
+          }`}
+        >
+          <div className="space-y-2">
+            {headerMenuGroups.map((group) => {
+              const isGroupOpen = openMobileGroup === group.label;
+              return (
+                <div key={group.label} className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff]">
+                  <div className="flex items-center gap-2 px-3.5 py-3">
+                    <Link
+                      href={group.href}
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="grow text-[14px] font-black text-[#1f2a44]"
+                    >
+                      {group.label}
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => setOpenMobileGroup(isGroupOpen ? null : group.label)}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#dde4ee] text-[#7d889d]"
+                      aria-label={`Abrir submenu ${group.label}`}
+                    >
+                      <ChevronDown size={15} className={`shrink-0 transition ${isGroupOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                  </div>
+                  {isGroupOpen ? (
+                    <div className="border-t border-[#edf1f7] px-2 py-2">
+                      {group.submenu.map((item) => (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setIsMobileMenuOpen(false)}
+                          className="block rounded-xl px-2.5 py-2 text-[13px] font-semibold text-[#42506a] transition hover:bg-[#fff5ee] hover:text-[#ff6a00]"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              );
+            })}
+          </div>
+          <div className="mt-3 grid gap-2">
+            <button
+              type="button"
+              onClick={() => openLuccaFromCta('mobile_menu')}
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d8deea] bg-white px-4 py-2.5 text-[12px] font-extrabold text-[#2b3240] transition hover:border-[#ffc8a5] hover:text-[#ff6a00]"
+            >
+              Solicite Demonstração
+              <ArrowRight size={13} />
+            </button>
+          </div>
+        </div>
 
         <div className="h-[84px]" />
 
@@ -463,7 +543,7 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
               {content.eyebrow}
             </span>
 
-            <h1 className="mt-6 text-[34px] font-black leading-[1.05] tracking-[-0.02em] text-[#0f1730] sm:text-[44px]">
+            <h1 className="mt-6 text-[30px] font-black leading-[1.05] tracking-[-0.02em] text-[#0f1730] sm:text-[34px] lg:text-[44px]">
               {content.headline}{' '}
               <span
                 className="bg-[length:200%_200%] bg-clip-text text-transparent"
@@ -474,7 +554,7 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
                 {content.highlightedHeadline}
               </span>
             </h1>
-            <p className="mt-4 max-w-[740px] text-[18px] leading-relaxed text-[#47526b]">{content.subheadline}</p>
+            <p className="mt-4 max-w-[740px] text-[16px] leading-relaxed text-[#47526b] sm:text-[17px] lg:text-[18px]">{content.subheadline}</p>
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {heroQuickPoints.map((item) => {

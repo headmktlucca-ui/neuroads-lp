@@ -1,8 +1,12 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 export default function Footer() {
+  const pathname = usePathname();
+  const isHubSection = pathname?.startsWith('/hub');
+
   const renderSocialIcon = (name: string) => {
     if (name === 'Instagram') {
       return (
@@ -34,6 +38,45 @@ export default function Footer() {
     { name: 'LinkedIn', href: 'https://www.linkedin.com/company/neuroads' },
     { name: 'YouTube', href: 'https://www.youtube.com/@claudiomullermkt' }
   ];
+
+  const hubFooterGroups = [
+    {
+      title: 'Hub Estratégico',
+      links: [
+        { label: 'Hub Estratégico', href: '/hub' },
+      ],
+    },
+    {
+      title: 'Laboratório de Agentes',
+      links: [
+        { label: 'Laboratório de Agentes', href: '/hub/laboratorio-agentes?agente=auditor-de-desperdicio' },
+        { label: 'Performance', href: '/hub/performance' },
+        { label: 'Criativos', href: '/hub/criativos' },
+        { label: 'Técnico', href: '/hub/tecnico' },
+        { label: 'Inteligência', href: '/hub/inteligencia' },
+      ],
+    },
+  ];
+
+  const defaultFooterGroups = [
+    {
+      title: 'Plataforma',
+      links: [
+        { label: 'Desafios', href: '#problemas' },
+        { label: 'Soluções', href: '#servicos' },
+        { label: 'Metodologia', href: '#processo' },
+      ],
+    },
+    {
+      title: 'Legal',
+      links: [
+        { label: 'Privacidade', href: '/privacidade' },
+        { label: 'Termos', href: '/termos' },
+      ],
+    },
+  ];
+
+  const footerGroups = isHubSection ? hubFooterGroups : defaultFooterGroups;
 
   return (
     <footer className="bg-white/65 backdrop-blur-sm py-20 px-6 border-t border-border">
@@ -71,22 +114,23 @@ export default function Footer() {
             </div>
           </div>
           
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-12 sm:gap-20">
-            <div>
-              <h4 className="text-[11px] font-bold tracking-[0.2em] uppercase text-text-dim mb-6">Plataforma</h4>
-              <ul className="flex flex-col gap-4 list-none m-0 p-0">
-                <li><Link href="#problemas" className="text-sm font-medium text-text-muted hover:text-primary transition-all">Desafios</Link></li>
-                <li><Link href="#servicos" className="text-sm font-medium text-text-muted hover:text-primary transition-all">Soluções</Link></li>
-                <li><Link href="#processo" className="text-sm font-medium text-text-muted hover:text-primary transition-all">Metodologia</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-[11px] font-bold tracking-[0.2em] uppercase text-text-dim mb-6">Legal</h4>
-              <ul className="flex flex-col gap-4 list-none m-0 p-0">
-                <li><Link href="/privacidade" className="text-sm font-medium text-text-muted hover:text-primary transition-all">Privacidade</Link></li>
-                <li><Link href="/termos" className="text-sm font-medium text-text-muted hover:text-primary transition-all">Termos</Link></li>
-              </ul>
-            </div>
+          <div className={isHubSection ? 'grid grid-cols-1 sm:grid-cols-2 gap-12 sm:gap-20' : 'grid grid-cols-2 sm:grid-cols-3 gap-12 sm:gap-20'}>
+            {footerGroups.map((group) => (
+              <div key={group.title}>
+                {!isHubSection ? (
+                  <h4 className="text-[11px] font-bold tracking-[0.2em] uppercase text-text-dim mb-6">{group.title}</h4>
+                ) : null}
+                <ul className="flex flex-col gap-4 list-none m-0 p-0">
+                  {group.links.map((link) => (
+                    <li key={link.href}>
+                      <Link href={link.href} className="text-sm font-medium text-text-muted hover:text-primary transition-all">
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
 

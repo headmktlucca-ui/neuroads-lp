@@ -1,11 +1,12 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { ChevronDown, User, LogOut, X, PlugZap, CheckCircle2, Database, Gauge } from 'lucide-react';
 import { HTTPS_PREFIX, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
+import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -72,6 +73,14 @@ const CONNECTOR_DEFINITIONS: ConnectorDefinition[] = [
   { key: 'payments', name: 'Stripe/Pagamentos', source: 'Receita', required: true, usedBy: 'Receita confirmada e LTV' },
   { key: 'warehouse', name: 'BigQuery/Data Warehouse', source: 'Consolidação', required: true, usedBy: 'Visão unificada e projeções' },
 ];
+
+const PLAN_AGENT_CAPACITY: Record<string, number> = {
+  Lite: 5,
+  Start: 10,
+  Growth: 15,
+  'Pro Scale': 20,
+  Enterprise: 50,
+};
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -219,9 +228,10 @@ export default function Navbar() {
       ]
       : [
         { name: 'Hub Estratégico', href: '/hub' },
-        { name: 'Laboratório de Agentes', href: '/hub/laboratorio-agentes?agente=auditor-de-desperdicio' },
+        { name: 'Agentes Ativos', href: '/hub/agentes-ativos' },
       ];
   const laboratorySubLinks = [
+    { name: 'Laboratório de Agentes', href: '/hub/laboratorio-agentes?agente=auditor-de-desperdicio' },
     { name: 'Performance', href: '/hub/performance' },
     { name: 'Criativos', href: '/hub/criativos' },
     { name: 'Técnico', href: '/hub/tecnico' },
@@ -236,16 +246,10 @@ export default function Navbar() {
     const [pathWithQuery, hash] = href.split('#');
     const [basePath] = pathWithQuery.split('?');
     if (basePath === '/hub') {
-      return pathname === '/hub' || pathname.startsWith('/hub/agente');
+      return pathname === '/hub' || pathname.startsWith('/hub/agente/');
     }
-    if (basePath === '/hub/laboratorio-agentes') {
-      return (
-        pathname.startsWith('/hub/laboratorio-agentes') ||
-        pathname.startsWith('/hub/performance') ||
-        pathname.startsWith('/hub/criativos') ||
-        pathname.startsWith('/hub/tecnico') ||
-        pathname.startsWith('/hub/inteligencia')
-      );
+    if (basePath === '/hub/agentes-ativos') {
+      return pathname === '/hub/agentes-ativos' || pathname === '/hub/dashboard';
     }
     if (basePath === '/admin' && hash) {
       return pathname === '/admin' && currentHash === `#${hash}`;
@@ -268,6 +272,15 @@ export default function Navbar() {
   const connectedRequired = requiredConnectors.filter((item) => connectorStatus[item.key]).length;
   const dashboardReadiness = Math.round((connectedRequired / requiredConnectors.length) * 100);
   const profileRecord = (profile as Record<string, unknown> | null) ?? null;
+  const contractedAgents = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
+  const activeAgentsCount = contractedAgents.size;
+  const currentPlanName = useMemo(
+    () => Array.from(contractedAgents.values()).find((agent) => agent.isActive)?.planName ?? 'Lite',
+    [contractedAgents]
+  );
+  const planCapacity = PLAN_AGENT_CAPACITY[currentPlanName] ?? 5;
+  const capacityRatio = planCapacity > 0 ? activeAgentsCount / planCapacity : 0;
+  const isCapacityAbove80 = capacityRatio >= 0.8;
 
   useEffect(() => {
     if (!user) return;
@@ -398,45 +411,62 @@ export default function Navbar() {
               ))
             ) : (
               <>
-                <Link
-                  href="/hub"
-                  className={`text-[15px] leading-none font-semibold transition-colors duration-200 ${
-                    isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-[#344054] hover:text-[#111827]'
+              <Link
+                href="/hub"
+                className={`text-[15px] leading-none font-semibold transition-colors duration-200 ${
+                  isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-[#344054] hover:text-[#111827]'
                   }`}
                 >
                   Hub Estratégico
                 </Link>
                 <div className="relative group">
-                  <Link
-                    href="/hub/laboratorio-agentes?agente=auditor-de-desperdicio"
-                    className={`inline-flex items-center gap-1 text-[15px] leading-none font-semibold transition-colors duration-200 ${
-                      isLinkActive('/hub/laboratorio-agentes?agente=auditor-de-desperdicio')
-                        ? 'text-[#0A9D57]'
-                        : 'text-[#344054] group-hover:text-[#111827]'
-                    }`}
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 text-[15px] leading-none font-semibold text-[#344054] transition-colors duration-200 group-hover:text-[#111827]"
                   >
-                    Laboratório de Agentes
+                    Agentes IA
                     <ChevronDown size={14} />
-                  </Link>
+                  </button>
                   <div className="invisible absolute left-1/2 top-full z-[120] mt-3 w-56 -translate-x-1/2 rounded-2xl border border-[#E7EAF0] bg-white p-2 opacity-0 shadow-[0_14px_30px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:opacity-100">
-                    {laboratorySubLinks.map((link) => (
-                      <Link
-                        key={link.name}
-                        href={link.href}
-                        className={`block rounded-xl px-3 py-2 text-[14px] font-semibold transition-colors ${
-                          isLinkActive(link.href) ? 'bg-[#F0FFF7] text-[#0A9D57]' : 'text-[#344054] hover:bg-[#F8FAFC]'
-                        }`}
-                      >
-                        {link.name}
-                      </Link>
+                    {laboratorySubLinks.map((link, index) => (
+                      <div key={link.name}>
+                        <Link
+                          href={link.href}
+                          className={`block rounded-xl px-3 py-2 text-[14px] font-semibold transition-colors ${
+                            isLinkActive(link.href) ? 'bg-[#F0FFF7] text-[#0A9D57]' : 'text-[#344054] hover:bg-[#F8FAFC]'
+                          }`}
+                        >
+                          {link.name}
+                        </Link>
+                        {index === 0 ? <div className="my-2 h-px w-full bg-[#E5E7EB]" /> : null}
+                      </div>
                     ))}
                   </div>
                 </div>
+                <Link
+                  href="/hub/agentes-ativos"
+                  className={`text-[15px] leading-none font-semibold transition-colors duration-200 ${
+                    isLinkActive('/hub/agentes-ativos') ? 'text-[#0A9D57]' : 'text-[#344054] hover:text-[#111827]'
+                  }`}
+                >
+                  Agentes Ativos
+                </Link>
               </>
             )}
           </div>
 
           <div className="hidden md:flex items-center gap-3">
+            {!pathname?.startsWith('/admin') && (
+              <span
+                className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-black ${
+                  isCapacityAbove80
+                    ? 'text-[#C2410C] shadow-[0_0_0_1px_rgba(245,158,11,0.30),0_0_14px_rgba(245,158,11,0.35)] animate-pulse'
+                    : 'text-[#0A9D57] shadow-[0_0_0_1px_rgba(10,157,87,0.25),0_0_14px_rgba(10,157,87,0.30)] animate-pulse'
+                }`}
+              >
+                Agentes Ativos: {String(activeAgentsCount).padStart(2, '0')} de {String(planCapacity).padStart(2, '0')}
+              </span>
+            )}
             {/* User menu (only when logged in) */}
             {user && (
               <div ref={settingsMenuRef} className="relative">
@@ -512,8 +542,8 @@ export default function Navbar() {
       </nav>
 
       {/* Mobile Menu */}
-      <div className={`md:hidden absolute top-24 left-6 right-6 bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] rounded-[32px] p-8 z-[210] overflow-hidden transition-all duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
-        <div className="flex flex-col items-center gap-10 px-6">
+      <div className={`md:hidden absolute top-24 left-4 right-4 bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] rounded-[24px] p-5 z-[210] overflow-hidden transition-all duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
+        <div className="flex flex-col items-center gap-8 px-2">
           {pathname?.startsWith('/admin') && isAdmin ? (
             navLinks.map((link) => (
               <Link
@@ -546,30 +576,37 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setIsLabSubmenuOpen((prev) => !prev)}
-                  className={`mx-auto flex items-center gap-2 text-lg font-black tracking-[0.08em] transition-colors ${
-                    isLinkActive('/hub/laboratorio-agentes?agente=auditor-de-desperdicio')
-                      ? 'text-[#0A9D57]'
-                      : 'text-text-main hover:text-primary'
-                  }`}
+                  className="mx-auto flex items-center gap-2 text-lg font-black tracking-[0.08em] text-text-main transition-colors hover:text-primary"
                 >
-                  Laboratório de Agentes
+                  Agentes IA
                   <ChevronDown size={16} className={`transition-transform ${isLabSubmenuOpen ? 'rotate-180' : ''}`} />
                 </button>
                 <div className={`mt-3 space-y-2 ${isLabSubmenuOpen ? 'block' : 'hidden'}`}>
-                  {laboratorySubLinks.map((link) => (
-                    <Link
-                      key={link.name}
-                      href={link.href}
-                      onClick={() => setIsMenuOpen(false)}
-                      className={`block rounded-xl px-4 py-2 text-center text-sm font-bold tracking-wide transition-colors ${
-                        isLinkActive(link.href) ? 'bg-[#F0FFF7] text-[#0A9D57]' : 'text-text-muted hover:bg-[#F8FAFC]'
-                      }`}
-                    >
-                      {link.name}
-                    </Link>
+                  {laboratorySubLinks.map((link, index) => (
+                    <div key={link.name}>
+                      <Link
+                        href={link.href}
+                        onClick={() => setIsMenuOpen(false)}
+                        className={`block rounded-xl px-4 py-2 text-center text-sm font-bold tracking-wide transition-colors ${
+                          isLinkActive(link.href) ? 'bg-[#F0FFF7] text-[#0A9D57]' : 'text-text-muted hover:bg-[#F8FAFC]'
+                        }`}
+                      >
+                        {link.name}
+                      </Link>
+                      {index === 0 ? <div className="my-2 h-px w-full bg-[#E5E7EB]" /> : null}
+                    </div>
                   ))}
+                  </div>
                 </div>
-              </div>
+              <Link
+                href="/hub/dashboard"
+                onClick={() => setIsMenuOpen(false)}
+                className={`text-lg font-black tracking-[0.08em] transition-colors ${
+                  isLinkActive('/hub/dashboard') ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
+                }`}
+              >
+                Agentes Ativos
+              </Link>
             </>
           )}
 

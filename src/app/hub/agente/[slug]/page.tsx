@@ -3,15 +3,13 @@
 import { useMemo, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { CheckCircle2, Sparkles, X } from 'lucide-react';
+import { CheckCircle2, History, Sparkles, X } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Navbar from '../../../../components/layout/Navbar';
 import Footer from '../../../../components/layout/Footer';
 import LuccaHubSupportWidget from '../../../../components/hub/LuccaHubSupportWidget';
 import SeoGeoWorkspace from '../../../../components/agents/SeoGeoWorkspace';
 import { useAuth } from '../../../../context/AuthContext';
-import { agents } from '../../../../data/agents';
-import { formatBRL } from '../../../../data/agent-pricing';
 import {
   getAgentBySlug,
   getAgentEntryDefinition,
@@ -19,13 +17,6 @@ import {
   slugifyAgentTitle,
 } from '../../../../lib/hub-agents';
 import { getFirebaseDb } from '../../../../lib/firebase';
-
-function formatDate(dateString?: string): string {
-  if (!dateString) return 'A confirmar';
-  const date = new Date(dateString);
-  if (Number.isNaN(date.getTime())) return 'A confirmar';
-  return date.toLocaleDateString('pt-BR');
-}
 
 type AutomationSuggestion = {
   id: string;
@@ -183,24 +174,6 @@ export default function AgentEntryPage() {
 
     loadPersistedAutomation();
   }, [agentAutomationKey, entry, user]);
-  const agentsByCategory = useMemo(() => {
-    const categoryOrder = ['Performance', 'Inteligência', 'Criativos', 'Técnico'];
-    const categoryMap = new Map<string, typeof agents>();
-
-    for (const category of categoryOrder) {
-      categoryMap.set(category, agents.filter((item) => item.category === category));
-    }
-
-    const remainingCategories = Array.from(new Set(agents.map((item) => item.category))).filter(
-      (category) => !categoryOrder.includes(category)
-    );
-    for (const category of remainingCategories) {
-      categoryMap.set(category, agents.filter((item) => item.category === category));
-    }
-
-    return Array.from(categoryMap.entries()).filter(([, list]) => list.length > 0);
-  }, []);
-
   if (loading || !user) {
     return (
       <div className="min-h-screen bg-bg-main flex items-center justify-center">
@@ -252,113 +225,77 @@ export default function AgentEntryPage() {
             <div className="max-w-6xl mx-auto space-y-6">
               <div className="rounded-[34px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_24px_56px_-28px_rgba(255,107,0,0.45)]">
                 <div className="rounded-[32px] bg-white/85 p-[1px]">
-                  <div className="rounded-[30px] border border-[#FFF1E8] bg-white p-6 md:p-8">
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-14 h-14 rounded-[14px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_10px_20px_rgba(255,107,0,0.22)]">
-                          <div className="relative w-full h-full rounded-[12px] overflow-hidden bg-white">
-                            <Image src={agent.icon} alt={entry.title} fill className="object-cover" />
-                          </div>
-                        </div>
+                  <div className="rounded-[30px] border border-[#FFF1E8] bg-white p-6 md:p-8 min-h-[220px] md:min-h-[300px]">
+                    <div className="flex flex-col md:flex-row md:items-stretch md:justify-between gap-6">
+                      <div className="flex-1">
                         <div>
                           <p className="text-xs uppercase tracking-widest text-primary font-bold mb-2">{entry.category}</p>
                           <h1 className="text-3xl md:text-4xl font-black text-text-main">{entry.title}</h1>
+                          {entry.title === 'SEO & GEO' ? (
+                            <p className="mt-4 max-w-[760px] text-[13px] leading-relaxed text-text-muted">
+                              O agente <strong className="text-text-main">SEO & GEO</strong> atua como uma camada estratégica contínua para aumentar a autoridade digital da sua marca
+                              em buscadores tradicionais e em mecanismos de resposta por IA. Ele organiza palavras-chave de intenção real, otimiza conteúdo e estrutura técnica das páginas,
+                              identifica oportunidades de posicionamento e transforma sinais de mercado em ações práticas. Com isso, sua operação ganha mais tráfego qualificado, melhora a
+                              previsibilidade de geração de demanda e constrói crescimento sustentável com impacto direto em oportunidades comerciais e receita.
+                            </p>
+                          ) : null}
+                          <div className="mt-6 flex flex-wrap items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setAutomationNotice(null);
+                                setAutomationActivated(false);
+                                setIsAutomationModalOpen(true);
+                              }}
+                              className="px-6 py-3 rounded-full border border-[#FF6B00] bg-[#FF6B00] text-white font-bold tracking-widest text-sm uppercase shadow-[0_10px_22px_rgba(255,107,0,0.3)] hover:brightness-105 transition-all"
+                            >
+                              Ativar Automação
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => router.push(`/hub/agente/${slug}#historico`)}
+                              className="px-6 py-3 rounded-full border border-[#D9E2F4] text-[#1D4ED8] bg-[#EEF4FF] font-bold tracking-widest text-sm uppercase hover:bg-[#E2ECFF] transition-colors"
+                            >
+                              <History size={14} className="inline mr-2 -mt-[2px]" />
+                              Histórico
+                            </button>
+                            <button
+                              onClick={() => router.push('/hub')}
+                              className="px-6 py-3 rounded-full border border-[#FFE1CF] text-text-main font-bold tracking-widest text-sm uppercase hover:bg-[#FFF8F3] transition-colors"
+                            >
+                              Voltar ao Hub
+                            </button>
+                          </div>
                         </div>
                       </div>
-                      <div className="flex flex-wrap items-center justify-end gap-3">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setAutomationNotice(null);
-                            setAutomationActivated(false);
-                            setIsAutomationModalOpen(true);
-                          }}
-                          className="px-6 py-3 rounded-full border border-[#FFD3B7] bg-gradient-to-br from-[#FF6B00] to-[#FF9D00] text-white font-bold tracking-widest text-sm uppercase shadow-[0_10px_22px_rgba(255,107,0,0.3)] hover:brightness-105 transition-all"
-                        >
-                          Ativar Automação
-                        </button>
-                        <button
-                          onClick={() => router.push('/hub')}
-                          className="px-6 py-3 rounded-full border border-[#FFE1CF] text-text-main font-bold tracking-widest text-sm uppercase hover:bg-[#FFF8F3] transition-colors"
-                        >
-                          Voltar ao Hub
-                        </button>
+
+                      <div className="flex flex-col items-end justify-start self-start gap-3 md:min-w-[280px]">
+                          {entry.title === 'SEO & GEO' ? (
+                            <div className="w-[168px] h-[168px] rounded-[24px] p-[3px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_14px_28px_rgba(255,107,0,0.26)]">
+                              <div className="relative w-full h-full rounded-[20px] overflow-hidden bg-white">
+                                <Image src={agent.icon} alt={entry.title} fill className="object-cover" />
+                              </div>
+                            </div>
+                          ) : (
+                          <div className="w-14 h-14 rounded-[14px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_10px_20px_rgba(255,107,0,0.22)]">
+                          <div className="relative w-full h-full rounded-[12px] overflow-hidden bg-white">
+                              <Image src={agent.icon} alt={entry.title} fill className="object-cover" />
+                            </div>
+                          </div>
+                        )}
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="lg:col-span-1 space-y-6">
-                  <div className="rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_20px_44px_-28px_rgba(255,107,0,0.38)]">
-                    <div className="rounded-[28px] bg-white/85 p-[1px]">
-                      <div className="rounded-[26px] border border-[#FFF1E8] bg-white p-6 h-full">
-                        <h2 className="text-xs uppercase tracking-widest text-primary font-bold mb-4">Resumo Comercial</h2>
-                        <div className="space-y-3">
-                          <p className="text-sm text-text-muted">
-                            Plano: <span className="font-bold text-text-main">{entry.planSummary?.planName ?? 'A confirmar'}</span>
-                          </p>
-                          <p className="text-sm text-text-muted">
-                            Valor: <span className="font-bold text-text-main">{formatBRL(entry.planSummary?.monthlyPrice ?? 0)}/mês</span>
-                          </p>
-                          <p className="text-sm text-text-muted">
-                            Limite: <span className="font-bold text-text-main">{entry.planSummary?.monthlyLimit ?? 0} execuções/mês</span>
-                          </p>
-                          <p className="text-sm text-text-muted">
-                            Em uso: <span className="font-bold text-text-main">{entry.planSummary?.usageUsed ?? 0}</span>
-                          </p>
-                          <p className="text-sm text-text-muted">
-                            Próximo pagamento:{' '}
-                            <span className="font-bold text-text-main">{formatDate(entry.planSummary?.nextPaymentAt)}</span>
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_20px_44px_-28px_rgba(255,107,0,0.38)]">
-                    <div className="rounded-[28px] bg-white/85 p-[1px]">
-                      <div className="rounded-[26px] border border-[#FFF1E8] bg-white p-6">
-                        <h2 className="text-xs uppercase tracking-widest text-primary font-bold mb-4">Agentes Neurais</h2>
-                        <div className="space-y-5">
-                          {agentsByCategory.map(([category, list]) => (
-                            <div key={category} className="space-y-2.5">
-                              <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-text-dim">{category}</p>
-                              <div className="space-y-2">
-                                {list.map((item) => {
-                                  const itemSlug = slugifyAgentTitle(item.title);
-                                  const isCurrent = itemSlug === slug;
-                                  return (
-                                    <button
-                                      key={item.title}
-                                      type="button"
-                                      onClick={() => router.push(`/hub/agente/${itemSlug}`)}
-                                      className={`w-full text-left rounded-xl border px-3 py-2.5 transition-all ${
-                                        isCurrent
-                                          ? 'border-[#FFBE94] bg-[#FFF6F0] shadow-[0_8px_18px_rgba(255,107,0,0.12)]'
-                                          : 'border-[#E3E8EF] bg-[#FBFCFE] hover:border-[#FFD2B5] hover:bg-white'
-                                      }`}
-                                    >
-                                      <p className={`text-sm font-semibold ${isCurrent ? 'text-primary' : 'text-text-main'}`}>{item.title}</p>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
+              <div className="grid grid-cols-1 gap-6">
                 {entry.title === 'SEO & GEO' ? (
-                  <div className="lg:col-span-2">
+                  <div className="col-span-1">
                     <SeoGeoWorkspace agentTitle={entry.title} />
                   </div>
                 ) : (
-                  <div className="lg:col-span-2 rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_24px_52px_-30px_rgba(255,107,0,0.42)]">
+                  <div className="col-span-1 rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_24px_52px_-30px_rgba(255,107,0,0.42)]">
                     <div className="rounded-[28px] bg-white/85 p-[1px]">
                       <div className="rounded-[26px] border border-[#FFF1E8] bg-white p-6 md:p-8 h-full">
                         <h2 className="text-sm uppercase tracking-widest text-primary font-bold mb-4">Área de implantação</h2>
