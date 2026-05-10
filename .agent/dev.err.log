@@ -12,3 +12,48 @@
 [2m[ 41.77ms][22m  [2m ↳ [22mTransform Tailwind CSS AST into PostCSS AST
 [2m[  5.45ms][22m  [2m ↳ [22mUpdate PostCSS AST
 
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+
+[2m[677.06ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.37ms][22m  [2m ↳ [22mQuick bail check
+[2m[128.21ms][22m  [2m ↳ [22mSetup compiler
+[2m[  2.81ms][22m    [2m ↳ [22mPostCSS AST -> Tailwind CSS AST
+[2m[125.26ms][22m    [2m ↳ [22mCreate compiler
+[2m[  0.60ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[ 25.10ms][22m  [2m ↳ [22mSetup scanner
+[2m[165.06ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 84.63ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[235.23ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 27.14ms][22m  [2m ↳ [22mTransform Tailwind CSS AST into PostCSS AST
+[2m[  9.24ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[548.86ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.03ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.74ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[396.08ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 22.78ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 71.92ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 56.42ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[96.96ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.02ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.46ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[81.94ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 2.16ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 4.80ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 7.34ms][22m  [2m ↳ [22mUpdate PostCSS AST
+

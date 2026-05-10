@@ -6,13 +6,13 @@ export const metadata: Metadata = {
   description:
     "Landing page cinematografica da NeuroAds com IA agentica, motion design premium e experiencia imersiva orientada a performance.",
   alternates: {
-    canonical: "https://neuroads.com.br/interativo",
+    canonical: "https://www.neuroads.com.br/interativo",
   },
   openGraph: {
     title: "NeuroAds Interativo",
     description:
       "Explore uma operacao comercial viva com agentes de IA, dashboards em tempo real e storytelling cinematico.",
-    url: "https://neuroads.com.br/interativo",
+    url: "https://www.neuroads.com.br/interativo",
     siteName: "NeuroAds",
     locale: "pt_BR",
     type: "website",

@@ -2,6 +2,19 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
+  const host = (request.headers.get("x-forwarded-host") ?? request.nextUrl.host)
+    .split(",")[0]
+    .trim()
+    .toLowerCase();
+  const hostname = host.split(":")[0];
+
+  if (hostname === "neuroads.com.br") {
+    const redirectUrl = request.nextUrl.clone();
+    redirectUrl.hostname = "www.neuroads.com.br";
+    redirectUrl.protocol = "https";
+    return NextResponse.redirect(redirectUrl, 308);
+  }
+
   const response = NextResponse.next();
   const accept = request.headers.get("accept") ?? "";
 

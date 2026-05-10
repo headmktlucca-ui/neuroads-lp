@@ -15,3 +15,21 @@ Creating turbopack project {
   · serverActions
 
  GET / 200 in 3.5s (next.js: 2.2s, application-code: 1325ms)
+ GET / 200 in 193ms (next.js: 8ms, application-code: 184ms)
+ GET / 200 in 123ms (next.js: 9ms, application-code: 114ms)
+ GET / 200 in 147ms (next.js: 4ms, application-code: 142ms)
+ GET / 200 in 306ms (next.js: 59ms, application-code: 247ms)
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.29.80.1:3000
+- Environments: .env.local
+✓ Ready in 2.4s
+Creating turbopack project {
+  dir: 'C:\\Users\\claud\\OneDrive\\Documentos\\NeuroAds\\LP',
+  testMode: true
+}
+- Experiments (use with caution):
+  · serverActions
+
+ GET / 200 in 9.6s (next.js: 5.5s, application-code: 4.1s)
+✓ Compiled in 15.7s

@@ -6,6 +6,16 @@ const nextConfig: NextConfig = {
       allowedOrigins: ["neuroads.com.br", "*.neuroads.com.br"],
     },
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "neuroads.com.br" }],
+        destination: "https://www.neuroads.com.br/:path*",
+        permanent: true,
+      },
+    ];
+  },
   async headers() {
     return [
       {
