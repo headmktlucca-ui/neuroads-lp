@@ -85,6 +85,12 @@ Caso você tenha um plano premium recente, a Hostinger permite injetar Node.js d
    ```bash
    npm run start
    ```
+7. Depois de cada deploy, limpe o cache de CDN da Hostinger/hPanel antes da validação final para evitar HTML antigo apontando para chunks que já não existem.
+8. Execute uma checagem objetiva de integridade dos assets:
+   ```bash
+   npm run ops:check-prod-assets -- https://neuroads.com.br
+   ```
+   Se retornar qualquer `404` em `/_next/static/*`, o cache do HTML precisa ser renovado e a aplicação reiniciada.
 
 ### Via VPS Hostinger (O Protocolo Mais Profissional e Estável)
 

@@ -1,0 +1,17 @@
+
+> temp-app@0.1.0 dev
+> next dev
+
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.29.80.1:3000
+- Environments: .env.local
+✓ Ready in 395ms
+Creating turbopack project {
+  dir: 'C:\\Users\\claud\\OneDrive\\Documentos\\NeuroAds\\LP',
+  testMode: true
+}
+- Experiments (use with caution):
+  · serverActions
+
+ GET / 200 in 3.5s (next.js: 2.2s, application-code: 1325ms)

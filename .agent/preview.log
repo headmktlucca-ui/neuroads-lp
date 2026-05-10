@@ -43,3 +43,124 @@ FirebaseError: Failed to get document because the client is offline. (src/app/hu
   · serverActions
 
  GET /hub 200 in 2.1s (next.js: 1359ms, application-code: 710ms)
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+ GET / 200 in 486ms (next.js: 231ms, application-code: 256ms)
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ POST / 200 in 38ms (next.js: 4ms, application-code: 35ms)
+  └─ ƒ submitLuccaLeadAction({"clientName":"Carlos","email":"digitalcmn@gmail.com","flow":"analise","...":"3 items not stringified"}) in 1ms src/app/actions/lucca-leads.ts
+ POST / 200 in 5.3s (next.js: 5ms, application-code: 5.3s)
+  └─ ƒ chatWithSupport([{"content":"Boa noite! Eu sou o Lucca, Secretário Executivo da NeuroAds. Para começarmos, qual é o seu nome?","role":"assistant"},{"content":"Prazer, Carlos.","role":"assistant"},{"content":"Escolha uma opção para eu te ajudar agora:","role":"assistant"}]) in 5312ms src/app/actions/chat-support.ts
+ POST / 200 in 20ms (next.js: 3ms, application-code: 16ms)
+  └─ ƒ submitLuccaLeadAction({"clientName":"Carlos","flow":"mensagem_livre","message":"Gostaria de mais detalhes"}) in 0ms src/app/actions/lucca-leads.ts
+ POST / 200 in 2.5s (next.js: 5ms, application-code: 2.5s)
+  └─ ƒ chatWithSupport([{"content":"Boa noite! Eu sou o Lucca, Secretário Executivo da NeuroAds. Para começarmos, qual é o seu nome?","role":"assistant"},{"content":"Prazer, Carlos.","role":"assistant"},{"content":"Escolha uma opção para eu te ajudar agora:","role":"assistant"},"... 4 items not stringified"]) in 2487ms src/app/actions/chat-support.ts
+ POST / 200 in 12ms (next.js: 4ms, application-code: 8ms)
+  └─ ƒ submitLuccaLeadAction({"clientName":"Carlos","flow":"mensagem_livre","message":"Como funcionam os Agentes?"}) in 0ms src/app/actions/lucca-leads.ts
+ GET /hub 200 in 211ms (next.js: 10ms, application-code: 200ms)
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+ GET /hub?connectors=1 200 in 49ms (next.js: 10ms, application-code: 39ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /hub 200 in 21ms (next.js: 8ms, application-code: 14ms)
+ GET /hub 200 in 37ms (next.js: 5ms, application-code: 32ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 80ms (next.js: 59ms, application-code: 21ms)
+ GET /hub/agentes-ativos 200 in 141ms (next.js: 89ms, application-code: 52ms)
+ GET / 200 in 347ms (next.js: 7ms, application-code: 341ms)
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /hub/agentes-ativos 200 in 84ms (next.js: 6ms, application-code: 77ms)
+ GET /hub/agentes-ativos 200 in 40ms (next.js: 5ms, application-code: 34ms)
+ GET /hub/agentes-ativos 200 in 87ms (next.js: 5ms, application-code: 82ms)
+ GET /hub/agentes-ativos 200 in 49ms (next.js: 6ms, application-code: 43ms)
+ GET /hub/agentes-ativos 200 in 73ms (next.js: 7ms, application-code: 66ms)
+ GET /hub/agentes-ativos 200 in 31ms (next.js: 5ms, application-code: 26ms)
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+ GET / 200 in 106ms (next.js: 3ms, application-code: 104ms)
+ GET / 200 in 118ms (next.js: 2ms, application-code: 116ms)
+ GET /servicos/gestao-de-trafego-google-meta 200 in 100ms (next.js: 60ms, application-code: 41ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /servicos/seo-geo 200 in 92ms (next.js: 70ms, application-code: 22ms)
+ GET /servicos/implantacao-de-agentes-ia 200 in 100ms (next.js: 71ms, application-code: 29ms)
+ GET /servicos/estrategia-de-funil-e-conversao 200 in 108ms (next.js: 77ms, application-code: 31ms)
+ GET /agentes-ia/visao-geral-dos-agentes 200 in 105ms (next.js: 74ms, application-code: 31ms)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.29.80.1:3000
+- Environments: .env.local
+✓ Ready in 619ms
+- Experiments (use with caution):
+  · serverActions
+
+○ Compiling /agentes-ia/visao-geral-dos-agentes ...
+ GET /hub/agentes-ativos 200 in 4.8s (next.js: 4.4s, application-code: 409ms)
+ GET /agentes-ia/visao-geral-dos-agentes 200 in 4.8s (next.js: 2.7s, application-code: 2.1s)
+ GET /agentes-ia/agentes-de-inteligencia-de-dados 200 in 90ms (next.js: 52ms, application-code: 38ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /conteudos/alem-do-algoritmo 200 in 90ms (next.js: 52ms, application-code: 38ms)
+ GET /conteudos/materias-de-apoio 200 in 94ms (next.js: 63ms, application-code: 31ms)
+ GET /conteudos/alem-do-algoritmo 200 in 95ms (next.js: 11ms, application-code: 84ms)
+ GET /conteudos/faq 200 in 271ms (next.js: 164ms, application-code: 107ms)
+ GET /a-neuroads/sobre 200 in 752ms (next.js: 262ms, application-code: 490ms)
+ GET /a-neuroads/nosso-metodo 200 in 1615ms (next.js: 1587ms, application-code: 28ms)
+ GET /a-neuroads/contato 200 in 1172ms (next.js: 1133ms, application-code: 39ms)
+ GET / 200 in 775ms (next.js: 176ms, application-code: 599ms)
+ GET / 200 in 78ms (next.js: 13ms, application-code: 65ms)
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /hub/agentes-ativos 200 in 344ms (next.js: 22ms, application-code: 321ms)
+ GET /hub/agentes-ativos 200 in 202ms (next.js: 20ms, application-code: 182ms)
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+ GET /hub/inteligencia 200 in 721ms (next.js: 194ms, application-code: 527ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+ GET /hub 200 in 155ms (next.js: 105ms, application-code: 50ms)
+ GET /hub/performance 200 in 171ms (next.js: 119ms, application-code: 52ms)
+ GET /hub 200 in 31ms (next.js: 5ms, application-code: 26ms)
+ GET /hub?brand=1 200 in 26ms (next.js: 4ms, application-code: 22ms)
+ GET /hub 200 in 36ms (next.js: 6ms, application-code: 31ms)
+ GET /hub/performance 200 in 29ms (next.js: 5ms, application-code: 24ms)
+ GET /hub/agentes-ativos 200 in 29ms (next.js: 3ms, application-code: 27ms)
+⚠ Found a change in next.config.ts. Restarting the server to apply the changes...
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://172.29.80.1:3000
+- Environments: .env.local
+✓ Ready in 2.9s
+- Experiments (use with caution):
+  · serverActions
+
+ GET /hub/laboratorio-agentes?agente=gerador-de-copies-de-conversao 200 in 9.1s (next.js: 6.8s, application-code: 2.4s)
+ GET /hub/laboratorio-agentes?agente=analista-de-trafego 200 in 9.2s (next.js: 7.0s, application-code: 2.2s)
+ GET /hub/agentes-ativos 200 in 9.5s (next.js: 5.1s, application-code: 4.4s)
+ GET / 200 in 9.5s (next.js: 6.5s, application-code: 3.1s)
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+ GET /hub/agentes-ativos 200 in 181ms (next.js: 11ms, application-code: 170ms)
+ GET /hub/agentes-ativos 200 in 101ms (next.js: 10ms, application-code: 90ms)
+ GET /hub/agentes-ativos 200 in 420ms (next.js: 10ms, application-code: 410ms)
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+ GET /hub/agentes-ativos 200 in 400ms (next.js: 56ms, application-code: 344ms)
+ GET /hub/laboratorio-agentes?agente=analista-de-trafego 200 in 61ms (next.js: 11ms, application-code: 50ms)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+✓ Compiled in 585ms
+ GET / 200 in 5.6s (next.js: 3.2s, application-code: 2.4s)
+ GET /hub/laboratorio-agentes?agente=analista-de-trafego 200 in 5.7s (next.js: 14ms, application-code: 5.7s)
+ GET / 200 in 648ms (next.js: 403ms, application-code: 245ms)
+ GET /hub/laboratorio-agentes?agente=analista-de-trafego 200 in 705ms (next.js: 154ms, application-code: 551ms)
+ GET /hub/laboratorio-agentes?agente=analista-de-trafego 200 in 352ms (next.js: 20ms, application-code: 332ms)
+ GET /hub/laboratorio-agentes?agente=analista-de-trafego 200 in 348ms (next.js: 12ms, application-code: 336ms)
+ GET /hub/laboratorio-agentes?agente=analista-de-trafego 200 in 292ms (next.js: 12ms, application-code: 279ms)
+ GET / 200 in 228ms (next.js: 62ms, application-code: 165ms)
+ GET / 200 in 232ms (next.js: 13ms, application-code: 219ms)
+ GET / 200 in 111ms (next.js: 10ms, application-code: 101ms)
+ GET /hub 200 in 127ms (next.js: 84ms, application-code: 42ms)
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.

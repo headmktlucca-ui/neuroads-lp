@@ -7,6 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "ops:check-prod-assets": "node scripts/ops/check-production-assets.mjs",
     "stripe:sync-agents": "node scripts/stripe/sync-agent-catalog.mjs",
     "stripe:seed-offers": "node scripts/stripe/reset-and-seed-offers.mjs"
   },

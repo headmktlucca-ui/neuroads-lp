@@ -8,9 +8,9 @@ const MotionP = motion.p;
 const MotionH2 = motion.h2;
 
 const testimonials = [
-  { q: 'Essencial para impulsionar sua empresa, recomendo!!', a: 'Flávio Almeida', s: 'CEO, FJR Teleprompter', img: '/images/image (2).png' },
-  { q: 'Excelente profissional de tráfego pago! Sempre muito estratégico, atencioso e focado em performance.', a: 'Bruno Ribeiro', s: 'CEO, Voar Estúdio Criativo', img: '/images/image (1).png' },
-  { q: 'Excelente agência, muito profissional e comprometida sempre buscando melhorar as atividades. Recomendo bastante!', a: 'Emanuel Silva', s: 'Consultor Financeiro', img: '/images/image.png' }
+  { q: 'Essencial para impulsionar sua empresa, recomendo!!', a: 'Flávio Almeida', s: 'CEO, FJR Teleprompter', img: '/images/Flávio Almeida.png' },
+  { q: 'Excelente profissional de tráfego pago! Sempre muito estratégico, atencioso e focado em performance.', a: 'Bruno Ribeiro', s: 'CEO, Voar Estúdio Criativo', img: '/images/Bruno Ribeiro.png' },
+  { q: 'Excelente agência, muito profissional e comprometida sempre buscando melhorar as atividades. Recomendo bastante!', a: 'Emanuel Silva', s: 'Consultor Financeiro', img: '/images/Emanuel Silva.png' }
 ];
 
 export default function TestimonialsSection() {
