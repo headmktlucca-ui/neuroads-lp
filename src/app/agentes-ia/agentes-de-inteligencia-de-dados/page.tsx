@@ -91,9 +91,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Inteligência de dados',
-    poster: '/images/tools/analise.png',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+    poster: '/images/tools/agentes-inteligencia-dados-hero-ultrarealista-v2.png',
   },
 };
 

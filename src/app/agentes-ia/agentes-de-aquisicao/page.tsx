@@ -91,9 +91,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Agentes de aquisição',
-    poster: '/images/tools/analisador_publico.png',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+    poster: '/images/tools/agentes-aquisicao-hero-ultrarealista-v2.png',
   },
 };
 

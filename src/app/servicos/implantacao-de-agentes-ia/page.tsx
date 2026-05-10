@@ -91,9 +91,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Orquestração de agentes IA',
-    poster: '/images/tools/automacao.png',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+    poster: '/images/tools/servico-implantacao-agentes-hero-ultrarealista-v2.png',
   },
 };
 

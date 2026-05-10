@@ -184,11 +184,11 @@ function LaboratorioAgentesContent() {
         <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none bg-gradient-to-b from-transparent via-[#f7f8fa]/75 to-bg-main" />
 
         <section className="relative z-10 wrap py-8 md:py-12 space-y-6">
-          <header className="rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
-            <h1 className="mt-2 text-3xl md:text-4xl font-black tracking-tight text-text-main">
+          <header className="rounded-3xl border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
+            <h1 className="mt-2 text-3xl font-black tracking-tight text-white md:text-4xl">
               Laboratório de Agentes
             </h1>
-            <p className="mt-3 max-w-3xl text-sm md:text-base text-text-muted leading-relaxed">
+            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-base">
               Esta área centraliza a ativação dos agentes da sua operação, com foco em coerência estratégica, previsibilidade e impacto financeiro real.
             </p>
           </header>

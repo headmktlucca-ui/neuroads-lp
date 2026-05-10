@@ -91,9 +91,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Mapa do ecossistema de agentes',
-    poster: '/images/template-match/process/process-step-02-ia-em-acao-v1.png',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+    poster: '/images/tools/agentes-visao-geral-hero-ultrarealista-v2.png',
   },
 };
 

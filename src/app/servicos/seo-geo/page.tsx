@@ -91,9 +91,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Visibilidade orgânica e GEO',
-    poster: '/images/tools/otimizacao.png',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+    poster: '/images/tools/servico-seo-geo-hero-ultrarealista-v2.png',
   },
 };
 

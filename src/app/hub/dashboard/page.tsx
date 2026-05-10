@@ -104,19 +104,19 @@ export default function HubDashboardPage() {
           style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
         />
         <div className="relative z-10 wrap py-8 md:py-12">
-          <section className="rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
+          <section className="rounded-3xl border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
-                <h1 className="text-3xl md:text-4xl font-black tracking-tight text-text-main">
+                <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">
                   Agentes Ativos
                 </h1>
-                <p className="mt-2 text-sm md:text-base text-text-muted">
+                <p className="mt-2 text-sm text-[#C6D3E9] md:text-base">
                   Visualização inicial dos agentes atualmente ativos na sua conta.
                 </p>
               </div>
               <Link
                 href="/hub/laboratorio-agentes"
-                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#FF6B00] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105"
+                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#FF6A00] bg-transparent px-6 text-[14px] leading-none font-black text-[#FF6A00] shadow-none transition hover:bg-[#FF6A00]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB98E]"
               >
                 <Wrench className="h-4 w-4" />
                 Acessar Laboratório

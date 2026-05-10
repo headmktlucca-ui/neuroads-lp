@@ -91,9 +91,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Funil e conversão previsível',
-    poster: '/images/tools/diagnostico_funil.png',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+    poster: '/images/tools/servico-funil-conversao-hero-ultrarealista-v2.png',
   },
 };
 

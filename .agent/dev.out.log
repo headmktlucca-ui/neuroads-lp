@@ -33,3 +33,10 @@ Creating turbopack project {
 
  GET / 200 in 9.6s (next.js: 5.5s, application-code: 4.1s)
 ✓ Compiled in 15.7s
+ GET / 200 in 509ms (next.js: 201ms, application-code: 308ms)
+ GET /login?next=%2Fhub 200 in 92ms (next.js: 55ms, application-code: 37ms)
+ GET /hub 200 in 139ms (next.js: 84ms, application-code: 55ms)
+ GET /hub 200 in 29ms (next.js: 6ms, application-code: 23ms)
+ GET / 200 in 251ms (next.js: 6ms, application-code: 245ms)
+ POST / 200 in 101ms (next.js: 6ms, application-code: 95ms)
+  └─ ƒ submitLuccaLeadAction({"clientName":"Carlos","flow":"claudio","message":"Cliente solicitou contato com especialista Claudio Müller."}) in 1ms src/app/actions/lucca-leads.ts

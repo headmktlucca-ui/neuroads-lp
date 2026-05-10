@@ -57,3 +57,90 @@
 [2m[ 4.80ms][22m  [2m ↳ [22mBuild utilities
 [2m[ 7.34ms][22m  [2m ↳ [22mUpdate PostCSS AST
 
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+
+[2m[51.88ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.23ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[34.13ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 2.32ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[10.24ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.81ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[63.60ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.28ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[43.47ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.66ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[11.65ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 6.35ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+
+[2m[34.87ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.20ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[26.69ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.79ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 5.42ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 1.68ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[45.84ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.15ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[35.49ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.63ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 6.92ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 1.54ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[44.14ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.33ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[37.15ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.17ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.29ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.85ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+
+[2m[48.09ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.36ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[38.69ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.50ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 5.65ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 1.76ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+
+[2m[101.96ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.45ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[ 79.87ms][22m  [2m ↳ [22mScan for candidates
+[2m[  2.47ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 14.19ms][22m  [2m ↳ [22mBuild utilities
+[2m[  4.63ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+
+[2m[72.77ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.02ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.66ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[60.83ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 2.28ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 2.94ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 5.77ms][22m  [2m ↳ [22mUpdate PostCSS AST
+

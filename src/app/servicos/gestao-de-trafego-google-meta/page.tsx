@@ -91,9 +91,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Controle de tráfego e orçamento',
-    poster: '/images/tools/analista_trafego.png',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+    poster: '/images/tools/gestao-trafego-controle-caixa-hero-ultrarealista-v2.png',
   },
 };
 

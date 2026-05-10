@@ -91,9 +91,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Agentes de conversão',
-    poster: '/images/tools/gerador_copies.png',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+    poster: '/images/tools/agentes-conversao-hero-ultrarealista-v2.png',
   },
 };
 

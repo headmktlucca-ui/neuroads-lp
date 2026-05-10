@@ -193,9 +193,16 @@ function MediaLoopBlock({ slug, media }: MediaLoopBlockProps) {
   const canShowMobileVideo = Boolean(media.mobileVideo && !mobileFailed);
 
   return (
-    <div className="relative overflow-hidden rounded-[26px] border border-[#e7ecf4] bg-white shadow-[0_18px_44px_rgba(12,22,38,0.08)]">
-      <div className="relative h-[260px] w-full sm:h-[320px] md:h-[420px]">
-        <Image src={media.poster} alt={media.title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" priority />
+    <div className="relative h-full min-h-[260px] overflow-hidden rounded-[26px] border border-[#e7ecf4] bg-white shadow-[0_18px_44px_rgba(12,22,38,0.08)] sm:min-h-[320px] md:min-h-[420px]">
+      <div className="relative h-full w-full">
+        <Image
+          src={media.poster}
+          alt={media.title}
+          fill
+          className="object-cover object-center scale-[1.12]"
+          sizes="(max-width: 1024px) 100vw, 50vw"
+          priority
+        />
         <div className="absolute inset-0 bg-gradient-to-tr from-[#0d1730]/28 via-transparent to-[#ff6a00]/8" />
 
         {canShowDesktopVideo && (
@@ -225,10 +232,6 @@ function MediaLoopBlock({ slug, media }: MediaLoopBlockProps) {
             onTimeUpdate={(event) => handleTimeUpdate(event.currentTarget.currentTime, event.currentTarget.duration)}
           />
         )}
-
-        <div className="absolute left-4 top-4 rounded-full border border-white/45 bg-white/85 px-3 py-1.5 text-[11px] font-black uppercase tracking-[0.12em] text-[#112043]">
-          Loop estratégico
-        </div>
       </div>
     </div>
   );

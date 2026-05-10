@@ -42,6 +42,9 @@ const CATEGORY_META: Record<
 const HUB_CONNECTOR_BUTTON_CLASS =
   'inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#FF6B00] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFBE94]';
 
+const HUB_HEADER_LAB_BUTTON_CLASS =
+  'inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#FF6A00] bg-transparent px-6 text-[14px] leading-none font-black text-[#FF6A00] shadow-none transition hover:bg-[#FF6A00]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB98E]';
+
 const PERFORMANCE_PRIORITY_MAP: Record<string, string> = {
   'Analista de Tráfego': 'Refinar termos de pesquisa e correspondências para reduzir CPL sem perder volume qualificado.',
   'Simulador de ROAS': 'Recalibrar metas por canal para concentrar investimento nas campanhas com maior retorno projetado.',
@@ -176,21 +179,21 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
       <div className="relative z-10 wrap py-8 md:py-12 space-y-6">
         {isPerformance ? (
           <>
-            <header className="rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
+            <header className="rounded-3xl border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
               <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-primary">Gestão de Agentes</p>
-                <h1 className="mt-2 text-[30px] leading-[1.1] font-black tracking-tight text-text-main sm:text-[34px] md:text-[36px]">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#FF6A00]">Gestão de Agentes</p>
+                <h1 className="mt-2 text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
                     Performance
                   </h1>
-                  <p className="mt-3 max-w-3xl text-sm md:text-lg text-text-muted leading-relaxed">
+                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-lg">
                     Oportunidades e estratégias a partir de dados e comportamento. Escale com inteligência.
                   </p>
-                  <p className="mt-2 text-sm font-semibold text-primary">
+                  <p className="mt-2 text-sm font-semibold text-[#FF6A00]">
                     Foco em decisões mais rápidas, menos desperdício de verba e crescimento previsível no caixa.
                   </p>
                 </div>
-                <Link href="/hub/laboratorio-agentes?categoria=performance" className={HUB_CONNECTOR_BUTTON_CLASS}>
+                <Link href="/hub/laboratorio-agentes?categoria=performance" className={HUB_HEADER_LAB_BUTTON_CLASS}>
                   <Wrench className="h-4 w-4" />
                   Acessar Laboratório
                 </Link>
@@ -199,17 +202,17 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
 
           </>
         ) : (
-          <header className="rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
+          <header className="rounded-3xl border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-primary">Gestão de Agentes</p>
-                <h1 className="mt-2 text-3xl md:text-4xl font-black tracking-tight text-text-main">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#FF6A00]">Gestão de Agentes</p>
+                <h1 className="mt-2 text-3xl font-black tracking-tight text-white md:text-4xl">
                   {category.label}
                 </h1>
-                <p className="mt-3 max-w-3xl text-sm md:text-base text-text-muted leading-relaxed">{category.summary}</p>
-                <p className="mt-2 text-sm font-semibold text-primary">{category.financialImpact}</p>
+                <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-base">{category.summary}</p>
+                <p className="mt-2 text-sm font-semibold text-[#FF6A00]">{category.financialImpact}</p>
               </div>
-              <Link href={`/hub/laboratorio-agentes?categoria=${categorySlug}`} className={HUB_CONNECTOR_BUTTON_CLASS}>
+              <Link href={`/hub/laboratorio-agentes?categoria=${categorySlug}`} className={HUB_HEADER_LAB_BUTTON_CLASS}>
                 <Wrench className="h-4 w-4" />
                 Acessar Laboratório
               </Link>
