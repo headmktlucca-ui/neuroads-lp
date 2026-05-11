@@ -1,12 +1,15 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, Fragment } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import { ChevronDown, User, LogOut, X, PlugZap, CheckCircle2, Database, Gauge } from 'lucide-react';
-import { HTTPS_PREFIX, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
+import { getFirebaseDb } from '../../lib/firebase';
+import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
+import { getHubProfileSummary } from '../../lib/hub-profile';
 import {
   AGENT_STATUS_UPDATED_EVENT,
   readAgentStatusOverrides,
@@ -25,9 +28,19 @@ function getFirstName(fullName: string | null | undefined): string {
   return fullName.split(' ')[0];
 }
 
+function readString(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function readRecord(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== 'object') return null;
+  return value as Record<string, unknown>;
+}
+
 type ConnectorStatus = {
   googleAds: boolean;
   metaAds: boolean;
+  linkedinAds: boolean;
   ga4: boolean;
   serverTracking: boolean;
   crm: boolean;
@@ -46,6 +59,7 @@ type ConnectorDefinition = {
 const DEFAULT_CONNECTOR_STATUS: ConnectorStatus = {
   googleAds: false,
   metaAds: false,
+  linkedinAds: false,
   ga4: false,
   serverTracking: false,
   crm: false,
@@ -72,6 +86,7 @@ const DEFAULT_CONNECTOR_CONFIG = {
 const CONNECTOR_DEFINITIONS: ConnectorDefinition[] = [
   { key: 'googleAds', name: 'Google Ads API', source: 'Mídia paga', required: true, usedBy: 'ROAS, CAC, alertas de campanha' },
   { key: 'metaAds', name: 'Meta Ads API', source: 'Mídia paga', required: true, usedBy: 'CPL, CPA, desperdício e variações' },
+  { key: 'linkedinAds', name: 'LinkedIn Ads API', source: 'Mídia paga B2B', required: true, usedBy: 'CPL B2B, qualidade de lead e CAC por conta' },
   { key: 'ga4', name: 'GA4 Data API', source: 'Analytics', required: true, usedBy: 'Funil, taxa de conversão e jornada' },
   { key: 'serverTracking', name: 'GTM Server + CAPI/Enhanced', source: 'Atribuição', required: true, usedBy: 'Atribuição confiável e deduplicação' },
   { key: 'crm', name: 'CRM (HubSpot/RD/Pipedrive)', source: 'Vendas', required: true, usedBy: 'MQL, SQL, ganhos reais por estágio' },
@@ -279,7 +294,6 @@ export default function Navbar() {
   const requiredConnectors = CONNECTOR_DEFINITIONS.filter((item) => item.required);
   const connectedRequired = requiredConnectors.filter((item) => connectorStatus[item.key]).length;
   const dashboardReadiness = Math.round((connectedRequired / requiredConnectors.length) * 100);
-  const profileRecord = (profile as Record<string, unknown> | null) ?? null;
   const contractedAgents = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
   const agentStatusOverrides = useMemo<AgentStatusOverrides>(
     () => {
@@ -302,13 +316,15 @@ export default function Navbar() {
     () => Array.from(effectiveContracts.values()).filter((agent) => agent.isActive).length,
     [effectiveContracts]
   );
+  const hubProfile = useMemo(() => getHubProfileSummary(profile), [profile]);
   const currentPlanName = useMemo(
     () => Array.from(effectiveContracts.values()).find((agent) => agent.isActive)?.planName ?? 'Lite',
     [effectiveContracts]
   );
-  const planCapacity = PLAN_AGENT_CAPACITY[currentPlanName] ?? 5;
+  const planCapacity = hubProfile.agentLimit ?? PLAN_AGENT_CAPACITY[currentPlanName] ?? 5;
   const capacityRatio = planCapacity > 0 ? activeAgentsCount / planCapacity : 0;
   const isCapacityAbove80 = capacityRatio >= 0.8;
+  const planDisplayLabel = hubProfile.planName ?? (profile?.isPremium ? 'Premium' : 'Padrão');
 
   useEffect(() => {
     if (!user) return;
@@ -328,15 +344,36 @@ export default function Navbar() {
   useEffect(() => {
     if (!user) return;
 
+    const profileRecord = (profile as Record<string, unknown> | null) ?? null;
     const companyKey = `neuroads_company_profile_${user.uid}`;
     const contactKey = `neuroads_profile_contact_${user.uid}`;
     const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
     const connectorsConfigKey = `neuroads_dashboard_connectors_config_${user.uid}`;
-    const fallbackWhatsapp = typeof profileRecord?.whatsapp === 'string' ? profileRecord.whatsapp : '';
+    const onboardingRecord = readRecord(profileRecord?.onboarding);
+    const profileDetailsRecord = readRecord(profileRecord?.profileDetails);
+    const fallbackCompanyForm = {
+      companyName: readString(
+        profileRecord?.companyName ?? profileRecord?.company ?? onboardingRecord?.companyName ?? onboardingRecord?.company
+      ),
+      site: normalizeHttpsMaskedUrlInput(
+        readString(profileRecord?.site ?? profileRecord?.website ?? onboardingRecord?.site ?? profileDetailsRecord?.site)
+      ),
+      instagram: readString(profileRecord?.instagram ?? onboardingRecord?.instagram ?? profileDetailsRecord?.instagram),
+      linkedin: readString(profileRecord?.linkedin ?? onboardingRecord?.linkedin ?? profileDetailsRecord?.linkedin),
+      tiktok: '',
+      blog: '',
+    };
+    const fallbackWhatsapp = readString(profileRecord?.whatsapp ?? onboardingRecord?.whatsapp ?? profileDetailsRecord?.whatsapp);
     let timeoutId: number | undefined;
 
     try {
-      let nextCompanyForm = DEFAULT_COMPANY_FORM;
+      let nextCompanyForm = {
+        ...DEFAULT_COMPANY_FORM,
+        ...fallbackCompanyForm,
+        site: fallbackCompanyForm.site && !isHttpsPlaceholderOnly(fallbackCompanyForm.site)
+          ? fallbackCompanyForm.site
+          : HTTPS_PREFIX,
+      };
       let nextWhatsapp = fallbackWhatsapp;
       let nextConnectorStatus = DEFAULT_CONNECTOR_STATUS;
       let nextConnectorConfig = DEFAULT_CONNECTOR_CONFIG;
@@ -345,10 +382,15 @@ export default function Navbar() {
       if (companyRaw) {
         const parsed = JSON.parse(companyRaw) as typeof companyForm;
         nextCompanyForm = {
-          companyName: parsed.companyName || '',
-          site: parsed.site ? normalizeHttpsMaskedUrlInput(parsed.site) : HTTPS_PREFIX,
-          instagram: parsed.instagram || '',
-          linkedin: parsed.linkedin || '',
+          companyName: nextCompanyForm.companyName || parsed.companyName || '',
+          site:
+            !isHttpsPlaceholderOnly(nextCompanyForm.site)
+              ? nextCompanyForm.site
+              : parsed.site
+                ? normalizeHttpsMaskedUrlInput(parsed.site)
+                : HTTPS_PREFIX,
+          instagram: nextCompanyForm.instagram || parsed.instagram || '',
+          linkedin: nextCompanyForm.linkedin || parsed.linkedin || '',
           tiktok: parsed.tiktok || '',
           blog: parsed.blog || '',
         };
@@ -357,7 +399,7 @@ export default function Navbar() {
       const contactRaw = window.localStorage.getItem(contactKey);
       if (contactRaw) {
         const parsed = JSON.parse(contactRaw) as { whatsapp?: string };
-        nextWhatsapp = parsed.whatsapp || fallbackWhatsapp;
+        nextWhatsapp = nextWhatsapp || parsed.whatsapp || fallbackWhatsapp;
       } else {
         nextWhatsapp = fallbackWhatsapp;
       }
@@ -394,20 +436,64 @@ export default function Navbar() {
         window.clearTimeout(timeoutId);
       }
     };
-  }, [profileRecord?.whatsapp, user]);
+  }, [profile, user]);
 
-  const handleSaveCompany = () => {
+  const handleSaveCompany = async () => {
     if (!user) return;
+
+    const normalizedSite = normalizeHttpsMaskedUrlInput(companyForm.site);
+    const payload = {
+      companyName: companyForm.companyName.trim(),
+      site: normalizedSite,
+      instagram: companyForm.instagram.trim(),
+      linkedin: companyForm.linkedin.trim(),
+      updatedAt: Date.now(),
+      onboarding: {
+        companyName: companyForm.companyName.trim(),
+        site: normalizedSite,
+        instagram: companyForm.instagram.trim(),
+        linkedin: companyForm.linkedin.trim(),
+      },
+    };
+
+    try {
+      const db = getFirebaseDb();
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(userRef, payload, { merge: true });
+    } catch (error) {
+      console.warn('Falha ao salvar dados da empresa no Firestore:', error);
+    }
+
     const companyKey = `neuroads_company_profile_${user.uid}`;
-    window.localStorage.setItem(companyKey, JSON.stringify(companyForm));
+    window.localStorage.setItem(companyKey, JSON.stringify({ ...companyForm, site: normalizedSite }));
     setCompanySaved(true);
     setTimeout(() => setCompanySaved(false), 2200);
   };
 
-  const handleSaveWhatsApp = () => {
+  const handleSaveWhatsApp = async () => {
     if (!user) return;
+
+    const normalizedWhatsapp = whatsApp.trim();
+    try {
+      const db = getFirebaseDb();
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(
+        userRef,
+        {
+          whatsapp: normalizedWhatsapp,
+          updatedAt: Date.now(),
+          onboarding: {
+            whatsapp: normalizedWhatsapp,
+          },
+        },
+        { merge: true }
+      );
+    } catch (error) {
+      console.warn('Falha ao salvar WhatsApp no Firestore:', error);
+    }
+
     const contactKey = `neuroads_profile_contact_${user.uid}`;
-    window.localStorage.setItem(contactKey, JSON.stringify({ whatsapp: whatsApp }));
+    window.localStorage.setItem(contactKey, JSON.stringify({ whatsapp: normalizedWhatsapp }));
   };
 
   const handleSaveConnectors = () => {
@@ -421,7 +507,8 @@ export default function Navbar() {
   };
 
   return (
-    <header
+    <Fragment>
+      <header
       className={
         isHubNavbarStyle
           ? 'fixed left-1/2 top-4 z-[200] w-[min(calc(100%-2.5rem),1196px)] -translate-x-1/2'
@@ -625,10 +712,10 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] z-[210] overflow-hidden transition-all duration-300 ${
+        className={`md:hidden bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] z-[210] overflow-y-auto transition-all duration-300 ${
           isHubNavbarStyle
-            ? 'fixed left-1/2 top-[84px] w-[min(calc(100%-2.5rem),460px)] -translate-x-1/2 rounded-[20px] p-4'
-            : 'absolute top-24 left-4 right-4 rounded-[24px] p-5'
+            ? 'fixed left-1/2 top-[84px] max-h-[calc(100dvh-108px)] w-[min(calc(100%-2.5rem),460px)] -translate-x-1/2 rounded-[20px] p-4'
+            : 'absolute top-24 left-4 right-4 max-h-[calc(100dvh-120px)] rounded-[24px] p-5'
         } ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
       >
         <div className="flex flex-col items-center gap-8 px-2">
@@ -687,10 +774,10 @@ export default function Navbar() {
                   </div>
                 </div>
               <Link
-                href="/hub/dashboard"
+                href="/hub/agentes-ativos"
                 onClick={() => setIsMenuOpen(false)}
                 className={`text-lg font-black tracking-[0.08em] transition-colors ${
-                  isLinkActive('/hub/dashboard') ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
+                  isLinkActive('/hub/agentes-ativos') ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
                 }`}
               >
                 Agentes Ativos
@@ -724,6 +811,15 @@ export default function Navbar() {
                 CONECTORES
               </button>
               <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  setIsCompanyOpen(true);
+                }}
+                className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
+              >
+                SUA EMPRESA
+              </button>
+              <button
                 onClick={() => { logout(); setIsMenuOpen(false); }}
                 className="w-full py-5 text-sm font-black text-red-500 tracking-widest uppercase border border-red-200 rounded-xl bg-red-50 flex items-center justify-center gap-3"
               >
@@ -733,96 +829,98 @@ export default function Navbar() {
           )}
         </div>
       </div>
+    </header>
 
-      {/* Profile Modal */}
-      {isProfileOpen && user && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-          <div
-            onClick={() => setIsProfileOpen(false)}
-            className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
-          />
+    {/* Profile Modal */}
+    {isProfileOpen && user && (
+      <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center sm:py-4">
+        <div
+          onClick={() => setIsProfileOpen(false)}
+          className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
+        />
 
-          <div className="relative w-full max-w-xl rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)]">
-            <div className="rounded-[28px] bg-white border border-[#FFF1E8] overflow-hidden">
-              <div className="relative px-6 py-5 border-b border-border bg-gradient-to-br from-orange-light to-white">
-                <h3 className="text-2xl font-black text-text-main tracking-tight">Meu perfil</h3>
-                <p className="text-sm text-text-muted mt-1">Informações da conta do usuário</p>
-                <button
-                  onClick={() => setIsProfileOpen(false)}
-                  className="absolute top-4 right-4 p-2 rounded-full bg-white border border-border hover:bg-bg-secondary transition-colors"
-                >
-                  <X size={18} className="text-text-main" />
-                </button>
+        <div className="relative w-full max-w-xl max-h-[92vh] rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)] animate-in fade-in zoom-in duration-300">
+          <div className="max-h-[calc(92vh-4px)] overflow-y-auto rounded-[28px] bg-white border border-[#FFF1E8]">
+            <div className="relative px-6 py-5 border-b border-border bg-gradient-to-br from-orange-light to-white">
+              <h3 className="text-2xl font-black text-text-main tracking-tight">Meu perfil</h3>
+              <p className="text-sm text-text-muted mt-1">Informações da conta do usuário</p>
+              <button
+                onClick={() => setIsProfileOpen(false)}
+                className="absolute top-4 right-4 p-2 rounded-full bg-white border border-border hover:bg-bg-secondary transition-colors"
+              >
+                <X size={18} className="text-text-main" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5">
+              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
+                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Nome</p>
+                <p className="text-base font-bold text-text-main">{user.displayName || 'Não informado'}</p>
               </div>
 
-              <div className="p-6 space-y-5">
-                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Nome</p>
-                  <p className="text-base font-bold text-text-main">{user.displayName || 'Não informado'}</p>
-                </div>
+              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
+                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">E-mail</p>
+                <p className="text-base font-bold text-text-main">{user.email || 'Não informado'}</p>
+              </div>
 
-                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">E-mail</p>
-                  <p className="text-base font-bold text-text-main">{user.email || 'Não informado'}</p>
+              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
+                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">WhatsApp</p>
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    value={whatsApp}
+                    onChange={(e) => setWhatsApp(e.target.value)}
+                    placeholder="(00) 00000-0000"
+                    className="flex-1 bg-white border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveWhatsApp}
+                    className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] text-white text-xs font-bold tracking-widest uppercase shadow-[0_8px_18px_rgba(8,183,96,0.25)]"
+                  >
+                    Salvar
+                  </button>
                 </div>
+              </div>
 
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">WhatsApp</p>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <input
-                      value={whatsApp}
-                      onChange={(e) => setWhatsApp(e.target.value)}
-                      placeholder="(00) 00000-0000"
-                      className="flex-1 bg-white border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={handleSaveWhatsApp}
-                      className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] text-white text-xs font-bold tracking-widest uppercase shadow-[0_8px_18px_rgba(8,183,96,0.25)]"
-                    >
-                      Salvar
-                    </button>
-                  </div>
+                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Plano</p>
+                  <p className={`text-base font-black ${hubProfile.isSubscriptionActive ? 'text-[#0A9D57]' : 'text-primary'}`}>
+                    {planDisplayLabel}
+                  </p>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                    <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Plano</p>
-                    <p className={`text-base font-black ${profile?.isPremium ? 'text-[#0A9D57]' : 'text-primary'}`}>
-                      {profile?.isPremium ? 'Premium' : 'Padrão'}
-                    </p>
-                  </div>
-                  <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                    <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Plataformas conectadas</p>
-                    <p className="text-base font-black text-text-main">{connectedPlatforms}</p>
-                  </div>
-                </div>
-
                 <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Aplicações em uso</p>
-                  <p className="text-base font-black text-text-main">{usageCount}</p>
+                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Plataformas conectadas</p>
+                  <p className="text-base font-black text-text-main">{connectedPlatforms}</p>
                 </div>
+              </div>
 
-                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">ID do usuário</p>
-                  <p className="text-sm font-semibold text-text-main break-all">{user.uid}</p>
-                </div>
+              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
+                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Aplicações em uso</p>
+                <p className="text-base font-black text-text-main">{usageCount}</p>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
+                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">ID do usuário</p>
+                <p className="text-sm font-semibold text-text-main break-all">{user.uid}</p>
               </div>
             </div>
           </div>
         </div>
-      )}
+      </div>
+    )}
+
 
       {/* Company Modal */}
       {isCompanyModalOpen && user && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center sm:py-4">
           <div
             onClick={closeCompanyModal}
             className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
           />
 
-          <div className="relative w-full max-w-2xl rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)]">
-            <div className="rounded-[28px] bg-white border border-[#FFF1E8] overflow-hidden">
+          <div className="relative w-full max-w-2xl max-h-[92vh] rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)] animate-in fade-in zoom-in duration-300">
+            <div className="max-h-[calc(92vh-4px)] overflow-y-auto rounded-[28px] bg-white border border-[#FFF1E8]">
               <div className="relative px-6 py-5 border-b border-border bg-gradient-to-br from-orange-light to-white">
                 <h3 className="text-2xl font-black text-text-main tracking-tight">Sobre sua Marca</h3>
                 <p className="text-sm text-text-muted mt-1">Cadastro das informações institucionais</p>
@@ -929,13 +1027,13 @@ export default function Navbar() {
 
       {/* Connectors Modal */}
       {isConnectorsModalOpen && user && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center sm:py-4">
           <div
             onClick={closeConnectorsModal}
             className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
           />
 
-          <div className="relative w-full max-w-4xl rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)] max-h-[92vh]">
+          <div className="relative w-full max-w-4xl rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)] max-h-[92vh] animate-in fade-in zoom-in duration-300">
             <div className="rounded-[28px] bg-white border border-[#FFF1E8] overflow-hidden h-full flex flex-col">
               <div className="relative px-6 py-5 border-b border-border bg-gradient-to-br from-orange-light to-white">
                 <h3 className="text-2xl font-black text-text-main tracking-tight">Conectores</h3>
@@ -1106,6 +1204,6 @@ export default function Navbar() {
           </div>
         </div>
       )}
-    </header>
+    </Fragment>
   );
 }

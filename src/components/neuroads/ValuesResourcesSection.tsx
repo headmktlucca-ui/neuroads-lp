@@ -282,7 +282,7 @@ export default function ValuesResourcesSection() {
           <span className="inline-flex items-center rounded-full border border-[#ffceb0] bg-white px-6 py-2 text-[13px] font-extrabold uppercase tracking-[0.22em] text-[#ff5a00]">
             Valores & Recursos
           </span>
-          <h2 className="mt-8 text-[30px] font-black leading-[1.08] tracking-[-0.02em] text-[#090f2a] sm:text-[38px] md:text-[62px]">
+          <h2 className="mt-8 text-[30px] font-black leading-[1.08] tracking-[-0.02em] text-[#090f2a] sm:text-[38px] md:text-[54px] lg:text-[62px]">
             Escolha seu plano e escale com previsibilidade
           </h2>
           <p className="mt-6 text-[17px] text-[#47506a]">Comece com 14 dias de demonstração grátis. Cancele quando quiser.</p>
@@ -434,7 +434,7 @@ export default function ValuesResourcesSection() {
 
             {creditOffers.map((credit) => (
               <article key={credit.slug} className="rounded-[10px] border border-[#173c6e] bg-[#081a38] px-3 py-2.5">
-                <div className="flex items-center justify-between gap-2">
+                <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="min-w-0">
                     <div className="mb-1 flex items-center gap-2">
                       <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#ff6a00]/60 bg-[#0b1d3f] text-[#ff6a00]">
@@ -451,7 +451,7 @@ export default function ValuesResourcesSection() {
                     type="button"
                     onClick={() => handleCheckout(credit)}
                     disabled={loadingId === credit.slug}
-                    className="inline-flex h-[84px] w-[92px] shrink-0 items-center justify-center rounded-[12px] border border-[#ff6a00] bg-transparent px-2 py-2 text-[12px] font-extrabold text-[#ff6a00] transition hover:bg-[#ff6a00]/10 disabled:opacity-60"
+                    className="inline-flex w-full items-center justify-center rounded-[12px] border border-[#ff6a00] bg-transparent px-3 py-2.5 text-[12px] font-extrabold text-[#ff6a00] transition hover:bg-[#ff6a00]/10 disabled:opacity-60 sm:h-[84px] sm:w-[92px] sm:shrink-0 sm:px-2 sm:py-2"
                   >
                     <span className="text-center leading-[1.05]">
                       {loadingId === credit.slug ? 'Processando...' : 'Comprar créditos'}

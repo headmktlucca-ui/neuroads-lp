@@ -5,6 +5,7 @@ import { MessageCircle, Send, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { chatWithSupport } from '../../app/actions/chat-support';
+import { getHubProfileSummary } from '../../lib/hub-profile';
 
 type MessageRole = 'assistant' | 'user';
 type SupportMessage = {
@@ -28,7 +29,7 @@ function getFirstName(fullName: string | null | undefined): string {
 }
 
 export default function LuccaHubSupportWidget() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
@@ -48,13 +49,27 @@ export default function LuccaHubSupportWidget() {
     const connectorsRaw =
       typeof window !== 'undefined' && connectorsStorageKey ? window.localStorage.getItem(connectorsStorageKey) : null;
 
-    let companyName = 'Empresa não cadastrada';
-    let site = 'Site não cadastrado';
+    const profileRecord = (profile as Record<string, unknown> | null) ?? null;
+    const onboardingRecord =
+      profileRecord?.onboarding && typeof profileRecord.onboarding === 'object'
+        ? (profileRecord.onboarding as Record<string, unknown>)
+        : null;
+
+    let companyName =
+      (typeof profileRecord?.companyName === 'string' && profileRecord.companyName.trim()) ||
+      (typeof profileRecord?.company === 'string' && profileRecord.company.trim()) ||
+      (typeof onboardingRecord?.companyName === 'string' && onboardingRecord.companyName.trim()) ||
+      'Empresa não cadastrada';
+    let site =
+      (typeof profileRecord?.site === 'string' && profileRecord.site.trim()) ||
+      (typeof profileRecord?.website === 'string' && profileRecord.website.trim()) ||
+      (typeof onboardingRecord?.site === 'string' && onboardingRecord.site.trim()) ||
+      'Site não cadastrado';
     if (companyRaw) {
       try {
         const parsed = JSON.parse(companyRaw) as { companyName?: string; site?: string };
-        companyName = parsed.companyName?.trim() || companyName;
-        site = parsed.site?.trim() || site;
+        companyName = companyName === 'Empresa não cadastrada' ? parsed.companyName?.trim() || companyName : companyName;
+        site = site === 'Site não cadastrado' ? parsed.site?.trim() || site : site;
       } catch {
         // fallback mantido
       }
@@ -63,6 +78,7 @@ export default function LuccaHubSupportWidget() {
     const connectorDefaults = {
       googleAds: false,
       metaAds: false,
+      linkedinAds: false,
       ga4: false,
       serverTracking: false,
       crm: false,
@@ -81,13 +97,14 @@ export default function LuccaHubSupportWidget() {
     const requiredTotal = Object.keys(connectorDefaults).length;
     const connectedRequired = Object.values(connectorStatus).filter(Boolean).length;
     const readinessPercent = Math.round((connectedRequired / requiredTotal) * 100);
+    const hubProfile = getHubProfileSummary(profile);
 
     return {
       clientId: user?.uid || 'anon',
       clientName: getFirstName(user?.displayName || user?.email),
       companyName,
       site,
-      planName: 'Pro Scale',
+      planName: hubProfile.planName ?? (hubProfile.isSubscriptionActive ? 'Plano ativo' : 'Plano pendente'),
       activePage: pathname || '/hub',
       kpis: [],
       connectors: {
@@ -96,7 +113,7 @@ export default function LuccaHubSupportWidget() {
         readinessPercent,
       },
     };
-  }, [pathname, user]);
+  }, [pathname, profile, user]);
 
   const appendMessage = (role: MessageRole, text: string, links?: Array<{ label: string; href: string }>) => {
     setMessages((prev) => [...prev, { id: `${Date.now()}-${Math.random()}`, role, text, links }]);

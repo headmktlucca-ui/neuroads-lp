@@ -2,95 +2,183 @@ import type { Metadata } from 'next';
 import SubmenuPageShell, { type SubmenuPageContent } from '@/components/neuroads/SubmenuPageShell';
 
 export const metadata: Metadata = {
-  title: 'FAQ NeuroAds | Dúvidas Frequentes',
+  title: 'FAQ NeuroAds | Perguntas Frequentes para PMEs',
   description:
-    'FAQ da NeuroAds com respostas objetivas sobre prazo, risco, custo e operação. Entenda como escalar com dados reais e previsibilidade.',
+    'FAQ completo da NeuroAds com respostas práticas sobre investimento, prazo, SEO + GEO, IA agêntica, Lucca e operação. Clareza para escalar com dados reais.',
 };
 
 const content: SubmenuPageContent = {
   slug: 'conteudos-faq',
   eyebrow: 'Conteúdos NeuroAds',
-  headline: 'Dúvidas reais de PMEs,',
-  highlightedHeadline: 'respostas objetivas',
+  headline: 'FAQ completo para empresários que querem',
+  highlightedHeadline: 'escala previsível',
   subheadline:
-    'Reunimos as perguntas mais comuns de empresários que querem previsibilidade em marketing e vendas sem promessas vagas.',
+    'Organizamos as dúvidas mais frequentes sobre estratégia, operação e resultado financeiro para você decidir com segurança, sem promessas vagas.',
   serviceContext: 'FAQ',
   copyContract: {
-    promise: 'Clareza para decidir com segurança e sem ruído.',
-    pain: 'A principal trava na contratação de marketing é insegurança: custo, prazo, risco e falta de transparência em resultado real.',
+    promise: 'Clareza estratégica para reduzir risco e acelerar decisão.',
+    pain: 'Muitas PMEs investem em marketing sem saber o que está funcionando, o que está drenando caixa e onde está o próximo ganho real.',
     impactoFinanceiro:
-      'Quando a decisão atrasa por falta de clareza, a empresa segue desperdiçando verba e perde oportunidades que poderiam entrar no caixa.',
+      'Sem uma leitura objetiva da operação, o custo por lead sobe, a previsibilidade cai e o faturamento fica dependente de tentativa e erro.',
     prova:
-      'Respondemos com base em operação real, métricas financeiras e método aplicado em PMEs, sem promessas de resultado garantido.',
+      'Nosso FAQ traduz dúvidas comuns em decisões práticas com base em dados reais de operação, métricas financeiras e método validado em PMEs.',
     metodo:
-      'Você traz o contexto da sua operação e estruturamos um diagnóstico inicial para separar o que é prioridade de curto prazo e o que é escala.',
-    cta: 'Se sua dúvida for específica, solicite diagnóstico e receba direcionamento direto para o seu cenário.',
+      'A partir do seu contexto, alinhamos prioridade de curto prazo (eficiência e conversão) e plano de médio prazo (escala sustentável).',
+    cta: 'Se sua operação tem uma variável específica, solicite diagnóstico para receber direcionamento claro por prioridade de impacto no caixa.',
   },
   painPoints: [
-    'Receio de investir e não ter retorno claro.',
-    'Desconfiança de relatórios difíceis de entender.',
-    'Dúvida sobre nível técnico de quem vai operar a conta.',
-    'Incerteza sobre prazo para gerar ganho consistente.',
+    'Investimento em mídia sem leitura clara de retorno.',
+    'Relatórios difíceis de traduzir para decisão financeira.',
+    'Falta de integração entre tráfego, SEO/GEO, CRM e time comercial.',
+    'Dependência de ações pontuais, sem sistema contínuo de performance.',
+    'Dúvida sobre como aplicar IA sem aumentar complexidade operacional.',
   ],
   impactPoints: [
-    'Procrastinação de decisões importantes para crescer.',
-    'Manutenção de custos ineficientes por falta de direção.',
-    'Baixa integração entre marketing e metas de faturamento.',
-    'Maior risco de repetir ciclos de tentativa e erro.',
+    'Aumento de custo por aquisição por falta de ajustes rápidos.',
+    'Perda de oportunidades por baixa previsibilidade de demanda.',
+    'Decisões lentas por ausência de indicadores confiáveis.',
+    'Desperdício de horas da equipe em tarefas repetitivas.',
+    'Crescimento travado mesmo com investimento mensal recorrente.',
   ],
   howItWorks: [
-    'Leitura rápida da sua operação atual e gargalos principais.',
-    'Esclarecimento de risco, esforço e expectativa de resultado.',
-    'Plano de ação inicial com prioridade de impacto no caixa.',
-    'Acompanhamento por especialista com linguagem objetiva.',
+    'Mapeamento inicial dos gargalos de aquisição, conversão e operação.',
+    'Diagnóstico com prioridade financeira: o que mexe no caixa primeiro.',
+    'Plano tático de execução com métricas de acompanhamento objetivas.',
+    'Ciclo contínuo de otimização com supervisão estratégica sênior.',
+    'Integração de SEO + GEO + IA agêntica para ganho composto.',
   ],
-  proofMetrics: [],
+  proofMetrics: [
+    { value: '25+ anos', label: 'Experiência em growth', detail: 'Atuação prática em operações comerciais de PMEs em múltiplos setores.' },
+    { value: 'R$ 10M+', label: 'Investimento gerenciado', detail: 'Gestão orientada a eficiência, margem e previsibilidade de receita.' },
+    { value: 'ROAS 5,2x', label: 'Média operacional', detail: 'Resultado recorrente com governança de dados e melhoria contínua.' },
+    { value: 'CPL R$ 4,82', label: 'Eficiência de aquisição', detail: 'Redução média de 18,2% no custo por lead nas contas monitoradas.' },
+  ],
   faq: [
     {
-      question: 'Vocês garantem resultado?',
+      question: '1) A NeuroAds garante resultado?',
       answer:
-        'Não fazemos promessa vazia. Trabalhamos com diagnóstico, método, execução e melhoria contínua para aumentar previsibilidade e retorno.',
+        'Não trabalhamos com promessa de resultado garantido. Trabalhamos com diagnóstico, método, execução disciplinada e melhoria contínua para elevar previsibilidade e retorno com dados reais.',
     },
     {
-      question: 'Quem conduz a operação do meu projeto?',
+      question: '2) Em quanto tempo começo a perceber evolução?',
       answer:
-        'Você fala com especialista sênior e tem acompanhamento estratégico direto, sem repasse para operação júnior sem contexto.',
+        'O prazo varia por maturidade da operação. Normalmente, os primeiros ganhos aparecem na eficiência (ex.: redução de desperdício e melhor taxa de conversão) antes da escala de volume.',
     },
     {
-      question: 'Em quanto tempo consigo medir evolução?',
+      question: '3) Quais métricas vocês priorizam?',
       answer:
-        'Depende do estágio da operação, mas ganhos de eficiência tendem a aparecer primeiro. O foco é evoluir indicadores que impactam receita e margem.',
+        'Priorizamos métricas com impacto financeiro direto: CPL, CAC, ROAS, taxa de conversão, receita incremental e margem. Alcance e curtidas não são tratados como KPI principal de negócio.',
     },
     {
-      question: 'IA funciona para PME de faturamento médio?',
+      question: '4) SEO morreu ou ainda vale a pena?',
       answer:
-        'Sim. Para PME, IA bem aplicada simplifica operação e aumenta velocidade de decisão, desde que exista supervisão e método.',
+        'SEO não morreu. Ele evoluiu para SEO + GEO. Além de ranking no Google, sua marca precisa ser encontrada e citada em mecanismos de resposta por IA como ChatGPT, Gemini e Perplexity.',
+    },
+    {
+      question: '5) O que é GEO na prática?',
+      answer:
+        'GEO é otimização para mecanismos generativos. Isso envolve estrutura de conteúdo, sinais de autoridade, consistência semântica e dados de contexto para ampliar presença em respostas de IA.',
+    },
+    {
+      question: '6) IA é viável para PME ou só para grandes empresas?',
+      answer:
+        'É viável para PME quando aplicada com objetivo claro. IA agêntica reduz tarefas operacionais, acelera decisões e libera o time para atividades de maior valor comercial.',
+    },
+    {
+      question: '7) O Lucca substitui equipe humana?',
+      answer:
+        'Não. O Lucca potencializa a equipe. A tecnologia executa rotinas e organiza sinais, enquanto o direcionamento estratégico e decisões críticas continuam com especialistas.',
+    },
+    {
+      question: '8) Como funciona o suporte e acompanhamento?',
+      answer:
+        'Você tem acompanhamento estratégico contínuo, com leitura de desempenho, priorização tática e ajustes orientados a resultado financeiro da operação.',
+    },
+    {
+      question: '9) Vou falar com estagiário ou com especialista?',
+      answer:
+        'A condução é sênior, com foco em decisão de negócio. O modelo evita repasses sem contexto e prioriza clareza para ações de impacto real.',
+    },
+    {
+      question: '10) O que preciso ter para começar?',
+      answer:
+        'No mínimo: acesso às contas de mídia, site/landing pages, contexto de oferta e metas comerciais. Com isso, estruturamos rapidamente um plano inicial de execução.',
+    },
+    {
+      question: '11) Vocês atuam apenas em tráfego pago?',
+      answer:
+        'Não. A proposta é ecossistema integrado: Gestão de Tráfego (Google + Meta), SEO + GEO e implantação de agentes de IA comercial para escala previsível.',
+    },
+    {
+      question: '12) Como vocês lidam com rastreamento e iOS?',
+      answer:
+        'Trabalhamos com governança de dados e estrutura de mensuração adequada ao cenário atual, reduzindo ruído de atribuição para melhorar qualidade de decisão.',
+    },
+    {
+      question: '13) Meu marketing atual parece bom, mas as vendas não sobem. E agora?',
+      answer:
+        'Esse é um cenário comum. Geralmente há desalinhamento entre aquisição, oferta, jornada e conversão comercial. O diagnóstico identifica o gargalo e prioriza correção por impacto no caixa.',
+    },
+    {
+      question: '14) Existe contrato longo obrigatório?',
+      answer:
+        'O formato depende do escopo e estágio da operação. O foco é construir um sistema sustentável, com compromisso de execução e transparência de evolução.',
+    },
+    {
+      question: '15) Como vocês apresentam resultados?',
+      answer:
+        'Com linguagem direta e traduzida para negócio: o que subiu/baixou, por que aconteceu e qual impacto financeiro prático para o próximo ciclo.',
+    },
+    {
+      question: '16) Vocês atendem somente alguns segmentos?',
+      answer:
+        'Atendemos PMEs de diferentes mercados, desde que exista potencial de estruturação comercial e dados mínimos para gestão por performance.',
+    },
+    {
+      question: '17) É possível começar pequeno e escalar depois?',
+      answer:
+        'Sim. O caminho mais saudável é validar eficiência em um escopo inicial e ampliar investimento com base em evidência de performance.',
+    },
+    {
+      question: '18) Qual o maior erro que vocês veem nas PMEs?',
+      answer:
+        'Operar por canal isolado. Quando tráfego, SEO/GEO, CRM e operação comercial não conversam, o custo sobe e a previsibilidade de receita cai.',
     },
   ],
   relatedPages: [
     {
-      label: 'Contato',
-      href: '/a-neuroads/contato',
-      description: 'Envie sua dúvida com contexto e receba orientação inicial.',
+      label: 'Nosso Método',
+      href: '/a-neuroads/nosso-metodo',
+      description: 'Veja o processo completo de diagnóstico, execução e otimização contínua.',
     },
     {
       label: 'Gestão de Tráfego (Google + Meta)',
       href: '/servicos/gestao-de-trafego-google-meta',
-      description: 'Veja como estruturamos mídia para previsibilidade de aquisição.',
+      description: 'Entenda como estruturamos aquisição com foco em previsibilidade e margem.',
+    },
+    {
+      label: 'SEO + GEO',
+      href: '/servicos/seo-geo',
+      description: 'Conheça a estratégia para posicionamento no Google e em mecanismos generativos.',
     },
     {
       label: 'Implantação de Agentes IA',
       href: '/servicos/implantacao-de-agentes-ia',
-      description: 'Entenda como aplicar IA comercial sem complexidade desnecessária.',
+      description: 'Descubra como reduzir esforço operacional com IA agêntica aplicada.',
     },
     {
-      label: 'Nosso Método',
-      href: '/a-neuroads/nosso-metodo',
-      description: 'Conheça o processo de diagnóstico, execução e escala.',
+      label: 'Além do Algoritmo',
+      href: '/conteudos/alem-do-algoritmo',
+      description: 'Conteúdo estratégico para decisões de marketing orientadas por dados reais.',
+    },
+    {
+      label: 'Contato',
+      href: '/a-neuroads/contato',
+      description: 'Envie seu contexto e receba um direcionamento inicial para sua operação.',
     },
   ],
   media: {
-    title: 'FAQ com foco em decisão',
+    title: 'FAQ NeuroAds',
     poster: '/images/tools/concorrentes.png',
     desktopVideo: '/videos/fundovideo.mp4',
     mobileVideo: '/videos/fundovideo.mp4',
@@ -100,4 +188,3 @@ const content: SubmenuPageContent = {
 export default function Page() {
   return <SubmenuPageShell content={content} />;
 }
-

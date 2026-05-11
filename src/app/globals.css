@@ -417,7 +417,7 @@ body::before { content: none; }
 }
 
 @layer utilities {
-  .wrap { @apply max-w-[1240px] mx-auto px-8 md:px-12 relative z-10; }
+  .wrap { @apply max-w-[1240px] mx-auto px-4 sm:px-6 md:px-12 relative z-10; }
   
   .glass-pill {
     @apply bg-bg-pill backdrop-blur-md border border-border shadow-md rounded-full;

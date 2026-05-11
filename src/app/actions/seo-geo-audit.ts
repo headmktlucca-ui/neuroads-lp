@@ -1,24 +1,7 @@
 'use server';
 
 import OpenAI from 'openai';
-
-export interface SeoGeoAuditInput {
-  websiteUrl: string;
-  businessContext?: string;
-}
-
-export interface SeoGeoAuditResult {
-  success: boolean;
-  report?: string;
-  error?: string;
-  generatedAt?: string;
-  model?: string;
-  usedWebSearch?: boolean;
-}
-
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-});
+import { SeoGeoAuditInput, SeoGeoAuditResult } from '../../types/seo-geo';
 
 function normalizeUrl(url: string): string {
   const candidate = url.trim();
@@ -28,18 +11,18 @@ function normalizeUrl(url: string): string {
 }
 
 const SYSTEM_PROMPT = `Você é um especialista sênior em SEO (Search Engine Optimization) e GEO (Generative Engine Optimization / AI Answer Optimization) com mais de 20 anos de experiência.
-Seu trabalho é realizar uma auditoria profunda e entregar um plano estratégico completo para que o site informado alcance a primeira posição nos resultados — tanto em buscadores tradicionais (Google, Bing) quanto nas respostas de assistentes de IA (ChatGPT, Gemini, Claude, Manus, Perplexity).
-
-Use a busca na web para coletar informações sobre o site, o setor em que atua, concorrentes, e melhores práticas atuais de SEO e GEO para o segmento identificado.
-
-REGRAS DE ENTREGA:
-- Seja específico e acionável — nada de recomendações genéricas
-- Forneça exemplos reais aplicados ao site analisado
-- Inclua código quando relevante (HTML, JSON-LD, robots.txt, etc.)
-- Priorize por impacto: 🔴 CRÍTICO / 🟡 IMPORTANTE / 🟢 MELHORIA
-- Use linguagem profissional e direta
-- Cada seção deve ter no mínimo 3 recomendações concretas
-- Formate em Markdown limpo com hierarquia clara de cabeçalhos`;
+ Seu trabalho é realizar uma auditoria profunda e entregar um plano estratégico completo.
+ 
+ Use a busca na web para coletar informações sobre o site, o setor em que atua, concorrentes, e melhores práticas atuais de SEO e GEO para o segmento identificado.
+ 
+ REGRAS DE ENTREGA:
+ - Seja específico e acionável — nada de recomendações genéricas
+ - Forneça exemplos reais aplicados ao site analisado
+ - Inclua código quando relevante (HTML, JSON-LD, etc.)
+ - Priorize por impacto: 🔴 CRÍTICO / 🟡 IMPORTANTE / 🟢 MELHORIA
+ - Use linguagem profissional e direta
+ - Formate em Markdown limpo com hierarquia clara de cabeçalhos
+ - IMPORTANTE: Finalize sempre o relatório com todas as seções solicitadas, sem cortes.`;
 
 const REPORT_FORMAT_PROMPT = `Realize uma auditoria SEO e GEO completa e entregue o relatório estruturado EXATAMENTE neste formato:
 
@@ -144,10 +127,14 @@ export async function generateSeoGeoAudit(input: SeoGeoAuditInput): Promise<SeoG
     .join('\n\n');
 
   try {
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY || '',
+    });
+
     const response = await (openai as any).responses.create({
       model: 'gpt-4o',
       tools: [{ type: 'web_search_preview' }],
-      max_output_tokens: 4000, // O nome correto para este endpoint Beta é max_output_tokens
+      max_output_tokens: 8000, // Increased for full report
       input: [
         { role: 'system', content: [{ type: 'input_text', text: SYSTEM_PROMPT }] },
         { role: 'user', content: [{ type: 'input_text', text: userPrompt }] },

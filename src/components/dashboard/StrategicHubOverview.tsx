@@ -18,6 +18,8 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
+import { getHubProfileSummary } from '../../lib/hub-profile';
 
 type ActionItem = {
   id: string;
@@ -103,12 +105,21 @@ function TrailCard({
 }
 
 export default function StrategicHubOverview() {
-  const { user } = useAuth();
-  const companyName = 'NeuroAds Marketing Digital';
-  const companySite = 'neuroads.com.br';
+  const { user, profile } = useAuth();
 
   const greeting = useMemo(() => getGreeting(), []);
   const firstName = getFirstName(user?.displayName || user?.email);
+  const hubProfile = useMemo(() => getHubProfileSummary(profile), [profile]);
+  const activeAgentsCount = useMemo(
+    () => Array.from(getContractedAgentsFromProfile(profile).values()).filter((agent) => agent.isActive).length,
+    [profile]
+  );
+  const remainingAgentSlots =
+    hubProfile.agentLimit != null ? Math.max(hubProfile.agentLimit - activeAgentsCount, 0) : null;
+  const operationLabel =
+    hubProfile.agentLimit != null && hubProfile.includedExecutions != null
+      ? `${remainingAgentSlots} vagas • ${hubProfile.includedExecutions.toLocaleString('pt-BR')} exec./mês`
+      : hubProfile.operationLabel;
 
   return (
     <section className="w-full pb-10 md:pb-12">
@@ -126,11 +137,11 @@ export default function StrategicHubOverview() {
                   <div className="space-y-3 text-[15px] leading-tight text-[#C6D3E9]">
                     <p className="flex items-center gap-2">
                       <Building2 className="h-5 w-5 text-[#FF6A00]" />
-                      Empresa: <span className="font-semibold text-white">{companyName}</span>
+                      Empresa: <span className="font-semibold text-white">{hubProfile.companyName}</span>
                     </p>
                     <p className="flex items-center gap-2">
                       <Globe className="h-5 w-5 text-[#FF6A00]" />
-                      Site: <span className="font-semibold text-white">{companySite}</span>
+                      Site: <span className="font-semibold text-white">{hubProfile.site}</span>
                     </p>
                   </div>
 
@@ -151,20 +162,22 @@ export default function StrategicHubOverview() {
                       <p className="text-[13px] text-[#B7C4DF]">Acesso</p>
                       <p className="mt-1 flex items-center gap-2 text-[20px] font-black text-white">
                         <Gem className="h-5 w-5 text-[#FF6A00]" />
-                        Hub Aberto
+                        {hubProfile.accessLabel}
                       </p>
                     </div>
                     <div>
                       <p className="text-[13px] text-[#B7C4DF]">Status</p>
-                      <p className="mt-1 text-[20px] font-black text-[#FF6A00]">● Ativo</p>
+                      <p className={`mt-1 text-[20px] font-black ${hubProfile.isSubscriptionActive ? 'text-[#FF6A00]' : 'text-[#F59E0B]'}`}>
+                        ● {hubProfile.statusLabel}
+                      </p>
                     </div>
                     <div>
                       <p className="text-[13px] text-[#B7C4DF]">Recursos</p>
-                      <p className="mt-1 text-[20px] font-black text-white">Ilimitados</p>
+                      <p className="mt-1 text-[20px] font-black text-white">{hubProfile.resourcesLabel}</p>
                     </div>
                     <div>
                       <p className="text-[13px] text-[#B7C4DF]">Operação</p>
-                      <p className="mt-1 text-[20px] font-black text-white">Em tempo real</p>
+                      <p className="mt-1 text-[20px] font-black text-white">{operationLabel}</p>
                     </div>
                   </div>
 

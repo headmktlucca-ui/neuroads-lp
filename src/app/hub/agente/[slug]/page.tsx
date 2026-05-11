@@ -9,6 +9,7 @@ import Navbar from '../../../../components/layout/Navbar';
 import Footer from '../../../../components/layout/Footer';
 import LuccaHubSupportWidget from '../../../../components/hub/LuccaHubSupportWidget';
 import SeoGeoWorkspace from '../../../../components/agents/SeoGeoWorkspace';
+import TrafficAnalystWorkspace from '../../../../components/agents/TrafficAnalystWorkspace';
 import { useAuth } from '../../../../context/AuthContext';
 import {
   getAgentBySlug,
@@ -18,6 +19,7 @@ import {
 } from '../../../../lib/hub-agents';
 import { getHubLoginRedirect, HUB_PLAN_REQUIRED_REDIRECT, resolveHubAccessState } from '../../../../lib/hub-access';
 import { getFirebaseDb } from '../../../../lib/firebase';
+import { readSeoGeoHistory, type SeoGeoHistoryEntry } from '../../../../lib/seo-geo-history';
 
 type AutomationSuggestion = {
   id: string;
@@ -119,6 +121,9 @@ export default function AgentEntryPage() {
   const params = useParams<{ slug: string }>();
   const slug = params?.slug;
   const [isAutomationModalOpen, setIsAutomationModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [historyEntries, setHistoryEntries] = useState<SeoGeoHistoryEntry[]>([]);
+  const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
   const [selectedAutomationId, setSelectedAutomationId] = useState<string | null>(null);
   const [automationActivated, setAutomationActivated] = useState(false);
   const [isSavingAutomation, setIsSavingAutomation] = useState(false);
@@ -151,7 +156,31 @@ export default function AgentEntryPage() {
     () => automationSuggestions.find((item) => item.id === selectedAutomationId) ?? null,
     [automationSuggestions, selectedAutomationId]
   );
+  const selectedHistoryEntry = useMemo(() => {
+    if (!historyEntries.length) return null;
+    if (!selectedHistoryId) return historyEntries[0];
+    return historyEntries.find((item) => item.id === selectedHistoryId) ?? historyEntries[0];
+  }, [historyEntries, selectedHistoryId]);
   const agentAutomationKey = useMemo(() => (entry ? slugifyAgentTitle(entry.title) : ''), [entry]);
+
+  const formatHistoryDate = (dateIso: string) => {
+    const parsed = new Date(dateIso);
+    if (Number.isNaN(parsed.getTime())) return 'Data indisponível';
+    return parsed.toLocaleString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const openHistoryModal = () => {
+    const entries = readSeoGeoHistory(user?.uid);
+    setHistoryEntries(entries);
+    setSelectedHistoryId(entries[0]?.id ?? null);
+    setIsHistoryModalOpen(true);
+  };
 
   useEffect(() => {
     if (!automationSuggestions.length) return;
@@ -272,7 +301,13 @@ export default function AgentEntryPage() {
                             </button>
                             <button
                               type="button"
-                              onClick={() => router.push(`/hub/agente/${slug}#historico`)}
+                              onClick={() => {
+                                if (entry.title === 'SEO & GEO') {
+                                  openHistoryModal();
+                                  return;
+                                }
+                                router.push(`/hub/agente/${slug}#historico`);
+                              }}
                               className="px-6 py-3 rounded-full border border-[#D9E2F4] text-[#1D4ED8] bg-[#EEF4FF] font-bold tracking-widest text-sm uppercase hover:bg-[#E2ECFF] transition-colors"
                             >
                               <History size={14} className="inline mr-2 -mt-[2px]" />
@@ -312,6 +347,10 @@ export default function AgentEntryPage() {
                 {entry.title === 'SEO & GEO' ? (
                   <div className="col-span-1">
                     <SeoGeoWorkspace agentTitle={entry.title} />
+                  </div>
+                ) : entry.title === 'Analista de Tráfego' ? (
+                  <div className="col-span-1">
+                    <TrafficAnalystWorkspace userId={user?.uid} />
                   </div>
                 ) : (
                   <div className="col-span-1 rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_24px_52px_-30px_rgba(255,107,0,0.42)]">
@@ -470,6 +509,106 @@ export default function AgentEntryPage() {
                 {automationNotice && !automationActivated && (
                   <div className="mt-4 rounded-xl border border-[#FFD2B5] bg-[#FFF7F1] px-4 py-3 text-sm text-[#B45309]">
                     {automationNotice}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {entry && entry.title === 'SEO & GEO' && isHistoryModalOpen && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4 py-6">
+          <div className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm" onClick={() => setIsHistoryModalOpen(false)} />
+
+          <div className="relative w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-[32px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_22px_56px_rgba(15,23,42,0.3)]">
+            <div className="rounded-[30px] bg-white/90 p-[1px] h-full">
+              <div className="rounded-[28px] border border-[#FFF1E8] bg-white h-full flex flex-col">
+                <div className="flex items-start justify-between gap-3 px-6 pt-6 pb-5 border-b border-[#F1F5F9]">
+                  <div>
+                    <p className="text-xs uppercase tracking-widest text-primary font-bold mb-1">SEO & GEO</p>
+                    <h3 className="text-2xl md:text-3xl font-black text-text-main">Histórico de Pesquisas</h3>
+                    <p className="text-sm text-text-muted mt-2">
+                      Selecione uma auditoria para visualizar o resultado completo gerado anteriormente.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsHistoryModalOpen(false)}
+                    className="p-2 rounded-full border border-border text-text-muted hover:text-text-main hover:bg-bg-secondary transition-colors"
+                    aria-label="Fechar histórico"
+                  >
+                    <X size={18} />
+                  </button>
+                </div>
+
+                {historyEntries.length === 0 ? (
+                  <div className="px-6 py-10">
+                    <div className="rounded-2xl border border-[#E3E8EF] bg-[#F8FAFC] px-5 py-6 text-sm text-text-muted">
+                      Ainda não existem pesquisas salvas neste agente. Gere uma auditoria para começar o histórico.
+                    </div>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-0 min-h-0 flex-1">
+                    <aside className="border-r border-[#EEF2F7] p-4 overflow-y-auto">
+                      <div className="space-y-3">
+                        {historyEntries.map((item, index) => {
+                          const isSelected = selectedHistoryEntry?.id === item.id;
+                          const cleanedUrl = item.websiteUrl.replace(/^https?:\/\//i, '');
+                          return (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => setSelectedHistoryId(item.id)}
+                              className={`w-full rounded-2xl border p-4 text-left transition-all ${
+                                isSelected
+                                  ? 'border-[#FFBE94] bg-[#FFF7F1] shadow-[0_10px_24px_rgba(255,107,0,0.14)]'
+                                  : 'border-[#E3E8EF] bg-[#FBFCFE] hover:border-[#FFD1B3] hover:bg-white'
+                              }`}
+                            >
+                              <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Pesquisa {historyEntries.length - index}</p>
+                              <p className="mt-2 text-sm font-bold text-text-main break-all">{cleanedUrl}</p>
+                              <p className="mt-1 text-xs text-text-muted">{formatHistoryDate(item.generatedAt)}</p>
+                              {item.businessContext ? (
+                                <p className="mt-2 text-xs text-text-dim line-clamp-2">{item.businessContext}</p>
+                              ) : null}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </aside>
+
+                    <section className="p-5 md:p-6 overflow-y-auto">
+                      {selectedHistoryEntry ? (
+                        <div className="space-y-4">
+                          <div className="rounded-2xl border border-[#E3E8EF] bg-[#FBFCFE] p-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                              <div>
+                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Site analisado</p>
+                                <p className="mt-1 font-semibold text-text-main break-all">{selectedHistoryEntry.websiteUrl}</p>
+                              </div>
+                              <div>
+                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Gerado em</p>
+                                <p className="mt-1 font-semibold text-text-main">{formatHistoryDate(selectedHistoryEntry.generatedAt)}</p>
+                              </div>
+                            </div>
+                            {selectedHistoryEntry.businessContext ? (
+                              <div className="mt-4">
+                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Contexto informado</p>
+                                <p className="mt-1 text-sm text-text-main">{selectedHistoryEntry.businessContext}</p>
+                              </div>
+                            ) : null}
+                          </div>
+
+                          <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
+                            <h4 className="text-base font-black text-text-main mb-3">Resultado Completo</h4>
+                            <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-text-main font-sans">
+                              {selectedHistoryEntry.report}
+                            </pre>
+                          </article>
+                        </div>
+                      ) : null}
+                    </section>
                   </div>
                 )}
               </div>

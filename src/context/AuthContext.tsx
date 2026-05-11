@@ -12,12 +12,21 @@ import { getFirebaseAuth, getFirebaseDb } from '../lib/firebase';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { syncToHostingerReach } from '../app/actions/hostinger';
 import { getPrimaryAuthEmail, isAdminEmail } from '../lib/admin-auth';
-import { hasHubPlanAccess } from '../lib/hub-access';
 
 interface UserProfile {
+  [key: string]: unknown;
   isPremium: boolean;
   usageStats: Record<string, { lastUsed: number; countThisWeek: number }>;
   authEmail?: string;
+  registeredAt?: number;
+  createdAt?: number;
+  updatedAt?: number;
+  companyName?: string;
+  site?: string;
+  whatsapp?: string;
+  instagram?: string;
+  linkedin?: string;
+  onboarding?: Record<string, unknown>;
   connections?: Record<string, { 
     accountId: string; 
     accessToken: string; 
@@ -60,6 +69,60 @@ function getCachedAuthEmail(uid: string): string | null {
 function cacheAuthEmail(uid: string, email: string | null): void {
   if (typeof window === 'undefined' || !email?.trim()) return;
   window.localStorage.setItem(`${AUTH_EMAIL_CACHE_PREFIX}${uid}`, email.trim());
+}
+
+function readCachedJson<T>(key: string): T | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw) as T;
+  } catch {
+    return null;
+  }
+}
+
+function readString(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function normalizeProfileWithLocalFallback(snapshotProfile: UserProfile, uid: string): UserProfile {
+  const companyCache = readCachedJson<{
+    companyName?: string;
+    site?: string;
+    instagram?: string;
+    linkedin?: string;
+    tiktok?: string;
+    blog?: string;
+  }>(`neuroads_company_profile_${uid}`);
+  const contactCache = readCachedJson<{ whatsapp?: string }>(`neuroads_profile_contact_${uid}`);
+
+  const mergedOnboarding =
+    snapshotProfile.onboarding && typeof snapshotProfile.onboarding === 'object'
+      ? { ...(snapshotProfile.onboarding as Record<string, unknown>) }
+      : {};
+
+  const companyName = readString((snapshotProfile as Record<string, unknown>).companyName) || readString(companyCache?.companyName);
+  const site = readString((snapshotProfile as Record<string, unknown>).site) || readString(companyCache?.site);
+  const whatsapp = readString((snapshotProfile as Record<string, unknown>).whatsapp) || readString(contactCache?.whatsapp);
+  const instagram = readString((snapshotProfile as Record<string, unknown>).instagram) || readString(companyCache?.instagram);
+  const linkedin = readString((snapshotProfile as Record<string, unknown>).linkedin) || readString(companyCache?.linkedin);
+
+  if (!readString(mergedOnboarding.companyName) && companyName) mergedOnboarding.companyName = companyName;
+  if (!readString(mergedOnboarding.site) && site) mergedOnboarding.site = site;
+  if (!readString(mergedOnboarding.whatsapp) && whatsapp) mergedOnboarding.whatsapp = whatsapp;
+  if (!readString(mergedOnboarding.instagram) && instagram) mergedOnboarding.instagram = instagram;
+  if (!readString(mergedOnboarding.linkedin) && linkedin) mergedOnboarding.linkedin = linkedin;
+
+  return {
+    ...snapshotProfile,
+    ...(companyName ? ({ companyName } as Partial<UserProfile>) : {}),
+    ...(site ? ({ site } as Partial<UserProfile>) : {}),
+    ...(whatsapp ? ({ whatsapp } as Partial<UserProfile>) : {}),
+    ...(instagram ? ({ instagram } as Partial<UserProfile>) : {}),
+    ...(linkedin ? ({ linkedin } as Partial<UserProfile>) : {}),
+    onboarding: mergedOnboarding,
+  } as UserProfile;
 }
 
 async function resolvePrimaryAuthEmail(firebaseUser: User | null): Promise<string | null> {
@@ -114,10 +177,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           (userDoc) => {
             if (userDoc.exists()) {
               const snapshotProfile = userDoc.data() as UserProfile;
-              setProfile(snapshotProfile);
-              // A sincronização com Stripe foi removida para o modelo Open Access Hub.
-              // O acesso é garantido para todos os usuários cadastrados.
+              const normalizedFromCache = normalizeProfileWithLocalFallback(snapshotProfile, firebaseUser.uid);
+              const registrationTimestamp =
+                (typeof normalizedFromCache.registeredAt === 'number' && Number.isFinite(normalizedFromCache.registeredAt)
+                  ? normalizedFromCache.registeredAt
+                  : typeof normalizedFromCache.createdAt === 'number' && Number.isFinite(normalizedFromCache.createdAt)
+                    ? normalizedFromCache.createdAt
+                    : typeof normalizedFromCache.updatedAt === 'number' && Number.isFinite(normalizedFromCache.updatedAt)
+                      ? normalizedFromCache.updatedAt
+                      : Date.now());
+
+              const normalizedProfile: UserProfile = {
+                ...normalizedFromCache,
+                registeredAt: registrationTimestamp,
+              };
+
+              setProfile(normalizedProfile);
               setPremiumSyncing(false);
+
+              if (snapshotProfile.registeredAt !== registrationTimestamp) {
+                void setDoc(
+                  userRef,
+                  {
+                    registeredAt: registrationTimestamp,
+                    updatedAt: Date.now(),
+                  },
+                  { merge: true }
+                ).catch((writeErr) => {
+                  if (!isFirestoreOfflineError(writeErr)) {
+                    console.warn('Falha ao normalizar timestamp de cadastro:', writeErr);
+                  }
+                });
+              }
 
               if (primaryEmail && snapshotProfile.authEmail !== primaryEmail) {
                 void setDoc(
@@ -134,36 +225,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 });
               }
             } else {
-              setPremiumSyncing(false);
+              setPremiumSyncing(true);
+              const now = Date.now();
               const newProfile: UserProfile = {
                 isPremium: false,
                 usageStats: {},
+                registeredAt: now,
+                createdAt: now,
+                updatedAt: now,
                 ...(primaryEmail ? { authEmail: primaryEmail } : {}),
               };
-              setProfile(newProfile);
 
               void setDoc(
                 userRef,
-                {
-                  ...newProfile,
-                  updatedAt: Date.now(),
-                },
+                newProfile,
                 { merge: true }
-              ).catch((writeErr) => {
-                if (isFirestoreOfflineError(writeErr)) {
-                  console.info('Firestore temporariamente offline. Prosseguindo com perfil local.');
-                } else {
-                  console.warn('Firestore write failed:', writeErr);
-                }
-              });
+              )
+                .then(() => {
+                  if (primaryEmail) {
+                    syncToHostingerReach({
+                      email: primaryEmail,
+                      name: firebaseUser.displayName || 'Usuário NeuroAds',
+                      tags: ['Usuários Ativos'],
+                    }).catch(err => console.error('Reach sync failed:', err));
+                  }
+                })
+                .catch((writeErr) => {
+                  setPremiumSyncing(false);
+                  setProfile(null);
+                  setLoading(false);
+                  if (isFirestoreOfflineError(writeErr)) {
+                    console.info('Firestore temporariamente offline. Não foi possível concluir o cadastro.');
+                  } else {
+                    console.warn('Firestore write failed:', writeErr);
+                  }
+                });
 
-              if (primaryEmail) {
-                syncToHostingerReach({
-                  email: primaryEmail,
-                  name: firebaseUser.displayName || 'Usuário NeuroAds',
-                  tags: ['Usuários Ativos'],
-                }).catch(err => console.error('Reach sync failed:', err));
-              }
+              return;
             }
 
             setLoading(false);
@@ -171,11 +269,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           (err) => {
             setPremiumSyncing(false);
             if (isFirestoreOfflineError(err)) {
-              console.info('Firestore temporariamente offline. Abrindo app com fallback local.');
+              console.info('Firestore temporariamente offline. Não foi possível validar cadastro no Hub.');
             } else {
               console.warn('Firestore profile snapshot failed:', err);
             }
-            setProfile({ isPremium: false, usageStats: {}, ...(primaryEmail ? { authEmail: primaryEmail } : {}) });
+            setProfile(null);
             setLoading(false);
           }
         );
@@ -217,8 +315,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await signOut(auth);
   };
 
-  const checkUsageLimit = async (_appName: string): Promise<boolean> => {
-    // No modelo Open Access Hub, o uso é ilimitado para todos os usuários autenticados.
+  const checkUsageLimit = async (appName: string): Promise<boolean> => {
+    void appName;
+    // No modelo atual, o uso continua ilimitado para usuários cadastrados.
     return true;
   };
 

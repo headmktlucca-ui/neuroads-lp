@@ -433,7 +433,7 @@ export default function Suggestion3LandingPage() {
           ) : null}
 
           <div
-            className={`fixed left-1/2 top-[84px] z-[95] w-[min(calc(100%-2.5rem),460px)] -translate-x-1/2 overflow-hidden rounded-[20px] border border-[#e5eaf3] bg-white p-4 shadow-[0_20px_44px_rgba(12,22,38,0.16)] transition xl:hidden ${
+            className={`fixed left-1/2 top-[84px] z-[95] max-h-[calc(100dvh-110px)] w-[min(calc(100%-2.5rem),460px)] -translate-x-1/2 overflow-y-auto rounded-[20px] border border-[#e5eaf3] bg-white p-4 shadow-[0_20px_44px_rgba(12,22,38,0.16)] transition xl:hidden ${
               isMobileMenuOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-2 opacity-0'
             }`}
           >
@@ -668,7 +668,7 @@ export default function Suggestion3LandingPage() {
                 </ul>
               </div>
 
-              <div className="relative rounded-r-[22px] border-y border-r border-white/10 border-l-0 bg-[linear-gradient(180deg,rgba(255,122,33,0.04)_0%,rgba(255,122,33,0.01)_100%)] p-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),inset_0_-1px_0_rgba(255,255,255,0.04),8px_0_24px_rgba(7,12,22,0.45),2px_0_10px_rgba(255,255,255,0.05)] sm:p-8 lg:-ml-px lg:rounded-l-none lg:pl-12">
+              <div className="relative rounded-b-[22px] border-t border-white/10 bg-[linear-gradient(180deg,rgba(255,122,33,0.04)_0%,rgba(255,122,33,0.01)_100%)] p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.07),inset_0_-1px_0_rgba(255,255,255,0.04),8px_0_24px_rgba(7,12,22,0.45),2px_0_10px_rgba(255,255,255,0.05)] sm:p-8 lg:-ml-px lg:rounded-b-none lg:rounded-l-none lg:rounded-r-[22px] lg:border-y lg:border-r lg:border-l-0 lg:pl-12">
                 <h3 className="bg-[linear-gradient(90deg,#ffb065_0%,#ff8f3a_45%,#ff6a00_100%)] bg-clip-text text-[24px] font-bold leading-none text-transparent sm:text-[32px] md:text-[36px] lg:text-[42px]">
                   Depois com NeuroAds
                 </h3>
@@ -771,11 +771,11 @@ export default function Suggestion3LandingPage() {
                               </p>
                             </div>
 
-                            <div className="mt-auto flex items-center justify-between gap-3">
+                            <div className="mt-auto flex flex-col items-start gap-3 pt-3 sm:flex-row sm:items-center sm:justify-between">
                               <button
                                 type="button"
                                 onClick={() => setDetailsAgent(agent)}
-                                className="inline-flex items-center gap-2 rounded-full border border-[#ffbd93] bg-white px-4 py-2 text-[12px] font-extrabold uppercase tracking-[0.04em] text-[#ff6a00] transition hover:bg-[#fff3ea] whitespace-nowrap"
+                                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#ffbd93] bg-white px-4 py-2 text-[12px] font-extrabold uppercase tracking-[0.04em] text-[#ff6a00] transition hover:bg-[#fff3ea] sm:w-auto sm:whitespace-nowrap"
                               >
                                 Mais detalhes
                                 <ArrowRight size={12} className="[animation:neuroadsFlowArrowPulse_1.2s_ease-in-out_infinite]" />
@@ -786,7 +786,7 @@ export default function Suggestion3LandingPage() {
                                 alt={`Ícone oficial do agente ${agent.title}`}
                                 width={76}
                                 height={76}
-                                className="h-[76px] w-[76px] rounded-[10px] object-cover shadow-[0_6px_14px_rgba(10,20,40,0.22)]"
+                                className="h-[76px] w-[76px] self-end rounded-[10px] object-cover shadow-[0_6px_14px_rgba(10,20,40,0.22)] sm:self-auto"
                               />
                             </div>
                           </div>
@@ -809,9 +809,9 @@ export default function Suggestion3LandingPage() {
       </section>
 
       {detailsAgent && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#090f1a]/70 px-4 py-6" onClick={() => setDetailsAgent(null)}>
+        <div className="fixed inset-0 z-[70] flex items-start justify-center overflow-y-auto bg-[#090f1a]/70 px-4 py-6 sm:items-center" onClick={() => setDetailsAgent(null)}>
           <div
-            className="relative w-full max-w-[760px] rounded-[24px] border border-[#e9edf4] bg-white p-6 shadow-[0_25px_60px_rgba(8,16,30,0.28)] sm:p-8"
+            className="relative w-full max-w-[760px] max-h-[88vh] overflow-y-auto rounded-[24px] border border-[#e9edf4] bg-white p-6 shadow-[0_25px_60px_rgba(8,16,30,0.28)] sm:p-8"
             onClick={(event) => event.stopPropagation()}
           >
             <button
@@ -823,13 +823,13 @@ export default function Suggestion3LandingPage() {
               <X size={16} />
             </button>
 
-            <div className="flex items-start gap-4 pr-10">
+            <div className="flex flex-col gap-4 pr-10 sm:flex-row sm:items-start">
               <div className="inline-flex rounded-[14px] border border-[#2b3f68] bg-[linear-gradient(180deg,#111c32_0%,#0b1428_100%)] p-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_8px_18px_rgba(10,20,40,0.35)]">
                 <Image src={detailsAgent.icon} alt={`Ícone oficial do agente ${detailsAgent.title}`} width={64} height={64} className="h-16 w-16 rounded-[10px] object-cover" />
               </div>
               <div>
                 <p className="text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#ff7a21]">Agente de IA</p>
-                <h3 className="mt-1 text-[30px] font-extrabold leading-tight text-[#171f2d]">{detailsAgent.title}</h3>
+                <h3 className="mt-1 text-[24px] font-extrabold leading-tight text-[#171f2d] sm:text-[30px]">{detailsAgent.title}</h3>
                 <p className="mt-2 text-[15px] leading-relaxed text-[#5b6476]">{detailsAgent.description}</p>
               </div>
             </div>

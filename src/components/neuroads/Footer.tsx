@@ -114,7 +114,7 @@ export default function Footer() {
             </div>
           </div>
           
-          <div className={isHubSection ? 'grid grid-cols-1 sm:grid-cols-2 gap-12 sm:gap-20' : 'grid grid-cols-2 sm:grid-cols-3 gap-12 sm:gap-20'}>
+          <div className={isHubSection ? 'grid grid-cols-1 sm:grid-cols-2 gap-12 sm:gap-20' : 'grid grid-cols-1 sm:grid-cols-2 gap-12 sm:gap-20'}>
             {footerGroups.map((group) => (
               <div key={group.title}>
                 {!isHubSection ? (

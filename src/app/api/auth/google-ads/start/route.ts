@@ -1,8 +1,11 @@
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(request: Request) {
   const clientId = process.env.GOOGLE_ADS_CLIENT_ID;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const { searchParams } = new URL(request.url);
+  const next = searchParams.get('next');
+  const safeNext = next && next.startsWith('/') ? next : '/hub';
   
   if (!clientId) {
     return NextResponse.json(
@@ -25,6 +28,7 @@ export async function GET() {
     ].join(' '),
     access_type: 'offline',
     prompt: 'consent',
+    state: encodeURIComponent(safeNext),
   });
 
   const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;

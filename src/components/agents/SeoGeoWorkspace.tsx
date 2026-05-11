@@ -5,6 +5,9 @@ import type { ReactNode } from 'react';
 import { Download, Globe, Loader2, Sparkles } from 'lucide-react';
 import { generateSeoGeoAudit } from '../../app/actions/seo-geo-audit';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
+import { useAuth } from '../../context/AuthContext';
+import { getHubProfileSummary } from '../../lib/hub-profile';
+import { appendSeoGeoHistory } from '../../lib/seo-geo-history';
 
 interface SeoGeoWorkspaceProps {
   agentTitle: string;
@@ -407,11 +410,18 @@ function StatCard({
 }
 
 export default function SeoGeoWorkspace({ agentTitle }: SeoGeoWorkspaceProps) {
-  const [websiteUrl, setWebsiteUrl] = useState(HTTPS_PREFIX);
+  const { profile, user } = useAuth();
   const [businessContext, setBusinessContext] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [reportState, setReportState] = useState<SeoGeoReportState | null>(null);
   const [isPending, startTransition] = useTransition();
+  const websiteUrl = useMemo(() => {
+    const summary = getHubProfileSummary(profile);
+    if (!summary.site || summary.site === 'Site não cadastrado') return HTTPS_PREFIX;
+    const normalizedSite = summary.site.startsWith('http') ? summary.site : `${HTTPS_PREFIX}${summary.site}`;
+    return normalizeHttpsMaskedUrlInput(normalizedSite);
+  }, [profile]);
+  const isSiteLocked = Boolean(user) && !isHttpsPlaceholderOnly(websiteUrl);
 
   const sections = useMemo(() => parseSections(reportState?.report ?? ''), [reportState?.report]);
   const seoScore = useMemo(() => extractScore(reportState?.report ?? '', 'Score SEO estimado'), [reportState?.report]);
@@ -447,12 +457,24 @@ export default function SeoGeoWorkspace({ agentTitle }: SeoGeoWorkspaceProps) {
         return;
       }
 
-      setReportState({
+      const nextReportState: SeoGeoReportState = {
         websiteUrl,
         generatedAt: result.generatedAt,
         report: result.report,
         usedWebSearch: Boolean(result.usedWebSearch),
-      });
+      };
+
+      setReportState(nextReportState);
+      appendSeoGeoHistory(
+        {
+          websiteUrl: nextReportState.websiteUrl,
+          businessContext,
+          generatedAt: nextReportState.generatedAt,
+          report: nextReportState.report,
+          usedWebSearch: nextReportState.usedWebSearch,
+        },
+        user?.uid
+      );
     });
   };
 
@@ -472,11 +494,20 @@ export default function SeoGeoWorkspace({ agentTitle }: SeoGeoWorkspaceProps) {
                   id="seo-url"
                   type="text"
                   value={websiteUrl}
-                  onChange={(event) => setWebsiteUrl(normalizeHttpsMaskedUrlInput(event.target.value))}
-                  onBlur={(event) => setWebsiteUrl(normalizeHttpsMaskedUrlInput(event.target.value))}
+                  readOnly
+                  disabled={isSiteLocked}
                   placeholder="https://seudominio.com.br"
-                  className="w-full rounded-xl border border-[#E3E8EF] bg-white px-4 py-3 text-sm text-text-main outline-none transition-all focus:border-[#FFB485] focus:shadow-[0_0_0_3px_rgba(255,107,0,0.12)]"
+                  className={`w-full rounded-xl border border-[#E3E8EF] px-4 py-3 text-sm text-text-main outline-none transition-all ${
+                    isSiteLocked
+                      ? 'cursor-not-allowed bg-[#F8FAFC] text-[#4B5563]'
+                      : 'bg-white focus:border-[#FFB485] focus:shadow-[0_0_0_3px_rgba(255,107,0,0.12)]'
+                  }`}
                 />
+                {isSiteLocked ? (
+                  <p className="text-xs font-semibold text-[#64748B]">
+                    URL vinculada ao cadastro da empresa e bloqueada para edição.
+                  </p>
+                ) : null}
               </div>
               <div className="space-y-2">
                 <label htmlFor="seo-context" className="text-xs font-bold uppercase tracking-widest text-text-dim">

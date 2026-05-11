@@ -183,7 +183,7 @@ export default function AgentGrid() {
       {/* Agent Detail Modal */}
       <AnimatePresence>
         {selectedAgent && (
-          <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
+          <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -199,9 +199,9 @@ export default function AgentGrid() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-[1120px] rounded-[34px] p-[3px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_18px_46px_rgba(255,107,0,0.2)] max-h-[92vh]"
+              className="relative w-full max-w-[1120px] max-h-[92vh] overflow-hidden rounded-[34px] p-[3px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_18px_46px_rgba(255,107,0,0.2)]"
             >
-              <div className="relative rounded-[30px] border border-[#FFF1E8] bg-white overflow-hidden">
+              <div className="relative max-h-[calc(92vh-6px)] overflow-y-auto rounded-[30px] border border-[#FFF1E8] bg-white">
                 {/* Header with gradient */}
                 <div className="relative h-36 bg-gradient-to-br from-orange-light to-white flex items-end p-6 md:p-7 border-b border-border">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-primary/20 to-transparent rounded-full blur-3xl" />
