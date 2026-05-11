@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
 import { 
   User, 
   onAuthStateChanged, 
@@ -9,13 +9,15 @@ import {
   signOut 
 } from 'firebase/auth';
 import { getFirebaseAuth, getFirebaseDb } from '../lib/firebase';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { syncToHostingerReach } from '../app/actions/hostinger';
 import { getPrimaryAuthEmail, isAdminEmail } from '../lib/admin-auth';
+import { hasHubPlanAccess } from '../lib/hub-access';
 
 interface UserProfile {
   isPremium: boolean;
   usageStats: Record<string, { lastUsed: number; countThisWeek: number }>;
+  authEmail?: string;
   connections?: Record<string, { 
     accountId: string; 
     accessToken: string; 
@@ -29,6 +31,7 @@ interface AuthContextType {
   userEmail: string | null;
   profile: UserProfile | null;
   loading: boolean;
+  premiumSyncing: boolean;
   isAdmin: boolean;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
@@ -83,11 +86,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [premiumSyncing, setPremiumSyncing] = useState(false);
+  const premiumSyncAttemptRef = useRef<Record<string, boolean>>({});
 
   useEffect(() => {
     const auth = getFirebaseAuth();
     const db = getFirebaseDb();
+    let profileUnsubscribe: (() => void) | null = null;
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (profileUnsubscribe) {
+        profileUnsubscribe();
+        profileUnsubscribe = null;
+      }
+
       setUser(firebaseUser);
       const primaryEmail = await resolvePrimaryAuthEmail(firebaseUser);
       setUserEmail(primaryEmail);
@@ -96,49 +108,119 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (firebaseUser) {
-        try {
-          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-          if (userDoc.exists()) {
-            setProfile(userDoc.data() as UserProfile);
-          } else {
-            const newProfile: UserProfile = { isPremium: false, usageStats: {} };
-            try {
-              await setDoc(doc(db, 'users', firebaseUser.uid), newProfile);
-            } catch (writeErr) {
-              if (isFirestoreOfflineError(writeErr)) {
-                console.info('Firestore temporariamente offline. Prosseguindo com perfil local.');
-              } else {
-                console.warn('Firestore write failed:', writeErr);
+        const userRef = doc(db, 'users', firebaseUser.uid);
+        profileUnsubscribe = onSnapshot(
+          userRef,
+          (userDoc) => {
+            if (userDoc.exists()) {
+              const snapshotProfile = userDoc.data() as UserProfile;
+              setProfile(snapshotProfile);
+              if (hasHubPlanAccess(snapshotProfile)) {
+                setPremiumSyncing(false);
+              }
+
+              if (!hasHubPlanAccess(snapshotProfile) && !premiumSyncAttemptRef.current[firebaseUser.uid]) {
+                premiumSyncAttemptRef.current[firebaseUser.uid] = true;
+                setPremiumSyncing(true);
+                void firebaseUser
+                  .getIdToken()
+                  .then((idToken) =>
+                    fetch('/api/stripe/sync-premium', {
+                      method: 'POST',
+                      headers: {
+                        Authorization: `Bearer ${idToken}`,
+                      },
+                    })
+                  )
+                  .then(async (response) => {
+                    if (!response.ok) {
+                      const payload = await response.json().catch(() => ({}));
+                      console.warn('Não foi possível sincronizar assinatura com Stripe:', payload);
+                    }
+                  })
+                  .catch((error) => {
+                    console.warn('Falha ao acionar sincronização de assinatura:', error);
+                  })
+                  .finally(() => {
+                    setPremiumSyncing(false);
+                  });
+              }
+
+              if (primaryEmail && snapshotProfile.authEmail !== primaryEmail) {
+                void setDoc(
+                  userRef,
+                  {
+                    authEmail: primaryEmail,
+                    updatedAt: Date.now(),
+                  },
+                  { merge: true }
+                ).catch((writeErr) => {
+                  if (!isFirestoreOfflineError(writeErr)) {
+                    console.warn('Falha ao atualizar e-mail primário no perfil:', writeErr);
+                  }
+                });
+              }
+            } else {
+              setPremiumSyncing(false);
+              const newProfile: UserProfile = {
+                isPremium: false,
+                usageStats: {},
+                ...(primaryEmail ? { authEmail: primaryEmail } : {}),
+              };
+              setProfile(newProfile);
+
+              void setDoc(
+                userRef,
+                {
+                  ...newProfile,
+                  updatedAt: Date.now(),
+                },
+                { merge: true }
+              ).catch((writeErr) => {
+                if (isFirestoreOfflineError(writeErr)) {
+                  console.info('Firestore temporariamente offline. Prosseguindo com perfil local.');
+                } else {
+                  console.warn('Firestore write failed:', writeErr);
+                }
+              });
+
+              if (primaryEmail) {
+                syncToHostingerReach({
+                  email: primaryEmail,
+                  name: firebaseUser.displayName || 'Usuário NeuroAds',
+                  tags: ['Usuários Ativos'],
+                }).catch(err => console.error('Reach sync failed:', err));
               }
             }
-            setProfile(newProfile);
 
-            if (primaryEmail) {
-              syncToHostingerReach({
-                email: primaryEmail,
-                name: firebaseUser.displayName || 'Usuário NeuroAds',
-                tags: ['Usuários Ativos'],
-              }).catch(err => console.error('Reach sync failed:', err));
+            setLoading(false);
+          },
+          (err) => {
+            setPremiumSyncing(false);
+            if (isFirestoreOfflineError(err)) {
+              console.info('Firestore temporariamente offline. Abrindo app com fallback local.');
+            } else {
+              console.warn('Firestore profile snapshot failed:', err);
             }
+            setProfile({ isPremium: false, usageStats: {}, ...(primaryEmail ? { authEmail: primaryEmail } : {}) });
+            setLoading(false);
           }
-        } catch (err) {
-          // Firestore offline or quota error — set minimal profile so the app still opens
-          if (isFirestoreOfflineError(err)) {
-            console.info('Firestore temporariamente offline. Abrindo app com fallback local.');
-          } else {
-            console.warn('Firestore getDoc failed:', err);
-          }
-          setProfile({ isPremium: false, usageStats: {} });
-        }
+        );
       } else {
         setProfile(null);
         setUserEmail(null);
+        setPremiumSyncing(false);
+        premiumSyncAttemptRef.current = {};
+        setLoading(false);
       }
-
-      setLoading(false);
     });
 
-    return () => unsubscribe();
+    return () => {
+      unsubscribe();
+      if (profileUnsubscribe) {
+        profileUnsubscribe();
+      }
+    };
   }, []);
 
 
@@ -181,7 +263,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, userEmail, profile, loading, isAdmin: isAdminEmail(userEmail), loginWithGoogle, logout, checkUsageLimit }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        userEmail,
+        profile,
+        loading,
+        premiumSyncing,
+        isAdmin: isAdminEmail(userEmail),
+        loginWithGoogle,
+        logout,
+        checkUsageLimit,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

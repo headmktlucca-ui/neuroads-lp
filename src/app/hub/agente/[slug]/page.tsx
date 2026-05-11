@@ -1,7 +1,7 @@
 'use client';
 
 import { useMemo, useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { CheckCircle2, History, Sparkles, X } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
@@ -16,6 +16,7 @@ import {
   getContractedAgentsFromProfile,
   slugifyAgentTitle,
 } from '../../../../lib/hub-agents';
+import { getHubLoginRedirect, HUB_PLAN_REQUIRED_REDIRECT, resolveHubAccessState } from '../../../../lib/hub-access';
 import { getFirebaseDb } from '../../../../lib/firebase';
 
 type AutomationSuggestion = {
@@ -112,8 +113,9 @@ function buildAutomationSuggestions(entry: { title: string; category: string; pl
 }
 
 export default function AgentEntryPage() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, premiumSyncing } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const params = useParams<{ slug: string }>();
   const slug = params?.slug;
   const [isAutomationModalOpen, setIsAutomationModalOpen] = useState(false);
@@ -122,12 +124,21 @@ export default function AgentEntryPage() {
   const [isSavingAutomation, setIsSavingAutomation] = useState(false);
   const [isLoadingAutomation, setIsLoadingAutomation] = useState(false);
   const [automationNotice, setAutomationNotice] = useState<string | null>(null);
+  const accessState = useMemo(
+    () => resolveHubAccessState({ loading, user, profile }),
+    [loading, profile, user]
+  );
+  const isSyncingAccess = accessState === 'forbidden' && premiumSyncing;
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.replace('/login?next=/hub');
+    if (accessState === 'unauthenticated') {
+      router.replace(getHubLoginRedirect(pathname));
+      return;
     }
-  }, [loading, router, user]);
+    if (accessState === 'forbidden' && !premiumSyncing) {
+      router.replace(HUB_PLAN_REQUIRED_REDIRECT);
+    }
+  }, [accessState, pathname, premiumSyncing, router]);
 
   const contracts = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
   const agent = useMemo(() => (slug ? getAgentBySlug(slug) : undefined), [slug]);
@@ -174,10 +185,18 @@ export default function AgentEntryPage() {
 
     loadPersistedAutomation();
   }, [agentAutomationKey, entry, user]);
-  if (loading || !user) {
+  if (accessState !== 'allowed') {
     return (
-      <div className="min-h-screen bg-bg-main flex items-center justify-center">
+      <div className="min-h-screen bg-bg-main flex flex-col items-center justify-center gap-4 px-4">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        {isSyncingAccess ? (
+          <div className="max-w-md rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-center">
+            <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#C2410C]">Configurando seu acesso</p>
+            <p className="mt-1 text-[13px] text-[#9A3412]">
+              Estamos preparando seu ambiente no Hub.
+            </p>
+          </div>
+        ) : null}
       </div>
     );
   }

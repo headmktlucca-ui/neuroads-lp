@@ -21,7 +21,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import offers from '../../data/stripe-offers.json';
-import { getFirebaseAuth } from '../../lib/firebase';
+import { doc, setDoc } from 'firebase/firestore';
+import { getFirebaseAuth, getFirebaseDb } from '../../lib/firebase';
 
 type OfferMode = 'subscription' | 'payment';
 
@@ -147,6 +148,7 @@ export default function ValuesResourcesSection() {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successKind, setSuccessKind] = useState<'plano' | 'credito'>('plano');
+  const [pendingSessionId, setPendingSessionId] = useState<string | null>(null);
   const recommendedPlanSlug = planOffers[2]?.slug ?? planOffers[0]?.slug;
 
   useEffect(() => {
@@ -154,10 +156,14 @@ export default function ValuesResourcesSection() {
     const params = new URLSearchParams(window.location.search);
     const success = params.get('success');
     const kind = params.get('kind');
+    const sessionId = params.get('session_id');
 
     if (success === 'true') {
       setSuccessKind(kind === 'credito' ? 'credito' : 'plano');
       setShowSuccessModal(true);
+      if (sessionId) {
+        setPendingSessionId(sessionId);
+      }
       params.delete('success');
       params.delete('kind');
       params.delete('session_id');
@@ -166,6 +172,51 @@ export default function ValuesResourcesSection() {
       window.history.replaceState({}, '', nextUrl);
     }
   }, []);
+
+  useEffect(() => {
+    const syncPremiumAfterCheckout = async () => {
+      if (!user || !pendingSessionId || successKind !== 'plano') return;
+
+      try {
+        const res = await fetch('/api/stripe/verify-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ sessionId: pendingSessionId }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Falha ao validar sessão do checkout.');
+        }
+
+        const isCompletedSubscription = data.mode === 'subscription' && data.status === 'complete';
+        const isCurrentUserSession = data.clientReferenceId === user.uid;
+
+        if (!isCompletedSubscription || !isCurrentUserSession) {
+          return;
+        }
+
+        const db = getFirebaseDb();
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(
+          userRef,
+          {
+            isPremium: true,
+            stripeCustomerId: data.customerId ?? null,
+            stripeSubscriptionId: data.subscriptionId ?? null,
+            updatedAt: Date.now(),
+          },
+          { merge: true }
+        );
+      } catch (error) {
+        console.warn('Falha na sincronização pós-checkout do plano:', error);
+      } finally {
+        setPendingSessionId(null);
+      }
+    };
+
+    void syncPremiumAfterCheckout();
+  }, [pendingSessionId, successKind, user]);
 
   const checkoutCopy = useMemo(
     () => ({
@@ -190,15 +241,19 @@ export default function ValuesResourcesSection() {
       if (!user) {
         await loginWithGoogle();
       }
-      const authUser = getFirebaseAuth().currentUser;
+      const auth = getFirebaseAuth();
+      const authUser = auth.currentUser;
+      if (!authUser) {
+        throw new Error('Sessão de autenticação não encontrada. Faça login novamente para continuar.');
+      }
 
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           priceId: offer.priceId,
-          userId: authUser?.uid,
-          email: authUser?.email,
+          userId: authUser.uid,
+          email: authUser.email,
           returnUrl: typeof window !== 'undefined' ? `${window.location.origin}/` : '',
           mode: offer.mode,
           kind: offer.mode === 'subscription' ? 'plano' : 'credito',

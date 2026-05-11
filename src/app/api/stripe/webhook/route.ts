@@ -1,8 +1,7 @@
 import { headers } from 'next/headers';
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { getFirebaseDb } from '../../../../lib/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { getAdminDb } from '../../../../lib/firebase-admin';
 
 function getStripeConfig() {
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -56,20 +55,26 @@ export async function POST(req: Request) {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
-        const userId = session.client_reference_id;
+        const userId = session.client_reference_id ?? session.metadata?.userId;
         const isSubscriptionCheckout = session.mode === 'subscription';
 
-        if (userId && isSubscriptionCheckout) {
-          const db = getFirebaseDb();
-          // Update Firebase User to Premium
-          const userRef = doc(db, 'users', userId);
-          await updateDoc(userRef, {
-            isPremium: true,
-            stripeCustomerId: session.customer as string,
-            stripeSubscriptionId: session.subscription as string,
-            updatedAt: Date.now()
-          });
+        if (isSubscriptionCheckout && userId) {
+          const db = getAdminDb();
+          const userRef = db.collection('users').doc(userId);
+          await userRef.set(
+            {
+              isPremium: true,
+              stripeCustomerId: session.customer as string,
+              stripeSubscriptionId: session.subscription as string,
+              updatedAt: Date.now(),
+            },
+            { merge: true }
+          );
           console.log(`User ${userId} upgraded to Premium via Webhook.`);
+        } else if (isSubscriptionCheckout) {
+          console.warn(
+            `Checkout concluído sem userId para assinatura. Session: ${session.id}, customer: ${String(session.customer ?? '')}`
+          );
         }
         break;
       }

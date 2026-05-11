@@ -15,7 +15,7 @@ function normalizeNextPath(path: string | null): string {
 function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, loading, loginWithGoogle } = useAuth();
+  const { user, loading, premiumSyncing, loginWithGoogle } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const nextPath = useMemo(() => normalizeNextPath(searchParams.get('next')), [searchParams]);
@@ -27,6 +27,7 @@ function LoginPageContent() {
   }, [loading, nextPath, router, user]);
 
   const handleGoogleLogin = async () => {
+    if (isSubmitting) return;
     try {
       setIsSubmitting(true);
       await loginWithGoogle();
@@ -50,11 +51,19 @@ function LoginPageContent() {
           <p className="mt-3 text-[15px] leading-relaxed text-text-muted">
             Entre com sua conta Google para acessar o seu Hub Estratégico e acompanhar performance, agentes e decisões do seu ecossistema.
           </p>
+          {premiumSyncing ? (
+            <div className="mt-5 rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3">
+              <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#C2410C]">Configurando seu acesso</p>
+              <p className="mt-1 text-[13px] text-[#9A3412]">
+                Estamos preparando seu ambiente no Hub Estratégico. Isso pode levar alguns segundos.
+              </p>
+            </div>
+          ) : null}
 
           <button
             type="button"
             onClick={handleGoogleLogin}
-            disabled={loading || isSubmitting}
+            disabled={isSubmitting}
             className="mt-7 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-6 py-3 text-[13px] font-extrabold uppercase tracking-[0.07em] text-white transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
           >
             {isSubmitting ? 'Autenticando...' : 'Entrar com Google'}

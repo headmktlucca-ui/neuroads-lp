@@ -87,6 +87,14 @@ interface FinanceEntry {
   updatedAt: number;
 }
 
+interface RegisteredUser {
+  id: string;
+  authEmail: string;
+  isPremium: boolean;
+  updatedAt: number;
+  createdAt?: number;
+}
+
 interface AdminControlCenterProps {
   userId: string;
 }
@@ -139,6 +147,7 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
   const [crmDeals, setCrmDeals] = useState<CrmDeal[]>([]);
   const [agentActivities, setAgentActivities] = useState<AgentActivity[]>([]);
   const [financeEntries, setFinanceEntries] = useState<FinanceEntry[]>([]);
+  const [registeredUsers, setRegisteredUsers] = useState<RegisteredUser[]>([]);
   const [crmClients, setCrmClients] = useState<string[]>([]);
   const [loadingData, setLoadingData] = useState(true);
 
@@ -177,6 +186,7 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
     const clientsQuery = query(collection(db, 'admin_workspaces', userId, 'crm_accounts'), orderBy('updatedAt', 'desc'));
     const activitiesQuery = query(collection(db, 'admin_workspaces', userId, 'agent_activities'), orderBy('updatedAt', 'desc'));
     const financeQuery = query(collection(db, 'admin_workspaces', userId, 'finance_entries'), orderBy('updatedAt', 'desc'));
+    const usersQuery = query(collection(db, 'users'), orderBy('updatedAt', 'desc'));
 
     const unsubscribeCrm = onSnapshot(crmQuery, (snapshot) => {
       const parsed = snapshot.docs.map((snapshotDoc) => {
@@ -243,11 +253,26 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
       setFinanceEntries(parsed);
     });
 
+    const unsubscribeUsers = onSnapshot(usersQuery, (snapshot) => {
+      const parsed = snapshot.docs.map((snapshotDoc) => {
+        const data = snapshotDoc.data() as DocumentData;
+        return {
+          id: snapshotDoc.id,
+          authEmail: String(data.authEmail || data.email || 'Sem e-mail'),
+          isPremium: Boolean(data.isPremium),
+          updatedAt: toMillis(data.updatedAt),
+          createdAt: data.createdAt ? toMillis(data.createdAt) : undefined,
+        } satisfies RegisteredUser;
+      });
+      setRegisteredUsers(parsed);
+    });
+
     return () => {
       unsubscribeCrm();
       unsubscribeClients();
       unsubscribeActivities();
       unsubscribeFinance();
+      unsubscribeUsers();
     };
   }, [userId]);
 
@@ -381,6 +406,14 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
     await deleteDoc(doc(db, 'admin_workspaces', userId, 'finance_entries', id));
   }
 
+  async function toggleUserPremium(userItem: RegisteredUser) {
+    const db = getFirebaseDb();
+    await updateDoc(doc(db, 'users', userItem.id), {
+      isPremium: !userItem.isPremium,
+      updatedAt: serverTimestamp(),
+    });
+  }
+
   const getDealLabel = (dealId: string): string => {
     const deal = crmDeals.find((item) => item.id === dealId);
     if (!deal) return 'Negócio não encontrado';
@@ -436,7 +469,7 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
         </section>
       )}
 
-      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
         {stats.map((stat) => (
           <article key={stat.label} className="rounded-3xl border border-[#FFB37A] bg-white p-5 shadow-[0_14px_34px_rgba(255,107,0,0.14)]">
             <div className="mb-3 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#FFF5EE] border border-[#FFE3CC]">
@@ -447,6 +480,14 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
             <p className="text-xs text-text-muted mt-2">{stat.helper}</p>
           </article>
         ))}
+        <article className="rounded-3xl border border-[#FFB37A] bg-white p-5 shadow-[0_14px_34px_rgba(255,107,0,0.14)]">
+          <div className="mb-3 inline-flex items-center justify-center w-10 h-10 rounded-xl bg-[#FFF5EE] border border-[#FFE3CC]">
+            <UserRoundCog size={18} className="text-[#6366F1]" />
+          </div>
+          <p className="text-sm text-text-dim font-semibold">Usuários cadastrados</p>
+          <p className="text-2xl font-black text-text-main mt-1">{registeredUsers.length}</p>
+          <p className="text-xs text-text-muted mt-2">Total na base Firebase</p>
+        </article>
       </section>
 
       <section id="crm-funil" className="rounded-3xl border border-[#FFB37A] bg-white p-6 space-y-6 scroll-mt-32 shadow-[0_14px_34px_rgba(255,107,0,0.14)]">
@@ -834,6 +875,63 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
 
           {!loadingData && financeEntries.length === 0 && (
             <p className="text-sm text-text-dim">Nenhum lançamento financeiro cadastrado.</p>
+          )}
+        </div>
+      </section>
+
+      {/* Gestão de Usuários */}
+      <section id="gestao-usuarios" className="space-y-6">
+        <header className="flex flex-col gap-1">
+          <h2 className="text-2xl font-black text-text-main">Gestão de Usuários</h2>
+          <p className="text-sm font-medium text-text-dim">Gerencie o acesso premium dos usuários da plataforma.</p>
+        </header>
+
+        <div className="space-y-3">
+          {registeredUsers.map((user) => (
+            <article key={user.id} className="rounded-2xl border border-border bg-bg-secondary p-4">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
+                    {user.name?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                  <div>
+                    <p className="text-sm font-black text-text-main">{user.name || 'Sem nome'}</p>
+                    <p className="text-xs text-text-muted">{user.email}</p>
+                    <p className="text-[10px] text-text-dim">UID: {user.id}</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <div className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
+                    user.isPremium 
+                      ? 'bg-[#E6F6EE] text-[#0A9D57] border border-[#BDE8CF]' 
+                      : 'bg-bg-secondary text-text-dim border border-border'
+                  }`}>
+                    {user.isPremium ? (
+                      <><ShieldCheck size={12} /> Premium</>
+                    ) : (
+                      'Padrão'
+                    )}
+                  </div>
+                  
+                  <button
+                    type="button"
+                    onClick={() => togglePremiumStatus(user.id, user.isPremium)}
+                    className={`rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-all ${
+                      user.isPremium 
+                        ? 'bg-red-500 hover:bg-red-600 shadow-[0_4px_12px_rgba(239,68,68,0.2)]' 
+                        : 'bg-[#0F172A] hover:bg-[#1E293B] shadow-[0_4px_12px_rgba(15,23,42,0.2)]'
+                    }`}
+                  >
+                    {user.isPremium ? 'Remover Premium' : 'Tornar Premium'}
+                  </button>
+                </div>
+              </div>
+            </article>
+          ))}
+
+          {!loadingData && registeredUsers.length === 0 && (
+            <p className="text-sm text-text-dim">Nenhum usuário registrado encontrado.</p>
           )}
         </div>
       </section>

@@ -335,3 +335,603 @@ FirebaseError: Failed to get document because the client is offline. (src/app/hu
 [2m[ 3.61ms][22m  [2m ↳ [22mUpdate PostCSS AST
 
 [browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+
+[2m[85.01ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.02ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.74ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[66.85ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 4.13ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 3.03ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 9.94ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[99.85ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.34ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[79.70ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.29ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[14.13ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.21ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[114.02ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.56ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[101.14ms][22m  [2m ↳ [22mScan for candidates
+[2m[  3.20ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[  4.38ms][22m  [2m ↳ [22mBuild utilities
+[2m[  4.46ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[45.73ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.41ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[40.86ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.10ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.31ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 1.89ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+
+[2m[71.02ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.37ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[29.18ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.79ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[28.51ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 9.33ms][22m  [2m ↳ [22mTransform Tailwind CSS AST into PostCSS AST
+[2m[ 2.69ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+
+[2m[66.00ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.30ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[57.26ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 2.70ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.90ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.69ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[69.66ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.27ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[61.05ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 2.16ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 2.10ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.93ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[104.66ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.36ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[ 84.49ms][22m  [2m ↳ [22mScan for candidates
+[2m[  1.29ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 10.64ms][22m  [2m ↳ [22mBuild utilities
+[2m[  7.67ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+
+[2m[110.43ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.24ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[ 84.05ms][22m  [2m ↳ [22mScan for candidates
+[2m[  4.09ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 12.36ms][22m  [2m ↳ [22mBuild utilities
+[2m[  9.50ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[61.05ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.49ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[54.12ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.94ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.91ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.40ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+
+[2m[66.91ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.31ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[58.94ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.11ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 2.00ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.39ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[61.78ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.38ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[53.20ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.90ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 2.52ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.56ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Erro ao ativar agente: Error: Ativação do agente excedeu o tempo limite de 12s.
+    at eval (src/app/hub/laboratorio-agentes/page.tsx:40:14)
+  38 |   const timeoutPromise = new Promise<never>((_, reject) => {
+  39 |     timeoutId = setTimeout(() => {
+> 40 |       reject(new Error(`${actionLabel} excedeu o tempo limite de ${Math.round(timeoutMs / ...
+     |              ^
+  41 |     }, timeoutMs);
+  42 |   });
+  43 | (src/app/hub/laboratorio-agentes/page.tsx:174:15)
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+
+[2m[55.90ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.44ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[43.05ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.35ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 7.38ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.52ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[61.68ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.19ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[47.06ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.88ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 8.87ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.46ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[56.11ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.37ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[48.33ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.11ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 2.21ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.85ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[122.10ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.03ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.63ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[108.03ms][22m  [2m ↳ [22mScan for candidates
+[2m[  3.65ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[  3.22ms][22m  [2m ↳ [22mBuild utilities
+[2m[  6.14ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[55.14ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.45ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[49.64ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.06ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.92ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 1.87ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Erro ao ativar agente: Error: Ativação do agente excedeu o tempo limite de 12s.
+    at eval (src/components/dashboard/CategoryAgentManagementSection.tsx:54:14)
+  52 |   const timeoutPromise = new Promise<never>((_, reject) => {
+  53 |     timeoutId = setTimeout(() => {
+> 54 |       reject(new Error(`${actionLabel} excedeu o tempo limite de ${Math.round(timeoutMs / ...
+     |              ^
+  55 |     }, timeoutMs);
+  56 |   });
+  57 | (src/components/dashboard/CategoryAgentManagementSection.tsx:189:15)
+[browser] Erro ao ativar agente: Error: Ativação do agente excedeu o tempo limite de 12s.
+    at eval (src/components/dashboard/CategoryAgentManagementSection.tsx:54:14)
+  52 |   const timeoutPromise = new Promise<never>((_, reject) => {
+  53 |     timeoutId = setTimeout(() => {
+> 54 |       reject(new Error(`${actionLabel} excedeu o tempo limite de ${Math.round(timeoutMs / ...
+     |              ^
+  55 |     }, timeoutMs);
+  56 |   });
+  57 | (src/components/dashboard/CategoryAgentManagementSection.tsx:189:15)
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Erro ao ativar agente: Error: Ativação do agente excedeu o tempo limite de 12s.
+    at <unknown> (src/app/hub/laboratorio-agentes/page.tsx:41:14)
+  39 |   const timeoutPromise = new Promise<never>((_, reject) => {
+  40 |     timeoutId = setTimeout(() => {
+> 41 |       reject(new Error(`${actionLabel} excedeu o tempo limite de ${Math.round(timeoutMs / ...
+     |              ^
+  42 |     }, timeoutMs);
+  43 |   });
+  44 | (src/app/hub/laboratorio-agentes/page.tsx:187:15)
+[browser] Erro ao desativar agente: Error: Desativação do agente excedeu o tempo limite de 12s.
+    at <unknown> (src/app/hub/laboratorio-agentes/page.tsx:41:14)
+  39 |   const timeoutPromise = new Promise<never>((_, reject) => {
+  40 |     timeoutId = setTimeout(() => {
+> 41 |       reject(new Error(`${actionLabel} excedeu o tempo limite de ${Math.round(timeoutMs / ...
+     |              ^
+  42 |     }, timeoutMs);
+  43 |   });
+  44 | (src/app/hub/laboratorio-agentes/page.tsx:224:15)
+
+[2m[47.21ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.39ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[43.00ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.61ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 0.89ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.19ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[52.97ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.29ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[47.32ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.65ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.21ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.35ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[50.14ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.29ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[45.84ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.59ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.24ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.03ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[60.84ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.19ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[46.94ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.11ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 8.99ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.47ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[92.89ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.31ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[69.19ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 2.39ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[16.16ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.64ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[54.86ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.28ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[39.39ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.30ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 9.89ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.62ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[54.15ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.32ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[47.76ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.06ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 2.08ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.71ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Cannot update a component (`Navbar`) while rendering a different component (`HubDashboardPage`). To locate the bad setState() call inside `HubDashboardPage`, follow the stack trace as described in https://react.dev/link/setstate-in-render 
+    at Navbar.useEffect.handleOverridesUpdate (src/components/layout/Navbar.tsx:319:7)
+    at writeAgentStatusOverrides (file://C:/Users/claud/OneDrive/Documentos/NeuroAds/LP/.next/dev/static/chunks/src_0~qeiu-._.js?id=%255Bproject%255D%252Fsrc%252Flib%252Fagent-status-cache.ts+%255Bapp-client%255D+%2528ecmascript%2529:34:16)
+    at eval (file://C:/Users/claud/OneDrive/Documentos/NeuroAds/LP/.next/dev/static/chunks/src_0~inf13._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Fhub%252Fdashboard%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:197:184)
+    at HubDashboardPage (file://C:/Users/claud/OneDrive/Documentos/NeuroAds/LP/.next/dev/static/chunks/src_0~inf13._.js?id=%255Bproject%255D%252Fsrc%252Fapp%252Fhub%252Fdashboard%252Fpage.tsx+%255Bapp-client%255D+%2528ecmascript%2529:50:225)
+  317 |       const customEvent = event as CustomEvent<{ uid?: string; overrides?: AgentStatusOve...
+  318 |       if (customEvent.detail?.uid !== user.uid) return;
+> 319 |       setAgentStatusVersion((current) => current + 1);
+      |       ^
+  320 |     };
+  321 |
+  322 |     window.addEventListener(AGENT_STATUS_UPDATED_EVENT, handleOverridesUpdate as EventLis... (src/components/layout/Navbar.tsx:319:7)
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+
+[2m[43.93ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.36ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[38.19ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.89ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.57ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.79ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[56.36ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.30ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[44.29ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.81ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 7.94ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.88ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[46.49ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.19ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[39.36ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.77ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.53ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.49ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[64.89ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.47ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[56.24ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.89ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 2.51ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.58ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[53.05ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.32ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[40.28ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 2.59ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 6.81ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.91ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[79.01ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.44ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[58.89ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.42ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[13.03ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.93ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[174.85ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.44ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[154.06ms][22m  [2m ↳ [22mScan for candidates
+[2m[  4.76ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[  6.10ms][22m  [2m ↳ [22mBuild utilities
+[2m[  9.24ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[138.41ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.34ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[110.59ms][22m  [2m ↳ [22mScan for candidates
+[2m[  4.80ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 16.57ms][22m  [2m ↳ [22mBuild utilities
+[2m[  5.43ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[75.71ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.31ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[64.76ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.50ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 3.85ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 5.03ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[70.26ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.34ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[61.03ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.60ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 2.87ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.22ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+
+[2m[52.69ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.26ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[42.21ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.17ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 6.67ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.29ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[46.38ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.27ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[34.89ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.87ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 8.54ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 1.53ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[72.98ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.29ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[66.93ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.66ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.80ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.15ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[62.30ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.48ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[52.84ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 2.38ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 3.20ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.18ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[65.78ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.35ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[48.91ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.91ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 9.86ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 5.53ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+⚠ Fast Refresh had to perform a full reload when ./src/context/AuthContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+
+[2m[63.22ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.43ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[49.21ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.16ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 9.34ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.76ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[51.03ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.29ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[37.02ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.81ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 9.06ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.68ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+
+[2m[56.25ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.15ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[44.18ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.85ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 8.82ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.13ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+
+[2m[68.81ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.71ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[58.07ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 3.01ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.93ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.82ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+
+[2m[44.19ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.30ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[33.64ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.12ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 7.05ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 1.94ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[49.75ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.16ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[38.26ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.10ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 8.58ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 1.55ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[50.68ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.19ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[35.68ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 2.25ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[10.25ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.20ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[90.78ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.45ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[77.92ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 2.48ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 3.00ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 6.76ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+⚠ Fast Refresh had to perform a full reload when ./src/context/AuthContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+⚠ Fast Refresh had to perform a full reload when ./src/context/AuthContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+Error: Cannot find module '@opentelemetry/api'
+Require stack:
+- C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\node_modules\@google-cloud\firestore\build\src\telemetry\enabled-trace-util.js
+- C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\node_modules\@google-cloud\firestore\build\src\index.js
+- C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\node_modules\firebase-admin\lib\firestore\index.js
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1476:15)
+    at C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\node_modules\next\dist\server\require-hook.js:68:36
+    at wrapResolveFilename (node:internal/modules/cjs/loader:1049:27)
+    at defaultResolveImplForCJSLoading (node:internal/modules/cjs/loader:1073:10)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1094:12)
+    at Module._load (node:internal/modules/cjs/loader:1262:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1576:12)
+    at mod.require (C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\node_modules\next\dist\server\require-hook.js:79:28)
+    at require (node:internal/modules/helpers:153:16)
+    at Object.<anonymous> (C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\node_modules\@google-cloud\firestore\build\src\telemetry\enabled-trace-util.js:19:15)
+    at Module._compile (node:internal/modules/cjs/loader:1830:14)
+    at Object..js (node:internal/modules/cjs/loader:1961:10)
+    at Module.load (node:internal/modules/cjs/loader:1553:32)
+    at Module._load (node:internal/modules/cjs/loader:1355:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1576:12)
+    at mod.require (C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\node_modules\next\dist\server\require-hook.js:79:28)
+    at require (node:internal/modules/helpers:153:16)
+    at Object.<anonymous> (C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\node_modules\@google-cloud\firestore\build\src\index.js:45:30)
+    at Module._compile (node:internal/modules/cjs/loader:1830:14)
+    at Object..js (node:internal/modules/cjs/loader:1961:10)
+    at Module.load (node:internal/modules/cjs/loader:1553:32)
+    at Module._load (node:internal/modules/cjs/loader:1355:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1576:12)
+    at mod.require (C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\node_modules\next\dist\server\require-hook.js:79:28)
+    at require (node:internal/modules/helpers:153:16)
+    at Object.<anonymous> (C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\node_modules\firebase-admin\lib\firestore\index.js:25:19)
+    at Module._compile (node:internal/modules/cjs/loader:1830:14)
+    at Object..js (node:internal/modules/cjs/loader:1961:10)
+    at Module.load (node:internal/modules/cjs/loader:1553:32)
+    at Module._load (node:internal/modules/cjs/loader:1355:12)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at loadCJSModuleWithModuleLoad (node:internal/modules/esm/translators:326:3)
+    at ModuleWrap.<anonymous> (node:internal/modules/esm/translators:231:7)
+    at ModuleJob.run (node:internal/modules/esm/module_job:437:25)
+    at async node:internal/modules/esm/loader:639:26
+    at async Context.externalImport [as y] (C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\.next\dev\server\chunks\[turbopack]_runtime.js:601:15)
+    at async C:\Users\claud\OneDrive\Documentos\NeuroAds\LP\.next\dev\server\chunks\[root-of-the-server]__0o8plct._.js:2026:13

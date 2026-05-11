@@ -40,6 +40,12 @@ export async function POST(req: Request) {
     }
 
     const isSubscription = mode === 'subscription';
+    if (isSubscription && !userId) {
+      return NextResponse.json(
+        { error: 'Faça login antes de contratar um plano para liberar o Hub corretamente.' },
+        { status: 400 }
+      );
+    }
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -58,6 +64,8 @@ export async function POST(req: Request) {
       subscription_data: isSubscription ? { trial_period_days: trialDays } : undefined,
       metadata: {
         checkout_kind: kind,
+        userId: userId || '',
+        email: email || '',
       },
     });
 
