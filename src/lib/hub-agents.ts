@@ -6,7 +6,6 @@ import {
   type AgentPricingProfile,
 } from '../data/agent-pricing';
 import stripeCatalog from '../data/stripe-agent-price-ids.json';
-const ENABLED_AGENT_TITLE = 'SEO & GEO';
 
 export interface AgentContractStatus {
   isActive: boolean;
@@ -115,7 +114,7 @@ function normalizeContractedAgents(input: unknown): Map<string, AgentContractSta
 
       if (item && typeof item === 'object') {
         const { title, status } = buildContractStatus(item as Record<string, unknown>);
-        if (title && status.isActive) {
+        if (title) {
           contracts.set(title, status);
         }
       }
@@ -126,8 +125,8 @@ function normalizeContractedAgents(input: unknown): Map<string, AgentContractSta
   if (input && typeof input === 'object') {
     for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
       if (typeof value === 'boolean') {
-        if (value && key.trim()) {
-          contracts.set(key.trim(), { isActive: true });
+        if (key.trim()) {
+          contracts.set(key.trim(), { isActive: value });
         }
         continue;
       }
@@ -139,7 +138,7 @@ function normalizeContractedAgents(input: unknown): Map<string, AgentContractSta
 
       if (value && typeof value === 'object') {
         const { title, status } = buildContractStatus(value as Record<string, unknown>, key.trim());
-        if (title && status.isActive) {
+        if (title) {
           contracts.set(title, status);
         }
       }
@@ -163,25 +162,7 @@ export function getAgentBySlug(slug: string): Agent | undefined {
 }
 
 export function getContractedAgentsFromProfile(profile: unknown): Map<string, AgentContractStatus> {
-  const forceEnabledAgent = (sourceMap: Map<string, AgentContractStatus>) => {
-    const result = new Map<string, AgentContractStatus>();
-    const fromSource = sourceMap.get(ENABLED_AGENT_TITLE);
-    const pricing = getAgentPricingProfile(ENABLED_AGENT_TITLE);
-    const growthPlan = pricing.plans.find((plan) => plan.name === 'Growth') ?? pricing.plans[0];
-
-    result.set(ENABLED_AGENT_TITLE, {
-      isActive: true,
-      planName: fromSource?.planName ?? growthPlan.name,
-      monthlyPrice: fromSource?.monthlyPrice ?? growthPlan.monthlyPrice,
-      monthlyLimit: fromSource?.monthlyLimit ?? growthPlan.monthlyLimit,
-      usageUsed: fromSource?.usageUsed,
-      nextPaymentAt: fromSource?.nextPaymentAt,
-    });
-
-    return result;
-  };
-
-  if (!profile || typeof profile !== 'object') return forceEnabledAgent(new Map<string, AgentContractStatus>());
+  if (!profile || typeof profile !== 'object') return new Map<string, AgentContractStatus>();
 
   const dynamicProfile = profile as Record<string, unknown>;
   const possibleSources: unknown[] = [
@@ -195,11 +176,11 @@ export function getContractedAgentsFromProfile(profile: unknown): Map<string, Ag
   for (const source of possibleSources) {
     const normalized = normalizeContractedAgents(source);
     if (normalized.size > 0) {
-      return forceEnabledAgent(normalized);
+      return normalized;
     }
   }
 
-  return forceEnabledAgent(new Map<string, AgentContractStatus>());
+  return new Map<string, AgentContractStatus>();
 }
 
 export function getAgentContractStatus(

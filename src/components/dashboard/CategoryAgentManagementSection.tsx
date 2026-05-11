@@ -2,12 +2,13 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2, ExternalLink, Info, Power, Wrench, X } from 'lucide-react';
 import { doc, setDoc } from 'firebase/firestore';
 import { agents } from '../../data/agents';
 import { getAgentEntryDefinition, getContractedAgentsFromProfile, slugifyAgentTitle } from '../../lib/hub-agents';
+import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../lib/agent-status-cache';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
 
@@ -73,20 +74,39 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
   const router = useRouter();
   const category = CATEGORY_META[categorySlug];
   const contractedAgents = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, boolean>>({});
+  const effectiveContracts = useMemo(() => {
+    if (Object.keys(statusOverrides).length === 0) return contractedAgents;
+
+    const merged = new Map(contractedAgents);
+    for (const [title, isActive] of Object.entries(statusOverrides)) {
+      const current = merged.get(title) ?? { isActive: false };
+      merged.set(title, { ...current, isActive });
+    }
+    return merged;
+  }, [contractedAgents, statusOverrides]);
   const [activatingSlug, setActivatingSlug] = useState<string | null>(null);
   const [deactivatingSlug, setDeactivatingSlug] = useState<string | null>(null);
   const [selectedDetailsSlug, setSelectedDetailsSlug] = useState<string | null>(null);
   const [pendingActivationSlug, setPendingActivationSlug] = useState<string | null>(null);
   const [pendingDeactivateSlug, setPendingDeactivateSlug] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!user) {
+      setStatusOverrides({});
+      return;
+    }
+    setStatusOverrides(readAgentStatusOverrides(user.uid));
+  }, [user]);
+
   const categoryAgents = useMemo(() => {
     return agents
       .filter((agent) => agent.category === category.label)
       .map((agent) => {
-        const entry = getAgentEntryDefinition(agent, contractedAgents);
+        const entry = getAgentEntryDefinition(agent, effectiveContracts);
         return { agent, entry };
       });
-  }, [category.label, contractedAgents]);
+  }, [category.label, effectiveContracts]);
 
   const isPerformance = categorySlug === 'performance';
 
@@ -121,10 +141,14 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
   const activateAgent = async (agentTitle: string, agentSlug: string) => {
     if (!user) return;
     setActivatingSlug(agentSlug);
+    const activationOverrides = { ...statusOverrides, [agentTitle]: true };
+    setStatusOverrides(activationOverrides);
+    writeAgentStatusOverrides(user.uid, activationOverrides);
+    setPendingActivationSlug(null);
     try {
       const db = getFirebaseDb();
       const userRef = doc(db, 'users', user.uid);
-      await setDoc(
+      void setDoc(
         userRef,
         {
           activeAgents: {
@@ -138,7 +162,9 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
           },
         },
         { merge: true }
-      );
+      ).catch((error) => {
+        console.warn('Falha ao sincronizar ativação do agente no Firestore:', error);
+      });
       router.refresh();
     } catch (error) {
       console.error('Erro ao ativar agente:', error);
@@ -150,10 +176,14 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
   const deactivateAgent = async (agentTitle: string, agentSlug: string) => {
     if (!user) return;
     setDeactivatingSlug(agentSlug);
+    const deactivationOverrides = { ...statusOverrides, [agentTitle]: false };
+    setStatusOverrides(deactivationOverrides);
+    writeAgentStatusOverrides(user.uid, deactivationOverrides);
+    setPendingDeactivateSlug(null);
     try {
       const db = getFirebaseDb();
       const userRef = doc(db, 'users', user.uid);
-      await setDoc(
+      void setDoc(
         userRef,
         {
           activeAgents: {
@@ -164,8 +194,9 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
           },
         },
         { merge: true }
-      );
-      setPendingDeactivateSlug(null);
+      ).catch((error) => {
+        console.warn('Falha ao sincronizar desativação do agente no Firestore:', error);
+      });
       router.refresh();
     } catch (error) {
       console.error('Erro ao desativar agente:', error);
@@ -234,8 +265,6 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
             {categoryAgents.map(({ agent, entry }) => {
               const agentSlug = slugifyAgentTitle(agent.title);
               const isActive = entry.isActive;
-              const isSeoGeo = agentSlug === 'seo-geo';
-
               return (
                 <article key={agent.title} className="rounded-[28px] border border-border bg-bg-secondary p-5">
                   <div className="flex items-start justify-between gap-3">
@@ -272,7 +301,7 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
                           Acessar Agente
                         </Link>
                       </>
-                    ) : isSeoGeo ? (
+                    ) : (
                       <button
                         type="button"
                         onClick={() => setPendingActivationSlug(agentSlug)}
@@ -281,14 +310,6 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
                       >
                         <Wrench className="h-4 w-4" />
                         {activatingSlug === agentSlug ? 'Ativando...' : 'Ativar Agente'}
-                      </button>
-                    ) : (
-                      <button
-                        type="button"
-                        disabled
-                        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#D1D5DB] px-6 text-[14px] leading-none font-black text-[#6B7280] shadow-none"
-                      >
-                        em breve
                       </button>
                     )}
 

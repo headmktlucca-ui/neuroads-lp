@@ -296,3 +296,42 @@ FirebaseError: Failed to get document because the client is offline. (src/app/hu
 [2m[ 1.12ms][22m  [2m ↳ [22mBuild utilities
 [2m[ 3.06ms][22m  [2m ↳ [22mUpdate PostCSS AST
 
+
+[2m[47.92ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.21ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[40.26ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.91ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.11ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 5.30ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Uncaught ReferenceError: UsersRound is not defined
+    at StrategicHubOverview (src/components/dashboard/StrategicHubOverview.tsx:233:22)
+    at HubPage (src/app/hub/page.tsx:40:11)
+  231 |                 <div className="mb-3 flex items-center gap-3">
+  232 |                   <span className="inline-flex h-11 w-11 items-center justify-center roun...
+> 233 |                     <UsersRound className="h-6 w-6" />
+      |                      ^
+  234 |                   </span>
+  235 |                   <div>
+  236 |                     <p className="text-[15px] font-semibold text-white">CPL Médio</p>
+
+[2m[41.67ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.18ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[36.59ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.91ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.33ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.55ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+
+[2m[53.07ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.16ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[45.05ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.24ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 2.65ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.61ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.

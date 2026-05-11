@@ -137,3 +137,11 @@ Creating turbopack project {
 ✓ Compiled in 143ms
  GET /hub/agentes-ativos 200 in 247ms (next.js: 166ms, application-code: 80ms)
  GET /hub 200 in 41ms (next.js: 9ms, application-code: 31ms)
+✓ Compiled in 777ms
+ GET / 200 in 1072ms (next.js: 339ms, application-code: 733ms)
+ GET /hub 200 in 1074ms (next.js: 590ms, application-code: 484ms)
+ GET / 200 in 413ms (next.js: 364ms, application-code: 49ms)
+ GET /hub 200 in 418ms (next.js: 7ms, application-code: 412ms)
+✓ Compiled in 108ms
+ GET /hub 200 in 512ms (next.js: 168ms, application-code: 344ms)
+✓ Compiled in 183ms

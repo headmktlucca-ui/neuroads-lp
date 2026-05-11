@@ -7,6 +7,11 @@ import { useAuth } from '../../context/AuthContext';
 import { ChevronDown, User, LogOut, X, PlugZap, CheckCircle2, Database, Gauge } from 'lucide-react';
 import { HTTPS_PREFIX, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
+import {
+  AGENT_STATUS_UPDATED_EVENT,
+  readAgentStatusOverrides,
+  type AgentStatusOverrides,
+} from '../../lib/agent-status-cache';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -94,6 +99,7 @@ export default function Navbar() {
   const [companyForm, setCompanyForm] = useState(DEFAULT_COMPANY_FORM);
   const [connectorStatus, setConnectorStatus] = useState<ConnectorStatus>(DEFAULT_CONNECTOR_STATUS);
   const [connectorConfig, setConnectorConfig] = useState(DEFAULT_CONNECTOR_CONFIG);
+  const [agentStatusVersion, setAgentStatusVersion] = useState(0);
   const [whatsApp, setWhatsApp] = useState('');
   const { user, profile, logout, isAdmin } = useAuth();
   const pathname = usePathname();
@@ -240,6 +246,8 @@ export default function Navbar() {
   const desktopNavClass = pathname?.startsWith('/admin')
     ? 'hidden md:flex items-center gap-9'
     : 'hidden md:flex items-center gap-10';
+  const isAdminContext = pathname?.startsWith('/admin') && isAdmin;
+  const isHubNavbarStyle = !pathname?.startsWith('/admin');
 
   const isLinkActive = (href: string): boolean => {
     if (!pathname) return false;
@@ -273,14 +281,49 @@ export default function Navbar() {
   const dashboardReadiness = Math.round((connectedRequired / requiredConnectors.length) * 100);
   const profileRecord = (profile as Record<string, unknown> | null) ?? null;
   const contractedAgents = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
-  const activeAgentsCount = contractedAgents.size;
+  const agentStatusOverrides = useMemo<AgentStatusOverrides>(
+    () => {
+      void agentStatusVersion;
+      return readAgentStatusOverrides(user?.uid);
+    },
+    [user?.uid, agentStatusVersion]
+  );
+  const effectiveContracts = useMemo(() => {
+    if (Object.keys(agentStatusOverrides).length === 0) return contractedAgents;
+
+    const merged = new Map(contractedAgents);
+    for (const [title, isActive] of Object.entries(agentStatusOverrides)) {
+      const current = merged.get(title) ?? { isActive: false };
+      merged.set(title, { ...current, isActive });
+    }
+    return merged;
+  }, [contractedAgents, agentStatusOverrides]);
+  const activeAgentsCount = useMemo(
+    () => Array.from(effectiveContracts.values()).filter((agent) => agent.isActive).length,
+    [effectiveContracts]
+  );
   const currentPlanName = useMemo(
-    () => Array.from(contractedAgents.values()).find((agent) => agent.isActive)?.planName ?? 'Lite',
-    [contractedAgents]
+    () => Array.from(effectiveContracts.values()).find((agent) => agent.isActive)?.planName ?? 'Lite',
+    [effectiveContracts]
   );
   const planCapacity = PLAN_AGENT_CAPACITY[currentPlanName] ?? 5;
   const capacityRatio = planCapacity > 0 ? activeAgentsCount / planCapacity : 0;
   const isCapacityAbove80 = capacityRatio >= 0.8;
+
+  useEffect(() => {
+    if (!user) return;
+
+    const handleOverridesUpdate = (event: Event) => {
+      const customEvent = event as CustomEvent<{ uid?: string; overrides?: AgentStatusOverrides }>;
+      if (customEvent.detail?.uid !== user.uid) return;
+      setAgentStatusVersion((current) => current + 1);
+    };
+
+    window.addEventListener(AGENT_STATUS_UPDATED_EVENT, handleOverridesUpdate as EventListener);
+    return () => {
+      window.removeEventListener(AGENT_STATUS_UPDATED_EVENT, handleOverridesUpdate as EventListener);
+    };
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -378,9 +421,21 @@ export default function Navbar() {
   };
 
   return (
-    <header className="fixed top-0 left-0 w-full z-[200] pt-3 px-4 lg:px-6">
-      <nav className="mx-auto max-w-[1240px] transition-all duration-700">
-        <div className="rounded-[32px] border border-[#E7EAF0] bg-white px-6 lg:px-10 py-3 flex items-center justify-between transition-all duration-500 shadow-[0_10px_28px_rgba(15,23,42,0.06)]">
+    <header
+      className={
+        isHubNavbarStyle
+          ? 'fixed left-1/2 top-4 z-[200] w-[min(calc(100%-2.5rem),1196px)] -translate-x-1/2'
+          : 'fixed top-0 left-0 w-full z-[200] pt-3 px-4 lg:px-6'
+      }
+    >
+      <nav className={isHubNavbarStyle ? 'w-full transition-all duration-700' : 'mx-auto max-w-[1240px] transition-all duration-700'}>
+        <div
+          className={
+            isHubNavbarStyle
+              ? 'flex items-center justify-between rounded-full border border-black/[0.06] bg-white px-4 py-3 shadow-[0_8px_26px_rgba(10,18,30,0.04)] transition-all duration-500 sm:px-5 md:px-7'
+              : 'flex items-center justify-between rounded-[32px] border border-[#E7EAF0] bg-white px-6 py-3 shadow-[0_10px_28px_rgba(15,23,42,0.06)] transition-all duration-500 lg:px-10'
+          }
+        >
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center group transition-transform duration-300 hover:scale-[1.01]">
@@ -389,21 +444,25 @@ export default function Navbar() {
                 alt="NeuroAds Logo"
                 width={192}
                 height={48}
-                className="h-9 lg:h-10 w-auto object-contain"
+                className={isHubNavbarStyle ? 'h-8 w-auto object-contain' : 'h-9 w-auto object-contain lg:h-10'}
               />
             </Link>
           </div>
 
           {/* Desktop Menu */}
           <div className={`${desktopNavClass} flex-1 justify-center px-8`}>
-            {pathname?.startsWith('/admin') && isAdmin ? (
+            {isAdminContext ? (
               navLinks.map((link) => (
                 <Link
                   key={link.name}
                   href={link.href}
                   onClick={() => handleNavLinkClick(link.href)}
-                  className={`text-[15px] leading-none font-semibold transition-colors duration-200 ${
-                    isLinkActive(link.href) ? 'text-[#0A9D57]' : 'text-[#344054] hover:text-[#111827]'
+                  className={`transition-colors duration-200 ${
+                    isHubNavbarStyle
+                      ? 'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-semibold'
+                      : 'text-[15px] leading-none font-semibold'
+                  } ${
+                    isLinkActive(link.href) ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#1c2230]'
                   }`}
                 >
                   {link.name}
@@ -413,8 +472,12 @@ export default function Navbar() {
               <>
               <Link
                 href="/hub"
-                className={`text-[15px] leading-none font-semibold transition-colors duration-200 ${
-                  isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-[#344054] hover:text-[#111827]'
+                className={`transition-colors duration-200 ${
+                  isHubNavbarStyle
+                    ? 'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-semibold'
+                    : 'text-[15px] leading-none font-semibold'
+                } ${
+                  isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#1c2230]'
                   }`}
                 >
                   Hub Estratégico
@@ -422,7 +485,9 @@ export default function Navbar() {
                 <div className="relative group">
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 text-[15px] leading-none font-semibold text-[#344054] transition-colors duration-200 group-hover:text-[#111827]"
+                    className={`inline-flex items-center gap-1 text-[13px] font-semibold transition-colors duration-200 ${
+                      isHubNavbarStyle ? 'rounded-full px-2 py-1 text-[#5f6572] group-hover:text-[#1c2230]' : 'text-[#344054] group-hover:text-[#111827]'
+                    }`}
                   >
                     Agentes IA
                     <ChevronDown size={14} />
@@ -445,8 +510,12 @@ export default function Navbar() {
                 </div>
                 <Link
                   href="/hub/agentes-ativos"
-                  className={`text-[15px] leading-none font-semibold transition-colors duration-200 ${
-                    isLinkActive('/hub/agentes-ativos') ? 'text-[#0A9D57]' : 'text-[#344054] hover:text-[#111827]'
+                  className={`transition-colors duration-200 ${
+                    isHubNavbarStyle
+                      ? 'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-semibold'
+                      : 'text-[15px] leading-none font-semibold'
+                  } ${
+                    isLinkActive('/hub/agentes-ativos') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#1c2230]'
                   }`}
                 >
                   Agentes Ativos
@@ -527,7 +596,11 @@ export default function Navbar() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-text-main p-2 focus:outline-none"
+              className={
+                isHubNavbarStyle
+                  ? 'inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#dbe2ee] bg-white p-0 text-[#2b3240] transition hover:border-[#ffc8a5] hover:text-[#ff6a00] focus:outline-none'
+                  : 'p-2 text-text-main focus:outline-none'
+              }
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isMenuOpen ? (
@@ -541,10 +614,25 @@ export default function Navbar() {
         </div>
       </nav>
 
+      {isHubNavbarStyle && isMenuOpen ? (
+        <button
+          type="button"
+          aria-label="Fechar menu mobile"
+          className="fixed inset-0 z-[185] bg-[#0e1830]/35 md:hidden"
+          onClick={() => setIsMenuOpen(false)}
+        />
+      ) : null}
+
       {/* Mobile Menu */}
-      <div className={`md:hidden absolute top-24 left-4 right-4 bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] rounded-[24px] p-5 z-[210] overflow-hidden transition-all duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}>
+      <div
+        className={`md:hidden bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] z-[210] overflow-hidden transition-all duration-300 ${
+          isHubNavbarStyle
+            ? 'fixed left-1/2 top-[84px] w-[min(calc(100%-2.5rem),460px)] -translate-x-1/2 rounded-[20px] p-4'
+            : 'absolute top-24 left-4 right-4 rounded-[24px] p-5'
+        } ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
+      >
         <div className="flex flex-col items-center gap-8 px-2">
-          {pathname?.startsWith('/admin') && isAdmin ? (
+          {isAdminContext ? (
             navLinks.map((link) => (
               <Link
                 key={link.name}

@@ -12,6 +12,7 @@ import LuccaHubSupportWidget from '../../../components/hub/LuccaHubSupportWidget
 import { useAuth } from '../../../context/AuthContext';
 import { agents } from '../../../data/agents';
 import { getAgentEntryDefinition, getContractedAgentsFromProfile, slugifyAgentTitle } from '../../../lib/hub-agents';
+import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../../lib/agent-status-cache';
 import { getFirebaseDb } from '../../../lib/firebase';
 
 const categories = [
@@ -60,6 +61,17 @@ function LaboratorioAgentesContent() {
   const searchParams = useSearchParams();
   const categoryFilter = searchParams.get('categoria');
   const contractedAgents = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, boolean>>({});
+  const effectiveContracts = useMemo(() => {
+    if (Object.keys(statusOverrides).length === 0) return contractedAgents;
+
+    const merged = new Map(contractedAgents);
+    for (const [title, isActive] of Object.entries(statusOverrides)) {
+      const current = merged.get(title) ?? { isActive: false };
+      merged.set(title, { ...current, isActive });
+    }
+    return merged;
+  }, [contractedAgents, statusOverrides]);
   const [activatingSlug, setActivatingSlug] = useState<string | null>(null);
   const [selectedDetailsSlug, setSelectedDetailsSlug] = useState<string | null>(null);
   const [pendingActivationSlug, setPendingActivationSlug] = useState<string | null>(null);
@@ -70,6 +82,14 @@ function LaboratorioAgentesContent() {
       router.replace('/login?next=/hub/laboratorio-agentes');
     }
   }, [loading, router, user]);
+
+  useEffect(() => {
+    if (!user) {
+      setStatusOverrides({});
+      return;
+    }
+    setStatusOverrides(readAgentStatusOverrides(user.uid));
+  }, [user]);
 
   const visibleCategories = useMemo(() => {
     if (!categoryFilter) return categories;
@@ -84,8 +104,8 @@ function LaboratorioAgentesContent() {
     );
   }
 
-  const activeAgentsCount = Array.from(contractedAgents.values()).filter((entry) => entry.isActive).length;
-  const activePlanName = Array.from(contractedAgents.values()).find((entry) => entry.isActive)?.planName ?? 'Growth';
+  const activeAgentsCount = Array.from(effectiveContracts.values()).filter((entry) => entry.isActive).length;
+  const activePlanName = Array.from(effectiveContracts.values()).find((entry) => entry.isActive)?.planName ?? 'Growth';
   const planCapacity = PLAN_AGENT_CAPACITY[activePlanName] ?? 15;
   const nextActiveCount = activeAgentsCount + 1;
 
@@ -118,10 +138,14 @@ function LaboratorioAgentesContent() {
   const activateAgent = async (agentTitle: string, agentSlug: string) => {
     if (!user) return;
     setActivatingSlug(agentSlug);
+    const activationOverrides = { ...statusOverrides, [agentTitle]: true };
+    setStatusOverrides(activationOverrides);
+    writeAgentStatusOverrides(user.uid, activationOverrides);
+    setPendingActivationSlug(null);
     try {
       const db = getFirebaseDb();
       const userRef = doc(db, 'users', user.uid);
-      await setDoc(
+      void setDoc(
         userRef,
         {
           activeAgents: {
@@ -135,8 +159,9 @@ function LaboratorioAgentesContent() {
           },
         },
         { merge: true }
-      );
-      setPendingActivationSlug(null);
+      ).catch((error) => {
+        console.warn('Falha ao sincronizar ativação do agente no Firestore:', error);
+      });
       router.refresh();
     } catch (error) {
       console.error('Erro ao ativar agente:', error);
@@ -148,10 +173,14 @@ function LaboratorioAgentesContent() {
   const deactivateAgent = async (agentTitle: string, agentSlug: string) => {
     if (!user) return;
     setActivatingSlug(agentSlug);
+    const deactivationOverrides = { ...statusOverrides, [agentTitle]: false };
+    setStatusOverrides(deactivationOverrides);
+    writeAgentStatusOverrides(user.uid, deactivationOverrides);
+    setPendingDeactivateSlug(null);
     try {
       const db = getFirebaseDb();
       const userRef = doc(db, 'users', user.uid);
-      await setDoc(
+      void setDoc(
         userRef,
         {
           activeAgents: {
@@ -162,8 +191,9 @@ function LaboratorioAgentesContent() {
           },
         },
         { merge: true }
-      );
-      setPendingDeactivateSlug(null);
+      ).catch((error) => {
+        console.warn('Falha ao sincronizar desativação do agente no Firestore:', error);
+      });
       router.refresh();
     } catch (error) {
       console.error('Erro ao desativar agente:', error);
@@ -208,11 +238,9 @@ function LaboratorioAgentesContent() {
 
                 <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
                   {categoryAgents.map((agent) => {
-                    const entry = getAgentEntryDefinition(agent, contractedAgents);
+                    const entry = getAgentEntryDefinition(agent, effectiveContracts);
                     const isActive = entry.isActive;
                     const agentSlug = slugifyAgentTitle(agent.title);
-
-                    const isSeoGeo = agentSlug === 'seo-geo';
 
                     return (
                       <article key={agent.title} className="rounded-xl border border-border bg-bg-secondary p-4">
@@ -258,35 +286,17 @@ function LaboratorioAgentesContent() {
                                 Mais detalhes
                               </button>
                             </>
-                          ) : isSeoGeo ? (
+                          ) : (
                             <>
                               <button
                                 type="button"
                                 onClick={() => setPendingActivationSlug(agentSlug)}
                                 disabled={activatingSlug === agentSlug}
                                 className={`${HUB_CONNECTOR_BUTTON_CLASS} disabled:opacity-60`}
-                              >
-                                <Wrench className="h-4 w-4" />
-                                {activatingSlug === agentSlug ? 'Ativando...' : 'Ativar Agente'}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => setSelectedDetailsSlug(agentSlug)}
-                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#D3DAE6] bg-white px-6 text-[14px] leading-none font-black text-[#344054] shadow-[0_8px_16px_rgba(15,23,42,0.08)] transition hover:bg-[#F8FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D3DAE6]"
-                              >
-                                <Info className="h-4 w-4" />
-                                Mais detalhes
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <button
-                                type="button"
-                                disabled
-                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#D1D5DB] px-6 text-[14px] leading-none font-black text-[#6B7280] shadow-none"
-                              >
-                                em breve
-                              </button>
+                                >
+                                  <Wrench className="h-4 w-4" />
+                                  {activatingSlug === agentSlug ? 'Ativando...' : 'Ativar Agente'}
+                                </button>
                               <button
                                 type="button"
                                 onClick={() => setSelectedDetailsSlug(agentSlug)}

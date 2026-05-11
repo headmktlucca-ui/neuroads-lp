@@ -12,11 +12,14 @@ import LuccaHubSupportWidget from '../../../components/hub/LuccaHubSupportWidget
 import { useAuth } from '../../../context/AuthContext';
 import { agents } from '../../../data/agents';
 import { getContractedAgentsFromProfile, slugifyAgentTitle } from '../../../lib/hub-agents';
+import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../../lib/agent-status-cache';
 import { getFirebaseDb } from '../../../lib/firebase';
 
 export default function HubDashboardPage() {
   const { user, profile, loading } = useAuth();
   const router = useRouter();
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, boolean>>({});
+  const [pendingActivationSlug, setPendingActivationSlug] = useState<string | null>(null);
   const [pendingDeactivateSlug, setPendingDeactivateSlug] = useState<string | null>(null);
   const [updatingSlug, setUpdatingSlug] = useState<string | null>(null);
 
@@ -25,6 +28,14 @@ export default function HubDashboardPage() {
       router.replace('/login?next=/hub/agentes-ativos');
     }
   }, [loading, router, user]);
+
+  useEffect(() => {
+    if (!user) {
+      setStatusOverrides({});
+      return;
+    }
+    setStatusOverrides(readAgentStatusOverrides(user.uid));
+  }, [user]);
 
   useEffect(() => {
     const refreshOnFocus = () => router.refresh();
@@ -42,15 +53,25 @@ export default function HubDashboardPage() {
   }, [router]);
 
   const contractedAgents = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
+  const effectiveContracts = useMemo(() => {
+    if (Object.keys(statusOverrides).length === 0) return contractedAgents;
+
+    const merged = new Map(contractedAgents);
+    for (const [title, isActive] of Object.entries(statusOverrides)) {
+      const current = merged.get(title) ?? { isActive: false };
+      merged.set(title, { ...current, isActive });
+    }
+    return merged;
+  }, [contractedAgents, statusOverrides]);
   const activeAgents = useMemo(() => {
     const activeTitles = new Set(
-      Array.from(contractedAgents.entries())
+      Array.from(effectiveContracts.entries())
         .filter(([, entry]) => entry.isActive)
         .map(([title]) => title)
     );
 
     return agents.filter((agent) => activeTitles.has(agent.title));
-  }, [contractedAgents]);
+  }, [effectiveContracts]);
   const recommendedAgents = useMemo(() => {
     const activeTitles = new Set(activeAgents.map((agent) => agent.title));
     return agents.filter((agent) => !activeTitles.has(agent.title)).slice(0, 4);
@@ -58,14 +79,56 @@ export default function HubDashboardPage() {
   const pendingDeactivateAgent = pendingDeactivateSlug
     ? activeAgents.find((agent) => slugifyAgentTitle(agent.title) === pendingDeactivateSlug) ?? null
     : null;
+  const pendingActivationAgent = pendingActivationSlug
+    ? recommendedAgents.find((agent) => slugifyAgentTitle(agent.title) === pendingActivationSlug) ?? null
+    : null;
+
+  const activateAgent = async (agentTitle: string, agentSlug: string) => {
+    if (!user) return;
+    setUpdatingSlug(agentSlug);
+    const activationOverrides = { ...statusOverrides, [agentTitle]: true };
+    setStatusOverrides(activationOverrides);
+    writeAgentStatusOverrides(user.uid, activationOverrides);
+    setPendingActivationSlug(null);
+    try {
+      const db = getFirebaseDb();
+      const userRef = doc(db, 'users', user.uid);
+      void setDoc(
+        userRef,
+        {
+          activeAgents: {
+            [agentTitle]: {
+              isActive: true,
+              planName: 'Growth',
+              monthlyLimit: 15,
+              usageUsed: 0,
+              updatedAt: Date.now(),
+            },
+          },
+        },
+        { merge: true }
+      ).catch((error) => {
+        console.warn('Falha ao sincronizar ativação do agente no Firestore:', error);
+      });
+      router.refresh();
+    } catch (error) {
+      console.error('Erro ao ativar agente:', error);
+    } finally {
+      setUpdatingSlug(null);
+    }
+  };
 
   const deactivateAgent = async (agentTitle: string, agentSlug: string) => {
     if (!user) return;
     setUpdatingSlug(agentSlug);
+    const deactivationOverrides = { ...statusOverrides, [agentTitle]: false };
+    setStatusOverrides(deactivationOverrides);
+    writeAgentStatusOverrides(user.uid, deactivationOverrides);
+    setPendingDeactivateSlug(null);
     try {
       const db = getFirebaseDb();
       const userRef = doc(db, 'users', user.uid);
-      await setDoc(
+      void setDoc(
         userRef,
         {
           activeAgents: {
@@ -76,8 +139,9 @@ export default function HubDashboardPage() {
           },
         },
         { merge: true }
-      );
-      setPendingDeactivateSlug(null);
+      ).catch((error) => {
+        console.warn('Falha ao sincronizar desativação do agente no Firestore:', error);
+      });
       router.refresh();
     } catch (error) {
       console.error('Erro ao desativar agente:', error);
@@ -186,23 +250,15 @@ export default function HubDashboardPage() {
                     <p className="text-sm font-black text-text-main">{agent.title}</p>
                     <p className="mt-1 text-xs text-text-muted">{agent.description}</p>
                     <div className="mt-3 flex flex-wrap gap-2">
-                      {slugifyAgentTitle(agent.title) === 'seo-geo' ? (
-                        <Link
-                          href={`/hub/laboratorio-agentes?agente=${slugifyAgentTitle(agent.title)}`}
-                          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#FF6B00] bg-[#FF6B00] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105"
-                        >
-                          <Wrench className="h-4 w-4" />
-                          Ativar Agente
-                        </Link>
-                      ) : (
-                        <button
-                          type="button"
-                          disabled
-                          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#D1D5DB] px-6 text-[14px] leading-none font-black text-[#6B7280] shadow-none"
-                        >
-                          em breve
-                        </button>
-                      )}
+                      <button
+                        type="button"
+                        onClick={() => setPendingActivationSlug(slugifyAgentTitle(agent.title))}
+                        disabled={updatingSlug === slugifyAgentTitle(agent.title)}
+                        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#FF6B00] bg-[#FF6B00] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105 disabled:opacity-60"
+                      >
+                        <Wrench className="h-4 w-4" />
+                        {updatingSlug === slugifyAgentTitle(agent.title) ? 'Ativando...' : 'Ativar Agente'}
+                      </button>
                       <Link
                         href={`/hub/laboratorio-agentes?agente=${slugifyAgentTitle(agent.title)}`}
                         className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#D3DAE6] bg-white px-6 text-[14px] leading-none font-black text-[#344054] shadow-[0_8px_16px_rgba(15,23,42,0.08)] transition hover:bg-[#F8FAFC]"
@@ -222,6 +278,52 @@ export default function HubDashboardPage() {
           </section>
         </div>
       </div>
+
+      {pendingActivationAgent ? (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+          <button
+            type="button"
+            onClick={() => setPendingActivationSlug(null)}
+            className="absolute inset-0 bg-[#101828]/45 backdrop-blur-[2px]"
+            aria-label="Fechar confirmação"
+          />
+          <section className="relative w-full max-w-2xl rounded-[24px] border border-border bg-white p-6 md:p-8 shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
+            <button
+              type="button"
+              onClick={() => setPendingActivationSlug(null)}
+              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-[#667085] hover:text-text-main"
+              aria-label="Fechar"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <p className="text-xs font-black uppercase tracking-[0.12em] text-primary">Confirmar ativação</p>
+            <h3 className="mt-1 text-3xl font-black tracking-tight text-text-main">{pendingActivationAgent.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-text-muted">
+              Ao confirmar, o agente será ativado e passará a aparecer na lista de ativos.
+            </p>
+
+            <div className="mt-5 flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setPendingActivationSlug(null)}
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-border bg-white px-5 text-sm font-black text-[#344054]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => activateAgent(pendingActivationAgent.title, slugifyAgentTitle(pendingActivationAgent.title))}
+                disabled={updatingSlug === slugifyAgentTitle(pendingActivationAgent.title)}
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#FF6B00] bg-[#FF6B00] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] disabled:opacity-60"
+              >
+                <Wrench className="h-4 w-4" />
+                {updatingSlug === slugifyAgentTitle(pendingActivationAgent.title) ? 'Ativando...' : 'Confirmar ativação'}
+              </button>
+            </div>
+          </section>
+        </div>
+      ) : null}
 
       {pendingDeactivateAgent ? (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
