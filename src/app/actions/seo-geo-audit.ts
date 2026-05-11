@@ -145,8 +145,9 @@ export async function generateSeoGeoAudit(input: SeoGeoAuditInput): Promise<SeoG
 
   try {
     const response = await openai.responses.create({
-      model: 'gpt-4.1-mini',
+      model: 'gpt-4o', // Use a more powerful model for deep audits
       tools: [{ type: 'web_search_preview' }],
+      max_tokens: 4000, // Ensure enough tokens for all 8 sections
       input: [
         { role: 'system', content: [{ type: 'input_text', text: SYSTEM_PROMPT }] },
         { role: 'user', content: [{ type: 'input_text', text: userPrompt }] },
@@ -165,7 +166,7 @@ export async function generateSeoGeoAudit(input: SeoGeoAuditInput): Promise<SeoG
       success: true,
       report,
       generatedAt: new Date().toISOString(),
-      model: 'gpt-4.1-mini',
+      model: 'gpt-4o',
       usedWebSearch: true,
     };
   } catch (error) {

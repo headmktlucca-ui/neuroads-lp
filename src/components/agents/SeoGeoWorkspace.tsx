@@ -25,21 +25,38 @@ interface SeoGeoReportState {
 function parseSections(markdown: string): ReportSection[] {
   const sectionDividerRegex = /^##\s+/gm;
   const matches = Array.from(markdown.matchAll(sectionDividerRegex));
-  if (matches.length === 0) {
-    return [{ title: 'Relatório', content: markdown.trim() }];
+  
+  const sections: ReportSection[] = [];
+
+  // Capture content before the first header as an "Introdução" section
+  if (matches.length > 0 && matches[0].index! > 0) {
+    const introContent = markdown.slice(0, matches[0].index).trim();
+    if (introContent) {
+      sections.push({
+        title: 'Resumo Executivo',
+        content: introContent,
+      });
+    }
   }
 
-  const sections: ReportSection[] = [];
+  if (matches.length === 0) {
+    return [{ title: 'Relatório de Auditoria', content: markdown.trim() }];
+  }
+
   for (let i = 0; i < matches.length; i += 1) {
     const current = matches[i];
     const start = current.index ?? 0;
     const nextStart = matches[i + 1]?.index ?? markdown.length;
     const chunk = markdown.slice(start, nextStart).trim();
+    
     const lines = chunk.split('\n');
-    const firstLine = lines[0] ?? '## Relatório';
+    const firstLine = lines[0] ?? '## Seção';
     const title = firstLine.replace(/^##\s+/, '').trim();
     const content = lines.slice(1).join('\n').trim();
-    sections.push({ title, content });
+    
+    if (title || content) {
+      sections.push({ title, content });
+    }
   }
 
   return sections;
