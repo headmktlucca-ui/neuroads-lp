@@ -115,36 +115,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (userDoc.exists()) {
               const snapshotProfile = userDoc.data() as UserProfile;
               setProfile(snapshotProfile);
-              if (hasHubPlanAccess(snapshotProfile)) {
-                setPremiumSyncing(false);
-              }
-
-              if (!hasHubPlanAccess(snapshotProfile) && !premiumSyncAttemptRef.current[firebaseUser.uid]) {
-                premiumSyncAttemptRef.current[firebaseUser.uid] = true;
-                setPremiumSyncing(true);
-                void firebaseUser
-                  .getIdToken()
-                  .then((idToken) =>
-                    fetch('/api/stripe/sync-premium', {
-                      method: 'POST',
-                      headers: {
-                        Authorization: `Bearer ${idToken}`,
-                      },
-                    })
-                  )
-                  .then(async (response) => {
-                    if (!response.ok) {
-                      const payload = await response.json().catch(() => ({}));
-                      console.warn('Não foi possível sincronizar assinatura com Stripe:', payload);
-                    }
-                  })
-                  .catch((error) => {
-                    console.warn('Falha ao acionar sincronização de assinatura:', error);
-                  })
-                  .finally(() => {
-                    setPremiumSyncing(false);
-                  });
-              }
+              // A sincronização com Stripe foi removida para o modelo Open Access Hub.
+              // O acesso é garantido para todos os usuários cadastrados.
+              setPremiumSyncing(false);
 
               if (primaryEmail && snapshotProfile.authEmail !== primaryEmail) {
                 void setDoc(
@@ -244,22 +217,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await signOut(auth);
   };
 
-  const checkUsageLimit = async (appName: string): Promise<boolean> => {
-    if (!user || !profile) return false;
-    if (profile.isPremium) return true;
-
-    const stats = profile.usageStats[appName];
-    if (!stats) return true;
-
-    const now = Date.now();
-    const oneWeekInMs = 7 * 24 * 60 * 60 * 1000;
-    
-    // Check if the last use was more than a week ago
-    if (now - stats.lastUsed > oneWeekInMs) {
-      return true;
-    }
-
-    return false;
+  const checkUsageLimit = async (_appName: string): Promise<boolean> => {
+    // No modelo Open Access Hub, o uso é ilimitado para todos os usuários autenticados.
+    return true;
   };
 
   return (

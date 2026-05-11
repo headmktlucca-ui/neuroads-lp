@@ -42,31 +42,11 @@ export default function AgentGrid() {
 
   const statusByTitle = useMemo(() => {
     const map = new Map<string, AgentContractStatus>();
-
     agents.forEach((agent) => {
-      if (agent.title !== ENABLED_AGENT_TITLE) {
-        map.set(agent.title, { isActive: false });
-        return;
-      }
-
-      const fromProfile = contractedAgents.get(agent.title);
-      if (fromProfile?.isActive) {
-        map.set(agent.title, fromProfile);
-        return;
-      }
-
-      const pricing = getAgentPricingProfile(agent.title);
-      const growthPlan = pricing.plans.find((plan) => plan.name === 'Growth') ?? pricing.plans[0];
-      map.set(agent.title, {
-        isActive: true,
-        planName: growthPlan.name,
-        monthlyPrice: growthPlan.monthlyPrice,
-        monthlyLimit: growthPlan.monthlyLimit,
-      });
+      map.set(agent.title, { isActive: true });
     });
-
     return map;
-  }, [contractedAgents]);
+  }, []);
 
   const activeAgentTitles = useMemo(() => {
     const titles = new Set<string>();
@@ -174,10 +154,8 @@ export default function AgentGrid() {
                   agent={agent}
                   onClick={() => {
                     setSelectedAgent(agent);
-                    setSelectedPlan(getDefaultPlanName(contractStatus, pricingProfile));
                   }}
                   index={index}
-                  startingPrice={pricingProfile.startingPrice}
                   contractStatus={contractStatus}
                 />
                 );
@@ -299,49 +277,29 @@ export default function AgentGrid() {
                     </div>
 
                     <div className="space-y-5">
-                      <div className="p-5 rounded-xl bg-[#FFF8F3] border border-[#FFE4D1]">
-                        <h3 className="text-sm font-bold text-primary uppercase tracking-widest mb-3">
-                          Opções de Valores e Limites
+                      <div className="p-5 rounded-xl bg-[#F8FFFB] border border-[#B9EBD1]">
+                        <h3 className="text-sm font-bold text-[#0A9D57] uppercase tracking-widest mb-3">
+                          Status de Acesso
                         </h3>
-
-                        {!selectedAgentContract.isActive ? (
-                          <>
-                            <p className="text-sm text-text-muted mb-3">
-                              a partir de <span className="font-bold text-primary">{formatBRL(selectedAgentPricing?.startingPrice ?? 29.9)}/mês</span>
-                            </p>
-                            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3 gap-2">
-                              {selectedAgentPricing?.plans.map((plan) => (
-                                <button
-                                  key={plan.name}
-                                  type="button"
-                                  disabled={!selectedAgentContract.isActive}
-                                  onClick={() => setSelectedPlan(plan.name)}
-                                  className={`rounded-xl border bg-white p-3 text-left transition-all ${
-                                    selectedPlan === plan.name
-                                      ? 'border-[#FF8D46] shadow-[0_0_0_1px_rgba(255,141,70,0.35)]'
-                                      : 'border-[#FFDCC7]'
-                                  } ${!selectedAgentContract.isActive ? 'opacity-60 cursor-not-allowed' : ''}`}
-                                >
-                                  <p className="text-[11px] uppercase tracking-widest text-text-dim font-bold mb-1">{plan.name}</p>
-                                  <p className="text-base font-black text-text-main mb-1">{formatBRL(plan.monthlyPrice)}/mês</p>
-                                  <p className="text-xs text-text-muted">{plan.monthlyLimit} execuções/mês</p>
-                                </button>
-                              ))}
-                            </div>
-                          </>
-                        ) : (
-                          <div className="rounded-xl border border-[#B9EBD1] bg-white p-4 space-y-2">
-                            <p className="text-sm font-bold text-[#0A9D57]">
-                              {selectedAgentContract.planName || 'Plano ativo'} • {formatBRL(selectedAgentContract.monthlyPrice ?? selectedAgentPricing?.startingPrice ?? 29.9)}/mês
-                            </p>
-                            <p className="text-xs text-text-muted">
-                              Limite: {selectedAgentContract.monthlyLimit ?? 'A confirmar'} exec./mês • Em uso: {selectedAgentContract.usageUsed ?? 'A confirmar'}
-                            </p>
-                            <p className="text-xs text-text-muted">
-                              Próximo pagamento: {formatDate(selectedAgentContract.nextPaymentAt)}
-                            </p>
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-2 text-[#0A9D57] font-bold">
+                            <span className="w-2 h-2 rounded-full bg-[#08B760] animate-pulse" />
+                            PLANO HUB OPEN ACCESS ATIVO
                           </div>
-                        )}
+                          <p className="text-sm text-text-muted leading-relaxed">
+                            Como parte da transição para o **Open Access Hub**, este agente está 100% liberado para sua conta. Aproveite todos os recursos neural-powered sem limites de contratação.
+                          </p>
+                          <div className="grid grid-cols-2 gap-4 pt-2">
+                            <div className="bg-white p-3 rounded-lg border border-[#B9EBD1]">
+                              <p className="text-[10px] uppercase font-bold text-text-dim mb-1">Capacidade</p>
+                              <p className="text-sm font-black text-text-main">Ilimitada</p>
+                            </div>
+                            <div className="bg-white p-3 rounded-lg border border-[#B9EBD1]">
+                              <p className="text-[10px] uppercase font-bold text-text-dim mb-1">Custo Mensal</p>
+                              <p className="text-sm font-black text-[#0A9D57]">Grátis (Open)</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
                       <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row gap-3 pt-1">

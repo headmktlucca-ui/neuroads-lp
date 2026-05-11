@@ -14,7 +14,7 @@ import {
   updateDoc,
   type DocumentData,
 } from 'firebase/firestore';
-import { BriefcaseBusiness, CircleDollarSign, KanbanSquare, Trash2, UserRoundCog } from 'lucide-react';
+import { BriefcaseBusiness, CircleDollarSign, KanbanSquare, ShieldCheck, Trash2, UserRoundCog } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
 import { agents } from '../../data/agents';
 import LuccaExecutiveDesk from './LuccaExecutiveDesk';
@@ -89,6 +89,8 @@ interface FinanceEntry {
 
 interface RegisteredUser {
   id: string;
+  name?: string;
+  email?: string;
   authEmail: string;
   isPremium: boolean;
   updatedAt: number;
@@ -258,6 +260,8 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
         const data = snapshotDoc.data() as DocumentData;
         return {
           id: snapshotDoc.id,
+          name: data.displayName || data.name || undefined,
+          email: data.email || undefined,
           authEmail: String(data.authEmail || data.email || 'Sem e-mail'),
           isPremium: Boolean(data.isPremium),
           updatedAt: toMillis(data.updatedAt),
@@ -892,11 +896,11 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
-                    {user.name?.charAt(0).toUpperCase() || 'U'}
+                    {(user.name || user.authEmail)?.charAt(0).toUpperCase() || 'U'}
                   </div>
                   <div>
-                    <p className="text-sm font-black text-text-main">{user.name || 'Sem nome'}</p>
-                    <p className="text-xs text-text-muted">{user.email}</p>
+                    <p className="text-sm font-black text-text-main">{user.name || 'Usuário NeuroAds'}</p>
+                    <p className="text-xs text-text-muted">{user.authEmail}</p>
                     <p className="text-[10px] text-text-dim">UID: {user.id}</p>
                   </div>
                 </div>
@@ -916,7 +920,7 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
                   
                   <button
                     type="button"
-                    onClick={() => togglePremiumStatus(user.id, user.isPremium)}
+                    onClick={() => toggleUserPremium(user)}
                     className={`rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white transition-all ${
                       user.isPremium 
                         ? 'bg-red-500 hover:bg-red-600 shadow-[0_4px_12px_rgba(239,68,68,0.2)]' 

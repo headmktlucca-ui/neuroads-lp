@@ -148,10 +148,10 @@ export default function StrategicHubOverview() {
                 <article className="rounded-[16px] border border-[#173c6e] bg-[#081a38] p-5">
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
-                      <p className="text-[13px] text-[#B7C4DF]">Plano</p>
+                      <p className="text-[13px] text-[#B7C4DF]">Acesso</p>
                       <p className="mt-1 flex items-center gap-2 text-[20px] font-black text-white">
                         <Gem className="h-5 w-5 text-[#FF6A00]" />
-                        Pro Scale
+                        Hub Aberto
                       </p>
                     </div>
                     <div>
@@ -159,12 +159,12 @@ export default function StrategicHubOverview() {
                       <p className="mt-1 text-[20px] font-black text-[#FF6A00]">● Ativo</p>
                     </div>
                     <div>
-                      <p className="text-[13px] text-[#B7C4DF]">Capacidade Mensal</p>
-                      <p className="mt-1 text-[20px] font-black text-white">250.000 execuções</p>
+                      <p className="text-[13px] text-[#B7C4DF]">Recursos</p>
+                      <p className="mt-1 text-[20px] font-black text-white">Ilimitados</p>
                     </div>
                     <div>
-                      <p className="text-[13px] text-[#B7C4DF]">Próxima Renovação</p>
-                      <p className="mt-1 text-[20px] font-black text-white">28/05/2026</p>
+                      <p className="text-[13px] text-[#B7C4DF]">Operação</p>
+                      <p className="mt-1 text-[20px] font-black text-white">Em tempo real</p>
                     </div>
                   </div>
 
