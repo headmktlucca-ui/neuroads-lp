@@ -144,3 +144,155 @@
 [2m[ 2.94ms][22m  [2m ↳ [22mBuild utilities
 [2m[ 5.77ms][22m  [2m ↳ [22mUpdate PostCSS AST
 
+[browser] Image with src "/images/tools/otimizacao.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Erro ao carregar automação persistida: FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/app/hub/agente/[slug]/page.tsx:169:17)
+[browser] Erro ao carregar automação persistida: FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/app/hub/agente/[slug]/page.tsx:169:17)
+[browser] Erro ao carregar automação persistida: FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/app/hub/agente/[slug]/page.tsx:169:17)
+[browser] Erro ao carregar automação persistida: FirebaseError: Failed to get document because the client is offline.
+FirebaseError: Failed to get document because the client is offline. (src/app/hub/agente/[slug]/page.tsx:169:17)
+
+[2m[133.66ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.48ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[ 51.31ms][22m  [2m ↳ [22mScan for candidates
+[2m[  1.44ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 56.05ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 18.85ms][22m  [2m ↳ [22mTransform Tailwind CSS AST into PostCSS AST
+[2m[  5.30ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+
+[2m[36.38ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.16ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[31.97ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.22ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.10ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 1.84ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[67.67ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.26ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[26.17ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.57ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[27.40ms][22m  [2m ↳ [22mBuild utilities
+[2m[10.33ms][22m  [2m ↳ [22mTransform Tailwind CSS AST into PostCSS AST
+[2m[ 1.75ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[113.63ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.63ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[ 47.68ms][22m  [2m ↳ [22mScan for candidates
+[2m[  1.11ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 40.94ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 19.00ms][22m  [2m ↳ [22mTransform Tailwind CSS AST into PostCSS AST
+[2m[  4.00ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+
+[2m[43.16ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.24ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[37.97ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.86ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.48ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.47ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[50.89ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.19ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[45.30ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.21ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.48ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.56ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[44.57ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.23ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[40.73ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.75ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.24ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 1.46ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[49.57ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.21ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[43.28ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.87ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 0.89ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 4.20ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[44.33ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.38ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[38.04ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.20ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.35ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.21ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[33.81ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.13ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[29.16ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.91ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.35ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.17ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[35.75ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.28ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[30.42ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.62ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.67ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 2.59ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+[browser] Image with src "/images/template-match/hero-orbit-white-v1.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+
+[2m[104.00ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[  0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[  0.47ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[ 47.18ms][22m  [2m ↳ [22mScan for candidates
+[2m[  0.84ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 39.90ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 11.23ms][22m  [2m ↳ [22mTransform Tailwind CSS AST into PostCSS AST
+[2m[  4.10ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[55.18ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.01ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.43ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[47.91ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 1.58ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.77ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.30ms][22m  [2m ↳ [22mUpdate PostCSS AST
+
+
+[2m[34.89ms][22m [@tailwindcss/postcss] src\app\globals.css
+[2m[ 0.00ms][22m  [2m ↳ [22mQuick bail check
+[2m[ 0.41ms][22m  [2m ↳ [22mRegister full rebuild paths
+[2m[29.52ms][22m  [2m ↳ [22mScan for candidates
+[2m[ 0.68ms][22m  [2m ↳ [22mRegister dependency messages
+[2m[ 1.12ms][22m  [2m ↳ [22mBuild utilities
+[2m[ 3.06ms][22m  [2m ↳ [22mUpdate PostCSS AST
+

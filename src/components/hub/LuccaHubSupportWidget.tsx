@@ -89,12 +89,7 @@ export default function LuccaHubSupportWidget() {
       site,
       planName: 'Pro Scale',
       activePage: pathname || '/hub',
-      kpis: [
-        { label: 'CPL Médio', value: 'R$ 4,82', trend: '-18,2% vs mês anterior' },
-        { label: 'CAC', value: 'R$ 38,11', trend: '-12,4% vs mês anterior' },
-        { label: 'ROAS', value: '5,2x', trend: '+15% vs mês anterior' },
-        { label: 'Receita Atribuída', value: 'R$ 1.243.000', trend: '+15,6% vs mês anterior' },
-      ],
+      kpis: [],
       connectors: {
         connectedRequired,
         requiredTotal,
@@ -233,4 +228,3 @@ export default function LuccaHubSupportWidget() {
     </>
   );
 }
-

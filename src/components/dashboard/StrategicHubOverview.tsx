@@ -4,58 +4,35 @@ import Link from 'next/link';
 import { useMemo } from 'react';
 import Image from 'next/image';
 import {
+  Database,
   Building2,
   CheckCircle2,
-  CalendarClock,
-  ChartNoAxesCombined,
-  CircleDollarSign,
   Cog,
   Funnel,
   Gem,
   Globe,
-  HandCoins,
+  PlugZap,
   Sparkles,
   Target,
-  TrendingDown,
-  TrendingUp,
-  UsersRound,
   Wrench,
   type LucideIcon,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-
-type ActionPriority = 'Alta prioridade' | 'Média prioridade';
 
 type ActionItem = {
   id: string;
   order: string;
   title: string;
   description: string;
-  priority: ActionPriority;
 };
 
-const ACTIONS: ActionItem[] = [
-  {
-    id: '01',
-    order: '01',
-    title: 'Reduzir CPL das campanhas de busca',
-    description: 'Revisar termos de pesquisa e ajustar correspondências para reduzir custo por lead.',
-    priority: 'Alta prioridade',
-  },
-  {
-    id: '02',
-    order: '02',
-    title: 'Escalar campanha vencedora no Meta Ads',
-    description: 'Aumentar orçamento da campanha com melhor ROAS mantendo controle de frequência.',
-    priority: 'Alta prioridade',
-  },
-  {
-    id: '03',
-    order: '03',
-    title: 'Otimizar página de conversão principal',
-    description: 'Testar nova headline e formulário reduzido para aumentar taxa de conversão.',
-    priority: 'Média prioridade',
-  },
+const ACTIONS: ActionItem[] = [];
+
+const REAL_DATA_REQUIREMENTS = [
+  'Conectar Google Ads API e Meta Ads API.',
+  'Ativar GA4 Data API e tracking server-side (GTM Server + CAPI/Enhanced).',
+  'Integrar CRM, pagamentos e data warehouse para consolidar receita e atribuição.',
+  'Definir timezone, janela de atribuição e frequência de atualização.',
 ];
 
 function getGreeting(): string {
@@ -69,19 +46,6 @@ function getFirstName(fullName: string | null | undefined): string {
   if (!fullName) return 'Claudio';
   const first = fullName.trim().split(/\s+/)[0];
   return first || 'Claudio';
-}
-
-function PriorityBadge({ value }: { value: ActionPriority }) {
-  const isHigh = value === 'Alta prioridade';
-  return (
-    <span
-      className={`inline-flex items-center whitespace-nowrap rounded-full px-3 py-1 text-[12px] font-semibold ${
-        isHigh ? 'bg-[#FFF0E6] text-[#E66100]' : 'bg-[#FFF6DA] text-[#C98500]'
-      }`}
-    >
-      {value}
-    </span>
-  );
 }
 
 function TrailCard({
@@ -260,72 +224,25 @@ export default function StrategicHubOverview() {
                 <h3 className="text-[17px] font-black leading-tight tracking-tight text-white">
                   Painel Executivo do Caixa
                 </h3>
-                <p className="mt-1 text-[14px] text-[#B7C4DF]">4 KPIs financeiros essenciais</p>
-              </article>
-
-              <article className="rounded-[16px] border border-[#173c6e] bg-[#081a38] px-5 py-4">
-                <div className="mb-3 flex items-center gap-3">
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#FF6A00]/60 bg-[#0B1D3F] text-[#FF6A00]">
-                    <UsersRound className="h-6 w-6" />
-                  </span>
-                  <div>
-                    <p className="text-[15px] font-semibold text-white">CPL Médio</p>
-                    <p className="text-[26px] leading-none font-black text-[#FF6A00]">R$ 4,82</p>
-                  </div>
-                </div>
-                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#FF6A00]">
-                  <TrendingDown className="h-4 w-4" />
-                  -18,2% <span className="font-normal text-[#C6D3E9]">vs mês anterior</span>
+                <p className="mt-1 text-[14px] text-[#B7C4DF]">
+                  Dados indisponíveis. Conecte os sistemas para visualizar os KPIs reais.
                 </p>
               </article>
 
-              <article className="rounded-[16px] border border-[#173c6e] bg-[#081a38] px-5 py-4">
-                <div className="mb-3 flex items-center gap-3">
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#FF6A00]/60 bg-[#0B1D3F] text-[#FF6A00]">
-                    <HandCoins className="h-6 w-6" />
-                  </span>
-                  <div>
-                    <p className="text-[15px] font-semibold text-white">CAC</p>
-                    <p className="text-[26px] leading-none font-black text-[#FF6A00]">R$ 38,11</p>
+              {['CPL Médio', 'CAC', 'Receita Atribuída', 'ROAS'].map((label) => (
+                <article key={label} className="rounded-[16px] border border-[#173c6e] bg-[#081a38] px-5 py-4">
+                  <div className="mb-3 flex items-center gap-3">
+                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#FF6A00]/60 bg-[#0B1D3F] text-[#FF6A00]">
+                      <Database className="h-6 w-6" />
+                    </span>
+                    <div>
+                      <p className="text-[15px] font-semibold text-white">{label}</p>
+                      <p className="text-[20px] leading-none font-black text-[#FF6A00]">Dados indisponíveis</p>
+                    </div>
                   </div>
-                </div>
-                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#FF6A00]">
-                  <TrendingDown className="h-4 w-4" />
-                  -12,4% <span className="font-normal text-[#C6D3E9]">vs mês anterior</span>
-                </p>
-              </article>
-
-              <article className="rounded-[16px] border border-[#173c6e] bg-[#081a38] px-5 py-4">
-                <div className="mb-3 flex items-center gap-3">
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#FF6A00]/60 bg-[#0B1D3F] text-[#FF6A00]">
-                    <CircleDollarSign className="h-6 w-6" />
-                  </span>
-                  <div>
-                    <p className="text-[15px] font-semibold text-white">Receita Atribuída</p>
-                    <p className="text-[26px] leading-none font-black text-[#FF6A00]">R$ 1.243.000</p>
-                  </div>
-                </div>
-                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#FF6A00]">
-                  <TrendingUp className="h-4 w-4" />
-                  +15,6% <span className="font-normal text-[#C6D3E9]">vs mês anterior</span>
-                </p>
-              </article>
-
-              <article className="rounded-[16px] border border-[#173c6e] bg-[#081a38] px-5 py-4">
-                <div className="mb-3 flex items-center gap-3">
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#FF6A00]/60 bg-[#0B1D3F] text-[#FF6A00]">
-                    <ChartNoAxesCombined className="h-6 w-6" />
-                  </span>
-                  <div>
-                    <p className="text-[15px] font-semibold text-white">ROAS</p>
-                    <p className="text-[26px] leading-none font-black text-[#FF6A00]">5,2x</p>
-                  </div>
-                </div>
-                <p className="flex items-center gap-1 text-[14px] font-semibold text-[#FF6A00]">
-                  <TrendingUp className="h-4 w-4" />
-                  +15% <span className="font-normal text-[#C6D3E9]">vs mês anterior</span>
-                </p>
-              </article>
+                  <p className="text-[13px] text-[#C6D3E9]">Aguardando integrações obrigatórias e sincronização inicial.</p>
+                </article>
+              ))}
             </div>
           </section>
 
@@ -337,9 +254,9 @@ export default function StrategicHubOverview() {
               </header>
 
               <div className="space-y-3">
-                {ACTIONS.map((item) => (
-                  <article key={item.id} className="rounded-[14px] border border-[#ECEFF4] bg-white p-4">
-                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                {ACTIONS.length > 0 ? (
+                  ACTIONS.map((item) => (
+                    <article key={item.id} className="rounded-[14px] border border-[#ECEFF4] bg-white p-4">
                       <div className="flex gap-3">
                         <span className="inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[12px] bg-[#FFF3EC] text-[24px] font-black text-[#FF5A00]">
                           {item.order}
@@ -349,24 +266,40 @@ export default function StrategicHubOverview() {
                           <p className="mt-1 text-[14px] leading-tight text-[#4B5563]">{item.description}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <PriorityBadge value={item.priority} />
-                        <span className="inline-flex items-center gap-1 text-[13px] text-[#4B5563]">
-                          <CalendarClock className="h-4 w-4" />
-                          Hoje
-                        </span>
+                    </article>
+                  ))
+                ) : (
+                  <article className="rounded-[14px] border border-[#ECEFF4] bg-[#FCFCFD] p-4">
+                    <div className="flex items-start gap-3">
+                      <span className="inline-flex h-11 w-11 items-center justify-center rounded-[12px] bg-[#FFF3EC] text-[#FF5A00]">
+                        <PlugZap className="h-5 w-5" />
+                      </span>
+                      <div>
+                        <h3 className="text-[16px] font-black leading-tight text-[#111827]">Dados indisponíveis</h3>
+                        <p className="mt-1 text-[14px] leading-relaxed text-[#4B5563]">
+                          Ainda não há insights reais para gerar prioridades automáticas.
+                        </p>
+                        <p className="mt-3 text-[13px] font-semibold text-[#111827]">Para visualizar dados reais:</p>
+                        <ul className="mt-2 space-y-2">
+                          {REAL_DATA_REQUIREMENTS.map((requirement) => (
+                            <li key={requirement} className="flex items-start gap-2 text-[13px] leading-relaxed text-[#4B5563]">
+                              <CheckCircle2 className="mt-0.5 h-4 w-4 text-[#0A9D57]" />
+                              {requirement}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
                     </div>
                   </article>
-                ))}
+                )}
               </div>
 
               <div className="mt-5 text-center">
                 <Link
-                  href="/hub/performance"
+                  href="/hub?connectors=1"
                   className="inline-flex items-center gap-2 text-[16px] font-bold text-[#FF5A00] transition hover:text-[#E14B00]"
                 >
-                  Ver todas as ações <span aria-hidden>→</span>
+                  Configurar conectores para liberar dados <span aria-hidden>→</span>
                 </Link>
               </div>
             </article>
