@@ -144,10 +144,10 @@ export async function generateSeoGeoAudit(input: SeoGeoAuditInput): Promise<SeoG
     .join('\n\n');
 
   try {
-    const response = await openai.responses.create({
-      model: 'gpt-4o', // Use a more powerful model for deep audits
+    const response = await (openai as any).responses.create({
+      model: 'gpt-4o',
       tools: [{ type: 'web_search_preview' }],
-      max_tokens: 4000, // Ensure enough tokens for all 8 sections
+      max_output_tokens: 4000, // O nome correto para este endpoint Beta é max_output_tokens
       input: [
         { role: 'system', content: [{ type: 'input_text', text: SYSTEM_PROMPT }] },
         { role: 'user', content: [{ type: 'input_text', text: userPrompt }] },
