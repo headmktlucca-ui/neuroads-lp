@@ -90,11 +90,13 @@ interface FinanceEntry {
 interface RegisteredUser {
   id: string;
   name?: string;
+  displayName?: string;
   email?: string;
   authEmail: string;
   isPremium: boolean;
   updatedAt: number;
   createdAt?: number;
+  photoURL?: string;
 }
 
 interface AdminControlCenterProps {
@@ -260,12 +262,14 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
         const data = snapshotDoc.data() as DocumentData;
         return {
           id: snapshotDoc.id,
-          name: data.displayName || data.name || undefined,
+          name: data.name || undefined,
+          displayName: data.displayName || undefined,
           email: data.email || undefined,
           authEmail: String(data.authEmail || data.email || 'Sem e-mail'),
           isPremium: Boolean(data.isPremium),
           updatedAt: toMillis(data.updatedAt),
           createdAt: data.createdAt ? toMillis(data.createdAt) : undefined,
+          photoURL: data.photoURL || undefined,
         } satisfies RegisteredUser;
       });
       setRegisteredUsers(parsed);
@@ -896,10 +900,10 @@ export default function AdminControlCenter({ userId }: AdminControlCenterProps) 
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-bold">
-                    {(user.name || user.authEmail)?.charAt(0).toUpperCase() || 'U'}
+                    {(user.displayName || user.name || user.authEmail)?.charAt(0).toUpperCase() || 'U'}
                   </div>
                   <div>
-                    <p className="text-sm font-black text-text-main">{user.name || 'Usuário NeuroAds'}</p>
+                    <p className="text-sm font-black text-text-main">{user.displayName || user.name || 'Usuário NeuroAds'}</p>
                     <p className="text-xs text-text-muted">{user.authEmail}</p>
                     <p className="text-[10px] text-text-dim">UID: {user.id}</p>
                   </div>
