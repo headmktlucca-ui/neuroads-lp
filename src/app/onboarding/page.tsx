@@ -1,14 +1,13 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { doc, setDoc } from 'firebase/firestore';
 import { ArrowRight, Building2, CheckCircle2, Globe, Phone, Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
-import { hasHubRegistration } from '../../lib/hub-access';
+import { getHubLoginRedirect, hasHubPlanAccess, normalizeHubNextPath } from '../../lib/hub-access';
 import { getHubProfileSummary } from '../../lib/hub-profile';
-import { GoogleLoginButton } from '../../components/auth/GoogleLoginButton';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import stripeOffersCatalog from '../../data/stripe-offers.json';
 
@@ -82,14 +81,13 @@ function buildFormFromProfile(profile: unknown): CompanyForm {
   };
 }
 
-export default function OnboardingPage() {
+function OnboardingPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, profile, loading, premiumSyncing, loginWithGoogle } = useAuth();
+  const { user, profile, loading, premiumSyncing } = useAuth();
   const [step, setStep] = useState<OnboardingStep>(1);
   const [form, setForm] = useState<CompanyForm>(DEFAULT_COMPANY_FORM);
   const [selectedPlanSlug, setSelectedPlanSlug] = useState('');
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isProcessingReturn, setIsProcessingReturn] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -99,6 +97,7 @@ export default function OnboardingPage() {
     () => ((stripeOffersCatalog.plans || []) as PlanOffer[]).filter((plan) => Boolean(plan.slug)),
     []
   );
+  const nextPath = useMemo(() => normalizeHubNextPath(searchParams.get('next'), '/hub'), [searchParams]);
 
   useEffect(() => {
     if (planOffers.length === 0) return;
@@ -107,10 +106,15 @@ export default function OnboardingPage() {
 
   useEffect(() => {
     if (loading) return;
-    if (user && hasHubRegistration(profile)) {
-      router.replace('/hub');
+    if (user && hasHubPlanAccess(profile)) {
+      router.replace(nextPath);
     }
-  }, [loading, profile, router, user]);
+  }, [loading, nextPath, profile, router, user]);
+
+  useEffect(() => {
+    if (loading || user) return;
+    router.replace(getHubLoginRedirect(`/onboarding?next=${encodeURIComponent(nextPath)}`));
+  }, [loading, nextPath, router, user]);
 
   useEffect(() => {
     if (!user || !profile) return;
@@ -184,20 +188,6 @@ export default function OnboardingPage() {
     user,
   ]);
 
-  const handleLogin = async () => {
-    if (isAuthenticating) return;
-    try {
-      setIsAuthenticating(true);
-      setErrorMessage(null);
-      await loginWithGoogle();
-    } catch (error) {
-      console.error('Falha no login do onboarding:', error);
-      setErrorMessage('Não foi possível autenticar com o Google agora. Tente novamente.');
-    } finally {
-      setIsAuthenticating(false);
-    }
-  };
-
   const handleContinueToPlans = async () => {
     const hasCompany = form.companyName.trim().length > 0;
     const normalizedSite = normalizeHttpsMaskedUrlInput(form.site);
@@ -221,7 +211,7 @@ export default function OnboardingPage() {
     }
 
     if (hubProfile.isSubscriptionActive) {
-      router.replace('/hub');
+      router.replace(nextPath);
       return;
     }
 
@@ -297,9 +287,10 @@ export default function OnboardingPage() {
       window.localStorage.removeItem(`${ONBOARDING_DRAFT_STORAGE_PREFIX}${user.uid}`);
     }
 
-    router.replace('/hub');
+    router.replace(nextPath);
   }, [
     currencyCode,
+    nextPath,
     router,
     user,
   ]);
@@ -469,31 +460,8 @@ export default function OnboardingPage() {
 
   if (!user) {
     return (
-      <main className="min-h-screen bg-bg-main text-text-main">
-        <div className="mx-auto flex min-h-screen w-full max-w-[1160px] items-center justify-center px-5 py-14">
-          <section className="w-full max-w-[560px] rounded-[28px] border border-border bg-white p-7 shadow-[0_24px_54px_rgba(15,23,42,0.08)] sm:p-10">
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">Onboarding do Hub</p>
-            <h1 className="mt-2 text-[34px] font-extrabold leading-tight text-text-main">
-              Entre com sua conta Google
-            </h1>
-            <p className="mt-3 text-[15px] leading-relaxed text-text-muted">
-              Para iniciar seu acesso ao Hub Estratégico, faça login com sua conta Google. Esse é o único método de autenticação.
-            </p>
-
-            <GoogleLoginButton
-              onClick={handleLogin}
-              disabled={isAuthenticating}
-              label={isAuthenticating ? 'Autenticando...' : 'Entrar com o Google'}
-              className="mt-7 w-full h-[46px]"
-            />
-
-            {errorMessage ? (
-              <p className="mt-4 rounded-xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-sm text-[#9A3412]">
-                {errorMessage}
-              </p>
-            ) : null}
-          </section>
-        </div>
+      <main className="min-h-screen bg-bg-main flex items-center justify-center px-5">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </main>
     );
   }
@@ -678,5 +646,13 @@ export default function OnboardingPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+export default function OnboardingPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-bg-main" />}>
+      <OnboardingPageContent />
+    </Suspense>
   );
 }

@@ -10,6 +10,7 @@ import Footer from '../../../../components/layout/Footer';
 import LuccaHubSupportWidget from '../../../../components/hub/LuccaHubSupportWidget';
 import SeoGeoWorkspace from '../../../../components/agents/SeoGeoWorkspace';
 import TrafficAnalystWorkspace from '../../../../components/agents/TrafficAnalystWorkspace';
+import GenericAgentWorkspace from '../../../../components/agents/GenericAgentWorkspace';
 import { useAuth } from '../../../../context/AuthContext';
 import {
   getAgentBySlug,
@@ -17,7 +18,7 @@ import {
   getContractedAgentsFromProfile,
   slugifyAgentTitle,
 } from '../../../../lib/hub-agents';
-import { getHubLoginRedirect, HUB_PLAN_REQUIRED_REDIRECT, resolveHubAccessState } from '../../../../lib/hub-access';
+import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } from '../../../../lib/hub-access';
 import { getFirebaseDb } from '../../../../lib/firebase';
 import { readSeoGeoHistory, type SeoGeoHistoryEntry } from '../../../../lib/seo-geo-history';
 
@@ -141,7 +142,7 @@ export default function AgentEntryPage() {
       return;
     }
     if (accessState === 'forbidden' && !premiumSyncing) {
-      router.replace(HUB_PLAN_REQUIRED_REDIRECT);
+      router.replace(getHubOnboardingRedirect(pathname));
     }
   }, [accessState, pathname, premiumSyncing, router]);
 
@@ -353,17 +354,15 @@ export default function AgentEntryPage() {
                     <TrafficAnalystWorkspace userId={user?.uid} />
                   </div>
                 ) : (
-                  <div className="col-span-1 rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_24px_52px_-30px_rgba(255,107,0,0.42)]">
-                    <div className="rounded-[28px] bg-white/85 p-[1px]">
-                      <div className="rounded-[26px] border border-[#FFF1E8] bg-white p-6 md:p-8 h-full">
-                        <h2 className="text-sm uppercase tracking-widest text-primary font-bold mb-4">Área de implantação</h2>
-                        <div className="min-h-[420px] rounded-2xl border-2 border-dashed border-[#FFD9C0] bg-gradient-to-br from-[#FFF8F3] to-white p-6">
-                          <p className="text-sm text-text-muted">
-                            Espaço reservado para implementação das atividades e componentes específicos do agente <strong>{entry.title}</strong>.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                  <div className="col-span-1">
+                    <GenericAgentWorkspace
+                      key={`${user?.uid ?? 'anon'}-${entry.slug}`}
+                      userId={user?.uid}
+                      agentTitle={entry.title}
+                      category={entry.category}
+                      description={agent.longDescription}
+                      monthlyLimit={entry.planSummary?.monthlyLimit}
+                    />
                   </div>
                 )}
               </div>

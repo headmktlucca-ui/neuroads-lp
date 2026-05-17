@@ -13,7 +13,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { agents } from '../../../data/agents';
 import { getAgentEntryDefinition, getContractedAgentsFromProfile, slugifyAgentTitle } from '../../../lib/hub-agents';
 import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../../lib/agent-status-cache';
-import { getHubLoginRedirect, HUB_PLAN_REQUIRED_REDIRECT, resolveHubAccessState } from '../../../lib/hub-access';
+import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } from '../../../lib/hub-access';
 import { getFirebaseDb } from '../../../lib/firebase';
 
 const categories = [
@@ -90,7 +90,7 @@ function LaboratorioAgentesContent() {
       return;
     }
     if (accessState === 'forbidden' && !premiumSyncing) {
-      router.replace(HUB_PLAN_REQUIRED_REDIRECT);
+      router.replace(getHubOnboardingRedirect(pathname));
     }
   }, [accessState, pathname, premiumSyncing, router]);
 

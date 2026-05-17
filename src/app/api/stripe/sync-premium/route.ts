@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { getAuth } from 'firebase-admin/auth';
 import { getAdminDb } from '../../../../lib/firebase-admin';
-import { hasHubPlanAccess } from '../../../../lib/hub-access';
+import { hasActiveHubSubscription } from '../../../../lib/hub-access';
 
 function getStripeClient() {
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     const userSnapshot = await userRef.get();
     const currentProfile = userSnapshot.exists ? userSnapshot.data() : {};
 
-    if (hasHubPlanAccess(currentProfile)) {
+    if (hasActiveHubSubscription(currentProfile)) {
       return NextResponse.json({ hasAccess: true, source: 'firestore' });
     }
 

@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(\"/c/Program Files/nodejs/npm\" run dev)",
+      "Bash(export PATH=\"/c/Program Files/nodejs:$PATH\")"
+    ]
+  }
+}

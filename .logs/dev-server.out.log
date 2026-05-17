@@ -1,0 +1,107 @@
+
+> temp-app@0.1.0 dev
+> next dev --hostname 0.0.0.0 --port 3000
+
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+- Environments: .env.local
+✓ Ready in 535ms
+Creating turbopack project {
+  dir: 'C:\\Users\\claud\\OneDrive\\Documentos\\NeuroAds\\LP',
+  testMode: true
+}
+- Experiments (use with caution):
+  · serverActions
+
+ GET / 200 in 19.3s (next.js: 5.3s, application-code: 13.9s)
+ GET / 200 in 91ms (next.js: 3ms, application-code: 88ms)
+ POST /api/stripe/checkout 404 in 130ms (next.js: 80ms, application-code: 50ms)
+ POST /api/stripe/checkout 404 in 60ms (next.js: 9ms, application-code: 51ms)
+ GET /login?next=%2Fhub 200 in 79ms (next.js: 47ms, application-code: 32ms)
+ GET /hub 200 in 146ms (next.js: 94ms, application-code: 53ms)
+ GET /hub 200 in 32ms (next.js: 7ms, application-code: 25ms)
+ GET /hub/agentes-ativos 404 in 68ms (next.js: 45ms, application-code: 23ms)
+ GET /hub/agentes-ativos 404 in 90ms (next.js: 15ms, application-code: 75ms)
+ GET /onboarding 200 in 134ms (next.js: 70ms, application-code: 63ms)
+ GET /hub 200 in 25ms (next.js: 4ms, application-code: 22ms)
+ GET /login?next=%2Fhub 200 in 26ms (next.js: 2ms, application-code: 24ms)
+ GET / 200 in 18ms (next.js: 3ms, application-code: 15ms)
+ GET /login?next=%2Fhub 200 in 28ms (next.js: 3ms, application-code: 25ms)
+ GET /login 200 in 61ms (next.js: 3ms, application-code: 58ms)
+ GET /onboarding 200 in 49ms (next.js: 5ms, application-code: 44ms)
+Hostinger Reach: contato sincronizado com sucesso. { message: 'Request accepted' }
+ POST /onboarding 200 in 477ms (next.js: 1849µs, application-code: 475ms)
+  └─ ƒ syncToHostingerReach({"email":"claudiomullerneto@gmail.com","name":"Claudio Müller","tags":["Usuários Ativos"]}) in 467ms src/app/actions/hostinger.ts
+ GET /hub 200 in 20ms (next.js: 4ms, application-code: 16ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 404 in 83ms (next.js: 60ms, application-code: 23ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 404 in 63ms (next.js: 11ms, application-code: 52ms)
+ GET / 200 in 249ms (next.js: 6ms, application-code: 242ms)
+ GET /servicos/gestao-de-trafego-google-meta 404 in 403ms (next.js: 155ms, application-code: 247ms)
+ GET /servicos/gestao-de-trafego-google-meta 404 in 167ms (next.js: 26ms, application-code: 142ms)
+○ Compiling /servicos ...
+ GET /servicos 200 in 4.9s (next.js: 4.5s, application-code: 329ms)
+ GET / 200 in 27ms (next.js: 4ms, application-code: 23ms)
+ GET /servicos/gestao-de-trafego-google-meta 404 in 86ms (next.js: 20ms, application-code: 65ms)
+ GET /servicos/gestao-de-trafego-google-meta 404 in 141ms (next.js: 27ms, application-code: 114ms)
+✓ Compiled in 544ms
+ GET /onboarding 200 in 494ms (next.js: 197ms, application-code: 297ms)
+ GET /hub 200 in 144ms (next.js: 120ms, application-code: 24ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 141ms (next.js: 112ms, application-code: 29ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 56ms (next.js: 6ms, application-code: 50ms)
+ GET /hub/agente/seo-geo 200 in 2.0s (next.js: 1936ms, application-code: 112ms)
+ GET /hub/agentes-ativos 200 in 274ms (next.js: 209ms, application-code: 65ms)
+✓ Compiled in 289ms
+ GET /hub/inteligencia 200 in 137ms (next.js: 88ms, application-code: 50ms)
+✓ Compiled in 329ms
+ GET / 200 in 227ms (next.js: 198ms, application-code: 29ms)
+ POST /api/stripe/checkout 200 in 1228ms (next.js: 308ms, application-code: 920ms)
+ GET /?success=true&kind=plano&session_id=cs_live_b1f58Bufn1SHYsynLyLRo4jP8NxC9bk47i7uCNjhAn5az7SNejD7Q2sgeo 200 in 389ms (next.js: 3ms, application-code: 386ms)
+ POST /api/stripe/verify-session 200 in 322ms (next.js: 50ms, application-code: 272ms)
+ GET /login?next=%2Fhub 200 in 666ms (next.js: 418ms, application-code: 248ms)
+ GET /hub 200 in 467ms (next.js: 14ms, application-code: 454ms)
+ GET /hub 200 in 233ms (next.js: 56ms, application-code: 177ms)
+ GET /hub/performance 200 in 131ms (next.js: 98ms, application-code: 33ms)
+ GET / 200 in 88ms (next.js: 55ms, application-code: 33ms)
+ GET /privacidade 200 in 516ms (next.js: 99ms, application-code: 417ms)
+ GET /termos 200 in 134ms (next.js: 114ms, application-code: 20ms)
+ GET /privacidade 200 in 33ms (next.js: 4ms, application-code: 30ms)
+ GET / 200 in 21ms (next.js: 2ms, application-code: 18ms)
+ GET /login?next=%2Fhub 200 in 26ms (next.js: 7ms, application-code: 20ms)
+ GET /hub 200 in 27ms (next.js: 3ms, application-code: 24ms)
+ GET /hub 200 in 26ms (next.js: 5ms, application-code: 22ms)
+ GET / 200 in 20ms (next.js: 2ms, application-code: 18ms)
+✓ Compiled in 391ms
+✓ Compiled in 292ms
+ GET / 200 in 351ms (next.js: 15ms, application-code: 336ms)
+ GET /login?next=%2Fhub 200 in 128ms (next.js: 105ms, application-code: 24ms)
+ GET /hub 200 in 154ms (next.js: 126ms, application-code: 29ms)
+ GET /login?next=%2Fhub 200 in 27ms (next.js: 3ms, application-code: 24ms)
+ GET / 200 in 26ms (next.js: 6ms, application-code: 20ms)
+ GET /login?next=%2Fhub 200 in 27ms (next.js: 4ms, application-code: 23ms)
+ POST /api/stripe/sync-premium 500 in 1035ms (next.js: 925ms, application-code: 110ms)
+ GET / 200 in 22ms (next.js: 3ms, application-code: 19ms)
+ POST /api/stripe/checkout 200 in 885ms (next.js: 9ms, application-code: 876ms)
+ GET /?success=true&kind=plano&session_id=cs_live_b1XcubOQLOrxytvPijsaxy3l0v5Nr0Bzn4HEzQxCNtqYloNAt6JvCUoep3 200 in 131ms (next.js: 2ms, application-code: 129ms)
+ POST /api/stripe/verify-session 200 in 636ms (next.js: 5ms, application-code: 632ms)
+ GET /login?next=%2Fhub 200 in 19ms (next.js: 2ms, application-code: 17ms)
+ GET /hub 200 in 28ms (next.js: 6ms, application-code: 22ms)
+ GET /login?next=%2Fhub 200 in 30ms (next.js: 4ms, application-code: 26ms)
+ POST /api/stripe/sync-premium 500 in 105ms (next.js: 5ms, application-code: 100ms)
+ GET / 200 in 21ms (next.js: 3ms, application-code: 17ms)
+ POST /api/stripe/checkout 200 in 479ms (next.js: 2ms, application-code: 476ms)
+ POST / 200 in 496ms (next.js: 2ms, application-code: 494ms)
+Hostinger Reach: contato sincronizado com sucesso. { message: 'Request accepted' }
+ GET /?success=true&kind=plano&session_id=cs_live_b1jUenmj9jJsKYOTpS5eboy7xmkeWT37j0lr929OqDFvSW44ZDGybIITku 200 in 91ms (next.js: 3ms, application-code: 88ms)
+ POST /api/stripe/verify-session 200 in 265ms (next.js: 3ms, application-code: 262ms)
+ GET /login?next=%2Fhub 200 in 23ms (next.js: 2ms, application-code: 20ms)
+ GET /onboarding?next=%2Fhub 200 in 124ms (next.js: 94ms, application-code: 29ms)
+ GET /hub 200 in 18ms (next.js: 2ms, application-code: 16ms)
+ GET /hub 200 in 22ms (next.js: 3ms, application-code: 19ms)
+ GET /hub/agentes-ativos 200 in 156ms (next.js: 120ms, application-code: 37ms)
+ GET /hub/agentes-ativos 200 in 35ms (next.js: 4ms, application-code: 31ms)
+ GET /hub/agente/analista-de-trafego 200 in 191ms (next.js: 138ms, application-code: 53ms)
+ GET /hub 200 in 18ms (next.js: 1974µs, application-code: 16ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 149ms (next.js: 106ms, application-code: 43ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 30ms (next.js: 3ms, application-code: 27ms)
+ GET /hub/agente/seo-geo 200 in 37ms (next.js: 11ms, application-code: 26ms)

@@ -4,7 +4,7 @@ import Footer from '../../components/layout/Footer';
 import StrategicHubOverview from '../../components/dashboard/StrategicHubOverview';
 import LuccaHubSupportWidget from '../../components/hub/LuccaHubSupportWidget';
 import { useAuth } from '../../context/AuthContext';
-import { resolveHubAccessState, getHubLoginRedirect, HUB_PLAN_REQUIRED_REDIRECT } from '../../lib/hub-access';
+import { resolveHubAccessState, getHubLoginRedirect, getHubOnboardingRedirect } from '../../lib/hub-access';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 
@@ -24,7 +24,7 @@ export default function HubPage() {
       return;
     }
     if (accessState === 'forbidden' && !premiumSyncing) {
-      router.replace(HUB_PLAN_REQUIRED_REDIRECT);
+      router.replace(getHubOnboardingRedirect(pathname));
     }
   }, [accessState, pathname, premiumSyncing, router]);
 

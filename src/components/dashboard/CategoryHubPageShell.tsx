@@ -7,7 +7,7 @@ import Footer from '../layout/Footer';
 import LuccaHubSupportWidget from '../hub/LuccaHubSupportWidget';
 import CategoryAgentManagementSection, { type AgentCategorySlug } from './CategoryAgentManagementSection';
 import { useAuth } from '../../context/AuthContext';
-import { resolveHubAccessState, getHubLoginRedirect, HUB_PLAN_REQUIRED_REDIRECT } from '../../lib/hub-access';
+import { resolveHubAccessState, getHubLoginRedirect, getHubOnboardingRedirect } from '../../lib/hub-access';
 
 export default function CategoryHubPageShell({ categorySlug }: { categorySlug: AgentCategorySlug }) {
   const { user, profile, loading, premiumSyncing } = useAuth();
@@ -25,7 +25,7 @@ export default function CategoryHubPageShell({ categorySlug }: { categorySlug: A
       return;
     }
     if (accessState === 'forbidden' && !premiumSyncing) {
-      router.replace(HUB_PLAN_REQUIRED_REDIRECT);
+      router.replace(getHubOnboardingRedirect(pathname));
     }
   }, [accessState, pathname, premiumSyncing, router]);
 
