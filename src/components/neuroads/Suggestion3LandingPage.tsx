@@ -543,12 +543,13 @@ export default function Suggestion3LandingPage() {
               </div>
             </div>
 
-            <div className="relative z-30 h-[360px] w-full overflow-hidden bg-white sm:h-[470px] lg:-ml-[140px] lg:h-[560px] lg:w-[calc(100%+140px)] lg:pointer-events-none">
+            <div className="relative z-30 h-[390px] w-full overflow-hidden bg-white sm:h-[470px] lg:-ml-[140px] lg:h-[560px] lg:w-[calc(100%+140px)] lg:pointer-events-none">
               <Image
                 src="/images/template-match/hero-orbit-white-v1.png"
                 alt="Anel de energia da NeuroAds"
                 fill
-                className="object-cover object-right scale-[1.16] origin-right"
+                className="object-contain object-center scale-100 origin-center sm:object-cover sm:object-right sm:scale-[1.16] sm:origin-right"
+                sizes="(max-width: 639px) 100vw, (max-width: 1024px) 50vw, 560px"
                 priority
               />
 

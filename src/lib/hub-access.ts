@@ -30,6 +30,37 @@ function readRecord(value: unknown): Record<string, unknown> | null {
   return value as Record<string, unknown>;
 }
 
+function readTimestamp(value: unknown): number | null {
+  if (!value) return null;
+
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value > 1_000_000_000_000 ? value : value * 1000;
+  }
+
+  if (typeof value === 'string') {
+    const normalized = value.trim();
+    if (!normalized) return null;
+
+    const parsedNumber = Number(normalized);
+    if (Number.isFinite(parsedNumber)) {
+      return parsedNumber > 1_000_000_000_000 ? parsedNumber : parsedNumber * 1000;
+    }
+
+    const parsedDate = Date.parse(normalized);
+    return Number.isFinite(parsedDate) ? parsedDate : null;
+  }
+
+  if (typeof value === 'object') {
+    const maybeTimestamp = value as { toMillis?: () => number };
+    if (typeof maybeTimestamp.toMillis === 'function') {
+      const millis = maybeTimestamp.toMillis();
+      return Number.isFinite(millis) ? millis : null;
+    }
+  }
+
+  return null;
+}
+
 function isValidSite(value: string | null): boolean {
   if (!value) return false;
   const normalized = value.trim().toLowerCase();
@@ -140,8 +171,113 @@ function normalizeStatus(value: string | null): string {
   return value
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[\s-]+/g, '_')
     .toLowerCase()
     .trim();
+}
+
+function hasSelectedPlan(profileRecord: Record<string, unknown>, onboardingRecord: Record<string, unknown> | null): boolean {
+  const profileDetails = readRecord(profileRecord.profileDetails);
+
+  const topLevelPlan =
+    readString(profileRecord.selectedPlanSlug) ??
+    readString(profileRecord.planSlug) ??
+    readString(profileRecord.selectedPlan) ??
+    readString(profileRecord.planName) ??
+    readString(profileRecord.currentPlan) ??
+    readString(profileRecord.plan) ??
+    readString(profileRecord.tier) ??
+    readString(profileDetails?.selectedPlanSlug) ??
+    readString(profileDetails?.planSlug) ??
+    readString(profileDetails?.selectedPlan) ??
+    readString(profileDetails?.planName) ??
+    readString(profileDetails?.currentPlan) ??
+    readString(profileDetails?.plan) ??
+    readString(profileDetails?.tier);
+
+  if (topLevelPlan) return true;
+
+  const onboardingPlan =
+    readString(onboardingRecord?.selectedPlanSlug) ??
+    readString(onboardingRecord?.planSlug) ??
+    readString(onboardingRecord?.selectedPlan) ??
+    readString(onboardingRecord?.planName) ??
+    readString(onboardingRecord?.currentPlan) ??
+    readString(onboardingRecord?.plan) ??
+    readString(onboardingRecord?.tier);
+
+  return Boolean(onboardingPlan);
+}
+
+function resolveTrialEndsAt(
+  profileRecord: Record<string, unknown>,
+  onboardingRecord: Record<string, unknown> | null
+): number | null {
+  const candidates: unknown[] = [
+    profileRecord.trialEndsAt,
+    profileRecord.trialEndAt,
+    profileRecord.trialEnd,
+    profileRecord.trial_end,
+    profileRecord.currentPeriodEnd,
+    profileRecord.current_period_end,
+    onboardingRecord?.trialEndsAt,
+    onboardingRecord?.trialEndAt,
+    onboardingRecord?.trialEnd,
+    onboardingRecord?.trial_end,
+    onboardingRecord?.currentPeriodEnd,
+    onboardingRecord?.current_period_end,
+  ];
+
+  for (const candidate of candidates) {
+    const parsed = readTimestamp(candidate);
+    if (parsed && Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  const onboardingCompletedAt = readTimestamp(profileRecord.onboardingCompletedAt);
+  if (onboardingCompletedAt) {
+    return onboardingCompletedAt + 14 * 24 * 60 * 60 * 1000;
+  }
+
+  const onboardingRecordCompletedAt =
+    readTimestamp(onboardingRecord?.onboardingCompletedAt) ?? readTimestamp(onboardingRecord?.completedAt);
+  if (onboardingRecordCompletedAt) {
+    return onboardingRecordCompletedAt + 14 * 24 * 60 * 60 * 1000;
+  }
+
+  const registeredAt = readTimestamp(profileRecord.registeredAt);
+  if (registeredAt) {
+    return registeredAt + 14 * 24 * 60 * 60 * 1000;
+  }
+
+  const createdAt = readTimestamp(profileRecord.createdAt);
+  if (createdAt) {
+    return createdAt + 14 * 24 * 60 * 60 * 1000;
+  }
+
+  return null;
+}
+
+function hasActiveTrialPeriod(profileRecord: Record<string, unknown>, onboardingRecord: Record<string, unknown> | null): boolean {
+  const trialEndsAt = resolveTrialEndsAt(profileRecord, onboardingRecord);
+  if (!trialEndsAt || trialEndsAt <= Date.now()) return false;
+
+  const normalizedStatus = normalizeStatus(
+    readString(profileRecord.subscriptionStatus) ??
+      readString(profileRecord.stripeSubscriptionStatus) ??
+      readString(profileRecord.status) ??
+      readString(onboardingRecord?.subscriptionStatus) ??
+      readString(onboardingRecord?.stripeSubscriptionStatus) ??
+      readString(onboardingRecord?.status)
+  );
+
+  const statusIndicatesTrial = normalizedStatus.includes('trial') || normalizedStatus === 'teste' || normalizedStatus === 'em_teste';
+  const hasSubscriptionSignal = Boolean(
+    readString(profileRecord.stripeSubscriptionId) ?? readString(onboardingRecord?.stripeSubscriptionId)
+  );
+
+  return (hasSelectedPlan(profileRecord, onboardingRecord) || hasSubscriptionSignal) && (statusIndicatesTrial || !normalizedStatus);
 }
 
 export function hasActiveHubSubscription(profile: unknown): boolean {
@@ -164,7 +300,11 @@ export function hasActiveHubSubscription(profile: unknown): boolean {
       readString(onboardingRecord?.status)
   );
 
-  return ['trialing', 'active', 'past_due', 'unpaid', 'incomplete', 'ativo'].includes(normalizedStatus);
+  if (['trialing', 'trial', 'active', 'past_due', 'unpaid', 'incomplete', 'ativo', 'contratado', 'paid'].includes(normalizedStatus)) {
+    return true;
+  }
+
+  return hasActiveTrialPeriod(profileRecord, onboardingRecord);
 }
 
 export function hasHubPlanAccess(profile: unknown): boolean {

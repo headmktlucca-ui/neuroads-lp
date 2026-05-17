@@ -54,7 +54,7 @@ function LoginPageContent() {
       if (!subscriptionActive) {
         await logout();
         setAuthErrorMessage(
-          'Acesso ao login liberado somente para contas com plano ativo. Contrate um plano para continuar.'
+          'Acesso ao login liberado somente para contas com plano ativo ou período gratuito inicial válido.'
         );
         setIsCheckingAccess(false);
         return;
@@ -105,7 +105,7 @@ function LoginPageContent() {
             <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">Hub Estratégico</p>
             <h1 className="mt-2 text-[30px] font-extrabold leading-tight text-text-main">Validando sua assinatura</h1>
             <p className="mt-3 text-[15px] leading-relaxed text-text-muted">
-              Estamos confirmando seu plano ativo para liberar o login no Hub.
+              Estamos confirmando seu plano (ativo ou em período gratuito inicial) para liberar o login no Hub.
             </p>
             <div className="mt-6 w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           </section>
