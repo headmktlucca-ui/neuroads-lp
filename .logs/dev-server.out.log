@@ -236,3 +236,6 @@ Hostinger Reach: contato sincronizado com sucesso. { message: 'Request accepted'
 ✓ Compiled in 171ms
 ✓ Compiled in 222ms
  GET / 200 in 809ms (next.js: 45ms, application-code: 764ms)
+ GET / 200 in 789ms (next.js: 21ms, application-code: 768ms)
+ POST /api/stripe/checkout 200 in 934ms (next.js: 14ms, application-code: 920ms)
+ GET /?canceled=true 200 in 154ms (next.js: 6ms, application-code: 148ms)

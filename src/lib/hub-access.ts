@@ -4,6 +4,7 @@ export const HUB_PLAN_REQUIRED_REDIRECT = '/onboarding';
 export const HUB_ONBOARDING_REDIRECT = HUB_PLAN_REQUIRED_REDIRECT;
 
 export type HubAccessStatus = 'loading' | 'allowed' | 'unauthenticated' | 'forbidden';
+const INITIAL_TRIAL_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
 
 function normalizePathCandidate(value: string | null | undefined): string | null {
   if (!value || !value.startsWith('/')) return null;
@@ -280,6 +281,42 @@ function hasActiveTrialPeriod(profileRecord: Record<string, unknown>, onboarding
   return (hasSelectedPlan(profileRecord, onboardingRecord) || hasSubscriptionSignal) && (statusIndicatesTrial || !normalizedStatus);
 }
 
+function isWithinInitialTrialWindow(
+  profileRecord: Record<string, unknown>,
+  onboardingRecord: Record<string, unknown> | null
+): boolean {
+  const now = Date.now();
+  const registeredAt =
+    readTimestamp(profileRecord.onboardingCompletedAt) ??
+    readTimestamp(onboardingRecord?.onboardingCompletedAt) ??
+    readTimestamp(onboardingRecord?.completedAt) ??
+    readTimestamp(profileRecord.registeredAt) ??
+    readTimestamp(profileRecord.createdAt) ??
+    readTimestamp(onboardingRecord?.registeredAt) ??
+    readTimestamp(onboardingRecord?.createdAt);
+
+  if (!registeredAt) return false;
+  if (registeredAt > now) return false;
+  if (now - registeredAt > INITIAL_TRIAL_WINDOW_MS) return false;
+
+  const normalizedStatus = normalizeStatus(
+    readString(profileRecord.subscriptionStatus) ??
+      readString(profileRecord.stripeSubscriptionStatus) ??
+      readString(profileRecord.status) ??
+      readString(onboardingRecord?.subscriptionStatus) ??
+      readString(onboardingRecord?.stripeSubscriptionStatus) ??
+      readString(onboardingRecord?.status)
+  );
+
+  if (['canceled', 'cancelled', 'incomplete_expired', 'expired', 'unpaid'].includes(normalizedStatus)) {
+    return false;
+  }
+
+  // Fallback operacional: durante os primeiros 14 dias, não bloquear usuários com
+  // cadastro completo por ausência de sinalização premium já sincronizada.
+  return hasCompletedCompanyRegistration(profileRecord);
+}
+
 export function hasActiveHubSubscription(profile: unknown): boolean {
   if (!profile || typeof profile !== 'object') return false;
 
@@ -304,7 +341,11 @@ export function hasActiveHubSubscription(profile: unknown): boolean {
     return true;
   }
 
-  return hasActiveTrialPeriod(profileRecord, onboardingRecord);
+  if (hasActiveTrialPeriod(profileRecord, onboardingRecord)) {
+    return true;
+  }
+
+  return isWithinInitialTrialWindow(profileRecord, onboardingRecord);
 }
 
 export function hasHubPlanAccess(profile: unknown): boolean {
