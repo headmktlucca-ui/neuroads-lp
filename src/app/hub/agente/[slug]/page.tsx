@@ -398,13 +398,13 @@ export default function AgentEntryPage() {
       </div>
 
       {entry && isAutomationModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4">
+        <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center">
           <div className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm" onClick={() => setIsAutomationModalOpen(false)} />
 
-          <div className="relative w-full max-w-3xl rounded-[32px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_22px_56px_rgba(15,23,42,0.3)]">
+          <div className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto rounded-[26px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_22px_56px_rgba(15,23,42,0.3)] sm:rounded-[32px]">
             <div className="rounded-[30px] bg-white/90 p-[1px]">
               <div className="rounded-[28px] border border-[#FFF1E8] bg-white p-6 md:p-7">
-                <div className="flex items-start justify-between gap-3 mb-5">
+                <div className="mb-5 flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs uppercase tracking-widest text-primary font-bold mb-1">Automação Inteligente</p>
                     <h3 className="text-2xl md:text-3xl font-black text-text-main">Ativar Rotina do Agente</h3>
@@ -543,10 +543,10 @@ export default function AgentEntryPage() {
       )}
 
       {entry && isHistoryModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4 py-6">
+        <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center">
           <div className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm" onClick={() => setIsHistoryModalOpen(false)} />
 
-          <div className="relative w-full max-w-6xl max-h-[90vh] overflow-hidden rounded-[32px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_22px_56px_rgba(15,23,42,0.3)]">
+          <div className="relative w-full max-w-6xl max-h-[92vh] overflow-hidden rounded-[26px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_22px_56px_rgba(15,23,42,0.3)] sm:rounded-[32px]">
             <div className="rounded-[30px] bg-white/90 p-[1px] h-full">
               <div className="rounded-[28px] border border-[#FFF1E8] bg-white h-full flex flex-col">
                 <div className="flex items-start justify-between gap-3 px-6 pt-6 pb-5 border-b border-[#F1F5F9]">

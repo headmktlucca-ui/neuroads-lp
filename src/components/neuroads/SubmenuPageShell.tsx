@@ -402,7 +402,7 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
   return (
     <main className="min-h-screen bg-[#f4f6fa] text-[#1a2234]">
       <section className="mx-auto max-w-[1260px] px-5 pb-16 pt-5 md:px-8">
-        <header className="fixed left-1/2 top-4 z-[90] flex w-[min(calc(100%-2.5rem),1196px)] -translate-x-1/2 items-center justify-between gap-3 rounded-full border border-black/[0.06] bg-white px-4 py-3 shadow-[0_8px_26px_rgba(10,18,30,0.04)] sm:px-5 md:px-7">
+        <header className="fixed left-1/2 top-4 z-[90] flex w-[min(calc(100%-1.5rem),1196px)] -translate-x-1/2 items-center justify-between gap-2 rounded-full border border-black/[0.06] bg-white px-3 py-3 shadow-[0_8px_26px_rgba(10,18,30,0.04)] sm:w-[min(calc(100%-2.5rem),1196px)] sm:gap-3 sm:px-5 md:px-7">
           <Link href="/" className="flex items-center" aria-label="Voltar para Home">
             <Image src="/images/logo2026.png" alt="NeuroAds" width={156} height={34} className="h-8 w-auto" priority />
           </Link>
@@ -456,10 +456,11 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
             <button
               type="button"
               onClick={openSpecialistChat}
-              className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-4 py-2.5 text-[11px] font-extrabold text-white shadow-[0_10px_24px_rgba(255,106,0,0.34)] transition hover:bg-[#e95f00] sm:px-5 sm:text-[12px]"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#ff6a00] px-3 py-2.5 text-[11px] font-extrabold text-white shadow-[0_10px_24px_rgba(255,106,0,0.34)] transition hover:bg-[#e95f00] sm:gap-2 sm:px-5 sm:text-[12px]"
             >
-              Fale com o especialista
-              <ArrowRight size={14} />
+              <span className="sm:hidden">Especialista</span>
+              <span className="hidden sm:inline">Fale com o especialista</span>
+              <ArrowRight size={14} className="hidden sm:inline" />
             </button>
             <button
               type="button"
@@ -482,7 +483,7 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
         ) : null}
 
         <div
-          className={`fixed left-1/2 top-[84px] z-[95] w-[min(calc(100%-2.5rem),460px)] -translate-x-1/2 overflow-hidden rounded-[20px] border border-[#e5eaf3] bg-white p-4 shadow-[0_20px_44px_rgba(12,22,38,0.16)] transition lg:hidden ${
+          className={`fixed left-1/2 top-[84px] z-[95] max-h-[calc(100dvh-110px)] w-[min(calc(100%-1.5rem),460px)] -translate-x-1/2 overflow-y-auto overscroll-contain rounded-[20px] border border-[#e5eaf3] bg-white p-4 shadow-[0_20px_44px_rgba(12,22,38,0.16)] transition sm:w-[min(calc(100%-2.5rem),460px)] lg:hidden ${
             isMobileMenuOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-2 opacity-0'
           }`}
         >

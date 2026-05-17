@@ -492,7 +492,7 @@ export default function ValuesResourcesSection() {
       </div>
 
       {showSuccessModal && (
-        <div className="fixed inset-0 z-[95] flex items-center justify-center bg-[#0a111d]/70 p-4">
+        <div className="fixed inset-0 z-[95] flex items-start justify-center overflow-y-auto bg-[#0a111d]/70 p-4 sm:items-center">
           <div className="w-full max-w-[560px] rounded-[20px] border border-[#e6ebf3] bg-white p-6 shadow-[0_30px_70px_rgba(4,10,20,0.35)]">
             <h3 className="text-[26px] font-extrabold text-[#1b2230]">{checkoutCopy[successKind].title}</h3>
             <p className="mt-3 text-[15px] leading-relaxed text-[#5a6478]">{checkoutCopy[successKind].description}</p>

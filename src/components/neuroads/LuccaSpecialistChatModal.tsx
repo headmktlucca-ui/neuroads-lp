@@ -183,9 +183,9 @@ export default function LuccaSpecialistChatModal({
   };
 
   return (
-    <div className="fixed inset-0 z-[220] flex items-center justify-center bg-[#060d18]/72 px-4 py-5 backdrop-blur-[3px]">
-      <div className="relative flex h-[90vh] w-full max-w-[980px] flex-col rounded-[26px] border border-[#e6e8ee] bg-[#f8f9fc] shadow-[0_35px_90px_rgba(0,0,0,0.35)]">
-        <div className="flex items-center justify-between border-b border-[#e7ebf2] bg-white px-7 py-4 rounded-t-[26px]">
+    <div className="fixed inset-0 z-[220] flex items-start justify-center overflow-y-auto bg-[#060d18]/72 px-3 py-3 backdrop-blur-[3px] sm:items-center sm:px-4 sm:py-5">
+      <div className="relative flex h-[calc(100dvh-1.5rem)] min-h-[calc(100dvh-1.5rem)] w-full max-w-[980px] flex-col rounded-[22px] border border-[#e6e8ee] bg-[#f8f9fc] shadow-[0_35px_90px_rgba(0,0,0,0.35)] sm:h-[90vh] sm:min-h-0 sm:rounded-[26px]">
+        <div className="flex items-center justify-between rounded-t-[22px] border-b border-[#e7ebf2] bg-white px-4 py-3 sm:rounded-t-[26px] sm:px-7 sm:py-4">
           <div className="flex items-center gap-3">
             <div className="relative h-12 w-12 overflow-hidden rounded-full border border-[#e1e6f0] bg-[#f3f6fb] shadow-[0_4px_12px_rgba(8,18,38,0.14)]">
               <Image
@@ -212,11 +212,11 @@ export default function LuccaSpecialistChatModal({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-7 py-6 space-y-5">
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-5 sm:px-7 sm:py-6">
           {messages.map((message) => (
             <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div
-                className={`max-w-[82%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed ${
+                className={`max-w-[90%] rounded-2xl px-4 py-3 text-[14px] leading-relaxed sm:max-w-[82%] ${
                   message.role === 'user'
                     ? 'bg-[#0f172a] text-white'
                     : 'border border-[#e1e6f0] bg-white text-[#202a3a]'
@@ -325,7 +325,7 @@ export default function LuccaSpecialistChatModal({
 
         </div>
 
-        <div className="border-t border-[#e7ebf2] bg-white px-7 py-4 rounded-b-[26px]">
+        <div className="rounded-b-[22px] border-t border-[#e7ebf2] bg-white px-4 py-3 sm:rounded-b-[26px] sm:px-7 sm:py-4">
           <div className="flex items-center gap-2 rounded-full border border-[#dbe1ec] bg-[#f5f7fb] px-3 py-2">
             <input
               value={freeText}

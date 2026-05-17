@@ -320,7 +320,7 @@ export default function ServicesSection() {
       {/* MODAL */}
       <AnimatePresence>
         {detailsAgent && (
-          <div className="fixed inset-0 z-[320] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[320] flex items-start justify-center overflow-y-auto p-4 sm:items-center">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -332,7 +332,7 @@ export default function ServicesSection() {
               initial={{ scale: 0.97, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.97, opacity: 0 }}
-              className="relative w-full max-w-5xl bg-white rounded-[32px] border border-primary/40 shadow-2xl overflow-hidden"
+              className="relative w-full max-w-5xl max-h-[92vh] overflow-y-auto rounded-[24px] border border-primary/40 bg-white shadow-2xl sm:rounded-[32px]"
             >
               <button
                 type="button"
@@ -343,7 +343,7 @@ export default function ServicesSection() {
                 <X size={20} />
               </button>
 
-              <div className="p-8 lg:p-10 border-b border-border flex items-center gap-5">
+              <div className="flex items-center gap-4 border-b border-border p-5 sm:gap-5 sm:p-8 lg:p-10">
                 <div className="w-24 h-24 rounded-[22px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_10px_20px_rgba(255,107,0,0.25)]">
                   <div className="w-full h-full rounded-[18px] overflow-hidden relative bg-white">
                     <Image src={detailsAgent.image} alt={detailsAgent.title} fill className="object-cover" />
@@ -353,11 +353,11 @@ export default function ServicesSection() {
                   <p className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-[0.14em] text-primary border border-primary/25 bg-orange-light">
                     {detailsAgent.category}
                   </p>
-                  <h3 className="text-4xl font-black text-text-main mt-4">{detailsAgent.title}</h3>
+                  <h3 className="mt-3 text-[28px] font-black text-text-main sm:mt-4 sm:text-4xl">{detailsAgent.title}</h3>
                 </div>
               </div>
 
-              <div className="p-8 lg:p-10 grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-6">
+              <div className="grid grid-cols-1 gap-6 p-5 sm:p-8 lg:grid-cols-[1.2fr_0.8fr] lg:p-10">
                 <div>
                   <p className="text-[13px] font-black uppercase tracking-[0.14em] text-primary mb-4">Descrição completa</p>
                   <p className="text-[16px] md:text-[18px] text-text-muted leading-relaxed">{detailsAgent.longDescription}</p>
@@ -402,9 +402,9 @@ export default function ServicesSection() {
         )}
 
         {isModalOpen && (
-          <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[300] flex items-start justify-center overflow-y-auto p-4 sm:items-center">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsModalOpen(false)} className="absolute inset-0 bg-charcoal/60 backdrop-blur-md" />
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative w-full max-w-lg bg-white rounded-[32px] shadow-2xl p-10">
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative w-full max-w-lg rounded-[24px] bg-white p-6 shadow-2xl sm:rounded-[32px] sm:p-10">
               <h3 className="text-2xl font-bold text-text-main mb-2">Finalizar Solicitação</h3>
               <p className="text-text-muted mb-8 italic">Seus {selectedAgents.size} agentes selecionados serão incluídos no plano.</p>
               

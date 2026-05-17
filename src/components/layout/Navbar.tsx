@@ -515,7 +515,7 @@ export default function Navbar() {
       <header
       className={
         isHubNavbarStyle
-          ? 'fixed left-1/2 top-4 z-[200] w-[min(calc(100%-2.5rem),1196px)] -translate-x-1/2'
+          ? 'fixed left-1/2 top-4 z-[200] w-[min(calc(100%-1.5rem),1196px)] -translate-x-1/2 sm:w-[min(calc(100%-2.5rem),1196px)]'
           : 'fixed top-0 left-0 w-full z-[200] pt-3 px-4 lg:px-6'
       }
     >
@@ -718,7 +718,7 @@ export default function Navbar() {
       <div
         className={`md:hidden bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] z-[210] overflow-y-auto transition-all duration-300 ${
           isHubNavbarStyle
-            ? 'fixed left-1/2 top-[84px] max-h-[calc(100dvh-108px)] w-[min(calc(100%-2.5rem),460px)] -translate-x-1/2 rounded-[20px] p-4'
+            ? 'fixed left-1/2 top-[84px] max-h-[calc(100dvh-108px)] w-[min(calc(100%-1.5rem),460px)] -translate-x-1/2 rounded-[20px] p-4 sm:w-[min(calc(100%-2.5rem),460px)]'
             : 'absolute top-24 left-4 right-4 max-h-[calc(100dvh-120px)] rounded-[24px] p-5'
         } ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
       >
