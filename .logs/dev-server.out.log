@@ -239,3 +239,16 @@ Hostinger Reach: contato sincronizado com sucesso. { message: 'Request accepted'
  GET / 200 in 789ms (next.js: 21ms, application-code: 768ms)
  POST /api/stripe/checkout 200 in 934ms (next.js: 14ms, application-code: 920ms)
  GET /?canceled=true 200 in 154ms (next.js: 6ms, application-code: 148ms)
+ GET / 200 in 118ms (next.js: 3ms, application-code: 115ms)
+ GET /?canceled=true 200 in 325ms (next.js: 7ms, application-code: 318ms)
+Hostinger Reach: contato sincronizado com sucesso. { message: 'Request accepted' }
+ POST /?canceled=true 200 in 714ms (next.js: 4ms, application-code: 710ms)
+  └─ ƒ syncToHostingerReach({"email":"contato.neuroads@gmail.com","name":"NeuroAds Sistemas em Marketing","tags":["Usuários Ativos"]}) in 652ms src/app/actions/hostinger.ts
+ GET / 200 in 169ms (next.js: 5ms, application-code: 164ms)
+ GET /login?next=%2Fhub 200 in 196ms (next.js: 169ms, application-code: 27ms)
+ POST /api/stripe/sync-premium 500 in 212ms (next.js: 127ms, application-code: 85ms)
+ GET / 200 in 21ms (next.js: 5ms, application-code: 17ms)
+ POST /api/stripe/checkout 200 in 820ms (next.js: 3ms, application-code: 817ms)
+ GET /?canceled=true 200 in 128ms (next.js: 6ms, application-code: 122ms)
+ GET /a-neuroads/sobre 200 in 44ms (next.js: 17ms, application-code: 27ms)
+ GET / 200 in 41ms (next.js: 7ms, application-code: 35ms)
