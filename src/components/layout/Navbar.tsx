@@ -116,7 +116,7 @@ export default function Navbar() {
   const [connectorConfig, setConnectorConfig] = useState(DEFAULT_CONNECTOR_CONFIG);
   const [agentStatusVersion, setAgentStatusVersion] = useState(0);
   const [whatsApp, setWhatsApp] = useState('');
-  const { user, profile, logout, isAdmin } = useAuth();
+  const { user, userEmail, profile, logout, isAdmin } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -442,12 +442,14 @@ export default function Navbar() {
     if (!user) return;
 
     const normalizedSite = normalizeHttpsMaskedUrlInput(companyForm.site);
+    const authenticatedEmail = userEmail?.trim() || user.email?.trim() || null;
     const payload = {
       companyName: companyForm.companyName.trim(),
       site: normalizedSite,
       instagram: companyForm.instagram.trim(),
       linkedin: companyForm.linkedin.trim(),
       updatedAt: Date.now(),
+      ...(authenticatedEmail ? { authEmail: authenticatedEmail, email: authenticatedEmail } : {}),
       onboarding: {
         companyName: companyForm.companyName.trim(),
         site: normalizedSite,
@@ -474,6 +476,7 @@ export default function Navbar() {
     if (!user) return;
 
     const normalizedWhatsapp = whatsApp.trim();
+    const authenticatedEmail = userEmail?.trim() || user.email?.trim() || null;
     try {
       const db = getFirebaseDb();
       const userRef = doc(db, 'users', user.uid);
@@ -482,6 +485,7 @@ export default function Navbar() {
         {
           whatsapp: normalizedWhatsapp,
           updatedAt: Date.now(),
+          ...(authenticatedEmail ? { authEmail: authenticatedEmail, email: authenticatedEmail } : {}),
           onboarding: {
             whatsapp: normalizedWhatsapp,
           },

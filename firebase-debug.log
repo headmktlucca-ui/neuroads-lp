@@ -1,0 +1,193 @@
+[debug] [2026-05-17T17:28:04.476Z] ----------------------------------------------------------------------
+[debug] [2026-05-17T17:28:04.479Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\claud\AppData\Local\npm-cache\_npx\7750544ccf494d8b\node_modules\firebase-tools\lib\bin\firebase.js deploy --only firestore --project neuroads-production
+[debug] [2026-05-17T17:28:04.480Z] CLI Version:   15.18.0
+[debug] [2026-05-17T17:28:04.480Z] Platform:      win32
+[debug] [2026-05-17T17:28:04.480Z] Node Version:  v24.15.0
+[debug] [2026-05-17T17:28:04.480Z] Time:          Sun May 17 2026 14:28:04 GMT-0300 (Horário Padrão de Brasília)
+[debug] [2026-05-17T17:28:04.480Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-05-17T17:28:07.591Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-17T17:28:07.593Z] > authorizing via signed-in user (headmktlucca@gmail.com)
+[debug] [2026-05-17T17:28:07.593Z] [iam] checking project neuroads-production for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
+[debug] [2026-05-17T17:28:07.596Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:07.597Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:07.600Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/neuroads-production:testIamPermissions [none]
+[debug] [2026-05-17T17:28:07.600Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/neuroads-production:testIamPermissions  x-goog-user-project=neuroads-production
+[debug] [2026-05-17T17:28:07.601Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/neuroads-production:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[debug] [2026-05-17T17:28:08.675Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/neuroads-production:testIamPermissions 200
+[debug] [2026-05-17T17:28:08.675Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/neuroads-production:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[info] 
+[info] === Deploying to 'neuroads-production'...
+[info] 
+[info] i  deploying firestore 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2026-05-17T17:28:08.683Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:08.683Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:08.683Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/neuroads-production/services/firestore.googleapis.com [none]
+[debug] [2026-05-17T17:28:08.683Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/neuroads-production/services/firestore.googleapis.com  x-goog-user-project=neuroads-production
+[debug] [2026-05-17T17:28:09.801Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/neuroads-production/services/firestore.googleapis.com 200
+[debug] [2026-05-17T17:28:09.801Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/neuroads-production/services/firestore.googleapis.com [omitted]
+[info] +  firestore: required API firestore.googleapis.com is enabled 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2026-05-17T17:28:09.811Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:09.811Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:09.811Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) [none]
+[debug] [2026-05-17T17:28:10.065Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) 200
+[debug] [2026-05-17T17:28:10.065Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) {"name":"projects/neuroads-production/databases/(default)","uid":"e467f00a-94de-4ab9-acad-f5ef99008738","createTime":"2026-05-11T14:37:05.472969Z","updateTime":"2026-05-11T14:37:05.472969Z","locationId":"southamerica-east1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2026-05-17T16:28:12.189442Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"i","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IOvH16nswJQDMJ3LkPq6sZQD"}
+[info] i  firestore: reading indexes from firestore.indexes.json... 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2026-05-17T17:28:10.067Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:10.068Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:10.068Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production:test [none]
+[debug] [2026-05-17T17:28:10.068Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production:test [omitted]
+[debug] [2026-05-17T17:28:11.496Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production:test 200
+[debug] [2026-05-17T17:28:11.496Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production:test {}
+[info] +  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2026-05-17T17:28:11.497Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:11.497Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:11.497Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/releases pageSize=10&pageToken=
+[debug] [2026-05-17T17:28:12.621Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/releases 200
+[debug] [2026-05-17T17:28:12.621Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/releases {"releases":[{"name":"projects/neuroads-production/releases/cloud.firestore","rulesetName":"projects/neuroads-production/rulesets/501e36c0-13b2-468c-957f-6a2343da6923","createTime":"2026-05-11T14:37:10.600865Z","updateTime":"2026-05-11T16:13:19.408324Z"}]}
+[debug] [2026-05-17T17:28:12.621Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:12.621Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:12.621Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets/501e36c0-13b2-468c-957f-6a2343da6923 [none]
+[debug] [2026-05-17T17:28:12.926Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets/501e36c0-13b2-468c-957f-6a2343da6923 200
+[debug] [2026-05-17T17:28:12.926Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets/501e36c0-13b2-468c-957f-6a2343da6923 [omitted]
+[info] i  firestore: uploading rules firestore.rules... 
+[debug] [2026-05-17T17:28:12.927Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:12.927Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:12.928Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets [none]
+[debug] [2026-05-17T17:28:12.928Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets [omitted]
+[debug] [2026-05-17T17:28:14.202Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets 200
+[debug] [2026-05-17T17:28:14.202Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets {"name":"projects/neuroads-production/rulesets/714f4b26-1999-42d5-a554-241c53d2c1f2","source":{"files":[{"content":"rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    function isSignedIn() {\n      return request.auth != null;\n    }\n\n    function isWorkspaceOwner(workspaceUserId) {\n      return isSignedIn() && request.auth.uid == workspaceUserId;\n    }\n\n    match /users/{userId} {\n      allow read, write: if isSignedIn() && request.auth.uid == userId;\n    }\n\n    match /users/{userId}/{document=**} {\n      allow read, write: if isSignedIn() && request.auth.uid == userId;\n    }\n\n    match /admin_workspaces/{workspaceUserId} {\n      allow read, write: if isWorkspaceOwner(workspaceUserId);\n\n      match /{collectionId}/{docId} {\n        allow read, write: if isWorkspaceOwner(workspaceUserId);\n      }\n\n      match /{collectionId}/{docId}/{nestedCollection}/{nestedDocId} {\n        allow read, write: if isWorkspaceOwner(workspaceUserId);\n      }\n    }\n\n    match /{document=**} {\n      allow read, write: if false;\n    }\n  }\n}\n","name":"firestore.rules"}]},"createTime":"2026-05-17T17:28:16.195919Z","metadata":{"services":["cloud.firestore"]}}
+[debug] [2026-05-17T17:28:14.203Z] [rules] created ruleset projects/neuroads-production/rulesets/714f4b26-1999-42d5-a554-241c53d2c1f2
+[info] i  firestore: deploying indexes... 
+[debug] [2026-05-17T17:28:14.204Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:14.204Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:14.204Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/indexes [none]
+[debug] [2026-05-17T17:28:14.327Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/indexes 200
+[debug] [2026-05-17T17:28:14.328Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/indexes {}
+[debug] [2026-05-17T17:28:14.328Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:14.328Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:14.329Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* [none]
+[debug] [2026-05-17T17:28:14.393Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* 200
+[debug] [2026-05-17T17:28:14.393Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* {"fields":[{"name":"projects/neuroads-production/databases/(default)/collectionGroups/__default__/fields/*","indexConfig":{"indexes":[{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"ASCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"DESCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","arrayConfig":"CONTAINS"}],"state":"READY"}]}}]}
+[debug] [2026-05-17T17:28:14.394Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:14.394Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:14.394Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) [none]
+[debug] [2026-05-17T17:28:14.463Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) 200
+[debug] [2026-05-17T17:28:14.463Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) {"name":"projects/neuroads-production/databases/(default)","uid":"e467f00a-94de-4ab9-acad-f5ef99008738","createTime":"2026-05-11T14:37:05.472969Z","updateTime":"2026-05-11T14:37:05.472969Z","locationId":"southamerica-east1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2026-05-17T16:28:16.589807Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"i","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IKWR5KvswJQDMJ3LkPq6sZQD"}
+[debug] [2026-05-17T17:28:14.463Z] Creating new index: {"collectionGroup":"crm_accounts","queryScope":"COLLECTION","fields":[{"fieldPath":"updatedAt","order":"DESCENDING"}]}
+[debug] [2026-05-17T17:28:14.463Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:14.463Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:14.463Z] >>> [apiv2][query] POST https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/crm_accounts/indexes [none]
+[debug] [2026-05-17T17:28:14.463Z] >>> [apiv2][body] POST https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/crm_accounts/indexes {"fields":[{"fieldPath":"updatedAt","order":"DESCENDING"}],"queryScope":"COLLECTION"}
+[debug] [2026-05-17T17:28:14.518Z] <<< [apiv2][status] POST https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/crm_accounts/indexes 400
+[debug] [2026-05-17T17:28:14.518Z] <<< [apiv2][body] POST https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/crm_accounts/indexes {"error":{"code":400,"message":"this index is not necessary, configure using single field index controls","status":"INVALID_ARGUMENT"}}
+[error] 
+[error] Error: Request to https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/crm_accounts/indexes had HTTP Error: 400, this index is not necessary, configure using single field index controls
+[debug] [2026-05-17T17:28:14.695Z] Error Context: {
+  "body": {
+    "error": {
+      "code": 400,
+      "message": "this index is not necessary, configure using single field index controls",
+      "status": "INVALID_ARGUMENT"
+    }
+  },
+  "response": {
+    "statusCode": 400
+  }
+}
+[debug] [2026-05-17T17:28:37.811Z] ----------------------------------------------------------------------
+[debug] [2026-05-17T17:28:37.813Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\claud\AppData\Local\npm-cache\_npx\7750544ccf494d8b\node_modules\firebase-tools\lib\bin\firebase.js deploy --only firestore --project neuroads-production
+[debug] [2026-05-17T17:28:37.813Z] CLI Version:   15.18.0
+[debug] [2026-05-17T17:28:37.813Z] Platform:      win32
+[debug] [2026-05-17T17:28:37.813Z] Node Version:  v24.15.0
+[debug] [2026-05-17T17:28:37.813Z] Time:          Sun May 17 2026 14:28:37 GMT-0300 (Horário Padrão de Brasília)
+[debug] [2026-05-17T17:28:37.813Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-05-17T17:28:38.801Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-05-17T17:28:38.801Z] > authorizing via signed-in user (headmktlucca@gmail.com)
+[debug] [2026-05-17T17:28:38.801Z] [iam] checking project neuroads-production for permissions ["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]
+[debug] [2026-05-17T17:28:38.803Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:38.803Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:38.804Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/neuroads-production:testIamPermissions [none]
+[debug] [2026-05-17T17:28:38.804Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/neuroads-production:testIamPermissions  x-goog-user-project=neuroads-production
+[debug] [2026-05-17T17:28:38.804Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/neuroads-production:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[debug] [2026-05-17T17:28:39.692Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/neuroads-production:testIamPermissions 200
+[debug] [2026-05-17T17:28:39.692Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/neuroads-production:testIamPermissions {"permissions":["datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get"]}
+[info] 
+[info] === Deploying to 'neuroads-production'...
+[info] 
+[info] i  deploying firestore 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[info] i  firestore: ensuring required API firestore.googleapis.com is enabled... 
+[debug] [2026-05-17T17:28:39.696Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:39.696Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:39.696Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) [none]
+[debug] [2026-05-17T17:28:39.897Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) 200
+[debug] [2026-05-17T17:28:39.898Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) {"name":"projects/neuroads-production/databases/(default)","uid":"e467f00a-94de-4ab9-acad-f5ef99008738","createTime":"2026-05-11T14:37:05.472969Z","updateTime":"2026-05-11T14:37:05.472969Z","locationId":"southamerica-east1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2026-05-17T16:28:42.022763Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"i","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"IJ249LfswJQDMJ3LkPq6sZQD"}
+[info] i  firestore: reading indexes from firestore.indexes.json... 
+[info] i  cloud.firestore: checking firestore.rules for compilation errors... 
+[debug] [2026-05-17T17:28:39.899Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:39.899Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:39.899Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production:test [none]
+[debug] [2026-05-17T17:28:39.899Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production:test [omitted]
+[debug] [2026-05-17T17:28:41.178Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production:test 200
+[debug] [2026-05-17T17:28:41.179Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production:test {}
+[info] +  cloud.firestore: rules file firestore.rules compiled successfully 
+[debug] [2026-05-17T17:28:41.181Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:41.181Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:41.181Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/releases pageSize=10&pageToken=
+[debug] [2026-05-17T17:28:42.323Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/releases 200
+[debug] [2026-05-17T17:28:42.323Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/releases {"releases":[{"name":"projects/neuroads-production/releases/cloud.firestore","rulesetName":"projects/neuroads-production/rulesets/501e36c0-13b2-468c-957f-6a2343da6923","createTime":"2026-05-11T14:37:10.600865Z","updateTime":"2026-05-11T16:13:19.408324Z"}]}
+[debug] [2026-05-17T17:28:42.324Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:42.324Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:42.324Z] >>> [apiv2][query] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets/501e36c0-13b2-468c-957f-6a2343da6923 [none]
+[debug] [2026-05-17T17:28:43.464Z] <<< [apiv2][status] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets/501e36c0-13b2-468c-957f-6a2343da6923 200
+[debug] [2026-05-17T17:28:43.464Z] <<< [apiv2][body] GET https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets/501e36c0-13b2-468c-957f-6a2343da6923 [omitted]
+[info] i  firestore: uploading rules firestore.rules... 
+[debug] [2026-05-17T17:28:43.465Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:43.466Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:43.466Z] >>> [apiv2][query] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets [none]
+[debug] [2026-05-17T17:28:43.466Z] >>> [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets [omitted]
+[debug] [2026-05-17T17:28:44.828Z] <<< [apiv2][status] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets 200
+[debug] [2026-05-17T17:28:44.828Z] <<< [apiv2][body] POST https://firebaserules.googleapis.com/v1/projects/neuroads-production/rulesets {"name":"projects/neuroads-production/rulesets/07c0d533-476a-429c-b4e3-85c7fa9e6542","source":{"files":[{"content":"rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    function isSignedIn() {\n      return request.auth != null;\n    }\n\n    function isWorkspaceOwner(workspaceUserId) {\n      return isSignedIn() && request.auth.uid == workspaceUserId;\n    }\n\n    match /users/{userId} {\n      allow read, write: if isSignedIn() && request.auth.uid == userId;\n    }\n\n    match /users/{userId}/{document=**} {\n      allow read, write: if isSignedIn() && request.auth.uid == userId;\n    }\n\n    match /admin_workspaces/{workspaceUserId} {\n      allow read, write: if isWorkspaceOwner(workspaceUserId);\n\n      match /{collectionId}/{docId} {\n        allow read, write: if isWorkspaceOwner(workspaceUserId);\n      }\n\n      match /{collectionId}/{docId}/{nestedCollection}/{nestedDocId} {\n        allow read, write: if isWorkspaceOwner(workspaceUserId);\n      }\n    }\n\n    match /{document=**} {\n      allow read, write: if false;\n    }\n  }\n}\n","name":"firestore.rules"}]},"createTime":"2026-05-17T17:28:46.817759Z","metadata":{"services":["cloud.firestore"]}}
+[debug] [2026-05-17T17:28:44.828Z] [rules] created ruleset projects/neuroads-production/rulesets/07c0d533-476a-429c-b4e3-85c7fa9e6542
+[info] i  firestore: deploying indexes... 
+[debug] [2026-05-17T17:28:44.829Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:44.829Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:44.829Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/indexes [none]
+[debug] [2026-05-17T17:28:44.869Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/indexes 200
+[debug] [2026-05-17T17:28:44.869Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/indexes {}
+[debug] [2026-05-17T17:28:44.869Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:44.869Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:44.869Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* [none]
+[debug] [2026-05-17T17:28:44.913Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* 200
+[debug] [2026-05-17T17:28:44.913Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/-/fields?filter=indexConfig.usesAncestorConfig=false OR ttlConfig:* {"fields":[{"name":"projects/neuroads-production/databases/(default)/collectionGroups/__default__/fields/*","indexConfig":{"indexes":[{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"ASCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","order":"DESCENDING"}],"state":"READY"},{"queryScope":"COLLECTION","fields":[{"fieldPath":"*","arrayConfig":"CONTAINS"}],"state":"READY"}]}}]}
+[debug] [2026-05-17T17:28:44.914Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:44.914Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:44.914Z] >>> [apiv2][query] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) [none]
+[debug] [2026-05-17T17:28:44.962Z] <<< [apiv2][status] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) 200
+[debug] [2026-05-17T17:28:44.963Z] <<< [apiv2][body] GET https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default) {"name":"projects/neuroads-production/databases/(default)","uid":"e467f00a-94de-4ab9-acad-f5ef99008738","createTime":"2026-05-11T14:37:05.472969Z","updateTime":"2026-05-11T14:37:05.472969Z","locationId":"southamerica-east1","type":"FIRESTORE_NATIVE","concurrencyMode":"PESSIMISTIC","versionRetentionPeriod":"3600s","earliestVersionTime":"2026-05-17T16:28:47.086134Z","appEngineIntegrationMode":"DISABLED","keyPrefix":"i","pointInTimeRecoveryEnablement":"POINT_IN_TIME_RECOVERY_DISABLED","deleteProtectionState":"DELETE_PROTECTION_DISABLED","databaseEdition":"STANDARD","freeTier":true,"realtimeUpdatesMode":"REALTIME_UPDATES_MODE_ENABLED","etag":"II2/qbrswJQDMJ3LkPq6sZQD"}
+[debug] [2026-05-17T17:28:44.963Z] Creating new index: {"collectionGroup":"agent_reports","queryScope":"COLLECTION","fields":[{"fieldPath":"agentKey","order":"ASCENDING"},{"fieldPath":"createdAtMs","order":"DESCENDING"}]}
+[debug] [2026-05-17T17:28:44.963Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:44.964Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:44.964Z] >>> [apiv2][query] POST https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/agent_reports/indexes [none]
+[debug] [2026-05-17T17:28:44.964Z] >>> [apiv2][body] POST https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/agent_reports/indexes {"fields":[{"fieldPath":"agentKey","order":"ASCENDING"},{"fieldPath":"createdAtMs","order":"DESCENDING"}],"queryScope":"COLLECTION"}
+[debug] [2026-05-17T17:28:45.101Z] <<< [apiv2][status] POST https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/agent_reports/indexes 200
+[debug] [2026-05-17T17:28:45.102Z] <<< [apiv2][body] POST https://firestore.googleapis.com/v1/projects/neuroads-production/databases/(default)/collectionGroups/agent_reports/indexes {"name":"projects/neuroads-production/databases/(default)/operations/S0U0aFhqT2dBQ0lDDCoDIDA0ODcwYjUyMTRkMC1kNDFhLTJjZTQtNmQ0MS01YTg0NmIwNSQac2VuaWxlcGlwCQpBEg","metadata":{"@type":"type.googleapis.com/google.firestore.admin.v1.IndexOperationMetadata","startTime":"2026-05-17T17:28:47.196545Z","index":"projects/neuroads-production/databases/(default)/collectionGroups/agent_reports/indexes/CICAgOjXh4EK","state":"INITIALIZING"}}
+[info] +  firestore: deployed indexes in firestore.indexes.json successfully for (default) database 
+[debug] [2026-05-17T17:28:45.102Z] [rules] releasing cloud.firestore with ruleset projects/neuroads-production/rulesets/07c0d533-476a-429c-b4e3-85c7fa9e6542
+[debug] [2026-05-17T17:28:45.102Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:45.102Z] Checked if tokens are valid: true, expires at: 1779042455606
+[debug] [2026-05-17T17:28:45.102Z] >>> [apiv2][query] PATCH https://firebaserules.googleapis.com/v1/projects/neuroads-production/releases/cloud.firestore [none]
+[debug] [2026-05-17T17:28:45.102Z] >>> [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/neuroads-production/releases/cloud.firestore {"release":{"name":"projects/neuroads-production/releases/cloud.firestore","rulesetName":"projects/neuroads-production/rulesets/07c0d533-476a-429c-b4e3-85c7fa9e6542"}}
+[debug] [2026-05-17T17:28:46.460Z] <<< [apiv2][status] PATCH https://firebaserules.googleapis.com/v1/projects/neuroads-production/releases/cloud.firestore 200
+[debug] [2026-05-17T17:28:46.461Z] <<< [apiv2][body] PATCH https://firebaserules.googleapis.com/v1/projects/neuroads-production/releases/cloud.firestore {"name":"projects/neuroads-production/releases/cloud.firestore","rulesetName":"projects/neuroads-production/rulesets/07c0d533-476a-429c-b4e3-85c7fa9e6542","createTime":"2026-05-11T14:37:10.600865Z","updateTime":"2026-05-17T17:28:48.458440Z"}
+[debug] [2026-05-17T17:28:46.461Z] [rules] updated release projects/neuroads-production/releases/cloud.firestore
+[info] +  firestore: released rules firestore.rules to cloud.firestore 
+[info] 
+[info] +  Deploy complete! 
+[info] 
+[info] Project Console: https://console.firebase.google.com/project/neuroads-production/overview

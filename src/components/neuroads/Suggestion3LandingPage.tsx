@@ -134,19 +134,19 @@ const testimonials = [
     quote: 'Essencial para impulsionar sua empresa, recomendo!!',
     name: 'Flávio Almeida',
     role: 'CEO, FJR TELEPROMPTER',
-    avatar: '/images/Fl%C3%A1vio%20Almeida.png',
+    avatar: '/images/Flávio Almeida.png',
   },
   {
     quote: 'Excelente profissional de tráfego pago! Sempre muito estratégico, atencioso e focado em performance.',
     name: 'Bruno Ribeiro',
     role: 'CEO, VOAR ESTÚDIO CRIATIVO',
-    avatar: '/images/Bruno%20Ribeiro.png',
+    avatar: '/images/Bruno Ribeiro.png',
   },
   {
     quote: 'Excelente agência, muito profissional e comprometida sempre buscando melhorar as atividades. Recomendo bastante!',
     name: 'Emanuel Silva',
     role: 'CONSULTOR FINANCEIRO',
-    avatar: '/images/Emanuel%20Silva.png',
+    avatar: '/images/Emanuel Silva.png',
   },
 ];
 

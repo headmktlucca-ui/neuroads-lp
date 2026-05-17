@@ -77,7 +77,12 @@ export async function POST(req: Request) {
           stripeCustomerId: customer.id,
           stripeSubscriptionId: activeSubscription.id,
           subscriptionStatus: activeSubscription.status,
+          trialEndsAt:
+            typeof activeSubscription.trial_end === 'number'
+              ? activeSubscription.trial_end * 1000
+              : null,
           authEmail: email,
+          email,
           updatedAt: Date.now(),
         },
         { merge: true }

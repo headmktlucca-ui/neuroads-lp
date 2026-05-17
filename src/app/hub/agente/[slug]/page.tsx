@@ -3,7 +3,7 @@
 import { useMemo, useEffect, useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { CheckCircle2, History, Sparkles, X } from 'lucide-react';
+import { CheckCircle2, Download, History, Sparkles, X } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Navbar from '../../../../components/layout/Navbar';
 import Footer from '../../../../components/layout/Footer';
@@ -20,7 +20,11 @@ import {
 } from '../../../../lib/hub-agents';
 import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } from '../../../../lib/hub-access';
 import { getFirebaseDb } from '../../../../lib/firebase';
-import { readSeoGeoHistory, type SeoGeoHistoryEntry } from '../../../../lib/seo-geo-history';
+import {
+  downloadAgentReport,
+  getLatestAgentReportsFromDb,
+  type AgentReportHistoryEntry,
+} from '../../../../lib/agent-report-history';
 
 type AutomationSuggestion = {
   id: string;
@@ -123,7 +127,9 @@ export default function AgentEntryPage() {
   const slug = params?.slug;
   const [isAutomationModalOpen, setIsAutomationModalOpen] = useState(false);
   const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
-  const [historyEntries, setHistoryEntries] = useState<SeoGeoHistoryEntry[]>([]);
+  const [historyEntries, setHistoryEntries] = useState<AgentReportHistoryEntry[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [historyError, setHistoryError] = useState<string | null>(null);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
   const [selectedAutomationId, setSelectedAutomationId] = useState<string | null>(null);
   const [automationActivated, setAutomationActivated] = useState(false);
@@ -176,11 +182,30 @@ export default function AgentEntryPage() {
     });
   };
 
-  const openHistoryModal = () => {
-    const entries = readSeoGeoHistory(user?.uid);
-    setHistoryEntries(entries);
-    setSelectedHistoryId(entries[0]?.id ?? null);
+  const openHistoryModal = async () => {
+    if (!user?.uid || !entry) {
+      setHistoryEntries([]);
+      setSelectedHistoryId(null);
+      setHistoryError('Faça login para acessar o histórico.');
+      setIsHistoryModalOpen(true);
+      return;
+    }
+
     setIsHistoryModalOpen(true);
+    setIsLoadingHistory(true);
+    setHistoryError(null);
+    try {
+      const entries = await getLatestAgentReportsFromDb(user.uid, entry.slug, 10);
+      setHistoryEntries(entries);
+      setSelectedHistoryId(entries[0]?.id ?? null);
+    } catch (error) {
+      console.error('Erro ao abrir histórico do agente:', error);
+      setHistoryEntries([]);
+      setSelectedHistoryId(null);
+      setHistoryError('Não foi possível carregar o histórico neste momento.');
+    } finally {
+      setIsLoadingHistory(false);
+    }
   };
 
   useEffect(() => {
@@ -303,11 +328,7 @@ export default function AgentEntryPage() {
                             <button
                               type="button"
                               onClick={() => {
-                                if (entry.title === 'SEO & GEO') {
-                                  openHistoryModal();
-                                  return;
-                                }
-                                router.push(`/hub/agente/${slug}#historico`);
+                                void openHistoryModal();
                               }}
                               className="px-6 py-3 rounded-full border border-[#D9E2F4] text-[#1D4ED8] bg-[#EEF4FF] font-bold tracking-widest text-sm uppercase hover:bg-[#E2ECFF] transition-colors"
                             >
@@ -347,11 +368,16 @@ export default function AgentEntryPage() {
               <div className="grid grid-cols-1 gap-6">
                 {entry.title === 'SEO & GEO' ? (
                   <div className="col-span-1">
-                    <SeoGeoWorkspace agentTitle={entry.title} />
+                    <SeoGeoWorkspace agentTitle={entry.title} agentSlug={entry.slug} agentCategory={entry.category} />
                   </div>
                 ) : entry.title === 'Analista de Tráfego' ? (
                   <div className="col-span-1">
-                    <TrafficAnalystWorkspace userId={user?.uid} />
+                    <TrafficAnalystWorkspace
+                      userId={user?.uid}
+                      agentSlug={entry.slug}
+                      agentTitle={entry.title}
+                      agentCategory={entry.category}
+                    />
                   </div>
                 ) : (
                   <div className="col-span-1">
@@ -516,7 +542,7 @@ export default function AgentEntryPage() {
         </div>
       )}
 
-      {entry && entry.title === 'SEO & GEO' && isHistoryModalOpen && (
+      {entry && isHistoryModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center px-4 py-6">
           <div className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm" onClick={() => setIsHistoryModalOpen(false)} />
 
@@ -525,10 +551,10 @@ export default function AgentEntryPage() {
               <div className="rounded-[28px] border border-[#FFF1E8] bg-white h-full flex flex-col">
                 <div className="flex items-start justify-between gap-3 px-6 pt-6 pb-5 border-b border-[#F1F5F9]">
                   <div>
-                    <p className="text-xs uppercase tracking-widest text-primary font-bold mb-1">SEO & GEO</p>
-                    <h3 className="text-2xl md:text-3xl font-black text-text-main">Histórico de Pesquisas</h3>
+                    <p className="text-xs uppercase tracking-widest text-primary font-bold mb-1">{entry.category}</p>
+                    <h3 className="text-2xl md:text-3xl font-black text-text-main">Histórico de Relatórios</h3>
                     <p className="text-sm text-text-muted mt-2">
-                      Selecione uma auditoria para visualizar o resultado completo gerado anteriormente.
+                      Últimos 10 relatórios do agente <strong>{entry.title}</strong>, prontos para visualização e download.
                     </p>
                   </div>
                   <button
@@ -541,10 +567,22 @@ export default function AgentEntryPage() {
                   </button>
                 </div>
 
-                {historyEntries.length === 0 ? (
+                {isLoadingHistory ? (
                   <div className="px-6 py-10">
                     <div className="rounded-2xl border border-[#E3E8EF] bg-[#F8FAFC] px-5 py-6 text-sm text-text-muted">
-                      Ainda não existem pesquisas salvas neste agente. Gere uma auditoria para começar o histórico.
+                      Carregando histórico...
+                    </div>
+                  </div>
+                ) : historyError ? (
+                  <div className="px-6 py-10">
+                    <div className="rounded-2xl border border-[#FFE1CF] bg-[#FFF8F3] px-5 py-6 text-sm text-[#B45309]">
+                      {historyError}
+                    </div>
+                  </div>
+                ) : historyEntries.length === 0 ? (
+                  <div className="px-6 py-10">
+                    <div className="rounded-2xl border border-[#E3E8EF] bg-[#F8FAFC] px-5 py-6 text-sm text-text-muted">
+                      Ainda não existem relatórios salvos neste agente. Gere um relatório para iniciar o histórico.
                     </div>
                   </div>
                 ) : (
@@ -553,7 +591,9 @@ export default function AgentEntryPage() {
                       <div className="space-y-3">
                         {historyEntries.map((item, index) => {
                           const isSelected = selectedHistoryEntry?.id === item.id;
-                          const cleanedUrl = item.websiteUrl.replace(/^https?:\/\//i, '');
+                          const websiteUrl =
+                            typeof item.metadata?.websiteUrl === 'string' ? item.metadata.websiteUrl : '';
+                          const cleanedUrl = websiteUrl ? websiteUrl.replace(/^https?:\/\//i, '') : '';
                           return (
                             <button
                               key={item.id}
@@ -565,11 +605,11 @@ export default function AgentEntryPage() {
                                   : 'border-[#E3E8EF] bg-[#FBFCFE] hover:border-[#FFD1B3] hover:bg-white'
                               }`}
                             >
-                              <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Pesquisa {historyEntries.length - index}</p>
-                              <p className="mt-2 text-sm font-bold text-text-main break-all">{cleanedUrl}</p>
+                              <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Relatório {historyEntries.length - index}</p>
+                              <p className="mt-2 text-sm font-bold text-text-main break-all">{item.reportTitle || cleanedUrl}</p>
                               <p className="mt-1 text-xs text-text-muted">{formatHistoryDate(item.generatedAt)}</p>
-                              {item.businessContext ? (
-                                <p className="mt-2 text-xs text-text-dim line-clamp-2">{item.businessContext}</p>
+                              {item.metadata?.websiteUrl ? (
+                                <p className="mt-2 text-xs text-text-dim line-clamp-2">{String(item.metadata.websiteUrl)}</p>
                               ) : null}
                             </button>
                           );
@@ -583,26 +623,42 @@ export default function AgentEntryPage() {
                           <div className="rounded-2xl border border-[#E3E8EF] bg-[#FBFCFE] p-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                               <div>
-                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Site analisado</p>
-                                <p className="mt-1 font-semibold text-text-main break-all">{selectedHistoryEntry.websiteUrl}</p>
+                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Agente</p>
+                                <p className="mt-1 font-semibold text-text-main break-all">{selectedHistoryEntry.agentTitle}</p>
                               </div>
                               <div>
                                 <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Gerado em</p>
                                 <p className="mt-1 font-semibold text-text-main">{formatHistoryDate(selectedHistoryEntry.generatedAt)}</p>
                               </div>
                             </div>
-                            {selectedHistoryEntry.businessContext ? (
+                            {selectedHistoryEntry.metadata?.websiteUrl ? (
+                              <div className="mt-4">
+                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Referência</p>
+                                <p className="mt-1 text-sm text-text-main break-all">{String(selectedHistoryEntry.metadata.websiteUrl)}</p>
+                              </div>
+                            ) : null}
+                            {selectedHistoryEntry.metadata?.businessContext ? (
                               <div className="mt-4">
                                 <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Contexto informado</p>
-                                <p className="mt-1 text-sm text-text-main">{selectedHistoryEntry.businessContext}</p>
+                                <p className="mt-1 text-sm text-text-main">{String(selectedHistoryEntry.metadata.businessContext)}</p>
                               </div>
                             ) : null}
                           </div>
 
                           <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-                            <h4 className="text-base font-black text-text-main mb-3">Resultado Completo</h4>
+                            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                              <h4 className="text-base font-black text-text-main">Resultado Completo</h4>
+                              <button
+                                type="button"
+                                onClick={() => downloadAgentReport(selectedHistoryEntry)}
+                                className="inline-flex items-center gap-2 rounded-full border border-[#B5E8CB] bg-gradient-to-br from-[#08B760] to-[#0A9D57] px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-[0_10px_24px_rgba(8,183,96,0.3)] transition-all hover:brightness-105"
+                              >
+                                <Download size={14} />
+                                Download
+                              </button>
+                            </div>
                             <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-text-main font-sans">
-                              {selectedHistoryEntry.report}
+                              {selectedHistoryEntry.reportContent}
                             </pre>
                           </article>
                         </div>

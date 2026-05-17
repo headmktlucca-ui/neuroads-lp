@@ -23,6 +23,19 @@ export async function POST(req: Request) {
 
     const stripe = getStripeClient();
     const session = await stripe.checkout.sessions.retrieve(sessionId);
+    let subscriptionStatus: Stripe.Subscription.Status | null = null;
+    let trialEndsAt: number | null = null;
+
+    if (session.mode === 'subscription' && typeof session.subscription === 'string') {
+      const subscription = await stripe.subscriptions.retrieve(session.subscription);
+      subscriptionStatus = subscription.status;
+
+      const trialEndSeconds =
+        typeof subscription.trial_end === 'number'
+          ? subscription.trial_end
+          : null;
+      trialEndsAt = trialEndSeconds ? trialEndSeconds * 1000 : null;
+    }
 
     return NextResponse.json({
       id: session.id,
@@ -33,6 +46,8 @@ export async function POST(req: Request) {
       clientReferenceId: session.client_reference_id ?? null,
       customerId: typeof session.customer === 'string' ? session.customer : null,
       subscriptionId: typeof session.subscription === 'string' ? session.subscription : null,
+      subscriptionStatus,
+      trialEndsAt,
     });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Falha ao verificar sessão.';

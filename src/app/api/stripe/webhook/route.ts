@@ -59,13 +59,21 @@ export async function POST(req: Request) {
         const isSubscriptionCheckout = session.mode === 'subscription';
 
         if (isSubscriptionCheckout && userId) {
+          const subscriptionId = typeof session.subscription === 'string' ? session.subscription : null;
+          const subscription = subscriptionId ? await stripe.subscriptions.retrieve(subscriptionId) : null;
+          const trialEndsAt =
+            typeof subscription?.trial_end === 'number'
+              ? subscription.trial_end * 1000
+              : null;
           const db = getAdminDb();
           const userRef = db.collection('users').doc(userId);
           await userRef.set(
             {
               isPremium: true,
               stripeCustomerId: session.customer as string,
-              stripeSubscriptionId: session.subscription as string,
+              stripeSubscriptionId: subscriptionId,
+              subscriptionStatus: subscription?.status ?? 'active',
+              trialEndsAt,
               updatedAt: Date.now(),
             },
             { merge: true }

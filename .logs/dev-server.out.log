@@ -105,3 +105,52 @@ Hostinger Reach: contato sincronizado com sucesso. { message: 'Request accepted'
  GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 149ms (next.js: 106ms, application-code: 43ms)
  GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 30ms (next.js: 3ms, application-code: 27ms)
  GET /hub/agente/seo-geo 200 in 37ms (next.js: 11ms, application-code: 26ms)
+ POST /hub/agente/seo-geo 200 in 35.3s (next.js: 10ms, application-code: 35.3s)
+  └─ ƒ generateSeoGeoAudit({"businessContext":"","websiteUrl":"https://shiftmc.com.br"}) in 35291ms src/app/actions/seo-geo-audit.ts
+✓ Compiled in 2s
+ GET /hub/agente/seo-geo 200 in 369ms (next.js: 235ms, application-code: 133ms)
+ GET /hub/agente/seo-geo 200 in 126ms (next.js: 7ms, application-code: 119ms)
+ GET /hub/agente/seo-geo 200 in 67ms (next.js: 7ms, application-code: 60ms)
+✓ Compiled in 329ms
+ GET /hub/agente/seo-geo 200 in 238ms (next.js: 128ms, application-code: 110ms)
+ GET /hub/agente/seo-geo 200 in 65ms (next.js: 7ms, application-code: 58ms)
+✓ Compiled in 362ms
+ GET /hub/agente/seo-geo 200 in 269ms (next.js: 156ms, application-code: 113ms)
+ GET /hub/agente/seo-geo 200 in 53ms (next.js: 6ms, application-code: 47ms)
+✓ Compiled in 279ms
+✓ Compiled in 173ms
+✓ Compiled in 11.1s
+✓ Compiled in 478ms
+ GET /hub/agente/seo-geo 200 in 442ms (next.js: 173ms, application-code: 270ms)
+ GET /hub/agente/seo-geo 200 in 141ms (next.js: 14ms, application-code: 127ms)
+✓ Compiled in 230ms
+ GET /hub/agentes-ativos 200 in 57ms (next.js: 30ms, application-code: 27ms)
+ GET /hub/agentes-ativos 200 in 43ms (next.js: 5ms, application-code: 38ms)
+ GET /hub/agente/gerador-de-copies-de-conversao 200 in 375ms (next.js: 292ms, application-code: 84ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 54ms (next.js: 20ms, application-code: 34ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 69ms (next.js: 7ms, application-code: 62ms)
+ GET /hub/agente/simulador-de-roas 200 in 36ms (next.js: 9ms, application-code: 27ms)
+ GET /hub/tecnico 200 in 843ms (next.js: 457ms, application-code: 386ms)
+ GET /hub/tecnico 200 in 234ms (next.js: 15ms, application-code: 219ms)
+ GET /hub/agente/rastreador-cirurgico 200 in 66ms (next.js: 19ms, application-code: 48ms)
+ GET /hub/agentes-ativos 200 in 53ms (next.js: 7ms, application-code: 45ms)
+ GET /hub/agentes-ativos 200 in 114ms (next.js: 8ms, application-code: 106ms)
+ GET /hub/agente/diagnostico-de-landing-page 200 in 73ms (next.js: 24ms, application-code: 49ms)
+ GET /hub 200 in 77ms (next.js: 35ms, application-code: 42ms)
+ GET /hub/criativos 200 in 150ms (next.js: 108ms, application-code: 42ms)
+ GET /hub/criativos 200 in 77ms (next.js: 11ms, application-code: 66ms)
+ GET /hub/agente/gerador-de-criativos 200 in 50ms (next.js: 16ms, application-code: 34ms)
+ GET /hub 200 in 57ms (next.js: 10ms, application-code: 47ms)
+✓ Compiled in 365ms
+✓ Compiled in 321ms
+ GET /hub 200 in 148ms (next.js: 114ms, application-code: 34ms)
+ GET /hub 200 in 20ms (next.js: 2ms, application-code: 18ms)
+✓ Compiled in 696ms
+ GET /hub 200 in 1174ms (next.js: 387ms, application-code: 787ms)
+✓ Compiled in 155ms
+ GET /hub 200 in 266ms (next.js: 82ms, application-code: 184ms)
+✓ Compiled in 199ms
+✓ Compiled in 153ms
+✓ Compiled in 374ms
+✓ Compiled in 170ms
+✓ Compiled in 154ms

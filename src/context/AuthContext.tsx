@@ -210,11 +210,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 });
               }
 
-              if (primaryEmail && snapshotProfile.authEmail !== primaryEmail) {
+              if (
+                primaryEmail &&
+                (
+                  snapshotProfile.authEmail !== primaryEmail ||
+                  (snapshotProfile as Record<string, unknown>).email !== primaryEmail
+                )
+              ) {
                 void setDoc(
                   userRef,
                   {
                     authEmail: primaryEmail,
+                    email: primaryEmail,
                     updatedAt: Date.now(),
                   },
                   { merge: true }
@@ -233,7 +240,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 registeredAt: now,
                 createdAt: now,
                 updatedAt: now,
-                ...(primaryEmail ? { authEmail: primaryEmail } : {}),
+                ...(primaryEmail ? { authEmail: primaryEmail, email: primaryEmail } : {}),
               };
 
               void setDoc(

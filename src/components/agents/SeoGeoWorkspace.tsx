@@ -7,10 +7,12 @@ import { generateSeoGeoAudit } from '../../app/actions/seo-geo-audit';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { useAuth } from '../../context/AuthContext';
 import { getHubProfileSummary } from '../../lib/hub-profile';
-import { appendSeoGeoHistory } from '../../lib/seo-geo-history';
+import { saveAgentReportToDb } from '../../lib/agent-report-history';
 
 interface SeoGeoWorkspaceProps {
   agentTitle: string;
+  agentSlug: string;
+  agentCategory: string;
 }
 
 interface ReportSection {
@@ -409,7 +411,7 @@ function StatCard({
   );
 }
 
-export default function SeoGeoWorkspace({ agentTitle }: SeoGeoWorkspaceProps) {
+export default function SeoGeoWorkspace({ agentTitle, agentSlug, agentCategory }: SeoGeoWorkspaceProps) {
   const { profile, user } = useAuth();
   const [businessContext, setBusinessContext] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -465,16 +467,23 @@ export default function SeoGeoWorkspace({ agentTitle }: SeoGeoWorkspaceProps) {
       };
 
       setReportState(nextReportState);
-      appendSeoGeoHistory(
-        {
-          websiteUrl: nextReportState.websiteUrl,
-          businessContext,
+      if (user?.uid) {
+        await saveAgentReportToDb({
+          userId: user.uid,
+          agentKey: agentSlug,
+          agentTitle,
+          agentCategory,
+          reportTitle: `Auditoria ${agentTitle}`,
+          reportContent: nextReportState.report,
+          reportFormat: 'markdown',
           generatedAt: nextReportState.generatedAt,
-          report: nextReportState.report,
-          usedWebSearch: nextReportState.usedWebSearch,
-        },
-        user?.uid
-      );
+          metadata: {
+            websiteUrl: nextReportState.websiteUrl,
+            businessContext: businessContext.trim() || null,
+            usedWebSearch: nextReportState.usedWebSearch,
+          },
+        });
+      }
     });
   };
 

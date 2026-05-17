@@ -17,6 +17,9 @@ type HubProfileSummary = {
   site: string;
   hasCompanyProfile: boolean;
   isSubscriptionActive: boolean;
+  isTrialing: boolean;
+  trialEndsAt: number | null;
+  trialRemainingMs: number | null;
   statusLabel: string;
   accessLabel: string;
   resourcesLabel: string;
@@ -46,6 +49,35 @@ function readNumber(value: unknown): number | null {
   return Number.isFinite(parsed) ? parsed : null;
 }
 
+function readTimestamp(value: unknown): number | null {
+  if (!value) return null;
+
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value > 1_000_000_000_000 ? value : value * 1000;
+  }
+
+  if (typeof value === 'string') {
+    const normalized = value.trim();
+    if (!normalized) return null;
+    const parsedNumber = Number(normalized);
+    if (Number.isFinite(parsedNumber)) {
+      return parsedNumber > 1_000_000_000_000 ? parsedNumber : parsedNumber * 1000;
+    }
+    const parsedDate = Date.parse(normalized);
+    return Number.isFinite(parsedDate) ? parsedDate : null;
+  }
+
+  if (typeof value === 'object') {
+    const maybeWithToMillis = value as { toMillis?: () => number };
+    if (typeof maybeWithToMillis.toMillis === 'function') {
+      const millis = maybeWithToMillis.toMillis();
+      return Number.isFinite(millis) ? millis : null;
+    }
+  }
+
+  return null;
+}
+
 function normalizeToken(value: string | null): string {
   if (!value) return '';
   return value
@@ -71,6 +103,55 @@ function isSubscriptionActive(profileRecord: Record<string, unknown>): boolean {
       readString(onboarding?.status)
   );
   return ['trialing', 'active', 'past_due', 'unpaid', 'incomplete', 'ativo'].includes(status);
+}
+
+function resolveSubscriptionStatus(
+  profileRecord: Record<string, unknown>,
+  onboarding: Record<string, unknown> | null
+): string | null {
+  const status = normalizeToken(
+    readString(profileRecord.subscriptionStatus) ??
+      readString(profileRecord.stripeSubscriptionStatus) ??
+      readString(profileRecord.status) ??
+      readString(onboarding?.subscriptionStatus) ??
+      readString(onboarding?.stripeSubscriptionStatus) ??
+      readString(onboarding?.status)
+  );
+  return status || null;
+}
+
+function resolveTrialEndsAt(
+  profileRecord: Record<string, unknown>,
+  onboarding: Record<string, unknown> | null
+): number | null {
+  const candidates: unknown[] = [
+    profileRecord.trialEndsAt,
+    profileRecord.trialEndAt,
+    profileRecord.trialEnd,
+    profileRecord.trial_end,
+    profileRecord.currentPeriodEnd,
+    profileRecord.current_period_end,
+    onboarding?.trialEndsAt,
+    onboarding?.trialEndAt,
+    onboarding?.trialEnd,
+    onboarding?.trial_end,
+    onboarding?.currentPeriodEnd,
+    onboarding?.current_period_end,
+  ];
+
+  for (const candidate of candidates) {
+    const parsed = readTimestamp(candidate);
+    if (parsed && Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  const onboardingCompletedAt = readTimestamp(profileRecord.onboardingCompletedAt);
+  if (onboardingCompletedAt) {
+    return onboardingCompletedAt + 14 * 24 * 60 * 60 * 1000;
+  }
+
+  return null;
 }
 
 function resolveCompanyName(
@@ -216,6 +297,10 @@ export function getHubProfileSummary(profile: unknown): HubProfileSummary {
   const site = resolveSite(profileRecord, onboarding, profileDetails);
   const hasCompanyProfile = companyName !== 'Empresa não cadastrada' && site !== 'Site não cadastrado';
   const subscriptionActive = isSubscriptionActive(profileRecord);
+  const subscriptionStatus = resolveSubscriptionStatus(profileRecord, onboarding);
+  const isTrialing = subscriptionStatus === 'trialing';
+  const trialEndsAt = isTrialing ? resolveTrialEndsAt(profileRecord, onboarding) : null;
+  const trialRemainingMs = trialEndsAt != null ? Math.max(trialEndsAt - Date.now(), 0) : null;
   const planOffer = matchPlanOffer(profileRecord, onboarding, profileDetails);
 
   const resourcesLabel = planOffer?.name ?? (subscriptionActive ? 'Plano ativo' : 'Aguardando contratação');
@@ -228,6 +313,9 @@ export function getHubProfileSummary(profile: unknown): HubProfileSummary {
     site,
     hasCompanyProfile,
     isSubscriptionActive: subscriptionActive,
+    isTrialing,
+    trialEndsAt,
+    trialRemainingMs,
     statusLabel: subscriptionActive ? 'Ativo' : 'Pendente',
     accessLabel: hasCompanyProfile ? 'Hub Aberto' : 'Configuração pendente',
     resourcesLabel,

@@ -8,6 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
 import { getHubLoginRedirect, hasHubPlanAccess, normalizeHubNextPath } from '../../lib/hub-access';
 import { getHubProfileSummary } from '../../lib/hub-profile';
+import { formatWhatsappInput } from '../../lib/phone-mask';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import stripeOffersCatalog from '../../data/stripe-offers.json';
 
@@ -75,7 +76,7 @@ function buildFormFromProfile(profile: unknown): CompanyForm {
   return {
     companyName,
     site: siteRaw ? normalizeHttpsMaskedUrlInput(siteRaw) : HTTPS_PREFIX,
-    whatsapp,
+    whatsapp: formatWhatsappInput(whatsapp),
     instagram,
     linkedin,
   };
@@ -84,7 +85,7 @@ function buildFormFromProfile(profile: unknown): CompanyForm {
 function OnboardingPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, profile, loading, premiumSyncing } = useAuth();
+  const { user, userEmail, profile, loading, premiumSyncing } = useAuth();
   const [step, setStep] = useState<OnboardingStep>(1);
   const [form, setForm] = useState<CompanyForm>(DEFAULT_COMPANY_FORM);
   const [selectedPlanSlug, setSelectedPlanSlug] = useState('');
@@ -143,6 +144,7 @@ function OnboardingPageContent() {
     if (!user) return;
 
     const now = Date.now();
+    const authenticatedEmail = userEmail?.trim() || user.email?.trim() || null;
     const payload = {
       companyName: form.companyName.trim(),
       site: normalizedSite,
@@ -150,6 +152,7 @@ function OnboardingPageContent() {
       instagram: form.instagram.trim(),
       linkedin: form.linkedin.trim(),
       updatedAt: now,
+      ...(authenticatedEmail ? { authEmail: authenticatedEmail, email: authenticatedEmail } : {}),
       onboarding: {
         companyName: form.companyName.trim(),
         site: normalizedSite,
@@ -185,6 +188,7 @@ function OnboardingPageContent() {
     form.instagram,
     form.linkedin,
     form.whatsapp,
+    userEmail,
     user,
   ]);
 
@@ -224,16 +228,21 @@ function OnboardingPageContent() {
     normalizedSite,
     customerId,
     subscriptionId,
+    subscriptionStatus,
+    trialEndsAt,
   }: {
     plan: PlanOffer;
     formData: CompanyForm;
     normalizedSite: string;
     customerId?: string | null;
     subscriptionId?: string | null;
+    subscriptionStatus?: string | null;
+    trialEndsAt?: number | null;
   }) => {
     if (!user) return;
 
     const now = Date.now();
+    const authenticatedEmail = userEmail?.trim() || user.email?.trim() || null;
     const payload = {
       companyName: formData.companyName.trim(),
       site: normalizedSite,
@@ -249,8 +258,11 @@ function OnboardingPageContent() {
       isPremium: true,
       stripeCustomerId: customerId ?? null,
       stripeSubscriptionId: subscriptionId ?? null,
+      subscriptionStatus: subscriptionStatus ?? 'active',
+      ...(trialEndsAt && Number.isFinite(trialEndsAt) ? { trialEndsAt } : {}),
       onboardingCompletedAt: now,
       updatedAt: now,
+      ...(authenticatedEmail ? { authEmail: authenticatedEmail, email: authenticatedEmail } : {}),
       onboarding: {
         companyName: formData.companyName.trim(),
         site: normalizedSite,
@@ -261,6 +273,8 @@ function OnboardingPageContent() {
         planSlug: plan.slug,
         planAmountCents: plan.amount,
         planCurrency: currencyCode,
+        subscriptionStatus: subscriptionStatus ?? 'active',
+        ...(trialEndsAt && Number.isFinite(trialEndsAt) ? { trialEndsAt } : {}),
         completedAt: now,
       },
     };
@@ -292,6 +306,7 @@ function OnboardingPageContent() {
     currencyCode,
     nextPath,
     router,
+    userEmail,
     user,
   ]);
 
@@ -329,7 +344,7 @@ function OnboardingPageContent() {
         body: JSON.stringify({
           priceId: selectedPlan.priceId,
           userId: user.uid,
-          email: user.email,
+          email: userEmail || user.email,
           returnUrl,
           mode: 'subscription',
           kind: 'plano',
@@ -387,7 +402,7 @@ function OnboardingPageContent() {
         const mergedForm: CompanyForm = {
           companyName: draft?.companyName?.trim() || form.companyName.trim(),
           site: draft?.site?.trim() || form.site,
-          whatsapp: draft?.whatsapp?.trim() || form.whatsapp.trim(),
+          whatsapp: formatWhatsappInput(draft?.whatsapp?.trim() || form.whatsapp.trim()),
           instagram: draft?.instagram?.trim() || form.instagram.trim(),
           linkedin: draft?.linkedin?.trim() || form.linkedin.trim(),
         };
@@ -405,6 +420,11 @@ function OnboardingPageContent() {
           normalizedSite: normalizeHttpsMaskedUrlInput(mergedForm.site),
           customerId: verifyData.customerId,
           subscriptionId: verifyData.subscriptionId,
+          subscriptionStatus: typeof verifyData.subscriptionStatus === 'string' ? verifyData.subscriptionStatus : null,
+          trialEndsAt:
+            typeof verifyData.trialEndsAt === 'number' && Number.isFinite(verifyData.trialEndsAt)
+              ? verifyData.trialEndsAt
+              : null,
         });
       } catch (error) {
         console.error('Falha ao processar retorno do checkout no onboarding:', error);
@@ -526,7 +546,12 @@ function OnboardingPageContent() {
                     <Phone size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
                     <input
                       value={form.whatsapp}
-                      onChange={(event) => setForm((prev) => ({ ...prev, whatsapp: event.target.value }))}
+                      onChange={(event) =>
+                        setForm((prev) => ({ ...prev, whatsapp: formatWhatsappInput(event.target.value) }))
+                      }
+                      inputMode="numeric"
+                      autoComplete="tel"
+                      maxLength={15}
                       placeholder="(00) 00000-0000"
                       className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
                     />

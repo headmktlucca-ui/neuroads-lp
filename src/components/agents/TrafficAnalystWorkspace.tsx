@@ -3,10 +3,13 @@
 import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { AlertTriangle, CheckCircle2, Link2, Sparkles } from 'lucide-react';
-import { appendTrafficAnalystHistory, readTrafficAnalystHistory } from '../../lib/traffic-analyst-history';
+import { getLatestAgentReportsFromDb, saveAgentReportToDb } from '../../lib/agent-report-history';
 
 type Props = {
   userId?: string | null;
+  agentSlug: string;
+  agentTitle: string;
+  agentCategory: string;
 };
 
 type ChannelKey = 'googleAds' | 'metaAds' | 'linkedinAds';
@@ -76,7 +79,7 @@ function calculateInsights(totals: { spend: number; impressions: number; clicks:
   return { ctr, cpc, cpl, convRate, priorities, executive };
 }
 
-export default function TrafficAnalystWorkspace({ userId }: Props) {
+export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle, agentCategory }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -111,9 +114,13 @@ export default function TrafficAnalystWorkspace({ userId }: Props) {
       }
     }
 
-    const history = readTrafficAnalystHistory(userId);
-    setHistoryCount(history.length);
-  }, [userId]);
+    const loadHistoryCount = async () => {
+      const entries = await getLatestAgentReportsFromDb(userId, agentSlug, 10);
+      setHistoryCount(entries.length);
+    };
+
+    void loadHistoryCount();
+  }, [agentSlug, userId]);
 
   useEffect(() => {
     if (!userId) return;
@@ -243,25 +250,36 @@ export default function TrafficAnalystWorkspace({ userId }: Props) {
       setExtraction(payload);
       const totals = payload.totals ?? { spend: 0, impressions: 0, clicks: 0, conversions: 0 };
       const insights = calculateInsights(totals);
-      appendTrafficAnalystHistory(
-        {
-          campaignName: `Consolidação ${activeChannels.map((key) => labelFor(key)).join(' + ')}`,
-          periodLabel: `${dateFrom} a ${dateTo}`,
-          investment: totals.spend,
-          leads: totals.conversions,
-          ctr: insights.ctr,
-          cpc: insights.cpc,
-          conversionRate: insights.convRate,
-          roas: 0,
-          notes: `Canais: ${activeChannels.join(', ')}`,
-          generatedAt: new Date().toISOString(),
-          diagnosisMarkdown: `${insights.executive}\n\nPrioridades:\n${insights.priorities
-            .map((p, i) => `${i + 1}. ${p}`)
-            .join('\n')}`,
-        },
-        userId
-      );
-      setHistoryCount((current) => current + 1);
+      const generatedAt = new Date().toISOString();
+      const diagnosisMarkdown = `${insights.executive}\n\nPrioridades:\n${insights.priorities
+        .map((p, i) => `${i + 1}. ${p}`)
+        .join('\n')}`;
+
+      if (userId) {
+        await saveAgentReportToDb({
+          userId,
+          agentKey: agentSlug,
+          agentTitle,
+          agentCategory,
+          reportTitle: `Diagnóstico de Tráfego ${dateFrom} a ${dateTo}`,
+          reportContent: diagnosisMarkdown,
+          reportFormat: 'plain_text',
+          generatedAt,
+          metadata: {
+            campaignName: `Consolidação ${activeChannels.map((key) => labelFor(key)).join(' + ')}`,
+            periodLabel: `${dateFrom} a ${dateTo}`,
+            investment: Number(totals.spend.toFixed(2)),
+            leads: totals.conversions,
+            ctr: Number(insights.ctr.toFixed(2)),
+            cpc: Number(insights.cpc.toFixed(2)),
+            conversionRate: Number(insights.convRate.toFixed(2)),
+            channels: activeChannels.join(', '),
+          },
+        });
+
+        const entries = await getLatestAgentReportsFromDb(userId, agentSlug, 10);
+        setHistoryCount(entries.length);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao extrair indicadores.');
     } finally {
@@ -419,7 +437,7 @@ export default function TrafficAnalystWorkspace({ userId }: Props) {
                   ))}
                 </ul>
               </div>
-              <p className="mt-3 text-xs text-text-dim">Histórico salvo: {historyCount} análises registradas.</p>
+              <p className="mt-3 text-xs text-text-dim">Histórico salvo no banco: {historyCount} análises (últimos 10).</p>
             </section>
           ) : null}
         </div>

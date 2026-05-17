@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import {
   Database,
@@ -48,6 +48,14 @@ function getFirstName(fullName: string | null | undefined): string {
   if (!fullName) return 'Claudio';
   const first = fullName.trim().split(/\s+/)[0];
   return first || 'Claudio';
+}
+
+function formatTrialCountdown(remainingMs: number): string {
+  const totalSeconds = Math.max(Math.floor(remainingMs / 1000), 0);
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  return `${days}d ${hours}h ${minutes}m`;
 }
 
 function TrailCard({
@@ -106,6 +114,7 @@ function TrailCard({
 
 export default function StrategicHubOverview() {
   const { user, profile } = useAuth();
+  const [nowMs, setNowMs] = useState(() => Date.now());
 
   const greeting = useMemo(() => getGreeting(), []);
   const firstName = getFirstName(user?.displayName || user?.email);
@@ -120,6 +129,21 @@ export default function StrategicHubOverview() {
     hubProfile.agentLimit != null && hubProfile.includedExecutions != null
       ? `${remainingAgentSlots} vagas • ${hubProfile.includedExecutions.toLocaleString('pt-BR')} exec./mês`
       : hubProfile.operationLabel;
+
+  useEffect(() => {
+    if (!hubProfile.isTrialing || hubProfile.trialEndsAt == null) return;
+    const intervalId = window.setInterval(() => {
+      setNowMs(Date.now());
+    }, 60_000);
+    return () => window.clearInterval(intervalId);
+  }, [hubProfile.isTrialing, hubProfile.trialEndsAt]);
+
+  const trialCountdownLabel = useMemo(() => {
+    if (!hubProfile.isTrialing || hubProfile.trialEndsAt == null) return null;
+    const remainingMs = Math.max(hubProfile.trialEndsAt - nowMs, 0);
+    if (remainingMs <= 0) return null;
+    return formatTrialCountdown(remainingMs);
+  }, [hubProfile.isTrialing, hubProfile.trialEndsAt, nowMs]);
 
   return (
     <section className="w-full pb-10 md:pb-12">
@@ -182,6 +206,11 @@ export default function StrategicHubOverview() {
                   </div>
 
                   <div className="mt-4">
+                    {trialCountdownLabel ? (
+                      <p className="mb-3 rounded-[10px] border border-[#28518A] bg-[#092349] px-3 py-2 text-[12px] font-bold text-[#D8E7FF]">
+                        Trial gratuito: {trialCountdownLabel} para a 1a cobranca.
+                      </p>
+                    ) : null}
                     <Link
                       href="/hub?connectors=1"
                       className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] bg-[#FF6A00] px-4 text-[16px] font-bold text-white shadow-[0_12px_20px_rgba(255,106,0,0.28)] transition hover:brightness-95"

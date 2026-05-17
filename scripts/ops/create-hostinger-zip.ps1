@@ -21,13 +21,16 @@ if (Test-Path $outputPath) {
 
 $excludeDirPrefixes = @(
   ".git\",
+  ".claire\",
+  ".claude\",
   ".next\",
   "node_modules\",
   ".agent\",
-  ".firebase\logs\",
+  ".firebase\",
   ".superpowers\",
   ".vscode\",
   "dist\",
+  "logs\",
   "docs\",
   "my-video\",
   "temp-app\"
