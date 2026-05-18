@@ -3,7 +3,7 @@
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { doc, setDoc } from 'firebase/firestore';
-import { ArrowRight, Building2, CheckCircle2, Globe, Phone, Sparkles } from 'lucide-react';
+import { ArrowRight, Building2, CheckCircle2, Globe, Lock, Mail, Phone, Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
 import { getHubLoginRedirect, hasHubPlanAccess, normalizeHubNextPath } from '../../lib/hub-access';
@@ -86,12 +86,18 @@ function buildFormFromProfile(profile: unknown): CompanyForm {
 function OnboardingPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, userEmail, profile, loading, premiumSyncing } = useAuth();
+  const { user, userEmail, profile, loading, premiumSyncing, hasPasswordProvider, linkCurrentUserWithEmailPassword } = useAuth();
   const [step, setStep] = useState<OnboardingStep>(1);
   const [form, setForm] = useState<CompanyForm>(DEFAULT_COMPANY_FORM);
   const [selectedPlanSlug, setSelectedPlanSlug] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [isProcessingReturn, setIsProcessingReturn] = useState(false);
+  const [isConfiguringAccess, setIsConfiguringAccess] = useState(false);
+  const [accessEmail, setAccessEmail] = useState('');
+  const [accessPassword, setAccessPassword] = useState('');
+  const [accessPasswordConfirm, setAccessPasswordConfirm] = useState('');
+  const [accessConfigured, setAccessConfigured] = useState(false);
+  const [accessErrorMessage, setAccessErrorMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const currencyCode = String(stripeOffersCatalog.currency || 'brl').toUpperCase();
@@ -137,9 +143,66 @@ function OnboardingPageContent() {
     [planOffers, selectedPlanSlug]
   );
   const hubProfile = useMemo(() => getHubProfileSummary(profile), [profile]);
+  const setupAuthParam = searchParams.get('setup_auth');
+  const mustConfigurePasswordAccess = setupAuthParam === '1';
   const successParam = searchParams.get('success');
   const canceledParam = searchParams.get('canceled');
   const sessionIdParam = searchParams.get('session_id');
+
+  useEffect(() => {
+    if (!user) return;
+    const preferredEmail = userEmail?.trim() || user.email?.trim() || '';
+    if (!preferredEmail) return;
+    setAccessEmail((current) => current || preferredEmail);
+  }, [user, userEmail]);
+
+  useEffect(() => {
+    if (hasPasswordProvider) {
+      setAccessConfigured(true);
+      setAccessErrorMessage(null);
+    }
+  }, [hasPasswordProvider]);
+
+  const configurePasswordAccess = useCallback(async () => {
+    const normalizedEmail = accessEmail.trim() || userEmail?.trim() || user?.email?.trim() || '';
+    if (!normalizedEmail) {
+      setAccessErrorMessage('Não foi possível identificar o e-mail da conta para vincular o acesso.');
+      return false;
+    }
+
+    if (accessPassword.length < 8) {
+      setAccessErrorMessage('Defina uma senha com no mínimo 8 caracteres.');
+      return false;
+    }
+
+    if (accessPassword !== accessPasswordConfirm) {
+      setAccessErrorMessage('A confirmação da senha não confere.');
+      return false;
+    }
+
+    try {
+      setIsConfiguringAccess(true);
+      setAccessErrorMessage(null);
+      await linkCurrentUserWithEmailPassword(normalizedEmail, accessPassword);
+      setAccessConfigured(true);
+      setAccessPassword('');
+      setAccessPasswordConfirm('');
+      return true;
+    } catch (error) {
+      console.error('Falha ao vincular email/senha no onboarding:', error);
+      setAccessErrorMessage('Não foi possível vincular email e senha agora. Tente novamente.');
+      return false;
+    } finally {
+      setIsConfiguringAccess(false);
+    }
+  }, [
+    accessEmail,
+    accessPassword,
+    accessPasswordConfirm,
+    linkCurrentUserWithEmailPassword,
+    user,
+    userEmail,
+  ]);
 
   const persistCompanyStepAndCache = useCallback(async (normalizedSite: string) => {
     if (!user) return;
@@ -202,6 +265,13 @@ function OnboardingPageContent() {
     if (!hasCompany || !hasSite || !hasWhatsapp) {
       setErrorMessage('Preencha empresa, site e WhatsApp para continuar.');
       return;
+    }
+
+    if (mustConfigurePasswordAccess && !hasPasswordProvider && !accessConfigured) {
+      const configuredNow = await configurePasswordAccess();
+      if (!configuredNow) {
+        return;
+      }
     }
 
     setErrorMessage(null);
@@ -582,9 +652,92 @@ function OnboardingPageContent() {
                 </div>
               </div>
 
+              <div className="rounded-2xl border border-[#DCE8FF] bg-[#F5F9FF] p-4">
+                <p className="text-xs font-black uppercase tracking-[0.1em] text-[#1D4ED8]">
+                  Acesso ao Hub por Email e Senha
+                </p>
+                <p className="mt-1 text-sm text-[#334155]">
+                  Você continua com login Google e pode acessar também com email e senha.
+                </p>
+                {mustConfigurePasswordAccess ? (
+                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.08em] text-[#C2410C]">
+                    Configure agora para concluir o onboarding.
+                  </p>
+                ) : null}
+
+                {hasPasswordProvider || accessConfigured ? (
+                  <p className="mt-3 rounded-xl border border-[#B7E4C9] bg-[#ECFDF3] px-3 py-2 text-sm font-semibold text-[#0A6A3E]">
+                    Email e senha já vinculados com sucesso.
+                  </p>
+                ) : (
+                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="sm:col-span-2">
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Email de acesso</label>
+                      <div className="relative">
+                        <Mail size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
+                        <input
+                          value={accessEmail}
+                          onChange={(event) => setAccessEmail(event.target.value)}
+                          autoComplete="email"
+                          placeholder="seu@email.com"
+                          className="w-full rounded-xl border border-border bg-white px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Senha</label>
+                      <div className="relative">
+                        <Lock size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
+                        <input
+                          type="password"
+                          value={accessPassword}
+                          onChange={(event) => setAccessPassword(event.target.value)}
+                          autoComplete="new-password"
+                          placeholder="No mínimo 8 caracteres"
+                          className="w-full rounded-xl border border-border bg-white px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Confirmar senha</label>
+                      <div className="relative">
+                        <Lock size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
+                        <input
+                          type="password"
+                          value={accessPasswordConfirm}
+                          onChange={(event) => setAccessPasswordConfirm(event.target.value)}
+                          autoComplete="new-password"
+                          placeholder="Repita a senha"
+                          className="w-full rounded-xl border border-border bg-white px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
+                        />
+                      </div>
+                    </div>
+                    <div className="sm:col-span-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          void configurePasswordAccess();
+                        }}
+                        disabled={isConfiguringAccess}
+                        className="inline-flex items-center gap-2 rounded-xl border border-[#1D4ED8] bg-white px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#1D4ED8] disabled:opacity-60"
+                      >
+                        {isConfiguringAccess ? 'Vinculando...' : 'Vincular Email e Senha'}
+                        <ArrowRight size={14} />
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {errorMessage ? (
                 <p className="rounded-xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-sm text-[#9A3412]">
                   {errorMessage}
+                </p>
+              ) : null}
+
+              {accessErrorMessage ? (
+                <p className="rounded-xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-sm text-[#9A3412]">
+                  {accessErrorMessage}
                 </p>
               ) : null}
 

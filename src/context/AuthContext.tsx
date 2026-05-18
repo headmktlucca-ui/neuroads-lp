@@ -6,6 +6,10 @@ import {
   onAuthStateChanged, 
   signInWithPopup, 
   GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  EmailAuthProvider,
+  linkWithCredential,
   signOut 
 } from 'firebase/auth';
 import { getFirebaseAuth, getFirebaseDb } from '../lib/firebase';
@@ -49,7 +53,11 @@ interface AuthContextType {
   loading: boolean;
   premiumSyncing: boolean;
   isAdmin: boolean;
+  hasPasswordProvider: boolean;
   loginWithGoogle: () => Promise<void>;
+  loginWithEmailPassword: (email: string, password: string) => Promise<void>;
+  registerWithEmailPassword: (email: string, password: string) => Promise<void>;
+  linkCurrentUserWithEmailPassword: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   checkUsageLimit: (appName: string) => Promise<boolean>;
 }
@@ -370,6 +378,50 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const loginWithEmailPassword = async (email: string, password: string) => {
+    const auth = getFirebaseAuth();
+    const credentials = await signInWithEmailAndPassword(auth, email.trim(), password);
+    const primaryEmail = await resolvePrimaryAuthEmail(credentials.user);
+    if (primaryEmail) {
+      setUserEmail(primaryEmail);
+      cacheAuthEmail(credentials.user.uid, primaryEmail);
+    }
+  };
+
+  const registerWithEmailPassword = async (email: string, password: string) => {
+    const auth = getFirebaseAuth();
+    const credentials = await createUserWithEmailAndPassword(auth, email.trim(), password);
+    const primaryEmail = await resolvePrimaryAuthEmail(credentials.user);
+    if (primaryEmail) {
+      setUserEmail(primaryEmail);
+      cacheAuthEmail(credentials.user.uid, primaryEmail);
+    }
+  };
+
+  const linkCurrentUserWithEmailPassword = async (email: string, password: string) => {
+    const auth = getFirebaseAuth();
+    const currentUser = auth.currentUser;
+    if (!currentUser) {
+      throw new Error('Sessão de autenticação não encontrada. Faça login novamente.');
+    }
+
+    const normalizedEmail = email.trim() || userEmail?.trim() || currentUser.email?.trim() || '';
+    if (!normalizedEmail) {
+      throw new Error('Não foi possível identificar um e-mail para vincular esta conta.');
+    }
+
+    const alreadyLinked = currentUser.providerData.some((provider) => provider.providerId === 'password');
+    if (alreadyLinked) {
+      return;
+    }
+
+    const credential = EmailAuthProvider.credential(normalizedEmail, password);
+    await linkWithCredential(currentUser, credential);
+
+    setUserEmail(normalizedEmail);
+    cacheAuthEmail(currentUser.uid, normalizedEmail);
+  };
+
   const logout = async () => {
     const auth = getFirebaseAuth();
     await signOut(auth);
@@ -381,6 +433,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return true;
   };
 
+  const hasPasswordProvider = Boolean(user?.providerData.some((provider) => provider.providerId === 'password'));
+
   return (
     <AuthContext.Provider
       value={{
@@ -390,7 +444,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loading,
         premiumSyncing,
         isAdmin: isAdminEmail(userEmail),
+        hasPasswordProvider,
         loginWithGoogle,
+        loginWithEmailPassword,
+        registerWithEmailPassword,
+        linkCurrentUserWithEmailPassword,
         logout,
         checkUsageLimit,
       }}

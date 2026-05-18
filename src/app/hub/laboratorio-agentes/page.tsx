@@ -34,6 +34,8 @@ const PLAN_AGENT_CAPACITY: Record<string, number> = {
   Enterprise: 50,
 };
 
+const ACTIVATABLE_AGENT_TITLES = new Set(['Analista de Tráfego', 'DNA da Marca', 'SEO & GEO']);
+
 type AgentDetailsContent = {
   activities: string[];
   howItWorks: string;
@@ -129,7 +131,11 @@ function LaboratorioAgentesContent() {
   const nextActiveCount = activeAgentsCount + 1;
 
   const pendingAgent = pendingActivationSlug
-    ? agents.find((agent) => slugifyAgentTitle(agent.title) === pendingActivationSlug)
+    ? agents.find(
+        (agent) =>
+          slugifyAgentTitle(agent.title) === pendingActivationSlug &&
+          ACTIVATABLE_AGENT_TITLES.has(agent.title)
+      )
     : null;
 
   const detailsAgent = selectedDetailsSlug
@@ -155,7 +161,7 @@ function LaboratorioAgentesContent() {
     : null;
 
   const activateAgent = async (agentTitle: string, agentSlug: string) => {
-    if (!user) return;
+    if (!user || !ACTIVATABLE_AGENT_TITLES.has(agentTitle)) return;
     setActivatingSlug(agentSlug);
     const activationOverrides = { ...statusOverrides, [agentTitle]: true };
     setStatusOverrides(activationOverrides);
@@ -260,6 +266,7 @@ function LaboratorioAgentesContent() {
                     const entry = getAgentEntryDefinition(agent, effectiveContracts);
                     const isActive = entry.isActive;
                     const agentSlug = slugifyAgentTitle(agent.title);
+                    const isActivatable = ACTIVATABLE_AGENT_TITLES.has(agent.title);
 
                     return (
                       <article key={agent.title} className="rounded-xl border border-border bg-bg-secondary p-4">
@@ -307,15 +314,26 @@ function LaboratorioAgentesContent() {
                             </>
                           ) : (
                             <>
-                              <button
-                                type="button"
-                                onClick={() => setPendingActivationSlug(agentSlug)}
-                                disabled={activatingSlug === agentSlug}
-                                className={`${HUB_CONNECTOR_BUTTON_CLASS} disabled:opacity-60`}
+                              {isActivatable ? (
+                                <button
+                                  type="button"
+                                  onClick={() => setPendingActivationSlug(agentSlug)}
+                                  disabled={activatingSlug === agentSlug}
+                                  className={`${HUB_CONNECTOR_BUTTON_CLASS} disabled:opacity-60`}
                                 >
                                   <Wrench className="h-4 w-4" />
                                   {activatingSlug === agentSlug ? 'Ativando...' : 'Ativar Agente'}
                                 </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  disabled
+                                  className={`${HUB_CONNECTOR_BUTTON_CLASS} cursor-not-allowed opacity-60`}
+                                >
+                                  <Wrench className="h-4 w-4" />
+                                  em desenvolvimento
+                                </button>
+                              )}
                               <button
                                 type="button"
                                 onClick={() => setSelectedDetailsSlug(agentSlug)}

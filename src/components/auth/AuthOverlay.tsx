@@ -12,16 +12,42 @@ interface AuthOverlayProps {
 
 
 export default function AuthOverlay({ isOpen, onClose }: AuthOverlayProps) {
-  const { loginWithGoogle } = useAuth();
+  const { loginWithGoogle, loginWithEmailPassword } = useAuth();
   const [isEmailLogin, setIsEmailLogin] = useState(false);
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+  const [isSubmittingEmail, setIsSubmittingEmail] = useState(false);
+  const [emailAuthError, setEmailAuthError] = useState<string | null>(null);
 
   const handleGoogleLogin = async () => {
     try {
+      setEmailAuthError(null);
       await loginWithGoogle();
       onClose();
       // No redirect — the calling component handles what happens after login
     } catch (error) {
       console.error('Login error:', error);
+    }
+  };
+
+  const handleEmailLogin = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!emailInput.trim() || !passwordInput) {
+      setEmailAuthError('Informe email e senha para continuar.');
+      return;
+    }
+
+    try {
+      setIsSubmittingEmail(true);
+      setEmailAuthError(null);
+      await loginWithEmailPassword(emailInput.trim(), passwordInput);
+      setPasswordInput('');
+      onClose();
+    } catch (error) {
+      console.error('Email login error:', error);
+      setEmailAuthError('Email ou senha inválidos. Tente novamente ou use o Google.');
+    } finally {
+      setIsSubmittingEmail(false);
     }
   };
 
@@ -94,12 +120,15 @@ export default function AuthOverlay({ isOpen, onClose }: AuthOverlayProps) {
                 <motion.form 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
+                  onSubmit={handleEmailLogin}
                   className="space-y-4"
                 >
                   <div className="relative">
                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                     <input 
                       type="email" 
+                      value={emailInput}
+                      onChange={(event) => setEmailInput(event.target.value)}
                       placeholder="seu@empresa.com"
                       className="w-full h-12 bg-white/5 border border-white/10 pl-12 pr-4 text-white focus:outline-none focus:border-[var(--color-brand-orange)] transition-colors"
                     />
@@ -108,12 +137,21 @@ export default function AuthOverlay({ isOpen, onClose }: AuthOverlayProps) {
                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                     <input 
                       type="password" 
+                      value={passwordInput}
+                      onChange={(event) => setPasswordInput(event.target.value)}
                       placeholder="Sua senha"
                       className="w-full h-12 bg-white/5 border border-white/10 pl-12 pr-4 text-white focus:outline-none focus:border-[var(--color-brand-orange)] transition-colors"
                     />
                   </div>
-                  <button className="w-full h-12 bg-[var(--color-brand-orange)] text-black font-bold flex items-center justify-center gap-2 hover:bg-[var(--color-brand-green)] transition-all">
-                    AUTENTICAR <ArrowRight size={18} />
+                  {emailAuthError ? (
+                    <p className="text-xs text-[#FFB4A5]">{emailAuthError}</p>
+                  ) : null}
+                  <button
+                    type="submit"
+                    disabled={isSubmittingEmail}
+                    className="w-full h-12 bg-[var(--color-brand-orange)] text-black font-bold flex items-center justify-center gap-2 hover:bg-[var(--color-brand-green)] transition-all disabled:opacity-60"
+                  >
+                    {isSubmittingEmail ? 'AUTENTICANDO...' : 'AUTENTICAR'} <ArrowRight size={18} />
                   </button>
                   <button 
                     type="button"

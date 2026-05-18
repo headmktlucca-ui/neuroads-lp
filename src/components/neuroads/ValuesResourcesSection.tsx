@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import {
   ArrowRight,
   BadgeCheck,
@@ -59,6 +60,7 @@ const planOffers = offers.plans as PlanOffer[];
 const creditOffers = offers.creditPacks as CreditOffer[];
 
 const onboardingHubUrl = '/onboarding?next=%2Fhub';
+const onboardingHubSetupUrl = '/onboarding?next=%2Fhub&setup_auth=1';
 
 const planVisuals = [
   {
@@ -145,11 +147,13 @@ function getCreditPackShortName(includedExecutions: number) {
 }
 
 export default function ValuesResourcesSection() {
+  const router = useRouter();
   const { user, loginWithGoogle } = useAuth();
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successKind, setSuccessKind] = useState<'plano' | 'credito'>('plano');
   const [pendingSessionId, setPendingSessionId] = useState<string | null>(null);
+  const [shouldRedirectToOnboarding, setShouldRedirectToOnboarding] = useState(false);
   const recommendedPlanSlug = planOffers[2]?.slug ?? planOffers[0]?.slug;
 
   useEffect(() => {
@@ -160,11 +164,19 @@ export default function ValuesResourcesSection() {
     const sessionId = params.get('session_id');
 
     if (success === 'true') {
-      setSuccessKind(kind === 'credito' ? 'credito' : 'plano');
-      setShowSuccessModal(true);
-      if (sessionId) {
-        setPendingSessionId(sessionId);
+      const isCreditPurchase = kind === 'credito';
+      setSuccessKind(isCreditPurchase ? 'credito' : 'plano');
+
+      if (isCreditPurchase) {
+        setShowSuccessModal(true);
+      } else {
+        setShowSuccessModal(false);
+        setShouldRedirectToOnboarding(true);
+        if (sessionId) {
+          setPendingSessionId(sessionId);
+        }
       }
+
       params.delete('success');
       params.delete('kind');
       params.delete('session_id');
@@ -176,7 +188,12 @@ export default function ValuesResourcesSection() {
 
   useEffect(() => {
     const syncPremiumAfterCheckout = async () => {
-      if (!user || !pendingSessionId || successKind !== 'plano') return;
+      if (!shouldRedirectToOnboarding || !user || successKind !== 'plano') return;
+
+      if (!pendingSessionId) {
+        router.replace(onboardingHubSetupUrl);
+        return;
+      }
 
       try {
         const verifyResult = await verifyStripeCheckoutSession(pendingSessionId);
@@ -188,36 +205,35 @@ export default function ValuesResourcesSection() {
         const isCompletedSubscription = data.mode === 'subscription' && data.status === 'complete';
         const isCurrentUserSession = data.clientReferenceId === user.uid;
 
-        if (!isCompletedSubscription || !isCurrentUserSession) {
-          return;
+        if (isCompletedSubscription && isCurrentUserSession) {
+          const db = getFirebaseDb();
+          const userRef = doc(db, 'users', user.uid);
+          await setDoc(
+            userRef,
+            {
+              isPremium: true,
+              stripeCustomerId: data.customerId ?? null,
+              stripeSubscriptionId: data.subscriptionId ?? null,
+              subscriptionStatus: data.subscriptionStatus ?? 'active',
+              trialEndsAt:
+                typeof data.trialEndsAt === 'number' && Number.isFinite(data.trialEndsAt)
+                  ? data.trialEndsAt
+                  : null,
+              updatedAt: Date.now(),
+            },
+            { merge: true }
+          );
         }
-
-        const db = getFirebaseDb();
-        const userRef = doc(db, 'users', user.uid);
-        await setDoc(
-          userRef,
-          {
-            isPremium: true,
-            stripeCustomerId: data.customerId ?? null,
-            stripeSubscriptionId: data.subscriptionId ?? null,
-            subscriptionStatus: data.subscriptionStatus ?? 'active',
-            trialEndsAt:
-              typeof data.trialEndsAt === 'number' && Number.isFinite(data.trialEndsAt)
-                ? data.trialEndsAt
-                : null,
-            updatedAt: Date.now(),
-          },
-          { merge: true }
-        );
       } catch (error) {
         console.warn('Falha na sincronização pós-checkout do plano:', error);
       } finally {
         setPendingSessionId(null);
+        router.replace(onboardingHubSetupUrl);
       }
     };
 
     void syncPremiumAfterCheckout();
-  }, [pendingSessionId, successKind, user]);
+  }, [pendingSessionId, router, shouldRedirectToOnboarding, successKind, user]);
 
   const checkoutCopy = useMemo(
     () => ({

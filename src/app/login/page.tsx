@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
@@ -15,23 +15,29 @@ import {
 function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, profile, loading, premiumSyncing, loginWithGoogle } = useAuth();
+  const { user, profile, loading, premiumSyncing, loginWithGoogle, loginWithEmailPassword } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEmailSubmitting, setIsEmailSubmitting] = useState(false);
+  const [emailInput, setEmailInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
   const [authErrorMessage, setAuthErrorMessage] = useState<string | null>(null);
   const [isCheckingAccess, setIsCheckingAccess] = useState(false);
-  const accessCheckRef = useRef<string | null>(null);
 
   const nextPath = useMemo(() => normalizeHubNextPath(searchParams.get('next'), '/hub'), [searchParams]);
 
   useEffect(() => {
     if (loading || !user) return;
     if (premiumSyncing && !profile) return;
-    if (accessCheckRef.current === user.uid) return;
-
-    accessCheckRef.current = user.uid;
+    if (!profile) return;
 
     const resolveAccess = async () => {
       setIsCheckingAccess(true);
+
+      if (!hasHubRegistration(profile)) {
+        router.replace(getHubOnboardingRedirect(nextPath));
+        setIsCheckingAccess(false);
+        return;
+      }
 
       let subscriptionActive = hasActiveHubSubscription(profile);
       let syncInfraFailure = false;
@@ -81,11 +87,6 @@ function LoginPageContent() {
   }, [loading, nextPath, premiumSyncing, profile, router, user]);
 
   useEffect(() => {
-    if (user) return;
-    accessCheckRef.current = null;
-  }, [user]);
-
-  useEffect(() => {
     if (hasActiveHubSubscription(profile)) {
       setAuthErrorMessage(null);
     }
@@ -102,6 +103,25 @@ function LoginPageContent() {
       setAuthErrorMessage('Não foi possível concluir seu login agora. Tente novamente.');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleEmailLogin = async () => {
+    if (isEmailSubmitting || isCheckingAccess) return;
+    if (!emailInput.trim() || !passwordInput) {
+      setAuthErrorMessage('Informe email e senha para continuar.');
+      return;
+    }
+
+    try {
+      setIsEmailSubmitting(true);
+      setAuthErrorMessage(null);
+      await loginWithEmailPassword(emailInput.trim(), passwordInput);
+    } catch (error) {
+      console.error('Falha ao autenticar com email/senha:', error);
+      setAuthErrorMessage('Email ou senha inválidos. Se preferir, entre com Google e configure sua senha no onboarding.');
+    } finally {
+      setIsEmailSubmitting(false);
     }
   };
 
@@ -150,10 +170,42 @@ function LoginPageContent() {
 
           <GoogleLoginButton
             onClick={handleGoogleLogin}
-            disabled={isSubmitting}
+            disabled={isSubmitting || isEmailSubmitting}
             label={isSubmitting ? 'Autenticando...' : 'Entrar com o Google'}
             className="mt-7 w-full h-[46px]"
           />
+
+          <div className="mt-5 rounded-2xl border border-border bg-bg-secondary p-4">
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.1em] text-text-dim">
+              Entrar com Email e Senha
+            </p>
+            <div className="mt-3 space-y-3">
+              <input
+                type="email"
+                value={emailInput}
+                onChange={(event) => setEmailInput(event.target.value)}
+                autoComplete="email"
+                placeholder="seu@email.com"
+                className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
+              />
+              <input
+                type="password"
+                value={passwordInput}
+                onChange={(event) => setPasswordInput(event.target.value)}
+                autoComplete="current-password"
+                placeholder="Sua senha"
+                className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
+              />
+              <button
+                type="button"
+                onClick={handleEmailLogin}
+                disabled={isEmailSubmitting || isSubmitting}
+                className="w-full rounded-xl border border-[#0A9D57] bg-white px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#0A9D57] disabled:opacity-60"
+              >
+                {isEmailSubmitting ? 'Autenticando...' : 'Entrar com Email e Senha'}
+              </button>
+            </div>
+          </div>
 
           <div className="mt-5 text-center text-[13px] text-text-muted">
             <Link href="/" className="font-bold text-text-main hover:text-primary">
