@@ -10,6 +10,10 @@ import Footer from '../../../../components/layout/Footer';
 import LuccaHubSupportWidget from '../../../../components/hub/LuccaHubSupportWidget';
 import SeoGeoWorkspace from '../../../../components/agents/SeoGeoWorkspace';
 import TrafficAnalystWorkspace from '../../../../components/agents/TrafficAnalystWorkspace';
+import RoasSimulatorWorkspace from '../../../../components/agents/RoasSimulatorWorkspace';
+import WasteAuditorWorkspace from '../../../../components/agents/WasteAuditorWorkspace';
+import BudgetOptimizerWorkspace from '../../../../components/agents/BudgetOptimizerWorkspace';
+import CreativeGeneratorWorkspace from '../../../../components/agents/CreativeGeneratorWorkspace';
 import DnaBrandWorkspace, { DnaBrandPresentationPanel } from '../../../../components/agents/DnaBrandWorkspace';
 import GenericAgentWorkspace from '../../../../components/agents/GenericAgentWorkspace';
 import { useAuth } from '../../../../context/AuthContext';
@@ -37,6 +41,11 @@ type AutomationSuggestion = {
   cadence: string;
   monthlyExecutions: number;
   distribution: string;
+  scheduleOptions: Array<{
+    id: string;
+    label: string;
+    detail: string;
+  }>;
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -119,6 +128,46 @@ function getAgentHeroDescription(title: string) {
     );
   }
 
+  if (title === 'Simulador de ROAS') {
+    return (
+      <>
+        O agente <strong className="text-text-main">Simulador de ROAS</strong> conecta seus canais de mídia, consolida indicadores reais e transforma metas de faturamento em
+        projeções acionáveis de investimento, leads e retorno. Ele identifica gaps entre o cenário atual e a meta desejada, prioriza oportunidades por canal e sugere simulações
+        de escala com foco em previsibilidade de caixa. Com isso, sua operação decide orçamento com mais segurança, reduz desperdício e avança com consistência financeira.
+      </>
+    );
+  }
+
+  if (title === 'Auditor de Desperdício') {
+    return (
+      <>
+        O agente <strong className="text-text-main">Auditor de Desperdício</strong> cruza dados reais de mídia para detectar onde sua verba está sendo drenada sem retorno
+        proporcional. Ele identifica canais, segmentações e padrões de baixa eficiência, estima o desperdício financeiro e simula cenários de recuperação para realocar
+        investimento com foco em margem e previsibilidade. O resultado é uma operação mais enxuta, com decisões orientadas por dados reais e impacto direto no caixa.
+      </>
+    );
+  }
+
+  if (title === 'Otimizador de Orçamento') {
+    return (
+      <>
+        O agente <strong className="text-text-main">Otimizador de Orçamento</strong> identifica o melhor destino para cada real investido entre seus canais ativos. Ele cruza
+        custo, conversão e eficiência por fonte para simular realocações mais inteligentes, reduzir desperdício e aumentar previsibilidade de resultado financeiro. Na prática,
+        você ganha um plano tático de distribuição de verba orientado por dados reais, com foco em escala previsível e consistência de caixa.
+      </>
+    );
+  }
+
+  if (title === 'Gerador de Criativos') {
+    return (
+      <>
+        O agente <strong className="text-text-main">Gerador de Criativos</strong> conecta seus canais, lê indicadores reais de CTR, conversão e custo por lead para identificar
+        quais mensagens e ângulos criativos têm maior potencial financeiro. Ele transforma dados de performance em oportunidades priorizadas e simulações práticas de impacto,
+        apoiando ciclos contínuos de testes com foco em reduzir CPL e aumentar previsibilidade comercial.
+      </>
+    );
+  }
+
   if (title === 'DNA da Marca') {
     return (
       <>
@@ -161,6 +210,10 @@ function buildAutomationSuggestions(entry: { title: string; category: string; pl
       cadence: toCadence(conservative),
       monthlyExecutions: conservative,
       distribution: context.distribution,
+      scheduleOptions: [
+        { id: 'conservative_mon_thu_0900', label: 'Seg e Qui • 09:00', detail: 'Revisão no início da manhã para ajustes rápidos antes do pico.' },
+        { id: 'conservative_tue_fri_1430', label: 'Ter e Sex • 14:30', detail: 'Acompanhamento no meio da tarde com janela para correções no mesmo dia.' },
+      ],
     },
     {
       id: 'balanced',
@@ -169,6 +222,11 @@ function buildAutomationSuggestions(entry: { title: string; category: string; pl
       cadence: toCadence(balanced),
       monthlyExecutions: balanced,
       distribution: context.distribution,
+      scheduleOptions: [
+        { id: 'balanced_mon_wed_fri_0830', label: 'Seg, Qua e Sex • 08:30', detail: 'Ritmo clássico para abrir, ajustar e consolidar a semana.' },
+        { id: 'balanced_tue_thu_sat_1000', label: 'Ter, Qui e Sáb • 10:00', detail: 'Distribuição equilibrada com revisão extra no sábado.' },
+        { id: 'balanced_mon_wed_fri_1700', label: 'Seg, Qua e Sex • 17:00', detail: 'Leitura de fechamento diário para replanejar o dia seguinte.' },
+      ],
     },
     {
       id: 'scale',
@@ -177,6 +235,12 @@ function buildAutomationSuggestions(entry: { title: string; category: string; pl
       cadence: toCadence(scale),
       monthlyExecutions: scale,
       distribution: context.distribution,
+      scheduleOptions: [
+        { id: 'scale_weekdays_0800', label: 'Seg a Sex • 08:00', detail: 'Ajustes agressivos na abertura de cada dia útil.' },
+        { id: 'scale_weekdays_1230', label: 'Seg a Sex • 12:30', detail: 'Correções no meio do dia, após sinais iniciais de performance.' },
+        { id: 'scale_weekdays_1800', label: 'Seg a Sex • 18:00', detail: 'Fechamento de rotina para rebalanceamento noturno.' },
+        { id: 'scale_daily_0900', label: 'Seg a Dom • 09:00', detail: 'Operação contínua inclusive fim de semana para contas com alto giro.' },
+      ],
     },
   ];
 }
@@ -197,6 +261,7 @@ export default function AgentEntryPage() {
   const [historyMenuReportId, setHistoryMenuReportId] = useState<string | null>(null);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
   const [selectedAutomationId, setSelectedAutomationId] = useState<string | null>(null);
+  const [selectedScheduleOptionId, setSelectedScheduleOptionId] = useState<string | null>(null);
   const [automationActivated, setAutomationActivated] = useState(false);
   const [isSavingAutomation, setIsSavingAutomation] = useState(false);
   const [isLoadingAutomation, setIsLoadingAutomation] = useState(false);
@@ -228,6 +293,10 @@ export default function AgentEntryPage() {
     () => automationSuggestions.find((item) => item.id === selectedAutomationId) ?? null,
     [automationSuggestions, selectedAutomationId]
   );
+  const selectedScheduleOption = useMemo(() => {
+    if (!selectedSuggestion) return null;
+    return selectedSuggestion.scheduleOptions.find((item) => item.id === selectedScheduleOptionId) ?? null;
+  }, [selectedScheduleOptionId, selectedSuggestion]);
   const selectedHistoryEntry = useMemo(() => {
     if (!historyEntries.length) return null;
     if (!selectedHistoryId) return historyEntries[0];
@@ -334,6 +403,15 @@ export default function AgentEntryPage() {
   }, [automationSuggestions]);
 
   useEffect(() => {
+    if (!selectedSuggestion) return;
+    setSelectedScheduleOptionId((current) => {
+      const exists = selectedSuggestion.scheduleOptions.some((option) => option.id === current);
+      if (exists) return current;
+      return selectedSuggestion.scheduleOptions[0]?.id ?? null;
+    });
+  }, [selectedSuggestion]);
+
+  useEffect(() => {
     const loadPersistedAutomation = async () => {
       if (!user || !entry || !agentAutomationKey) return;
 
@@ -343,13 +421,16 @@ export default function AgentEntryPage() {
         const userRef = doc(db, 'users', user.uid);
         const snapshot = await getDoc(userRef);
         const userData = snapshot.data() as
-          | { automations?: Record<string, { cadenceId?: string; status?: string }> }
+          | { automations?: Record<string, { cadenceId?: string; status?: string; scheduleOptionId?: string }> }
           | undefined;
         const persisted = userData?.automations?.[agentAutomationKey];
 
         if (persisted?.cadenceId) {
           setSelectedAutomationId(persisted.cadenceId);
           setAutomationActivated(persisted.status === 'active');
+          if (persisted.scheduleOptionId) {
+            setSelectedScheduleOptionId(persisted.scheduleOptionId);
+          }
         }
       } catch (error) {
         console.error('Erro ao carregar automação persistida:', error);
@@ -439,7 +520,13 @@ export default function AgentEntryPage() {
                                   : 'border-[#FF6B00] bg-[#FF6B00] shadow-[0_10px_22px_rgba(255,107,0,0.3)] hover:brightness-105'
                               }`}
                             >
-                              {automationActivated ? 'Automação Ativa' : 'Ativar Automação'}
+                              {automationActivated
+                                ? entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos'
+                                  ? 'Agente Ativo'
+                                  : 'Automação Ativa'
+                                : entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos'
+                                  ? 'Ativar Agente'
+                                  : 'Ativar Automação'}
                             </button>
                             <button
                               type="button"
@@ -489,6 +576,42 @@ export default function AgentEntryPage() {
                 ) : entry.title === 'Analista de Tráfego' ? (
                   <div className="col-span-1">
                     <TrafficAnalystWorkspace
+                      userId={user?.uid}
+                      agentSlug={entry.slug}
+                      agentTitle={entry.title}
+                      agentCategory={entry.category}
+                    />
+                  </div>
+                ) : entry.title === 'Simulador de ROAS' ? (
+                  <div className="col-span-1">
+                    <RoasSimulatorWorkspace
+                      userId={user?.uid}
+                      agentSlug={entry.slug}
+                      agentTitle={entry.title}
+                      agentCategory={entry.category}
+                    />
+                  </div>
+                ) : entry.title === 'Auditor de Desperdício' ? (
+                  <div className="col-span-1">
+                    <WasteAuditorWorkspace
+                      userId={user?.uid}
+                      agentSlug={entry.slug}
+                      agentTitle={entry.title}
+                      agentCategory={entry.category}
+                    />
+                  </div>
+                ) : entry.title === 'Otimizador de Orçamento' ? (
+                  <div className="col-span-1">
+                    <BudgetOptimizerWorkspace
+                      userId={user?.uid}
+                      agentSlug={entry.slug}
+                      agentTitle={entry.title}
+                      agentCategory={entry.category}
+                    />
+                  </div>
+                ) : entry.title === 'Gerador de Criativos' ? (
+                  <div className="col-span-1">
+                    <CreativeGeneratorWorkspace
                       userId={user?.uid}
                       agentSlug={entry.slug}
                       agentTitle={entry.title}
@@ -561,10 +684,17 @@ export default function AgentEntryPage() {
                   {automationSuggestions.map((option) => {
                     const isSelected = selectedAutomationId === option.id;
                     return (
-                      <button
+                      <div
                         key={option.id}
-                        type="button"
                         onClick={() => setSelectedAutomationId(option.id)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            setSelectedAutomationId(option.id);
+                          }
+                        }}
+                        role="button"
+                        tabIndex={0}
                         className={`w-full text-left rounded-2xl border p-4 transition-all ${
                           isSelected
                             ? 'border-[#FFBE94] bg-[#FFF7F1] shadow-[0_10px_24px_rgba(255,107,0,0.14)]'
@@ -582,7 +712,37 @@ export default function AgentEntryPage() {
                           Cadência: <strong className="text-text-main">{option.cadence}</strong>
                         </p>
                         <p className="text-xs text-text-dim mt-1">{option.distribution}</p>
-                      </button>
+                        {isSelected ? (
+                          <div className="mt-3 rounded-xl border border-[#FFE1CF] bg-white p-3">
+                            <p className="text-[11px] font-black uppercase tracking-widest text-[#B45309]">
+                              Sugestões de dias e horários
+                            </p>
+                            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                              {option.scheduleOptions.map((schedule) => {
+                                const isScheduleSelected = selectedScheduleOptionId === schedule.id;
+                                return (
+                                  <button
+                                    key={schedule.id}
+                                    type="button"
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      setSelectedScheduleOptionId(schedule.id);
+                                    }}
+                                    className={`rounded-lg border px-3 py-2 text-left transition-all ${
+                                      isScheduleSelected
+                                        ? 'border-[#FF9A63] bg-[#FFF4EC] shadow-[0_8px_16px_rgba(255,107,0,0.12)]'
+                                        : 'border-[#E4EAF2] bg-white hover:border-[#FFC7A2]'
+                                    }`}
+                                  >
+                                    <p className="text-xs font-black text-text-main">{schedule.label}</p>
+                                    <p className="mt-1 text-[11px] leading-relaxed text-text-dim">{schedule.detail}</p>
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
                     );
                   })}
                 </div>
@@ -598,9 +758,14 @@ export default function AgentEntryPage() {
 
                   <button
                     type="button"
-                    disabled={!selectedSuggestion}
+                    disabled={!selectedSuggestion || !selectedScheduleOption}
                     onClick={async () => {
-                      if (!selectedSuggestion || !user || !entry || !agentAutomationKey) return;
+                      if (!selectedSuggestion || !selectedScheduleOption || !user || !entry || !agentAutomationKey) return;
+
+                      const shouldConfirm = window.confirm(
+                        `Confirmar programação para ${entry.title}?\n\nCadência: ${selectedSuggestion.title}\nAgenda sugerida: ${selectedScheduleOption.label}`
+                      );
+                      if (!shouldConfirm) return;
 
                       setIsSavingAutomation(true);
                       setAutomationNotice(null);
@@ -622,6 +787,9 @@ export default function AgentEntryPage() {
                             monthlyExecutions: selectedSuggestion.monthlyExecutions,
                             distribution: selectedSuggestion.distribution,
                             objective: selectedSuggestion.objective,
+                            scheduleOptionId: selectedScheduleOption.id,
+                            scheduleOptionLabel: selectedScheduleOption.label,
+                            scheduleOptionDetail: selectedScheduleOption.detail,
                             planName: entry.planSummary?.planName ?? null,
                             monthlyLimit: entry.planSummary?.monthlyLimit ?? null,
                             activatedAt: Date.now(),
@@ -633,7 +801,8 @@ export default function AgentEntryPage() {
 
                         await setDoc(userRef, payload, { merge: true });
                         setAutomationActivated(true);
-                        setAutomationNotice('Automação salva com sucesso no seu perfil.');
+                        setAutomationNotice('Programação salva com sucesso no seu perfil.');
+                        setIsAutomationModalOpen(false);
                       } catch (error) {
                         console.error('Erro ao salvar automação:', error);
                         setAutomationActivated(false);
@@ -659,6 +828,12 @@ export default function AgentEntryPage() {
                     <span>
                       Automação ativada com a configuração <strong>{selectedSuggestion.title}</strong> para o agente{' '}
                       <strong>{entry.title}</strong>.
+                      {selectedScheduleOption ? (
+                        <>
+                          {' '}
+                          Agenda selecionada: <strong>{selectedScheduleOption.label}</strong>.
+                        </>
+                      ) : null}
                     </span>
                   </div>
                 )}
@@ -771,7 +946,7 @@ export default function AgentEntryPage() {
                                       <button
                                         type="button"
                                         onClick={() => {
-                                          downloadAgentReport(item);
+                                          void downloadAgentReport(item);
                                           setHistoryMenuReportId(null);
                                         }}
                                         className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-[#0A9D57] hover:bg-[#EEFDF5]"
@@ -842,7 +1017,9 @@ export default function AgentEntryPage() {
                               <h4 className="text-base font-black text-text-main">Resultado Completo</h4>
                               <button
                                 type="button"
-                                onClick={() => downloadAgentReport(selectedHistoryEntry)}
+                                onClick={() => {
+                                  void downloadAgentReport(selectedHistoryEntry);
+                                }}
                                 className="inline-flex items-center gap-2 rounded-full border border-[#B5E8CB] bg-gradient-to-br from-[#08B760] to-[#0A9D57] px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-[0_10px_24px_rgba(8,183,96,0.3)] transition-all hover:brightness-105"
                               >
                                 <Download size={14} />

@@ -11,6 +11,9 @@ export type HubAutomationEntry = {
   monthlyExecutions: number;
   distribution: string;
   objective: string;
+  scheduleOptionId: string;
+  scheduleOptionLabel: string;
+  scheduleOptionDetail: string;
   planName: string | null;
   monthlyLimit: number | null;
   activatedAt: number | null;
@@ -106,6 +109,9 @@ export function getHubAutomationsFromProfile(profile: unknown): HubAutomationEnt
       monthlyExecutions,
       distribution: asString(rawValue.distribution),
       objective: asString(rawValue.objective),
+      scheduleOptionId: asString(rawValue.scheduleOptionId),
+      scheduleOptionLabel: asString(rawValue.scheduleOptionLabel),
+      scheduleOptionDetail: asString(rawValue.scheduleOptionDetail),
       planName: asString(rawValue.planName) || null,
       monthlyLimit: asNumber(rawValue.monthlyLimit),
       activatedAt,

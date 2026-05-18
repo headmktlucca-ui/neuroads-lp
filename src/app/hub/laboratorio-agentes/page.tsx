@@ -34,7 +34,15 @@ const PLAN_AGENT_CAPACITY: Record<string, number> = {
   Enterprise: 50,
 };
 
-const ACTIVATABLE_AGENT_TITLES = new Set(['Analista de Tráfego', 'DNA da Marca', 'SEO & GEO']);
+const ACTIVATABLE_AGENT_TITLES = new Set([
+  'Analista de Tráfego',
+  'DNA da Marca',
+  'SEO & GEO',
+  'Simulador de ROAS',
+  'Auditor de Desperdício',
+  'Otimizador de Orçamento',
+  'Gerador de Criativos',
+]);
 
 type AgentDetailsContent = {
   activities: string[];
@@ -55,6 +63,54 @@ const AGENT_DETAILS_MAP: Record<string, AgentDetailsContent> = {
       'Checklist de otimização, recomendações de investimento e alertas operacionais para correção rápida de perdas.',
     effectiveResult:
       'Mais previsibilidade no caixa, menor custo por aquisição e ganho real de eficiência na operação de mídia.',
+  },
+  'Simulador de ROAS': {
+    activities: [
+      'Consolida indicadores de mídia por canal para transformar dados em projeções reais de receita.',
+      'Simula cenários de investimento, gap de leads e distribuição recomendada de verba com foco em ROAS sustentável.',
+    ],
+    howItWorks:
+      'Cruza investimento, conversão, ticket médio e taxa de fechamento para projetar o esforço necessário para bater metas de faturamento.',
+    deliveries:
+      'Simulações por cenário, oportunidades priorizadas por canal e plano de alocação de verba para escala previsível.',
+    effectiveResult:
+      'Mais clareza sobre onde investir, quanto investir e qual retorno financeiro esperar antes de acelerar o orçamento.',
+  },
+  'Auditor de Desperdício': {
+    activities: [
+      'Mapeia canais e campanhas com baixa eficiência para identificar desperdício financeiro recorrente.',
+      'Simula cenários de corte e recuperação de verba para aumentar margem sem reduzir potencial de vendas.',
+    ],
+    howItWorks:
+      'Confronta indicadores reais com metas operacionais de CPC, CPL e conversão para isolar pontos de drenagem de caixa.',
+    deliveries:
+      'Relatório de perdas estimadas, prioridades de ajuste por canal e plano de realocação de investimento.',
+    effectiveResult:
+      'Menos desperdício, maior eficiência de mídia e crescimento com previsibilidade financeira.',
+  },
+  'Otimizador de Orçamento': {
+    activities: [
+      'Avalia distribuição atual de verba entre canais e campanhas para identificar alocação ineficiente.',
+      'Simula redistribuições com foco em reduzir desperdício e elevar retorno com base em dados reais.',
+    ],
+    howItWorks:
+      'Cruza custo, conversão e desempenho por canal para priorizar realocação de investimento com maior impacto financeiro.',
+    deliveries:
+      'Plano de redistribuição de verba, cenários comparativos e prioridades de ajuste por janela operacional.',
+    effectiveResult:
+      'Mais previsibilidade no caixa, menor risco de drenagem de orçamento e escala com eficiência.',
+  },
+  'Gerador de Criativos': {
+    activities: [
+      'Conecta indicadores reais dos canais para diagnosticar quais criativos têm maior potencial de escala.',
+      'Prioriza variações de mensagem e ângulo com base em gaps de CTR, conversão e CPL por canal.',
+    ],
+    howItWorks:
+      'Cruza dados de mídia com metas criativas para sugerir ciclos de testes e simular impacto financeiro antes de publicar novas peças.',
+    deliveries:
+      'Plano criativo com oportunidades priorizadas, cadência recomendada de produção e simulações de uplift.',
+    effectiveResult:
+      'Mais consistência na geração de criativos com foco em reduzir CPL e aumentar previsibilidade comercial.',
   },
 };
 

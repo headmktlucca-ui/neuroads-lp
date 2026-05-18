@@ -5,11 +5,14 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Activity,
+  AlertCircle,
   ArrowRight,
   Bot,
   CalendarClock,
   CheckCircle2,
   Clock3,
+  PauseCircle,
+  PlayCircle,
   RefreshCw,
   Sparkles,
 } from 'lucide-react';
@@ -25,6 +28,42 @@ function getStatusLabel(status: HubAutomationEntry['status']): string {
   if (status === 'active') return 'Automação Ativa';
   if (status === 'paused') return 'Automação Pausada';
   return 'Automação Inativa';
+}
+
+function getRuntimeInfo(automation: HubAutomationEntry, nowTs: number): {
+  label: string;
+  icon: 'running' | 'scheduled' | 'paused' | 'inactive';
+  tone: string;
+} {
+  if (automation.status === 'paused') {
+    return {
+      label: 'Programação pausada',
+      icon: 'paused',
+      tone: 'border-[#F5D0A9] bg-[#FFF7ED] text-[#B45309]',
+    };
+  }
+
+  if (automation.status !== 'active') {
+    return {
+      label: 'Programação inativa',
+      icon: 'inactive',
+      tone: 'border-[#D0D5DD] bg-[#F9FAFB] text-[#667085]',
+    };
+  }
+
+  if (automation.nextUpdateAt && automation.nextUpdateAt <= nowTs) {
+    return {
+      label: 'Em execução',
+      icon: 'running',
+      tone: 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]',
+    };
+  }
+
+  return {
+    label: 'Programada',
+    icon: 'scheduled',
+    tone: 'border-[#DCE8FF] bg-[#F5F9FF] text-[#1D4ED8]',
+  };
 }
 
 export default function HubAutomacoesPage() {
@@ -50,20 +89,20 @@ export default function HubAutomacoesPage() {
   }, [accessState, pathname, premiumSyncing, router]);
 
   const automations = useMemo(() => getHubAutomationsFromProfile(profile), [profile]);
-  const activeAutomations = useMemo(
-    () => automations.filter((automation) => automation.status === 'active'),
+  const trackedAutomations = useMemo(
+    () => automations.filter((automation) => automation.status === 'active' || automation.status === 'paused'),
     [automations]
   );
   const effectiveSelectedKey = useMemo(() => {
-    if (!activeAutomations.length) return null;
-    if (!selectedKey) return activeAutomations[0].key;
-    return activeAutomations.some((automation) => automation.key === selectedKey)
+    if (!trackedAutomations.length) return null;
+    if (!selectedKey) return trackedAutomations[0].key;
+    return trackedAutomations.some((automation) => automation.key === selectedKey)
       ? selectedKey
-      : activeAutomations[0].key;
-  }, [activeAutomations, selectedKey]);
+      : trackedAutomations[0].key;
+  }, [trackedAutomations, selectedKey]);
   const selectedAutomation = useMemo(
-    () => activeAutomations.find((automation) => automation.key === effectiveSelectedKey) ?? null,
-    [activeAutomations, effectiveSelectedKey]
+    () => trackedAutomations.find((automation) => automation.key === effectiveSelectedKey) ?? null,
+    [trackedAutomations, effectiveSelectedKey]
   );
 
   useEffect(() => {
@@ -72,16 +111,30 @@ export default function HubAutomacoesPage() {
   }, []);
 
   const totalMonthlyExecutions = useMemo(
-    () => activeAutomations.reduce((acc, item) => acc + item.monthlyExecutions, 0),
-    [activeAutomations]
+    () => trackedAutomations.reduce((acc, item) => acc + item.monthlyExecutions, 0),
+    [trackedAutomations]
+  );
+  const activeAutomationsCount = useMemo(
+    () => trackedAutomations.filter((item) => item.status === 'active').length,
+    [trackedAutomations]
+  );
+  const runningNowCount = useMemo(
+    () =>
+      trackedAutomations.filter((item) => {
+        if (item.status !== 'active') return false;
+        if (!item.nextUpdateAt) return false;
+        return item.nextUpdateAt <= nowTs;
+      }).length,
+    [trackedAutomations, nowTs]
   );
   const automationsUpdatingToday = useMemo(() => {
     const dayAhead = nowTs + 24 * 60 * 60 * 1000;
-    return activeAutomations.filter((item) => {
+    return trackedAutomations.filter((item) => {
+      if (item.status !== 'active') return false;
       if (!item.nextUpdateAt) return false;
       return item.nextUpdateAt >= nowTs && item.nextUpdateAt <= dayAhead;
     }).length;
-  }, [activeAutomations, nowTs]);
+  }, [trackedAutomations, nowTs]);
 
   if (accessState !== 'allowed') {
     return (
@@ -127,30 +180,34 @@ export default function HubAutomacoesPage() {
               </Link>
             </div>
 
-            <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3">
+            <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-4">
               <article className="rounded-2xl border border-[#173c6e] bg-[#081a38] p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Automações ativas</p>
-                <p className="mt-2 text-3xl font-black text-white">{activeAutomations.length}</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Programadas/execução</p>
+                <p className="mt-2 text-3xl font-black text-white">{trackedAutomations.length}</p>
+              </article>
+              <article className="rounded-2xl border border-[#173c6e] bg-[#081a38] p-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Ativas</p>
+                <p className="mt-2 text-3xl font-black text-white">{activeAutomationsCount}</p>
+              </article>
+              <article className="rounded-2xl border border-[#173c6e] bg-[#081a38] p-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Em execução</p>
+                <p className="mt-2 text-3xl font-black text-white">{runningNowCount}</p>
               </article>
               <article className="rounded-2xl border border-[#173c6e] bg-[#081a38] p-4">
                 <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Execuções/mês</p>
                 <p className="mt-2 text-3xl font-black text-white">{totalMonthlyExecutions.toLocaleString('pt-BR')}</p>
               </article>
-              <article className="rounded-2xl border border-[#173c6e] bg-[#081a38] p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Atualizam hoje</p>
-                <p className="mt-2 text-3xl font-black text-white">{automationsUpdatingToday}</p>
-              </article>
             </div>
           </section>
 
-          {activeAutomations.length === 0 ? (
+          {trackedAutomations.length === 0 ? (
             <section className="rounded-[30px] border border-[#E5EAF2] bg-white p-8 md:p-10 shadow-[0_16px_36px_rgba(15,23,42,0.08)] text-center">
               <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF6A00]">
                 <Bot className="h-7 w-7" />
               </div>
-              <h2 className="text-2xl md:text-3xl font-black text-text-main">Nenhuma automação ativa no momento</h2>
+              <h2 className="text-2xl md:text-3xl font-black text-text-main">Nenhuma automação programada no momento</h2>
               <p className="mt-3 text-sm md:text-base text-text-muted max-w-2xl mx-auto">
-                Ative a rotina em um agente para começar a acompanhar próximas e últimas atualizações com visibilidade total no Hub.
+                Ative a rotina em um agente para listar aqui automações programadas e em execução com todas as configurações operacionais.
               </p>
               <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                 <Link
@@ -171,15 +228,16 @@ export default function HubAutomacoesPage() {
             <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.05fr_1fr]">
               <article className="rounded-[30px] border border-[#E5EAF2] bg-white p-5 md:p-6 shadow-[0_16px_36px_rgba(15,23,42,0.08)]">
                 <header className="mb-4">
-                  <h2 className="text-2xl font-black text-text-main">Relação de Automações Ativas</h2>
+                  <h2 className="text-2xl font-black text-text-main">Relação de Automações Programadas</h2>
                   <p className="mt-1 text-sm text-text-muted">
-                    Selecione uma automação para visualizar o detalhamento operacional.
+                    Selecione uma automação programada ou em execução para visualizar o detalhamento completo.
                   </p>
                 </header>
 
                 <div className="space-y-3">
-                  {activeAutomations.map((automation) => {
+                  {trackedAutomations.map((automation) => {
                     const isSelected = selectedAutomation?.key === automation.key;
+                    const runtime = getRuntimeInfo(automation, nowTs);
                     return (
                       <button
                         key={automation.key}
@@ -193,12 +251,26 @@ export default function HubAutomacoesPage() {
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
                           <p className="text-[17px] font-black text-text-main">{automation.agentTitle}</p>
+                          <span className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[11px] font-bold ${runtime.tone}`}>
+                            {runtime.icon === 'running' ? (
+                              <PlayCircle className="h-3.5 w-3.5" />
+                            ) : runtime.icon === 'paused' ? (
+                              <PauseCircle className="h-3.5 w-3.5" />
+                            ) : runtime.icon === 'inactive' ? (
+                              <AlertCircle className="h-3.5 w-3.5" />
+                            ) : (
+                              <CheckCircle2 className="h-3.5 w-3.5" />
+                            )}
+                            {runtime.label}
+                          </span>
                           <span className="inline-flex items-center gap-1 rounded-full border border-[#CDE7D9] bg-[#F2FFF7] px-3 py-1 text-[11px] font-bold text-[#0A9D57]">
-                            <CheckCircle2 className="h-3.5 w-3.5" />
                             {getStatusLabel(automation.status)}
                           </span>
                         </div>
                         <p className="mt-1 text-sm text-text-muted">{automation.cadenceTitle}</p>
+                        {automation.scheduleOptionLabel ? (
+                          <p className="mt-1 text-xs font-semibold text-[#1D4ED8]">Agenda: {automation.scheduleOptionLabel}</p>
+                        ) : null}
                         <div className="mt-3 flex flex-wrap gap-2">
                           <span className="inline-flex items-center gap-1 rounded-full bg-[#EEF4FF] px-2.5 py-1 text-[11px] font-bold text-[#1D4ED8]">
                             <Activity className="h-3.5 w-3.5" />
@@ -207,6 +279,10 @@ export default function HubAutomacoesPage() {
                           <span className="inline-flex items-center gap-1 rounded-full bg-[#FFF7ED] px-2.5 py-1 text-[11px] font-bold text-[#C2410C]">
                             <CalendarClock className="h-3.5 w-3.5" />
                             Próxima: {formatAutomationDateTime(automation.nextUpdateAt)}
+                          </span>
+                          <span className="inline-flex items-center gap-1 rounded-full bg-[#F5F7FA] px-2.5 py-1 text-[11px] font-bold text-[#475467]">
+                            <Clock3 className="h-3.5 w-3.5" />
+                            Atualiza hoje: {automationsUpdatingToday > 0 && automation.nextUpdateAt && automation.nextUpdateAt >= nowTs && automation.nextUpdateAt <= nowTs + 24 * 60 * 60 * 1000 ? 'Sim' : 'Não'}
                           </span>
                         </div>
                       </button>
@@ -218,6 +294,23 @@ export default function HubAutomacoesPage() {
               <article className="rounded-[30px] border border-[#E5EAF2] bg-white p-5 md:p-6 shadow-[0_16px_36px_rgba(15,23,42,0.08)]">
                 {selectedAutomation ? (
                   <>
+                    {(() => {
+                      const runtime = getRuntimeInfo(selectedAutomation, nowTs);
+                      return (
+                        <div className={`mb-4 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-bold ${runtime.tone}`}>
+                          {runtime.icon === 'running' ? (
+                            <PlayCircle className="h-3.5 w-3.5" />
+                          ) : runtime.icon === 'paused' ? (
+                            <PauseCircle className="h-3.5 w-3.5" />
+                          ) : runtime.icon === 'inactive' ? (
+                            <AlertCircle className="h-3.5 w-3.5" />
+                          ) : (
+                            <CheckCircle2 className="h-3.5 w-3.5" />
+                          )}
+                          {runtime.label}
+                        </div>
+                      );
+                    })()}
                     <header>
                       <p className="text-xs font-black uppercase tracking-[0.12em] text-primary">Painel da automação</p>
                       <h3 className="mt-2 text-3xl font-black tracking-tight text-text-main">{selectedAutomation.agentTitle}</h3>
@@ -229,9 +322,28 @@ export default function HubAutomacoesPage() {
                         <p className="text-xs font-bold uppercase tracking-widest text-[#667085]">Cadência ativa</p>
                         <p className="mt-1 text-lg font-black text-text-main">{selectedAutomation.cadenceTitle}</p>
                         <p className="mt-1 text-sm text-text-muted">{selectedAutomation.cadence}</p>
+                        <p className="mt-1 text-xs text-text-dim">ID da cadência: {selectedAutomation.cadenceId || 'Não informado'}</p>
+                      </div>
+
+                      <div className="rounded-2xl border border-[#E6ECF4] bg-white p-4">
+                        <p className="text-xs font-bold uppercase tracking-widest text-[#667085]">Status e chave da automação</p>
+                        <p className="mt-1 text-sm text-text-main">
+                          <strong>Status:</strong> {getStatusLabel(selectedAutomation.status)}
+                        </p>
+                        <p className="mt-1 text-sm text-text-main break-all">
+                          <strong>Identificador:</strong> {selectedAutomation.key}
+                        </p>
                       </div>
 
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                        <div className="rounded-2xl border border-[#E6ECF4] bg-white p-4">
+                          <p className="text-xs font-bold uppercase tracking-widest text-[#667085]">Ativada em</p>
+                          <p className="mt-1 text-sm font-black text-text-main">{formatAutomationDateTime(selectedAutomation.activatedAt)}</p>
+                        </div>
+                        <div className="rounded-2xl border border-[#E6ECF4] bg-white p-4">
+                          <p className="text-xs font-bold uppercase tracking-widest text-[#667085]">Última edição</p>
+                          <p className="mt-1 text-sm font-black text-text-main">{formatAutomationDateTime(selectedAutomation.updatedAt)}</p>
+                        </div>
                         <div className="rounded-2xl border border-[#E6ECF4] bg-white p-4">
                           <p className="text-xs font-bold uppercase tracking-widest text-[#667085]">Última atualização</p>
                           <p className="mt-1 text-sm font-black text-text-main">{formatAutomationDateTime(selectedAutomation.lastUpdateAt)}</p>
@@ -245,6 +357,15 @@ export default function HubAutomacoesPage() {
                       <div className="rounded-2xl border border-[#E6ECF4] bg-white p-4">
                         <p className="text-xs font-bold uppercase tracking-widest text-[#667085]">Distribuição semanal</p>
                         <p className="mt-1 text-sm text-text-main">{selectedAutomation.distribution || 'Não informado'}</p>
+                      </div>
+
+                      <div className="rounded-2xl border border-[#E6ECF4] bg-white p-4">
+                        <p className="text-xs font-bold uppercase tracking-widest text-[#667085]">Agenda programada</p>
+                        <p className="mt-1 text-sm font-black text-text-main">{selectedAutomation.scheduleOptionLabel || 'Não informado'}</p>
+                        {selectedAutomation.scheduleOptionDetail ? (
+                          <p className="mt-1 text-sm text-text-muted">{selectedAutomation.scheduleOptionDetail}</p>
+                        ) : null}
+                        <p className="mt-1 text-xs text-text-dim">Código interno: {selectedAutomation.scheduleOptionId || 'Não informado'}</p>
                       </div>
 
                       <div className="rounded-2xl border border-[#E6ECF4] bg-white p-4">

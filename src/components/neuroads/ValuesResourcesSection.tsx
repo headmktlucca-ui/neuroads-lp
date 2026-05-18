@@ -5,17 +5,13 @@ import { useRouter } from 'next/navigation';
 import {
   ArrowRight,
   BadgeCheck,
-  BarChart3,
   Check,
   CheckCheck,
-  CircleDollarSign,
   Crown,
-  Database,
   Gem,
   Receipt,
   Rocket,
   ShieldCheck,
-  ShoppingCart,
   TrendingUp,
   UserRound,
   UsersRound,
@@ -38,26 +34,10 @@ interface PlanOffer {
   trialDays?: number;
   limits: {
     agents: number;
-    includedExecutions: number;
-    extraCreditUnitPrice: number;
-  };
-}
-
-interface CreditOffer {
-  slug: string;
-  name: string;
-  amount: number;
-  description: string;
-  priceId: string;
-  mode: OfferMode;
-  limits: {
-    includedExecutions: number;
-    unitPrice: number;
   };
 }
 
 const planOffers = offers.plans as PlanOffer[];
-const creditOffers = offers.creditPacks as CreditOffer[];
 
 const onboardingHubUrl = '/onboarding?next=%2Fhub';
 const onboardingHubSetupUrl = '/onboarding?next=%2Fhub&setup_auth=1';
@@ -68,7 +48,7 @@ const planVisuals = [
     subtitle: 'Para começar com inteligência.',
     icon: Rocket,
     features: [
-      'Acesso a todos os Agentes de IA',
+      'Acesso a todos os Agentes de IA com Automações inclusas',
       'Dashboard e relatórios essenciais',
       'Integrações e conectores básicos',
       'Suporte por email',
@@ -79,7 +59,7 @@ const planVisuals = [
     subtitle: 'Para acelerar seu crescimento.',
     icon: TrendingUp,
     features: [
-      'Acesso a todos os Agentes de IA',
+      'Acesso a todos os Agentes de IA com Automações inclusas',
       'Dashboards avançados',
       'Integrações e conectores avançados',
       'Suporte prioritário por email e chat',
@@ -90,7 +70,7 @@ const planVisuals = [
     subtitle: 'O melhor equilíbrio entre custo e escala.',
     icon: Gem,
     features: [
-      'Acesso a todos os Agentes de IA',
+      'Acesso a todos os Agentes de IA com Automações inclusas',
       'Dashboards avançados e personalizados',
       'Integrações e conectores avançados',
       'Suporte prioritário por email e chat',
@@ -102,7 +82,7 @@ const planVisuals = [
     subtitle: 'Para operações de alta performance.',
     icon: Crown,
     features: [
-      'Acesso a todos os Agentes de IA',
+      'Acesso a todos os Agentes de IA com Automações inclusas',
       'Dashboards executivos e preditivos',
       'Integrações e conectores ilimitados',
       'Suporte dedicado e SLA',
@@ -123,27 +103,14 @@ const journeySteps = [
     icon: CheckCheck,
   },
   {
-    title: 'Escala com créditos',
-    description: 'Aumente sua capacidade pagando apenas pelo que usar.',
-    icon: BarChart3,
+    title: 'Escala com mais agentes',
+    description: 'Amplie sua operação liberando mais agentes ativos simultâneos.',
+    icon: UsersRound,
   },
 ];
 
-function formatCurrencyFromCents(cents: number) {
-  return (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-
-function formatUnitPrice(value: number) {
-  return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 });
-}
-
 function formatPriceNumberFromCents(cents: number) {
   return Math.round(cents / 100).toLocaleString('pt-BR');
-}
-
-function getCreditPackShortName(includedExecutions: number) {
-  if (includedExecutions >= 1000) return `Pacote ${Math.round(includedExecutions / 1000)}K`;
-  return `Pacote ${includedExecutions}`;
 }
 
 export default function ValuesResourcesSection() {
@@ -251,7 +218,7 @@ export default function ValuesResourcesSection() {
     [],
   );
 
-  const handleCheckout = async (offer: PlanOffer | CreditOffer) => {
+  const handleCheckout = async (offer: PlanOffer) => {
     try {
       setLoadingId(offer.slug);
 
@@ -294,8 +261,19 @@ export default function ValuesResourcesSection() {
 
   return (
     <section id="pricing" className="mx-auto max-w-[1520px] px-4 pb-14 pt-12 md:px-8">
-      <div className="rounded-[28px] border border-[#e8edf5] bg-[#f9fbff] p-4 shadow-[0_12px_34px_rgba(10,20,40,0.04)] sm:p-8 lg:p-10">
-        <div className="text-center">
+      <div className="relative overflow-hidden rounded-[28px] border border-[#e8edf5] bg-[#f9fbff] p-4 shadow-[0_12px_34px_rgba(10,20,40,0.04)] sm:p-8 lg:p-10">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_88%_15%,rgba(255,121,32,0.08)_0%,rgba(255,121,32,0)_50%),linear-gradient(180deg,#fafcff_0%,#f6f9ff_100%)]" />
+        <div
+          className="pointer-events-none absolute inset-0 hidden bg-cover bg-center bg-no-repeat md:block"
+          style={{ backgroundImage: "url('/images/backgrounds/valores-recursos-bg-option-2-desktop.png')" }}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 bg-cover bg-top bg-no-repeat md:hidden"
+          style={{ backgroundImage: "url('/images/backgrounds/valores-recursos-bg-option-2-mobile.png')" }}
+        />
+        <div className="pointer-events-none absolute inset-0 bg-white/58" />
+
+        <div className="relative z-10 text-center">
           <span className="inline-flex items-center rounded-full border border-[#ffceb0] bg-white px-6 py-2 text-[13px] font-extrabold uppercase tracking-[0.22em] text-[#ff5a00]">
             Valores & Recursos
           </span>
@@ -305,7 +283,7 @@ export default function ValuesResourcesSection() {
           <p className="mt-6 text-[17px] text-[#47506a]">Comece com 14 dias de demonstração grátis. Cancele quando quiser.</p>
         </div>
 
-        <div className="mt-16 grid gap-8 md:grid-cols-3 lg:gap-8">
+        <div className="relative z-10 mt-16 grid gap-8 md:grid-cols-3 lg:gap-8">
           {journeySteps.map((step, index) => (
             <div key={step.title} className="relative rounded-2xl px-2 py-2">
               <div className="flex items-center gap-4">
@@ -329,7 +307,7 @@ export default function ValuesResourcesSection() {
           ))}
         </div>
 
-        <div className="mt-12 grid gap-4 xl:grid-cols-4">
+        <div className="relative z-10 mt-12 grid gap-4 xl:grid-cols-4">
           {planOffers.map((plan, index) => {
             const visual = planVisuals[index] ?? planVisuals[planVisuals.length - 1];
             const isRecommended = plan.slug === recommendedPlanSlug;
@@ -385,26 +363,14 @@ export default function ValuesResourcesSection() {
                 </ul>
 
                 <div className="mt-4 border-t border-[#e7ebf2] pt-3">
-                  <div className="grid grid-cols-2 gap-2 text-[12px] text-[#2a3552]">
+                  <div className="text-[12px] text-[#2a3552]">
                     <p className="flex items-center gap-1.5">
                       <UsersRound size={16} />
                       <span>
-                        <strong>{plan.limits.agents}</strong> Agentes inclusos
-                      </span>
-                    </p>
-                    <p className="flex items-center gap-1.5">
-                      <BarChart3 size={16} />
-                      <span>
-                        <strong>{plan.limits.includedExecutions.toLocaleString('pt-BR')}</strong> execuções/mês
+                        <strong>{plan.limits.agents}</strong> Agentes ativos simultâneos
                       </span>
                     </p>
                   </div>
-                  <p className="mt-2 flex items-center gap-2 text-[13px] text-[#2a3552]">
-                    <CircleDollarSign size={17} />
-                    <span>
-                      Crédito excedente: <strong>{formatUnitPrice(plan.limits.extraCreditUnitPrice)}</strong> por execução
-                    </span>
-                  </p>
                 </div>
 
                 <button
@@ -433,57 +399,7 @@ export default function ValuesResourcesSection() {
           })}
         </div>
 
-        <div className="mt-12 rounded-[14px] border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-3 shadow-[0_18px_32px_rgba(2,8,22,0.35)]">
-          <div className="grid gap-2 lg:grid-cols-[1.45fr_1fr_1fr_1fr]">
-            <article className="rounded-[10px] border border-[#173c6e] bg-[#081a38] px-4 py-3">
-              <div className="flex items-center gap-3">
-                <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#ff6a00]/55 bg-[#0b1d3f] text-[#ff6a00]">
-                  <Database size={21} />
-                </span>
-                <div>
-                  <h3 className="text-[22px] font-extrabold leading-[1.06] text-white">Créditos avulsos para expansão imediata</h3>
-                  <p className="mt-1 text-[13px] leading-[1.35] text-[#b7c4df]">
-                    Quando seu consumo ultrapassar o limite do plano, adicione créditos sem precisar trocar de assinatura.
-                  </p>
-                </div>
-              </div>
-            </article>
-
-            {creditOffers.map((credit) => (
-              <article key={credit.slug} className="rounded-[10px] border border-[#173c6e] bg-[#081a38] px-3 py-2.5">
-                <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="min-w-0">
-                    <div className="mb-1 flex items-center gap-2">
-                      <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#ff6a00]/60 bg-[#0b1d3f] text-[#ff6a00]">
-                        <Database size={15} />
-                      </span>
-                      <span className="text-[13px] font-bold text-white">{getCreditPackShortName(credit.limits.includedExecutions)}</span>
-                    </div>
-                    <p className="text-[30px] font-black leading-none text-[#ff6a00] sm:text-[34px] lg:text-[40px]">{formatCurrencyFromCents(credit.amount)}</p>
-                    <p className="mt-1 text-[13px] text-white">{credit.limits.includedExecutions.toLocaleString('pt-BR')} execuções</p>
-                    <p className="text-[13px] text-[#c6d3e9]">{formatUnitPrice(credit.limits.unitPrice)} por execução</p>
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => handleCheckout(credit)}
-                    disabled={loadingId === credit.slug}
-                    className="inline-flex w-full items-center justify-center rounded-[12px] border border-[#ff6a00] bg-transparent px-3 py-2.5 text-[12px] font-extrabold text-[#ff6a00] transition hover:bg-[#ff6a00]/10 disabled:opacity-60 sm:h-[84px] sm:w-[92px] sm:shrink-0 sm:px-2 sm:py-2"
-                  >
-                    <span className="text-center leading-[1.05]">
-                      {loadingId === credit.slug ? 'Processando...' : 'Comprar créditos'}
-                      <span className="mt-1.5 block">
-                        <ShoppingCart size={18} className="mx-auto" />
-                      </span>
-                    </span>
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-10 grid gap-3 rounded-[18px] border border-[#e6ebf3] bg-white p-5 md:grid-cols-3">
+        <div className="relative z-10 mt-10 grid gap-3 rounded-[18px] border border-[#e6ebf3] bg-white p-5 md:grid-cols-3">
           <div className="flex items-center gap-3">
             <ShieldCheck size={24} className="text-[#18223e]" />
             <div>
