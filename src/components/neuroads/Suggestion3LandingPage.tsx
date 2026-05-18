@@ -486,10 +486,10 @@ export default function Suggestion3LandingPage() {
 
             <div className="flex items-center gap-2">
               <Link
-                href="/login?next=/hub"
+                href="/#pricing"
                 className="hidden items-center gap-2 rounded-full border border-[#d7dce5] bg-white px-5 py-2.5 text-[12px] font-extrabold text-[#2b3240] lg:inline-flex"
               >
-                Acessar meu Hub
+                Valores & Recursos
                 <ArrowRight size={13} />
               </Link>
               <button
@@ -590,11 +590,11 @@ export default function Suggestion3LandingPage() {
             </div>
             <div className="mt-3 grid gap-2">
               <Link
-                href="/login?next=/hub"
+                href="/#pricing"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d8deea] bg-white px-4 py-2.5 text-[12px] font-extrabold text-[#2b3240]"
               >
-                Acessar meu Hub
+                Valores & Recursos
                 <ArrowRight size={13} />
               </Link>
               <button
