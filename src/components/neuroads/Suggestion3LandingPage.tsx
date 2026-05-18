@@ -368,7 +368,7 @@ export default function Suggestion3LandingPage() {
   }, []);
 
   return (
-    <main className="bg-white text-[#1a1d23]">
+    <main className="relative overflow-hidden bg-white text-[#1a1d23]">
       <style jsx global>{`
         @keyframes neuroadsGradientFlow {
           0% {
@@ -404,7 +404,7 @@ export default function Suggestion3LandingPage() {
         }
 
         .neuroads-smooth-bg-card {
-          background: linear-gradient(180deg, #ffffff 0%, #fffbf8 52%, #ffffff 100%);
+          background: transparent;
         }
 
         .neuroads-smooth-bg-image {
@@ -423,7 +423,13 @@ export default function Suggestion3LandingPage() {
           );
         }
       `}</style>
-      <section className="relative overflow-hidden pt-5">
+      <div
+        className="pointer-events-none absolute inset-0 bg-top bg-repeat-y bg-[length:100%_auto]"
+        style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
+      />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent via-[#f7f8fa]/75 to-bg-main" />
+      <div className="relative z-10">
+        <section className="relative overflow-hidden pt-5">
         <div className="mx-auto max-w-[1260px] px-5 md:px-8">
           <header className="fixed left-1/2 top-4 z-[90] flex w-[min(calc(100%-1.5rem),1196px)] -translate-x-1/2 items-center justify-between gap-2 rounded-full border border-black/[0.06] bg-white px-3 py-3 shadow-[0_8px_26px_rgba(10,18,30,0.04)] sm:w-[min(calc(100%-2.5rem),1196px)] sm:gap-3 sm:px-5 md:px-7">
             <a href="#" className="flex items-center">
@@ -626,16 +632,8 @@ export default function Suggestion3LandingPage() {
           <div className="h-[84px]" aria-hidden="true" />
 
           <div className="neuroads-smooth-bg-card relative overflow-hidden rounded-[34px] px-5 pb-10 pt-12 sm:px-7 lg:min-h-[560px] lg:px-10">
-            <Image
-              src="/images/back2026.png"
-              alt=""
-              fill
-              className="pointer-events-none neuroads-smooth-bg-image object-cover object-[78%_52%]"
-              sizes="100vw"
-              priority
-            />
-            <div className="neuroads-smooth-bg-fade pointer-events-none absolute inset-0" />
-            <div className="relative z-10 max-w-[560px] lg:pr-14">
+            <div className="relative z-10 grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+              <div className="max-w-[560px] lg:pr-8">
               <h1 className="mt-4 text-[30px] font-extrabold leading-[1.08] tracking-[-0.02em] text-[#111317] sm:text-[34px] lg:text-[34px]">
                 Desbloqueie o Potencial Oculto:
                 <br />
@@ -674,6 +672,18 @@ export default function Suggestion3LandingPage() {
                     <ArrowRight size={10} />
                   </span>
                 </button>
+              </div>
+              </div>
+
+              <div className="relative mx-auto w-full max-w-[470px] lg:max-w-[520px]">
+                <Image
+                  src="/images/hero/hero-cube-anexo-222.png"
+                  alt="Ilustração de IA agêntica aplicada à performance de marketing e vendas"
+                  width={1428}
+                  height={2048}
+                  className="h-auto w-full object-contain"
+                  priority
+                />
               </div>
             </div>
           </div>
@@ -1221,7 +1231,8 @@ export default function Suggestion3LandingPage() {
             <a href="/termos">Termos de Uso</a>
           </div>
         </div>
-      </footer>
+        </footer>
+      </div>
 
       {isLuccaChatOpen && (
         <LuccaSpecialistChatModal

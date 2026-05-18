@@ -43,7 +43,8 @@ async function fetchGoogleAdsChannel(
   if (!developerToken) {
     throw new Error('GOOGLE_ADS_DEVELOPER_TOKEN não configurado.');
   }
-  if (!channel.accountId) {
+  const sanitizedCustomerId = (channel.accountId || '').replace(/[^\d]/g, '');
+  if (!sanitizedCustomerId) {
     throw new Error('Conta Google Ads não informada.');
   }
 
@@ -60,11 +61,14 @@ async function fetchGoogleAdsChannel(
   };
 
   if (channel.loginCustomerId) {
-    headers['login-customer-id'] = channel.loginCustomerId;
+    const sanitizedLoginCustomerId = channel.loginCustomerId.replace(/[^\d]/g, '');
+    if (sanitizedLoginCustomerId) {
+      headers['login-customer-id'] = sanitizedLoginCustomerId;
+    }
   }
 
   const response = await fetch(
-    `https://googleads.googleapis.com/v17/customers/${channel.accountId}/googleAds:search`,
+    `https://googleads.googleapis.com/v17/customers/${sanitizedCustomerId}/googleAds:search`,
     {
       method: 'POST',
       headers,

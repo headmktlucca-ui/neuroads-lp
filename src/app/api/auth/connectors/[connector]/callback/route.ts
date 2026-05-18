@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { ConnectorKey } from '@/lib/connectors';
 import {
   exchangeOAuthCodeForToken,
-  getAppBaseUrl,
+  getAppBaseUrlForRequest,
   parseAuthState,
   type ConnectorProvider,
 } from '@/lib/connector-auth';
@@ -21,8 +21,7 @@ function isSupportedConnector(value: string): value is ConnectorKey {
   return SUPPORTED_CONNECTORS.includes(value as ConnectorKey);
 }
 
-function buildRedirectUrl(path: string) {
-  const appBase = getAppBaseUrl();
+function buildRedirectUrl(path: string, appBase: string) {
   if (path.startsWith('/')) return new URL(`${appBase}${path}`);
   return new URL(`${appBase}/hub?connectors=1`);
 }
@@ -31,9 +30,10 @@ export async function GET(
   request: Request,
   context: { params: Promise<{ connector: string }> }
 ) {
+  const appBaseUrl = getAppBaseUrlForRequest(request);
   const { connector } = await context.params;
   if (!isSupportedConnector(connector)) {
-    return NextResponse.redirect(`${getAppBaseUrl()}/hub?connectors=1&connector_auth_error=unsupported_connector`);
+    return NextResponse.redirect(`${appBaseUrl}/hub?connectors=1&connector_auth_error=unsupported_connector`);
   }
 
   const { searchParams } = new URL(request.url);
@@ -42,7 +42,7 @@ export async function GET(
   const state = parseAuthState(searchParams.get('state'));
 
   const redirectPath = state?.next && state.next.startsWith('/') ? state.next : '/hub?connectors=1';
-  const redirectUrl = buildRedirectUrl(redirectPath);
+  const redirectUrl = buildRedirectUrl(redirectPath, appBaseUrl);
   redirectUrl.searchParams.set('connector', connector);
 
   if (error || !code || !state) {
@@ -59,6 +59,7 @@ export async function GET(
       connector,
       provider: state.provider as ConnectorProvider,
       code,
+      appBaseUrl,
     });
 
     redirectUrl.searchParams.set('connector_auth_success', '1');

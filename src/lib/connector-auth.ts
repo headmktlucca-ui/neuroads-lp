@@ -215,9 +215,57 @@ function fromBase64Url(value: string): string {
   return Buffer.from(padded, 'base64').toString('utf8');
 }
 
+function stripTrailingSlashes(value: string): string {
+  return value.replace(/\/+$/g, '');
+}
+
+function isLocalHostname(hostname: string): boolean {
+  const normalized = hostname.trim().toLowerCase().replace(/^\[(.*)\]$/, '$1');
+  return normalized === 'localhost' || normalized === '127.0.0.1' || normalized === '::1';
+}
+
+function getRequestOrigin(request: Request): string {
+  try {
+    const requestUrl = new URL(request.url);
+    const forwardedHost = request.headers.get('x-forwarded-host')?.trim();
+    const host = (forwardedHost || request.headers.get('host') || requestUrl.host).trim();
+    const forwardedProto = request.headers.get('x-forwarded-proto')?.trim();
+    const protocol = forwardedProto || requestUrl.protocol.replace(/:$/, '');
+    return `${protocol}://${host}`;
+  } catch {
+    return 'http://localhost:3000';
+  }
+}
+
+function resolveBaseUrl(overrideBaseUrl?: string, request?: Request): string {
+  if (overrideBaseUrl?.trim()) {
+    return stripTrailingSlashes(overrideBaseUrl.trim());
+  }
+
+  const configured = process.env.NEXT_PUBLIC_APP_URL?.trim();
+  if (!request) {
+    return stripTrailingSlashes(configured || 'http://localhost:3000');
+  }
+
+  const requestOrigin = stripTrailingSlashes(getRequestOrigin(request));
+  try {
+    const requestHost = new URL(requestOrigin).hostname;
+    if (isLocalHostname(requestHost)) {
+      return requestOrigin;
+    }
+  } catch {
+    // Ignore parse failures and fallback to configured URL.
+  }
+
+  return stripTrailingSlashes(configured || requestOrigin);
+}
+
 export function getAppBaseUrl(): string {
-  const base = process.env.NEXT_PUBLIC_APP_URL?.trim() || 'http://localhost:3000';
-  return base.replace(/\/+$/g, '');
+  return resolveBaseUrl();
+}
+
+export function getAppBaseUrlForRequest(request: Request): string {
+  return resolveBaseUrl(undefined, request);
 }
 
 export function getConnectorOAuthConfig(connector: ConnectorKey): ConnectorOAuthConfig | null {
@@ -244,8 +292,8 @@ export function resolveProviderConfig(
   return config.providers.find((item) => item.provider === config.defaultProvider) ?? null;
 }
 
-export function buildCallbackUrl(connector: ConnectorKey): string {
-  return `${getAppBaseUrl()}/api/auth/connectors/${connector}/callback`;
+export function buildCallbackUrl(connector: ConnectorKey, appBaseUrl?: string): string {
+  return `${resolveBaseUrl(appBaseUrl)}/api/auth/connectors/${connector}/callback`;
 }
 
 export function createAuthState(connector: ConnectorKey, provider: ConnectorProvider, next: string): string {
@@ -276,7 +324,10 @@ export function parseAuthState(encodedState: string | null): ConnectorAuthState 
 export function buildOAuthAuthorizationUrl(
   connector: ConnectorKey,
   provider: ConnectorProvider | null | undefined,
-  next: string
+  next: string,
+  options?: {
+    appBaseUrl?: string;
+  }
 ): { url: string; provider: ConnectorProvider } | { error: string; missingEnv?: string[] } {
   const providerConfig = resolveProviderConfig(connector, provider);
   if (!providerConfig) {
@@ -301,7 +352,7 @@ export function buildOAuthAuthorizationUrl(
     };
   }
 
-  const callbackUrl = buildCallbackUrl(connector);
+  const callbackUrl = buildCallbackUrl(connector, options?.appBaseUrl);
   const state = createAuthState(connector, providerConfig.provider, next);
   const params = new URLSearchParams({
     response_type: 'code',
@@ -325,6 +376,7 @@ export async function exchangeOAuthCodeForToken(args: {
   connector: ConnectorKey;
   provider: ConnectorProvider;
   code: string;
+  appBaseUrl?: string;
 }): Promise<ConnectorTokenExchangeResult> {
   const providerConfig = resolveProviderConfig(args.connector, args.provider);
   if (!providerConfig) {
@@ -337,7 +389,7 @@ export async function exchangeOAuthCodeForToken(args: {
     throw new Error(`Credenciais OAuth ausentes para ${args.provider}.`);
   }
 
-  const callbackUrl = buildCallbackUrl(args.connector);
+  const callbackUrl = buildCallbackUrl(args.connector, args.appBaseUrl);
 
   if (providerConfig.tokenExchangeStyle === 'meta-get') {
     const tokenUrl = new URL(providerConfig.tokenUrl);

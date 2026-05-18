@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { AlertTriangle, CheckCircle2, Link2, Sparkles } from 'lucide-react';
 import { getLatestAgentReportsFromDb, saveAgentReportToDb } from '../../lib/agent-report-history';
+import { useAuth } from '../../context/AuthContext';
 
 type Props = {
   userId?: string | null;
@@ -15,14 +16,21 @@ type Props = {
 type ChannelKey = 'googleAds' | 'metaAds' | 'linkedinAds';
 
 type ConnectorAuth = {
+  oauthConnected: boolean;
   isActive: boolean;
-  accessToken: string;
   accountId: string;
   loginCustomerId?: string;
   connectedAt?: number;
 };
 
 type ConnectorState = Record<ChannelKey, ConnectorAuth>;
+
+type ProfileConnection = {
+  isActive?: boolean;
+  accessToken?: string;
+};
+
+type ProfileConnections = Record<string, ProfileConnection | undefined>;
 
 type ExtractResponse = {
   success: boolean;
@@ -43,11 +51,22 @@ type ExtractResponse = {
 };
 
 const CONNECTORS_KEY = (uid: string) => `neuroads_ad_connectors_${uid}`;
-const DASHBOARD_CONNECTORS_KEY = (uid: string) => `neuroads_dashboard_connectors_${uid}`;
+
+const CHANNEL_CONNECTION_KEY: Record<ChannelKey, string> = {
+  googleAds: 'google_ads',
+  metaAds: 'meta_ads',
+  linkedinAds: 'linkedin_ads',
+};
+
+const CHANNEL_PROVIDER: Record<ChannelKey, string> = {
+  googleAds: 'google',
+  metaAds: 'meta',
+  linkedinAds: 'linkedin',
+};
 
 const EMPTY_CONNECTOR: ConnectorAuth = {
+  oauthConnected: false,
   isActive: false,
-  accessToken: '',
   accountId: '',
   loginCustomerId: '',
 };
@@ -79,10 +98,17 @@ function calculateInsights(totals: { spend: number; impressions: number; clicks:
   return { ctr, cpc, cpl, convRate, priorities, executive };
 }
 
+function getConnectionKey(channel: ChannelKey): string {
+  return CHANNEL_CONNECTION_KEY[channel];
+}
+
+function hasOAuthConnection(connection: ProfileConnection | undefined): boolean {
+  return Boolean(connection?.isActive && connection?.accessToken && connection.accessToken.trim());
+}
+
 export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle, agentCategory }: Props) {
-  const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { profile } = useAuth();
 
   const [connectors, setConnectors] = useState<ConnectorState>(DEFAULT_CONNECTORS);
   const [dateFrom, setDateFrom] = useState(() => new Date(Date.now() - 1000 * 60 * 60 * 24 * 7).toISOString().slice(0, 10));
@@ -91,6 +117,13 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
   const [error, setError] = useState<string | null>(null);
   const [extraction, setExtraction] = useState<ExtractResponse | null>(null);
   const [historyCount, setHistoryCount] = useState(0);
+
+  const profileConnections = useMemo(() => {
+    if (!profile || typeof profile !== 'object') return {} as ProfileConnections;
+    const maybeConnections = (profile as Record<string, unknown>).connections;
+    if (!maybeConnections || typeof maybeConnections !== 'object') return {} as ProfileConnections;
+    return maybeConnections as ProfileConnections;
+  }, [profile]);
 
   const activeChannels = useMemo(
     () => (Object.keys(connectors) as ChannelKey[]).filter((key) => connectors[key].isActive),
@@ -101,18 +134,44 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
     if (!userId) return;
 
     const persisted = window.localStorage.getItem(CONNECTORS_KEY(userId));
+    let parsed = DEFAULT_CONNECTORS;
+
     if (persisted) {
       try {
-        const parsed = JSON.parse(persisted) as Partial<ConnectorState>;
-        setConnectors({
-          googleAds: { ...EMPTY_CONNECTOR, ...(parsed.googleAds ?? {}) },
-          metaAds: { ...EMPTY_CONNECTOR, ...(parsed.metaAds ?? {}) },
-          linkedinAds: { ...EMPTY_CONNECTOR, ...(parsed.linkedinAds ?? {}) },
-        });
+        const raw = JSON.parse(persisted) as Partial<ConnectorState>;
+        parsed = {
+          googleAds: { ...EMPTY_CONNECTOR, ...(raw.googleAds ?? {}) },
+          metaAds: { ...EMPTY_CONNECTOR, ...(raw.metaAds ?? {}) },
+          linkedinAds: { ...EMPTY_CONNECTOR, ...(raw.linkedinAds ?? {}) },
+        };
       } catch {
-        setConnectors(DEFAULT_CONNECTORS);
+        parsed = DEFAULT_CONNECTORS;
       }
     }
+
+    const hydrated: ConnectorState = {
+      googleAds: {
+        ...parsed.googleAds,
+        oauthConnected: hasOAuthConnection(profileConnections[getConnectionKey('googleAds')]),
+      },
+      metaAds: {
+        ...parsed.metaAds,
+        oauthConnected: hasOAuthConnection(profileConnections[getConnectionKey('metaAds')]),
+      },
+      linkedinAds: {
+        ...parsed.linkedinAds,
+        oauthConnected: hasOAuthConnection(profileConnections[getConnectionKey('linkedinAds')]),
+      },
+    };
+
+    (Object.keys(hydrated) as ChannelKey[]).forEach((key) => {
+      hydrated[key].isActive =
+        hydrated[key].oauthConnected &&
+        hydrated[key].isActive &&
+        Boolean(hydrated[key].accountId.trim());
+    });
+
+    setConnectors(hydrated);
 
     const loadHistoryCount = async () => {
       const entries = await getLatestAgentReportsFromDb(userId, agentSlug, 10);
@@ -120,47 +179,18 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
     };
 
     void loadHistoryCount();
-  }, [agentSlug, userId]);
+  }, [agentSlug, profileConnections, userId]);
 
   useEffect(() => {
-    if (!userId) return;
-    const token = searchParams.get('google_ads_token');
-    const refresh = searchParams.get('google_ads_refresh');
-    if (!token) return;
+    const oauthError = searchParams.get('google_ads_error') || searchParams.get('connector_auth_error');
+    if (oauthError) {
+      setError(`Falha na autenticação do canal: ${oauthError}.`);
+    }
+  }, [searchParams]);
 
-    setConnectors((prev) => ({
-      ...prev,
-      googleAds: {
-        ...prev.googleAds,
-        isActive: true,
-        accessToken: token,
-        connectedAt: Date.now(),
-        loginCustomerId: prev.googleAds.loginCustomerId || '',
-        accountId: prev.googleAds.accountId || '',
-      },
-    }));
-
-    const cleaned = new URLSearchParams(searchParams.toString());
-    cleaned.delete('google_ads_token');
-    cleaned.delete('google_ads_refresh');
-    if (refresh) cleaned.delete('google_ads_refresh');
-    const query = cleaned.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname);
-  }, [pathname, router, searchParams, userId]);
-
-  const syncConnectorFlags = (next: ConnectorState) => {
+  const persistConnectors = (next: ConnectorState) => {
     if (!userId) return;
     window.localStorage.setItem(CONNECTORS_KEY(userId), JSON.stringify(next));
-
-    const dashboardRaw = window.localStorage.getItem(DASHBOARD_CONNECTORS_KEY(userId));
-    const dashboardParsed = dashboardRaw ? (JSON.parse(dashboardRaw) as Record<string, boolean>) : {};
-    const merged = {
-      ...dashboardParsed,
-      googleAds: next.googleAds.isActive,
-      metaAds: next.metaAds.isActive,
-      linkedinAds: next.linkedinAds.isActive,
-    };
-    window.localStorage.setItem(DASHBOARD_CONNECTORS_KEY(userId), JSON.stringify(merged));
   };
 
   const setConnectorField = (key: ChannelKey, field: keyof ConnectorAuth, value: string | boolean | number) => {
@@ -172,20 +202,22 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
           [field]: value,
         },
       };
-      syncConnectorFlags(next);
+      persistConnectors(next);
       return next;
     });
   };
 
   const connectChannel = (key: ChannelKey) => {
     setError(null);
-    const channel = connectors[key];
-    if (!channel.accessToken.trim()) {
-      setError(`Informe o Access Token para conectar ${labelFor(key)}.`);
+
+    const current = connectors[key];
+    if (!current.oauthConnected) {
+      setError(`Autentique ${labelFor(key)} com o mesmo e-mail logado antes de ativar este canal.`);
       return;
     }
-    if (!channel.accountId.trim()) {
-      setError(`Informe o ID da conta para conectar ${labelFor(key)}.`);
+
+    if (!current.accountId.trim()) {
+      setError(`Informe o ID da conta para ativar ${labelFor(key)}.`);
       return;
     }
 
@@ -198,7 +230,7 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
           connectedAt: Date.now(),
         },
       };
-      syncConnectorFlags(next);
+      persistConnectors(next);
       return next;
     });
   };
@@ -208,17 +240,18 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
       const next = {
         ...prev,
         [key]: {
-          ...EMPTY_CONNECTOR,
+          ...prev[key],
+          isActive: false,
         },
       };
-      syncConnectorFlags(next);
+      persistConnectors(next);
       return next;
     });
   };
 
   const runExtraction = async () => {
     if (!activeChannels.length) {
-      setError('Conecte ao menos 1 canal antes de extrair indicadores.');
+      setError('Ative ao menos 1 canal autenticado antes de extrair indicadores.');
       return;
     }
     if (!dateFrom || !dateTo) {
@@ -230,12 +263,21 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
     setError(null);
     setExtraction(null);
     try {
-      const channels = activeChannels.map((key) => ({
-        platform: key,
-        accessToken: connectors[key].accessToken.trim(),
-        accountId: connectors[key].accountId.trim(),
-        loginCustomerId: connectors[key].loginCustomerId?.trim() || undefined,
-      }));
+      const channels = activeChannels.map((key) => {
+        const connection = profileConnections[getConnectionKey(key)];
+        const accessToken = connection?.accessToken?.trim() || '';
+
+        if (!accessToken) {
+          throw new Error(`A autenticação de ${labelFor(key)} expirou. Reconecte o canal para continuar.`);
+        }
+
+        return {
+          platform: key,
+          accessToken,
+          accountId: connectors[key].accountId.trim(),
+          loginCustomerId: connectors[key].loginCustomerId?.trim() || undefined,
+        };
+      });
 
       const response = await fetch('/api/traffic/extract', {
         method: 'POST',
@@ -301,79 +343,83 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
           <section className="rounded-2xl border border-[#E4EAF2] bg-[#FBFCFF] p-5">
             <h3 className="text-sm font-black text-text-main">1. Conectar canais de mídia</h3>
             <p className="mt-1 text-sm text-text-muted">
-              Conecte Google Ads, Meta Ads e/ou LinkedIn Ads. Após conectar, os canais ficam ativos também na janela de Conectores.
+              A conexão é feita apenas por autenticação do canal com o mesmo e-mail da sua sessão. Não há entrada manual de token.
             </p>
 
             <div className="mt-4 space-y-4">
-              {(Object.keys(connectors) as ChannelKey[]).map((key) => (
-                <div key={key} className="rounded-xl border border-[#E1E7F0] bg-white p-4">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-black text-text-main">{labelFor(key)}</p>
-                    {connectors[key].isActive ? (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-[#BDE8CF] bg-[#F2FFF7] px-3 py-1 text-xs font-bold text-[#0A9D57]">
-                        <CheckCircle2 className="h-3.5 w-3.5" />
-                        Conector ativo
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 rounded-full border border-[#D1D5DB] bg-white px-3 py-1 text-xs font-bold text-[#6B7280]">
-                        <AlertTriangle className="h-3.5 w-3.5" />
-                        Pendente
-                      </span>
-                    )}
-                  </div>
+              {(Object.keys(connectors) as ChannelKey[]).map((key) => {
+                const oauthHref = `/api/auth/connectors/${key}/start?provider=${CHANNEL_PROVIDER[key]}&next=/hub/agente/analista-de-trafego`;
+                return (
+                  <div key={key} className="rounded-xl border border-[#E1E7F0] bg-white p-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <p className="text-sm font-black text-text-main">{labelFor(key)}</p>
+                      {connectors[key].isActive ? (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[#BDE8CF] bg-[#F2FFF7] px-3 py-1 text-xs font-bold text-[#0A9D57]">
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          Canal ativo
+                        </span>
+                      ) : connectors[key].oauthConnected ? (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[#FCD34D] bg-[#FFFBEB] px-3 py-1 text-xs font-bold text-[#92400E]">
+                          <AlertTriangle className="h-3.5 w-3.5" />
+                          Autenticado (pendente ativação)
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 rounded-full border border-[#D1D5DB] bg-white px-3 py-1 text-xs font-bold text-[#6B7280]">
+                          <AlertTriangle className="h-3.5 w-3.5" />
+                          Não autenticado
+                        </span>
+                      )}
+                    </div>
 
-                  <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <input
-                      value={connectors[key].accessToken}
-                      onChange={(e) => setConnectorField(key, 'accessToken', e.target.value)}
-                      placeholder="Access Token"
-                      className="rounded-xl border border-[#D6DEE8] bg-white px-3 py-2 text-sm text-text-main"
-                    />
-                    <input
-                      value={connectors[key].accountId}
-                      onChange={(e) => setConnectorField(key, 'accountId', e.target.value)}
-                      placeholder={key === 'googleAds' ? 'Customer ID' : key === 'metaAds' ? 'Ad Account ID' : 'Sponsored Account ID'}
-                      className="rounded-xl border border-[#D6DEE8] bg-white px-3 py-2 text-sm text-text-main"
-                    />
-                    {key === 'googleAds' ? (
+                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
                       <input
-                        value={connectors[key].loginCustomerId || ''}
-                        onChange={(e) => setConnectorField(key, 'loginCustomerId', e.target.value)}
-                        placeholder="Login Customer ID (MCC) opcional"
-                        className="md:col-span-2 rounded-xl border border-[#D6DEE8] bg-white px-3 py-2 text-sm text-text-main"
+                        value={connectors[key].accountId}
+                        onChange={(e) => setConnectorField(key, 'accountId', e.target.value)}
+                        placeholder={key === 'googleAds' ? 'Customer ID' : key === 'metaAds' ? 'Ad Account ID' : 'Sponsored Account ID'}
+                        className="rounded-xl border border-[#D6DEE8] bg-white px-3 py-2 text-sm text-text-main"
                       />
-                    ) : null}
-                  </div>
+                      {key === 'googleAds' ? (
+                        <input
+                          value={connectors[key].loginCustomerId || ''}
+                          onChange={(e) => setConnectorField(key, 'loginCustomerId', e.target.value)}
+                          placeholder="Login Customer ID (MCC) opcional"
+                          className="rounded-xl border border-[#D6DEE8] bg-white px-3 py-2 text-sm text-text-main"
+                        />
+                      ) : (
+                        <div className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2 text-xs text-text-dim flex items-center">
+                          Autenticação via e-mail do usuário logado
+                        </div>
+                      )}
+                    </div>
 
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {key === 'googleAds' ? (
+                    <div className="mt-3 flex flex-wrap gap-2">
                       <a
-                        href="/api/auth/google-ads/start?next=/hub/agente/analista-de-trafego"
+                        href={oauthHref}
                         className="inline-flex items-center gap-2 rounded-full border border-[#D9E2F4] bg-[#EEF4FF] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#1D4ED8]"
                       >
                         <Link2 className="h-3.5 w-3.5" />
-                        OAuth Google
+                        Autenticar Canal
                       </a>
-                    ) : null}
-                    <button
-                      type="button"
-                      onClick={() => connectChannel(key)}
-                      className="inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white"
-                    >
-                      Conectar
-                    </button>
-                    {connectors[key].isActive ? (
                       <button
                         type="button"
-                        onClick={() => disconnectChannel(key)}
-                        className="inline-flex items-center gap-2 rounded-full border border-[#FECACA] bg-[#FFF1F2] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#B42318]"
+                        onClick={() => connectChannel(key)}
+                        className="inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white"
                       >
-                        Desconectar
+                        Ativar Canal
                       </button>
-                    ) : null}
+                      {connectors[key].isActive ? (
+                        <button
+                          type="button"
+                          onClick={() => disconnectChannel(key)}
+                          className="inline-flex items-center gap-2 rounded-full border border-[#FECACA] bg-[#FFF1F2] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#B42318]"
+                        >
+                          Desativar
+                        </button>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 

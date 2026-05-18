@@ -1,11 +1,26 @@
 import { NextResponse } from 'next/server';
 
+function resolveAppUrl(request: Request): string {
+  const requestUrl = new URL(request.url);
+  const host = request.headers.get('x-forwarded-host') || request.headers.get('host') || requestUrl.host;
+  const proto = request.headers.get('x-forwarded-proto') || requestUrl.protocol.replace(/:$/, '');
+  const origin = `${proto}://${host}`.replace(/\/+$/g, '');
+  const hostname = requestUrl.hostname.toLowerCase();
+  const configured = process.env.NEXT_PUBLIC_APP_URL?.trim().replace(/\/+$/g, '');
+
+  if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1') {
+    return origin;
+  }
+
+  return configured || origin;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
   const state = searchParams.get('state');
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  const appUrl = resolveAppUrl(request);
   const safeNext = state ? decodeURIComponent(state) : '/hub';
   const redirectPath = safeNext.startsWith('/') ? safeNext : '/hub';
 

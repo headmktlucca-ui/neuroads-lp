@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useRef, useState, Fragment } from 'rea
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
-import { ChevronDown, User, LogOut, X, PlugZap, CheckCircle2, Database, Gauge, AlertTriangle } from 'lucide-react';
+import { ChevronDown, User, LogOut, X, PlugZap, CheckCircle2, Database, Gauge, AlertTriangle, CreditCard } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
@@ -86,6 +86,28 @@ function isConnectorKey(value: string | null): value is ConnectorKey {
   return value in DEFAULT_CONNECTOR_STATUS;
 }
 
+function formatCurrencyFromCents(cents: number | null): string {
+  if (cents == null || !Number.isFinite(cents)) return 'Não informado';
+  return (cents / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function formatDateTime(value: number | null): string {
+  if (!value || !Number.isFinite(value)) return 'Não informado';
+  return new Intl.DateTimeFormat('pt-BR', {
+    dateStyle: 'full',
+    timeStyle: 'short',
+    timeZone: 'America/Sao_Paulo',
+  }).format(new Date(value));
+}
+
+function formatTrialRemaining(remainingMs: number | null): string {
+  if (remainingMs == null || remainingMs <= 0) return 'Encerrado';
+  const totalHours = Math.floor(remainingMs / (1000 * 60 * 60));
+  const days = Math.floor(totalHours / 24);
+  const hours = totalHours % 24;
+  return `${days}d ${hours}h restantes`;
+}
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLabSubmenuOpen, setIsLabSubmenuOpen] = useState(false);
@@ -93,6 +115,7 @@ export default function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCompanyOpen, setIsCompanyOpen] = useState(false);
   const [isConnectorsOpen, setIsConnectorsOpen] = useState(false);
+  const [isFinanceOpen, setIsFinanceOpen] = useState(false);
   const [companySaved, setCompanySaved] = useState(false);
   const [connectorsSaved, setConnectorsSaved] = useState(false);
   const [connectorFeedback, setConnectorFeedback] = useState<string | null>(null);
@@ -213,6 +236,7 @@ export default function Navbar() {
 
   const isConnectorsModalOpen = isConnectorsOpen || searchParams.get('connectors') === '1';
   const isCompanyModalOpen = isCompanyOpen || searchParams.get('brand') === '1';
+  const isFinanceModalOpen = isFinanceOpen || searchParams.get('financeiro') === '1';
 
   const closeConnectorsModal = () => {
     setIsConnectorsOpen(false);
@@ -226,6 +250,43 @@ export default function Navbar() {
     if (searchParams.get('brand') === '1') {
       router.replace(pathname || '/hub', { scroll: false });
     }
+  };
+
+  const closeFinanceModal = () => {
+    setIsFinanceOpen(false);
+    if (searchParams.get('financeiro') === '1') {
+      router.replace(pathname || '/hub', { scroll: false });
+    }
+  };
+
+  const openProfileModal = () => {
+    setIsSettingsOpen(false);
+    setIsMenuOpen(false);
+    setIsProfileOpen(true);
+  };
+
+  const openConnectorsModal = () => {
+    setIsSettingsOpen(false);
+    setIsMenuOpen(false);
+    setIsConnectorsOpen(true);
+  };
+
+  const openCompanyModal = () => {
+    setIsSettingsOpen(false);
+    setIsMenuOpen(false);
+    setIsCompanyOpen(true);
+  };
+
+  const openFinanceModal = () => {
+    setIsSettingsOpen(false);
+    setIsMenuOpen(false);
+    setIsFinanceOpen(true);
+  };
+
+  const handleLogout = () => {
+    setIsSettingsOpen(false);
+    setIsMenuOpen(false);
+    void logout();
   };
 
   const persistConnectorStatusLocal = useCallback((nextStatus: ConnectorStatus) => {
@@ -330,6 +391,10 @@ export default function Navbar() {
   const capacityRatio = planCapacity > 0 ? activeAgentsCount / planCapacity : 0;
   const isCapacityAbove80 = capacityRatio >= 0.8;
   const planDisplayLabel = hubProfile.planName ?? (profile?.isPremium ? 'Premium' : 'Padrão');
+  const financialPlanName = hubProfile.planName ?? planDisplayLabel;
+  const financialPlanAmount = formatCurrencyFromCents(hubProfile.planAmountCents);
+  const trialEndsAtLabel = formatDateTime(hubProfile.trialEndsAt);
+  const trialRemainingLabel = formatTrialRemaining(hubProfile.trialRemainingMs);
 
   useEffect(() => {
     if (!user) return;
@@ -889,13 +954,15 @@ export default function Navbar() {
                     Agentes IA
                     <ChevronDown size={14} />
                   </button>
-                  <div className="invisible absolute left-1/2 top-full z-[120] mt-3 w-56 -translate-x-1/2 rounded-2xl border border-[#E7EAF0] bg-white p-2 opacity-0 shadow-[0_14px_30px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:opacity-100">
+                  <div className="invisible absolute left-1/2 top-full z-[120] mt-3 w-[300px] -translate-x-1/2 rounded-2xl border border-[#E7EAF0] bg-white p-2 opacity-0 shadow-[0_14px_30px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:opacity-100">
                     {laboratorySubLinks.map((link, index) => (
                       <div key={link.name}>
                         <Link
                           href={link.href}
-                          className={`block rounded-xl px-3 py-2 text-[14px] font-semibold transition-colors ${
-                            isLinkActive(link.href) ? 'bg-[#F0FFF7] text-[#0A9D57]' : 'text-[#344054] hover:bg-[#F8FAFC]'
+                          className={`block w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
+                            isLinkActive(link.href)
+                              ? 'text-[#FF6A00] bg-[#F0FFF7]'
+                              : 'text-[#344054] hover:bg-[#F8FAFC]'
                           }`}
                         >
                           {link.name}
@@ -917,6 +984,52 @@ export default function Navbar() {
                 >
                   Agentes Ativos
                 </Link>
+                <div className="relative group">
+                  <button
+                    type="button"
+                    className={`inline-flex items-center gap-1 text-[13px] font-semibold transition-colors duration-200 ${
+                      isHubNavbarStyle
+                        ? 'rounded-full px-2 py-1 text-[#5f6572] group-hover:text-[#1c2230]'
+                        : 'text-[#344054] group-hover:text-[#111827]'
+                    }`}
+                  >
+                    Configurações
+                    <ChevronDown size={14} />
+                  </button>
+                  <div className="invisible absolute left-1/2 top-full z-[120] mt-3 w-[300px] -translate-x-1/2 rounded-2xl border border-[#E7EAF0] bg-white p-2 opacity-0 shadow-[0_14px_30px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:opacity-100">
+                      <button
+                        onClick={openProfileModal}
+                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] transition-colors"
+                      >
+                        Meu perfil
+                      </button>
+                      <button
+                        onClick={openConnectorsModal}
+                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] transition-colors"
+                      >
+                        Conectores
+                      </button>
+                      <button
+                        onClick={openCompanyModal}
+                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] transition-colors"
+                      >
+                        Sua Empresa
+                      </button>
+                      <button
+                        onClick={openFinanceModal}
+                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] transition-colors"
+                      >
+                        Financeiro
+                      </button>
+                      <div className="my-2 h-px w-full bg-[#E5E7EB]" />
+                      <button
+                        onClick={handleLogout}
+                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-red-500 hover:bg-red-50 transition-colors"
+                      >
+                        Sair
+                      </button>
+                  </div>
+                </div>
               </>
             )}
           </div>
@@ -949,35 +1062,32 @@ export default function Navbar() {
                   <div className="absolute top-full right-0 mt-4 w-[300px] rounded-[22px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.18)] z-[60]">
                     <div className="bg-white border border-[#FFF1E8] rounded-[20px] overflow-hidden py-3">
                     <button
-                      onClick={() => {
-                        setIsSettingsOpen(false);
-                        setIsProfileOpen(true);
-                      }}
+                      onClick={openProfileModal}
                       className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-text-main hover:text-primary hover:bg-[#FFF8F3] transition-all flex items-center gap-4 normal-case"
                     >
                       <User size={15} className="text-text-dim" /> Meu perfil
                     </button>
                     <button
-                      onClick={() => {
-                        setIsSettingsOpen(false);
-                        setIsConnectorsOpen(true);
-                      }}
+                      onClick={openConnectorsModal}
                       className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-text-main hover:text-primary hover:bg-[#FFF8F3] transition-all flex items-center gap-4 normal-case"
                     >
                       <PlugZap size={15} className="text-text-dim" /> Conectores
                     </button>
                     <button
-                      onClick={() => {
-                        setIsSettingsOpen(false);
-                        setIsCompanyOpen(true);
-                      }}
+                      onClick={openCompanyModal}
                       className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-text-main hover:text-primary hover:bg-[#FFF8F3] transition-all flex items-center gap-4 normal-case"
                     >
                       <User size={15} className="text-text-dim" /> Sua Empresa
                     </button>
+                    <button
+                      onClick={openFinanceModal}
+                      className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-text-main hover:text-primary hover:bg-[#FFF8F3] transition-all flex items-center gap-4 normal-case"
+                    >
+                      <CreditCard size={15} className="text-text-dim" /> Financeiro
+                    </button>
                     <div className="h-px bg-border mx-7 my-2" />
                     <button
-                      onClick={() => { logout(); setIsSettingsOpen(false); }}
+                      onClick={handleLogout}
                       className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-red-500 hover:bg-red-50 transition-all flex items-center gap-4 normal-case"
                     >
                       <LogOut size={15} /> Sair
@@ -1073,7 +1183,7 @@ export default function Navbar() {
                         href={link.href}
                         onClick={() => setIsMenuOpen(false)}
                         className={`block rounded-xl px-4 py-2 text-center text-sm font-bold tracking-wide transition-colors ${
-                          isLinkActive(link.href) ? 'bg-[#F0FFF7] text-[#0A9D57]' : 'text-text-muted hover:bg-[#F8FAFC]'
+                          isLinkActive(link.href) ? 'bg-[#F0FFF7] text-[#FF6A00]' : 'text-text-muted hover:bg-[#F8FAFC]'
                         }`}
                       >
                         {link.name}
@@ -1103,34 +1213,31 @@ export default function Navbar() {
                 {getGreeting()}, {getFirstName(user.displayName || user.email)}!
               </p>
               <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  setIsProfileOpen(true);
-                }}
+                onClick={openProfileModal}
                 className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
               >
                 MEU PERFIL
               </button>
               <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  setIsConnectorsOpen(true);
-                }}
+                onClick={openConnectorsModal}
                 className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
               >
                 CONECTORES
               </button>
               <button
-                onClick={() => {
-                  setIsMenuOpen(false);
-                  setIsCompanyOpen(true);
-                }}
+                onClick={openCompanyModal}
                 className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
               >
                 SUA EMPRESA
               </button>
               <button
-                onClick={() => { logout(); setIsMenuOpen(false); }}
+                onClick={openFinanceModal}
+                className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
+              >
+                FINANCEIRO
+              </button>
+              <button
+                onClick={handleLogout}
                 className="w-full py-5 text-sm font-black text-red-500 tracking-widest uppercase border border-red-200 rounded-xl bg-red-50 flex items-center justify-center gap-3"
               >
                 <LogOut size={18} /> SAIR
@@ -1239,6 +1346,88 @@ export default function Navbar() {
       </div>
     )}
 
+
+    {/* Finance Modal */}
+    {isFinanceModalOpen && user && (
+      <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center sm:py-4">
+        <div
+          onClick={closeFinanceModal}
+          className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
+        />
+
+        <div className="relative w-full max-w-2xl max-h-[92vh] rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)] animate-in fade-in zoom-in duration-300">
+          <div className="max-h-[calc(92vh-4px)] overflow-y-auto rounded-[28px] bg-white border border-[#FFF1E8]">
+            <div className="relative px-6 py-5 border-b border-border bg-gradient-to-br from-orange-light to-white">
+              <h3 className="text-2xl font-black text-text-main tracking-tight">Financeiro</h3>
+              <p className="text-sm text-text-muted mt-1">Detalhes do plano, assinatura e período de acesso</p>
+              <button
+                onClick={closeFinanceModal}
+                className="absolute top-4 right-4 p-2 rounded-full bg-white border border-border hover:bg-bg-secondary transition-colors"
+              >
+                <X size={18} className="text-text-main" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
+                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Plano atual</p>
+                  <p className="text-base font-black text-text-main">{financialPlanName}</p>
+                </div>
+                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
+                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Valor mensal</p>
+                  <p className="text-base font-black text-text-main">{financialPlanAmount}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
+                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Status da assinatura</p>
+                  <p className={`text-base font-black ${hubProfile.isSubscriptionActive ? 'text-[#0A9D57]' : 'text-primary'}`}>
+                    {hubProfile.statusLabel}
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
+                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Acesso operacional</p>
+                  <p className="text-base font-black text-text-main">{hubProfile.accessLabel}</p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
+                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Recursos incluídos</p>
+                <p className="text-sm font-bold text-text-main">
+                  {hubProfile.operationLabel}
+                </p>
+                {hubProfile.includedExecutions != null ? (
+                  <p className="text-xs text-text-muted mt-2">
+                    Execuções inclusas por mês: {hubProfile.includedExecutions.toLocaleString('pt-BR')}
+                  </p>
+                ) : null}
+              </div>
+
+              {hubProfile.isTrialing && (hubProfile.trialRemainingMs ?? 0) > 0 ? (
+                <div className="rounded-2xl border border-[#FFD2B5] bg-[#FFF8F3] p-5">
+                  <p className="text-xs uppercase tracking-widest text-[#B45309] font-bold mb-2">Período gratuito ativo</p>
+                  <p className="text-base font-black text-[#7C2D12]">{trialRemainingLabel}</p>
+                  <p className="text-sm text-[#7C2D12] mt-2">
+                    Sua primeira cobrança está prevista para: <span className="font-bold">{trialEndsAtLabel}</span>.
+                  </p>
+                </div>
+              ) : null}
+
+              {!hubProfile.isTrialing ? (
+                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
+                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Período gratuito</p>
+                  <p className="text-sm font-bold text-text-main">
+                    {hubProfile.trialEndsAt ? `Encerrado em ${trialEndsAtLabel}` : 'Não aplicável ao status atual'}
+                  </p>
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
 
       {/* Company Modal */}
       {isCompanyModalOpen && user && (
