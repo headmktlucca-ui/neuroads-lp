@@ -718,3 +718,30 @@ Hostinger Reach: contato sincronizado com sucesso. { message: 'Request accepted'
  GET /hub/agentes-ativos 200 in 87ms (next.js: 14ms, application-code: 72ms)
  GET /hub/agentes-ativos 200 in 162ms (next.js: 9ms, application-code: 154ms)
  GET /hub/agentes-ativos 200 in 88ms (next.js: 11ms, application-code: 77ms)
+✓ Compiled in 882ms
+ GET /hub/agentes-ativos 200 in 179ms (next.js: 9ms, application-code: 170ms)
+ GET /hub/agentes-ativos 200 in 75ms (next.js: 8ms, application-code: 67ms)
+ GET /hub/agentes-ativos 200 in 117ms (next.js: 5ms, application-code: 111ms)
+ GET /hub/agentes-ativos 200 in 81ms (next.js: 10ms, application-code: 71ms)
+ GET /hub 200 in 33ms (next.js: 10ms, application-code: 23ms)
+✓ Compiled in 1290ms
+✓ Compiled in 2.1s
+✓ Compiled in 664ms
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 152ms (next.js: 30ms, application-code: 122ms)
+✓ Compiled in 454ms
+✓ Compiled in 694ms
+✓ Compiled in 3.1s
+ GET / 200 in 3.5s (next.js: 1911ms, application-code: 1597ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 3.5s (next.js: 2.6s, application-code: 889ms)
+ GET / 200 in 905ms (next.js: 77ms, application-code: 829ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 1027ms (next.js: 436ms, application-code: 592ms)
+ GET / 200 in 370ms (next.js: 25ms, application-code: 345ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 374ms (next.js: 215ms, application-code: 159ms)
+✓ Compiled in 616ms
+ POST /api/stripe/checkout 200 in 1166ms (next.js: 247ms, application-code: 919ms)
+ GET /?canceled=true 200 in 1964ms (next.js: 781ms, application-code: 1183ms)
+ GET /hub 200 in 3.0s (next.js: 1171ms, application-code: 1786ms)
+✓ Compiled in 657ms
+✓ Compiled in 3.8s
+✓ Compiled in 1149ms
+ GET /?canceled=true 200 in 4.4s (next.js: 2.7s, application-code: 1692ms)

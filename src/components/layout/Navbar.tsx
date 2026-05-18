@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useMemo, useRef, useState, Fragment } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, Fragment } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
@@ -15,6 +15,15 @@ import {
   readAgentStatusOverrides,
   type AgentStatusOverrides,
 } from '../../lib/agent-status-cache';
+import {
+  CONNECTOR_CONNECTION_KEYS,
+  CONNECTOR_DEFINITIONS,
+  DEFAULT_CONNECTOR_STATUS,
+  getConnectorStatusFromConnections,
+  type ConnectorConnection,
+  type ConnectorKey,
+  type ConnectorStatus,
+} from '../../lib/connectors';
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -37,36 +46,6 @@ function readRecord(value: unknown): Record<string, unknown> | null {
   return value as Record<string, unknown>;
 }
 
-type ConnectorStatus = {
-  googleAds: boolean;
-  metaAds: boolean;
-  linkedinAds: boolean;
-  ga4: boolean;
-  serverTracking: boolean;
-  crm: boolean;
-  payments: boolean;
-  warehouse: boolean;
-};
-
-type ConnectorDefinition = {
-  key: keyof ConnectorStatus;
-  name: string;
-  source: string;
-  required: boolean;
-  usedBy: string;
-};
-
-const DEFAULT_CONNECTOR_STATUS: ConnectorStatus = {
-  googleAds: false,
-  metaAds: false,
-  linkedinAds: false,
-  ga4: false,
-  serverTracking: false,
-  crm: false,
-  payments: false,
-  warehouse: false,
-};
-
 const DEFAULT_COMPANY_FORM = {
   companyName: '',
   site: HTTPS_PREFIX,
@@ -83,17 +62,6 @@ const DEFAULT_CONNECTOR_CONFIG = {
   refreshFrequency: '15 min',
 };
 
-const CONNECTOR_DEFINITIONS: ConnectorDefinition[] = [
-  { key: 'googleAds', name: 'Google Ads API', source: 'Mídia paga', required: true, usedBy: 'ROAS, CAC, alertas de campanha' },
-  { key: 'metaAds', name: 'Meta Ads API', source: 'Mídia paga', required: true, usedBy: 'CPL, CPA, desperdício e variações' },
-  { key: 'linkedinAds', name: 'LinkedIn Ads API', source: 'Mídia paga B2B', required: true, usedBy: 'CPL B2B, qualidade de lead e CAC por conta' },
-  { key: 'ga4', name: 'GA4 Data API', source: 'Analytics', required: true, usedBy: 'Funil, taxa de conversão e jornada' },
-  { key: 'serverTracking', name: 'GTM Server + CAPI/Enhanced', source: 'Atribuição', required: true, usedBy: 'Atribuição confiável e deduplicação' },
-  { key: 'crm', name: 'CRM (HubSpot/RD/Pipedrive)', source: 'Vendas', required: true, usedBy: 'MQL, SQL, ganhos reais por estágio' },
-  { key: 'payments', name: 'Stripe/Pagamentos', source: 'Receita', required: true, usedBy: 'Receita confirmada e LTV' },
-  { key: 'warehouse', name: 'BigQuery/Data Warehouse', source: 'Consolidação', required: true, usedBy: 'Visão unificada e projeções' },
-];
-
 const PLAN_AGENT_CAPACITY: Record<string, number> = {
   Lite: 5,
   Start: 10,
@@ -103,6 +71,20 @@ const PLAN_AGENT_CAPACITY: Record<string, number> = {
 };
 
 const ACCOUNT_DELETE_FLAG_PREFIX = 'neuroads_account_delete_in_progress_';
+const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
+  googleAds: 'google',
+  metaAds: 'meta',
+  linkedinAds: 'linkedin',
+  ga4: 'google',
+  crm: 'hubspot',
+  payments: 'stripe',
+  warehouse: 'bigquery',
+};
+
+function isConnectorKey(value: string | null): value is ConnectorKey {
+  if (!value) return false;
+  return value in DEFAULT_CONNECTOR_STATUS;
+}
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -113,6 +95,9 @@ export default function Navbar() {
   const [isConnectorsOpen, setIsConnectorsOpen] = useState(false);
   const [companySaved, setCompanySaved] = useState(false);
   const [connectorsSaved, setConnectorsSaved] = useState(false);
+  const [connectorFeedback, setConnectorFeedback] = useState<string | null>(null);
+  const [connectorError, setConnectorError] = useState<string | null>(null);
+  const [connectorBusyKey, setConnectorBusyKey] = useState<ConnectorKey | null>(null);
   const [companyForm, setCompanyForm] = useState(DEFAULT_COMPANY_FORM);
   const [connectorStatus, setConnectorStatus] = useState<ConnectorStatus>(DEFAULT_CONNECTOR_STATUS);
   const [connectorConfig, setConnectorConfig] = useState(DEFAULT_CONNECTOR_CONFIG);
@@ -241,6 +226,22 @@ export default function Navbar() {
     if (searchParams.get('brand') === '1') {
       router.replace(pathname || '/hub', { scroll: false });
     }
+  };
+
+  const persistConnectorStatusLocal = useCallback((nextStatus: ConnectorStatus) => {
+    if (!user) return;
+    const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+    window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
+  }, [user]);
+
+  const getConnectorOAuthHref = (connectorKey: ConnectorKey, provider?: string) => {
+    const params = new URLSearchParams({
+      next: `${pathname || '/hub'}?connectors=1`,
+    });
+    if (provider) {
+      params.set('provider', provider);
+    }
+    return `/api/auth/connectors/${connectorKey}/start?${params.toString()}`;
   };
 
   const navLinks = pathname?.startsWith('/admin') && isAdmin
@@ -379,7 +380,7 @@ export default function Navbar() {
           : HTTPS_PREFIX,
       };
       let nextWhatsapp = fallbackWhatsapp;
-      let nextConnectorStatus = DEFAULT_CONNECTOR_STATUS;
+      let nextConnectorStatus = { ...DEFAULT_CONNECTOR_STATUS };
       let nextConnectorConfig = DEFAULT_CONNECTOR_CONFIG;
 
       const companyRaw = window.localStorage.getItem(companyKey);
@@ -417,6 +418,16 @@ export default function Navbar() {
         };
       }
 
+      const profileConnections =
+        (readRecord(profileRecord?.connections) as Record<string, ConnectorConnection | null | undefined> | null) ?? null;
+      if (profileConnections) {
+        const persistedStatus = getConnectorStatusFromConnections(profileConnections);
+        nextConnectorStatus = {
+          ...nextConnectorStatus,
+          ...persistedStatus,
+        };
+      }
+
       const connectorsConfigRaw = window.localStorage.getItem(connectorsConfigKey);
       if (connectorsConfigRaw) {
         const parsed = JSON.parse(connectorsConfigRaw) as Partial<typeof connectorConfig>;
@@ -441,6 +452,101 @@ export default function Navbar() {
       }
     };
   }, [profile, user]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const success = searchParams.get('connector_auth_success');
+    const error = searchParams.get('connector_auth_error');
+    const connectorParam = searchParams.get('connector');
+    const provider = searchParams.get('connector_provider');
+    const accessToken = searchParams.get('connector_access_token');
+    const refreshToken = searchParams.get('connector_refresh_token');
+    const accountId = searchParams.get('connector_account_id');
+    const expiresInRaw = searchParams.get('connector_expires_in');
+    const expiresIn = expiresInRaw ? Number(expiresInRaw) : undefined;
+
+    if (!success && !error) return;
+
+    const clearConnectorQueryParams = () => {
+      const cleaned = new URLSearchParams(searchParams.toString());
+      [
+        'connector_auth_success',
+        'connector_auth_error',
+        'connector',
+        'connector_provider',
+        'connector_access_token',
+        'connector_refresh_token',
+        'connector_account_id',
+        'connector_expires_in',
+      ].forEach((param) => cleaned.delete(param));
+      const query = cleaned.toString();
+      const basePath = pathname || '/hub';
+      router.replace(query ? `${basePath}?${query}` : basePath, { scroll: false });
+    };
+
+    if (error) {
+      setConnectorError(`Falha ao conectar: ${error}`);
+      setConnectorFeedback(null);
+      clearConnectorQueryParams();
+      return;
+    }
+
+    if (!isConnectorKey(connectorParam) || !accessToken) {
+      setConnectorError('Conexão retornou sem dados suficientes para ativar o conector.');
+      setConnectorFeedback(null);
+      clearConnectorQueryParams();
+      return;
+    }
+
+    const connectionKey = CONNECTOR_CONNECTION_KEYS[connectorParam];
+    const now = Date.now();
+    setConnectorStatus((prev) => {
+      const nextStatus = {
+        ...prev,
+        [connectorParam]: true,
+      };
+      persistConnectorStatusLocal(nextStatus);
+      return nextStatus;
+    });
+
+    const upsertConnection = async () => {
+      try {
+        const db = getFirebaseDb();
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(
+          userRef,
+          {
+            connections: {
+              [connectionKey]: {
+                isActive: true,
+                provider: provider ?? null,
+                accountId: accountId ?? null,
+                accessToken,
+                refreshToken: refreshToken ?? null,
+                expiresIn: Number.isFinite(expiresIn || NaN) ? expiresIn : null,
+                expiresAt: Number.isFinite(expiresIn || NaN) ? now + Number(expiresIn) * 1000 : null,
+                connectedAt: now,
+                updatedAt: now,
+              },
+            },
+            updatedAt: now,
+          },
+          { merge: true }
+        );
+        setConnectorFeedback('Conector autenticado e salvo com sucesso.');
+        setConnectorError(null);
+      } catch (saveError) {
+        console.warn('Falha ao persistir conexão OAuth:', saveError);
+        setConnectorFeedback(null);
+        setConnectorError('Conexão concluída, mas não foi possível salvar no banco.');
+      } finally {
+        clearConnectorQueryParams();
+      }
+    };
+
+    void upsertConnection();
+  }, [pathname, persistConnectorStatusLocal, router, searchParams, user]);
 
   const handleSaveCompany = async () => {
     if (!user) return;
@@ -512,6 +618,100 @@ export default function Navbar() {
     window.localStorage.setItem(connectorsConfigKey, JSON.stringify(connectorConfig));
     setConnectorsSaved(true);
     setTimeout(() => setConnectorsSaved(false), 2200);
+  };
+
+  const handleConnectorDisconnect = async (connectorKey: ConnectorKey) => {
+    if (!user) return;
+    setConnectorBusyKey(connectorKey);
+    setConnectorError(null);
+    setConnectorFeedback(null);
+
+    setConnectorStatus((prev) => {
+      const nextStatus = { ...prev, [connectorKey]: false };
+      persistConnectorStatusLocal(nextStatus);
+      return nextStatus;
+    });
+
+    try {
+      const db = getFirebaseDb();
+      const userRef = doc(db, 'users', user.uid);
+      const connectionKey = CONNECTOR_CONNECTION_KEYS[connectorKey];
+      await setDoc(
+        userRef,
+        {
+          connections: {
+            [connectionKey]: {
+              isActive: false,
+              updatedAt: Date.now(),
+            },
+          },
+          updatedAt: Date.now(),
+        },
+        { merge: true }
+      );
+      setConnectorFeedback('Conector desconectado com sucesso.');
+    } catch (disconnectError) {
+      console.warn('Falha ao desconectar conector:', disconnectError);
+      setConnectorError('Não foi possível desconectar o conector no banco.');
+    } finally {
+      setConnectorBusyKey(null);
+    }
+  };
+
+  const handleConnectorConnect = async (connectorKey: ConnectorKey) => {
+    if (!user) return;
+    setConnectorBusyKey(connectorKey);
+    setConnectorError(null);
+    setConnectorFeedback(null);
+
+    const oauthProvider = OAUTH_CONNECTOR_PROVIDERS[connectorKey];
+    if (oauthProvider) {
+      window.location.href = getConnectorOAuthHref(connectorKey, oauthProvider);
+      return;
+    }
+
+    // Conector sem OAuth nativo (ex.: GTM Server + CAPI): salva configuração manual.
+    const now = Date.now();
+    const connectionKey = CONNECTOR_CONNECTION_KEYS[connectorKey];
+    const metadata = {
+      timezone: connectorConfig.timezone,
+      currency: connectorConfig.currency,
+      attributionWindow: connectorConfig.attributionWindow,
+      refreshFrequency: connectorConfig.refreshFrequency,
+    };
+
+    setConnectorStatus((prev) => {
+      const nextStatus = { ...prev, [connectorKey]: true };
+      persistConnectorStatusLocal(nextStatus);
+      return nextStatus;
+    });
+
+    try {
+      const db = getFirebaseDb();
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(
+        userRef,
+        {
+          connections: {
+            [connectionKey]: {
+              isActive: true,
+              provider: 'manual',
+              connectedAt: now,
+              updatedAt: now,
+              metadata,
+            },
+          },
+          updatedAt: now,
+        },
+        { merge: true }
+      );
+      setConnectorFeedback('Conector manual ativado e salvo com sucesso.');
+    } catch (connectError) {
+      console.warn('Falha ao conectar conector manual:', connectError);
+      setConnectorError('Conector ativado localmente, mas houve falha ao salvar no banco.');
+    } finally {
+      setConnectorBusyKey(null);
+    }
   };
 
   const handleDeleteAccount = async () => {
@@ -1207,30 +1407,40 @@ export default function Navbar() {
                             <p className="text-sm font-black text-text-main">{connector.name}</p>
                             <p className="text-xs text-text-muted mt-1">{connector.source} • {connector.usedBy}</p>
                           </div>
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setConnectorStatus((prev) => ({
-                                ...prev,
-                                [connector.key]: !prev[connector.key],
-                              }))
-                            }
-                            className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border text-xs font-bold tracking-wider uppercase transition-all ${
-                              connectorStatus[connector.key]
-                                ? 'bg-[#F2FFF7] border-[#BDE8CF] text-[#0A9D57]'
-                                : 'bg-white border-[#D1D5DB] text-[#6B7280]'
-                            }`}
-                          >
-                            {connectorStatus[connector.key] ? (
-                              <>
-                                <CheckCircle2 size={14} /> Conectado
-                              </>
-                            ) : (
-                              <>
-                                <PlugZap size={14} /> Pendente
-                              </>
-                            )}
-                          </button>
+                          <div className="flex flex-wrap items-center justify-end gap-2">
+                            {connector.key === 'crm' && !connectorStatus[connector.key] ? (
+                              <a
+                                href={getConnectorOAuthHref(connector.key, 'pipedrive')}
+                                className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] text-[#1D4ED8] text-[11px] font-bold tracking-wide uppercase"
+                              >
+                                <PlugZap size={12} /> Pipedrive
+                              </a>
+                            ) : null}
+                            <button
+                              type="button"
+                              disabled={connectorBusyKey === connector.key}
+                              onClick={() =>
+                                connectorStatus[connector.key]
+                                  ? void handleConnectorDisconnect(connector.key)
+                                  : void handleConnectorConnect(connector.key)
+                              }
+                              className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border text-xs font-bold tracking-wider uppercase transition-all disabled:opacity-60 disabled:cursor-not-allowed ${
+                                connectorStatus[connector.key]
+                                  ? 'bg-[#F2FFF7] border-[#BDE8CF] text-[#0A9D57]'
+                                  : 'bg-white border-[#D1D5DB] text-[#6B7280]'
+                              }`}
+                            >
+                              {connectorStatus[connector.key] ? (
+                                <>
+                                  <CheckCircle2 size={14} /> Conectado
+                                </>
+                              ) : (
+                                <>
+                                  <PlugZap size={14} /> Conectar
+                                </>
+                              )}
+                            </button>
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -1309,8 +1519,16 @@ export default function Navbar() {
               </div>
 
               <div className="px-6 py-5 border-t border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <p className={`text-sm ${connectorsSaved ? 'text-[#0A9D57]' : 'text-text-muted'}`}>
-                  {connectorsSaved ? 'Configurações de conectores salvas com sucesso.' : 'Ative os conectores e salve para aplicar no Dashboard.'}
+                <p className={`text-sm ${
+                  connectorError ? 'text-[#B42318]' : connectorsSaved || connectorFeedback ? 'text-[#0A9D57]' : 'text-text-muted'
+                }`}>
+                  {connectorError
+                    ? connectorError
+                    : connectorFeedback
+                      ? connectorFeedback
+                      : connectorsSaved
+                        ? 'Configurações de conectores salvas com sucesso.'
+                        : 'Conecte os conectores obrigatórios para liberar dados reais no Dashboard.'}
                 </p>
                 <div className="flex gap-3">
                   <button

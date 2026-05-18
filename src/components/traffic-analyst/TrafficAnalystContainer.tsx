@@ -95,8 +95,8 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
       const platformKey = data.plataforma.toLowerCase().replace(' ', '_');
       const connection = profile.connections[platformKey];
       if (connection && connection.isActive) {
-        setConnectedAccountId(connection.accountId);
-        setAccessToken(connection.accessToken);
+        setConnectedAccountId(connection.accountId || null);
+        setAccessToken(connection.accessToken || '');
         setLoginCustomerId(connection.loginCustomerId || null);
       } else {
         setConnectedAccountId(null);

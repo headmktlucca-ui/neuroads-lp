@@ -28,9 +28,16 @@ interface UserProfile {
   linkedin?: string;
   onboarding?: Record<string, unknown>;
   connections?: Record<string, { 
-    accountId: string; 
-    accessToken: string; 
+    accountId?: string; 
+    accessToken?: string; 
     isActive: boolean;
+    provider?: string;
+    refreshToken?: string;
+    connectedAt?: number;
+    updatedAt?: number;
+    expiresIn?: number;
+    expiresAt?: number;
+    metadata?: Record<string, unknown>;
     loginCustomerId?: string;
   }>;
 }
