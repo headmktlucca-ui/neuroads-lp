@@ -580,3 +580,263 @@ Stripe Premium Sync Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EM
    9 |   }
   10 |   return value;
   11 | }
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+Stripe Premium Sync Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at readRequiredEnv (src\lib\firebase-admin.ts:8:11)
+    at getFirebaseAdminApp (src\lib\firebase-admin.ts:27:20)
+    at getAdminDb (src\lib\firebase-admin.ts:34:23)
+    at POST (src\app\api\stripe\sync-premium\route.ts:36:15)
+   6 | function readRequiredEnv(name: string, value: string | undefined): string {
+   7 |   if (!value || !value.trim()) {
+>  8 |     throw new Error(`Firebase Admin env ausente: ${name}`);
+     |           ^
+   9 |   }
+  10 |   return value;
+  11 | }
+Stripe Premium Sync Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at readRequiredEnv (src\lib\firebase-admin.ts:8:11)
+    at getFirebaseAdminApp (src\lib\firebase-admin.ts:27:20)
+    at getAdminDb (src\lib\firebase-admin.ts:34:23)
+    at POST (src\app\api\stripe\sync-premium\route.ts:36:15)
+   6 | function readRequiredEnv(name: string, value: string | undefined): string {
+   7 |   if (!value || !value.trim()) {
+>  8 |     throw new Error(`Firebase Admin env ausente: ${name}`);
+     |           ^
+   9 |   }
+  10 |   return value;
+  11 | }
+[browser] Falha ao autenticar: FirebaseError: Firebase: Error (auth/cancelled-popup-request).
+    at loginWithGoogle (src/context/AuthContext.tsx:339:41)
+    at handleGoogleLogin (src/app/login/page.tsx:99:13)
+  337 |     provider.setCustomParameters({ prompt: 'select_account' });
+  338 |
+> 339 |     const result = await signInWithPopup(auth, provider);
+      |                                         ^
+  340 |     const primaryEmail = await resolvePrimaryAuthEmail(result.user);
+  341 |     if (primaryEmail) {
+  342 |       setUserEmail(primaryEmail); (src/app/login/page.tsx:101:15)
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Stripe Premium Sync Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at readRequiredEnv (src\lib\firebase-admin.ts:8:11)
+    at getFirebaseAdminApp (src\lib\firebase-admin.ts:27:20)
+    at getAdminDb (src\lib\firebase-admin.ts:34:23)
+    at POST (src\app\api\stripe\sync-premium\route.ts:36:15)
+   6 | function readRequiredEnv(name: string, value: string | undefined): string {
+   7 |   if (!value || !value.trim()) {
+>  8 |     throw new Error(`Firebase Admin env ausente: ${name}`);
+     |           ^
+   9 |   }
+  10 |   return value;
+  11 | }
+Stripe Premium Sync Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at readRequiredEnv (src\lib\firebase-admin.ts:8:11)
+    at getFirebaseAdminApp (src\lib\firebase-admin.ts:27:20)
+    at getAdminDb (src\lib\firebase-admin.ts:34:23)
+    at POST (src\app\api\stripe\sync-premium\route.ts:36:15)
+   6 | function readRequiredEnv(name: string, value: string | undefined): string {
+   7 |   if (!value || !value.trim()) {
+>  8 |     throw new Error(`Firebase Admin env ausente: ${name}`);
+     |           ^
+   9 |   }
+  10 |   return value;
+  11 | }
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+Stripe Premium Sync Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at readRequiredEnv (src\lib\firebase-admin.ts:8:11)
+    at getFirebaseAdminApp (src\lib\firebase-admin.ts:27:20)
+    at getAdminDb (src\lib\firebase-admin.ts:34:23)
+    at POST (src\app\api\stripe\sync-premium\route.ts:36:15)
+   6 | function readRequiredEnv(name: string, value: string | undefined): string {
+   7 |   if (!value || !value.trim()) {
+>  8 |     throw new Error(`Firebase Admin env ausente: ${name}`);
+     |           ^
+   9 |   }
+  10 |   return value;
+  11 | }
+Stripe Premium Sync Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at readRequiredEnv (src\lib\firebase-admin.ts:8:11)
+    at getFirebaseAdminApp (src\lib\firebase-admin.ts:27:20)
+    at getAdminDb (src\lib\firebase-admin.ts:34:23)
+    at POST (src\app\api\stripe\sync-premium\route.ts:36:15)
+   6 | function readRequiredEnv(name: string, value: string | undefined): string {
+   7 |   if (!value || !value.trim()) {
+>  8 |     throw new Error(`Firebase Admin env ausente: ${name}`);
+     |           ^
+   9 |   }
+  10 |   return value;
+  11 | }
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/client/image-component.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/client/image-component.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+⚠ Fast Refresh had to perform a full reload when ./src/context/AuthContext.tsx changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+Account Deletion Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at readRequiredEnv (src\lib\firebase-admin.ts:8:11)
+    at getFirebaseAdminApp (src\lib\firebase-admin.ts:27:20)
+    at getAdminDb (src\lib\firebase-admin.ts:34:23)
+    at POST (src\app\api\account\delete\route.ts:43:15)
+   6 | function readRequiredEnv(name: string, value: string | undefined): string {
+   7 |   if (!value || !value.trim()) {
+>  8 |     throw new Error(`Firebase Admin env ausente: ${name}`);
+     |           ^
+   9 |   }
+  10 |   return value;
+  11 | }
+[browser] Falha ao excluir conta: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at handleDeleteAccount (src/components/layout/Navbar.tsx:550:15)
+  548 |       const data = (await response.json().catch(() => null)) as { error?: string } | null;
+  549 |       if (!response.ok) {
+> 550 |         throw new Error(data?.error || 'Não foi possível concluir a exclusão da conta.');
+      |               ^
+  551 |       }
+  552 |
+  553 |       if (typeof window !== 'undefined') { (src/components/layout/Navbar.tsx:569:15)
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+Stripe Premium Sync Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at readRequiredEnv (src\lib\firebase-admin.ts:8:11)
+    at getFirebaseAdminApp (src\lib\firebase-admin.ts:27:20)
+    at getAdminDb (src\lib\firebase-admin.ts:34:23)
+    at POST (src\app\api\stripe\sync-premium\route.ts:36:15)
+   6 | function readRequiredEnv(name: string, value: string | undefined): string {
+   7 |   if (!value || !value.trim()) {
+>  8 |     throw new Error(`Firebase Admin env ausente: ${name}`);
+     |           ^
+   9 |   }
+  10 |   return value;
+  11 | }
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] ./src/app/a-neuroads/sobre/page.tsx:11:7
+Unexpected token `ident`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+   9 |
+  10 | const content: SubmenuPageContent = {
+> 11 | const content: StrategicContentPageData = {
+     |       ^^^^^^^
+  12 |   slug: 'a-neuroads-sobre',
+  13 |   eyebrow: 'A NeuroAds',
+  14 |   title: 'Não vendemos campanhas.',
+
+Parsing ecmascript source code failed 
+[browser] ./src/app/a-neuroads/sobre/page.tsx:11:7
+Unexpected token `ident`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+   9 |
+  10 | const content: SubmenuPageContent = {
+> 11 | const content: StrategicContentPageData = {
+     |       ^^^^^^^
+  12 |   slug: 'a-neuroads-sobre',
+  13 |   eyebrow: 'A NeuroAds',
+  14 |   title: 'Não vendemos campanhas.',
+
+Parsing ecmascript source code failed 
+[browser] ./src/app/a-neuroads/sobre/page.tsx:11:7
+Unexpected token `ident`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+   9 |
+  10 | const content: SubmenuPageContent = {
+> 11 | const content: StrategicContentPageData = {
+     |       ^^^^^^^
+  12 |   slug: 'a-neuroads-sobre',
+  13 |   eyebrow: 'A NeuroAds',
+  14 |   title: 'Não vendemos campanhas.',
+
+Parsing ecmascript source code failed 
+[browser] ./src/app/a-neuroads/sobre/page.tsx:11:7
+Unexpected token `ident`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+   9 |
+  10 | const content: SubmenuPageContent = {
+> 11 | const content: StrategicContentPageData = {
+     |       ^^^^^^^
+  12 |   slug: 'a-neuroads-sobre',
+  13 |   eyebrow: 'A NeuroAds',
+  14 |   title: 'Não vendemos campanhas.',
+
+Parsing ecmascript source code failed 
+[browser] ./src/app/a-neuroads/sobre/page.tsx:11:7
+Unexpected token `ident`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+   9 |
+  10 | const content: SubmenuPageContent = {
+> 11 | const content: StrategicContentPageData = {
+     |       ^^^^^^^
+  12 |   slug: 'a-neuroads-sobre',
+  13 |   eyebrow: 'A NeuroAds',
+  14 |   title: 'Não vendemos campanhas.',
+
+Parsing ecmascript source code failed 
+[browser] Uncaught Error: ./src/app/a-neuroads/sobre/page.tsx:11:7
+Unexpected token `ident`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+   9 |
+  10 | const content: SubmenuPageContent = {
+> 11 | const content: StrategicContentPageData = {
+     |       ^^^^^^^
+  12 |   slug: 'a-neuroads-sobre',
+  13 |   eyebrow: 'A NeuroAds',
+  14 |   title: 'Não vendemos campanhas.',
+
+Parsing ecmascript source code failed
+
+
+    at <unknown> (Error: ./src/app/a-neuroads/sobre/page.tsx:11:7)
+    at <unknown> (Error: (./src/app/a-neuroads/sobre/page.tsx:11:7)
+[browser] ./src/app/a-neuroads/sobre/page.tsx:11:7
+Unexpected token `ident`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+   9 |
+  10 | const content: SubmenuPageContent = {
+> 11 | const content: StrategicContentPageData = {
+     |       ^^^^^^^
+  12 |   slug: 'a-neuroads-sobre',
+  13 |   eyebrow: 'A NeuroAds',
+  14 |   title: 'Não vendemos campanhas.',
+
+Parsing ecmascript source code failed 
+[browser] ./src/app/a-neuroads/sobre/page.tsx:11:7
+Unexpected token `ident`. Expected ... , *,  (, [, :, , ?, =, an identifier, public, protected, private, readonly, <.
+   9 |
+  10 | const content: SubmenuPageContent = {
+> 11 | const content: StrategicContentPageData = {
+     |       ^^^^^^^
+  12 |   slug: 'a-neuroads-sobre',
+  13 |   eyebrow: 'A NeuroAds',
+  14 |   title: 'Não vendemos campanhas.',
+
+Parsing ecmascript source code failed 
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload when ./node_modules/next/dist/shared/lib/router/router.js changed. Read more: https://nextjs.org/docs/messages/fast-refresh-reload
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.

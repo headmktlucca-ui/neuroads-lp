@@ -496,6 +496,9 @@ function OnboardingPageContent() {
               <p className="mt-2 text-sm text-text-muted">
                 Primeiro registramos os dados da sua empresa. Depois você seleciona o plano contratado.
               </p>
+              <p className="mt-3 text-xs font-bold uppercase tracking-[0.08em] text-[#9A3412]">
+                Campos obrigatórios: Empresa, Site e WhatsApp.
+              </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-secondary px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-text-dim">
               <CheckCircle2 size={14} className={step === 2 ? 'text-[#0A9D57]' : 'text-text-dim'} />
@@ -507,20 +510,21 @@ function OnboardingPageContent() {
             <div className="mt-8 space-y-5">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Empresa</label>
+                  <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Empresa *</label>
                   <div className="relative">
                     <Building2 size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
                     <input
                       value={form.companyName}
                       onChange={(event) => setForm((prev) => ({ ...prev, companyName: event.target.value }))}
                       placeholder="Nome da empresa"
+                      required
                       className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
                     />
                   </div>
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Site</label>
+                  <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Site *</label>
                   <div className="relative">
                     <Globe size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
                     <input
@@ -532,13 +536,14 @@ function OnboardingPageContent() {
                         setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(event.target.value) }))
                       }
                       placeholder="https://empresa.com.br"
+                      required
                       className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">WhatsApp</label>
+                  <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">WhatsApp *</label>
                   <div className="relative">
                     <Phone size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
                     <input
@@ -550,6 +555,7 @@ function OnboardingPageContent() {
                       autoComplete="tel"
                       maxLength={15}
                       placeholder="(00) 00000-0000"
+                      required
                       className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
                     />
                   </div>
