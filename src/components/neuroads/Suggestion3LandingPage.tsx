@@ -6,20 +6,15 @@ import Link from 'next/link';
 import {
   ArrowRight,
   Bot,
-  BriefcaseBusiness,
   ChevronDown,
   CheckCircle2,
   CircleGauge,
   Funnel,
-  GraduationCap,
   Headphones,
   Menu,
-  ShoppingBag,
-  Stethoscope,
   Target,
   TrendingUp,
   X,
-  Building2,
 } from 'lucide-react';
 import { agents as catalogAgents, type Agent as CatalogAgent } from '../../data/agents';
 import LuccaSpecialistChatModal from './LuccaSpecialistChatModal';
@@ -138,35 +133,35 @@ const segmentLandingCards = [
   {
     title: 'Mercado Imobiliário',
     href: '/servicos/mercado-imobiliario',
-    icon: Building2,
+    iconImage: '/images/segment-icons/mercado-imobiliario-hd.png',
     pain: 'Plantão cheio, mas poucas visitas com perfil de fechamento.',
     impact: 'Mais previsibilidade entre lead, visita e proposta.',
   },
   {
     title: 'Saúde & Clínicas',
     href: '/servicos/saude-clinicas',
-    icon: Stethoscope,
+    iconImage: '/images/segment-icons/saude-clinicas-hd.png',
     pain: 'Agenda instável com contatos sem aderência clínica.',
     impact: 'Redução de desperdício e melhor ocupação da agenda.',
   },
   {
     title: 'E-commerce & Varejo',
     href: '/servicos/e-commerce-varejo',
-    icon: ShoppingBag,
+    iconImage: '/images/segment-icons/ecommerce-varejo-hd.png',
     pain: 'Tráfego alto sem conversão consistente em faturamento.',
     impact: 'Escala de vendas com foco em margem e ROAS sustentável.',
   },
   {
     title: 'Serviços Profissionais',
     href: '/servicos/servicos-profissionais',
-    icon: BriefcaseBusiness,
+    iconImage: '/images/segment-icons/servicos-profissionais-hd.png',
     pain: 'Dependência de indicação e pipeline comercial irregular.',
     impact: 'Fluxo recorrente de reuniões com perfil ideal.',
   },
   {
     title: 'Educação Digital',
     href: '/servicos/educacao-digital',
-    icon: GraduationCap,
+    iconImage: '/images/segment-icons/educacao-digital-hd.png',
     pain: 'Receita dependente de picos de lançamento.',
     impact: 'Matrículas previsíveis com sistema contínuo de aquisição.',
   },
@@ -407,6 +402,26 @@ export default function Suggestion3LandingPage() {
             background-position: -32px 0;
           }
         }
+
+        .neuroads-smooth-bg-card {
+          background: linear-gradient(180deg, #ffffff 0%, #fffbf8 52%, #ffffff 100%);
+        }
+
+        .neuroads-smooth-bg-image {
+          -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 21%, #000 79%, transparent 100%);
+          mask-image: linear-gradient(to bottom, transparent 0%, #000 21%, #000 79%, transparent 100%);
+          filter: saturate(1.02) contrast(1.01);
+        }
+
+        .neuroads-smooth-bg-fade {
+          background: linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.9) 0%,
+            rgba(255, 255, 255, 0.21) 24%,
+            rgba(255, 255, 255, 0.1) 68%,
+            rgba(255, 255, 255, 0.95) 100%
+          );
+        }
       `}</style>
       <section className="relative overflow-hidden pt-5">
         <div className="mx-auto max-w-[1260px] px-5 md:px-8">
@@ -610,7 +625,16 @@ export default function Suggestion3LandingPage() {
 
           <div className="h-[84px]" aria-hidden="true" />
 
-          <div className="relative grid items-center gap-8 pb-10 pt-12 lg:grid-cols-[1.02fr_0.98fr]">
+          <div className="neuroads-smooth-bg-card relative overflow-hidden rounded-[34px] px-5 pb-10 pt-12 sm:px-7 lg:min-h-[560px] lg:px-10">
+            <Image
+              src="/images/back2026.png"
+              alt=""
+              fill
+              className="pointer-events-none neuroads-smooth-bg-image object-cover object-[78%_52%]"
+              sizes="100vw"
+              priority
+            />
+            <div className="neuroads-smooth-bg-fade pointer-events-none absolute inset-0" />
             <div className="relative z-10 max-w-[560px] lg:pr-14">
               <h1 className="mt-4 text-[30px] font-extrabold leading-[1.08] tracking-[-0.02em] text-[#111317] sm:text-[34px] lg:text-[34px]">
                 Desbloqueie o Potencial Oculto:
@@ -640,11 +664,11 @@ export default function Suggestion3LandingPage() {
               </div>
 
               <div className="mt-7 flex flex-wrap gap-3">
-                <button type="button" onClick={handleOpenSpecialistChat} className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-6 py-3 text-[13px] font-extrabold text-white">
+                <button type="button" onClick={handleOpenSpecialistChat} className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#ff6a00] px-6 py-3 text-[13px] font-extrabold text-white">
                   Fale com um especialista
                   <ArrowRight size={13} />
                 </button>
-                <button type="button" onClick={handleRequestDemo} className="inline-flex items-center gap-2 rounded-full border border-[#d9dee7] bg-transparent px-6 py-3 text-[13px] font-bold text-[#2a2f3a]">
+                <button type="button" onClick={handleRequestDemo} className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#d9dee7] bg-transparent px-6 py-3 text-[13px] font-bold text-[#2a2f3a]">
                   Solicite Demonstração
                   <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#d1d6e0] text-[#434b5a]">
                     <ArrowRight size={10} />
@@ -652,38 +676,9 @@ export default function Suggestion3LandingPage() {
                 </button>
               </div>
             </div>
-
-            <div className="relative z-30 h-[390px] w-full overflow-hidden bg-white sm:h-[470px] lg:-ml-[140px] lg:h-[560px] lg:w-[calc(100%+140px)] lg:pointer-events-none">
-              <Image
-                src="/images/template-match/hero-orbit-white-v1.png"
-                alt="Anel de energia da NeuroAds"
-                fill
-                className="object-contain object-center scale-100 origin-center sm:object-cover sm:object-right sm:scale-[1.16] sm:origin-right"
-                sizes="(max-width: 639px) 100vw, (max-width: 1024px) 50vw, 560px"
-                priority
-              />
-
-              <div className="absolute right-[10px] top-[10px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:right-[14px] sm:top-[14px] sm:px-4 sm:py-3">
-                <p className="text-[10px] font-semibold text-[#7b8291]">ROAS</p>
-                <p className="mt-1 text-[30px] font-extrabold leading-none text-[#ff6b00] sm:text-[37px]">+320%</p>
-                <p className="mt-1 text-[10px] text-[#9197a4]">vs. período anterior</p>
-              </div>
-
-              <div className="absolute left-[12px] top-[132px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:left-[18px] sm:top-[182px] sm:px-4 sm:py-3">
-                <p className="text-[10px] font-semibold text-[#7b8291]">Conversão</p>
-                <p className="mt-1 text-[30px] font-extrabold leading-none text-[#ff6b00] sm:text-[37px]">+68%</p>
-                <p className="mt-1 text-[10px] text-[#9197a4]">vs. período anterior</p>
-              </div>
-
-              <div className="absolute bottom-[14px] right-[6px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:bottom-[24px] sm:right-[8px] sm:px-4 sm:py-3">
-                <p className="text-[10px] font-semibold text-[#7b8291]">CPL</p>
-                <p className="mt-1 text-[30px] font-extrabold leading-none text-[#ff6b00] sm:text-[37px]">-45%</p>
-                <p className="mt-1 text-[10px] text-[#9197a4]">vs. período anterior</p>
-              </div>
-            </div>
           </div>
 
-          <div className="mb-12">
+          <div className="mb-16">
             <div className="relative">
               <div className="pointer-events-none absolute left-[14.8%] top-[140px] z-0 hidden w-[34.5%] lg:block" aria-hidden="true">
                 <Image
@@ -976,14 +971,20 @@ export default function Suggestion3LandingPage() {
 
             <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {segmentLandingCards.map((segment) => {
-                const Icon = segment.icon;
                 return (
                   <article
                     key={segment.href}
                     className="group rounded-[20px] border border-[#e9edf4] bg-white p-5 shadow-[0_10px_24px_rgba(16,24,40,0.05)] transition hover:-translate-y-0.5 hover:border-[#ffd4b2] hover:shadow-[0_14px_28px_rgba(255,122,36,0.13)]"
                   >
-                    <div className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#ffe0c6] bg-[#fff4ea] text-[#ff6a00]">
-                      <Icon size={18} strokeWidth={2.2} />
+                    <div className="inline-flex h-[58px] w-[58px] items-center justify-center rounded-[12px] bg-transparent">
+                      <Image
+                        src={segment.iconImage}
+                        alt={`Ícone ${segment.title}`}
+                        width={58}
+                        height={58}
+                        className="h-[58px] w-[58px] object-contain"
+                        sizes="58px"
+                      />
                     </div>
                     <h3 className="mt-4 text-[20px] font-extrabold leading-snug text-[#1f2531]">{segment.title}</h3>
                     <p className="mt-2 text-[14px] leading-relaxed text-[#5b6577]">{segment.pain}</p>
