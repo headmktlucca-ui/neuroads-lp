@@ -23,8 +23,24 @@ import { trackSubmenuEvent } from '@/lib/submenu-tracking';
 type HeaderMenuGroup = {
   label: string;
   href: string;
-  submenu: Array<{ label: string; href: string }>;
+  submenu: HeaderSubmenuItem[];
 };
+
+type HeaderMenuLinkItem = {
+  label: string;
+  href: string;
+};
+
+type HeaderMenuCategoryItem = {
+  label: string;
+  items: HeaderMenuLinkItem[];
+};
+
+type HeaderSubmenuItem = HeaderMenuLinkItem | HeaderMenuCategoryItem;
+
+function isCategorySubmenuItem(item: HeaderSubmenuItem): item is HeaderMenuCategoryItem {
+  return 'items' in item;
+}
 
 type FaqItem = {
   question: string;
@@ -81,10 +97,20 @@ const headerMenuGroups: HeaderMenuGroup[] = [
     label: 'Serviços',
     href: '/servicos',
     submenu: [
-      { label: 'Gestão de Tráfego (Google + Meta)', href: '/servicos/gestao-de-trafego-google-meta' },
+      { label: 'Gestão de Tráfego', href: '/servicos/gestao-de-trafego-google-meta' },
       { label: 'SEO + GEO', href: '/servicos/seo-geo' },
-      { label: 'Implantação de Agentes IA', href: '/servicos/implantacao-de-agentes-ia' },
-      { label: 'Estratégia de Funil e Conversão', href: '/servicos/estrategia-de-funil-e-conversao' },
+      { label: 'Implantação de Agentes de IA', href: '/servicos/implantacao-de-agentes-ia' },
+      { label: 'Estratégia de Funil de Conversão', href: '/servicos/estrategia-de-funil-e-conversao' },
+      {
+        label: 'Principais Setores',
+        items: [
+          { label: 'Mercado Imobiliário', href: '/servicos/mercado-imobiliario' },
+          { label: 'Saúde & Clínicas', href: '/servicos/saude-clinicas' },
+          { label: 'E-commerce & Varejo', href: '/servicos/e-commerce-varejo' },
+          { label: 'Serviços Profissionais', href: '/servicos/servicos-profissionais' },
+          { label: 'Educação Digital', href: '/servicos/educacao-digital' },
+        ],
+      },
     ],
   },
   {
@@ -427,16 +453,38 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
                   </Link>
                   {isOpen ? (
                     <div className="absolute left-0 top-[calc(100%+10px)] min-w-[300px] rounded-[16px] border border-[#e6ebf4] bg-white py-2 shadow-[0_22px_44px_rgba(12,22,38,0.14)]">
-                      {group.submenu.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          className="block px-4 py-3 text-[14px] font-semibold text-[#33415d] transition hover:bg-[#fff6f0] hover:text-[#ff6a00]"
-                          onClick={() => setOpenMenuGroup(null)}
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
+                      {group.submenu.map((item) => {
+                        if (isCategorySubmenuItem(item)) {
+                          return (
+                            <div key={item.label} className="px-4 py-2">
+                              <p className="text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#ff6a00]">{item.label}</p>
+                              <div className="mt-1.5 space-y-1">
+                                {item.items.map((nestedItem) => (
+                                  <Link
+                                    key={nestedItem.href}
+                                    href={nestedItem.href}
+                                    className="block rounded-[10px] px-2.5 py-2 text-[14px] font-semibold text-[#33415d] transition hover:bg-[#fff6f0] hover:text-[#ff6a00]"
+                                    onClick={() => setOpenMenuGroup(null)}
+                                  >
+                                    {nestedItem.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            className="block px-4 py-3 text-[14px] font-semibold text-[#33415d] transition hover:bg-[#fff6f0] hover:text-[#ff6a00]"
+                            onClick={() => setOpenMenuGroup(null)}
+                          >
+                            {item.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   ) : null}
                 </div>
@@ -511,16 +559,38 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
                   </div>
                   {isGroupOpen ? (
                     <div className="border-t border-[#edf1f7] px-2 py-2">
-                      {group.submenu.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="block rounded-xl px-2.5 py-2 text-[13px] font-semibold text-[#42506a] transition hover:bg-[#fff5ee] hover:text-[#ff6a00]"
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
+                      {group.submenu.map((item) => {
+                        if (isCategorySubmenuItem(item)) {
+                          return (
+                            <div key={item.label} className="rounded-xl px-2.5 py-2">
+                              <p className="text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#ff6a00]">{item.label}</p>
+                              <div className="mt-1.5 space-y-1">
+                                {item.items.map((nestedItem) => (
+                                  <Link
+                                    key={nestedItem.href}
+                                    href={nestedItem.href}
+                                    onClick={() => setIsMobileMenuOpen(false)}
+                                    className="block rounded-lg px-2 py-1.5 text-[13px] font-semibold text-[#42506a] transition hover:bg-[#fff5ee] hover:text-[#ff6a00]"
+                                  >
+                                    {nestedItem.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setIsMobileMenuOpen(false)}
+                            className="block rounded-xl px-2.5 py-2 text-[13px] font-semibold text-[#42506a] transition hover:bg-[#fff5ee] hover:text-[#ff6a00]"
+                          >
+                            {item.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   ) : null}
                 </div>

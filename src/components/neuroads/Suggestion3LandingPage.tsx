@@ -6,15 +6,20 @@ import Link from 'next/link';
 import {
   ArrowRight,
   Bot,
+  BriefcaseBusiness,
   ChevronDown,
   CheckCircle2,
   CircleGauge,
   Funnel,
+  GraduationCap,
   Headphones,
   Menu,
+  ShoppingBag,
+  Stethoscope,
   Target,
   TrendingUp,
   X,
+  Building2,
 } from 'lucide-react';
 import { agents as catalogAgents, type Agent as CatalogAgent } from '../../data/agents';
 import LuccaSpecialistChatModal from './LuccaSpecialistChatModal';
@@ -129,6 +134,44 @@ const metrics = [
   { value: '+25%', label: 'Crescimento de receita', path: 'M0 22 C 8 22, 12 20, 16 16 C 20 12, 24 13, 28 17 C 32 21, 36 20, 40 16 C 44 12, 48 12, 52 17 C 56 22, 60 22, 64 17 C 68 12, 72 17, 76 18 C 80 19, 84 16, 88 10 C 92 4, 96 8, 100 8 C 104 8, 108 2, 112 2 C 116 2, 120 12, 124 13 C 128 14, 132 8, 136 8' },
 ];
 
+const segmentLandingCards = [
+  {
+    title: 'Mercado Imobiliário',
+    href: '/servicos/mercado-imobiliario',
+    icon: Building2,
+    pain: 'Plantão cheio, mas poucas visitas com perfil de fechamento.',
+    impact: 'Mais previsibilidade entre lead, visita e proposta.',
+  },
+  {
+    title: 'Saúde & Clínicas',
+    href: '/servicos/saude-clinicas',
+    icon: Stethoscope,
+    pain: 'Agenda instável com contatos sem aderência clínica.',
+    impact: 'Redução de desperdício e melhor ocupação da agenda.',
+  },
+  {
+    title: 'E-commerce & Varejo',
+    href: '/servicos/e-commerce-varejo',
+    icon: ShoppingBag,
+    pain: 'Tráfego alto sem conversão consistente em faturamento.',
+    impact: 'Escala de vendas com foco em margem e ROAS sustentável.',
+  },
+  {
+    title: 'Serviços Profissionais',
+    href: '/servicos/servicos-profissionais',
+    icon: BriefcaseBusiness,
+    pain: 'Dependência de indicação e pipeline comercial irregular.',
+    impact: 'Fluxo recorrente de reuniões com perfil ideal.',
+  },
+  {
+    title: 'Educação Digital',
+    href: '/servicos/educacao-digital',
+    icon: GraduationCap,
+    pain: 'Receita dependente de picos de lançamento.',
+    impact: 'Matrículas previsíveis com sistema contínuo de aquisição.',
+  },
+] as const;
+
 const testimonials = [
   {
     quote: 'Essencial para impulsionar sua empresa, recomendo!!',
@@ -176,21 +219,44 @@ const faq = [
 type HeaderMenuGroup = {
   label: string;
   href: string;
-  submenu: Array<{
-    label: string;
-    href: string;
-  }>;
+  submenu: HeaderSubmenuItem[];
 };
+
+type HeaderMenuLinkItem = {
+  label: string;
+  href: string;
+};
+
+type HeaderMenuCategoryItem = {
+  label: string;
+  items: HeaderMenuLinkItem[];
+};
+
+type HeaderSubmenuItem = HeaderMenuLinkItem | HeaderMenuCategoryItem;
+
+function isCategorySubmenuItem(item: HeaderSubmenuItem): item is HeaderMenuCategoryItem {
+  return 'items' in item;
+}
 
 const headerMenuGroups: HeaderMenuGroup[] = [
   {
     label: 'Serviços',
     href: '/servicos',
     submenu: [
-      { label: 'Gestão de Tráfego (Google + Meta)', href: '/servicos/gestao-de-trafego-google-meta' },
+      { label: 'Gestão de Tráfego', href: '/servicos/gestao-de-trafego-google-meta' },
       { label: 'SEO + GEO', href: '/servicos/seo-geo' },
-      { label: 'Implantação de Agentes IA', href: '/servicos/implantacao-de-agentes-ia' },
-      { label: 'Estratégia de Funil e Conversão', href: '/servicos/estrategia-de-funil-e-conversao' },
+      { label: 'Implantação de Agentes de IA', href: '/servicos/implantacao-de-agentes-ia' },
+      { label: 'Estratégia de Funil de Conversão', href: '/servicos/estrategia-de-funil-e-conversao' },
+      {
+        label: 'Principais Setores',
+        items: [
+          { label: 'Mercado Imobiliário', href: '/servicos/mercado-imobiliario' },
+          { label: 'Saúde & Clínicas', href: '/servicos/saude-clinicas' },
+          { label: 'E-commerce & Varejo', href: '/servicos/e-commerce-varejo' },
+          { label: 'Serviços Profissionais', href: '/servicos/servicos-profissionais' },
+          { label: 'Educação Digital', href: '/servicos/educacao-digital' },
+        ],
+      },
     ],
   },
   {
@@ -380,16 +446,38 @@ export default function Suggestion3LandingPage() {
                     onMouseLeave={() => closeMenuWithDelay(220)}
                   >
                     <div className="rounded-[16px] border border-[#e6ebf2] bg-white p-2 shadow-[0_16px_30px_rgba(18,26,40,0.1)]">
-                      {group.submenu.map((item) => (
-                        <Link
-                          key={item.href}
-                          href={item.href}
-                          onClick={() => setOpenMenuGroup(null)}
-                          className="block rounded-[12px] px-3 py-2.5 text-[13px] font-semibold text-[#344058] transition hover:bg-[#f7f9fc] hover:text-[#ff6a00]"
-                        >
-                          {item.label}
-                        </Link>
-                      ))}
+                      {group.submenu.map((item) => {
+                        if (isCategorySubmenuItem(item)) {
+                          return (
+                            <div key={item.label} className="rounded-[12px] px-3 py-2">
+                              <p className="text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#ff6a00]">{item.label}</p>
+                              <div className="mt-1.5 space-y-1">
+                                {item.items.map((nestedItem) => (
+                                  <Link
+                                    key={nestedItem.href}
+                                    href={nestedItem.href}
+                                    onClick={() => setOpenMenuGroup(null)}
+                                    className="block rounded-[10px] px-2.5 py-1.5 text-[13px] font-semibold text-[#344058] transition hover:bg-[#f7f9fc] hover:text-[#ff6a00]"
+                                  >
+                                    {nestedItem.label}
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        }
+
+                        return (
+                          <Link
+                            key={item.href}
+                            href={item.href}
+                            onClick={() => setOpenMenuGroup(null)}
+                            className="block rounded-[12px] px-3 py-2.5 text-[13px] font-semibold text-[#344058] transition hover:bg-[#f7f9fc] hover:text-[#ff6a00]"
+                          >
+                            {item.label}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -462,16 +550,38 @@ export default function Suggestion3LandingPage() {
                     </div>
                     {isGroupOpen ? (
                       <div className="border-t border-[#edf1f7] px-2 py-2">
-                        {group.submenu.map((item) => (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            onClick={() => setIsMobileMenuOpen(false)}
-                            className="block rounded-xl px-2.5 py-2 text-[13px] font-semibold text-[#42506a] transition hover:bg-[#fff5ee] hover:text-[#ff6a00]"
-                          >
-                            {item.label}
-                          </Link>
-                        ))}
+                        {group.submenu.map((item) => {
+                          if (isCategorySubmenuItem(item)) {
+                            return (
+                              <div key={item.label} className="rounded-xl px-2.5 py-2">
+                                <p className="text-[11px] font-extrabold uppercase tracking-[0.1em] text-[#ff6a00]">{item.label}</p>
+                                <div className="mt-1.5 space-y-1">
+                                  {item.items.map((nestedItem) => (
+                                    <Link
+                                      key={nestedItem.href}
+                                      href={nestedItem.href}
+                                      onClick={() => setIsMobileMenuOpen(false)}
+                                      className="block rounded-lg px-2 py-1.5 text-[13px] font-semibold text-[#42506a] transition hover:bg-[#fff5ee] hover:text-[#ff6a00]"
+                                    >
+                                      {nestedItem.label}
+                                    </Link>
+                                  ))}
+                                </div>
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setIsMobileMenuOpen(false)}
+                              className="block rounded-xl px-2.5 py-2 text-[13px] font-semibold text-[#42506a] transition hover:bg-[#fff5ee] hover:text-[#ff6a00]"
+                            >
+                              {item.label}
+                            </Link>
+                          );
+                        })}
                       </div>
                     ) : null}
                   </div>
@@ -851,6 +961,60 @@ export default function Suggestion3LandingPage() {
         </div>
       )}
 
+      <section id="segmentos" className="mx-auto max-w-[1260px] px-5 pb-2 pt-10 md:px-8">
+        <div className="relative overflow-hidden rounded-[30px] border border-[#e8edf5] bg-[radial-gradient(circle_at_0%_0%,#fff3e8_0%,#ffffff_42%),linear-gradient(180deg,#ffffff_0%,#f8fbff_100%)] px-5 py-7 sm:px-7 sm:py-9">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_88%_15%,rgba(255,121,32,0.12)_0%,rgba(255,121,32,0)_52%)]" />
+          <div className="relative">
+            <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#ff6a00]">Soluções por Segmento</p>
+            <h2 className="mt-2 text-[28px] font-extrabold leading-tight text-[#191e29] sm:text-[34px] lg:text-[40px]">
+              Captação especializada para o seu
+              <span className="bg-[linear-gradient(90deg,#ff6a00_0%,#ff8f3a_42%,#d55a00_100%)] bg-clip-text text-transparent"> modelo de negócio.</span>
+            </h2>
+            <p className="mt-2 max-w-[850px] text-[14px] leading-relaxed text-[#586174] sm:text-[15px]">
+              Cada segmento tem uma lógica de compra diferente. Aqui você encontra páginas de captura específicas para reduzir desperdício e aumentar previsibilidade de receita.
+            </p>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {segmentLandingCards.map((segment) => {
+                const Icon = segment.icon;
+                return (
+                  <article
+                    key={segment.href}
+                    className="group rounded-[20px] border border-[#e9edf4] bg-white p-5 shadow-[0_10px_24px_rgba(16,24,40,0.05)] transition hover:-translate-y-0.5 hover:border-[#ffd4b2] hover:shadow-[0_14px_28px_rgba(255,122,36,0.13)]"
+                  >
+                    <div className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#ffe0c6] bg-[#fff4ea] text-[#ff6a00]">
+                      <Icon size={18} strokeWidth={2.2} />
+                    </div>
+                    <h3 className="mt-4 text-[20px] font-extrabold leading-snug text-[#1f2531]">{segment.title}</h3>
+                    <p className="mt-2 text-[14px] leading-relaxed text-[#5b6577]">{segment.pain}</p>
+                    <p className="mt-3 text-[13px] font-semibold leading-relaxed text-[#2d3648]">{segment.impact}</p>
+                    <Link
+                      href={segment.href}
+                      className="mt-4 inline-flex items-center gap-2 text-[13px] font-extrabold text-[#ff6a00] transition group-hover:gap-2.5"
+                    >
+                      Ver página do segmento
+                      <ArrowRight size={13} />
+                    </Link>
+                  </article>
+                );
+              })}
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={handleOpenSpecialistChat}
+                className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-6 py-2.5 text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(255,106,0,0.28)] transition hover:brightness-110"
+              >
+                Solicitar diagnóstico do meu segmento
+                <ArrowRight size={13} />
+              </button>
+              <p className="text-[13px] font-medium text-[#667083]">Sem compromisso. Com foco em impacto no caixa.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="mx-auto max-w-[1260px] px-5 pb-2 pt-10 md:px-8">
         <div className="relative overflow-hidden rounded-[32px] border border-[#122034] bg-[#040a13] px-4 pb-32 pt-7 sm:px-8 sm:pb-40 sm:pt-7">
           <Image src="/images/template-match/metrics-wave-v1.png" alt="" fill className="pointer-events-none object-cover object-bottom opacity-[1]" />
@@ -1020,13 +1184,30 @@ export default function Suggestion3LandingPage() {
                 {group.label}
               </Link>
               <ul className="mt-3 space-y-2 text-[13px] text-[#656d7c]">
-                {group.submenu.map((item) => (
-                  <li key={item.href}>
-                    <Link href={item.href} className="transition hover:text-[#ff6a00]">
-                      {item.label}
-                    </Link>
-                  </li>
-                ))}
+                {group.submenu.map((item) => {
+                  if (isCategorySubmenuItem(item)) {
+                    return (
+                      <li key={item.label} className="pt-1">
+                        <p className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#ff6a00]">{item.label}</p>
+                        <div className="mt-1.5 space-y-1.5 pl-2">
+                          {item.items.map((nestedItem) => (
+                            <Link key={nestedItem.href} href={nestedItem.href} className="block transition hover:text-[#ff6a00]">
+                              {nestedItem.label}
+                            </Link>
+                          ))}
+                        </div>
+                      </li>
+                    );
+                  }
+
+                  return (
+                    <li key={item.href}>
+                      <Link href={item.href} className="transition hover:text-[#ff6a00]">
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           ))}

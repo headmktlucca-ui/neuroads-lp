@@ -23,6 +23,7 @@ import { useAuth } from '../../context/AuthContext';
 import offers from '../../data/stripe-offers.json';
 import { doc, setDoc } from 'firebase/firestore';
 import { getFirebaseAuth, getFirebaseDb } from '../../lib/firebase';
+import { verifyStripeCheckoutSession } from '../../lib/stripe-session-verifier';
 
 type OfferMode = 'subscription' | 'payment';
 
@@ -57,7 +58,7 @@ interface CreditOffer {
 const planOffers = offers.plans as PlanOffer[];
 const creditOffers = offers.creditPacks as CreditOffer[];
 
-const scheduleUrl = 'https://cal.com/atendimento-neuroads/atendimento?overlayCalendar=true';
+const onboardingHubUrl = '/onboarding?next=%2Fhub';
 
 const planVisuals = [
   {
@@ -178,16 +179,11 @@ export default function ValuesResourcesSection() {
       if (!user || !pendingSessionId || successKind !== 'plano') return;
 
       try {
-        const res = await fetch('/api/stripe/verify-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId: pendingSessionId }),
-        });
-
-        const data = await res.json();
-        if (!res.ok) {
-          throw new Error(data.error || 'Falha ao validar sessão do checkout.');
+        const verifyResult = await verifyStripeCheckoutSession(pendingSessionId);
+        if (!verifyResult.ok || !verifyResult.data) {
+          throw new Error(verifyResult.error || 'Falha ao validar sessão do checkout.');
         }
+        const data = verifyResult.data;
 
         const isCompletedSubscription = data.mode === 'subscription' && data.status === 'complete';
         const isCurrentUserSession = data.clientReferenceId === user.uid;
@@ -204,6 +200,11 @@ export default function ValuesResourcesSection() {
             isPremium: true,
             stripeCustomerId: data.customerId ?? null,
             stripeSubscriptionId: data.subscriptionId ?? null,
+            subscriptionStatus: data.subscriptionStatus ?? 'active',
+            trialEndsAt:
+              typeof data.trialEndsAt === 'number' && Number.isFinite(data.trialEndsAt)
+                ? data.trialEndsAt
+                : null,
             updatedAt: Date.now(),
           },
           { merge: true }
@@ -223,7 +224,7 @@ export default function ValuesResourcesSection() {
       plano: {
         title: 'Contratação confirmada com sucesso',
         description:
-          'As instruções para acessar seu Hub Operacional serão enviadas em até 02 dias úteis. Enquanto isso, agende agora sua implantação de 30 minutos.',
+          'As instruções para acessar seu Hub Operacional serão enviadas em até 02 dias úteis. Acesse seu Hub de Agentes no link abaixo:',
       },
       credito: {
         title: 'Compra de créditos confirmada',
@@ -498,12 +499,10 @@ export default function ValuesResourcesSection() {
             <p className="mt-3 text-[15px] leading-relaxed text-[#5a6478]">{checkoutCopy[successKind].description}</p>
             <div className="mt-5 flex flex-wrap gap-3">
               <a
-                href={scheduleUrl}
-                target="_blank"
-                rel="noreferrer"
+                href={onboardingHubUrl}
                 className="inline-flex items-center justify-center rounded-full bg-[#ff6a00] px-5 py-3 text-[13px] font-extrabold uppercase tracking-[0.07em] text-white transition hover:brightness-110"
               >
-                Agendar Implantação (30 min)
+                Acessar meu Hub
               </a>
               <button
                 type="button"

@@ -10,6 +10,7 @@ import { getHubLoginRedirect, hasHubPlanAccess, normalizeHubNextPath } from '../
 import { getHubProfileSummary } from '../../lib/hub-profile';
 import { formatWhatsappInput } from '../../lib/phone-mask';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
+import { verifyStripeCheckoutSession } from '../../lib/stripe-session-verifier';
 import stripeOffersCatalog from '../../data/stripe-offers.json';
 
 type OnboardingStep = 1 | 2;
@@ -373,15 +374,11 @@ function OnboardingPageContent() {
       try {
         setIsProcessingReturn(true);
         setErrorMessage(null);
-        const verifyRes = await fetch('/api/stripe/verify-session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ sessionId: sessionIdParam }),
-        });
-        const verifyData = await verifyRes.json();
-        if (!verifyRes.ok) {
-          throw new Error(verifyData.error || 'Falha ao validar checkout no Stripe.');
+        const verifyResult = await verifyStripeCheckoutSession(sessionIdParam);
+        if (!verifyResult.ok || !verifyResult.data) {
+          throw new Error(verifyResult.error || 'Falha ao validar checkout no Stripe.');
         }
+        const verifyData = verifyResult.data;
 
         const isCompletedSubscription =
           verifyData.mode === 'subscription' &&

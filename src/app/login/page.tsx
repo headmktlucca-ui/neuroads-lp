@@ -15,7 +15,7 @@ import {
 function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, profile, loading, premiumSyncing, loginWithGoogle, logout } = useAuth();
+  const { user, profile, loading, premiumSyncing, loginWithGoogle } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [authErrorMessage, setAuthErrorMessage] = useState<string | null>(null);
   const [isCheckingAccess, setIsCheckingAccess] = useState(false);
@@ -34,6 +34,7 @@ function LoginPageContent() {
       setIsCheckingAccess(true);
 
       let subscriptionActive = hasActiveHubSubscription(profile);
+      let syncInfraFailure = false;
 
       if (!subscriptionActive) {
         try {
@@ -46,16 +47,23 @@ function LoginPageContent() {
           });
           const syncData = (await syncRes.json()) as { hasAccess?: boolean };
           subscriptionActive = Boolean(syncRes.ok && syncData.hasAccess);
+          if (!syncRes.ok && syncRes.status >= 500) {
+            syncInfraFailure = true;
+          }
         } catch {
           subscriptionActive = false;
+          syncInfraFailure = true;
         }
       }
 
       if (!subscriptionActive) {
-        await logout();
-        setAuthErrorMessage(
-          'Acesso ao login liberado somente para contas com plano ativo ou período gratuito inicial válido.'
-        );
+        if (syncInfraFailure) {
+          setAuthErrorMessage(
+            'Não foi possível validar sua assinatura agora. Tente novamente em instantes.'
+          );
+        } else {
+          router.replace(getHubOnboardingRedirect(nextPath));
+        }
         setIsCheckingAccess(false);
         return;
       }
@@ -70,7 +78,7 @@ function LoginPageContent() {
     };
 
     void resolveAccess();
-  }, [loading, logout, nextPath, premiumSyncing, profile, router, user]);
+  }, [loading, nextPath, premiumSyncing, profile, router, user]);
 
   useEffect(() => {
     if (user) return;
