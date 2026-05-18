@@ -1,11 +1,18 @@
 'use client';
 
-import { addDoc, collection, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, limit, orderBy, query, where } from 'firebase/firestore';
 import { getFirebaseDb } from './firebase';
 
 type AgentReportFormat = 'markdown' | 'plain_text';
 
-type AgentReportMetadataValue = string | number | boolean | null;
+type AgentReportMetadataPrimitive = string | number | boolean | null;
+type AgentReportMetadataObject = {
+  [key: string]: AgentReportMetadataValue;
+};
+type AgentReportMetadataValue =
+  | AgentReportMetadataPrimitive
+  | AgentReportMetadataObject
+  | AgentReportMetadataValue[];
 
 export type AgentReportHistoryEntry = {
   id: string;
@@ -32,13 +39,45 @@ export type SaveAgentReportInput = {
   metadata?: Record<string, AgentReportMetadataValue | undefined>;
 };
 
+function sanitizeMetadataValue(value: unknown): AgentReportMetadataValue | undefined {
+  if (value === null) return null;
+
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    const sanitizedArray = value
+      .map((item) => sanitizeMetadataValue(item))
+      .filter((item): item is AgentReportMetadataValue => typeof item !== 'undefined');
+    return sanitizedArray;
+  }
+
+  if (typeof value === 'object') {
+    const sanitizedObject = Object.entries(value as Record<string, unknown>).reduce<AgentReportMetadataObject>(
+      (acc, [key, itemValue]) => {
+        const sanitized = sanitizeMetadataValue(itemValue);
+        if (typeof sanitized !== 'undefined') {
+          acc[key] = sanitized;
+        }
+        return acc;
+      },
+      {}
+    );
+    return sanitizedObject;
+  }
+
+  return undefined;
+}
+
 function sanitizeMetadata(
   metadata?: Record<string, AgentReportMetadataValue | undefined>
 ): Record<string, AgentReportMetadataValue> {
   if (!metadata) return {};
 
   return Object.entries(metadata).reduce<Record<string, AgentReportMetadataValue>>((acc, [key, value]) => {
-    if (typeof value !== 'undefined') acc[key] = value;
+    const sanitized = sanitizeMetadataValue(value);
+    if (typeof sanitized !== 'undefined') acc[key] = sanitized;
     return acc;
   }, {});
 }
@@ -119,6 +158,21 @@ export async function getLatestAgentReportsFromDb(
   }
 }
 
+export async function deleteAgentReportFromDb(
+  userId: string,
+  reportId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const db = getFirebaseDb();
+    const reportRef = doc(db, 'users', userId, 'agent_reports', reportId);
+    await deleteDoc(reportRef);
+    return { success: true };
+  } catch (error) {
+    console.error('Erro ao excluir relatório do agente:', error);
+    return { success: false, error: 'Erro ao excluir relatório no banco de dados.' };
+  }
+}
+
 export function downloadAgentReport(entry: AgentReportHistoryEntry) {
   const header = [
     `Relatório: ${entry.reportTitle}`,
@@ -126,7 +180,12 @@ export function downloadAgentReport(entry: AgentReportHistoryEntry) {
     `Categoria: ${entry.agentCategory}`,
     `Gerado em: ${new Date(entry.generatedAt).toLocaleString('pt-BR')}`,
   ];
-  const metadataLines = Object.entries(entry.metadata).map(([key, value]) => `${key}: ${String(value)}`);
+  const metadataLines = Object.entries(entry.metadata).map(([key, value]) => {
+    if (value && typeof value === 'object') {
+      return `${key}: ${JSON.stringify(value)}`;
+    }
+    return `${key}: ${String(value)}`;
+  });
   const body = [header.join('\n'), metadataLines.length ? metadataLines.join('\n') : null, entry.reportContent]
     .filter(Boolean)
     .join('\n\n');

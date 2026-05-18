@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowRight, CheckCircle2, CircleHelp, FolderKanban, Gauge, Goal, Handshake, Layers3 } from 'lucide-react';
 import PrimaryTopMenu from './PrimaryTopMenu';
 import PrimaryFooter from './PrimaryFooter';
+import HomePageBackground from './HomePageBackground';
 import { submitLuccaLeadAction } from '@/app/actions/lucca-leads';
 
 type IconKey = 'goal' | 'layers' | 'gauge' | 'handshake' | 'faq' | 'resource';
@@ -174,10 +175,12 @@ export default function StrategicContentPageShell({ data }: { data: StrategicCon
   };
 
   return (
-    <main className="min-h-screen bg-[#f4f6fa] text-[#1a2234]">
-      <PrimaryTopMenu />
+    <main className="relative min-h-screen overflow-hidden bg-white text-[#1a2234]">
+      <HomePageBackground />
+      <div className="relative z-10">
+        <PrimaryTopMenu />
 
-      <section className="mx-auto max-w-[1260px] px-5 pb-14 pt-5 md:px-8">
+        <section className="mx-auto max-w-[1260px] px-5 pb-14 pt-5 md:px-8">
         <div className="h-[84px]" />
 
         <section className="rounded-[28px] border border-[#e7ecf4] bg-white px-6 py-8 shadow-[0_16px_36px_rgba(12,22,38,0.06)] md:px-8">
@@ -480,9 +483,10 @@ export default function StrategicContentPageShell({ data }: { data: StrategicCon
             </div>
           </section>
         ) : null}
-      </section>
+        </section>
 
-      <PrimaryFooter />
+        <PrimaryFooter />
+      </div>
     </main>
   );
 }

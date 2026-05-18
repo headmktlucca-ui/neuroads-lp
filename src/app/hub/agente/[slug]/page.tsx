@@ -3,15 +3,17 @@
 import { useMemo, useEffect, useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { CheckCircle2, Download, History, Sparkles, X } from 'lucide-react';
+import { CheckCircle2, Download, Eye, History, MoreVertical, Sparkles, Trash2, X } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import Navbar from '../../../../components/layout/Navbar';
 import Footer from '../../../../components/layout/Footer';
 import LuccaHubSupportWidget from '../../../../components/hub/LuccaHubSupportWidget';
 import SeoGeoWorkspace from '../../../../components/agents/SeoGeoWorkspace';
 import TrafficAnalystWorkspace from '../../../../components/agents/TrafficAnalystWorkspace';
+import DnaBrandWorkspace, { DnaBrandPresentationPanel } from '../../../../components/agents/DnaBrandWorkspace';
 import GenericAgentWorkspace from '../../../../components/agents/GenericAgentWorkspace';
 import { useAuth } from '../../../../context/AuthContext';
+import type { DnaBrandPresentation, DnaBrandSource } from '../../../actions/dna-brand';
 import {
   getAgentBySlug,
   getAgentEntryDefinition,
@@ -21,10 +23,12 @@ import {
 import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } from '../../../../lib/hub-access';
 import { getFirebaseDb } from '../../../../lib/firebase';
 import {
+  deleteAgentReportFromDb,
   downloadAgentReport,
   getLatestAgentReportsFromDb,
   type AgentReportHistoryEntry,
 } from '../../../../lib/agent-report-history';
+import { buildAutomationTimestamps } from '../../../../lib/hub-automations';
 
 type AutomationSuggestion = {
   id: string;
@@ -34,6 +38,29 @@ type AutomationSuggestion = {
   monthlyExecutions: number;
   distribution: string;
 };
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function getDnaHistoryPayload(entry: AgentReportHistoryEntry | null): {
+  presentation: DnaBrandPresentation;
+  sources: DnaBrandSource[];
+} | null {
+  if (!entry || entry.agentTitle !== 'DNA da Marca') return null;
+  const metadata = entry.metadata;
+  if (!isRecord(metadata)) return null;
+
+  const presentationRaw = metadata.dnaPresentation;
+  const sourcesRaw = metadata.dnaSources;
+
+  if (!isRecord(presentationRaw) || !Array.isArray(sourcesRaw)) return null;
+
+  return {
+    presentation: presentationRaw as unknown as DnaBrandPresentation,
+    sources: sourcesRaw as unknown as DnaBrandSource[],
+  };
+}
 
 function getCadenceContext(category: string, title: string) {
   const byCategory: Record<string, { objective: string; distribution: string }> = {
@@ -68,6 +95,41 @@ function getCadenceContext(category: string, title: string) {
   }
 
   return byCategory[category] ?? fallback;
+}
+
+function getAgentHeroDescription(title: string) {
+  if (title === 'SEO & GEO') {
+    return (
+      <>
+        O agente <strong className="text-text-main">SEO & GEO</strong> atua como uma camada estratégica contínua para aumentar a autoridade digital da sua marca em buscadores
+        tradicionais e em mecanismos de resposta por IA. Ele organiza palavras-chave de intenção real, otimiza conteúdo e estrutura técnica das páginas, identifica
+        oportunidades de posicionamento e transforma sinais de mercado em ações práticas. Com isso, sua operação ganha mais tráfego qualificado, melhora a previsibilidade de
+        geração de demanda e constrói crescimento sustentável com impacto direto em oportunidades comerciais e receita.
+      </>
+    );
+  }
+
+  if (title === 'Analista de Tráfego') {
+    return (
+      <>
+        O agente <strong className="text-text-main">Analista de Tráfego</strong> monitora campanhas em Google Ads e Meta de forma contínua para identificar desperdícios,
+        oportunidades de escala e ajustes de conversão com prioridade no caixa da operação. Ele cruza dados reais de desempenho, redistribui orçamento por potencial de retorno e
+        sinaliza decisões práticas para manter CPL competitivo e ROAS saudável. O resultado é mais previsibilidade comercial, menos achismo e avanço consistente da receita.
+      </>
+    );
+  }
+
+  if (title === 'DNA da Marca') {
+    return (
+      <>
+        O agente <strong className="text-text-main">DNA da Marca</strong> transforma posicionamento em linguagem comercial clara, garantindo consistência entre anúncios,
+        páginas, roteiros e atendimento. Ele organiza diferenciais, dores e provas de valor para que cada mensagem reflita o que torna sua empresa única no mercado. Com isso,
+        sua comunicação ganha força estratégica, aumenta a qualidade dos leads e melhora a conversão sem depender de improviso.
+      </>
+    );
+  }
+
+  return null;
 }
 
 function buildAutomationSuggestions(entry: { title: string; category: string; planSummary?: { monthlyLimit?: number } }): AutomationSuggestion[] {
@@ -130,6 +192,9 @@ export default function AgentEntryPage() {
   const [historyEntries, setHistoryEntries] = useState<AgentReportHistoryEntry[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const [historyError, setHistoryError] = useState<string | null>(null);
+  const [historyActionError, setHistoryActionError] = useState<string | null>(null);
+  const [deletingReportId, setDeletingReportId] = useState<string | null>(null);
+  const [historyMenuReportId, setHistoryMenuReportId] = useState<string | null>(null);
   const [selectedHistoryId, setSelectedHistoryId] = useState<string | null>(null);
   const [selectedAutomationId, setSelectedAutomationId] = useState<string | null>(null);
   const [automationActivated, setAutomationActivated] = useState(false);
@@ -168,7 +233,12 @@ export default function AgentEntryPage() {
     if (!selectedHistoryId) return historyEntries[0];
     return historyEntries.find((item) => item.id === selectedHistoryId) ?? historyEntries[0];
   }, [historyEntries, selectedHistoryId]);
+  const dnaHistoryPayload = useMemo(
+    () => getDnaHistoryPayload(selectedHistoryEntry),
+    [selectedHistoryEntry]
+  );
   const agentAutomationKey = useMemo(() => (entry ? slugifyAgentTitle(entry.title) : ''), [entry]);
+  const heroDescription = useMemo(() => (entry ? getAgentHeroDescription(entry.title) : null), [entry]);
 
   const formatHistoryDate = (dateIso: string) => {
     const parsed = new Date(dateIso);
@@ -194,6 +264,8 @@ export default function AgentEntryPage() {
     setIsHistoryModalOpen(true);
     setIsLoadingHistory(true);
     setHistoryError(null);
+    setHistoryActionError(null);
+    setHistoryMenuReportId(null);
     try {
       const entries = await getLatestAgentReportsFromDb(user.uid, entry.slug, 10);
       setHistoryEntries(entries);
@@ -207,6 +279,54 @@ export default function AgentEntryPage() {
       setIsLoadingHistory(false);
     }
   };
+
+  const handleDeleteHistoryEntry = async (reportId: string) => {
+    if (!user?.uid) {
+      setHistoryActionError('Faça login para excluir relatórios.');
+      return;
+    }
+
+    const shouldDelete = window.confirm('Deseja realmente excluir este relatório do histórico?');
+    if (!shouldDelete) return;
+
+    setHistoryActionError(null);
+    setHistoryMenuReportId(null);
+    setDeletingReportId(reportId);
+    try {
+      const deleteResult = await deleteAgentReportFromDb(user.uid, reportId);
+      if (!deleteResult.success) {
+        throw new Error(deleteResult.error || 'Falha ao excluir relatório.');
+      }
+
+      setHistoryEntries((prev) => {
+        const next = prev.filter((entry) => entry.id !== reportId);
+        setSelectedHistoryId((current) => {
+          if (current !== reportId) return current;
+          return next[0]?.id ?? null;
+        });
+        return next;
+      });
+    } catch (error) {
+      console.error('Erro ao excluir relatório do histórico:', error);
+      setHistoryActionError('Não foi possível excluir este relatório agora. Tente novamente.');
+    } finally {
+      setDeletingReportId(null);
+    }
+  };
+
+  useEffect(() => {
+    if (!historyMenuReportId) return;
+
+    const handleOutsideClick = (event: MouseEvent) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+      if (target.closest('[data-history-menu-root="true"]')) return;
+      setHistoryMenuReportId(null);
+    };
+
+    window.addEventListener('mousedown', handleOutsideClick);
+    return () => window.removeEventListener('mousedown', handleOutsideClick);
+  }, [historyMenuReportId]);
 
   useEffect(() => {
     if (!automationSuggestions.length) return;
@@ -305,25 +425,21 @@ export default function AgentEntryPage() {
                         <div>
                           <p className="text-xs uppercase tracking-widest text-primary font-bold mb-2">{entry.category}</p>
                           <h1 className="text-3xl md:text-4xl font-black text-text-main">{entry.title}</h1>
-                          {entry.title === 'SEO & GEO' ? (
-                            <p className="mt-4 max-w-[760px] text-[13px] leading-relaxed text-text-muted">
-                              O agente <strong className="text-text-main">SEO & GEO</strong> atua como uma camada estratégica contínua para aumentar a autoridade digital da sua marca
-                              em buscadores tradicionais e em mecanismos de resposta por IA. Ele organiza palavras-chave de intenção real, otimiza conteúdo e estrutura técnica das páginas,
-                              identifica oportunidades de posicionamento e transforma sinais de mercado em ações práticas. Com isso, sua operação ganha mais tráfego qualificado, melhora a
-                              previsibilidade de geração de demanda e constrói crescimento sustentável com impacto direto em oportunidades comerciais e receita.
-                            </p>
-                          ) : null}
+                          {heroDescription ? <p className="mt-4 max-w-[760px] text-[13px] leading-relaxed text-text-muted">{heroDescription}</p> : null}
                           <div className="mt-6 flex flex-wrap items-center gap-3">
                             <button
                               type="button"
                               onClick={() => {
                                 setAutomationNotice(null);
-                                setAutomationActivated(false);
                                 setIsAutomationModalOpen(true);
                               }}
-                              className="px-6 py-3 rounded-full border border-[#FF6B00] bg-[#FF6B00] text-white font-bold tracking-widest text-sm uppercase shadow-[0_10px_22px_rgba(255,107,0,0.3)] hover:brightness-105 transition-all"
+                              className={`px-6 py-3 rounded-full border text-white font-bold tracking-widest text-sm uppercase transition-all ${
+                                automationActivated
+                                  ? 'border-[#08B760] bg-[#08B760] shadow-[0_10px_22px_rgba(8,183,96,0.3)] hover:brightness-105'
+                                  : 'border-[#FF6B00] bg-[#FF6B00] shadow-[0_10px_22px_rgba(255,107,0,0.3)] hover:brightness-105'
+                              }`}
                             >
-                              Ativar Automação
+                              {automationActivated ? 'Automação Ativa' : 'Ativar Automação'}
                             </button>
                             <button
                               type="button"
@@ -373,6 +489,15 @@ export default function AgentEntryPage() {
                 ) : entry.title === 'Analista de Tráfego' ? (
                   <div className="col-span-1">
                     <TrafficAnalystWorkspace
+                      userId={user?.uid}
+                      agentSlug={entry.slug}
+                      agentTitle={entry.title}
+                      agentCategory={entry.category}
+                    />
+                  </div>
+                ) : entry.title === 'DNA da Marca' ? (
+                  <div className="col-span-1">
+                    <DnaBrandWorkspace
                       userId={user?.uid}
                       agentSlug={entry.slug}
                       agentTitle={entry.title}
@@ -480,6 +605,10 @@ export default function AgentEntryPage() {
                       setIsSavingAutomation(true);
                       setAutomationNotice(null);
                       try {
+                        const timestamps = buildAutomationTimestamps({
+                          cadence: selectedSuggestion.cadence,
+                          monthlyExecutions: selectedSuggestion.monthlyExecutions,
+                        });
                         const db = getFirebaseDb();
                         const userRef = doc(db, 'users', user.uid);
                         const payload = {
@@ -497,6 +626,8 @@ export default function AgentEntryPage() {
                             monthlyLimit: entry.planSummary?.monthlyLimit ?? null,
                             activatedAt: Date.now(),
                             updatedAt: Date.now(),
+                            lastUpdateAt: timestamps.lastUpdateAt,
+                            nextUpdateAt: timestamps.nextUpdateAt,
                           },
                         };
 
@@ -588,30 +719,91 @@ export default function AgentEntryPage() {
                 ) : (
                   <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-0 min-h-0 flex-1">
                     <aside className="border-r border-[#EEF2F7] p-4 overflow-y-auto">
+                      {historyActionError ? (
+                        <div className="mb-3 rounded-xl border border-[#FFE1CF] bg-[#FFF8F3] px-3 py-2 text-xs font-semibold text-[#B45309]">
+                          {historyActionError}
+                        </div>
+                      ) : null}
                       <div className="space-y-3">
                         {historyEntries.map((item, index) => {
                           const isSelected = selectedHistoryEntry?.id === item.id;
                           const websiteUrl =
                             typeof item.metadata?.websiteUrl === 'string' ? item.metadata.websiteUrl : '';
                           const cleanedUrl = websiteUrl ? websiteUrl.replace(/^https?:\/\//i, '') : '';
+                          const isDeletingCurrent = deletingReportId === item.id;
                           return (
-                            <button
+                            <div
                               key={item.id}
-                              type="button"
-                              onClick={() => setSelectedHistoryId(item.id)}
+                              data-history-menu-root="true"
                               className={`w-full rounded-2xl border p-4 text-left transition-all ${
                                 isSelected
                                   ? 'border-[#FFBE94] bg-[#FFF7F1] shadow-[0_10px_24px_rgba(255,107,0,0.14)]'
                                   : 'border-[#E3E8EF] bg-[#FBFCFE] hover:border-[#FFD1B3] hover:bg-white'
                               }`}
                             >
-                              <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Relatório {historyEntries.length - index}</p>
+                              <div className="flex items-start justify-between gap-2">
+                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Relatório {historyEntries.length - index}</p>
+                                <div className="relative">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setHistoryMenuReportId((current) => (current === item.id ? null : item.id))
+                                    }
+                                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#DCE4EE] bg-white text-[#667085] hover:bg-[#F8FAFC]"
+                                    aria-label="Abrir menu de ações do relatório"
+                                  >
+                                    <MoreVertical size={14} />
+                                  </button>
+
+                                  {historyMenuReportId === item.id ? (
+                                    <div className="absolute right-0 top-9 z-20 min-w-[148px] overflow-hidden rounded-xl border border-[#E3E8EF] bg-white shadow-[0_16px_28px_rgba(15,23,42,0.14)]">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setSelectedHistoryId(item.id);
+                                          setHistoryMenuReportId(null);
+                                        }}
+                                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-[#1D4ED8] hover:bg-[#EEF4FF]"
+                                      >
+                                        <Eye size={13} />
+                                        Visualizar
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          downloadAgentReport(item);
+                                          setHistoryMenuReportId(null);
+                                        }}
+                                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-[#0A9D57] hover:bg-[#EEFDF5]"
+                                      >
+                                        <Download size={13} />
+                                        Download
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          void handleDeleteHistoryEntry(item.id);
+                                        }}
+                                        disabled={isDeletingCurrent}
+                                        className={`flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold ${
+                                          isDeletingCurrent
+                                            ? 'cursor-not-allowed text-[#B42318] bg-[#FFF4F6]'
+                                            : 'text-[#B42318] hover:bg-[#FFF1F3]'
+                                        }`}
+                                      >
+                                        <Trash2 size={13} />
+                                        {isDeletingCurrent ? 'Excluindo...' : 'Excluir'}
+                                      </button>
+                                    </div>
+                                  ) : null}
+                                </div>
+                              </div>
                               <p className="mt-2 text-sm font-bold text-text-main break-all">{item.reportTitle || cleanedUrl}</p>
                               <p className="mt-1 text-xs text-text-muted">{formatHistoryDate(item.generatedAt)}</p>
                               {item.metadata?.websiteUrl ? (
                                 <p className="mt-2 text-xs text-text-dim line-clamp-2">{String(item.metadata.websiteUrl)}</p>
                               ) : null}
-                            </button>
+                            </div>
                           );
                         })}
                       </div>
@@ -657,9 +849,17 @@ export default function AgentEntryPage() {
                                 Download
                               </button>
                             </div>
-                            <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-text-main font-sans">
-                              {selectedHistoryEntry.reportContent}
-                            </pre>
+                            {dnaHistoryPayload ? (
+                              <DnaBrandPresentationPanel
+                                presentation={dnaHistoryPayload.presentation}
+                                sources={dnaHistoryPayload.sources}
+                                generatedAt={selectedHistoryEntry.generatedAt}
+                              />
+                            ) : (
+                              <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-text-main font-sans">
+                                {selectedHistoryEntry.reportContent}
+                              </pre>
+                            )}
                           </article>
                         </div>
                       ) : null}

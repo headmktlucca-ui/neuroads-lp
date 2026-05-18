@@ -7,6 +7,7 @@ import { ArrowRight, Bot, CircleGauge, Headphones, HelpCircle, ShieldCheck, Targ
 import LuccaSpecialistChatModal from './LuccaSpecialistChatModal';
 import PrimaryTopMenu from './PrimaryTopMenu';
 import PrimaryFooter from './PrimaryFooter';
+import HomePageBackground from './HomePageBackground';
 import { submitLuccaLeadAction } from '@/app/actions/lucca-leads';
 import { trackSubmenuEvent } from '@/lib/submenu-tracking';
 
@@ -314,10 +315,12 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
   };
 
   return (
-    <main className="min-h-screen bg-[#f4f6fa] text-[#1a2234]">
-      <PrimaryTopMenu onSpecialistClick={openSpecialistChat} onRequestDemoClick={() => openLuccaFromCta('header_demo')} />
+    <main className="relative min-h-screen overflow-hidden bg-white text-[#1a2234]">
+      <HomePageBackground />
+      <div className="relative z-10">
+        <PrimaryTopMenu onSpecialistClick={openSpecialistChat} onRequestDemoClick={() => openLuccaFromCta('header_demo')} />
 
-      <section className="mx-auto max-w-[1260px] px-5 pb-16 pt-5 md:px-8">
+        <section className="mx-auto max-w-[1260px] px-5 pb-16 pt-5 md:px-8">
         <div className="h-[84px]" />
 
         <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
@@ -570,15 +573,16 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
             ))}
           </div>
         </section>
-      </section>
+        </section>
 
-      <PrimaryFooter />
+        <PrimaryFooter />
 
-      <LuccaSpecialistChatModal
-        isOpen={isLuccaChatOpen}
-        onClose={() => setIsLuccaChatOpen(false)}
-        autoUserMessage={luccaAutoMessage}
-      />
+        <LuccaSpecialistChatModal
+          isOpen={isLuccaChatOpen}
+          onClose={() => setIsLuccaChatOpen(false)}
+          autoUserMessage={luccaAutoMessage}
+        />
+      </div>
     </main>
   );
 }

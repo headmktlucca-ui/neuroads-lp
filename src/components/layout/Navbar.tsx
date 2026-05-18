@@ -1,11 +1,11 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCallback, useEffect, useMemo, useRef, useState, Fragment } from 'react';
+import { useCallback, useEffect, useMemo, useState, Fragment } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
-import { ChevronDown, User, LogOut, X, PlugZap, CheckCircle2, Database, Gauge, AlertTriangle, CreditCard } from 'lucide-react';
+import { ChevronDown, LogOut, X, PlugZap, CheckCircle2, Database, Gauge, AlertTriangle } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
@@ -108,10 +108,30 @@ function formatTrialRemaining(remainingMs: number | null): string {
   return `${days}d ${hours}h restantes`;
 }
 
+const SETTINGS_MODAL_VIEWPORT =
+  'fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-3 py-3 sm:px-4 sm:py-4';
+const SETTINGS_MODAL_BACKDROP = 'absolute inset-0 bg-charcoal/60 backdrop-blur-sm';
+const SETTINGS_MODAL_FRAME =
+  'relative w-full max-h-[90vh] rounded-[32px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_24px_56px_rgba(255,107,0,0.22)] animate-in fade-in zoom-in duration-300';
+const SETTINGS_MODAL_SURFACE = 'max-h-[calc(90vh-4px)] overflow-hidden rounded-[30px] border border-[#FFF1E8] bg-white';
+const SETTINGS_MODAL_HEADER = 'relative border-b border-[#E8EDF4] bg-gradient-to-b from-[#FFF4EC] to-white px-6 py-5';
+const SETTINGS_MODAL_CLOSE_BUTTON =
+  'absolute right-4 top-4 rounded-full border border-[#E3E8EF] bg-white p-2 text-[#2C3444] transition-colors hover:bg-[#F8FAFC]';
+const SETTINGS_PANEL =
+  'rounded-[22px] border border-[#E8EDF4] bg-white p-5 shadow-[0_10px_30px_-24px_rgba(15,23,42,0.55)]';
+const SETTINGS_LABEL = 'mb-2 text-xs font-bold uppercase tracking-widest text-[#98A2B3]';
+const SETTINGS_INPUT =
+  'w-full rounded-xl border border-[#E3E8EF] bg-[#F8FAFC] px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-[#FF8A2B] focus:bg-white';
+const SETTINGS_SECONDARY_BUTTON =
+  'rounded-xl border border-[#E3E8EF] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#667085] transition-colors hover:bg-[#F8FAFC]';
+const SETTINGS_PRIMARY_BUTTON =
+  'rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(8,183,96,0.25)] transition-transform hover:-translate-y-0.5';
+const SETTINGS_TOAST_BASE =
+  'fixed bottom-4 right-4 z-[10020] rounded-xl px-4 py-3 text-sm font-bold shadow-[0_16px_35px_-20px_rgba(15,23,42,0.6)] animate-in fade-in slide-in-from-bottom-2 duration-200';
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLabSubmenuOpen, setIsLabSubmenuOpen] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCompanyOpen, setIsCompanyOpen] = useState(false);
   const [isConnectorsOpen, setIsConnectorsOpen] = useState(false);
@@ -128,29 +148,22 @@ export default function Navbar() {
   const [whatsApp, setWhatsApp] = useState('');
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
+  const [settingsToast, setSettingsToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
   const { user, userEmail, profile, logout, isAdmin } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
   const [currentHash, setCurrentHash] = useState('');
-  const settingsMenuRef = useRef<HTMLDivElement | null>(null);
+
+  const showSettingsToast = useCallback((message: string, variant: 'success' | 'error' = 'success') => {
+    setSettingsToast({ message, variant });
+  }, []);
 
   useEffect(() => {
-    if (!isSettingsOpen) return;
-
-    const handleOutsidePointerDown = (event: PointerEvent) => {
-      const target = event.target as Node | null;
-      if (!target) return;
-      if (settingsMenuRef.current && !settingsMenuRef.current.contains(target)) {
-        setIsSettingsOpen(false);
-      }
-    };
-
-    document.addEventListener('pointerdown', handleOutsidePointerDown);
-    return () => {
-      document.removeEventListener('pointerdown', handleOutsidePointerDown);
-    };
-  }, [isSettingsOpen]);
+    if (!settingsToast) return;
+    const timeoutId = window.setTimeout(() => setSettingsToast(null), 2200);
+    return () => window.clearTimeout(timeoutId);
+  }, [settingsToast]);
 
   useEffect(() => {
     const syncHash = () => {
@@ -260,31 +273,26 @@ export default function Navbar() {
   };
 
   const openProfileModal = () => {
-    setIsSettingsOpen(false);
     setIsMenuOpen(false);
     setIsProfileOpen(true);
   };
 
   const openConnectorsModal = () => {
-    setIsSettingsOpen(false);
     setIsMenuOpen(false);
     setIsConnectorsOpen(true);
   };
 
   const openCompanyModal = () => {
-    setIsSettingsOpen(false);
     setIsMenuOpen(false);
     setIsCompanyOpen(true);
   };
 
   const openFinanceModal = () => {
-    setIsSettingsOpen(false);
     setIsMenuOpen(false);
     setIsFinanceOpen(true);
   };
 
   const handleLogout = () => {
-    setIsSettingsOpen(false);
     setIsMenuOpen(false);
     void logout();
   };
@@ -637,14 +645,16 @@ export default function Navbar() {
       const db = getFirebaseDb();
       const userRef = doc(db, 'users', user.uid);
       await setDoc(userRef, payload, { merge: true });
+      const companyKey = `neuroads_company_profile_${user.uid}`;
+      window.localStorage.setItem(companyKey, JSON.stringify({ ...companyForm, site: normalizedSite }));
+      setCompanySaved(true);
+      setTimeout(() => setCompanySaved(false), 2200);
+      showSettingsToast('Informações da empresa salvas com sucesso.');
+      closeCompanyModal();
     } catch (error) {
       console.warn('Falha ao salvar dados da empresa no Firestore:', error);
+      showSettingsToast('Não foi possível salvar os dados da empresa.', 'error');
     }
-
-    const companyKey = `neuroads_company_profile_${user.uid}`;
-    window.localStorage.setItem(companyKey, JSON.stringify({ ...companyForm, site: normalizedSite }));
-    setCompanySaved(true);
-    setTimeout(() => setCompanySaved(false), 2200);
   };
 
   const handleSaveWhatsApp = async () => {
@@ -667,22 +677,31 @@ export default function Navbar() {
         },
         { merge: true }
       );
+      const contactKey = `neuroads_profile_contact_${user.uid}`;
+      window.localStorage.setItem(contactKey, JSON.stringify({ whatsapp: normalizedWhatsapp }));
+      showSettingsToast('WhatsApp atualizado com sucesso.');
+      setIsProfileOpen(false);
     } catch (error) {
       console.warn('Falha ao salvar WhatsApp no Firestore:', error);
+      showSettingsToast('Não foi possível salvar o WhatsApp.', 'error');
     }
-
-    const contactKey = `neuroads_profile_contact_${user.uid}`;
-    window.localStorage.setItem(contactKey, JSON.stringify({ whatsapp: normalizedWhatsapp }));
   };
 
-  const handleSaveConnectors = () => {
+  const handleSaveConnectors = async () => {
     if (!user) return;
-    const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
-    const connectorsConfigKey = `neuroads_dashboard_connectors_config_${user.uid}`;
-    window.localStorage.setItem(connectorsKey, JSON.stringify(connectorStatus));
-    window.localStorage.setItem(connectorsConfigKey, JSON.stringify(connectorConfig));
-    setConnectorsSaved(true);
-    setTimeout(() => setConnectorsSaved(false), 2200);
+    try {
+      const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+      const connectorsConfigKey = `neuroads_dashboard_connectors_config_${user.uid}`;
+      window.localStorage.setItem(connectorsKey, JSON.stringify(connectorStatus));
+      window.localStorage.setItem(connectorsConfigKey, JSON.stringify(connectorConfig));
+      setConnectorsSaved(true);
+      setTimeout(() => setConnectorsSaved(false), 2200);
+      showSettingsToast('Configurações de conectores salvas com sucesso.');
+      closeConnectorsModal();
+    } catch (error) {
+      console.warn('Falha ao salvar configurações locais de conectores:', error);
+      showSettingsToast('Não foi possível salvar as configurações de conectores.', 'error');
+    }
   };
 
   const handleConnectorDisconnect = async (connectorKey: ConnectorKey) => {
@@ -984,6 +1003,18 @@ export default function Navbar() {
                 >
                   Agentes Ativos
                 </Link>
+                <Link
+                  href="/hub/automacoes"
+                  className={`transition-colors duration-200 ${
+                    isHubNavbarStyle
+                      ? 'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-semibold'
+                      : 'text-[15px] leading-none font-semibold'
+                  } ${
+                    isLinkActive('/hub/automacoes') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#1c2230]'
+                  }`}
+                >
+                  Automações
+                </Link>
                 <div className="relative group">
                   <button
                     type="button"
@@ -1045,57 +1076,6 @@ export default function Navbar() {
               >
                 Agentes Ativos: {String(activeAgentsCount).padStart(2, '0')} de {String(planCapacity).padStart(2, '0')}
               </span>
-            )}
-            {/* User menu (only when logged in) */}
-            {user && (
-              <div ref={settingsMenuRef} className="relative">
-                <button
-                  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                  className="relative size-11 group overflow-hidden rounded-full transition-all flex items-center justify-center border border-[#E5E7EB] bg-white text-[#344054] hover:text-[#111827]"
-                >
-                  <User size={16} className="relative z-10" />
-                  <ChevronDown size={12} className={`relative z-10 transition-transform duration-300 ${isSettingsOpen ? 'rotate-180' : ''}`} />
-                </button>
-
-                {/* Submenu */}
-                {isSettingsOpen && (
-                  <div className="absolute top-full right-0 mt-4 w-[300px] rounded-[22px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.18)] z-[60]">
-                    <div className="bg-white border border-[#FFF1E8] rounded-[20px] overflow-hidden py-3">
-                    <button
-                      onClick={openProfileModal}
-                      className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-text-main hover:text-primary hover:bg-[#FFF8F3] transition-all flex items-center gap-4 normal-case"
-                    >
-                      <User size={15} className="text-text-dim" /> Meu perfil
-                    </button>
-                    <button
-                      onClick={openConnectorsModal}
-                      className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-text-main hover:text-primary hover:bg-[#FFF8F3] transition-all flex items-center gap-4 normal-case"
-                    >
-                      <PlugZap size={15} className="text-text-dim" /> Conectores
-                    </button>
-                    <button
-                      onClick={openCompanyModal}
-                      className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-text-main hover:text-primary hover:bg-[#FFF8F3] transition-all flex items-center gap-4 normal-case"
-                    >
-                      <User size={15} className="text-text-dim" /> Sua Empresa
-                    </button>
-                    <button
-                      onClick={openFinanceModal}
-                      className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-text-main hover:text-primary hover:bg-[#FFF8F3] transition-all flex items-center gap-4 normal-case"
-                    >
-                      <CreditCard size={15} className="text-text-dim" /> Financeiro
-                    </button>
-                    <div className="h-px bg-border mx-7 my-2" />
-                    <button
-                      onClick={handleLogout}
-                      className="w-full px-7 py-4 text-left text-[13px] font-bold tracking-[0.08em] text-red-500 hover:bg-red-50 transition-all flex items-center gap-4 normal-case"
-                    >
-                      <LogOut size={15} /> Sair
-                    </button>
-                    </div>
-                  </div>
-                )}
-              </div>
             )}
           </div>
 
@@ -1202,6 +1182,15 @@ export default function Navbar() {
               >
                 Agentes Ativos
               </Link>
+              <Link
+                href="/hub/automacoes"
+                onClick={() => setIsMenuOpen(false)}
+                className={`text-lg font-black tracking-[0.08em] transition-colors ${
+                  isLinkActive('/hub/automacoes') ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
+                }`}
+              >
+                Automações
+              </Link>
             </>
           )}
 
@@ -1250,79 +1239,77 @@ export default function Navbar() {
 
     {/* Profile Modal */}
     {isProfileOpen && user && (
-      <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center sm:py-4">
+      <div className={SETTINGS_MODAL_VIEWPORT}>
         <div
           onClick={() => setIsProfileOpen(false)}
-          className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
+          className={SETTINGS_MODAL_BACKDROP}
         />
 
-        <div className="relative w-full max-w-xl max-h-[92vh] rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)] animate-in fade-in zoom-in duration-300">
-          <div className="max-h-[calc(92vh-4px)] overflow-y-auto rounded-[28px] bg-white border border-[#FFF1E8]">
-            <div className="relative px-6 py-5 border-b border-border bg-gradient-to-br from-orange-light to-white">
+        <div className={`${SETTINGS_MODAL_FRAME} max-w-xl`}>
+          <div className={SETTINGS_MODAL_SURFACE}>
+            <div className={SETTINGS_MODAL_HEADER}>
               <h3 className="text-2xl font-black text-text-main tracking-tight">Meu perfil</h3>
               <p className="text-sm text-text-muted mt-1">Informações da conta do usuário</p>
               <button
                 onClick={() => setIsProfileOpen(false)}
-                className="absolute top-4 right-4 p-2 rounded-full bg-white border border-border hover:bg-bg-secondary transition-colors"
+                className={SETTINGS_MODAL_CLOSE_BUTTON}
               >
                 <X size={18} className="text-text-main" />
               </button>
             </div>
 
-            <div className="p-6 space-y-5">
-              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Nome</p>
+            <div className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-2">
+              <div className={SETTINGS_PANEL}>
+                <p className={SETTINGS_LABEL}>Nome</p>
                 <p className="text-base font-bold text-text-main">{user.displayName || 'Não informado'}</p>
               </div>
 
-              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">E-mail</p>
+              <div className={SETTINGS_PANEL}>
+                <p className={SETTINGS_LABEL}>E-mail</p>
                 <p className="text-base font-bold text-text-main">{user.email || 'Não informado'}</p>
               </div>
 
-              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">WhatsApp</p>
-                <div className="flex flex-col sm:flex-row gap-3">
+              <div className={`${SETTINGS_PANEL} sm:col-span-2`}>
+                <p className={SETTINGS_LABEL}>WhatsApp</p>
+                <div className="flex flex-col gap-2 sm:flex-row">
                   <input
                     value={whatsApp}
                     onChange={(e) => setWhatsApp(e.target.value)}
                     placeholder="(00) 00000-0000"
-                    className="flex-1 bg-white border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                    className={`flex-1 ${SETTINGS_INPUT}`}
                   />
                   <button
                     type="button"
                     onClick={handleSaveWhatsApp}
-                    className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] text-white text-xs font-bold tracking-widest uppercase shadow-[0_8px_18px_rgba(8,183,96,0.25)]"
+                    className={SETTINGS_PRIMARY_BUTTON}
                   >
                     Salvar
                   </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Plano</p>
-                  <p className={`text-base font-black ${hubProfile.isSubscriptionActive ? 'text-[#0A9D57]' : 'text-primary'}`}>
-                    {planDisplayLabel}
-                  </p>
-                </div>
-                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Plataformas conectadas</p>
-                  <p className="text-base font-black text-text-main">{connectedPlatforms}</p>
-                </div>
+              <div className={SETTINGS_PANEL}>
+                <p className={SETTINGS_LABEL}>Plano</p>
+                <p className={`text-base font-black ${hubProfile.isSubscriptionActive ? 'text-[#0A9D57]' : 'text-primary'}`}>
+                  {planDisplayLabel}
+                </p>
+              </div>
+              <div className={SETTINGS_PANEL}>
+                <p className={SETTINGS_LABEL}>Plataformas conectadas</p>
+                <p className="text-base font-black text-text-main">{connectedPlatforms}</p>
               </div>
 
-              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Aplicações em uso</p>
+              <div className={SETTINGS_PANEL}>
+                <p className={SETTINGS_LABEL}>Aplicações em uso</p>
                 <p className="text-base font-black text-text-main">{usageCount}</p>
               </div>
 
-              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">ID do usuário</p>
+              <div className={SETTINGS_PANEL}>
+                <p className={SETTINGS_LABEL}>ID do usuário</p>
                 <p className="text-sm font-semibold text-text-main break-all">{user.uid}</p>
               </div>
 
-              <div className="rounded-2xl border border-red-200 bg-red-50 p-5 space-y-3">
+              <div className="rounded-[22px] border border-red-200 bg-[#FFF4F4] p-4 shadow-[0_10px_30px_-24px_rgba(185,28,28,0.75)] space-y-2 sm:col-span-2">
                 <p className="text-xs uppercase tracking-widest text-red-600 font-black">Zona de risco</p>
                 <p className="text-sm text-red-700">
                   Ao excluir a conta, seu plano será cancelado e o cadastro será removido do banco de dados.
@@ -1349,52 +1336,52 @@ export default function Navbar() {
 
     {/* Finance Modal */}
     {isFinanceModalOpen && user && (
-      <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center sm:py-4">
+      <div className={SETTINGS_MODAL_VIEWPORT}>
         <div
           onClick={closeFinanceModal}
-          className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
+          className={SETTINGS_MODAL_BACKDROP}
         />
 
-        <div className="relative w-full max-w-2xl max-h-[92vh] rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)] animate-in fade-in zoom-in duration-300">
-          <div className="max-h-[calc(92vh-4px)] overflow-y-auto rounded-[28px] bg-white border border-[#FFF1E8]">
-            <div className="relative px-6 py-5 border-b border-border bg-gradient-to-br from-orange-light to-white">
+        <div className={`${SETTINGS_MODAL_FRAME} max-w-2xl`}>
+          <div className={SETTINGS_MODAL_SURFACE}>
+            <div className={SETTINGS_MODAL_HEADER}>
               <h3 className="text-2xl font-black text-text-main tracking-tight">Financeiro</h3>
               <p className="text-sm text-text-muted mt-1">Detalhes do plano, assinatura e período de acesso</p>
               <button
                 onClick={closeFinanceModal}
-                className="absolute top-4 right-4 p-2 rounded-full bg-white border border-border hover:bg-bg-secondary transition-colors"
+                className={SETTINGS_MODAL_CLOSE_BUTTON}
               >
                 <X size={18} className="text-text-main" />
               </button>
             </div>
 
-            <div className="p-6 space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Plano atual</p>
+            <div className="p-5 space-y-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className={SETTINGS_PANEL}>
+                  <p className={SETTINGS_LABEL}>Plano atual</p>
                   <p className="text-base font-black text-text-main">{financialPlanName}</p>
                 </div>
-                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Valor mensal</p>
+                <div className={SETTINGS_PANEL}>
+                  <p className={SETTINGS_LABEL}>Valor mensal</p>
                   <p className="text-base font-black text-text-main">{financialPlanAmount}</p>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Status da assinatura</p>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div className={SETTINGS_PANEL}>
+                  <p className={SETTINGS_LABEL}>Status da assinatura</p>
                   <p className={`text-base font-black ${hubProfile.isSubscriptionActive ? 'text-[#0A9D57]' : 'text-primary'}`}>
                     {hubProfile.statusLabel}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Acesso operacional</p>
+                <div className={SETTINGS_PANEL}>
+                  <p className={SETTINGS_LABEL}>Acesso operacional</p>
                   <p className="text-base font-black text-text-main">{hubProfile.accessLabel}</p>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Recursos incluídos</p>
+              <div className={SETTINGS_PANEL}>
+                <p className={SETTINGS_LABEL}>Recursos incluídos</p>
                 <p className="text-sm font-bold text-text-main">
                   {hubProfile.operationLabel}
                 </p>
@@ -1406,7 +1393,7 @@ export default function Navbar() {
               </div>
 
               {hubProfile.isTrialing && (hubProfile.trialRemainingMs ?? 0) > 0 ? (
-                <div className="rounded-2xl border border-[#FFD2B5] bg-[#FFF8F3] p-5">
+                <div className="rounded-2xl border border-[#FFD2B5] bg-[#FFF8F3] p-4">
                   <p className="text-xs uppercase tracking-widest text-[#B45309] font-bold mb-2">Período gratuito ativo</p>
                   <p className="text-base font-black text-[#7C2D12]">{trialRemainingLabel}</p>
                   <p className="text-sm text-[#7C2D12] mt-2">
@@ -1416,8 +1403,8 @@ export default function Navbar() {
               ) : null}
 
               {!hubProfile.isTrialing ? (
-                <div className="rounded-2xl border border-border bg-bg-secondary p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">Período gratuito</p>
+                <div className={SETTINGS_PANEL}>
+                  <p className={SETTINGS_LABEL}>Período gratuito</p>
                   <p className="text-sm font-bold text-text-main">
                     {hubProfile.trialEndsAt ? `Encerrado em ${trialEndsAtLabel}` : 'Não aplicável ao status atual'}
                   </p>
@@ -1431,38 +1418,38 @@ export default function Navbar() {
 
       {/* Company Modal */}
       {isCompanyModalOpen && user && (
-        <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center sm:py-4">
+        <div className={SETTINGS_MODAL_VIEWPORT}>
           <div
             onClick={closeCompanyModal}
-            className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
+            className={SETTINGS_MODAL_BACKDROP}
           />
 
-          <div className="relative w-full max-w-2xl max-h-[92vh] rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)] animate-in fade-in zoom-in duration-300">
-            <div className="max-h-[calc(92vh-4px)] overflow-y-auto rounded-[28px] bg-white border border-[#FFF1E8]">
-              <div className="relative px-6 py-5 border-b border-border bg-gradient-to-br from-orange-light to-white">
+          <div className={`${SETTINGS_MODAL_FRAME} max-w-2xl`}>
+            <div className={SETTINGS_MODAL_SURFACE}>
+              <div className={SETTINGS_MODAL_HEADER}>
                 <h3 className="text-2xl font-black text-text-main tracking-tight">Sobre sua Marca</h3>
                 <p className="text-sm text-text-muted mt-1">Cadastro das informações institucionais</p>
                 <button
                   onClick={closeCompanyModal}
-                  className="absolute top-4 right-4 p-2 rounded-full bg-white border border-border hover:bg-bg-secondary transition-colors"
+                  className={SETTINGS_MODAL_CLOSE_BUTTON}
                 >
                   <X size={18} className="text-text-main" />
                 </button>
               </div>
 
-              <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className={`${SETTINGS_PANEL} m-5 grid grid-cols-1 gap-3 sm:grid-cols-2`}>
                 <div className="sm:col-span-2">
-                  <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">Nome da Empresa</label>
+                  <label className={`${SETTINGS_LABEL} block`}>Nome da Empresa</label>
                   <input
                     value={companyForm.companyName}
                     onChange={(e) => setCompanyForm((prev) => ({ ...prev, companyName: e.target.value }))}
-                    className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                    className={SETTINGS_INPUT}
                     placeholder="Nome da empresa"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">Site</label>
+                  <label className={`${SETTINGS_LABEL} block`}>Site</label>
                   <input
                     value={companyForm.site}
                     onChange={(e) =>
@@ -1471,53 +1458,53 @@ export default function Navbar() {
                     onBlur={(e) =>
                       setCompanyForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))
                     }
-                    className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                    className={SETTINGS_INPUT}
                     placeholder="https://..."
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">Instagram</label>
+                  <label className={`${SETTINGS_LABEL} block`}>Instagram</label>
                   <input
                     value={companyForm.instagram}
                     onChange={(e) => setCompanyForm((prev) => ({ ...prev, instagram: e.target.value }))}
-                    className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                    className={SETTINGS_INPUT}
                     placeholder="@perfil"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">LinkedIn</label>
+                  <label className={`${SETTINGS_LABEL} block`}>LinkedIn</label>
                   <input
                     value={companyForm.linkedin}
                     onChange={(e) => setCompanyForm((prev) => ({ ...prev, linkedin: e.target.value }))}
-                    className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                    className={SETTINGS_INPUT}
                     placeholder="linkedin.com/company/..."
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">TikTok</label>
+                  <label className={`${SETTINGS_LABEL} block`}>TikTok</label>
                   <input
                     value={companyForm.tiktok}
                     onChange={(e) => setCompanyForm((prev) => ({ ...prev, tiktok: e.target.value }))}
-                    className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                    className={SETTINGS_INPUT}
                     placeholder="tiktok.com/@perfil"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">Blog</label>
+                  <label className={`${SETTINGS_LABEL} block`}>Blog</label>
                   <input
                     value={companyForm.blog}
                     onChange={(e) => setCompanyForm((prev) => ({ ...prev, blog: e.target.value }))}
-                    className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                    className={SETTINGS_INPUT}
                     placeholder="blog.seudominio.com"
                   />
                 </div>
               </div>
 
-              <div className="px-6 pb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div className="px-5 pb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                 <p className={`text-sm ${companySaved ? 'text-[#0A9D57]' : 'text-text-muted'}`}>
                   {companySaved ? 'Dados salvos com sucesso.' : 'Preencha os dados da empresa.'}
                 </p>
@@ -1525,14 +1512,14 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={closeCompanyModal}
-                    className="px-5 py-3 rounded-xl border border-border text-text-muted text-xs font-bold tracking-widest uppercase hover:bg-bg-secondary"
+                    className={SETTINGS_SECONDARY_BUTTON}
                   >
                     Fechar
                   </button>
                   <button
                     type="button"
                     onClick={handleSaveCompany}
-                    className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] text-white text-xs font-bold tracking-widest uppercase shadow-[0_8px_18px_rgba(8,183,96,0.25)]"
+                    className={SETTINGS_PRIMARY_BUTTON}
                   >
                     Salvar
                   </button>
@@ -1545,29 +1532,30 @@ export default function Navbar() {
 
       {/* Connectors Modal */}
       {isConnectorsModalOpen && user && (
-        <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center sm:py-4">
+        <div className={SETTINGS_MODAL_VIEWPORT}>
           <div
             onClick={closeConnectorsModal}
-            className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm"
+            className={SETTINGS_MODAL_BACKDROP}
           />
 
-          <div className="relative w-full max-w-4xl rounded-[30px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_20px_50px_rgba(255,107,0,0.2)] max-h-[92vh] animate-in fade-in zoom-in duration-300">
-            <div className="rounded-[28px] bg-white border border-[#FFF1E8] overflow-hidden h-full flex flex-col">
-              <div className="relative px-6 py-5 border-b border-border bg-gradient-to-br from-orange-light to-white">
+          <div className={`${SETTINGS_MODAL_FRAME} w-[min(96vw,1360px)] max-w-none`}>
+            <div className={`${SETTINGS_MODAL_SURFACE} flex h-full flex-col overflow-hidden`}>
+              <div className={SETTINGS_MODAL_HEADER}>
                 <h3 className="text-2xl font-black text-text-main tracking-tight">Conectores</h3>
                 <p className="text-sm text-text-muted mt-1">
                   Configure as integrações e parâmetros essenciais para exibir dados reais e corretos no Dashboard.
                 </p>
                 <button
                   onClick={closeConnectorsModal}
-                  className="absolute top-4 right-4 p-2 rounded-full bg-white border border-border hover:bg-bg-secondary transition-colors"
+                  className={SETTINGS_MODAL_CLOSE_BUTTON}
                 >
                   <X size={18} className="text-text-main" />
                 </button>
               </div>
 
-              <div className="p-6 overflow-y-auto space-y-6">
-                <div className="rounded-2xl border border-[#FFE4D1] bg-[#FFF8F3] p-5">
+              <div className="flex-1 overflow-y-auto px-5 py-4">
+                <div className="grid grid-cols-1 gap-3 xl:grid-cols-[1.65fr_1fr]">
+                <div className="rounded-[22px] border border-[#FFE4D1] bg-[#FFF8F3] p-4 shadow-[0_10px_30px_-24px_rgba(180,83,9,0.75)] xl:col-span-2">
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div>
                       <p className="text-xs uppercase tracking-widest text-[#B45309] font-bold mb-1">Prontidão do Dashboard</p>
@@ -1578,7 +1566,7 @@ export default function Navbar() {
                       <span className="text-sm font-black text-primary">{dashboardReadiness}%</span>
                     </div>
                   </div>
-                  <div className="mt-4 h-2.5 rounded-full bg-[#FFE5D0] overflow-hidden">
+                  <div className="mt-3 h-2 rounded-full bg-[#FFE5D0] overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-[#FF6B00] to-[#FF9D00] transition-all duration-500"
                       style={{ width: `${dashboardReadiness}%` }}
@@ -1586,23 +1574,37 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-border bg-white p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-4">Conectores obrigatórios</p>
-                  <div className="space-y-3">
+                <div className={`${SETTINGS_PANEL} xl:row-span-2`}>
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <p className={SETTINGS_LABEL}>Conectores obrigatórios</p>
+                    <span className="rounded-full border border-[#E6ECF2] bg-[#F8FAFC] px-2.5 py-1 text-[11px] font-bold text-[#667085]">
+                      {connectedRequired}/{requiredConnectors.length}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                     {CONNECTOR_DEFINITIONS.map((connector) => (
-                      <div key={connector.key} className="rounded-xl border border-border bg-bg-secondary p-4">
-                        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-                          <div>
-                            <p className="text-sm font-black text-text-main">{connector.name}</p>
-                            <p className="text-xs text-text-muted mt-1">{connector.source} • {connector.usedBy}</p>
+                      <div key={connector.key} className="h-[94px] rounded-xl border border-[#E6ECF2] bg-[#F8FAFC] p-2.5">
+                        <div className="flex h-full items-center justify-between gap-3">
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center gap-2">
+                              <p className="truncate text-[13px] font-black leading-tight text-text-main">{connector.name}</p>
+                              <span
+                                className={`inline-flex h-2.5 w-2.5 shrink-0 rounded-full ${
+                                  connectorStatus[connector.key] ? 'bg-[#0A9D57]' : 'bg-[#D0D5DD]'
+                                }`}
+                                aria-hidden
+                              />
+                            </div>
+                            <p className="mt-1 truncate text-[11px] leading-tight text-text-muted">{connector.source} • {connector.usedBy}</p>
                           </div>
-                          <div className="flex flex-wrap items-center justify-end gap-2">
+
+                          <div className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
                             {connector.key === 'crm' && !connectorStatus[connector.key] ? (
                               <a
                                 href={getConnectorOAuthHref(connector.key, 'pipedrive')}
-                                className="inline-flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-[#BFDBFE] bg-[#EFF6FF] text-[#1D4ED8] text-[11px] font-bold tracking-wide uppercase"
+                                className="inline-flex h-8 min-w-[96px] items-center justify-center gap-1.5 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[#1D4ED8]"
                               >
-                                <PlugZap size={12} /> Pipedrive
+                                <PlugZap size={11} /> Pipedrive
                               </a>
                             ) : null}
                             <button
@@ -1613,19 +1615,19 @@ export default function Navbar() {
                                   ? void handleConnectorDisconnect(connector.key)
                                   : void handleConnectorConnect(connector.key)
                               }
-                              className={`inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl border text-xs font-bold tracking-wider uppercase transition-all disabled:opacity-60 disabled:cursor-not-allowed ${
+                              className={`inline-flex h-8 min-w-[120px] items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
                                 connectorStatus[connector.key]
-                                  ? 'bg-[#F2FFF7] border-[#BDE8CF] text-[#0A9D57]'
-                                  : 'bg-white border-[#D1D5DB] text-[#6B7280]'
+                                  ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]'
+                                  : 'border-[#D1D5DB] bg-white text-[#6B7280]'
                               }`}
                             >
                               {connectorStatus[connector.key] ? (
                                 <>
-                                  <CheckCircle2 size={14} /> Conectado
+                                  <CheckCircle2 size={11} /> Conectado
                                 </>
                               ) : (
                                 <>
-                                  <PlugZap size={14} /> Conectar
+                                  <PlugZap size={11} /> Conectar
                                 </>
                               )}
                             </button>
@@ -1636,69 +1638,55 @@ export default function Navbar() {
                   </div>
                 </div>
 
-                <div className="rounded-2xl border border-border bg-white p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-4">Configurações operacionais</p>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className={`${SETTINGS_PANEL} space-y-4`}>
+                  <p className={SETTINGS_LABEL}>Configurações operacionais</p>
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                     <div>
-                      <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">Timezone</label>
+                      <label className={`${SETTINGS_LABEL} block`}>Timezone</label>
                       <input
                         value={connectorConfig.timezone}
                         onChange={(e) => setConnectorConfig((prev) => ({ ...prev, timezone: e.target.value }))}
-                        className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                        className={SETTINGS_INPUT}
                         placeholder="America/Sao_Paulo"
                       />
                     </div>
                     <div>
-                      <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">Moeda</label>
+                      <label className={`${SETTINGS_LABEL} block`}>Moeda</label>
                       <input
                         value={connectorConfig.currency}
                         onChange={(e) => setConnectorConfig((prev) => ({ ...prev, currency: e.target.value.toUpperCase() }))}
-                        className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                        className={SETTINGS_INPUT}
                         placeholder="BRL"
                       />
                     </div>
                     <div>
-                      <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">Janela de atribuição</label>
+                      <label className={`${SETTINGS_LABEL} block`}>Janela de atribuição</label>
                       <input
                         value={connectorConfig.attributionWindow}
                         onChange={(e) => setConnectorConfig((prev) => ({ ...prev, attributionWindow: e.target.value }))}
-                        className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                        className={SETTINGS_INPUT}
                         placeholder="7d-click / 1d-view"
                       />
                     </div>
                     <div>
-                      <label className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2 block">Frequência de atualização</label>
+                      <label className={`${SETTINGS_LABEL} block`}>Frequência de atualização</label>
                       <input
                         value={connectorConfig.refreshFrequency}
                         onChange={(e) => setConnectorConfig((prev) => ({ ...prev, refreshFrequency: e.target.value }))}
-                        className="w-full bg-bg-secondary border border-border rounded-xl px-4 py-3 text-sm font-semibold text-text-main focus:border-primary outline-none"
+                        className={SETTINGS_INPUT}
                         placeholder="15 min"
                       />
                     </div>
                   </div>
-                </div>
-
-                <div className="rounded-2xl border border-border bg-white p-5">
-                  <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-4">Componentes do Dashboard e dependências</p>
-                  <div className="space-y-3">
-                    <div className="rounded-xl border border-border bg-bg-secondary p-4">
-                      <p className="text-sm font-bold text-text-main">Resumo executivo (ROAS, CAC, CPL, Receita)</p>
-                      <p className="text-xs text-text-muted mt-1">Google Ads + Meta Ads + CRM + Pagamentos + Warehouse</p>
-                    </div>
-                    <div className="rounded-xl border border-border bg-bg-secondary p-4">
-                      <p className="text-sm font-bold text-text-main">Alertas inteligentes e fila de ações</p>
-                      <p className="text-xs text-text-muted mt-1">Mídia paga + GA4 + Tracking server-side + Jobs de automação</p>
-                    </div>
-                    <div className="rounded-xl border border-border bg-bg-secondary p-4">
-                      <p className="text-sm font-bold text-text-main">Status de agentes e timeline</p>
-                      <p className="text-xs text-text-muted mt-1">Firestore (logs) + Scheduler + Warehouse</p>
-                    </div>
-                    <div className="rounded-xl border border-border bg-bg-secondary p-4">
-                      <p className="text-sm font-bold text-text-main">Projeções e cenários</p>
-                      <p className="text-xs text-text-muted mt-1">Histórico consolidado no Warehouse + regras de margem e sazonalidade</p>
+                  <div className="rounded-xl border border-[#DCE8FF] bg-[#F5F9FF] p-3">
+                    <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-[#1D4ED8]">Dependências do Dashboard</p>
+                    <div className="space-y-2">
+                      <p className="text-[11px] text-[#1D4ED8]"><strong>Resumo executivo:</strong> Google Ads + Meta + CRM + Pagamentos + Warehouse</p>
+                      <p className="text-[11px] text-[#1D4ED8]"><strong>Alertas:</strong> Mídia paga + GA4 + Tracking server-side</p>
+                      <p className="text-[11px] text-[#1D4ED8]"><strong>Status de agentes:</strong> Firestore + Scheduler + Warehouse</p>
                     </div>
                   </div>
-                  <div className="mt-4 rounded-xl border border-[#DCE8FF] bg-[#F5F9FF] p-4 text-xs text-[#1D4ED8] flex items-start gap-2">
+                  <div className="flex items-start gap-2 rounded-xl border border-[#DCE8FF] bg-[#F5F9FF] p-3 text-[11px] text-[#1D4ED8]">
                     <Database size={14} className="mt-0.5" />
                     <span>
                       Recomendação: centralizar dados no BigQuery e sincronizar os conectores a cada 15 minutos para precisão operacional.
@@ -1706,9 +1694,10 @@ export default function Navbar() {
                   </div>
                 </div>
               </div>
+              </div>
 
-              <div className="px-6 py-5 border-t border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <p className={`text-sm ${
+              <div className="sticky bottom-0 z-20 flex flex-col gap-3 border-t border-border bg-white/95 px-5 py-4 backdrop-blur sm:flex-row sm:items-center sm:justify-between shadow-[0_-12px_28px_-24px_rgba(15,23,42,0.45)]">
+                <p className={`flex-1 text-sm ${
                   connectorError ? 'text-[#B42318]' : connectorsSaved || connectorFeedback ? 'text-[#0A9D57]' : 'text-text-muted'
                 }`}>
                   {connectorError
@@ -1719,18 +1708,18 @@ export default function Navbar() {
                         ? 'Configurações de conectores salvas com sucesso.'
                         : 'Conecte os conectores obrigatórios para liberar dados reais no Dashboard.'}
                 </p>
-                <div className="flex gap-3">
+                <div className="flex w-full gap-3 sm:w-auto">
                   <button
                     type="button"
                     onClick={closeConnectorsModal}
-                    className="px-5 py-3 rounded-xl border border-border text-text-muted text-xs font-bold tracking-widest uppercase hover:bg-bg-secondary"
+                    className={`${SETTINGS_SECONDARY_BUTTON} flex-1 bg-[#F8FAFC] sm:flex-none`}
                   >
                     Fechar
                   </button>
                   <button
                     type="button"
                     onClick={handleSaveConnectors}
-                    className="px-5 py-3 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] text-white text-xs font-bold tracking-widest uppercase shadow-[0_8px_18px_rgba(8,183,96,0.25)]"
+                    className={`${SETTINGS_PRIMARY_BUTTON} flex-1 sm:flex-none`}
                   >
                     Salvar configuração
                   </button>
@@ -1740,6 +1729,20 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {settingsToast ? (
+        <div
+          className={`${SETTINGS_TOAST_BASE} ${
+            settingsToast.variant === 'success'
+              ? 'border border-[#BDE8CF] bg-[#ECFDF3] text-[#0A9D57]'
+              : 'border border-[#FECACA] bg-[#FEF2F2] text-[#B42318]'
+          }`}
+          role="status"
+          aria-live="polite"
+        >
+          {settingsToast.message}
+        </div>
+      ) : null}
     </Fragment>
   );
 }

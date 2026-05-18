@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { ArrowRight, CalendarDays, Clock3, Bot, CircleDollarSign, TrendingUp } from 'lucide-react';
 import PrimaryFooter from '@/components/neuroads/PrimaryFooter';
 import PrimaryTopMenu from '@/components/neuroads/PrimaryTopMenu';
+import HomePageBackground from '@/components/neuroads/HomePageBackground';
 
 export const metadata: Metadata = {
   title: 'Além do Algoritmo | Canal de Blog NeuroAds',
@@ -92,14 +93,11 @@ const weeklySignals = [
 
 export default function Page() {
   return (
-    <main className="site-bg text-[#0f172a]">
-      <PrimaryTopMenu />
-      <div className="site-bg-media" />
-      <div className="site-bg-depth" />
-      <div className="site-bg-overlay" />
-      <div className="site-bg-sheen" />
-      <div className="site-bg-noise" />
-      <div className="h-[84px]" />
+    <main className="relative overflow-hidden bg-white text-[#0f172a]">
+      <HomePageBackground />
+      <div className="relative z-10">
+        <PrimaryTopMenu />
+        <div className="h-[84px]" />
 
       <section className="wrap pb-10 pt-16 sm:pt-20">
         <div className="mb-7 inline-flex items-center rounded-full border border-[#ffd8c2] bg-[#fff5ee] px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#ff5f00]">
@@ -227,7 +225,8 @@ export default function Page() {
         </aside>
       </section>
 
-      <PrimaryFooter />
+        <PrimaryFooter />
+      </div>
     </main>
   );
 }
