@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import SubmenuPageShell, { type SubmenuPageContent } from '@/components/neuroads/SubmenuPageShell';
+import StrategicContentPageShell, { type StrategicContentPageData } from '@/components/neuroads/StrategicContentPageShell';
 
 export const metadata: Metadata = {
   title: 'Sobre a NeuroAds | Growth com IA Agêntica',
@@ -7,97 +7,95 @@ export const metadata: Metadata = {
     'Conheça a NeuroAds: posicionamento, experiência e método para construir sistemas de marketing que geram resultado enquanto o empresário foca no negócio.',
 };
 
-const content: SubmenuPageContent = {
+const content: StrategicContentPageData = {
   slug: 'a-neuroads-sobre',
   eyebrow: 'A NeuroAds',
-  headline: 'Não vendemos campanhas.',
-  highlightedHeadline: 'Construímos sistema.',
-  subheadline:
-    'A NeuroAds nasceu para resolver uma dor recorrente de PMEs: investir em marketing sem clareza de resultado financeiro real. Nosso foco é previsibilidade com dados e execução.',
-  serviceContext: 'Sobre a NeuroAds',
-  copyContract: {
-    promise: 'Estratégia, execução e IA no mesmo sistema de crescimento.',
-    pain: 'Empresários chegam à NeuroAds após frustração com operações desconectadas: agência, tecnologia e comercial sem conversa entre si.',
-    impactoFinanceiro:
-      'Sem integração, o investimento mensal vira custo incerto. O caixa sente primeiro quando não existe governança de aquisição e conversão.',
-    prova:
-      'Com 25+ anos de experiência em growth e R$ 10M+ gerenciados, estruturamos operações com indicadores financeiros e supervisão sênior direta.',
-    metodo:
-      'Diagnóstico profundo, definição de prioridades e execução contínua orientada por dados reais para gerar crescimento previsível com menor desperdício.',
-    cta: 'Solicite um diagnóstico e veja como aplicar esse sistema no seu cenário atual.',
-  },
-  painPoints: [
-    'Marketing tratado como ação isolada, não como sistema.',
-    'Relatórios que não respondem a pergunta principal: “isso vende?”.',
-    'Falta de direção clara para equipe comercial e operação.',
-    'Baixa confiança para escalar investimento com segurança.',
+  title: 'Não vendemos campanhas.',
+  highlightedTitle: 'Construímos sistemas de crescimento previsível.',
+  subtitle:
+    'A NeuroAds foi criada para PMEs que cansaram de investir sem clareza de retorno real. Aqui, estratégia, dados e execução funcionam no mesmo ecossistema para transformar marketing em receita previsível.',
+  primaryCta: { label: 'Falar com especialista', href: '/a-neuroads/contato' },
+  secondaryCta: { label: 'Conhecer nosso método', href: '/a-neuroads/nosso-metodo' },
+  highlights: [
+    { title: '25+ anos em growth', description: 'Experiência prática para decisões sem achismo.', icon: 'goal' },
+    { title: 'R$ 10M+ gerenciados', description: 'Operação orientada a margem e previsibilidade.', icon: 'gauge' },
+    { title: 'Ecossistema completo', description: 'Tráfego, SEO + GEO e IA agêntica em uma só estratégia.', icon: 'layers' },
+    { title: 'Acesso sênior', description: 'Você fala com especialista, não com atendimento genérico.', icon: 'handshake' },
   ],
-  impactPoints: [
-    'Crescimento irregular e dependente de “mês bom”.',
-    'Desperdício de verba por decisões sem base sólida.',
-    'Dificuldade para manter margem em escala.',
-    'Maior pressão de caixa em períodos de oscilação.',
+  sections: [
+    {
+      title: 'O problema que resolvemos',
+      description:
+        'A maioria das PMEs não precisa de mais ferramenta. Precisa de direção clara para saber onde o dinheiro está vazando e como escalar com segurança.',
+      bullets: [
+        'Relatórios que parecem bons, mas não explicam por que as vendas não batem.',
+        'Canais e equipe comercial sem integração de dados e prioridade.',
+        'Investimento mensal sem previsibilidade de retorno.',
+        'Decisões operacionais lentas por falta de leitura financeira.',
+      ],
+    },
+    {
+      title: 'Como a NeuroAds atua',
+      description:
+        'Aplicamos uma operação de performance com governança. Cada ação precisa mostrar impacto no caixa: reduzir custo ineficiente, elevar conversão e proteger margem.',
+      bullets: [
+        'Diagnóstico da operação atual com foco em gargalos de receita.',
+        'Plano de execução com prioridades de curto e médio prazo.',
+        'Implantação de IA agêntica com supervisão humana estratégica.',
+        'Ajustes recorrentes orientados por dados reais do negócio.',
+      ],
+    },
   ],
-  howItWorks: [
-    'Entendimento estratégico do contexto comercial da empresa.',
-    'Mapeamento de gargalos de aquisição, conversão e dados.',
-    'Implantação de operação com IA agêntica e governança humana.',
-    'Ajuste contínuo com foco em previsibilidade de receita.',
+  process: [
+    { title: 'Diagnóstico', detail: 'Mapeamos onde o sistema atual perde eficiência e margem.' },
+    { title: 'Direção', detail: 'Definimos o plano com metas financeiras claras por etapa.' },
+    { title: 'Execução', detail: 'Operamos mídia, conteúdo e IA com ritos de controle.' },
+    { title: 'Escala', detail: 'Ajustamos continuamente para crescimento previsível.' },
   ],
-  proofMetrics: [],
+  resources: [
+    {
+      title: 'Nosso Método',
+      description: 'Veja o processo completo da NeuroAds para previsibilidade comercial.',
+      href: '/a-neuroads/nosso-metodo',
+    },
+    {
+      title: 'FAQ NeuroAds',
+      description: 'Respostas objetivas sobre risco, investimento e execução.',
+      href: '/conteudos/faq',
+    },
+    {
+      title: 'Agentes IA',
+      description: 'Entenda como os agentes apoiam aquisição, conversão e operação.',
+      href: '/agentes-ia/visao-geral-dos-agentes',
+    },
+  ],
   faq: [
     {
-      question: 'A NeuroAds atende apenas empresas grandes?',
-      answer:
-        'Não. Nossa especialidade é PME em crescimento que precisa sair do ciclo de tentativa e erro e construir previsibilidade comercial.',
+      question: 'A NeuroAds atende somente empresas grandes?',
+      answer: 'Não. O foco principal é PME entre R$ 30 mil e R$ 200 mil/mês que quer escala previsível sem depender de sorte.',
     },
     {
-      question: 'Qual é o diferencial da NeuroAds frente a agências comuns?',
+      question: 'Qual diferença da NeuroAds para uma agência tradicional?',
       answer:
-        'Integração real entre tráfego, SEO + GEO, conversão e agentes IA, com leitura de resultado em dinheiro e não só em métricas de vaidade.',
+        'Não trabalhamos por canal isolado. Construímos um sistema integrado com leitura financeira para cada decisão de marketing.',
     },
     {
-      question: 'Vocês trabalham com acompanhamento próximo?',
-      answer:
-        'Sim. O modelo é consultivo-operacional, com acesso a especialista e rotina de decisões práticas conforme evolução da operação.',
-    },
-    {
-      question: 'A IA substitui estratégia humana no processo?',
-      answer:
-        'Não. A IA acelera análise e execução. A estratégia, priorização e direção de negócio permanecem sob liderança especializada.',
+      question: 'A IA substitui a estratégia humana?',
+      answer: 'Não. A IA acelera execução e análise. A decisão estratégica continua com especialista por trás da operação.',
     },
   ],
-  relatedPages: [
-    {
-      label: 'Nosso Método',
-      href: '/a-neuroads/nosso-metodo',
-      description: 'Veja o processo completo de diagnóstico, execução e escala.',
-    },
-    {
-      label: 'Contato',
-      href: '/a-neuroads/contato',
-      description: 'Fale com a equipe para avaliar aderência ao seu momento.',
-    },
-    {
-      label: 'Visão Geral dos Agentes',
-      href: '/agentes-ia/visao-geral-dos-agentes',
-      description: 'Entenda como o ecossistema IA opera no dia a dia.',
-    },
-    {
-      label: 'FAQ',
-      href: '/conteudos/faq',
-      description: 'Tire dúvidas sobre prazo, risco e previsibilidade.',
-    },
-  ],
-  media: {
-    title: 'Sobre a NeuroAds',
-    poster: '/images/especialista-sobre.jpg',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+  form: {
+    title: 'Receba um diagnóstico inicial da sua operação',
+    description: 'Em poucos dados, mapeamos o ponto de maior impacto no seu caixa e sugerimos o próximo passo estratégico.',
+    ctaLabel: 'Solicitar diagnóstico',
+    flow: 'analise',
+    serviceContext: 'Sobre - Diagnóstico inicial',
+    successMessage: 'Diagnóstico solicitado com sucesso. Nossa equipe vai seguir com os próximos passos.',
+    includeMessage: true,
   },
 };
 
 export default function Page() {
-  return <SubmenuPageShell content={content} />;
+  return <StrategicContentPageShell data={content} />;
 }
 

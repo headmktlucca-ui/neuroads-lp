@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import SubmenuPageShell, { type SubmenuPageContent } from '@/components/neuroads/SubmenuPageShell';
+import StrategicContentPageShell, { type StrategicContentPageData } from '@/components/neuroads/StrategicContentPageShell';
 
 export const metadata: Metadata = {
   title: 'Nosso Método | NeuroAds',
@@ -7,97 +7,97 @@ export const metadata: Metadata = {
     'Conheça o método NeuroAds: diagnóstico, estratégia, execução, otimização e escala com foco em previsibilidade financeira para PMEs.',
 };
 
-const content: SubmenuPageContent = {
+const content: StrategicContentPageData = {
   slug: 'a-neuroads-nosso-metodo',
   eyebrow: 'A NeuroAds',
-  headline: 'Método replicável para',
-  highlightedHeadline: 'escala previsível',
-  subheadline:
-    'Estruturamos um ciclo contínuo que conecta diagnóstico, estratégia e execução com indicadores de caixa. Menos improviso, mais consistência comercial.',
-  serviceContext: 'Nosso Método',
-  copyContract: {
-    promise: 'Processo claro para crescer com previsibilidade e governança.',
-    pain: 'Sem método, a operação depende de decisões pontuais e não evolui de forma consistente entre equipes e canais.',
-    impactoFinanceiro:
-      'A falta de processo aumenta custo operacional, amplia desperdício e reduz capacidade de manter margem em crescimento.',
-    prova:
-      'Nosso método organiza entradas, decisões e saídas em cada etapa: diagnóstico, estratégia, execução, otimização e escala.',
-    metodo:
-      'Trabalhamos com SLAs operacionais e revisões recorrentes para garantir que cada ação tenha objetivo mensurável e impacto no resultado financeiro.',
-    cta: 'Solicite diagnóstico e receba um plano inicial com prioridades por etapa do método.',
-  },
-  painPoints: [
-    'Ausência de rotina de priorização entre marketing e vendas.',
-    'Mudança de direção frequente sem base em dados.',
-    'Execução inconsistente entre canais e equipes.',
-    'Falta de previsibilidade para projeção de receita.',
+  title: 'Método NeuroAds para',
+  highlightedTitle: 'escala previsível com dados reais.',
+  subtitle:
+    'Nosso método conecta marketing e vendas em um fluxo operacional claro. Cada etapa tem objetivo financeiro definido para reduzir desperdício e aumentar conversão com consistência.',
+  primaryCta: { label: 'Solicitar diagnóstico', href: '/a-neuroads/contato' },
+  secondaryCta: { label: 'Entender os serviços', href: '/servicos' },
+  highlights: [
+    { title: 'Estrutura replicável', description: 'Processo padronizado, adaptado ao contexto da PME.', icon: 'layers' },
+    { title: 'Decisão por impacto', description: 'Priorização orientada a caixa e velocidade de retorno.', icon: 'goal' },
+    { title: 'Ritmo operacional', description: 'Cadência semanal para evitar execução inconsistente.', icon: 'gauge' },
+    { title: 'Especialista + IA', description: 'Tecnologia com direção humana para reduzir risco.', icon: 'handshake' },
   ],
-  impactPoints: [
-    'Aumento de custo por retrabalho e desalinhamento interno.',
-    'Tempo maior para corrigir gargalos críticos.',
-    'Maior variância mensal em desempenho comercial.',
-    'Dificuldade para escalar sem sacrificar margem.',
+  sections: [
+    {
+      title: 'Por que um método importa',
+      description:
+        'Sem método, o crescimento fica refém de campanhas isoladas. Com método, a empresa ganha previsibilidade e clareza de prioridade.',
+      bullets: [
+        'Reduz retrabalho entre marketing, operação e comercial.',
+        'Aumenta velocidade de correção de gargalos críticos.',
+        'Evita decisões de investimento baseadas em percepção.',
+        'Cria governança para escalar sem perder margem.',
+      ],
+    },
+    {
+      title: 'O que entregamos em cada ciclo',
+      description:
+        'Cada ciclo de execução é fechado com leitura financeira, melhoria de processo e novas prioridades para o próximo sprint operacional.',
+      bullets: [
+        'Mapa de gargalos atualizado por etapa do funil.',
+        'Plano tático com foco em CPL, conversão e receita.',
+        'Ajustes de criativos, ofertas e fluxo comercial.',
+        'Relatório objetivo: o que melhorou, o que trava, o próximo passo.',
+      ],
+    },
   ],
-  howItWorks: [
-    'Diagnóstico de maturidade e gargalos do funil.',
-    'Estratégia priorizada por impacto em caixa e velocidade.',
-    'Execução com agentes IA e ritos operacionais claros.',
-    'Otimização contínua até consolidar escala previsível.',
+  process: [
+    { title: 'Imersão inicial', detail: 'Levantamento do cenário atual de aquisição, oferta e comercial.' },
+    { title: 'Priorização', detail: 'Definição da sequência de ações por impacto financeiro imediato.' },
+    { title: 'Operação integrada', detail: 'Mídia, conteúdo, GEO e agentes IA atuando no mesmo objetivo.' },
+    { title: 'Revisão de performance', detail: 'Leitura em números de negócio para corrigir rota rápido.' },
   ],
-  proofMetrics: [],
+  resources: [
+    {
+      title: 'Sobre a NeuroAds',
+      description: 'Conheça o posicionamento e os diferenciais do ecossistema.',
+      href: '/a-neuroads/sobre',
+    },
+    {
+      title: 'Implantação de Agentes de IA',
+      description: 'Veja como automatizamos rotinas sem perder governança.',
+      href: '/servicos/implantacao-de-agentes-ia',
+    },
+    {
+      title: 'Estratégia de Funil de Conversão',
+      description: 'Entenda como elevamos conversão com processo comercial.',
+      href: '/servicos/estrategia-de-funil-e-conversao',
+    },
+  ],
   faq: [
     {
-      question: 'O método é igual para todas as empresas?',
+      question: 'Esse método serve para qualquer segmento?',
       answer:
-        'A estrutura é a mesma, mas as prioridades mudam conforme contexto, segmento, ticket médio e maturidade operacional de cada PME.',
+        'A lógica do método é padrão, mas as prioridades mudam conforme segmento, ticket médio, ciclo de venda e maturidade da operação.',
     },
     {
-      question: 'Como vocês definem o que entra primeiro na execução?',
+      question: 'Em quanto tempo o método começa a gerar resultado?',
       answer:
-        'Priorizamos pelo potencial de impacto financeiro e urgência operacional. O objetivo é gerar ganho rápido sem comprometer base de longo prazo.',
+        'Os primeiros ganhos normalmente aparecem na eficiência operacional e qualidade de lead. Escala de receita vem na sequência, com consistência.',
     },
     {
-      question: 'Existe SLA de acompanhamento?',
+      question: 'Como vocês evitam que o plano vire só teoria?',
       answer:
-        'Sim. Trabalhamos com ritos e cadência definidos para leitura de resultado, tomada de decisão e ajustes de rota quando necessário.',
-    },
-    {
-      question: 'Como o método evita dependência de “campanha vencedora”?',
-      answer:
-        'Ao transformar decisão em sistema contínuo de aprendizado e otimização, com múltiplas alavancas monitoradas e ajustadas ao longo do tempo.',
+        'Cada etapa já sai com responsável, prazo e métrica de impacto. O método foi desenhado para execução prática, não para apresentação.',
     },
   ],
-  relatedPages: [
-    {
-      label: 'Sobre',
-      href: '/a-neuroads/sobre',
-      description: 'Entenda o posicionamento e a experiência por trás do método.',
-    },
-    {
-      label: 'Implantação de Agentes IA',
-      href: '/servicos/implantacao-de-agentes-ia',
-      description: 'Veja como operacionalizamos o método com IA agêntica.',
-    },
-    {
-      label: 'Estratégia de Funil e Conversão',
-      href: '/servicos/estrategia-de-funil-e-conversao',
-      description: 'Conecte o método à evolução prática da conversão.',
-    },
-    {
-      label: 'Contato',
-      href: '/a-neuroads/contato',
-      description: 'Solicite um diagnóstico de aderência ao método para sua operação.',
-    },
-  ],
-  media: {
-    title: 'Método NeuroAds',
-    poster: '/images/tools/testes.png',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+  form: {
+    title: 'Quer aplicar esse método na sua operação?',
+    description: 'Envie seu contexto e receba uma recomendação de prioridade para os próximos 30 dias.',
+    ctaLabel: 'Receber recomendação',
+    flow: 'analise',
+    serviceContext: 'Nosso Método - Recomendação 30 dias',
+    successMessage: 'Solicitação enviada. Vamos retornar com uma recomendação inicial por ordem de impacto.',
+    includeMessage: true,
   },
 };
 
 export default function Page() {
-  return <SubmenuPageShell content={content} />;
+  return <StrategicContentPageShell data={content} />;
 }
 

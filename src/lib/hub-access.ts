@@ -84,6 +84,12 @@ function isValidSite(value: string | null): boolean {
   return withoutProtocol.includes('.');
 }
 
+function isValidWhatsapp(value: string | null): boolean {
+  if (!value) return false;
+  const digits = value.replace(/\D/g, '');
+  return digits.length >= 10;
+}
+
 function hasCompletedCompanyRegistration(profileRecord: Record<string, unknown>): boolean {
   const topCompanyName = readString(
     profileRecord.companyName ??
@@ -102,8 +108,15 @@ function hasCompletedCompanyRegistration(profileRecord: Record<string, unknown>)
       profileRecord.domain ??
       profileRecord.url
   );
+  const topWhatsapp = readString(
+    profileRecord.whatsapp ??
+      profileRecord.phone ??
+      profileRecord.phoneNumber ??
+      profileRecord.telefone ??
+      profileRecord.celular
+  );
 
-  if (topCompanyName && isValidSite(topSite)) {
+  if (topCompanyName && isValidSite(topSite) && isValidWhatsapp(topWhatsapp)) {
     return true;
   }
 
@@ -125,8 +138,15 @@ function hasCompletedCompanyRegistration(profileRecord: Record<string, unknown>)
       onboardingRecord?.domain ??
       onboardingRecord?.url
   );
+  const onboardingWhatsapp = readString(
+    onboardingRecord?.whatsapp ??
+      onboardingRecord?.phone ??
+      onboardingRecord?.phoneNumber ??
+      onboardingRecord?.telefone ??
+      onboardingRecord?.celular
+  );
 
-  if (onboardingCompany && isValidSite(onboardingSite)) {
+  if (onboardingCompany && isValidSite(onboardingSite) && isValidWhatsapp(onboardingWhatsapp)) {
     return true;
   }
 
@@ -148,14 +168,15 @@ function hasCompletedCompanyRegistration(profileRecord: Record<string, unknown>)
       profileDetailsRecord?.domain ??
       profileDetailsRecord?.url
   );
+  const detailsWhatsapp = readString(
+    profileDetailsRecord?.whatsapp ??
+      profileDetailsRecord?.phone ??
+      profileDetailsRecord?.phoneNumber ??
+      profileDetailsRecord?.telefone ??
+      profileDetailsRecord?.celular
+  );
 
-  if (detailsCompany && isValidSite(detailsSite)) {
-    return true;
-  }
-
-  // Fallback de segurança: onboarding já finalizado no perfil.
-  const onboardingCompletedAt = profileRecord.onboardingCompletedAt;
-  if (typeof onboardingCompletedAt === 'number' && Number.isFinite(onboardingCompletedAt)) {
+  if (detailsCompany && isValidSite(detailsSite) && isValidWhatsapp(detailsWhatsapp)) {
     return true;
   }
 

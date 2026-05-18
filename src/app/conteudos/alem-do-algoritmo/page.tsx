@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, CalendarDays, Clock3, Bot, CircleDollarSign, TrendingUp } from 'lucide-react';
-import Footer from '@/components/neuroads/Footer';
+import PrimaryFooter from '@/components/neuroads/PrimaryFooter';
+import PrimaryTopMenu from '@/components/neuroads/PrimaryTopMenu';
 
 export const metadata: Metadata = {
   title: 'Além do Algoritmo | Canal de Blog NeuroAds',
@@ -93,49 +93,13 @@ const weeklySignals = [
 export default function Page() {
   return (
     <main className="site-bg text-[#0f172a]">
+      <PrimaryTopMenu />
       <div className="site-bg-media" />
       <div className="site-bg-depth" />
       <div className="site-bg-overlay" />
       <div className="site-bg-sheen" />
       <div className="site-bg-noise" />
-
-      <header className="sticky top-0 z-50 border-b border-white/50 bg-white/75 backdrop-blur-xl">
-        <div className="wrap flex h-20 items-center justify-between gap-6">
-          <Link href="/" className="flex items-center">
-            <Image
-              src="/images/logo2026.png"
-              alt="NeuroAds"
-              width={176}
-              height={44}
-              className="h-9 w-auto object-contain sm:h-10"
-              priority
-            />
-          </Link>
-
-          <nav className="hidden items-center gap-7 text-sm font-semibold text-[#1f2a44] md:flex">
-            <Link className="transition-colors hover:text-[#ff5f00]" href="/servicos">
-              Serviços
-            </Link>
-            <Link className="transition-colors hover:text-[#ff5f00]" href="/agentes-ia">
-              Agentes IA
-            </Link>
-            <Link className="text-[#ff5f00]" href="/conteudos/alem-do-algoritmo">
-              Conteúdos
-            </Link>
-            <Link className="transition-colors hover:text-[#ff5f00]" href="/a-neuroads">
-              A NeuroAds
-            </Link>
-          </nav>
-
-          <Link
-            href="/a-neuroads/contato"
-            className="inline-flex items-center gap-2 rounded-full bg-[#ff5f00] px-5 py-2.5 text-xs font-extrabold uppercase tracking-[0.12em] text-white shadow-[0_14px_34px_rgba(255,95,0,0.28)] transition hover:bg-[#e55600]"
-          >
-            Diagnóstico
-            <ArrowRight size={14} />
-          </Link>
-        </div>
-      </header>
+      <div className="h-[84px]" />
 
       <section className="wrap pb-10 pt-16 sm:pt-20">
         <div className="mb-7 inline-flex items-center rounded-full border border-[#ffd8c2] bg-[#fff5ee] px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#ff5f00]">
@@ -263,7 +227,7 @@ export default function Page() {
         </aside>
       </section>
 
-      <Footer />
+      <PrimaryFooter />
     </main>
   );
 }

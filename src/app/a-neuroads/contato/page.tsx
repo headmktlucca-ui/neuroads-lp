@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import SubmenuPageShell, { type SubmenuPageContent } from '@/components/neuroads/SubmenuPageShell';
+import StrategicContentPageShell, { type StrategicContentPageData } from '@/components/neuroads/StrategicContentPageShell';
 
 export const metadata: Metadata = {
   title: 'Contato NeuroAds | Diagnóstico com Especialista',
@@ -7,97 +7,93 @@ export const metadata: Metadata = {
     'Fale com a NeuroAds e solicite diagnóstico com foco em resultado financeiro. Envie Nome, Email, WhatsApp e Site da Empresa.',
 };
 
-const content: SubmenuPageContent = {
+const content: StrategicContentPageData = {
   slug: 'a-neuroads-contato',
-  eyebrow: 'A NeuroAds',
-  headline: 'Contato direto para',
-  highlightedHeadline: 'diagnóstico estratégico',
-  subheadline:
-    'Se o objetivo é previsibilidade de crescimento, a conversa precisa começar com contexto real da sua operação. Aqui você fala com foco em solução e impacto no caixa.',
-  serviceContext: 'Contato',
-  copyContract: {
-    promise: 'Entrada rápida, clara e orientada a decisão.',
-    pain: 'Empresas chegam com dúvidas urgentes, mas sem um processo claro para transformar isso em plano de ação prático.',
-    impactoFinanceiro:
-      'Quanto mais o diagnóstico inicial atrasa, mais a operação mantém desperdícios ativos e perde oportunidades de receita no curto prazo.',
-    prova:
-      'Nosso contato inicial já coleta os dados críticos para triagem: Nome, Email, WhatsApp e Site da Empresa, acelerando o próximo passo com precisão.',
-    metodo:
-      'Após o envio, avaliamos contexto, priorizamos gargalos e direcionamos a trilha mais aderente entre aquisição, conversão, dados e implantação de IA.',
-    cta: 'Preencha seus dados e solicite agora o diagnóstico inicial da sua operação.',
-  },
-  painPoints: [
-    'Falta de clareza sobre onde está o principal gargalo hoje.',
-    'Dificuldade de priorizar ações com impacto em receita.',
-    'Operação com muitas frentes e pouca direção estratégica.',
-    'Necessidade de resposta rápida com base em dados reais.',
+  eyebrow: 'Contato NeuroAds',
+  title: 'Fale com especialista e',
+  highlightedTitle: 'ganhe clareza sobre seu próximo passo.',
+  subtitle:
+    'Se você investe todo mês e ainda não tem previsibilidade de vendas, a conversa precisa começar com diagnóstico objetivo. Aqui, sua operação é lida por impacto no caixa.',
+  primaryCta: { label: 'Preencher diagnóstico agora', href: '#rodape' },
+  secondaryCta: { label: 'Ver nosso método', href: '/a-neuroads/nosso-metodo' },
+  highlights: [
+    { title: 'Triagem estratégica', description: 'Entendimento rápido do cenário antes de qualquer proposta.', icon: 'goal' },
+    { title: 'Sem intermediários', description: 'Contato com direção sênior e linguagem de negócio.', icon: 'handshake' },
+    { title: 'Foco em dinheiro', description: 'Análise orientada a CPL, conversão, margem e receita.', icon: 'gauge' },
+    { title: 'Próximo passo claro', description: 'Você sai com rota prática, não com promessa genérica.', icon: 'layers' },
   ],
-  impactPoints: [
-    'Manutenção de custos ineficientes por mais tempo.',
-    'Menor velocidade para capturar demanda qualificada.',
-    'Risco de decisões reativas que comprometem margem.',
-    'Baixa previsibilidade de entrada de vendas no mês.',
+  sections: [
+    {
+      title: 'Quando esse contato faz sentido',
+      description: 'Ideal para empresas que já investem e precisam parar de operar no escuro.',
+      bullets: [
+        'Os números de marketing parecem bons, mas as vendas não acompanham.',
+        'Existe dúvida sobre onde o orçamento está sendo desperdiçado.',
+        'A equipe comercial recebe lead, mas a taxa de fechamento está travada.',
+        'Falta previsibilidade para tomar decisão de escala com segurança.',
+      ],
+    },
+    {
+      title: 'O que acontece após o envio',
+      description: 'Nosso fluxo foi desenhado para ser objetivo e útil desde o primeiro contato.',
+      bullets: [
+        'Leitura inicial do contexto enviado (canal, oferta, funil e operação).',
+        'Classificação do principal gargalo de aquisição ou conversão.',
+        'Retorno com direcionamento prático para próximos passos.',
+        'Se fizer sentido, estruturação da trilha de implantação.',
+      ],
+    },
   ],
-  howItWorks: [
-    'Envio dos dados iniciais para triagem estratégica.',
-    'Leitura do contexto da operação e dos gargalos críticos.',
-    'Definição do plano inicial com foco em caixa e execução.',
-    'Condução do próximo passo com especialista e Lucca.',
+  process: [
+    { title: 'Você envia o contexto', detail: 'Nome, contato, site e principal desafio de negócio.' },
+    { title: 'Análise inicial', detail: 'Triagem por urgência e potencial de impacto financeiro.' },
+    { title: 'Direcionamento', detail: 'Retorno com orientação objetiva de curto prazo.' },
+    { title: 'Plano de execução', detail: 'Definição de frente prioritária para começar com segurança.' },
   ],
-  proofMetrics: [],
+  resources: [
+    {
+      title: 'Gestão de Tráfego',
+      description: 'Para reduzir desperdício e melhorar aquisição com governança.',
+      href: '/servicos/gestao-de-trafego-google-meta',
+    },
+    {
+      title: 'SEO + GEO',
+      description: 'Para aumentar presença em busca clássica e generativa.',
+      href: '/servicos/seo-geo',
+    },
+    {
+      title: 'Agentes de IA',
+      description: 'Para ganhar velocidade operacional sem perder controle.',
+      href: '/servicos/implantacao-de-agentes-ia',
+    },
+  ],
   faq: [
     {
-      question: 'O diagnóstico inicial tem custo?',
-      answer:
-        'A triagem inicial é sem compromisso e serve para entender aderência, urgência e próximos passos mais inteligentes para sua operação.',
+      question: 'Esse primeiro contato tem custo?',
+      answer: 'Não. A triagem inicial é sem compromisso e serve para validar aderência e prioridade de ação.',
     },
     {
-      question: 'Quais dados devo enviar no primeiro contato?',
-      answer:
-        'Nome, Email, WhatsApp e Site da Empresa. Com isso já conseguimos montar um contexto inicial para direcionamento objetivo.',
+      question: 'Preciso ter estrutura grande para começar?',
+      answer: 'Não. O processo foi desenhado para PME com equipe enxuta e foco em ganho rápido de eficiência.',
     },
     {
-      question: 'Quanto tempo para retorno após o envio?',
+      question: 'Vocês só atendem tráfego pago?',
       answer:
-        'A equipe organiza o retorno conforme prioridade e complexidade. O objetivo é responder com clareza e próximo passo prático.',
-    },
-    {
-      question: 'Posso tratar mais de uma frente no mesmo diagnóstico?',
-      answer:
-        'Sim. Mapeamos aquisição, conversão e dados para definir a ordem de execução por impacto financeiro e capacidade operacional.',
+        'Não. A NeuroAds integra tráfego, SEO + GEO, funil e IA agêntica para construir um sistema comercial completo.',
     },
   ],
-  relatedPages: [
-    {
-      label: 'Sobre',
-      href: '/a-neuroads/sobre',
-      description: 'Conheça posicionamento, experiência e diferenciais da NeuroAds.',
-    },
-    {
-      label: 'Nosso Método',
-      href: '/a-neuroads/nosso-metodo',
-      description: 'Veja como estruturamos o ciclo completo de crescimento previsível.',
-    },
-    {
-      label: 'Gestão de Tráfego (Google + Meta)',
-      href: '/servicos/gestao-de-trafego-google-meta',
-      description: 'Acesse a frente de aquisição com foco em retorno financeiro.',
-    },
-    {
-      label: 'Implantação de Agentes IA',
-      href: '/servicos/implantacao-de-agentes-ia',
-      description: 'Conheça a frente de automação inteligente da operação comercial.',
-    },
-  ],
-  media: {
-    title: 'Contato NeuroAds',
-    poster: '/images/especialista.jpg',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+  form: {
+    title: 'Envie seus dados e seu principal desafio',
+    description: 'Quanto mais claro o contexto, mais objetivo será nosso direcionamento inicial.',
+    ctaLabel: 'Enviar para diagnóstico',
+    flow: 'claudio',
+    serviceContext: 'Contato - Diagnóstico com especialista',
+    successMessage: 'Recebemos seu contato. Em breve você recebe retorno com próximo passo recomendado.',
+    includeMessage: true,
   },
 };
 
 export default function Page() {
-  return <SubmenuPageShell content={content} />;
+  return <StrategicContentPageShell data={content} />;
 }
 

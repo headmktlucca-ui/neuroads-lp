@@ -1,103 +1,99 @@
 import type { Metadata } from 'next';
-import SubmenuPageShell, { type SubmenuPageContent } from '@/components/neuroads/SubmenuPageShell';
+import StrategicContentPageShell, { type StrategicContentPageData } from '@/components/neuroads/StrategicContentPageShell';
 
 export const metadata: Metadata = {
-  title: 'Materias de Apoio | Conteúdos NeuroAds',
+  title: 'Materiais de Apoio | Conteúdos NeuroAds',
   description:
     'Biblioteca prática da NeuroAds com guias e playbooks para PMEs: aplicação em 7 dias, foco em execução e impacto financeiro.',
 };
 
-const content: SubmenuPageContent = {
+const content: StrategicContentPageData = {
   slug: 'conteudos-materias-de-apoio',
   eyebrow: 'Conteúdos NeuroAds',
-  headline: 'Materiais de apoio para',
-  highlightedHeadline: 'execução em 7 dias',
-  subheadline:
-    'Guias, checklists e playbooks para transformar estratégia em rotina operacional. Conteúdo direto para reduzir ruído e aumentar previsibilidade.',
-  serviceContext: 'Materias de Apoio',
-  copyContract: {
-    promise: 'Material prático para acelerar execução com padrão de qualidade.',
-    pain: 'Mesmo com boas ideias, o time trava na hora de operacionalizar por falta de processo documentado e prioridades claras.',
-    impactoFinanceiro:
-      'Sem padronização, a operação repete erros, aumenta retrabalho e perde eficiência financeira na aquisição e conversão.',
-    prova:
-      'A biblioteca organiza materiais por maturidade e frente de atuação, com foco em reduzir tempo de implementação e aumentar clareza de execução.',
-    metodo:
-      'Você escolhe a trilha por prioridade de negócio, aplica os checklists na rotina e mede ganho de performance com base em indicadores de caixa.',
-    cta: 'Solicite diagnóstico para receber a trilha mais aderente ao momento da sua operação.',
-  },
-  painPoints: [
-    'Falta de playbook para repetir acertos com consistência.',
-    'Onboarding lento de novas pessoas no time.',
-    'Execução desalinhada entre marketing e comercial.',
-    'Baixa cadência de melhoria contínua.',
+  title: 'Materiais de apoio para',
+  highlightedTitle: 'executar com clareza e previsibilidade.',
+  subtitle:
+    'Esta biblioteca foi criada para tirar sua equipe do improviso. São trilhas práticas para reduzir retrabalho, aumentar conversão e transformar estratégia em rotina operacional.',
+  primaryCta: { label: 'Receber trilha recomendada', href: '/a-neuroads/contato' },
+  secondaryCta: { label: 'Acessar FAQ', href: '/conteudos/faq' },
+  highlights: [
+    { title: 'Aplicação prática', description: 'Conteúdo para executar, não para acumular teoria.', icon: 'resource' },
+    { title: 'Foco em caixa', description: 'Cada material conecta ação com impacto financeiro.', icon: 'gauge' },
+    { title: 'Ritmo de equipe', description: 'Checklists para padronizar operação entre times.', icon: 'layers' },
+    { title: 'Curadoria NeuroAds', description: 'Base alinhada ao método e ao DNA da marca.', icon: 'goal' },
   ],
-  impactPoints: [
-    'Retrabalho frequente e desperdício de horas operacionais.',
-    'Menor velocidade para capturar oportunidades de mercado.',
-    'Custo maior para alcançar metas de faturamento.',
-    'Perda de previsibilidade em entregas críticas.',
+  sections: [
+    {
+      title: 'O que você encontra aqui',
+      description: 'Os materiais estão organizados por necessidade de negócio para facilitar decisão e execução.',
+      bullets: [
+        'Playbooks de aquisição para reduzir CPL com previsibilidade.',
+        'Roteiros de funil comercial para melhorar taxa de conversão.',
+        'Modelos de acompanhamento para leitura de performance semanal.',
+        'Guias de GEO e IA agêntica para acelerar operação com controle.',
+      ],
+    },
+    {
+      title: 'Como usar sem complicar',
+      description: 'O objetivo é aplicar rápido e medir resultado em linguagem de negócio.',
+      bullets: [
+        'Escolha a trilha pelo gargalo mais urgente da operação.',
+        'Implemente em ciclos curtos de 7 dias com checklist.',
+        'Meça resultado com indicadores de eficiência e receita.',
+        'Ajuste com base em evidência, não em opinião.',
+      ],
+    },
   ],
-  howItWorks: [
-    'Seleção da trilha por objetivo de crescimento.',
-    'Aplicação de checklists por etapa do funil.',
-    'Ritual de revisão semanal com indicadores financeiros.',
-    'Ajustes contínuos com suporte de diagnóstico especializado.',
+  process: [
+    { title: 'Priorizar o gargalo', detail: 'Definir o problema com maior impacto no caixa hoje.' },
+    { title: 'Aplicar a trilha', detail: 'Executar o playbook da semana com responsáveis claros.' },
+    { title: 'Medir e revisar', detail: 'Comparar evolução de custo, conversão e qualidade de lead.' },
+    { title: 'Padronizar', detail: 'Documentar o que funcionou para escalar com consistência.' },
   ],
-  proofMetrics: [],
+  resources: [
+    {
+      title: 'Além do Algoritmo',
+      description: 'Canal editorial com visão estratégica para empresários.',
+      href: '/conteudos/alem-do-algoritmo',
+    },
+    {
+      title: 'Nosso Método',
+      description: 'Entenda a lógica de execução por trás dos materiais.',
+      href: '/a-neuroads/nosso-metodo',
+    },
+    {
+      title: 'Agentes de Conversão',
+      description: 'Aplique a biblioteca com apoio de IA na jornada comercial.',
+      href: '/agentes-ia/agentes-de-conversao',
+    },
+  ],
   faq: [
     {
-      question: 'Esses materiais substituem consultoria?',
+      question: 'Esses materiais substituem acompanhamento estratégico?',
       answer:
-        'Eles aceleram a execução, mas a consultoria estratégica garante priorização correta para o contexto específico da sua empresa.',
+        'Eles aceleram execução, mas o acompanhamento estratégico garante prioridade correta e ajuste mais rápido de rota.',
     },
     {
-      question: 'Posso aplicar com equipe enxuta?',
-      answer:
-        'Sim. Os materiais foram desenhados para PMEs e focam em ações de alto impacto sem exigir estrutura grande.',
+      question: 'Minha equipe é pequena. Ainda faz sentido?',
+      answer: 'Sim. A curadoria foi feita para PMEs com equipe enxuta e foco em ação de maior retorno.',
     },
     {
-      question: 'Qual a diferença entre guia, checklist e playbook?',
-      answer:
-        'Guia orienta, checklist garante execução e playbook estrutura recorrência. Os três juntos aumentam consistência operacional.',
-    },
-    {
-      question: 'Como saber qual trilha começar?',
-      answer:
-        'Pelo gargalo com maior impacto no caixa hoje. O diagnóstico inicial ajuda a definir a sequência ideal de implementação.',
+      question: 'Qual trilha devo começar primeiro?',
+      answer: 'Comece pelo gargalo que mais pressiona caixa hoje. Se precisar, solicite diagnóstico para definir essa ordem.',
     },
   ],
-  relatedPages: [
-    {
-      label: 'Além do Algoritmo',
-      href: '/conteudos/alem-do-algoritmo',
-      description: 'Complete a base estratégica com visão aplicada para PMEs.',
-    },
-    {
-      label: 'Agentes de Conversão',
-      href: '/agentes-ia/agentes-de-conversao',
-      description: 'Aplique materiais para elevar consistência de fechamento.',
-    },
-    {
-      label: 'Nosso Método',
-      href: '/a-neuroads/nosso-metodo',
-      description: 'Entenda o processo que organiza execução e escala.',
-    },
-    {
-      label: 'Contato',
-      href: '/a-neuroads/contato',
-      description: 'Solicite recomendação da trilha ideal para sua empresa.',
-    },
-  ],
-  media: {
-    title: 'Biblioteca prática',
-    poster: '/images/tools/diagnostico_lp.png',
-    desktopVideo: '/videos/fundovideo.mp4',
-    mobileVideo: '/videos/fundovideo.mp4',
+  form: {
+    title: 'Receba a trilha mais aderente ao seu momento',
+    description: 'Informe seu cenário e indicamos por onde começar para gerar resultado com mais velocidade.',
+    ctaLabel: 'Quero minha trilha',
+    flow: 'analise',
+    serviceContext: 'Materiais de Apoio - Trilha recomendada',
+    successMessage: 'Solicitação enviada. Vamos indicar a trilha inicial mais aderente ao seu cenário.',
+    includeMessage: true,
   },
 };
 
 export default function Page() {
-  return <SubmenuPageShell content={content} />;
+  return <StrategicContentPageShell data={content} />;
 }
 

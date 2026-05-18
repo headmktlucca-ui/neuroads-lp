@@ -49,6 +49,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 const AUTH_EMAIL_CACHE_PREFIX = 'neuroads_auth_email_';
+const ACCOUNT_DELETE_FLAG_PREFIX = 'neuroads_account_delete_in_progress_';
 
 function isFirestoreOfflineError(error: unknown): boolean {
   if (!error || typeof error !== 'object') return false;
@@ -69,6 +70,16 @@ function getCachedAuthEmail(uid: string): string | null {
 function cacheAuthEmail(uid: string, email: string | null): void {
   if (typeof window === 'undefined' || !email?.trim()) return;
   window.localStorage.setItem(`${AUTH_EMAIL_CACHE_PREFIX}${uid}`, email.trim());
+}
+
+function isAccountDeletionInProgress(uid: string): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.localStorage.getItem(`${ACCOUNT_DELETE_FLAG_PREFIX}${uid}`) === '1';
+}
+
+function clearAccountDeletionFlag(uid: string): void {
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem(`${ACCOUNT_DELETE_FLAG_PREFIX}${uid}`);
 }
 
 function readCachedJson<T>(key: string): T | null {
@@ -95,18 +106,45 @@ function normalizeProfileWithLocalFallback(snapshotProfile: UserProfile, uid: st
     tiktok?: string;
     blog?: string;
   }>(`neuroads_company_profile_${uid}`);
-  const contactCache = readCachedJson<{ whatsapp?: string }>(`neuroads_profile_contact_${uid}`);
 
   const mergedOnboarding =
     snapshotProfile.onboarding && typeof snapshotProfile.onboarding === 'object'
       ? { ...(snapshotProfile.onboarding as Record<string, unknown>) }
       : {};
 
-  const companyName = readString((snapshotProfile as Record<string, unknown>).companyName) || readString(companyCache?.companyName);
-  const site = readString((snapshotProfile as Record<string, unknown>).site) || readString(companyCache?.site);
-  const whatsapp = readString((snapshotProfile as Record<string, unknown>).whatsapp) || readString(contactCache?.whatsapp);
-  const instagram = readString((snapshotProfile as Record<string, unknown>).instagram) || readString(companyCache?.instagram);
-  const linkedin = readString((snapshotProfile as Record<string, unknown>).linkedin) || readString(companyCache?.linkedin);
+  const profileRecord = snapshotProfile as Record<string, unknown>;
+  const profileDetails =
+    profileRecord.profileDetails && typeof profileRecord.profileDetails === 'object'
+      ? (profileRecord.profileDetails as Record<string, unknown>)
+      : null;
+
+  // Campos usados na validação de onboarding devem vir apenas do Firestore.
+  const companyName = readString(
+    profileRecord.companyName ??
+      profileRecord.company ??
+      mergedOnboarding.companyName ??
+      mergedOnboarding.company ??
+      profileDetails?.companyName ??
+      profileDetails?.company
+  );
+  const site = readString(
+    profileRecord.site ??
+      profileRecord.website ??
+      mergedOnboarding.site ??
+      mergedOnboarding.website ??
+      profileDetails?.site ??
+      profileDetails?.website
+  );
+  const whatsapp = readString(
+    profileRecord.whatsapp ??
+      profileRecord.phone ??
+      mergedOnboarding.whatsapp ??
+      mergedOnboarding.phone ??
+      profileDetails?.whatsapp ??
+      profileDetails?.phone
+  );
+  const instagram = readString(profileRecord.instagram) || readString(companyCache?.instagram);
+  const linkedin = readString(profileRecord.linkedin) || readString(companyCache?.linkedin);
 
   if (!readString(mergedOnboarding.companyName) && companyName) mergedOnboarding.companyName = companyName;
   if (!readString(mergedOnboarding.site) && site) mergedOnboarding.site = site;
@@ -176,6 +214,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           userRef,
           (userDoc) => {
             if (userDoc.exists()) {
+              clearAccountDeletionFlag(firebaseUser.uid);
               const snapshotProfile = userDoc.data() as UserProfile;
               const normalizedFromCache = normalizeProfileWithLocalFallback(snapshotProfile, firebaseUser.uid);
               const registrationTimestamp =
@@ -232,6 +271,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 });
               }
             } else {
+              if (isAccountDeletionInProgress(firebaseUser.uid)) {
+                setPremiumSyncing(false);
+                setProfile(null);
+                setLoading(false);
+                return;
+              }
+
               setPremiumSyncing(true);
               const now = Date.now();
               const newProfile: UserProfile = {

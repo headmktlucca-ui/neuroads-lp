@@ -3,9 +3,9 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useMemo, useRef, useState, Fragment } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { doc, setDoc } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
-import { ChevronDown, User, LogOut, X, PlugZap, CheckCircle2, Database, Gauge } from 'lucide-react';
+import { ChevronDown, User, LogOut, X, PlugZap, CheckCircle2, Database, Gauge, AlertTriangle } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
@@ -102,6 +102,8 @@ const PLAN_AGENT_CAPACITY: Record<string, number> = {
   Enterprise: 50,
 };
 
+const ACCOUNT_DELETE_FLAG_PREFIX = 'neuroads_account_delete_in_progress_';
+
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isLabSubmenuOpen, setIsLabSubmenuOpen] = useState(false);
@@ -116,6 +118,8 @@ export default function Navbar() {
   const [connectorConfig, setConnectorConfig] = useState(DEFAULT_CONNECTOR_CONFIG);
   const [agentStatusVersion, setAgentStatusVersion] = useState(0);
   const [whatsApp, setWhatsApp] = useState('');
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
   const { user, userEmail, profile, logout, isAdmin } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
@@ -508,6 +512,108 @@ export default function Navbar() {
     window.localStorage.setItem(connectorsConfigKey, JSON.stringify(connectorConfig));
     setConnectorsSaved(true);
     setTimeout(() => setConnectorsSaved(false), 2200);
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user || isDeletingAccount) return;
+
+    const firstConfirmation = window.confirm(
+      'Tem certeza que deseja excluir sua conta? Esta ação vai cancelar seu plano e remover seus dados do banco.'
+    );
+    if (!firstConfirmation) return;
+
+    const secondConfirmation = window.confirm(
+      'Confirmação final: esta ação é irreversível. Deseja continuar com a exclusão da conta?'
+    );
+    if (!secondConfirmation) return;
+
+    setDeleteAccountError(null);
+    setIsDeletingAccount(true);
+
+    const deletionFlagKey = `${ACCOUNT_DELETE_FLAG_PREFIX}${user.uid}`;
+    const profileRecord = (profile as Record<string, unknown> | null) ?? null;
+    const onboardingRecord = readRecord(profileRecord?.onboarding);
+    const stripeCustomerId = readString(profileRecord?.stripeCustomerId ?? onboardingRecord?.stripeCustomerId);
+    const stripeSubscriptionId = readString(profileRecord?.stripeSubscriptionId ?? onboardingRecord?.stripeSubscriptionId);
+    const normalizedEmail = (userEmail?.trim() || user.email?.trim() || readString(profileRecord?.email || profileRecord?.authEmail) || null);
+
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(deletionFlagKey, '1');
+    }
+
+    try {
+      const token = await user.getIdToken();
+      const response = await fetch('/api/account/delete', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          uid: user.uid,
+          email: normalizedEmail,
+          stripeCustomerId,
+          stripeSubscriptionId,
+          onboardingStripeSubscriptionId: readString(onboardingRecord?.stripeSubscriptionId),
+        }),
+      });
+
+      const data = (await response.json().catch(() => null)) as { error?: string } | null;
+      if (!response.ok) {
+        throw new Error(data?.error || 'Não foi possível concluir a exclusão da conta.');
+      }
+
+      const db = getFirebaseDb();
+      const userRef = doc(db, 'users', user.uid);
+
+      // Remove subcoleções usadas no Hub antes de apagar o documento principal.
+      const userSubcollections = ['agent_reports'];
+      for (const subcollectionName of userSubcollections) {
+        const snapshot = await getDocs(collection(db, 'users', user.uid, subcollectionName));
+        await Promise.all(snapshot.docs.map((entry) => deleteDoc(entry.ref)));
+      }
+
+      await deleteDoc(userRef);
+
+      try {
+        await user.delete();
+      } catch (deleteAuthError) {
+        const errorCode =
+          deleteAuthError && typeof deleteAuthError === 'object' && 'code' in deleteAuthError
+            ? String((deleteAuthError as { code?: unknown }).code ?? '')
+            : '';
+
+        if (errorCode !== 'auth/requires-recent-login') {
+          throw deleteAuthError;
+        }
+      }
+
+      if (typeof window !== 'undefined') {
+        const keysToClear = [
+          `neuroads_company_profile_${user.uid}`,
+          `neuroads_profile_contact_${user.uid}`,
+          `neuroads_dashboard_connectors_${user.uid}`,
+          `neuroads_dashboard_connectors_config_${user.uid}`,
+          `neuroads_auth_email_${user.uid}`,
+          deletionFlagKey,
+        ];
+        keysToClear.forEach((key) => window.localStorage.removeItem(key));
+      }
+
+      setIsProfileOpen(false);
+      await logout();
+      router.push('/');
+    } catch (error) {
+      console.error('Falha ao excluir conta:', error);
+      setDeleteAccountError(
+        error instanceof Error ? error.message : 'Não foi possível excluir sua conta agora. Tente novamente.'
+      );
+      if (typeof window !== 'undefined') {
+        window.localStorage.removeItem(deletionFlagKey);
+      }
+    } finally {
+      setIsDeletingAccount(false);
+    }
   };
 
   return (
@@ -907,6 +1013,25 @@ export default function Navbar() {
               <div className="rounded-2xl border border-border bg-bg-secondary p-5">
                 <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-2">ID do usuário</p>
                 <p className="text-sm font-semibold text-text-main break-all">{user.uid}</p>
+              </div>
+
+              <div className="rounded-2xl border border-red-200 bg-red-50 p-5 space-y-3">
+                <p className="text-xs uppercase tracking-widest text-red-600 font-black">Zona de risco</p>
+                <p className="text-sm text-red-700">
+                  Ao excluir a conta, seu plano será cancelado e o cadastro será removido do banco de dados.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleDeleteAccount}
+                  disabled={isDeletingAccount}
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-red-600 text-white text-xs font-black tracking-widest uppercase hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  <AlertTriangle size={15} />
+                  {isDeletingAccount ? 'Excluindo...' : 'Excluir conta'}
+                </button>
+                {deleteAccountError ? (
+                  <p className="text-xs font-semibold text-red-700">{deleteAccountError}</p>
+                ) : null}
               </div>
             </div>
           </div>
