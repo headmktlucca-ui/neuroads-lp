@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, Bot, CircleGauge, Headphones, HelpCircle, ShieldCheck, Target, Wallet } from 'lucide-react';
@@ -66,18 +66,6 @@ const heroQuickPoints = [
   { title: 'Dados reais', description: 'Decisão financeira em tempo real', icon: CircleGauge },
   { title: 'Acesso sênior', description: 'Diagnóstico com especialista, sem intermediários', icon: Headphones },
 ] as const;
-
-const defaultProofMetrics: ProofMetric[] = [
-  { value: '25+ anos', label: 'Experiência em growth', detail: 'Estratégia e operação aplicadas em PMEs reais.' },
-  { value: 'R$ 10M+', label: 'Investimento gerenciado', detail: 'Gestão com foco em retorno financeiro sustentável.' },
-  { value: 'ROAS 5,2x', label: 'Média operacional', detail: '15% acima do mês anterior nas contas analisadas.' },
-  { value: 'CPL R$ 4,82', label: 'Eficiência de aquisição', detail: 'Redução média de 18,2% no custo por lead.' },
-];
-
-function mergeProofMetrics(pageMetrics: ProofMetric[]) {
-  if (!pageMetrics.length) return defaultProofMetrics;
-  return pageMetrics;
-}
 
 function getUtmPayload() {
   if (typeof window === 'undefined') {
@@ -199,7 +187,6 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
     companySite: '',
   });
 
-  const proofMetrics = useMemo(() => mergeProofMetrics(content.proofMetrics), [content.proofMetrics]);
   const scrollMilestonesRef = useRef<Set<number>>(new Set());
 
   useEffect(() => {
@@ -379,18 +366,6 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
 
           <MediaLoopBlock slug={content.slug} media={content.media} />
         </div>
-
-        <section className="mt-8 rounded-[28px] border border-[#e7ecf4] bg-white p-6 shadow-[0_16px_36px_rgba(12,22,38,0.06)] md:p-8">
-          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {proofMetrics.map((metric) => (
-              <article key={`${metric.label}-${metric.value}`} className="rounded-2xl border border-[#e8edf5] bg-[#fafcff] px-4 py-4">
-                <p className="text-[28px] font-black leading-none text-[#0f1730]">{metric.value}</p>
-                <p className="mt-2 text-[14px] font-black text-[#1f2b45]">{metric.label}</p>
-                <p className="mt-1 text-[13px] leading-relaxed text-[#62708a]">{metric.detail}</p>
-              </article>
-            ))}
-          </div>
-        </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-2">
           <article className="rounded-[26px] border border-[#e7ecf4] bg-white p-6 shadow-[0_14px_34px_rgba(12,22,38,0.05)] md:p-8">
