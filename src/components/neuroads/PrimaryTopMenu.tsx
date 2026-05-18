@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, ChevronDown, Menu, X } from 'lucide-react';
@@ -94,6 +95,8 @@ export default function PrimaryTopMenu({
   const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
   const closeMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const pathname = usePathname();
+
   const clearMenuCloseTimeout = () => {
     if (!closeMenuTimeoutRef.current) return;
     clearTimeout(closeMenuTimeoutRef.current);
@@ -111,6 +114,12 @@ export default function PrimaryTopMenu({
       setOpenMenuGroup(null);
       closeMenuTimeoutRef.current = null;
     }, delay);
+  };
+
+  const isActiveSubmenuItem = (href: string) => {
+    if (!pathname) return false;
+    const [basePath] = href.split('?');
+    return pathname === basePath || pathname.startsWith(`${basePath}/`);
   };
 
   useEffect(() => {
@@ -166,7 +175,9 @@ export default function PrimaryTopMenu({
                                   key={nestedItem.href}
                                   href={nestedItem.href}
                                   onClick={() => setOpenMenuGroup(null)}
-                                  className="block rounded-[10px] px-2.5 py-1.5 text-[13px] font-semibold text-[#344058] transition hover:bg-[#f7f9fc] hover:text-[#ff6a00]"
+                                  className={`block rounded-[10px] px-2.5 py-1.5 text-[13px] font-semibold transition hover:bg-[#f7f9fc] hover:text-[#ff6a00] ${
+                                    isActiveSubmenuItem(nestedItem.href) ? 'text-[#ff6a00]' : 'text-[#344058]'
+                                  }`}
                                 >
                                   {nestedItem.label}
                                 </Link>
@@ -181,7 +192,9 @@ export default function PrimaryTopMenu({
                           key={item.href}
                           href={item.href}
                           onClick={() => setOpenMenuGroup(null)}
-                          className="block rounded-[12px] px-3 py-2.5 text-[13px] font-semibold text-[#344058] transition hover:bg-[#f7f9fc] hover:text-[#ff6a00]"
+                          className={`block rounded-[12px] px-3 py-2.5 text-[13px] font-semibold transition hover:bg-[#f7f9fc] hover:text-[#ff6a00] ${
+                            isActiveSubmenuItem(item.href) ? 'text-[#ff6a00]' : 'text-[#344058]'
+                          }`}
                         >
                           {item.label}
                         </Link>
@@ -208,21 +221,22 @@ export default function PrimaryTopMenu({
               type="button"
               onClick={() => {
                 setIsMobileMenuOpen(false);
-                onSpecialistClick();
+                // navegar para a página de login
+                if (typeof window !== 'undefined') window.location.href = '/login';
               }}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#ff6a00] px-3 py-2.5 text-[11px] font-extrabold text-white sm:gap-2 sm:px-5 sm:text-[12px]"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#0A9D57] px-3 py-2.5 text-[11px] font-extrabold text-white sm:gap-2 sm:px-5 sm:text-[12px] shadow-[0_10px_30px_rgba(10,157,87,0.18)] hover:shadow-[0_12px_40px_rgba(10,157,87,0.26)] transition-shadow hover:bg-[#0B9D57] active:bg-[#087a45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A9D57] focus-visible:ring-offset-white"
             >
-              <span className="sm:hidden">Especialista</span>
-              <span className="hidden sm:inline">Fale com o especialista</span>
+              <span className="sm:hidden">Acessar meu Hub</span>
+              <span className="hidden sm:inline">Acessar meu Hub</span>
               <ArrowRight size={13} className="hidden sm:inline" />
             </button>
           ) : (
             <Link
-              href="/a-neuroads/contato"
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#ff6a00] px-3 py-2.5 text-[11px] font-extrabold text-white sm:gap-2 sm:px-5 sm:text-[12px]"
+              href="/login"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#0A9D57] px-3 py-2.5 text-[11px] font-extrabold text-white sm:gap-2 sm:px-5 sm:text-[12px] shadow-[0_10px_30px_rgba(10,157,87,0.18)] hover:shadow-[0_12px_40px_rgba(10,157,87,0.26)] transition-shadow hover:bg-[#0B9D57] active:bg-[#087a45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A9D57] focus-visible:ring-offset-white"
             >
-              <span className="sm:hidden">Especialista</span>
-              <span className="hidden sm:inline">Fale com o especialista</span>
+              <span className="sm:hidden">Acessar meu Hub</span>
+              <span className="hidden sm:inline">Acessar meu Hub</span>
               <ArrowRight size={13} className="hidden sm:inline" />
             </Link>
           )}
@@ -287,7 +301,9 @@ export default function PrimaryTopMenu({
                                   key={nestedItem.href}
                                   href={nestedItem.href}
                                   onClick={() => setIsMobileMenuOpen(false)}
-                                  className="block rounded-lg px-2 py-1.5 text-[13px] font-semibold text-[#42506a] transition hover:bg-[#fff5ee] hover:text-[#ff6a00]"
+                                  className={`block rounded-lg px-2 py-1.5 text-[13px] font-semibold transition hover:bg-[#fff5ee] hover:text-[#ff6a00] ${
+                                    isActiveSubmenuItem(nestedItem.href) ? 'text-[#ff6a00]' : 'text-[#42506a]'
+                                  }`}
                                 >
                                   {nestedItem.label}
                                 </Link>
@@ -302,7 +318,9 @@ export default function PrimaryTopMenu({
                           key={item.href}
                           href={item.href}
                           onClick={() => setIsMobileMenuOpen(false)}
-                          className="block rounded-xl px-2.5 py-2 text-[13px] font-semibold text-[#42506a] transition hover:bg-[#fff5ee] hover:text-[#ff6a00]"
+                          className={`block rounded-xl px-2.5 py-2 text-[13px] font-semibold transition hover:bg-[#fff5ee] hover:text-[#ff6a00] ${
+                            isActiveSubmenuItem(item.href) ? 'text-[#ff6a00]' : 'text-[#42506a]'
+                          }`}
                         >
                           {item.label}
                         </Link>

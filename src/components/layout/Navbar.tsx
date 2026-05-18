@@ -980,7 +980,7 @@ export default function Navbar() {
                           href={link.href}
                           className={`block w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
                             isLinkActive(link.href)
-                              ? 'text-[#FF6A00] bg-[#F0FFF7]'
+                              ? 'text-[#FF6A00] bg-[#F3F4F6]'
                               : 'text-[#344054] hover:bg-[#F8FAFC]'
                           }`}
                         >
@@ -1163,7 +1163,7 @@ export default function Navbar() {
                         href={link.href}
                         onClick={() => setIsMenuOpen(false)}
                         className={`block rounded-xl px-4 py-2 text-center text-sm font-bold tracking-wide transition-colors ${
-                          isLinkActive(link.href) ? 'bg-[#F0FFF7] text-[#FF6A00]' : 'text-text-muted hover:bg-[#F8FAFC]'
+                          isLinkActive(link.href) ? 'bg-[#F3F4F6] text-[#FF6A00]' : 'text-text-muted hover:bg-[#F8FAFC]'
                         }`}
                       >
                         {link.name}

@@ -513,15 +513,14 @@ export default function Suggestion3LandingPage() {
                 Valores & Recursos
                 <ArrowRight size={13} />
               </Link>
-              <button
-                type="button"
-                onClick={handleOpenSpecialistChat}
-                className="inline-flex items-center gap-1.5 rounded-full bg-[#ff6a00] px-3 py-2.5 text-[11px] font-extrabold text-white sm:gap-2 sm:px-5 sm:text-[12px]"
+              <Link
+                href="/login"
+                className="inline-flex items-center gap-1.5 rounded-full bg-[#0A9D57] px-3 py-2.5 text-[11px] font-extrabold text-white sm:gap-2 sm:px-5 sm:text-[12px] shadow-[0_10px_30px_rgba(10,157,87,0.18)] hover:shadow-[0_12px_40px_rgba(10,157,87,0.26)] transition-shadow hover:bg-[#0B9D57] active:bg-[#087a45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A9D57] focus-visible:ring-offset-white"
               >
-                <span className="sm:hidden">Especialista</span>
-                <span className="hidden sm:inline">Fale com o especialista</span>
+                <span className="sm:hidden">Acessar meu Hub</span>
+                <span className="hidden sm:inline">Acessar meu Hub</span>
                 <ArrowRight size={13} className="hidden sm:inline" />
-              </button>
+              </Link>
               <button
                 type="button"
                 onClick={() => setIsMobileMenuOpen((prev) => !prev)}
