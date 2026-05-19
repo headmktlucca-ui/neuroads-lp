@@ -1,8 +1,8 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { AlertTriangle, CheckCircle2, Copy, Download, Link2, Sparkles, Star } from 'lucide-react';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
 import ChannelConnectionHelpTooltip from './ChannelConnectionHelpTooltip';
@@ -69,6 +69,30 @@ const CONTENT_TYPES = ['Topo de Funil', 'Meio de Funil', 'Fundo de Funil', 'Ofer
 
 function readString(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
+}
+
+function parseStoredCreative(value: unknown): GeneratedCreative | null {
+  if (!value || typeof value !== 'object') return null;
+  const item = value as Record<string, unknown>;
+  const id = readString(item.id);
+  const title = readString(item.title);
+  if (!id || !title) return null;
+
+  const createdAtRaw = Number(item.createdAt);
+  const createdAt = Number.isFinite(createdAtRaw) && createdAtRaw > 0 ? createdAtRaw : Date.now();
+
+  return {
+    id,
+    createdAt,
+    channel: readString(item.channel) || 'Canal não informado',
+    format: readString(item.format) || 'Formato não informado',
+    contentType: readString(item.contentType) || 'Conteúdo não informado',
+    title,
+    copy: readString(item.copy),
+    cta: readString(item.cta),
+    concept: readString(item.concept),
+    modelFromId: readString(item.modelFromId) || undefined,
+  };
 }
 
 function labelForChannel(key: ChannelKey): string {
@@ -143,6 +167,39 @@ export default function CreativeGeneratorWorkspace({
     [creatives, selectedModelId]
   );
 
+  useEffect(() => {
+    const loadCreativeLibrary = async () => {
+      if (!userId) return;
+
+      try {
+        const db = getFirebaseDb();
+        const userRef = doc(db, 'users', userId);
+        const snapshot = await getDoc(userRef);
+        if (!snapshot.exists()) return;
+
+        const userData = snapshot.data() as Record<string, unknown>;
+        const libraryRaw = userData.creativeLibrary;
+        if (!libraryRaw || typeof libraryRaw !== 'object') return;
+        const library = libraryRaw as Record<string, unknown>;
+
+        const itemsRaw = Array.isArray(library.latestItems) ? library.latestItems : [];
+        const restored = itemsRaw
+          .map((item) => parseStoredCreative(item))
+          .filter((item): item is GeneratedCreative => Boolean(item))
+          .slice(0, 40);
+
+        if (restored.length) setCreatives(restored);
+
+        const restoredSelectedModelId = readString(library.selectedModelId);
+        if (restoredSelectedModelId) setSelectedModelId(restoredSelectedModelId);
+      } catch (loadError) {
+        console.error('Erro ao carregar biblioteca de criativos:', loadError);
+      }
+    };
+
+    void loadCreativeLibrary();
+  }, [userId]);
+
   const toggleSelection = (
     list: string[],
     value: string,
@@ -171,6 +228,27 @@ export default function CreativeGeneratorWorkspace({
       },
       { merge: true }
     );
+  };
+
+  const saveSelectedModel = async (nextModelId: string) => {
+    setSelectedModelId(nextModelId);
+    if (!userId) return;
+
+    try {
+      const db = getFirebaseDb();
+      await setDoc(
+        doc(db, 'users', userId),
+        {
+          creativeLibrary: {
+            selectedModelId: nextModelId,
+            updatedAt: Date.now(),
+          },
+        },
+        { merge: true }
+      );
+    } catch (persistError) {
+      console.error('Erro ao salvar modelo de criativo:', persistError);
+    }
   };
 
   const generateCreatives = async () => {
@@ -462,7 +540,9 @@ export default function CreativeGeneratorWorkspace({
                       <div className="mt-3 flex flex-wrap gap-2">
                         <button
                           type="button"
-                          onClick={() => setSelectedModelId(creative.id)}
+                          onClick={() => {
+                            void saveSelectedModel(creative.id);
+                          }}
                           className="inline-flex items-center gap-1 rounded-full border border-[#D6DEE8] bg-white px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide text-text-main"
                         >
                           <Copy className="h-3.5 w-3.5" />

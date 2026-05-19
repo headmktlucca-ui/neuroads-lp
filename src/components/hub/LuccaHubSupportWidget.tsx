@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { MessageCircle, Send, X } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '../../context/AuthContext';
 import { chatWithSupport } from '../../app/actions/chat-support';
 import { getHubProfileSummary } from '../../lib/hub-profile';
@@ -38,7 +39,7 @@ export default function LuccaHubSupportWidget() {
     {
       id: 'intro',
       role: 'assistant',
-      text: `${getGreetingByHour()}! Eu sou o Lucca | Suporte. Posso te ajudar com indicadores, plano ativo e próximos passos da sua operação.`,
+      text: `${getGreetingByHour()}! Eu sou o Lucca, seu Agente de Operações IA. Vamos transformar os dados da sua operação em decisões claras e próximos passos para escalar com previsibilidade.`,
     },
   ]);
 
@@ -172,14 +173,26 @@ export default function LuccaHubSupportWidget() {
       {isOpen ? (
         <div className="fixed bottom-24 right-6 z-[320] w-[94vw] max-w-[430px] rounded-[24px] border border-[#E8ECF1] bg-white shadow-[0_24px_50px_rgba(15,23,42,0.25)]">
           <div className="flex items-center justify-between rounded-t-[24px] border-b border-[#E8ECF1] bg-[#FCFCFD] px-4 py-3">
-            <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-primary">Lucca | Suporte</p>
-              <p className="text-xs text-[#4B5563]">Contexto do cliente ativo</p>
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-[#DDE4F0] bg-[#EAF1FF]">
+                <Image
+                  src="/images/Avatar_Lucca_Novo.jpeg"
+                  alt="Avatar do Lucca"
+                  fill
+                  sizes="44px"
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              <div>
+                <p className="text-[11px] font-black uppercase tracking-[0.12em] text-primary">Lucca | Gestão & Estratégia</p>
+                <p className="text-xs text-[#4B5563]">Agente de Operações IA</p>
+              </div>
             </div>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F3F4F6]"
+              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F3F4F6]"
               aria-label="Fechar chat"
             >
               <X size={14} />

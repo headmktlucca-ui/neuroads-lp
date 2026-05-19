@@ -169,13 +169,21 @@ export default function StrategicHubOverview() {
                     </p>
                   </div>
 
-                  <div className="mt-6">
+                  <div className="mt-6 max-w-[320px] space-y-3">
                     <Link
                       href="/hub?brand=1"
-                      className="inline-flex h-12 items-center justify-center gap-2 rounded-[12px] border border-[#FF6A00] px-6 text-[15px] font-bold text-[#FF6A00] transition hover:bg-[#FF6A00]/10"
+                      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] border border-[#FF6A00] px-6 text-[15px] font-bold text-[#FF6A00] transition hover:bg-[#FF6A00]/10"
                     >
                       <Cog className="h-5 w-5" />
                       Configurar
+                    </Link>
+
+                    <Link
+                      href="/hub?connectors=1"
+                      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] bg-[#FF6A00] px-4 text-[16px] font-bold text-white shadow-[0_12px_20px_rgba(255,106,0,0.28)] transition hover:brightness-95"
+                    >
+                      <Wrench className="h-5 w-5" />
+                      Conectores
                     </Link>
                   </div>
                 </article>
@@ -211,13 +219,14 @@ export default function StrategicHubOverview() {
                         Trial gratuito: {trialCountdownLabel} para a 1a cobranca.
                       </p>
                     ) : null}
-                    <Link
-                      href="/hub?connectors=1"
-                      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] bg-[#FF6A00] px-4 text-[16px] font-bold text-white shadow-[0_12px_20px_rgba(255,106,0,0.28)] transition hover:brightness-95"
-                    >
-                      <Wrench className="h-5 w-5" />
-                      Conectores
-                    </Link>
+                    <div className="rounded-[12px] border border-[#28518A] bg-[#092349] px-3 py-3">
+                      <p className="text-[12px] font-semibold text-[#B7C4DF]">Agentes Ativos</p>
+                      <p className="mt-1 text-[20px] leading-none font-black text-white">
+                        {hubProfile.agentLimit != null
+                          ? `${String(activeAgentsCount).padStart(2, '0')} de ${String(hubProfile.agentLimit).padStart(2, '0')}`
+                          : `${String(activeAgentsCount).padStart(2, '0')} de --`}
+                      </p>
+                    </div>
                   </div>
                 </article>
               </div>
