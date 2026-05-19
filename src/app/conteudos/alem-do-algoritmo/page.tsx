@@ -89,31 +89,6 @@ export default function Page() {
           </div>
         </section>
 
-        <section className="wrap pb-2">
-          <div className="grid gap-4 md:grid-cols-3">
-            <article className="rounded-[22px] border border-[#e5ecf5] bg-white/92 p-6 shadow-[0_16px_40px_rgba(9,24,50,0.08)]">
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#ff5f00]">Notícias e sinais</p>
-              <p className="mt-3 text-[15px] leading-relaxed text-[#23324c]">
-                Curadoria para separar tendência de ruído e priorizar decisões de aquisição, comercial e operação.
-              </p>
-            </article>
-
-            <article className="rounded-[22px] border border-[#e5ecf5] bg-white/92 p-6 shadow-[0_16px_40px_rgba(9,24,50,0.08)]">
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#ff5f00]">SEO + GEO aplicado</p>
-              <p className="mt-3 text-[15px] leading-relaxed text-[#23324c]">
-                Conteúdo desenhado para Google, ChatGPT, Gemini e Perplexity, com foco em intenção comercial e receita.
-              </p>
-            </article>
-
-            <article className="rounded-[22px] border border-[#e5ecf5] bg-white/92 p-6 shadow-[0_16px_40px_rgba(9,24,50,0.08)]">
-              <p className="text-xs font-black uppercase tracking-[0.14em] text-[#ff5f00]">Template padrão de publicação</p>
-              <p className="mt-3 text-[15px] leading-relaxed text-[#23324c]">
-                Cada artigo segue o <strong>{EDITORIAL_TEMPLATE_NAME}</strong> para manter clareza, narrativa comercial e otimização SEO/GEO.
-              </p>
-            </article>
-          </div>
-        </section>
-
         <EditorialFiltersClient posts={posts} />
 
         <section className="wrap pb-16">

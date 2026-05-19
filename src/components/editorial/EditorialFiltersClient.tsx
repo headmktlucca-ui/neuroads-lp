@@ -58,7 +58,7 @@ export default function EditorialFiltersClient({ posts }: Props) {
   return (
     <section className="wrap grid gap-8 pb-16 pt-8 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div>
-        <div className="mb-6 rounded-[24px] border border-[#e5ecf5] bg-white/92 p-5 shadow-[0_12px_30px_rgba(9,24,50,0.08)]">
+        <div className="mb-6 rounded-[24px] border border-[#252a34] bg-[#0d121b] p-5 shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
           <div className="flex flex-wrap items-center gap-2">
             {orderOptions.map((option) => (
               <button
@@ -67,8 +67,8 @@ export default function EditorialFiltersClient({ posts }: Props) {
                 onClick={() => setOrder(option.key)}
                 className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.11em] transition ${
                   order === option.key
-                    ? 'bg-[#ff5f00] text-white shadow-[0_10px_20px_rgba(255,95,0,0.22)]'
-                    : 'border border-[#dfe8f2] bg-white text-[#2b3953] hover:border-[#ffd1b7]'
+                    ? 'bg-[#ff7a00] text-white shadow-[0_10px_20px_rgba(255,122,33,0.24)]'
+                    : 'border border-white/10 bg-white/5 text-slate-300 hover:border-[#384361] hover:bg-white/10'
                 }`}
               >
                 {option.label}
@@ -84,8 +84,8 @@ export default function EditorialFiltersClient({ posts }: Props) {
                 onClick={() => setActiveTag(tag)}
                 className={`rounded-full border px-3 py-1.5 text-xs font-bold transition ${
                   activeTag === tag
-                    ? 'border-[#ff5f00] bg-[#fff2e9] text-[#ff5f00]'
-                    : 'border-[#dce5ef] bg-white text-[#465674] hover:border-[#ffcca9]'
+                    ? 'border-[#ff7a00] bg-[#ff7a00]/10 text-[#ffcc9a]'
+                    : 'border-white/10 bg-white/5 text-slate-400 hover:border-[#384361] hover:bg-white/10'
                 }`}
               >
                 {tag} ({count})
@@ -162,12 +162,12 @@ export default function EditorialFiltersClient({ posts }: Props) {
       </div>
 
       <aside className="space-y-5">
-        <div className="rounded-[24px] border border-[#dfe7f1] bg-white/95 p-6 shadow-[0_18px_38px_rgba(9,23,44,0.08)]">
-          <h2 className="inline-flex items-center gap-2 text-lg font-black text-[#0f1730]">
-            <Flame size={18} className="text-[#ff5f00]" />
+        <div className="rounded-[24px] border border-[#252a34] bg-[#0d121b] p-6 shadow-[0_18px_38px_rgba(0,0,0,0.35)]">
+          <h2 className="inline-flex items-center gap-2 text-lg font-black text-white">
+            <Flame size={18} className="text-[#ff9d1f]" />
             Radar 24h
           </h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#4d5c75]">
+          <p className="mt-2 text-sm leading-relaxed text-slate-400">
             Conteúdos com maior tração nas últimas 24 horas.
           </p>
 
@@ -176,21 +176,21 @@ export default function EditorialFiltersClient({ posts }: Props) {
               <Link
                 key={`radar-${post.slug}`}
                 href={`/conteudos/alem-do-algoritmo/${post.slug}`}
-                className="block rounded-2xl border border-[#edf2f8] bg-[#fbfdff] p-4 transition hover:border-[#ffd4bc]"
+                className="block rounded-3xl border border-[#1f2937] bg-[#101827] p-4 transition hover:border-[#384361] hover:bg-[#111b2b]"
               >
-                <p className="text-sm font-black text-[#12213d]">{post.title}</p>
-                <p className="mt-1 text-xs text-[#5b6a84]">{post.views24h.toLocaleString('pt-BR')} acessos em 24h</p>
+                <p className="text-sm font-black text-white">{post.title}</p>
+                <p className="mt-1 text-xs text-slate-500">{post.views24h.toLocaleString('pt-BR')} acessos em 24h</p>
               </Link>
             ))}
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-[#ffd7c1] bg-[linear-gradient(145deg,#fff8f2_0%,#fff2e8_100%)] p-6">
-          <h2 className="text-lg font-black text-[#0f1730]">Template de publicação</h2>
-          <p className="mt-2 text-sm leading-relaxed text-[#4b5b74]">
+        <div className="rounded-[24px] border border-[#252a34] bg-[#0d121b] p-6 shadow-[0_18px_38px_rgba(0,0,0,0.28)]">
+          <h2 className="text-lg font-black text-white">Template de publicação</h2>
+          <p className="mt-2 text-sm leading-relaxed text-slate-400">
             Todos os conteúdos seguem padrão editorial com SEO + GEO, leitura orientada a caixa e blocos de decisão para equipe comercial.
           </p>
-          <p className="mt-4 rounded-xl border border-[#ffd4bc] bg-white/70 px-3 py-2 text-xs font-semibold text-[#4b5b74]">
+          <p className="mt-4 rounded-xl border border-[#1f2937] bg-white/5 px-3 py-2 text-xs font-semibold text-slate-300">
             Estrutura padrão: contexto do problema → impacto financeiro → execução recomendada → CTA consultiva.
           </p>
         </div>
