@@ -44,6 +44,7 @@ const ACTIVATABLE_AGENT_TITLES = new Set([
   'Otimizador de Orçamento',
   'Gerador de Criativos',
   'Gerador de Copies de Conversão',
+  'Diagnóstico de Landing Page',
   'Análise Viral',
 ]);
 
@@ -126,6 +127,18 @@ const AGENT_DETAILS_MAP: Record<string, AgentDetailsContent> = {
       'Plano criativo com oportunidades priorizadas, cadência recomendada de produção e simulações de uplift.',
     effectiveResult:
       'Mais consistência na geração de criativos com foco em reduzir CPL e aumentar previsibilidade comercial.',
+  },
+  'Diagnóstico de Landing Page': {
+    activities: [
+      'Executa auditoria estratégica de landing pages para encontrar gargalos reais de conversão, UX e percepção de valor.',
+      'Conecta promessa do anúncio com a mensagem da página para identificar desalinhamentos que geram abandono.',
+    ],
+    howItWorks:
+      'Captura sinais da URL analisada, estrutura scorecards por dimensão crítica e transforma achados em prioridades práticas com simulação de impacto.',
+    deliveries:
+      'Diagnóstico executivo, análise detalhada por domínio, heatmap cognitivo simulado e recomendações priorizadas por impacto/facilidade/urgência.',
+    effectiveResult:
+      'Mais clareza para decidir o que ajustar primeiro, reduzindo abandono e elevando conversão com foco em resultado financeiro.',
   },
   'Análise Viral': {
     activities: [

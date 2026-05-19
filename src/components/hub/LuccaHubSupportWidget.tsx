@@ -1,7 +1,7 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { MessageCircle, Send, X } from 'lucide-react';
+import { useMemo, useRef, useState } from 'react';
+import { MessageCircle, Send, X, Maximize2, Minimize2, Paperclip, Mic, StopCircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '../../context/AuthContext';
@@ -12,8 +12,9 @@ type MessageRole = 'assistant' | 'user';
 type SupportMessage = {
   id: string;
   role: MessageRole;
-  text: string;
+  text?: string;
   links?: Array<{ label: string; href: string }>;
+  attachments?: Array<{ type: 'audio' | 'file'; name: string; url: string }>;
 };
 
 function getGreetingByHour(): string {
@@ -33,6 +34,7 @@ export default function LuccaHubSupportWidget() {
   const { user, profile } = useAuth();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [messages, setMessages] = useState<SupportMessage[]>([
@@ -120,6 +122,12 @@ export default function LuccaHubSupportWidget() {
     setMessages((prev) => [...prev, { id: `${Date.now()}-${Math.random()}`, role, text, links }]);
   };
 
+  // refs & state for recording and attachments
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const recordedChunksRef = useRef<Blob[]>([]);
+  const [isRecording, setIsRecording] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
   const handleSend = async () => {
     const text = input.trim();
     if (!text || loading) return;
@@ -130,7 +138,7 @@ export default function LuccaHubSupportWidget() {
 
     const history = [...messages, { id: 'tmp', role: 'user' as const, text }].map((item) => ({
       role: item.role,
-      content: item.text,
+      content: item.text ?? '',
     }));
 
     const result = await chatWithSupport(history, supportContext);
@@ -159,6 +167,60 @@ export default function LuccaHubSupportWidget() {
     setLoading(false);
   };
 
+  const handleToggleMaximize = () => {
+    setIsMaximized((s) => !s);
+  };
+
+  const startRecording = async () => {
+    if (!navigator.mediaDevices || isRecording) return;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream);
+      recordedChunksRef.current = [];
+      mr.ondataavailable = (e) => {
+        if (e.data.size > 0) recordedChunksRef.current.push(e.data);
+      };
+      mr.onstop = () => {
+        const blob = new Blob(recordedChunksRef.current, { type: 'audio/webm' });
+        const url = URL.createObjectURL(blob);
+        const name = `audio-${Date.now()}.webm`;
+        setMessages((prev) => [...prev, { id: `${Date.now()}-audio`, role: 'user', text: 'Envio de áudio', attachments: [{ type: 'audio', name, url }] }]);
+        // optionally: upload blob to server here
+      };
+      mediaRecorderRef.current = mr;
+      mr.start();
+      setIsRecording(true);
+    } catch (err) {
+      // falha ao acessar microfone
+      console.error('Recording failed', err);
+    }
+  };
+
+  const stopRecording = () => {
+    if (!mediaRecorderRef.current) return;
+    mediaRecorderRef.current.stop();
+    mediaRecorderRef.current.stream?.getTracks().forEach((t) => t.stop());
+    mediaRecorderRef.current = null;
+    setIsRecording(false);
+  };
+
+  const handleAttachmentClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+    const arr = Array.from(files);
+    arr.forEach((file) => {
+      const url = URL.createObjectURL(file);
+      setMessages((prev) => [...prev, { id: `${Date.now()}-${file.name}`, role: 'user', text: `Arquivo: ${file.name}`, attachments: [{ type: 'file', name: file.name, url }] }]);
+      // optionally: upload to server here
+    });
+    // clear input value to allow re-upload same file later
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   return (
     <>
       <button
@@ -171,8 +233,10 @@ export default function LuccaHubSupportWidget() {
       </button>
 
       {isOpen ? (
-        <div className="fixed bottom-24 right-6 z-[320] w-[94vw] max-w-[430px] rounded-[24px] border border-[#E8ECF1] bg-white shadow-[0_24px_50px_rgba(15,23,42,0.25)]">
-          <div className="flex items-center justify-between rounded-t-[24px] border-b border-[#E8ECF1] bg-[#FCFCFD] px-4 py-3">
+        <div className={
+          `fixed z-[320] ${isMaximized ? 'inset-0 flex items-center justify-center' : 'bottom-24 right-6'} w-[94vw] ${isMaximized ? 'max-w-3xl' : 'max-w-[430px]'} rounded-[24px] border border-[#E8ECF1] bg-white shadow-[0_24px_50px_rgba(15,23,42,0.25)]`
+        }>
+          <div className={`flex items-center justify-between rounded-t-[24px] border-b border-[#E8ECF1] bg-[#FCFCFD] px-4 py-3 ${isMaximized ? 'rounded-tl-lg rounded-tr-lg' : ''}`}>
             <div className="flex min-w-0 items-center gap-3">
               <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-[#DDE4F0] bg-[#EAF1FF]">
                 <Image
@@ -189,17 +253,30 @@ export default function LuccaHubSupportWidget() {
                 <p className="text-xs text-[#4B5563]">Agente de Operações IA</p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F3F4F6]"
-              aria-label="Fechar chat"
-            >
-              <X size={14} />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleToggleMaximize}
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F3F4F6]"
+                aria-label={isMaximized ? 'Restaurar janela' : 'Maximizar chat'}
+              >
+                {isMaximized ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsOpen(false);
+                  setIsMaximized(false);
+                }}
+                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F3F4F6]"
+                aria-label="Fechar chat"
+              >
+                <X size={14} />
+              </button>
+            </div>
           </div>
 
-          <div className="max-h-[420px] space-y-3 overflow-y-auto px-4 py-4">
+          <div className={`max-h-[420px] ${isMaximized ? 'max-h-[70vh]' : ''} space-y-3 overflow-y-auto px-4 py-4`}>
             {messages.map((message) => (
               <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div
@@ -207,7 +284,22 @@ export default function LuccaHubSupportWidget() {
                     message.role === 'user' ? 'bg-[#111827] text-white' : 'border border-[#E5E7EB] bg-white text-[#1F2937]'
                   }`}
                 >
-                  <p>{message.text}</p>
+                  {message.text ? <p>{message.text}</p> : null}
+                  {message.attachments && message.attachments.length > 0 ? (
+                    <div className="mt-2 flex flex-col gap-2">
+                      {message.attachments.map((att) => (
+                        <div key={`${message.id}-${att.name}`} className="flex items-center gap-2">
+                          {att.type === 'audio' ? (
+                            <audio controls src={att.url} className="max-w-[220px]" />
+                          ) : (
+                            <a href={att.url} target="_blank" rel="noreferrer" className="text-xs text-primary underline">
+                              {att.name}
+                            </a>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : null}
                   {message.links && message.links.length > 0 ? (
                     <div className="mt-2 flex flex-wrap gap-2">
                       {message.links.map((link) => (
@@ -227,9 +319,23 @@ export default function LuccaHubSupportWidget() {
               </div>
             ))}
           </div>
-
           <div className="rounded-b-[24px] border-t border-[#E8ECF1] bg-[#FCFCFD] px-4 py-3">
+            <input ref={fileInputRef} onChange={handleFileChange} type="file" className="hidden" />
             <div className="flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-3 py-2">
+              <button type="button" onClick={handleAttachmentClick} className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#6B7280] hover:bg-[#F3F4F6]" aria-label="Anexar arquivo">
+                <Paperclip size={14} />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (isRecording) stopRecording();
+                  else startRecording();
+                }}
+                className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${isRecording ? 'bg-red-500 text-white' : 'text-[#6B7280] hover:bg-[#F3F4F6]'}`}
+                aria-label={isRecording ? 'Parar gravação' : 'Gravar áudio'}
+              >
+                {isRecording ? <StopCircle size={14} /> : <Mic size={14} />}
+              </button>
               <input
                 value={input}
                 onChange={(event) => setInput(event.target.value)}

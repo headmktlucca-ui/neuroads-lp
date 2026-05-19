@@ -17,6 +17,7 @@ import BudgetOptimizerWorkspace from '../../../../components/agents/BudgetOptimi
 import CreativeGeneratorWorkspace from '../../../../components/agents/CreativeGeneratorWorkspace';
 import ConversionCopyWorkspace from '../../../../components/agents/ConversionCopyWorkspace';
 import CreativeAnalysisWorkspace from '../../../../components/agents/CreativeAnalysisWorkspace';
+import LandingPageDiagnosisWorkspace from '../../../../components/agents/LandingPageDiagnosisWorkspace';
 import DnaBrandWorkspace, { DnaBrandPresentationPanel } from '../../../../components/agents/DnaBrandWorkspace';
 import GenericAgentWorkspace from '../../../../components/agents/GenericAgentWorkspace';
 import { useAuth } from '../../../../context/AuthContext';
@@ -207,6 +208,17 @@ function getAgentHeroDescription(title: string) {
     );
   }
 
+  if (title === 'Diagnóstico de Landing Page') {
+    return (
+      <>
+        O agente <strong className="text-text-main">Diagnóstico de Landing Page</strong> funciona como um laboratório de conversão para identificar com precisão os pontos que
+        derrubam resultado comercial na sua página. Ele cruza clareza de oferta, UX, copy, autoridade e consistência entre anúncio e landing page para encontrar gargalos
+        críticos, priorizar ações e simular impacto esperado em conversão. Na prática, você recebe direção objetiva para ajustar o que realmente afeta receita, retenção e
+        eficiência da operação.
+      </>
+    );
+  }
+
   if (title === 'DNA da Marca') {
     return (
       <>
@@ -223,6 +235,7 @@ function getAgentHeroDescription(title: string) {
 function getRequiredConnectorKeysForAgent(title: string, category: string): ConnectorKey[] {
   if (title === 'SEO & GEO') return ['ga4', 'crm', 'warehouse'];
   if (title === 'DNA da Marca') return ['crm', 'ga4'];
+  if (title === 'Diagnóstico de Landing Page') return ['ga4', 'googleAds', 'metaAds', 'crm'];
   if (title === 'Gerador de Copies de Conversão') return ['ga4', 'crm', 'googleAds', 'metaAds'];
   if (title === 'Gerador de Criativos' || title === 'Análise Viral') return ['googleAds', 'metaAds', 'linkedinAds', 'ga4'];
   if (title === 'Simulador de ROAS' || title === 'Preditor de Funil') {
@@ -642,10 +655,10 @@ export default function AgentEntryPage() {
                               {entry.title === 'Gerador de Copies de Conversão'
                                 ? 'Ativar Agente'
                                 : automationActivated
-                                  ? entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil'
+                                  ? entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil' || entry.title === 'Diagnóstico de Landing Page'
                                     ? 'Agente Ativo'
                                     : 'Automação Ativa'
-                                  : entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil'
+                                  : entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil' || entry.title === 'Diagnóstico de Landing Page'
                                     ? 'Ativar Agente'
                                     : 'Ativar Automação'}
                             </button>
@@ -804,6 +817,15 @@ export default function AgentEntryPage() {
                 ) : entry.title === 'Análise Viral' ? (
                   <div className="col-span-1">
                     <CreativeAnalysisWorkspace
+                      userId={user?.uid}
+                      agentSlug={entry.slug}
+                      agentTitle={entry.title}
+                      agentCategory={entry.category}
+                    />
+                  </div>
+                ) : entry.title === 'Diagnóstico de Landing Page' ? (
+                  <div className="col-span-1">
+                    <LandingPageDiagnosisWorkspace
                       userId={user?.uid}
                       agentSlug={entry.slug}
                       agentTitle={entry.title}
