@@ -49,8 +49,8 @@ export default function Page() {
           <div className="pointer-events-none absolute right-0 top-24 h-72 w-72 rounded-full bg-[#0f1d3f]/10 blur-3xl" />
           <div className="pointer-events-none absolute left-1/2 top-1/3 h-72 w-72 -translate-x-1/2 rounded-full bg-[#ff5f00]/6 blur-3xl" />
 
-          <div className="relative z-10 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-center">
-            <div>
+          <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
+            <div className="max-w-4xl">
               <div className="mb-7 inline-flex items-center rounded-full border border-[#ffd8c2] bg-[#fff5ee] px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#ff5f00]">
                 Canal Editorial NeuroAds
               </div>
@@ -74,30 +74,16 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-[36px] border border-white/80 bg-white/70 p-6 shadow-[0_40px_80px_rgba(8,22,44,0.12)] backdrop-blur-3xl">
-              <div className="pointer-events-none absolute -top-10 -left-10 h-40 w-40 rounded-full bg-[#ff6a00]/10 blur-3xl" />
-              <div className="pointer-events-none absolute -bottom-12 right-6 h-48 w-48 rounded-full bg-[#0f1d3f]/10 blur-3xl" />
-              <div className="relative z-10">
-                <div className="overflow-hidden rounded-[32px] bg-[#f8fafc]">
-                  <Image
-                    src="/images/hero/hero-cube-anexo-222.png"
-                    alt="Ilustração de alto impacto"
-                    width={680}
-                    height={560}
-                    className="w-full object-cover"
-                  />
-                </div>
-
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-[24px] bg-[#fff7f1] px-4 py-4 text-sm text-[#3f4f69] shadow-[0_18px_40px_rgba(255,111,0,0.08)]">
-                    <p className="text-xs font-black uppercase tracking-[0.18em] text-[#ff5f00]">Sinal real</p>
-                    <p className="mt-2 font-semibold text-[#0f1730]">SEO + GEO com prática comercial.</p>
-                  </div>
-                  <div className="rounded-[24px] bg-[#f5fbff] px-4 py-4 text-sm text-[#3f4f69] shadow-[0_18px_40px_rgba(15,29,63,0.06)]">
-                    <p className="text-xs font-black uppercase tracking-[0.18em] text-[#0f3f6f]">Impacto direto</p>
-                    <p className="mt-2 font-semibold text-[#0f1730]">Conteúdo orientado a receita previsível.</p>
-                  </div>
-                </div>
+            <div className="relative flex justify-center lg:justify-end">
+              <div className="relative w-full max-w-[460px] bg-transparent shadow-none">
+                <Image
+                  src="/images/editorial/alem-do-algoritmo/bus-quad-clean.png"
+                  alt="Bússola estratégica para crescimento previsível"
+                  width={820}
+                  height={861}
+                  className="h-auto w-full object-contain"
+                  priority
+                />
               </div>
             </div>
           </div>
@@ -159,4 +145,3 @@ export default function Page() {
     </main>
   );
 }
-

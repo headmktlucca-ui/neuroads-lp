@@ -400,6 +400,10 @@ export default function AgentEntryPage() {
       };
     });
   }, [connectorStatus, entry]);
+  const inactiveRequiredConnectors = useMemo(
+    () => requiredConnectors.filter((connector) => !connector.isActive),
+    [requiredConnectors]
+  );
 
   const formatHistoryDate = (dateIso: string) => {
     const parsed = new Date(dateIso);
@@ -526,6 +530,8 @@ export default function AgentEntryPage() {
           if (persisted.scheduleOptionId) {
             setSelectedScheduleOptionId(persisted.scheduleOptionId);
           }
+        } else {
+          setAutomationActivated(false);
         }
       } catch (error) {
         console.error('Erro ao carregar automação persistida:', error);
@@ -893,6 +899,11 @@ export default function AgentEntryPage() {
                     Carregando configuração de automação salva...
                   </div>
                 )}
+                {inactiveRequiredConnectors.length > 0 && (
+                  <div className="mb-3 rounded-xl border border-[#FFE1CF] bg-[#FFF8F3] px-4 py-2.5 text-sm text-[#B45309]">
+                    Para ativar esta automação, conecte primeiro: {inactiveRequiredConnectors.map((connector) => connector.name).join(', ')}.
+                  </div>
+                )}
 
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                   {automationSuggestions.map((option) => {
@@ -909,7 +920,7 @@ export default function AgentEntryPage() {
                         }}
                         role="button"
                         tabIndex={0}
-                        className={`w-full text-left rounded-2xl border p-3 transition-all ${
+                        className={`w-full cursor-pointer text-left rounded-2xl border p-3 transition-all ${
                           isSelected
                             ? 'border-[#FFBE94] bg-[#FFF7F1] shadow-[0_10px_24px_rgba(255,107,0,0.14)]'
                             : 'border-[#E3E8EF] bg-[#FBFCFE] hover:border-[#FFD1B3] hover:bg-white'
@@ -942,7 +953,7 @@ export default function AgentEntryPage() {
                                       event.stopPropagation();
                                       setSelectedScheduleOptionId(schedule.id);
                                     }}
-                                    className={`rounded-lg border px-3 py-2 text-left transition-all ${
+                                    className={`cursor-pointer rounded-lg border px-3 py-2 text-left transition-all ${
                                       isScheduleSelected
                                         ? 'border-[#FF9A63] bg-[#FFF4EC] shadow-[0_8px_16px_rgba(255,107,0,0.12)]'
                                         : 'border-[#E4EAF2] bg-white hover:border-[#FFC7A2]'
@@ -972,9 +983,17 @@ export default function AgentEntryPage() {
 
                   <button
                     type="button"
-                    disabled={!selectedSuggestion || !selectedScheduleOption}
+                    disabled={!selectedSuggestion || !selectedScheduleOption || inactiveRequiredConnectors.length > 0}
                     onClick={async () => {
                       if (!selectedSuggestion || !selectedScheduleOption || !user || !entry || !agentAutomationKey) return;
+                      if (inactiveRequiredConnectors.length > 0) {
+                        setAutomationNotice(
+                          `Conecte os canais obrigatórios antes de confirmar: ${inactiveRequiredConnectors
+                            .map((connector) => connector.name)
+                            .join(', ')}.`
+                        );
+                        return;
+                      }
 
                       const shouldConfirm = window.confirm(
                         `Confirmar programação para ${entry.title}?\n\nCadência: ${selectedSuggestion.title}\nAgenda sugerida: ${selectedScheduleOption.label}`
@@ -987,6 +1006,7 @@ export default function AgentEntryPage() {
                         const timestamps = buildAutomationTimestamps({
                           cadence: selectedSuggestion.cadence,
                           monthlyExecutions: selectedSuggestion.monthlyExecutions,
+                          scheduleOptionLabel: selectedScheduleOption.label,
                         });
                         const db = getFirebaseDb();
                         const userRef = doc(db, 'users', user.uid);
@@ -1026,7 +1046,7 @@ export default function AgentEntryPage() {
                       }
                     }}
                     className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all ${
-                      selectedSuggestion && !isSavingAutomation
+                      selectedSuggestion && !isSavingAutomation && inactiveRequiredConnectors.length === 0
                         ? 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] text-white shadow-[0_10px_22px_rgba(8,183,96,0.3)] hover:brightness-105'
                         : 'bg-[#E2E8F0] text-[#64748B] cursor-not-allowed'
                     }`}

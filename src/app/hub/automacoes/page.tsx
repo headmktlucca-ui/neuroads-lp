@@ -32,9 +32,11 @@ function getStatusLabel(status: HubAutomationEntry['status']): string {
 
 function getRuntimeInfo(automation: HubAutomationEntry, nowTs: number): {
   label: string;
-  icon: 'running' | 'scheduled' | 'paused' | 'inactive';
+  icon: 'running' | 'scheduled' | 'paused' | 'inactive' | 'overdue';
   tone: string;
 } {
+  const EXECUTION_WINDOW_MS = 45 * 60 * 1000;
+
   if (automation.status === 'paused') {
     return {
       label: 'Programação pausada',
@@ -51,11 +53,19 @@ function getRuntimeInfo(automation: HubAutomationEntry, nowTs: number): {
     };
   }
 
-  if (automation.nextUpdateAt && automation.nextUpdateAt <= nowTs) {
+  if (automation.lastUpdateAt && nowTs >= automation.lastUpdateAt && nowTs - automation.lastUpdateAt <= EXECUTION_WINDOW_MS) {
     return {
       label: 'Em execução',
       icon: 'running',
       tone: 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]',
+    };
+  }
+
+  if (automation.nextUpdateAt && automation.nextUpdateAt < nowTs) {
+    return {
+      label: 'Execução atrasada',
+      icon: 'overdue',
+      tone: 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]',
     };
   }
 
@@ -121,21 +131,10 @@ export default function HubAutomacoesPage() {
   const runningNowCount = useMemo(
     () =>
       trackedAutomations.filter((item) => {
-        if (item.status !== 'active') return false;
-        if (!item.nextUpdateAt) return false;
-        return item.nextUpdateAt <= nowTs;
+        return getRuntimeInfo(item, nowTs).icon === 'running';
       }).length,
     [trackedAutomations, nowTs]
   );
-  const automationsUpdatingToday = useMemo(() => {
-    const dayAhead = nowTs + 24 * 60 * 60 * 1000;
-    return trackedAutomations.filter((item) => {
-      if (item.status !== 'active') return false;
-      if (!item.nextUpdateAt) return false;
-      return item.nextUpdateAt >= nowTs && item.nextUpdateAt <= dayAhead;
-    }).length;
-  }, [trackedAutomations, nowTs]);
-
   if (accessState !== 'allowed') {
     return (
       <div className="min-h-screen bg-bg-main flex flex-col items-center justify-center gap-4 px-4">
@@ -256,7 +255,7 @@ export default function HubAutomacoesPage() {
                               <PlayCircle className="h-3.5 w-3.5" />
                             ) : runtime.icon === 'paused' ? (
                               <PauseCircle className="h-3.5 w-3.5" />
-                            ) : runtime.icon === 'inactive' ? (
+                            ) : runtime.icon === 'inactive' || runtime.icon === 'overdue' ? (
                               <AlertCircle className="h-3.5 w-3.5" />
                             ) : (
                               <CheckCircle2 className="h-3.5 w-3.5" />
@@ -282,7 +281,7 @@ export default function HubAutomacoesPage() {
                           </span>
                           <span className="inline-flex items-center gap-1 rounded-full bg-[#F5F7FA] px-2.5 py-1 text-[11px] font-bold text-[#475467]">
                             <Clock3 className="h-3.5 w-3.5" />
-                            Atualiza hoje: {automationsUpdatingToday > 0 && automation.nextUpdateAt && automation.nextUpdateAt >= nowTs && automation.nextUpdateAt <= nowTs + 24 * 60 * 60 * 1000 ? 'Sim' : 'Não'}
+                            Atualiza hoje: {automation.nextUpdateAt && automation.nextUpdateAt >= nowTs && automation.nextUpdateAt <= nowTs + 24 * 60 * 60 * 1000 ? 'Sim' : 'Não'}
                           </span>
                         </div>
                       </button>
@@ -302,7 +301,7 @@ export default function HubAutomacoesPage() {
                             <PlayCircle className="h-3.5 w-3.5" />
                           ) : runtime.icon === 'paused' ? (
                             <PauseCircle className="h-3.5 w-3.5" />
-                          ) : runtime.icon === 'inactive' ? (
+                          ) : runtime.icon === 'inactive' || runtime.icon === 'overdue' ? (
                             <AlertCircle className="h-3.5 w-3.5" />
                           ) : (
                             <CheckCircle2 className="h-3.5 w-3.5" />
