@@ -40,13 +40,9 @@ export const PRIMARY_HEADER_MENU_GROUPS: HeaderMenuGroup[] = [
     ],
   },
   {
-    label: 'Conteúdos',
-    href: '/conteudos',
-    submenu: [
-      { label: 'Além do Algoritmo', href: '/conteudos/alem-do-algoritmo' },
-      { label: 'Materias de Apoio', href: '/conteudos/materias-de-apoio' },
-      { label: 'FAQ', href: '/conteudos/faq' },
-    ],
+    label: 'Além do Algoritmo',
+    href: '/conteudos/alem-do-algoritmo',
+    submenu: [],
   },
   {
     label: 'A NeuroAds',
@@ -55,6 +51,7 @@ export const PRIMARY_HEADER_MENU_GROUPS: HeaderMenuGroup[] = [
       { label: 'Sobre', href: '/a-neuroads/sobre' },
       { label: 'Nosso Método', href: '/a-neuroads/nosso-metodo' },
       { label: 'Implantação de Agentes IA', href: '/servicos/implantacao-de-agentes-ia' },
+      { label: 'FAQ', href: '/conteudos/faq' },
       { label: 'Contato', href: '/a-neuroads/contato' },
     ],
   },
@@ -145,12 +142,14 @@ export default function PrimaryTopMenu({
                   onFocus={() => openMenuWithIntent(group.label)}
                 >
                   {group.label}
-                  <ChevronDown size={13} className={`text-[#8a93a3] transition ${isOpen ? 'rotate-180' : ''}`} />
+                  {group.submenu.length > 0 && (
+                    <ChevronDown size={13} className={`text-[#8a93a3] transition ${isOpen ? 'rotate-180' : ''}`} />
+                  )}
                 </Link>
 
                 <div
                   className={`absolute left-1/2 top-full z-[130] w-[320px] -translate-x-1/2 pt-2 transition duration-150 ${
-                    isOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-1 opacity-0'
+                    isOpen && group.submenu.length > 0 ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-1 opacity-0'
                   }`}
                   onMouseEnter={clearMenuCloseTimeout}
                   onMouseLeave={() => closeMenuWithDelay(220)}
@@ -204,7 +203,7 @@ export default function PrimaryTopMenu({
             href="/#pricing"
             className="hidden items-center gap-2 rounded-full border border-[#d7dce5] bg-white px-5 py-2.5 text-[12px] font-extrabold text-[#2b3240] lg:inline-flex"
           >
-            Valores & Recursos
+            Teste por 14 dias
           </Link>
 
           {onSpecialistClick ? (
@@ -270,16 +269,18 @@ export default function PrimaryTopMenu({
                   >
                     {group.label}
                   </Link>
-                  <button
-                    type="button"
-                    onClick={() => setOpenMobileGroup(isGroupOpen ? null : group.label)}
-                    className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#dde4ee] text-[#7d889d]"
-                    aria-label={`Abrir submenu ${group.label}`}
-                  >
-                    <ChevronDown size={15} className={`shrink-0 transition ${isGroupOpen ? 'rotate-180' : ''}`} />
-                  </button>
+                  {group.submenu.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setOpenMobileGroup(isGroupOpen ? null : group.label)}
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#dde4ee] text-[#7d889d]"
+                      aria-label={`Abrir submenu ${group.label}`}
+                    >
+                      <ChevronDown size={15} className={`shrink-0 transition ${isGroupOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                  )}
                 </div>
-                {isGroupOpen ? (
+                {isGroupOpen && group.submenu.length > 0 ? (
                   <div className="border-t border-[#edf1f7] px-2 py-2">
                     {group.submenu.map((item) => {
                       if (isCategorySubmenuItem(item)) {
@@ -329,7 +330,7 @@ export default function PrimaryTopMenu({
             onClick={() => setIsMobileMenuOpen(false)}
             className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d8deea] bg-white px-4 py-2.5 text-[12px] font-extrabold text-[#2b3240]"
           >
-            Valores & Recursos
+            Teste por 14 dias
           </Link>
 
           {onRequestDemoClick ? (

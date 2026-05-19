@@ -233,130 +233,130 @@ export default function LuccaHubSupportWidget() {
       </button>
 
       {isOpen ? (
-        <div className={
-          `fixed z-[320] ${isMaximized ? 'inset-0 flex items-center justify-center' : 'bottom-24 right-6'} w-[94vw] ${isMaximized ? 'max-w-3xl' : 'max-w-[430px]'} rounded-[24px] border border-[#E8ECF1] bg-white shadow-[0_24px_50px_rgba(15,23,42,0.25)]`
-        }>
-          <div className={`flex items-center justify-between rounded-t-[24px] border-b border-[#E8ECF1] bg-[#FCFCFD] px-4 py-3 ${isMaximized ? 'rounded-tl-lg rounded-tr-lg' : ''}`}>
-            <div className="flex min-w-0 items-center gap-3">
-              <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-[#DDE4F0] bg-[#EAF1FF]">
-                <Image
-                  src="/images/Avatar_Lucca_Novo.jpeg"
-                  alt="Avatar do Lucca"
-                  fill
-                  sizes="44px"
-                  className="object-cover"
-                  priority
-                />
-              </div>
-              <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.12em] text-primary">Lucca | Gestão & Estratégia</p>
-                <p className="text-xs text-[#4B5563]">Agente de Operações IA</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={handleToggleMaximize}
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F3F4F6]"
-                aria-label={isMaximized ? 'Restaurar janela' : 'Maximizar chat'}
-              >
-                {isMaximized ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setIsOpen(false);
-                  setIsMaximized(false);
-                }}
-                className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F3F4F6]"
-                aria-label="Fechar chat"
-              >
-                <X size={14} />
-              </button>
-            </div>
-          </div>
-
-          <div className={`max-h-[420px] ${isMaximized ? 'max-h-[70vh]' : ''} space-y-3 overflow-y-auto px-4 py-4`}>
-            {messages.map((message) => (
-              <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div
-                  className={`max-w-[86%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
-                    message.role === 'user' ? 'bg-[#111827] text-white' : 'border border-[#E5E7EB] bg-white text-[#1F2937]'
-                  }`}
-                >
-                  {message.text ? <p>{message.text}</p> : null}
-                  {message.attachments && message.attachments.length > 0 ? (
-                    <div className="mt-2 flex flex-col gap-2">
-                      {message.attachments.map((att) => (
-                        <div key={`${message.id}-${att.name}`} className="flex items-center gap-2">
-                          {att.type === 'audio' ? (
-                            <audio controls src={att.url} className="max-w-[220px]" />
-                          ) : (
-                            <a href={att.url} target="_blank" rel="noreferrer" className="text-xs text-primary underline">
-                              {att.name}
-                            </a>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  ) : null}
-                  {message.links && message.links.length > 0 ? (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {message.links.map((link) => (
-                        <a
-                          key={`${message.id}-${link.href}`}
-                          href={link.href}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="rounded-full border border-[#FFD4B8] bg-[#FFF4EC] px-3 py-1 text-xs font-bold text-primary"
-                        >
-                          {link.label}
-                        </a>
-                      ))}
-                    </div>
-                  ) : null}
+        <div className={`${isMaximized ? 'fixed inset-0 z-[320] flex items-center justify-center bg-black/10 p-6' : 'fixed bottom-24 right-6 z-[320]'}`}>
+          <div className={`relative ${isMaximized ? 'w-[calc(100vw-3rem)] max-w-[1100px] h-[calc(100vh-3rem)] max-h-[calc(100vh-3rem)]' : 'w-[94vw] max-w-[430px]'} rounded-[24px] border border-[#E8ECF1] bg-white shadow-[0_24px_50px_rgba(15,23,42,0.25)] ${isMaximized ? 'flex flex-col overflow-hidden' : ''}`}>
+            <div className={`flex items-center justify-between rounded-t-[24px] border-b border-[#E8ECF1] bg-[#FCFCFD] px-5 py-4 ${isMaximized ? 'rounded-tl-[24px] rounded-tr-[24px]' : ''}`}>
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full border border-[#DDE4F0] bg-[#EAF1FF]">
+                  <Image
+                    src="/images/Avatar_Lucca_Novo.jpeg"
+                    alt="Avatar do Lucca"
+                    fill
+                    sizes="44px"
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+                <div>
+                  <p className="text-[11px] font-black uppercase tracking-[0.12em] text-primary">Lucca | Gestão & Estratégia</p>
+                  <p className="text-xs text-[#4B5563]">Agente de Operações IA</p>
                 </div>
               </div>
-            ))}
-          </div>
-          <div className="rounded-b-[24px] border-t border-[#E8ECF1] bg-[#FCFCFD] px-4 py-3">
-            <input ref={fileInputRef} onChange={handleFileChange} type="file" className="hidden" />
-            <div className="flex items-center gap-2 rounded-full border border-[#E5E7EB] bg-white px-3 py-2">
-              <button type="button" onClick={handleAttachmentClick} className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#6B7280] hover:bg-[#F3F4F6]" aria-label="Anexar arquivo">
-                <Paperclip size={14} />
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  if (isRecording) stopRecording();
-                  else startRecording();
-                }}
-                className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${isRecording ? 'bg-red-500 text-white' : 'text-[#6B7280] hover:bg-[#F3F4F6]'}`}
-                aria-label={isRecording ? 'Parar gravação' : 'Gravar áudio'}
-              >
-                {isRecording ? <StopCircle size={14} /> : <Mic size={14} />}
-              </button>
-              <input
-                value={input}
-                onChange={(event) => setInput(event.target.value)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault();
-                    handleSend();
-                  }
-                }}
-                placeholder="Pergunte ao Lucca sobre sua operação..."
-                className="flex-1 bg-transparent text-sm text-[#1F2937] outline-none placeholder:text-[#9CA3AF]"
-              />
-              <button
-                type="button"
-                onClick={handleSend}
-                disabled={loading}
-                className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#3F66FF] text-white disabled:opacity-60"
-                aria-label="Enviar mensagem"
-              >
-                <Send size={13} />
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleToggleMaximize}
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F3F4F6]"
+                  aria-label={isMaximized ? 'Restaurar janela' : 'Maximizar chat'}
+                >
+                  {isMaximized ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsOpen(false);
+                    setIsMaximized(false);
+                  }}
+                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#E5E7EB] text-[#6B7280] hover:bg-[#F3F4F6]"
+                  aria-label="Fechar chat"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            </div>
+
+            <div className={`${isMaximized ? 'flex-1 min-h-0 overflow-y-auto' : 'max-h-[420px] overflow-y-auto'} space-y-4 px-5 py-5`}>
+              {messages.map((message) => (
+                <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    className={`max-w-[86%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
+                      message.role === 'user' ? 'bg-[#111827] text-white' : 'border border-[#E5E7EB] bg-white text-[#1F2937]'
+                    }`}
+                  >
+                    {message.text ? <p>{message.text}</p> : null}
+                    {message.attachments && message.attachments.length > 0 ? (
+                      <div className="mt-2 flex flex-col gap-2">
+                        {message.attachments.map((att) => (
+                          <div key={`${message.id}-${att.name}`} className="flex items-center gap-2">
+                            {att.type === 'audio' ? (
+                              <audio controls src={att.url} className="max-w-[220px]" />
+                            ) : (
+                              <a href={att.url} target="_blank" rel="noreferrer" className="text-xs text-primary underline">
+                                {att.name}
+                              </a>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    ) : null}
+                    {message.links && message.links.length > 0 ? (
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {message.links.map((link) => (
+                          <a
+                            key={`${message.id}-${link.href}`}
+                            href={link.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="rounded-full border border-[#FFD4B8] bg-[#FFF4EC] px-3 py-1 text-xs font-bold text-primary"
+                          >
+                            {link.label}
+                          </a>
+                        ))}
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="rounded-b-[24px] border-t border-[#E8ECF1] bg-[#FCFCFD] px-5 py-4">
+              <input ref={fileInputRef} onChange={handleFileChange} type="file" className="hidden" />
+              <div className="flex items-center gap-3 rounded-full border border-[#E5E7EB] bg-white px-3 py-3">
+                <button type="button" onClick={handleAttachmentClick} className="inline-flex h-8 w-8 items-center justify-center rounded-full text-[#6B7280] hover:bg-[#F3F4F6]" aria-label="Anexar arquivo">
+                  <Paperclip size={14} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (isRecording) stopRecording();
+                    else startRecording();
+                  }}
+                  className={`inline-flex h-8 w-8 items-center justify-center rounded-full ${isRecording ? 'bg-red-500 text-white' : 'text-[#6B7280] hover:bg-[#F3F4F6]'}`}
+                  aria-label={isRecording ? 'Parar gravação' : 'Gravar áudio'}
+                >
+                  {isRecording ? <StopCircle size={14} /> : <Mic size={14} />}
+                </button>
+                <input
+                  value={input}
+                  onChange={(event) => setInput(event.target.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') {
+                      event.preventDefault();
+                      handleSend();
+                    }
+                  }}
+                  placeholder="Pergunte ao Lucca sobre sua operação..."
+                  className="flex-1 bg-transparent text-sm text-[#1F2937] outline-none placeholder:text-[#9CA3AF]"
+                />
+                <button
+                  type="button"
+                  onClick={handleSend}
+                  disabled={loading}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#3F66FF] text-white disabled:opacity-60"
+                  aria-label="Enviar mensagem"
+                >
+                  <Send size={13} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
