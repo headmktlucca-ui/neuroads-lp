@@ -464,12 +464,6 @@ body::before { content: none; }
     @apply bg-clip-text text-transparent bg-gradient-to-r from-text-main to-text-muted;
   }
 
-  .grad-text-animated {
-    @apply font-bold bg-clip-text text-transparent bg-[size:200%_auto];
-    background-image: linear-gradient(to right, #B33600, #FF8533, #B33600);
-    animation: textGradientLoop 3s linear infinite;
-  }
-
   @keyframes textGradientLoop {
     0% { background-position: 0% center; }
     100% { background-position: 200% center; }

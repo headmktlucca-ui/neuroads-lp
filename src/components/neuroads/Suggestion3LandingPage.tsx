@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { agents as catalogAgents, type Agent as CatalogAgent } from '../../data/agents';
 import LuccaSpecialistChatModal from './LuccaSpecialistChatModal';
+import { PRIMARY_HEADER_MENU_GROUPS } from './PrimaryTopMenu';
 import ValuesResourcesSection from './ValuesResourcesSection';
 
 const quickPoints = [
@@ -233,48 +234,7 @@ function isCategorySubmenuItem(item: HeaderSubmenuItem): item is HeaderMenuCateg
   return 'items' in item;
 }
 
-const headerMenuGroups: HeaderMenuGroup[] = [
-  {
-    label: 'Agentes IA',
-    href: '/agentes-ia',
-    submenu: [
-      { label: 'Visão Geral dos Agentes', href: '/agentes-ia/visao-geral-dos-agentes' },
-      { label: 'Agentes de Aquisição', href: '/agentes-ia/agentes-de-aquisicao' },
-      { label: 'Agentes de Conversão', href: '/agentes-ia/agentes-de-conversao' },
-      { label: 'Agentes de Inteligência de Dados', href: '/agentes-ia/agentes-de-inteligencia-de-dados' },
-    ],
-  },
-  {
-    label: 'Conteúdos',
-    href: '/conteudos',
-    submenu: [
-      { label: 'Além do Algoritmo', href: '/conteudos/alem-do-algoritmo' },
-      { label: 'Materias de Apoio', href: '/conteudos/materias-de-apoio' },
-      { label: 'FAQ', href: '/conteudos/faq' },
-    ],
-  },
-  {
-    label: 'A NeuroAds',
-    href: '/a-neuroads',
-    submenu: [
-      { label: 'Sobre', href: '/a-neuroads/sobre' },
-      { label: 'Nosso Método', href: '/a-neuroads/nosso-metodo' },
-      { label: 'Implantação de Agentes IA', href: '/servicos/implantacao-de-agentes-ia' },
-      { label: 'Contato', href: '/a-neuroads/contato' },
-    ],
-  },
-  {
-    label: 'Oportunidades',
-    href: '/servicos',
-    submenu: [
-      { label: 'Mercado Imobiliário', href: '/servicos/mercado-imobiliario' },
-      { label: 'Saúde & Clínicas', href: '/servicos/saude-clinicas' },
-      { label: 'E-commerce & Varejo', href: '/servicos/e-commerce-varejo' },
-      { label: 'Serviços Profissionais', href: '/servicos/servicos-profissionais' },
-      { label: 'Educação Digital', href: '/servicos/educacao-digital' },
-    ],
-  },
-];
+const headerMenuGroups: HeaderMenuGroup[] = PRIMARY_HEADER_MENU_GROUPS;
 
 function Sparkline({ d }: { d: string }) {
   return (
@@ -448,12 +408,14 @@ export default function Suggestion3LandingPage() {
                     onFocus={() => openMenuWithIntent(group.label)}
                   >
                     {group.label}
-                    <ChevronDown size={13} className={`text-[#8a93a3] transition ${isOpen ? 'rotate-180' : ''}`} />
+                    {group.submenu.length > 0 && (
+                      <ChevronDown size={13} className={`text-[#8a93a3] transition ${isOpen ? 'rotate-180' : ''}`} />
+                    )}
                   </Link>
 
                   <div
                     className={`absolute left-1/2 top-full z-[130] w-[320px] -translate-x-1/2 pt-2 transition duration-150 ${
-                      isOpen ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-1 opacity-0'
+                      isOpen && group.submenu.length > 0 ? 'visible translate-y-0 opacity-100' : 'invisible -translate-y-1 opacity-0'
                     }`}
                     onMouseEnter={clearMenuCloseTimeout}
                     onMouseLeave={() => closeMenuWithDelay(220)}
