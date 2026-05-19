@@ -1179,14 +1179,32 @@ export default function Suggestion3LandingPage() {
             <Image src="/images/logo2026.png" alt="NeuroAds" width={150} height={32} className="h-8 w-auto" />
             <p className="mt-3 max-w-[280px] text-[13px] text-[#707887]">IA agêntica para marketing de alta performance.</p>
             <div className="mt-4 flex items-center gap-3 text-[#525b6b]">
-              <a href="#" className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#e5e8ee] bg-white">
-                <span className="text-[11px] font-bold">in</span>
+              <a
+                href="https://www.linkedin.com/company/neuroads"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="LinkedIn"
+                className="inline-flex h-8 w-8 overflow-hidden rounded-lg border border-[#e5e8ee] bg-white"
+              >
+                <Image src="/images/linkedin-3d.png" alt="LinkedIn" width={32} height={32} className="h-full w-full object-cover" />
               </a>
-              <a href="#" className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#e5e8ee] bg-white">
-                <span className="text-[11px] font-bold">ig</span>
+              <a
+                href="https://www.instagram.com/neuroads.oficial/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Instagram"
+                className="inline-flex h-8 w-8 overflow-hidden rounded-lg border border-[#e5e8ee] bg-white"
+              >
+                <Image src="/images/instagram-final.png" alt="Instagram" width={32} height={32} className="h-full w-full object-cover" />
               </a>
-              <a href="#" className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#e5e8ee] bg-white">
-                <span className="text-[11px] font-bold">yt</span>
+              <a
+                href="https://www.youtube.com/@claudiomullermkt"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="YouTube"
+                className="inline-flex h-8 w-8 overflow-hidden rounded-lg border border-[#e5e8ee] bg-white"
+              >
+                <Image src="/images/youtube-final.png" alt="YouTube" width={32} height={32} className="h-full w-full object-cover" />
               </a>
             </div>
           </div>

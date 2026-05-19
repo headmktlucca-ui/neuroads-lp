@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { AlertTriangle, CheckCircle2, Link2, Sparkles, Target, TrendingUp } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Sparkles, Target, TrendingUp } from 'lucide-react';
 import { getLatestAgentReportsFromDb, saveAgentReportToDb } from '../../lib/agent-report-history';
 import { useAuth } from '../../context/AuthContext';
-import ChannelConnectionHelpTooltip from './ChannelConnectionHelpTooltip';
 
 type Props = {
   userId?: string | null;
@@ -29,6 +27,8 @@ type ConnectorState = Record<ChannelKey, ConnectorAuth>;
 type ProfileConnection = {
   isActive?: boolean;
   accessToken?: string;
+  accountId?: string;
+  loginCustomerId?: string;
 };
 
 type ProfileConnections = Record<string, ProfileConnection | undefined>;
@@ -96,18 +96,10 @@ type AlertItem = {
   action: string;
 };
 
-const CONNECTORS_KEY = (uid: string) => `neuroads_funnel_predictor_connectors_${uid}`;
-
 const CHANNEL_CONNECTION_KEY: Record<ChannelKey, string> = {
   googleAds: 'google_ads',
   metaAds: 'meta_ads',
   linkedinAds: 'linkedin_ads',
-};
-
-const CHANNEL_PROVIDER: Record<ChannelKey, string> = {
-  googleAds: 'google',
-  metaAds: 'meta',
-  linkedinAds: 'linkedin',
 };
 
 const EMPTY_CONNECTOR: ConnectorAuth = {
@@ -250,7 +242,6 @@ function buildMarkdownReport(payload: {
 }
 
 export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle, agentCategory }: Props) {
-  const searchParams = useSearchParams();
   const { profile } = useAuth();
 
   const [connectors, setConnectors] = useState<ConnectorState>(DEFAULT_CONNECTORS);
@@ -299,36 +290,22 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
   }, [profile]);
 
   useEffect(() => {
-    if (!userId) return;
-
-    const persisted = window.localStorage.getItem(CONNECTORS_KEY(userId));
-    let parsed = DEFAULT_CONNECTORS;
-
-    if (persisted) {
-      try {
-        const raw = JSON.parse(persisted) as Partial<ConnectorState>;
-        parsed = {
-          googleAds: { ...EMPTY_CONNECTOR, ...(raw.googleAds ?? {}) },
-          metaAds: { ...EMPTY_CONNECTOR, ...(raw.metaAds ?? {}) },
-          linkedinAds: { ...EMPTY_CONNECTOR, ...(raw.linkedinAds ?? {}) },
-        };
-      } catch {
-        parsed = DEFAULT_CONNECTORS;
-      }
-    }
-
     const hydrated: ConnectorState = {
       googleAds: {
-        ...parsed.googleAds,
+        ...EMPTY_CONNECTOR,
         oauthConnected: hasOAuthConnection(profileConnections[getConnectionKey('googleAds')]),
+        accountId: profileConnections[getConnectionKey('googleAds')]?.accountId?.trim() ?? '',
+        loginCustomerId: profileConnections[getConnectionKey('googleAds')]?.loginCustomerId?.trim() ?? '',
       },
       metaAds: {
-        ...parsed.metaAds,
+        ...EMPTY_CONNECTOR,
         oauthConnected: hasOAuthConnection(profileConnections[getConnectionKey('metaAds')]),
+        accountId: profileConnections[getConnectionKey('metaAds')]?.accountId?.trim() ?? '',
       },
       linkedinAds: {
-        ...parsed.linkedinAds,
+        ...EMPTY_CONNECTOR,
         oauthConnected: hasOAuthConnection(profileConnections[getConnectionKey('linkedinAds')]),
+        accountId: profileConnections[getConnectionKey('linkedinAds')]?.accountId?.trim() ?? '',
       },
     };
 
@@ -342,6 +319,7 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
     setConnectors(hydrated);
 
     const loadHistoryCount = async () => {
+      if (!userId) return;
       const entries = await getLatestAgentReportsFromDb(userId, agentSlug, 10);
       setHistoryCount(entries.length);
     };
@@ -355,76 +333,9 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
     }
   }, [profileContext.inferredModel]);
 
-  useEffect(() => {
-    const oauthError = searchParams.get('google_ads_error') || searchParams.get('connector_auth_error');
-    if (oauthError) {
-      setError(`Falha na autenticação do canal: ${oauthError}.`);
-    }
-  }, [searchParams]);
-
-  const persistConnectors = (next: ConnectorState) => {
-    if (!userId) return;
-    window.localStorage.setItem(CONNECTORS_KEY(userId), JSON.stringify(next));
-  };
-
-  const setConnectorField = (key: ChannelKey, field: keyof ConnectorAuth, value: string | boolean | number) => {
-    setConnectors((prev) => {
-      const next = {
-        ...prev,
-        [key]: {
-          ...prev[key],
-          [field]: value,
-        },
-      };
-      persistConnectors(next);
-      return next;
-    });
-  };
-
-  const connectChannel = (key: ChannelKey) => {
-    setError(null);
-    const current = connectors[key];
-
-    if (!current.oauthConnected) {
-      setError(`Autentique ${labelFor(key)} com o mesmo e-mail logado antes de ativar este canal.`);
-      return;
-    }
-    if (!current.accountId.trim()) {
-      setError(`Informe o ID da conta para ativar ${labelFor(key)}.`);
-      return;
-    }
-
-    setConnectors((prev) => {
-      const next = {
-        ...prev,
-        [key]: {
-          ...prev[key],
-          isActive: true,
-          connectedAt: Date.now(),
-        },
-      };
-      persistConnectors(next);
-      return next;
-    });
-  };
-
-  const disconnectChannel = (key: ChannelKey) => {
-    setConnectors((prev) => {
-      const next = {
-        ...prev,
-        [key]: {
-          ...prev[key],
-          isActive: false,
-        },
-      };
-      persistConnectors(next);
-      return next;
-    });
-  };
-
   const runExtraction = async () => {
     if (!activeChannels.length) {
-      setError('Ative ao menos 1 canal autenticado antes de extrair indicadores.');
+      setError('Nenhum canal ativo encontrado. Configure os conectores na janela Conectores para extrair indicadores.');
       return;
     }
     if (!dateFrom || !dateTo) {
@@ -441,13 +352,13 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
         const connection = profileConnections[getConnectionKey(key)];
         const accessToken = connection?.accessToken?.trim() || '';
         if (!accessToken) {
-          throw new Error(`A autenticação de ${labelFor(key)} expirou. Reconecte o canal para continuar.`);
+          throw new Error(`A autenticação de ${labelFor(key)} está inativa. Reative esse canal na janela Conectores para continuar.`);
         }
         return {
           platform: key,
           accessToken,
-          accountId: connectors[key].accountId.trim(),
-          loginCustomerId: connectors[key].loginCustomerId?.trim() || undefined,
+          accountId: connection?.accountId?.trim() || '',
+          loginCustomerId: connection?.loginCustomerId?.trim() || undefined,
         };
       });
 
@@ -836,22 +747,10 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
     <div className="col-span-1 rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_24px_52px_-30px_rgba(255,107,0,0.42)]">
       <div className="rounded-[28px] bg-white/85 p-[1px]">
         <div className="rounded-[26px] border border-[#FFF1E8] bg-white p-6 md:p-8 space-y-6">
-          <header className="rounded-2xl border border-[#E4EAF2] bg-[#FBFCFF] p-5">
-            <p className="text-xs font-black uppercase tracking-[0.12em] text-primary">Radar Preditivo da Operação Comercial</p>
-            <h3 className="mt-1 text-xl md:text-2xl font-black text-text-main">Preditor de Funil</h3>
-            <p className="mt-2 text-sm text-text-muted">
-              Conecta sinais de mídia e funil para antecipar riscos, gargalos e oportunidades de crescimento com previsibilidade financeira.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              <span className="rounded-full border border-[#DCE8FF] bg-[#F5F9FF] px-3 py-1 text-xs font-semibold text-[#1D4ED8]">Empresa: {profileContext.companyName}</span>
-              <span className="rounded-full border border-[#FFE1CF] bg-[#FFF7F1] px-3 py-1 text-xs font-semibold text-[#C2410C]">Segmento: {profileContext.segment}</span>
-            </div>
-          </header>
-
           <section className="rounded-2xl border border-[#E4EAF2] bg-[#FBFCFF] p-5">
             <h3 className="text-sm font-black text-text-main">1. Inteligência integrada multicanal</h3>
             <p className="mt-1 text-sm text-text-muted">
-              Ative os canais para extração dos sinais de performance. As demais fontes (CRM, WhatsApp, E-mail, LP, BI, ERP) entram no radar como próximas integrações estratégicas.
+              Esta página apenas valida status. Ative ou reative conexões exclusivamente na janela <strong>Conectores</strong>. As demais fontes (CRM, WhatsApp, E-mail, LP, BI, ERP) entram no radar como próximas integrações estratégicas.
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2">
@@ -862,73 +761,29 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
               ))}
             </div>
 
-            <div className="mt-4 space-y-4">
+            <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
               {(Object.keys(connectors) as ChannelKey[]).map((key) => {
-                const oauthHref = `/api/auth/connectors/${key}/start?provider=${CHANNEL_PROVIDER[key]}&next=/hub/agente/preditor-de-funil`;
                 return (
-                  <div key={key} className="rounded-xl border border-[#E1E7F0] bg-white p-4">
+                  <div
+                    key={key}
+                    className={`rounded-xl border p-4 ${
+                      connectors[key].isActive
+                        ? 'border-[#BDE8CF] bg-[#F2FFF7]'
+                        : 'border-[#FECACA] bg-[#FFF1F2]'
+                    }`}
+                  >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <p className="text-sm font-black text-text-main">{labelFor(key)}</p>
-                      {connectors[key].isActive ? (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-[#BDE8CF] bg-[#F2FFF7] px-3 py-1 text-xs font-bold text-[#0A9D57]">
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          Canal ativo
-                        </span>
-                      ) : connectors[key].oauthConnected ? (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-[#FCD34D] bg-[#FFFBEB] px-3 py-1 text-xs font-bold text-[#92400E]">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          Autenticado (pendente ativação)
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-[#D1D5DB] bg-white px-3 py-1 text-xs font-bold text-[#6B7280]">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          Não autenticado
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <input
-                        value={connectors[key].accountId}
-                        onChange={(event) => setConnectorField(key, 'accountId', event.target.value)}
-                        placeholder={key === 'googleAds' ? 'Customer ID' : key === 'metaAds' ? 'Ad Account ID' : 'Sponsored Account ID'}
-                        className="rounded-xl border border-[#D6DEE8] bg-white px-3 py-2 text-sm text-text-main"
-                      />
-                      <input
-                        value={connectors[key].loginCustomerId || ''}
-                        onChange={(event) => setConnectorField(key, 'loginCustomerId', event.target.value)}
-                        placeholder={key === 'googleAds' ? 'Login Customer ID (MCC) opcional' : 'Autenticação via e-mail logado'}
-                        disabled={key !== 'googleAds'}
-                        className="rounded-xl border border-[#D6DEE8] bg-white px-3 py-2 text-sm text-text-main disabled:bg-[#F8FAFC] disabled:text-[#98A2B3]"
-                      />
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap items-center gap-2">
-                      <a
-                        href={oauthHref}
-                        className="inline-flex h-9 items-center gap-2 rounded-full border border-[#D9E2F4] bg-[#EEF4FF] px-4 text-xs font-bold uppercase tracking-wide text-[#1D4ED8]"
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-bold ${
+                          connectors[key].isActive
+                            ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]'
+                            : 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]'
+                        }`}
                       >
-                        <Link2 className="h-3.5 w-3.5" />
-                        Autenticar canal
-                      </a>
-                      <ChannelConnectionHelpTooltip channel={key} />
-                      {!connectors[key].isActive ? (
-                        <button
-                          type="button"
-                          onClick={() => connectChannel(key)}
-                          className="inline-flex h-9 items-center rounded-full bg-[#FF6B00] px-4 text-xs font-bold uppercase tracking-wide text-white shadow-[0_8px_18px_rgba(255,107,0,0.28)]"
-                        >
-                          Ativar canal
-                        </button>
-                      ) : (
-                        <button
-                          type="button"
-                          onClick={() => disconnectChannel(key)}
-                          className="inline-flex h-9 items-center rounded-full border border-[#E4E7EC] bg-white px-4 text-xs font-bold uppercase tracking-wide text-[#475467]"
-                        >
-                          Desativar canal
-                        </button>
-                      )}
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        {connectors[key].isActive ? 'ATIVA' : 'INATIVA'}
+                      </span>
                     </div>
                   </div>
                 );
@@ -1313,4 +1168,3 @@ function PredictionCard({ title, probability, detail }: { title: string; probabi
     </article>
   );
 }
-

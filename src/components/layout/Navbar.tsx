@@ -1628,11 +1628,14 @@ export default function Navbar() {
                             <div className="flex items-center gap-2">
                               <p className="truncate text-[13px] font-black leading-tight text-text-main">{connector.name}</p>
                               <span
-                                className={`inline-flex h-2.5 w-2.5 shrink-0 rounded-full ${
-                                  connectorStatus[connector.key] ? 'bg-[#0A9D57]' : 'bg-[#D0D5DD]'
+                                className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${
+                                  connectorStatus[connector.key]
+                                    ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]'
+                                    : 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]'
                                 }`}
-                                aria-hidden
-                              />
+                              >
+                                {connectorStatus[connector.key] ? 'ATIVA' : 'INATIVA'}
+                              </span>
                             </div>
                             <p className="mt-1 truncate text-[11px] leading-tight text-text-muted">{connector.source} • {connector.usedBy}</p>
                           </div>
@@ -1657,7 +1660,7 @@ export default function Navbar() {
                               className={`inline-flex h-8 min-w-[120px] items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
                                 connectorStatus[connector.key]
                                   ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]'
-                                  : 'border-[#D1D5DB] bg-white text-[#6B7280]'
+                                  : 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]'
                               }`}
                             >
                               {connectorStatus[connector.key] ? (

@@ -2,60 +2,24 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import {
+  PRIMARY_HEADER_MENU_GROUPS,
+  type HeaderMenuCategoryItem,
+  type HeaderSubmenuItem,
+} from './PrimaryTopMenu';
+
+function isCategorySubmenuItem(item: HeaderSubmenuItem): item is HeaderMenuCategoryItem {
+  return 'items' in item;
+}
 
 export default function Footer() {
   const pathname = usePathname();
   const isHubSection = pathname?.startsWith('/hub');
 
-  const renderSocialIcon = (name: string) => {
-    if (name === 'Instagram') {
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#E1306C]" fill="none" aria-hidden="true">
-          <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="1.8" />
-          <circle cx="12" cy="12" r="4.2" stroke="currentColor" strokeWidth="1.8" />
-          <circle cx="17.4" cy="6.6" r="1.2" fill="currentColor" />
-        </svg>
-      );
-    }
-
-    if (name === 'LinkedIn') {
-      return (
-        <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#0A66C2]" fill="currentColor" aria-hidden="true">
-          <path d="M6.8 8.6a1.8 1.8 0 1 1 0-3.6 1.8 1.8 0 0 1 0 3.6ZM5.3 10h3V19h-3v-9Zm5 0h2.9v1.2h.1c.4-.8 1.4-1.5 2.9-1.5 3.1 0 3.7 2 3.7 4.7V19h-3v-4c0-1 0-2.3-1.4-2.3s-1.6 1.1-1.6 2.2V19h-3v-9Z" />
-        </svg>
-      );
-    }
-
-    return (
-      <svg viewBox="0 0 24 24" className="w-4 h-4 text-[#FF0000]" fill="currentColor" aria-hidden="true">
-        <path d="M21.6 8.8a3 3 0 0 0-2.1-2.1C17.6 6.2 12 6.2 12 6.2s-5.6 0-7.5.5a3 3 0 0 0-2.1 2.1C2 10.7 2 12 2 12s0 1.3.4 3.2a3 3 0 0 0 2.1 2.1c1.9.5 7.5.5 7.5.5s5.6 0 7.5-.5a3 3 0 0 0 2.1-2.1c.4-1.9.4-3.2.4-3.2s0-1.3-.4-3.2ZM10.2 15.2v-6.4L15.8 12l-5.6 3.2Z" />
-      </svg>
-    );
-  };
-
   const socialLinks = [
-    { name: 'Instagram', href: 'https://www.instagram.com/neuroads.oficial/' },
-    { name: 'LinkedIn', href: 'https://www.linkedin.com/company/neuroads' },
-    { name: 'YouTube', href: 'https://www.youtube.com/@claudiomullermkt' }
-  ];
-
-  const hubFooterGroups = [
-    {
-      title: 'Hub Estratégico',
-      links: [
-        { label: 'Hub Estratégico', href: '/hub' },
-      ],
-    },
-    {
-      title: 'Laboratório de Agentes',
-      links: [
-        { label: 'Laboratório de Agentes', href: '/hub/laboratorio-agentes?agente=auditor-de-desperdicio' },
-        { label: 'Performance', href: '/hub/performance' },
-        { label: 'Criativos', href: '/hub/criativos' },
-        { label: 'Técnico', href: '/hub/tecnico' },
-        { label: 'Inteligência', href: '/hub/inteligencia' },
-      ],
-    },
+    { name: 'LinkedIn', href: 'https://www.linkedin.com/company/neuroads', iconSrc: '/images/linkedin-3d.png' },
+    { name: 'Instagram', href: 'https://www.instagram.com/neuroads.oficial/', iconSrc: '/images/instagram-final.png' },
+    { name: 'YouTube', href: 'https://www.youtube.com/@claudiomullermkt', iconSrc: '/images/youtube-final.png' }
   ];
 
   const defaultFooterGroups = [
@@ -75,8 +39,78 @@ export default function Footer() {
       ],
     },
   ];
+  if (isHubSection) {
+    return (
+      <footer className="border-t border-[#e8edf3] bg-[#f5f6f8] px-6 py-12">
+        <div className="mx-auto max-w-[1260px]">
+          <div className="grid gap-8 border-b border-[#eceef2] pb-8 md:grid-cols-2 xl:grid-cols-[1.25fr_repeat(4,minmax(0,1fr))]">
+            <div>
+              <Link href="/" className="inline-flex items-center">
+                <Image src="/images/logo2026.png" alt="NeuroAds Logo" width={176} height={44} className="h-9 w-auto object-contain" />
+              </Link>
+              <p className="mt-3 max-w-[280px] text-[13px] text-[#5f697b]">IA agêntica para marketing de alta performance.</p>
+              <div className="mt-4 flex items-center gap-3">
+                {socialLinks.map((social) => (
+                  <a
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.name}
+                    className="inline-flex h-9 w-9 overflow-hidden rounded-full border border-[#dce2ec] bg-white"
+                  >
+                    <Image src={social.iconSrc} alt={social.name} width={36} height={36} className="h-full w-full object-cover" />
+                  </a>
+                ))}
+              </div>
+            </div>
 
-  const footerGroups = isHubSection ? hubFooterGroups : defaultFooterGroups;
+            {PRIMARY_HEADER_MENU_GROUPS.map((group) => (
+              <div key={group.label}>
+                <Link href={group.href} className="text-[14px] font-extrabold text-[#111827] transition hover:text-[#ff6a00]">
+                  {group.label}
+                </Link>
+                <ul className="mt-3 space-y-2 text-[13px] text-[#566379]">
+                  {group.submenu.map((item) => {
+                    if (isCategorySubmenuItem(item)) {
+                      return (
+                        <li key={item.label}>
+                          <p className="text-[11px] font-extrabold uppercase tracking-[0.08em] text-[#ff6a00]">{item.label}</p>
+                          <div className="mt-1.5 space-y-1.5 pl-2">
+                            {item.items.map((nestedItem) => (
+                              <Link key={nestedItem.href} href={nestedItem.href} className="block transition hover:text-[#ff6a00]">
+                                {nestedItem.label}
+                              </Link>
+                            ))}
+                          </div>
+                        </li>
+                      );
+                    }
+
+                    return (
+                      <li key={item.href}>
+                        <Link href={item.href} className="transition hover:text-[#ff6a00]">
+                          {item.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-4">
+            <p className="text-xs text-[#8c93a0]">© 2026 NeuroAds · Claudio Müller. Todos os direitos reservados.</p>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold uppercase tracking-[0.1em] text-[#8c93a0]">Powered by</span>
+              <span className="text-[11px] font-extrabold uppercase tracking-[0.2em] text-primary">Lucca.os</span>
+            </div>
+          </div>
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <footer className="bg-white/65 backdrop-blur-sm py-20 px-6 border-t border-border">
@@ -105,21 +139,25 @@ export default function Footer() {
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={social.name}
-                    className="w-9 h-9 bg-white border border-border rounded-full flex items-center justify-center hover:border-primary transition-all"
+                    className="w-9 h-9 overflow-hidden rounded-xl border border-border bg-white transition-all hover:border-primary"
                   >
-                    {renderSocialIcon(social.name)}
+                    <Image
+                      src={social.iconSrc}
+                      alt={social.name}
+                      width={36}
+                      height={36}
+                      className="h-full w-full object-cover"
+                    />
                   </a>
                 );
               })}
             </div>
           </div>
           
-          <div className={isHubSection ? 'grid grid-cols-1 sm:grid-cols-2 gap-12 sm:gap-20' : 'grid grid-cols-1 sm:grid-cols-2 gap-12 sm:gap-20'}>
-            {footerGroups.map((group) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 sm:gap-20">
+            {defaultFooterGroups.map((group) => (
               <div key={group.title}>
-                {!isHubSection ? (
-                  <h4 className="text-[11px] font-bold tracking-[0.2em] uppercase text-text-dim mb-6">{group.title}</h4>
-                ) : null}
+                <h4 className="text-[11px] font-bold tracking-[0.2em] uppercase text-text-dim mb-6">{group.title}</h4>
                 <ul className="flex flex-col gap-4 list-none m-0 p-0">
                   {group.links.map((link) => (
                     <li key={link.href}>

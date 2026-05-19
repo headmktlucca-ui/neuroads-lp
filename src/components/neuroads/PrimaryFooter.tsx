@@ -16,28 +16,28 @@ export default function PrimaryFooter() {
               href="https://www.linkedin.com/company/neuroads"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#e5e8ee] bg-white"
+              className="inline-flex h-8 w-8 overflow-hidden rounded-lg border border-[#e5e8ee] bg-white"
               aria-label="LinkedIn"
             >
-              <span className="text-[11px] font-bold">in</span>
+              <Image src="/images/linkedin-3d.png" alt="LinkedIn" width={32} height={32} className="h-full w-full object-cover" />
             </a>
             <a
               href="https://www.instagram.com/neuroads.oficial/"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#e5e8ee] bg-white"
+              className="inline-flex h-8 w-8 overflow-hidden rounded-lg border border-[#e5e8ee] bg-white"
               aria-label="Instagram"
             >
-              <span className="text-[11px] font-bold">ig</span>
+              <Image src="/images/instagram-final.png" alt="Instagram" width={32} height={32} className="h-full w-full object-cover" />
             </a>
             <a
               href="https://www.youtube.com/@claudiomullermkt"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#e5e8ee] bg-white"
+              className="inline-flex h-8 w-8 overflow-hidden rounded-lg border border-[#e5e8ee] bg-white"
               aria-label="YouTube"
             >
-              <span className="text-[11px] font-bold">yt</span>
+              <Image src="/images/youtube-final.png" alt="YouTube" width={32} height={32} className="h-full w-full object-cover" />
             </a>
           </div>
         </div>
@@ -87,4 +87,3 @@ export default function PrimaryFooter() {
     </footer>
   );
 }
-

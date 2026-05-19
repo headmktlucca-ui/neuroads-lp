@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { AlertTriangle, CheckCircle2, Link2, Sparkles, Target, TrendingDown } from 'lucide-react';
+import { CheckCircle2, Sparkles, Target, TrendingDown } from 'lucide-react';
 import { getLatestAgentReportsFromDb, saveAgentReportToDb } from '../../lib/agent-report-history';
 import { useAuth } from '../../context/AuthContext';
-import ChannelConnectionHelpTooltip from './ChannelConnectionHelpTooltip';
 
 type Props = {
   userId?: string | null;
@@ -29,6 +27,8 @@ type ConnectorState = Record<ChannelKey, ConnectorAuth>;
 type ProfileConnection = {
   isActive?: boolean;
   accessToken?: string;
+  accountId?: string;
+  loginCustomerId?: string;
 };
 
 type ProfileConnections = Record<string, ProfileConnection | undefined>;
@@ -58,18 +58,10 @@ type AuditInput = {
   wasteCutGoal: string;
 };
 
-const CONNECTORS_KEY = (uid: string) => `neuroads_waste_connectors_${uid}`;
-
 const CHANNEL_CONNECTION_KEY: Record<ChannelKey, string> = {
   googleAds: 'google_ads',
   metaAds: 'meta_ads',
   linkedinAds: 'linkedin_ads',
-};
-
-const CHANNEL_PROVIDER: Record<ChannelKey, string> = {
-  googleAds: 'google',
-  metaAds: 'meta',
-  linkedinAds: 'linkedin',
 };
 
 const EMPTY_CONNECTOR: ConnectorAuth = {
@@ -125,7 +117,6 @@ function formatNumber(value: number, max = 2): string {
 }
 
 export default function WasteAuditorWorkspace({ userId, agentSlug, agentTitle, agentCategory }: Props) {
-  const searchParams = useSearchParams();
   const { profile } = useAuth();
 
   const [connectors, setConnectors] = useState<ConnectorState>(DEFAULT_CONNECTORS);
@@ -151,36 +142,22 @@ export default function WasteAuditorWorkspace({ userId, agentSlug, agentTitle, a
   );
 
   useEffect(() => {
-    if (!userId) return;
-
-    const persisted = window.localStorage.getItem(CONNECTORS_KEY(userId));
-    let parsed = DEFAULT_CONNECTORS;
-
-    if (persisted) {
-      try {
-        const raw = JSON.parse(persisted) as Partial<ConnectorState>;
-        parsed = {
-          googleAds: { ...EMPTY_CONNECTOR, ...(raw.googleAds ?? {}) },
-          metaAds: { ...EMPTY_CONNECTOR, ...(raw.metaAds ?? {}) },
-          linkedinAds: { ...EMPTY_CONNECTOR, ...(raw.linkedinAds ?? {}) },
-        };
-      } catch {
-        parsed = DEFAULT_CONNECTORS;
-      }
-    }
-
     const hydrated: ConnectorState = {
       googleAds: {
-        ...parsed.googleAds,
+        ...EMPTY_CONNECTOR,
         oauthConnected: hasOAuthConnection(profileConnections[getConnectionKey('googleAds')]),
+        accountId: profileConnections[getConnectionKey('googleAds')]?.accountId?.trim() ?? '',
+        loginCustomerId: profileConnections[getConnectionKey('googleAds')]?.loginCustomerId?.trim() ?? '',
       },
       metaAds: {
-        ...parsed.metaAds,
+        ...EMPTY_CONNECTOR,
         oauthConnected: hasOAuthConnection(profileConnections[getConnectionKey('metaAds')]),
+        accountId: profileConnections[getConnectionKey('metaAds')]?.accountId?.trim() ?? '',
       },
       linkedinAds: {
-        ...parsed.linkedinAds,
+        ...EMPTY_CONNECTOR,
         oauthConnected: hasOAuthConnection(profileConnections[getConnectionKey('linkedinAds')]),
+        accountId: profileConnections[getConnectionKey('linkedinAds')]?.accountId?.trim() ?? '',
       },
     };
 
@@ -194,6 +171,7 @@ export default function WasteAuditorWorkspace({ userId, agentSlug, agentTitle, a
     setConnectors(hydrated);
 
     const loadHistoryCount = async () => {
+      if (!userId) return;
       const entries = await getLatestAgentReportsFromDb(userId, agentSlug, 10);
       setHistoryCount(entries.length);
     };
@@ -201,76 +179,9 @@ export default function WasteAuditorWorkspace({ userId, agentSlug, agentTitle, a
     void loadHistoryCount();
   }, [agentSlug, profileConnections, userId]);
 
-  useEffect(() => {
-    const oauthError = searchParams.get('google_ads_error') || searchParams.get('connector_auth_error');
-    if (oauthError) {
-      setError(`Falha na autenticação do canal: ${oauthError}.`);
-    }
-  }, [searchParams]);
-
-  const persistConnectors = (next: ConnectorState) => {
-    if (!userId) return;
-    window.localStorage.setItem(CONNECTORS_KEY(userId), JSON.stringify(next));
-  };
-
-  const setConnectorField = (key: ChannelKey, field: keyof ConnectorAuth, value: string | boolean | number) => {
-    setConnectors((prev) => {
-      const next = {
-        ...prev,
-        [key]: {
-          ...prev[key],
-          [field]: value,
-        },
-      };
-      persistConnectors(next);
-      return next;
-    });
-  };
-
-  const connectChannel = (key: ChannelKey) => {
-    setError(null);
-    const current = connectors[key];
-
-    if (!current.oauthConnected) {
-      setError(`Autentique ${labelFor(key)} com o mesmo e-mail logado antes de ativar este canal.`);
-      return;
-    }
-    if (!current.accountId.trim()) {
-      setError(`Informe o ID da conta para ativar ${labelFor(key)}.`);
-      return;
-    }
-
-    setConnectors((prev) => {
-      const next = {
-        ...prev,
-        [key]: {
-          ...prev[key],
-          isActive: true,
-          connectedAt: Date.now(),
-        },
-      };
-      persistConnectors(next);
-      return next;
-    });
-  };
-
-  const disconnectChannel = (key: ChannelKey) => {
-    setConnectors((prev) => {
-      const next = {
-        ...prev,
-        [key]: {
-          ...prev[key],
-          isActive: false,
-        },
-      };
-      persistConnectors(next);
-      return next;
-    });
-  };
-
   const runExtraction = async () => {
     if (!activeChannels.length) {
-      setError('Ative ao menos 1 canal autenticado antes de extrair indicadores.');
+      setError('Nenhum canal ativo encontrado. Configure os conectores na janela Conectores para extrair indicadores.');
       return;
     }
     if (!dateFrom || !dateTo) {
@@ -287,13 +198,13 @@ export default function WasteAuditorWorkspace({ userId, agentSlug, agentTitle, a
         const connection = profileConnections[getConnectionKey(key)];
         const accessToken = connection?.accessToken?.trim() || '';
         if (!accessToken) {
-          throw new Error(`A autenticação de ${labelFor(key)} expirou. Reconecte o canal para continuar.`);
+          throw new Error(`A autenticação de ${labelFor(key)} está inativa. Reative esse canal na janela Conectores para continuar.`);
         }
         return {
           platform: key,
           accessToken,
-          accountId: connectors[key].accountId.trim(),
-          loginCustomerId: connectors[key].loginCustomerId?.trim() || undefined,
+          accountId: connection?.accountId?.trim() || '',
+          loginCustomerId: connection?.loginCustomerId?.trim() || undefined,
         };
       });
 
@@ -479,82 +390,34 @@ export default function WasteAuditorWorkspace({ userId, agentSlug, agentTitle, a
           <h2 className="text-sm uppercase tracking-widest text-primary font-bold">Área de implantação</h2>
 
           <section className="rounded-2xl border border-[#E4EAF2] bg-[#FBFCFF] p-5">
-            <h3 className="text-sm font-black text-text-main">1. Integrar canais e extrair indicadores</h3>
+            <h3 className="text-sm font-black text-text-main">1. Canais obrigatórios para extração</h3>
             <p className="mt-1 text-sm text-text-muted">
-              Conecte os canais com o e-mail logado para consolidar investimento, cliques e conversões no período analisado.
+              Esta página apenas valida status. Ative ou reative conexões exclusivamente na janela <strong>Conectores</strong>.
             </p>
 
-            <div className="mt-4 space-y-4">
+            <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
               {(Object.keys(connectors) as ChannelKey[]).map((key) => {
-                const oauthHref = `/api/auth/connectors/${key}/start?provider=${CHANNEL_PROVIDER[key]}&next=/hub/agente/auditor-de-desperdicio`;
                 return (
-                  <div key={key} className="rounded-xl border border-[#E1E7F0] bg-white p-4">
+                  <div
+                    key={key}
+                    className={`rounded-xl border p-4 ${
+                      connectors[key].isActive
+                        ? 'border-[#BDE8CF] bg-[#F2FFF7]'
+                        : 'border-[#FECACA] bg-[#FFF1F2]'
+                    }`}
+                  >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <p className="text-sm font-black text-text-main">{labelFor(key)}</p>
-                      {connectors[key].isActive ? (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-[#BDE8CF] bg-[#F2FFF7] px-3 py-1 text-xs font-bold text-[#0A9D57]">
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          Canal ativo
-                        </span>
-                      ) : connectors[key].oauthConnected ? (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-[#FCD34D] bg-[#FFFBEB] px-3 py-1 text-xs font-bold text-[#92400E]">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          Autenticado (pendente ativação)
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-[#D1D5DB] bg-white px-3 py-1 text-xs font-bold text-[#6B7280]">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          Não autenticado
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <input
-                        value={connectors[key].accountId}
-                        onChange={(e) => setConnectorField(key, 'accountId', e.target.value)}
-                        placeholder={key === 'googleAds' ? 'Customer ID' : key === 'metaAds' ? 'Ad Account ID' : 'Sponsored Account ID'}
-                        className="rounded-xl border border-[#D6DEE8] bg-white px-3 py-2 text-sm text-text-main"
-                      />
-                      {key === 'googleAds' ? (
-                        <input
-                          value={connectors[key].loginCustomerId || ''}
-                          onChange={(e) => setConnectorField(key, 'loginCustomerId', e.target.value)}
-                          placeholder="Login Customer ID (MCC) opcional"
-                          className="rounded-xl border border-[#D6DEE8] bg-white px-3 py-2 text-sm text-text-main"
-                        />
-                      ) : (
-                        <div className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2 text-xs text-text-dim flex items-center">
-                          Autenticação via e-mail do usuário logado
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <a
-                        href={oauthHref}
-                        className="inline-flex items-center gap-2 rounded-full border border-[#D9E2F4] bg-[#EEF4FF] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#1D4ED8]"
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-bold ${
+                          connectors[key].isActive
+                            ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]'
+                            : 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]'
+                        }`}
                       >
-                        <Link2 className="h-3.5 w-3.5" />
-                        Autenticar Canal
-                      </a>
-                      <ChannelConnectionHelpTooltip channel={key} />
-                      <button
-                        type="button"
-                        onClick={() => connectChannel(key)}
-                        className="inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white"
-                      >
-                        Ativar Canal
-                      </button>
-                      {connectors[key].isActive ? (
-                        <button
-                          type="button"
-                          onClick={() => disconnectChannel(key)}
-                          className="inline-flex items-center gap-2 rounded-full border border-[#FECACA] bg-[#FFF1F2] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#B42318]"
-                        >
-                          Desativar
-                        </button>
-                      ) : null}
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        {connectors[key].isActive ? 'ATIVA' : 'INATIVA'}
+                      </span>
                     </div>
                   </div>
                 );

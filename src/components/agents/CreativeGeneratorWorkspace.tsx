@@ -1,11 +1,10 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, CheckCircle2, Copy, Download, Link2, Sparkles, Star } from 'lucide-react';
+import { CheckCircle2, Copy, Download, Sparkles, Star } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
-import ChannelConnectionHelpTooltip from './ChannelConnectionHelpTooltip';
 
 type CreativeGeneratorWorkspaceProps = {
   userId?: string;
@@ -37,12 +36,6 @@ type GeneratedCreative = {
   cta: string;
   concept: string;
   modelFromId?: string;
-};
-
-const CHANNEL_PROVIDER: Record<ChannelKey, string> = {
-  googleAds: 'google',
-  metaAds: 'meta',
-  linkedinAds: 'linkedin',
 };
 
 const EMPTY_CONNECTOR: ConnectorAuth = {
@@ -101,16 +94,6 @@ function labelForChannel(key: ChannelKey): string {
   return 'LinkedIn Ads';
 }
 
-function isOauthConnected(profile: unknown, channelKey: string): boolean {
-  if (!profile || typeof profile !== 'object') return false;
-  const connectionsRaw = (profile as Record<string, unknown>).connections;
-  if (!connectionsRaw || typeof connectionsRaw !== 'object') return false;
-  const connection = (connectionsRaw as Record<string, unknown>)[channelKey];
-  if (!connection || typeof connection !== 'object') return false;
-  const connectionRecord = connection as Record<string, unknown>;
-  return Boolean(connectionRecord.isActive && readString(connectionRecord.accessToken));
-}
-
 function downloadCreative(creative: GeneratedCreative) {
   const content = [
     `Título: ${creative.title}`,
@@ -157,6 +140,13 @@ export default function CreativeGeneratorWorkspace({
     return readString(root.companyName) || readString(root.company) || readString(onboarding.companyName) || 'Empresa';
   }, [profile]);
 
+  const profileConnections = useMemo(() => {
+    if (!profile || typeof profile !== 'object') return {} as Record<string, Record<string, unknown> | undefined>;
+    const maybeConnections = (profile as Record<string, unknown>).connections;
+    if (!maybeConnections || typeof maybeConnections !== 'object') return {} as Record<string, Record<string, unknown> | undefined>;
+    return maybeConnections as Record<string, Record<string, unknown> | undefined>;
+  }, [profile]);
+
   const activeChannels = useMemo(
     () => (Object.keys(connectors) as ChannelKey[]).filter((key) => connectors[key].isActive),
     [connectors]
@@ -166,6 +156,30 @@ export default function CreativeGeneratorWorkspace({
     () => creatives.find((item) => item.id === selectedModelId) ?? null,
     [creatives, selectedModelId]
   );
+
+  useEffect(() => {
+    const next: ConnectorState = {
+      googleAds: { ...EMPTY_CONNECTOR },
+      metaAds: { ...EMPTY_CONNECTOR },
+      linkedinAds: { ...EMPTY_CONNECTOR },
+    };
+
+    (Object.keys(next) as ChannelKey[]).forEach((key) => {
+      const connection = profileConnections[CHANNEL_CONNECTION_KEY[key]];
+      const accessToken = readString(connection?.accessToken);
+      const accountId = readString(connection?.accountId);
+      const loginCustomerId = readString(connection?.loginCustomerId);
+      next[key] = {
+        ...next[key],
+        oauthConnected: Boolean(connection?.isActive && accessToken),
+        isActive: Boolean(connection?.isActive && accessToken && accountId),
+        accountId,
+        loginCustomerId,
+      };
+    });
+
+    setConnectors(next);
+  }, [profileConnections]);
 
   useEffect(() => {
     const loadCreativeLibrary = async () => {
@@ -253,7 +267,7 @@ export default function CreativeGeneratorWorkspace({
 
   const generateCreatives = async () => {
     if (!activeChannels.length) {
-      setError('Ative ao menos 1 canal para gerar os criativos.');
+      setError('Nenhum canal ativo encontrado. Configure os conectores na janela Conectores para gerar os criativos.');
       return;
     }
     if (!formats.length || !contentTypes.length) {
@@ -312,109 +326,30 @@ export default function CreativeGeneratorWorkspace({
           <section className="rounded-2xl border border-[#E4EAF2] bg-[#FBFCFF] p-5">
             <h3 className="text-sm font-black text-text-main">1. Canais para veiculação</h3>
             <p className="mt-1 text-sm text-text-muted">
-              Conecte e ative os canais que serão usados para publicação dos criativos.
+              Esta página apenas valida status. Ative ou reative conexões exclusivamente na janela <strong>Conectores</strong>.
             </p>
 
-            <div className="mt-4 space-y-4">
+            <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
               {(Object.keys(connectors) as ChannelKey[]).map((key) => {
-                const oauthConnected = isOauthConnected(profile, CHANNEL_CONNECTION_KEY[key]);
                 const isActive = connectors[key].isActive;
-                const oauthHref = `/api/auth/connectors/${key}/start?provider=${CHANNEL_PROVIDER[key]}&next=/hub/agente/gerador-de-criativos`;
 
                 return (
-                  <div key={key} className="rounded-xl border border-[#E1E7F0] bg-white p-4">
+                  <div
+                    key={key}
+                    className={`rounded-xl border p-4 ${
+                      isActive ? 'border-[#BDE8CF] bg-[#F2FFF7]' : 'border-[#FECACA] bg-[#FFF1F2]'
+                    }`}
+                  >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <p className="text-sm font-black text-text-main">{labelForChannel(key)}</p>
-                      {isActive ? (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-[#BDE8CF] bg-[#F2FFF7] px-3 py-1 text-xs font-bold text-[#0A9D57]">
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          Canal ativo
-                        </span>
-                      ) : oauthConnected ? (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-[#FCD34D] bg-[#FFFBEB] px-3 py-1 text-xs font-bold text-[#92400E]">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          Autenticado (pendente ativação)
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center gap-1 rounded-full border border-[#D1D5DB] bg-white px-3 py-1 text-xs font-bold text-[#6B7280]">
-                          <AlertTriangle className="h-3.5 w-3.5" />
-                          Não autenticado
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                      <input
-                        value={connectors[key].accountId}
-                        onChange={(event) =>
-                          setConnectors((prev) => ({
-                            ...prev,
-                            [key]: { ...prev[key], accountId: event.target.value },
-                          }))
-                        }
-                        placeholder={
-                          key === 'googleAds'
-                            ? 'Customer ID'
-                            : key === 'metaAds'
-                              ? 'Ad Account ID'
-                              : 'Sponsored Account ID'
-                        }
-                        className="rounded-xl border border-[#D6DEE8] bg-white px-3 py-2 text-sm text-text-main"
-                      />
-                      {key === 'googleAds' ? (
-                        <input
-                          value={connectors[key].loginCustomerId || ''}
-                          onChange={(event) =>
-                            setConnectors((prev) => ({
-                              ...prev,
-                              [key]: { ...prev[key], loginCustomerId: event.target.value },
-                            }))
-                          }
-                          placeholder="Login Customer ID (MCC) opcional"
-                          className="rounded-xl border border-[#D6DEE8] bg-white px-3 py-2 text-sm text-text-main"
-                        />
-                      ) : (
-                        <div className="rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-3 py-2 text-xs text-text-dim flex items-center">
-                          Autenticação via e-mail logado
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <a
-                        href={oauthHref}
-                        className="inline-flex items-center gap-2 rounded-full border border-[#D9E2F4] bg-[#EEF4FF] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#1D4ED8]"
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-bold ${
+                          isActive ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]' : 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]'
+                        }`}
                       >
-                        <Link2 className="h-3.5 w-3.5" />
-                        Autenticar Canal
-                      </a>
-                      <ChannelConnectionHelpTooltip channel={key} />
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setConnectors((prev) => ({
-                            ...prev,
-                            [key]: { ...prev[key], isActive: true, connectedAt: Date.now() },
-                          }))
-                        }
-                        className="inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-4 py-2 text-xs font-bold uppercase tracking-wide text-white"
-                      >
-                        Ativar Canal
-                      </button>
-                      {isActive ? (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setConnectors((prev) => ({
-                              ...prev,
-                              [key]: { ...prev[key], isActive: false },
-                            }))
-                          }
-                          className="inline-flex items-center gap-2 rounded-full border border-[#FECACA] bg-[#FFF1F2] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#B42318]"
-                        >
-                          Desativar
-                        </button>
-                      ) : null}
+                        <CheckCircle2 className="h-3.5 w-3.5" />
+                        {isActive ? 'ATIVA' : 'INATIVA'}
+                      </span>
                     </div>
                   </div>
                 );

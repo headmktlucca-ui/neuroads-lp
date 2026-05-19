@@ -36,6 +36,12 @@ import {
   type AgentReportHistoryEntry,
 } from '../../../../lib/agent-report-history';
 import { buildAutomationTimestamps } from '../../../../lib/hub-automations';
+import {
+  CONNECTOR_DEFINITIONS,
+  getConnectorStatusFromConnections,
+  type ConnectorConnection,
+  type ConnectorKey,
+} from '../../../../lib/connectors';
 
 type AutomationSuggestion = {
   id: string;
@@ -214,6 +220,32 @@ function getAgentHeroDescription(title: string) {
   return null;
 }
 
+function getRequiredConnectorKeysForAgent(title: string, category: string): ConnectorKey[] {
+  if (title === 'SEO & GEO') return ['ga4', 'crm', 'warehouse'];
+  if (title === 'DNA da Marca') return ['crm', 'ga4'];
+  if (title === 'Gerador de Copies de Conversão') return ['ga4', 'crm', 'googleAds', 'metaAds'];
+  if (title === 'Gerador de Criativos' || title === 'Análise Viral') return ['googleAds', 'metaAds', 'linkedinAds', 'ga4'];
+  if (title === 'Simulador de ROAS' || title === 'Preditor de Funil') {
+    return ['googleAds', 'metaAds', 'linkedinAds', 'ga4', 'crm', 'payments'];
+  }
+  if (title === 'Analista de Tráfego' || title === 'Auditor de Desperdício' || title === 'Otimizador de Orçamento') {
+    return ['googleAds', 'metaAds', 'linkedinAds', 'ga4'];
+  }
+  if (category === 'Performance') return ['googleAds', 'metaAds', 'linkedinAds', 'ga4'];
+  if (category === 'Criativos') return ['googleAds', 'metaAds', 'ga4'];
+  if (category === 'Técnico') return ['ga4', 'serverTracking', 'warehouse'];
+  return ['ga4', 'crm', 'warehouse'];
+}
+
+function getConnectionStatusFromProfile(profile: unknown): Record<ConnectorKey, boolean> {
+  const profileRecord = isRecord(profile) ? profile : null;
+  const connectionsRaw = profileRecord?.connections;
+  const connections = isRecord(connectionsRaw)
+    ? (connectionsRaw as Record<string, ConnectorConnection | null | undefined>)
+    : null;
+  return getConnectorStatusFromConnections(connections);
+}
+
 function buildAutomationSuggestions(entry: { title: string; category: string; planSummary?: { monthlyLimit?: number } }): AutomationSuggestion[] {
   const limit = Math.max(6, entry.planSummary?.monthlyLimit ?? 12);
   const context = getCadenceContext(entry.category, entry.title);
@@ -341,6 +373,20 @@ export default function AgentEntryPage() {
   );
   const agentAutomationKey = useMemo(() => (entry ? slugifyAgentTitle(entry.title) : ''), [entry]);
   const heroDescription = useMemo(() => (entry ? getAgentHeroDescription(entry.title) : null), [entry]);
+  const connectorStatus = useMemo(() => getConnectionStatusFromProfile(profile), [profile]);
+  const requiredConnectors = useMemo(() => {
+    if (!entry) return [];
+    const requiredKeys = getRequiredConnectorKeysForAgent(entry.title, entry.category);
+    return requiredKeys.map((key) => {
+      const definition = CONNECTOR_DEFINITIONS.find((item) => item.key === key);
+      return {
+        key,
+        name: definition?.name ?? key,
+        source: definition?.source ?? 'Conector',
+        isActive: connectorStatus[key],
+      };
+    });
+  }, [connectorStatus, entry]);
 
   const formatHistoryDate = (dateIso: string) => {
     const parsed = new Date(dateIso);
@@ -525,6 +571,43 @@ export default function AgentEntryPage() {
               <p className="text-base text-text-muted mb-8">
                 Este agente ainda não está ativo na sua conta. Faça a contratação no Hub para liberar a janela funcional individual.
               </p>
+              <div className="mb-8 rounded-2xl border border-[#FFE4D1] bg-[#FFF8F3] p-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <p className="text-sm font-black text-text-main">Canais necessários para operação</p>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/hub?connectors=1')}
+                    className="rounded-full border border-[#D9E2F4] bg-[#EEF4FF] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#1D4ED8] hover:bg-[#E2ECFF]"
+                  >
+                    Abrir Conectores
+                  </button>
+                </div>
+                <div className="mt-3 grid grid-cols-1 gap-2 md:grid-cols-2">
+                  {requiredConnectors.map((connector) => (
+                    <div
+                      key={connector.key}
+                      className={`rounded-lg border px-3 py-2 ${
+                        connector.isActive
+                          ? 'border-[#BDE8CF] bg-[#F2FFF7]'
+                          : 'border-[#FECACA] bg-[#FFF1F2]'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <p className="text-xs font-black text-text-main">{connector.name}</p>
+                        <span
+                          className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-black ${
+                            connector.isActive
+                              ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]'
+                              : 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]'
+                          }`}
+                        >
+                          {connector.isActive ? 'ATIVA' : 'INATIVA'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
               <button
                 onClick={() => router.push('/hub')}
                 className="btn btn-primary px-7 py-3 rounded-full text-sm font-bold tracking-widest uppercase"
@@ -587,24 +670,68 @@ export default function AgentEntryPage() {
                       </div>
 
                       <div className="flex flex-col items-end justify-start self-start gap-3 md:min-w-[280px]">
-                          {entry.title === 'SEO & GEO' ? (
-                            <div className="w-[168px] h-[168px] rounded-[24px] p-[3px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_14px_28px_rgba(255,107,0,0.26)]">
-                              <div className="relative w-full h-full rounded-[20px] overflow-hidden bg-white">
-                                <Image src={agent.icon} alt={entry.title} fill className="object-cover" />
-                              </div>
-                            </div>
-                          ) : (
-                          <div className="w-14 h-14 rounded-[14px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_10px_20px_rgba(255,107,0,0.22)]">
-                          <div className="relative w-full h-full rounded-[12px] overflow-hidden bg-white">
-                              <Image src={agent.icon} alt={entry.title} fill className="object-cover" />
-                            </div>
+                        <div className="w-[168px] h-[168px] rounded-[24px] p-[3px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_14px_28px_rgba(255,107,0,0.26)]">
+                          <div className="relative w-full h-full rounded-[20px] overflow-hidden bg-white">
+                            <Image src={agent.icon} alt={entry.title} fill className="object-cover" />
                           </div>
-                        )}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
+
+              <section className="rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/70 to-[#FF6B00] shadow-[0_18px_44px_-28px_rgba(255,107,0,0.38)]">
+                <div className="rounded-[28px] bg-white/90 p-[1px]">
+                  <div className="rounded-[26px] border border-[#FFF1E8] bg-white px-6 py-5">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs uppercase tracking-widest text-primary font-bold">Canais Necessários</p>
+                        <h2 className="mt-1 text-lg font-black text-text-main">Status operacional deste agente</h2>
+                        <p className="mt-1 text-sm text-text-muted">
+                          As conexões são gerenciadas exclusivamente na janela <strong>Conectores</strong>.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => router.push('/hub?connectors=1')}
+                        className="rounded-full border border-[#D9E2F4] bg-[#EEF4FF] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#1D4ED8] hover:bg-[#E2ECFF]"
+                      >
+                        Abrir Conectores
+                      </button>
+                    </div>
+
+                    <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+                      {requiredConnectors.map((connector) => (
+                        <div
+                          key={connector.key}
+                          className={`rounded-xl border px-4 py-3 ${
+                            connector.isActive
+                              ? 'border-[#BDE8CF] bg-[#F2FFF7]'
+                              : 'border-[#FECACA] bg-[#FFF1F2]'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-black text-text-main">{connector.name}</p>
+                              <p className="text-xs text-text-muted">{connector.source}</p>
+                            </div>
+                            <span
+                              className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-black ${
+                                connector.isActive
+                                  ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]'
+                                  : 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]'
+                              }`}
+                            >
+                              {connector.isActive ? 'ATIVA' : 'INATIVA'}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </section>
 
               <div className="grid grid-cols-1 gap-6">
                 {entry.title === 'SEO & GEO' ? (
@@ -711,16 +838,16 @@ export default function AgentEntryPage() {
       </div>
 
       {entry && isAutomationModalOpen && (
-        <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center">
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-4 py-4">
           <div className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm" onClick={() => setIsAutomationModalOpen(false)} />
 
-          <div className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto rounded-[26px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_22px_56px_rgba(15,23,42,0.3)] sm:rounded-[32px]">
+          <div className="relative w-full max-w-[1120px] rounded-[26px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_22px_56px_rgba(15,23,42,0.3)] sm:rounded-[32px]">
             <div className="rounded-[30px] bg-white/90 p-[1px]">
-              <div className="rounded-[28px] border border-[#FFF1E8] bg-white p-6 md:p-7">
-                <div className="mb-5 flex items-start justify-between gap-3">
+              <div className="rounded-[28px] border border-[#FFF1E8] bg-white p-5 md:p-6">
+                <div className="mb-4 flex items-start justify-between gap-3">
                   <div>
                     <p className="text-xs uppercase tracking-widest text-primary font-bold mb-1">Automação Inteligente</p>
-                    <h3 className="text-2xl md:text-3xl font-black text-text-main">Ativar Rotina do Agente</h3>
+                    <h3 className="text-2xl md:text-[2rem] font-black text-text-main">Ativar Rotina do Agente</h3>
                     <p className="text-sm text-text-muted mt-2">
                       Selecione uma cadência para <strong>{entry.title}</strong>, respeitando o plano atual e o limite contratado.
                     </p>
@@ -735,17 +862,17 @@ export default function AgentEntryPage() {
                   </button>
                 </div>
 
-                <div className="mb-4 rounded-xl border border-[#E3E8EF] bg-[#F8FAFC] px-4 py-3 text-sm text-text-muted">
+                <div className="mb-3 rounded-xl border border-[#E3E8EF] bg-[#F8FAFC] px-4 py-2.5 text-sm text-text-muted">
                   Plano: <strong className="text-text-main">{entry.planSummary?.planName ?? 'A confirmar'}</strong> • Limite mensal:{' '}
                   <strong className="text-text-main">{entry.planSummary?.monthlyLimit ?? 0} execuções</strong>
                 </div>
                 {isLoadingAutomation && (
-                  <div className="mb-4 rounded-xl border border-[#E3E8EF] bg-white px-4 py-3 text-sm text-text-muted">
+                  <div className="mb-3 rounded-xl border border-[#E3E8EF] bg-white px-4 py-2.5 text-sm text-text-muted">
                     Carregando configuração de automação salva...
                   </div>
                 )}
 
-                <div className="space-y-3">
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
                   {automationSuggestions.map((option) => {
                     const isSelected = selectedAutomationId === option.id;
                     return (
@@ -760,29 +887,29 @@ export default function AgentEntryPage() {
                         }}
                         role="button"
                         tabIndex={0}
-                        className={`w-full text-left rounded-2xl border p-4 transition-all ${
+                        className={`w-full text-left rounded-2xl border p-3 transition-all ${
                           isSelected
                             ? 'border-[#FFBE94] bg-[#FFF7F1] shadow-[0_10px_24px_rgba(255,107,0,0.14)]'
                             : 'border-[#E3E8EF] bg-[#FBFCFE] hover:border-[#FFD1B3] hover:bg-white'
                         }`}
                       >
                         <div className="flex flex-wrap items-center justify-between gap-2">
-                          <p className="text-base font-bold text-text-main">{option.title}</p>
+                          <p className="text-[1rem] font-bold text-text-main">{option.title}</p>
                           <span className="inline-flex items-center rounded-full border border-[#CDE7D9] bg-[#F2FFF7] px-3 py-1 text-xs font-bold text-[#0A9D57]">
                             {option.monthlyExecutions} execuções/mês
                           </span>
                         </div>
-                        <p className="text-sm text-text-muted mt-2">{option.objective}</p>
-                        <p className="text-xs text-text-dim mt-2">
+                        <p className={`mt-2 text-sm text-text-muted ${isSelected ? '' : 'truncate'}`}>{option.objective}</p>
+                        <p className="mt-2 text-xs text-text-dim">
                           Cadência: <strong className="text-text-main">{option.cadence}</strong>
                         </p>
-                        <p className="text-xs text-text-dim mt-1">{option.distribution}</p>
+                        {isSelected ? <p className="mt-1 text-xs text-text-dim">{option.distribution}</p> : null}
                         {isSelected ? (
                           <div className="mt-3 rounded-xl border border-[#FFE1CF] bg-white p-3">
                             <p className="text-[11px] font-black uppercase tracking-widest text-[#B45309]">
                               Sugestões de dias e horários
                             </p>
-                            <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                            <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
                               {option.scheduleOptions.map((schedule) => {
                                 const isScheduleSelected = selectedScheduleOptionId === schedule.id;
                                 return (
@@ -800,7 +927,7 @@ export default function AgentEntryPage() {
                                     }`}
                                   >
                                     <p className="text-xs font-black text-text-main">{schedule.label}</p>
-                                    <p className="mt-1 text-[11px] leading-relaxed text-text-dim">{schedule.detail}</p>
+                                    <p className="mt-1 text-[11px] leading-snug text-text-dim">{schedule.detail}</p>
                                   </button>
                                 );
                               })}
@@ -812,7 +939,7 @@ export default function AgentEntryPage() {
                   })}
                 </div>
 
-                <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                   <button
                     type="button"
                     onClick={() => setIsAutomationModalOpen(false)}
