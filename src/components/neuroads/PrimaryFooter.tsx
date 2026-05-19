@@ -78,7 +78,7 @@ export default function PrimaryFooter() {
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3 pt-4 text-[11px] text-[#8c93a0]">
-        <p>© 2025 NeuroAds. Todos os direitos reservados.</p>
+        <p>© 2026 NeuroAds. Todos os direitos reservados.</p>
         <div className="flex items-center gap-6">
           <Link href="/privacidade">Política de Privacidade</Link>
           <Link href="/termos">Termos de Uso</Link>

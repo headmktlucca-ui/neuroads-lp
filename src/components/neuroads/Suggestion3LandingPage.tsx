@@ -960,15 +960,15 @@ export default function Suggestion3LandingPage() {
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_88%_15%,rgba(255,121,32,0.12)_0%,rgba(255,121,32,0)_52%)]" />
           <div className="relative">
             <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#ff6a00]">Soluções por Segmento</p>
-            <h2 className="mt-2 text-[28px] font-extrabold leading-tight text-[#191e29] sm:text-[34px] lg:text-[40px]">
-              Captação especializada para o seu
-              <span className="bg-[linear-gradient(90deg,#ff6a00_0%,#ff8f3a_42%,#d55a00_100%)] bg-clip-text text-transparent"> modelo de negócio.</span>
+            <h2 className="mt-2 text-center text-[28px] font-extrabold leading-tight text-[#191e29] sm:text-[34px] lg:text-[40px]">
+              <span className="block">Agentes Autônomos especialistas</span>
+              <span className="block bg-[linear-gradient(90deg,#ff6a00_0%,#ff8f3a_42%,#d55a00_100%)] bg-clip-text text-transparent">no seu modelo de negócio.</span>
             </h2>
-            <p className="mt-2 max-w-[850px] text-[14px] leading-relaxed text-[#586174] sm:text-[15px]">
+            <p className="mt-4 max-w-[850px] text-[14px] leading-relaxed text-[#586174] sm:text-[15px]">
               Cada segmento tem uma lógica de compra diferente. Aqui você encontra páginas de captura específicas para reduzir desperdício e aumentar previsibilidade de receita.
             </p>
 
-            <div className="mt-6 flex flex-wrap justify-center gap-4">
+            <div className="mt-12 flex flex-wrap justify-center gap-4">
               {segmentLandingCards.map((segment) => {
                 const hasBackgroundImage = Boolean(segment.backgroundImage);
 
@@ -1245,7 +1245,7 @@ export default function Suggestion3LandingPage() {
         </div>
 
         <div className="flex flex-wrap items-center justify-between gap-3 pt-4 text-[11px] text-[#8c93a0]">
-          <p>© 2025 NeuroAds. Todos os direitos reservados.</p>
+          <p>© 2026 NeuroAds. Todos os direitos reservados.</p>
           <div className="flex items-center gap-6">
             <a href="/privacidade">Política de Privacidade</a>
             <a href="/termos">Termos de Uso</a>
