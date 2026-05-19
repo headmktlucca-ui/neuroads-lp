@@ -42,6 +42,7 @@ const ACTIVATABLE_AGENT_TITLES = new Set([
   'Auditor de Desperdício',
   'Otimizador de Orçamento',
   'Gerador de Criativos',
+  'Gerador de Copies de Conversão',
 ]);
 
 type AgentDetailsContent = {

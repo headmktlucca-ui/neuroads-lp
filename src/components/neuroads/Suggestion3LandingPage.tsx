@@ -235,26 +235,6 @@ function isCategorySubmenuItem(item: HeaderSubmenuItem): item is HeaderMenuCateg
 
 const headerMenuGroups: HeaderMenuGroup[] = [
   {
-    label: 'Serviços',
-    href: '/servicos',
-    submenu: [
-      { label: 'Gestão de Tráfego', href: '/servicos/gestao-de-trafego-google-meta' },
-      { label: 'SEO + GEO', href: '/servicos/seo-geo' },
-      { label: 'Implantação de Agentes de IA', href: '/servicos/implantacao-de-agentes-ia' },
-      { label: 'Estratégia de Funil de Conversão', href: '/servicos/estrategia-de-funil-e-conversao' },
-      {
-        label: 'Principais Setores',
-        items: [
-          { label: 'Mercado Imobiliário', href: '/servicos/mercado-imobiliario' },
-          { label: 'Saúde & Clínicas', href: '/servicos/saude-clinicas' },
-          { label: 'E-commerce & Varejo', href: '/servicos/e-commerce-varejo' },
-          { label: 'Serviços Profissionais', href: '/servicos/servicos-profissionais' },
-          { label: 'Educação Digital', href: '/servicos/educacao-digital' },
-        ],
-      },
-    ],
-  },
-  {
     label: 'Agentes IA',
     href: '/agentes-ia',
     submenu: [
@@ -279,7 +259,19 @@ const headerMenuGroups: HeaderMenuGroup[] = [
     submenu: [
       { label: 'Sobre', href: '/a-neuroads/sobre' },
       { label: 'Nosso Método', href: '/a-neuroads/nosso-metodo' },
+      { label: 'Implantação de Agentes IA', href: '/servicos/implantacao-de-agentes-ia' },
       { label: 'Contato', href: '/a-neuroads/contato' },
+    ],
+  },
+  {
+    label: 'Oportunidades',
+    href: '/servicos',
+    submenu: [
+      { label: 'Mercado Imobiliário', href: '/servicos/mercado-imobiliario' },
+      { label: 'Saúde & Clínicas', href: '/servicos/saude-clinicas' },
+      { label: 'E-commerce & Varejo', href: '/servicos/e-commerce-varejo' },
+      { label: 'Serviços Profissionais', href: '/servicos/servicos-profissionais' },
+      { label: 'Educação Digital', href: '/servicos/educacao-digital' },
     ],
   },
 ];
@@ -511,7 +503,6 @@ export default function Suggestion3LandingPage() {
                 className="hidden items-center gap-2 rounded-full border border-[#d7dce5] bg-white px-5 py-2.5 text-[12px] font-extrabold text-[#2b3240] lg:inline-flex"
               >
                 Valores & Recursos
-                <ArrowRight size={13} />
               </Link>
               <Link
                 href="/login"
@@ -615,7 +606,6 @@ export default function Suggestion3LandingPage() {
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-[#d8deea] bg-white px-4 py-2.5 text-[12px] font-extrabold text-[#2b3240]"
               >
                 Valores & Recursos
-                <ArrowRight size={13} />
               </Link>
               <button
                 type="button"

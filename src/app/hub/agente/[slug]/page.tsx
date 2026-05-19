@@ -14,6 +14,7 @@ import RoasSimulatorWorkspace from '../../../../components/agents/RoasSimulatorW
 import WasteAuditorWorkspace from '../../../../components/agents/WasteAuditorWorkspace';
 import BudgetOptimizerWorkspace from '../../../../components/agents/BudgetOptimizerWorkspace';
 import CreativeGeneratorWorkspace from '../../../../components/agents/CreativeGeneratorWorkspace';
+import ConversionCopyWorkspace from '../../../../components/agents/ConversionCopyWorkspace';
 import DnaBrandWorkspace, { DnaBrandPresentationPanel } from '../../../../components/agents/DnaBrandWorkspace';
 import GenericAgentWorkspace from '../../../../components/agents/GenericAgentWorkspace';
 import { useAuth } from '../../../../context/AuthContext';
@@ -164,6 +165,16 @@ function getAgentHeroDescription(title: string) {
         O agente <strong className="text-text-main">Gerador de Criativos</strong> conecta seus canais, lê indicadores reais de CTR, conversão e custo por lead para identificar
         quais mensagens e ângulos criativos têm maior potencial financeiro. Ele transforma dados de performance em oportunidades priorizadas e simulações práticas de impacto,
         apoiando ciclos contínuos de testes com foco em reduzir CPL e aumentar previsibilidade comercial.
+      </>
+    );
+  }
+
+  if (title === 'Gerador de Copies de Conversão') {
+    return (
+      <>
+        O agente <strong className="text-text-main">Gerador de Copies de Conversão</strong> transforma sinais reais de performance em copies orientadas a resultado financeiro.
+        Ele localiza padrões vencedores por canal, mensura prioridades de otimização e gera variações de headline, hook, corpo e CTA prontas para execução com foco em elevar
+        conversão e controlar o custo por aquisição.
       </>
     );
   }
@@ -425,9 +436,12 @@ export default function AgentEntryPage() {
           | undefined;
         const persisted = userData?.automations?.[agentAutomationKey];
 
-        if (persisted?.cadenceId) {
-          setSelectedAutomationId(persisted.cadenceId);
+        if (persisted) {
+          // Support legacy records that may have `status` but no `cadenceId`.
           setAutomationActivated(persisted.status === 'active');
+          if (persisted.cadenceId) {
+            setSelectedAutomationId(persisted.cadenceId);
+          }
           if (persisted.scheduleOptionId) {
             setSelectedScheduleOptionId(persisted.scheduleOptionId);
           }
@@ -520,13 +534,15 @@ export default function AgentEntryPage() {
                                   : 'border-[#FF6B00] bg-[#FF6B00] shadow-[0_10px_22px_rgba(255,107,0,0.3)] hover:brightness-105'
                               }`}
                             >
-                              {automationActivated
-                                ? entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos'
-                                  ? 'Agente Ativo'
-                                  : 'Automação Ativa'
-                                : entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos'
-                                  ? 'Ativar Agente'
-                                  : 'Ativar Automação'}
+                              {entry.title === 'Gerador de Copies de Conversão'
+                                ? 'Ativar Agente'
+                                : automationActivated
+                                  ? entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos'
+                                    ? 'Agente Ativo'
+                                    : 'Automação Ativa'
+                                  : entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos'
+                                    ? 'Ativar Agente'
+                                    : 'Ativar Automação'}
                             </button>
                             <button
                               type="button"
@@ -612,6 +628,15 @@ export default function AgentEntryPage() {
                 ) : entry.title === 'Gerador de Criativos' ? (
                   <div className="col-span-1">
                     <CreativeGeneratorWorkspace
+                      userId={user?.uid}
+                      agentSlug={entry.slug}
+                      agentTitle={entry.title}
+                      agentCategory={entry.category}
+                    />
+                  </div>
+                ) : entry.title === 'Gerador de Copies de Conversão' ? (
+                  <div className="col-span-1">
+                    <ConversionCopyWorkspace
                       userId={user?.uid}
                       agentSlug={entry.slug}
                       agentTitle={entry.title}

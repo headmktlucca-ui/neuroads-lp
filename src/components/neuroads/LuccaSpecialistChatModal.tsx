@@ -198,8 +198,8 @@ export default function LuccaSpecialistChatModal({
               />
             </div>
             <div>
-              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#ff6a00]">Lucca | Secretário Executivo</p>
-              <p className="text-[13px] font-semibold text-[#1d2431]">Consultoria NeuroAds com IA agêntica</p>
+              <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#ff6a00]">Lucca | Gestão & Estratégia</p>
+              <p className="text-[13px] font-semibold text-[#1d2431]">Agente de Operações IA</p>
             </div>
           </div>
           <button

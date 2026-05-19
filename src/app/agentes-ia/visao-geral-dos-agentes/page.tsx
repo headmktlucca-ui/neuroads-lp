@@ -4,89 +4,139 @@ import SubmenuPageShell, { type SubmenuPageContent } from '@/components/neuroads
 export const metadata: Metadata = {
   title: 'Visão Geral dos Agentes IA | NeuroAds',
   description:
-    'Conheça o ecossistema de agentes IA da NeuroAds e como cada frente de aquisição, conversão e dados impacta receita e previsibilidade.',
+    'Entenda como os Agentes IA da NeuroAds conectam Gestão de Tráfego, SEO + GEO e estratégias de relacionamento para gerar crescimento previsível.',
 };
 
 const content: SubmenuPageContent = {
   slug: 'agentes-visao-geral',
   eyebrow: 'Ecossistema de Agentes IA',
-  headline: 'Um ecossistema que opera',
-  highlightedHeadline: 'em fluxo contínuo',
+  headline: 'Agentes IA conectados',
+  highlightedHeadline: 'para escala previsível',
   subheadline:
-    'Nossos agentes não funcionam isolados. Eles atuam em cadeia: atração qualificada, avanço de conversão e inteligência de dados para escalar com consistência.',
+    'A NeuroAds orquestra agentes especializados em Gestão de Tráfego, SEO + GEO e relacionamento comercial para transformar sinais em decisões e decisões em receita.',
   serviceContext: 'Visão Geral dos Agentes',
   copyContract: {
-    promise: 'Agentes integrados para escalar sem perder controle.',
-    pain: 'Empresas adotam ferramentas soltas e perdem clareza de prioridade. O resultado é esforço alto e pouca previsibilidade.',
+    promise: 'Um sistema único para aquisição, posicionamento e relacionamento.',
+    pain: 'Quando mídia, conteúdo e relacionamento operam separados, o empresário perde visibilidade do que realmente gera venda.',
     impactoFinanceiro:
-      'Sem integração entre aquisição, conversão e inteligência, o custo operacional aumenta e o retorno comercial fica irregular.',
+      'Sem orquestração entre frentes, o custo por lead tende a subir, o CAC oscila e o caixa perde previsibilidade de entrada no mês.',
     prova:
-      'A estrutura da NeuroAds conecta 18 agentes proprietários em frentes complementares, com leitura contínua de desempenho financeiro.',
+      'Hoje, a NeuroAds opera 18 agentes proprietários conectando tráfego, SEO + GEO e CRM para acelerar decisões com dados reais.',
     metodo:
-      'Classificamos agentes por função no funil, definimos handoff entre etapas e monitoramos desempenho em ciclos de melhoria contínua.',
-    cta: 'Solicite o diagnóstico e receba o mapa de quais agentes priorizar na sua operação.',
+      'Mapeamos o estágio do funil, priorizamos agentes por impacto no caixa e implementamos uma rotina de otimização contínua com supervisão sênior.',
+    cta: 'Solicite o diagnóstico e receba o plano de quais agentes ativar primeiro no seu cenário.',
   },
   painPoints: [
-    'Excesso de ferramentas sem integração prática.',
-    'Decisões lentas por falta de visão consolidada.',
-    'Time atuando no urgente, não no estratégico.',
-    'Dificuldade para saber onde escalar primeiro.',
+    'Gestão de tráfego sem aprendizado contínuo do pós-venda.',
+    'Conteúdo sem estratégia de GEO para buscadores generativos.',
+    'Relacionamento comercial reativo, sem cadência inteligente.',
+    'Métricas espalhadas e pouca clareza sobre desperdício.',
   ],
   impactPoints: [
-    'Aumento de custos sem ganho proporcional de receita.',
-    'Maior risco de erro operacional em decisões críticas.',
-    'Baixa previsibilidade de performance por trimestre.',
-    'Menor capacidade de reação frente à concorrência.',
+    'Maior custo de aquisição por falta de ajuste entre canais.',
+    'Perda de oportunidades por baixa velocidade de resposta comercial.',
+    'Queda de margem por decisões sem leitura consolidada de funil.',
+    'Baixa previsibilidade de receita para planejar crescimento.',
   ],
   howItWorks: [
-    'Mapeamento do estágio atual de maturidade da operação.',
-    'Definição de agentes por prioridade de caixa e crescimento.',
-    'Integração entre aquisição, conversão e dados em rotina única.',
-    'Acompanhamento com métricas traduzidas para impacto financeiro.',
+    'Gestão de Tráfego: agentes ajustam segmentação, criativos e budget com foco em CPL e ROAS.',
+    'SEO + GEO: agentes estruturam conteúdo para Google e motores generativos, ampliando presença qualificada.',
+    'Relacionamento e Posicionamento: agentes ativam follow-ups, qualificação e narrativa comercial por estágio.',
+    'Camada de Inteligência: dashboards e alertas traduzem performance em impacto financeiro para decisão rápida.',
   ],
-  proofMetrics: [],
+  proofMetrics: [
+    {
+      value: '5,2×',
+      label: 'ROAS médio',
+      detail: 'Retorno médio em contas com operação integrada entre tráfego e IA agêntica.',
+    },
+    {
+      value: '-18,2%',
+      label: 'CPL médio',
+      detail: 'Queda no custo por lead com priorização de sinais de maior potencial comercial.',
+    },
+    {
+      value: '6,42%',
+      label: 'Conversão média',
+      detail: 'Taxa média de conversão com otimização contínua do funil de aquisição a fechamento.',
+    },
+  ],
+  agentExamples: [
+    {
+      name: 'Agente de Gestão de Tráfego',
+      icon: '🎯',
+      trigger: 'Oscilação de CPL e queda de qualidade dos leads em Google/Meta.',
+      action: 'Recalibra público, distribuição de budget e variações criativas com base em dados reais.',
+      result: 'Mais leads qualificados mantendo eficiência de investimento.',
+      metric: 'Foco: CPL + ROAS',
+    },
+    {
+      name: 'Agente de SEO + GEO',
+      icon: '🔎',
+      trigger: 'Baixa presença orgânica em buscas tradicionais e respostas de IA.',
+      action: 'Organiza pauta, estrutura semântica e intenção de busca para Google, ChatGPT e Gemini.',
+      result: 'Aumento de autoridade digital e geração recorrente de demanda qualificada.',
+      metric: 'Foco: demanda orgânica',
+    },
+    {
+      name: 'Agente de Relacionamento',
+      icon: '🤝',
+      trigger: 'Leads sem resposta e follow-up comercial inconsistente.',
+      action: 'Dispara cadências inteligentes por etapa do funil e prioriza oportunidades quentes.',
+      result: 'Redução de perdas no meio do funil e aumento da taxa de avanço para proposta.',
+      metric: 'Foco: taxa de avanço',
+    },
+    {
+      name: 'Agente de Posicionamento',
+      icon: '📍',
+      trigger: 'Mensagem comercial genérica e baixa diferenciação no mercado.',
+      action: 'Ajusta propostas de valor por segmento e reforça o DNA da marca em pontos críticos da jornada.',
+      result: 'Percepção de valor mais clara e maior consistência no discurso de venda.',
+      metric: 'Foco: conversão qualificada',
+    },
+  ],
   faq: [
     {
-      question: 'Preciso implantar todos os agentes de uma vez?',
+      question: 'Preciso ativar todos os agentes de uma vez?',
       answer:
-        'Não. A implantação é faseada por impacto financeiro. Começamos pelos agentes que reduzem desperdício e aceleram resultado mais rápido.',
+        'Não. A ativação é feita por prioridade de impacto financeiro. Começamos pelo que reduz desperdício agora e cria base para escalar com segurança.',
     },
     {
-      question: 'Os agentes funcionam para qualquer segmento?',
+      question: 'Isso funciona para qualquer segmento de PME?',
       answer:
-        'A lógica é adaptável, mas a priorização muda conforme estágio, ticket, ciclo de venda e canais ativos da empresa.',
+        'A lógica é adaptável. O que muda é a ordem de implantação, considerando ticket médio, ciclo comercial, maturidade de dados e metas de caixa.',
     },
     {
-      question: 'Quem supervisiona as decisões dos agentes?',
+      question: 'Quem supervisiona as decisões dos agentes IA?',
       answer:
-        'A equipe sênior da NeuroAds supervisiona estratégia e governança. A IA acelera execução, mas o direcionamento continua humano.',
+        'O direcionamento continua humano. A equipe sênior da NeuroAds supervisiona estratégia, governança e priorização das ações dos agentes.',
     },
     {
-      question: 'Qual a principal vantagem de um ecossistema integrado?',
+      question: 'Qual a vantagem prática de integrar tráfego, GEO e relacionamento?',
       answer:
-        'Reduzir fricção entre times e transformar dados em ação coordenada. Isso melhora previsibilidade e protege margem ao escalar.',
+        'Você reduz retrabalho entre áreas, acelera resposta ao mercado e melhora previsibilidade de receita sem depender de decisões por achismo.',
     },
   ],
   relatedPages: [
     {
+      label: 'Gestão de Tráfego',
+      href: '/servicos/gestao-de-trafego-google-meta',
+      description: 'Entenda como a operação de mídia é conectada ao restante do ecossistema.',
+    },
+    {
+      label: 'SEO + GEO',
+      href: '/servicos/seo-geo',
+      description: 'Veja como posicionar sua marca para Google e buscadores generativos.',
+    },
+    {
+      label: 'Estratégia de Funil de Conversão',
+      href: '/servicos/estrategia-de-funil-e-conversao',
+      description: 'Organize aquisição, qualificação e fechamento com critérios financeiros.',
+    },
+    {
       label: 'Agentes de Aquisição',
       href: '/agentes-ia/agentes-de-aquisicao',
       description: 'Frente para atrair público qualificado com menor custo.',
-    },
-    {
-      label: 'Agentes de Conversão',
-      href: '/agentes-ia/agentes-de-conversao',
-      description: 'Frente para transformar demanda em vendas consistentes.',
-    },
-    {
-      label: 'Agentes de Inteligência de Dados',
-      href: '/agentes-ia/agentes-de-inteligencia-de-dados',
-      description: 'Frente para decisões orientadas a sinal e caixa.',
-    },
-    {
-      label: 'Implantação de Agentes IA',
-      href: '/servicos/implantacao-de-agentes-ia',
-      description: 'Veja como colocar os agentes em produção com governança.',
     },
   ],
   media: {
