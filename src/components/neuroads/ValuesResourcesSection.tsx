@@ -275,7 +275,7 @@ export default function ValuesResourcesSection() {
 
         <div className="relative z-10 text-center">
           <span className="inline-flex items-center rounded-full border border-[#ffceb0] bg-white px-6 py-2 text-[13px] font-extrabold uppercase tracking-[0.22em] text-[#ff5a00]">
-            Valores & Recursos
+            Teste por 14 dias
           </span>
           <h2 className="mt-8 text-[30px] font-black leading-[1.08] tracking-[-0.02em] text-[#090f2a] sm:text-[38px] md:text-[54px] lg:text-[62px]">
             Escolha seu plano e escale com previsibilidade

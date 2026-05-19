@@ -4,13 +4,20 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import {
+  Activity,
+  AlertCircle,
+  ArrowRight,
+  Bot,
   Database,
   Building2,
+  CalendarClock,
   CheckCircle2,
   Cog,
   Funnel,
   Gem,
   Globe,
+  PauseCircle,
+  PlayCircle,
   PlugZap,
   Sparkles,
   Target,
@@ -18,7 +25,10 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { agents } from '../../data/agents';
+import { AGENT_STATUS_UPDATED_EVENT, readAgentStatusOverrides } from '../../lib/agent-status-cache';
 import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
+import { formatAutomationDateTime, getHubAutomationsFromProfile, type HubAutomationEntry } from '../../lib/hub-automations';
 import { getHubProfileSummary } from '../../lib/hub-profile';
 
 type ActionItem = {
@@ -36,6 +46,36 @@ const REAL_DATA_REQUIREMENTS = [
   'Integrar CRM, pagamentos e data warehouse para consolidar receita e atribuição.',
   'Definir timezone, janela de atribuição e frequência de atualização.',
 ];
+
+const EXECUTION_WINDOW_MS = 45 * 60 * 1000;
+
+type AutomationRuntimeState = 'running' | 'scheduled' | 'paused' | 'inactive' | 'overdue';
+
+function getAutomationRuntimeState(automation: HubAutomationEntry, nowTs: number): AutomationRuntimeState {
+  if (automation.status === 'paused') return 'paused';
+  if (automation.status !== 'active') return 'inactive';
+  if (automation.lastUpdateAt && nowTs >= automation.lastUpdateAt && nowTs - automation.lastUpdateAt <= EXECUTION_WINDOW_MS) {
+    return 'running';
+  }
+  if (automation.nextUpdateAt && automation.nextUpdateAt < nowTs) return 'overdue';
+  return 'scheduled';
+}
+
+function getAutomationRuntimeLabel(runtimeState: AutomationRuntimeState): string {
+  if (runtimeState === 'running') return 'Em execução';
+  if (runtimeState === 'scheduled') return 'Programada';
+  if (runtimeState === 'paused') return 'Pausada';
+  if (runtimeState === 'overdue') return 'Atrasada';
+  return 'Inativa';
+}
+
+function getAutomationRuntimeTone(runtimeState: AutomationRuntimeState): string {
+  if (runtimeState === 'running') return 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]';
+  if (runtimeState === 'scheduled') return 'border-[#DCE8FF] bg-[#F5F9FF] text-[#1D4ED8]';
+  if (runtimeState === 'paused') return 'border-[#F5D0A9] bg-[#FFF7ED] text-[#B45309]';
+  if (runtimeState === 'overdue') return 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]';
+  return 'border-[#D0D5DD] bg-[#F9FAFB] text-[#667085]';
+}
 
 function getGreeting(): string {
   const hour = new Date().getHours();
@@ -115,14 +155,75 @@ function TrailCard({
 export default function StrategicHubOverview() {
   const { user, profile } = useAuth();
   const [nowMs, setNowMs] = useState(() => Date.now());
+  const [statusCacheVersion, setStatusCacheVersion] = useState(0);
 
   const greeting = useMemo(() => getGreeting(), []);
   const firstName = getFirstName(user?.displayName || user?.email);
   const hubProfile = useMemo(() => getHubProfileSummary(profile), [profile]);
+  const statusOverrides = useMemo(() => {
+    void statusCacheVersion;
+    return readAgentStatusOverrides(user?.uid);
+  }, [statusCacheVersion, user?.uid]);
+  const contractedAgents = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
+  const effectiveContracts = useMemo(() => {
+    if (Object.keys(statusOverrides).length === 0) return contractedAgents;
+
+    const merged = new Map(contractedAgents);
+    for (const [title, isActive] of Object.entries(statusOverrides)) {
+      const current = merged.get(title) ?? { isActive: false };
+      merged.set(title, { ...current, isActive });
+    }
+    return merged;
+  }, [contractedAgents, statusOverrides]);
+  const activeAgentEntries = useMemo(() => {
+    const activeTitles = new Set(
+      Array.from(effectiveContracts.entries())
+        .filter(([, entry]) => entry.isActive)
+        .map(([title]) => title)
+    );
+
+    return agents
+      .filter((agent) => activeTitles.has(agent.title))
+      .map((agent) => ({
+        title: agent.title,
+        category: agent.category,
+        description: agent.description,
+      }));
+  }, [effectiveContracts]);
   const activeAgentsCount = useMemo(
-    () => Array.from(getContractedAgentsFromProfile(profile).values()).filter((agent) => agent.isActive).length,
-    [profile]
+    () => activeAgentEntries.length,
+    [activeAgentEntries]
   );
+  const activeAgentsByCategory = useMemo(() => {
+    const categoryCount = new Map<string, number>();
+    for (const agent of activeAgentEntries) {
+      categoryCount.set(agent.category, (categoryCount.get(agent.category) ?? 0) + 1);
+    }
+    return Array.from(categoryCount.entries()).sort((a, b) => b[1] - a[1]);
+  }, [activeAgentEntries]);
+  const automations = useMemo(() => getHubAutomationsFromProfile(profile), [profile]);
+  const trackedAutomations = useMemo(
+    () => automations.filter((automation) => automation.status === 'active' || automation.status === 'paused'),
+    [automations]
+  );
+  const activeAutomationsCount = useMemo(
+    () => trackedAutomations.filter((automation) => automation.status === 'active').length,
+    [trackedAutomations]
+  );
+  const runningAutomationsCount = useMemo(
+    () => trackedAutomations.filter((automation) => getAutomationRuntimeState(automation, nowMs) === 'running').length,
+    [trackedAutomations, nowMs]
+  );
+  const overdueAutomationsCount = useMemo(
+    () => trackedAutomations.filter((automation) => getAutomationRuntimeState(automation, nowMs) === 'overdue').length,
+    [trackedAutomations, nowMs]
+  );
+  const nextAutomation = useMemo(() => {
+    const sorted = trackedAutomations
+      .filter((automation) => automation.nextUpdateAt != null)
+      .sort((a, b) => (a.nextUpdateAt ?? Number.MAX_SAFE_INTEGER) - (b.nextUpdateAt ?? Number.MAX_SAFE_INTEGER));
+    return sorted[0] ?? null;
+  }, [trackedAutomations]);
   const remainingAgentSlots =
     hubProfile.agentLimit != null ? Math.max(hubProfile.agentLimit - activeAgentsCount, 0) : null;
   const operationLabel =
@@ -131,12 +232,28 @@ export default function StrategicHubOverview() {
       : hubProfile.operationLabel;
 
   useEffect(() => {
-    if (!hubProfile.isTrialing || hubProfile.trialEndsAt == null) return;
+    if (!(hubProfile.isTrialing && hubProfile.trialEndsAt != null) && trackedAutomations.length === 0) return;
     const intervalId = window.setInterval(() => {
       setNowMs(Date.now());
     }, 60_000);
     return () => window.clearInterval(intervalId);
-  }, [hubProfile.isTrialing, hubProfile.trialEndsAt]);
+  }, [hubProfile.isTrialing, hubProfile.trialEndsAt, trackedAutomations.length]);
+
+  useEffect(() => {
+    if (!user?.uid) return;
+
+    const syncOverrides = () => {
+      setStatusCacheVersion((current) => current + 1);
+    };
+
+    window.addEventListener(AGENT_STATUS_UPDATED_EVENT, syncOverrides);
+    window.addEventListener('storage', syncOverrides);
+
+    return () => {
+      window.removeEventListener(AGENT_STATUS_UPDATED_EVENT, syncOverrides);
+      window.removeEventListener('storage', syncOverrides);
+    };
+  }, [user?.uid]);
 
   const trialCountdownLabel = useMemo(() => {
     if (!hubProfile.isTrialing || hubProfile.trialEndsAt == null) return null;
@@ -295,6 +412,141 @@ export default function StrategicHubOverview() {
                 </article>
               ))}
             </div>
+          </section>
+
+          <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.05fr_1fr]">
+            <article className="rounded-[24px] border border-[#E8ECF1] bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
+              <header className="mb-4 border-b border-[#EEF1F5] pb-4">
+                <h2 className="text-[18px] font-black tracking-tight text-[#FF5A00]">Resumo das Automações</h2>
+                <p className="text-[14px] text-[#4B5563]">Status operacional das atividades programadas</p>
+              </header>
+
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Programadas</p>
+                  <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{trackedAutomations.length}</p>
+                </article>
+                <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Ativas</p>
+                  <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{activeAutomationsCount}</p>
+                </article>
+                <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Executando</p>
+                  <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{runningAutomationsCount}</p>
+                </article>
+                <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Atrasadas</p>
+                  <p className="mt-1 text-[24px] leading-none font-black text-[#B42318]">{overdueAutomationsCount}</p>
+                </article>
+              </div>
+
+              {trackedAutomations.length > 0 ? (
+                <div className="mt-4 space-y-2">
+                  {trackedAutomations.slice(0, 3).map((automation) => {
+                    const runtimeState = getAutomationRuntimeState(automation, nowMs);
+                    return (
+                      <article key={automation.key} className="rounded-[14px] border border-[#E9EDF4] bg-white p-3">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <p className="text-[14px] font-black text-[#111827]">{automation.agentTitle}</p>
+                          <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold ${getAutomationRuntimeTone(runtimeState)}`}>
+                            {runtimeState === 'running' ? (
+                              <PlayCircle className="h-3.5 w-3.5" />
+                            ) : runtimeState === 'paused' ? (
+                              <PauseCircle className="h-3.5 w-3.5" />
+                            ) : runtimeState === 'overdue' || runtimeState === 'inactive' ? (
+                              <AlertCircle className="h-3.5 w-3.5" />
+                            ) : (
+                              <Activity className="h-3.5 w-3.5" />
+                            )}
+                            {getAutomationRuntimeLabel(runtimeState)}
+                          </span>
+                        </div>
+                        <p className="mt-1 text-[12px] text-[#4B5563]">{automation.cadenceTitle}</p>
+                        <p className="mt-1 text-[12px] text-[#1D4ED8]">
+                          Próxima atualização: {formatAutomationDateTime(automation.nextUpdateAt)}
+                        </p>
+                      </article>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="mt-4 rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-4 text-[14px] text-[#4B5563]">
+                  Nenhuma automação programada ainda. Ative uma automação em um agente para acompanhar status em tempo real.
+                </div>
+              )}
+
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                <p className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#4B5563]">
+                  <CalendarClock className="h-4 w-4 text-[#1D4ED8]" />
+                  {nextAutomation
+                    ? `Próxima execução: ${formatAutomationDateTime(nextAutomation.nextUpdateAt)}`
+                    : 'Sem execução programada no momento'}
+                </p>
+                <Link
+                  href="/hub/automacoes"
+                  className="inline-flex items-center gap-2 text-[14px] font-bold text-[#FF5A00] transition hover:text-[#E14B00]"
+                >
+                  Abrir painel completo <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </article>
+
+            <article className="rounded-[24px] border border-[#E8ECF1] bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
+              <header className="mb-4 border-b border-[#EEF1F5] pb-4">
+                <h2 className="text-[18px] font-black tracking-tight text-[#FF5A00]">Agentes IA Ativos na Conta</h2>
+                <p className="text-[14px] text-[#4B5563]">Visão rápida dos agentes em operação no seu ecossistema</p>
+              </header>
+
+              {activeAgentEntries.length > 0 ? (
+                <>
+                  <div className="mb-3 flex flex-wrap items-center gap-2">
+                    {activeAgentsByCategory.map(([category, count]) => (
+                      <span key={category} className="inline-flex items-center rounded-full bg-[#EEF4FF] px-3 py-1 text-[11px] font-bold text-[#1D4ED8]">
+                        {category}: {count}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="space-y-2">
+                    {activeAgentEntries.slice(0, 5).map((agent) => (
+                      <article key={agent.title} className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                        <p className="text-[14px] font-black text-[#111827]">{agent.title}</p>
+                        <p className="mt-1 text-[12px] text-[#4B5563]">{agent.description}</p>
+                        <div className="mt-2">
+                          <span className="inline-flex items-center rounded-full bg-[#FFF3EC] px-2.5 py-1 text-[11px] font-bold text-[#C2410C]">
+                            {agent.category}
+                          </span>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-4">
+                  <div className="flex items-start gap-2">
+                    <Bot className="mt-0.5 h-5 w-5 text-[#667085]" />
+                    <p className="text-[14px] text-[#4B5563]">
+                      Ainda não há agentes ativos na conta. Ative agentes no laboratório para iniciar sua operação assistida por IA.
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <div className="mt-4 flex flex-wrap gap-3">
+                <Link
+                  href="/hub/agentes-ativos"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] bg-[#FF6A00] px-4 text-[13px] font-black text-white shadow-[0_10px_18px_rgba(255,106,0,0.25)] transition hover:brightness-95"
+                >
+                  Ver todos os agentes
+                </Link>
+                <Link
+                  href="/hub/laboratorio-agentes"
+                  className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] border border-[#D3DAE6] bg-white px-4 text-[13px] font-black text-[#344054] transition hover:bg-[#F8FAFC]"
+                >
+                  Gerenciar ativações
+                </Link>
+              </div>
+            </article>
           </section>
 
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1.33fr]">

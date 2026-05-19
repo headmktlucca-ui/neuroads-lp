@@ -997,7 +997,7 @@ export default function Navbar() {
                     ? 'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-semibold'
                     : 'text-[15px] leading-none font-semibold'
                 } ${
-                  isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#1c2230]'
+                  isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#FF6A00]'
                   }`}
                 >
                   Hub Estratégico
@@ -1006,7 +1006,7 @@ export default function Navbar() {
                   <button
                     type="button"
                     className={`inline-flex items-center gap-1 text-[13px] font-semibold transition-colors duration-200 ${
-                      isHubNavbarStyle ? 'rounded-full px-2 py-1 text-[#5f6572] group-hover:text-[#1c2230]' : 'text-[#344054] group-hover:text-[#111827]'
+                      isHubNavbarStyle ? 'rounded-full px-2 py-1 text-[#5f6572] group-hover:text-[#FF6A00]' : 'text-[#344054] group-hover:text-[#FF6A00]'
                     }`}
                   >
                     Agentes IA
@@ -1020,7 +1020,7 @@ export default function Navbar() {
                           className={`block w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
                             isLinkActive(link.href)
                               ? 'text-[#FF6A00] bg-[#F3F4F6]'
-                              : 'text-[#344054] hover:bg-[#F8FAFC]'
+                              : 'text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
                           }`}
                         >
                           {link.name}
@@ -1037,7 +1037,7 @@ export default function Navbar() {
                       ? 'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-semibold'
                       : 'text-[15px] leading-none font-semibold'
                   } ${
-                    isLinkActive('/hub/agentes-ativos') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#1c2230]'
+                    isLinkActive('/hub/agentes-ativos') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#FF6A00]'
                   }`}
                 >
                   Agentes Ativos
@@ -1049,7 +1049,7 @@ export default function Navbar() {
                       ? 'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-semibold'
                       : 'text-[15px] leading-none font-semibold'
                   } ${
-                    isLinkActive('/hub/automacoes') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#1c2230]'
+                    isLinkActive('/hub/automacoes') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#FF6A00]'
                   }`}
                 >
                   Automações
@@ -1059,8 +1059,8 @@ export default function Navbar() {
                     type="button"
                     className={`inline-flex items-center gap-1 text-[13px] font-semibold transition-colors duration-200 ${
                       isHubNavbarStyle
-                        ? 'rounded-full px-2 py-1 text-[#5f6572] group-hover:text-[#1c2230]'
-                        : 'text-[#344054] group-hover:text-[#111827]'
+                        ? 'rounded-full px-2 py-1 text-[#5f6572] group-hover:text-[#FF6A00]'
+                        : 'text-[#344054] group-hover:text-[#FF6A00]'
                     }`}
                   >
                     Configurações
@@ -1069,25 +1069,25 @@ export default function Navbar() {
                   <div className="invisible absolute left-1/2 top-full z-[120] mt-3 w-[300px] -translate-x-1/2 rounded-2xl border border-[#E7EAF0] bg-white p-2 opacity-0 shadow-[0_14px_30px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:opacity-100">
                       <button
                         onClick={openProfileModal}
-                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] transition-colors"
+                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00] transition-colors"
                       >
                         Meu perfil
                       </button>
                       <button
                         onClick={openConnectorsModal}
-                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] transition-colors"
+                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00] transition-colors"
                       >
                         Conectores
                       </button>
                       <button
                         onClick={openCompanyModal}
-                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] transition-colors"
+                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00] transition-colors"
                       >
                         Sua Empresa
                       </button>
                       <button
                         onClick={openFinanceModal}
-                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] transition-colors"
+                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00] transition-colors"
                       >
                         Financeiro
                       </button>
@@ -1180,7 +1180,7 @@ export default function Navbar() {
                 href="/hub"
                 onClick={() => setIsMenuOpen(false)}
                 className={`text-lg font-black tracking-[0.08em] transition-colors ${
-                  isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
+                  isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-text-main hover:text-[#FF6A00]'
                 }`}
               >
                 Hub Estratégico
@@ -1190,7 +1190,7 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setIsLabSubmenuOpen((prev) => !prev)}
-                  className="mx-auto flex items-center gap-2 text-lg font-black tracking-[0.08em] text-text-main transition-colors hover:text-primary"
+                  className="mx-auto flex items-center gap-2 text-lg font-black tracking-[0.08em] text-text-main transition-colors hover:text-[#FF6A00]"
                 >
                   Agentes IA
                   <ChevronDown size={16} className={`transition-transform ${isLabSubmenuOpen ? 'rotate-180' : ''}`} />
@@ -1202,7 +1202,7 @@ export default function Navbar() {
                         href={link.href}
                         onClick={() => setIsMenuOpen(false)}
                         className={`block rounded-xl px-4 py-2 text-center text-sm font-bold tracking-wide transition-colors ${
-                          isLinkActive(link.href) ? 'bg-[#F3F4F6] text-[#FF6A00]' : 'text-text-muted hover:bg-[#F8FAFC]'
+                          isLinkActive(link.href) ? 'bg-[#F3F4F6] text-[#FF6A00]' : 'text-text-muted hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
                         }`}
                       >
                         {link.name}
@@ -1216,7 +1216,7 @@ export default function Navbar() {
                 href="/hub/agentes-ativos"
                 onClick={() => setIsMenuOpen(false)}
                 className={`text-lg font-black tracking-[0.08em] transition-colors ${
-                  isLinkActive('/hub/agentes-ativos') ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
+                  isLinkActive('/hub/agentes-ativos') ? 'text-[#0A9D57]' : 'text-text-main hover:text-[#FF6A00]'
                 }`}
               >
                 Agentes Ativos
@@ -1225,7 +1225,7 @@ export default function Navbar() {
                 href="/hub/automacoes"
                 onClick={() => setIsMenuOpen(false)}
                 className={`text-lg font-black tracking-[0.08em] transition-colors ${
-                  isLinkActive('/hub/automacoes') ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
+                  isLinkActive('/hub/automacoes') ? 'text-[#0A9D57]' : 'text-text-main hover:text-[#FF6A00]'
                 }`}
               >
                 Automações
@@ -1819,3 +1819,4 @@ export default function Navbar() {
     </Fragment>
   );
 }
+
