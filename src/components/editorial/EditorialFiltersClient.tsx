@@ -7,6 +7,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, CalendarDays, Clock3, Eye, Flame } from 'lucide-react';
 import type { EditorialOrder, EditorialPost, EditorialTag } from '@/lib/editorial/alem-do-algoritmo';
 import { sortPostsByOrder } from '@/lib/editorial/alem-do-algoritmo';
+import NewsletterSignup from './NewsletterSignup';
 
 interface Props {
   posts: EditorialPost[];
@@ -162,12 +163,12 @@ export default function EditorialFiltersClient({ posts }: Props) {
       </div>
 
       <aside className="space-y-5">
-        <div className="rounded-[24px] border border-[#252a34] bg-[#0d121b] p-6 shadow-[0_18px_38px_rgba(0,0,0,0.35)]">
-          <h2 className="inline-flex items-center gap-2 text-lg font-black text-white">
-            <Flame size={18} className="text-[#ff9d1f]" />
+        <div className="rounded-[24px] border border-[#dfe7f1] bg-white/95 p-6 shadow-[0_18px_38px_rgba(9,23,44,0.08)]">
+          <h2 className="inline-flex items-center gap-2 text-lg font-black text-[#0f1730]">
+            <Flame size={18} className="text-[#ff5f00]" />
             Radar 24h
           </h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-400">
+          <p className="mt-2 text-sm leading-relaxed text-[#4d5c75]">
             Conteúdos com maior tração nas últimas 24 horas.
           </p>
 
@@ -176,24 +177,16 @@ export default function EditorialFiltersClient({ posts }: Props) {
               <Link
                 key={`radar-${post.slug}`}
                 href={`/conteudos/alem-do-algoritmo/${post.slug}`}
-                className="block rounded-3xl border border-[#1f2937] bg-[#101827] p-4 transition hover:border-[#384361] hover:bg-[#111b2b]"
+                className="block rounded-2xl border border-[#edf2f8] bg-[#fbfdff] p-4 transition hover:border-[#ffd4bc]"
               >
-                <p className="text-sm font-black text-white">{post.title}</p>
-                <p className="mt-1 text-xs text-slate-500">{post.views24h.toLocaleString('pt-BR')} acessos em 24h</p>
+                <p className="text-sm font-black text-[#12213d]">{post.title}</p>
+                <p className="mt-1 text-xs text-[#5b6a84]">{post.views24h.toLocaleString('pt-BR')} acessos em 24h</p>
               </Link>
             ))}
           </div>
         </div>
 
-        <div className="rounded-[24px] border border-[#252a34] bg-[#0d121b] p-6 shadow-[0_18px_38px_rgba(0,0,0,0.28)]">
-          <h2 className="text-lg font-black text-white">Template de publicação</h2>
-          <p className="mt-2 text-sm leading-relaxed text-slate-400">
-            Todos os conteúdos seguem padrão editorial com SEO + GEO, leitura orientada a caixa e blocos de decisão para equipe comercial.
-          </p>
-          <p className="mt-4 rounded-xl border border-[#1f2937] bg-white/5 px-3 py-2 text-xs font-semibold text-slate-300">
-            Estrutura padrão: contexto do problema → impacto financeiro → execução recomendada → CTA consultiva.
-          </p>
-        </div>
+        <NewsletterSignup />
       </aside>
     </section>
   );

@@ -45,33 +45,15 @@ export default function Page() {
         <div className="h-[84px]" />
 
         <section className="wrap relative overflow-hidden pb-8 pt-14 sm:pt-18">
-          <div className="pointer-events-none absolute -left-20 top-8 h-56 w-56 rounded-full bg-[#ff6a00]/12 blur-3xl" />
-          <div className="pointer-events-none absolute right-0 top-24 h-72 w-72 rounded-full bg-[#0f1d3f]/10 blur-3xl" />
-          <div className="pointer-events-none absolute left-1/2 top-1/3 h-72 w-72 -translate-x-1/2 rounded-full bg-[#ff5f00]/6 blur-3xl" />
-
           <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
             <div className="max-w-4xl">
-              <div className="mb-7 inline-flex items-center rounded-full border border-[#ffd8c2] bg-[#fff5ee] px-4 py-2 text-[11px] font-black uppercase tracking-[0.16em] text-[#ff5f00]">
-                Canal Editorial NeuroAds
-              </div>
-
-              <h1 className="max-w-5xl text-balance text-4xl font-black leading-[1.04] tracking-[-0.03em] text-[#0f1730] sm:text-5xl md:text-6xl">
+              <h1 className="max-w-5xl text-balance text-4xl font-black leading-[1.04] tracking-[-0.03em] sm:text-5xl md:text-6xl grad-text-animated">
                 Além do Algoritmo
               </h1>
 
               <p className="mt-6 max-w-3xl text-lg leading-relaxed text-[#40506a]">
                 Estratégia aplicada para empresários que precisam de crescimento previsível. Aqui cada conteúdo traduz SEO + GEO, IA agêntica e performance para impacto real no caixa.
               </p>
-
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <span className="inline-flex items-center gap-2 rounded-full bg-[#fff2e9] px-3 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-[#ff5f00]">
-                  <Sparkles size={13} />
-                  Widgets inteligentes de leitura
-                </span>
-                <span className="rounded-full border border-[#dfe8f2] bg-white px-3 py-1.5 text-xs font-semibold text-[#3f4f69]">
-                  Filtros por Últimas 24h, Mais acessadas e Tags por tema
-                </span>
-              </div>
             </div>
 
             <div className="relative flex justify-center lg:justify-end">
