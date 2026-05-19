@@ -158,7 +158,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Escala de vendas para e-commerce',
-    poster: '/images/tools/servico-funil-conversao-hero-ultrarealista-v2.png',
+    poster: '/images/segment-highlights/ecommerce-varejo-destaque.png',
   },
 };
 

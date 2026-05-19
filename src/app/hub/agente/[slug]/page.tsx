@@ -11,10 +11,12 @@ import LuccaHubSupportWidget from '../../../../components/hub/LuccaHubSupportWid
 import SeoGeoWorkspace from '../../../../components/agents/SeoGeoWorkspace';
 import TrafficAnalystWorkspace from '../../../../components/agents/TrafficAnalystWorkspace';
 import RoasSimulatorWorkspace from '../../../../components/agents/RoasSimulatorWorkspace';
+import FunnelPredictorWorkspace from '../../../../components/agents/FunnelPredictorWorkspace';
 import WasteAuditorWorkspace from '../../../../components/agents/WasteAuditorWorkspace';
 import BudgetOptimizerWorkspace from '../../../../components/agents/BudgetOptimizerWorkspace';
 import CreativeGeneratorWorkspace from '../../../../components/agents/CreativeGeneratorWorkspace';
 import ConversionCopyWorkspace from '../../../../components/agents/ConversionCopyWorkspace';
+import CreativeAnalysisWorkspace from '../../../../components/agents/CreativeAnalysisWorkspace';
 import DnaBrandWorkspace, { DnaBrandPresentationPanel } from '../../../../components/agents/DnaBrandWorkspace';
 import GenericAgentWorkspace from '../../../../components/agents/GenericAgentWorkspace';
 import { useAuth } from '../../../../context/AuthContext';
@@ -139,6 +141,16 @@ function getAgentHeroDescription(title: string) {
     );
   }
 
+  if (title === 'Preditor de Funil') {
+    return (
+      <>
+        O agente <strong className="text-text-main">Preditor de Funil</strong> transforma sinais reais de tráfego e conversão em projeções financeiras acionáveis para cada etapa
+        da jornada comercial. Ele estima volume necessário de cliques, leads, MQLs, SQLs e vendas para bater metas de receita, compara cenários de execução e aponta o caminho com
+        melhor equilíbrio entre escala, custo e margem.
+      </>
+    );
+  }
+
   if (title === 'Auditor de Desperdício') {
     return (
       <>
@@ -175,6 +187,16 @@ function getAgentHeroDescription(title: string) {
         O agente <strong className="text-text-main">Gerador de Copies de Conversão</strong> transforma sinais reais de performance em copies orientadas a resultado financeiro.
         Ele localiza padrões vencedores por canal, mensura prioridades de otimização e gera variações de headline, hook, corpo e CTA prontas para execução com foco em elevar
         conversão e controlar o custo por aquisição.
+      </>
+    );
+  }
+
+  if (title === 'Análise Viral') {
+    return (
+      <>
+        O agente <strong className="text-text-main">Análise de Criativos</strong> monitora sinais quentes do mercado para mapear conteúdos em destaque nas últimas 24 horas.
+        Ele transforma tendências em variações estratégicas de formato, narrativa e posicionamento, priorizando relevância comercial, clareza de oferta e impacto direto na
+        geração de demanda.
       </>
     );
   }
@@ -537,10 +559,10 @@ export default function AgentEntryPage() {
                               {entry.title === 'Gerador de Copies de Conversão'
                                 ? 'Ativar Agente'
                                 : automationActivated
-                                  ? entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos'
+                                  ? entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil'
                                     ? 'Agente Ativo'
                                     : 'Automação Ativa'
-                                  : entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos'
+                                  : entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil'
                                     ? 'Ativar Agente'
                                     : 'Ativar Automação'}
                             </button>
@@ -607,6 +629,15 @@ export default function AgentEntryPage() {
                       agentCategory={entry.category}
                     />
                   </div>
+                ) : entry.title === 'Preditor de Funil' ? (
+                  <div className="col-span-1">
+                    <FunnelPredictorWorkspace
+                      userId={user?.uid}
+                      agentSlug={entry.slug}
+                      agentTitle={entry.title}
+                      agentCategory={entry.category}
+                    />
+                  </div>
                 ) : entry.title === 'Auditor de Desperdício' ? (
                   <div className="col-span-1">
                     <WasteAuditorWorkspace
@@ -637,6 +668,15 @@ export default function AgentEntryPage() {
                 ) : entry.title === 'Gerador de Copies de Conversão' ? (
                   <div className="col-span-1">
                     <ConversionCopyWorkspace
+                      userId={user?.uid}
+                      agentSlug={entry.slug}
+                      agentTitle={entry.title}
+                      agentCategory={entry.category}
+                    />
+                  </div>
+                ) : entry.title === 'Análise Viral' ? (
+                  <div className="col-span-1">
+                    <CreativeAnalysisWorkspace
                       userId={user?.uid}
                       agentSlug={entry.slug}
                       agentTitle={entry.title}

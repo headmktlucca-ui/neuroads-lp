@@ -252,6 +252,7 @@ function MediaLoopBlock({ slug, media }: MediaLoopBlockProps) {
 
 function AgentCard({ agent, index }: { agent: AgentExample; index: number }) {
   const { ref, isVisible } = useInView(0.08);
+  const hasImageIcon = agent.icon.startsWith('/');
 
   return (
     <div
@@ -264,9 +265,21 @@ function AgentCard({ agent, index }: { agent: AgentExample; index: number }) {
       }}
     >
       <div className="flex items-start justify-between gap-3">
-        <span className="text-[34px] leading-none">{agent.icon}</span>
+        {hasImageIcon ? (
+          <span className="relative inline-flex h-11 w-11 overflow-hidden rounded-xl border border-white/15 bg-white/[0.06] p-1.5">
+            <Image
+              src={agent.icon}
+              alt={`Ícone oficial do agente ${agent.name}`}
+              fill
+              className="object-cover"
+              sizes="44px"
+            />
+          </span>
+        ) : (
+          <span className="text-[34px] leading-none">{agent.icon}</span>
+        )}
         {agent.metric && (
-          <span className="mt-1 rounded-full border border-[#ff6a00]/25 bg-[#ff6a00]/10 px-3 py-1 text-[12px] font-black text-[#ff9a50]">
+          <span className="mt-1 text-[12px] font-black text-[#ff9a50]">
             {agent.metric}
           </span>
         )}
@@ -275,19 +288,19 @@ function AgentCard({ agent, index }: { agent: AgentExample; index: number }) {
       <h3 className="mt-3 text-[15px] font-black leading-tight text-white">{agent.name}</h3>
 
       <div className="mt-4 flex flex-col gap-2.5">
-        <div className="rounded-xl border border-white/[0.07] bg-white/[0.04] p-3">
+        <div className="p-3">
           <p className="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-[#f97316]/70">
             Gatilho
           </p>
           <p className="text-[13px] leading-snug text-white/60">{agent.trigger}</p>
         </div>
-        <div className="rounded-xl border border-white/[0.07] bg-white/[0.04] p-3">
+        <div className="p-3">
           <p className="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-[#60a5fa]/70">
             Execução
           </p>
           <p className="text-[13px] leading-snug text-white/60">{agent.action}</p>
         </div>
-        <div className="rounded-xl border border-[#4ade80]/15 bg-[#4ade80]/[0.05] p-3">
+        <div className="p-3">
           <p className="mb-1 text-[10px] font-black uppercase tracking-[0.14em] text-[#4ade80]/80">
             Resultado
           </p>

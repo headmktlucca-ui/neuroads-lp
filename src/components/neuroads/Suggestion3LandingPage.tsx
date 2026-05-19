@@ -133,35 +133,35 @@ const segmentLandingCards = [
   {
     title: 'Mercado Imobiliário',
     href: '/servicos/mercado-imobiliario',
-    iconImage: '/images/segment-icons/mercado-imobiliario-hd.png',
+    backgroundImage: '/images/segment-backgrounds/mercado-imobiliario-bg.png',
     pain: 'Plantão cheio, mas poucas visitas com perfil de fechamento.',
     impact: 'Mais previsibilidade entre lead, visita e proposta.',
   },
   {
     title: 'Saúde & Clínicas',
     href: '/servicos/saude-clinicas',
-    iconImage: '/images/segment-icons/saude-clinicas-hd.png',
+    backgroundImage: '/images/segment-backgrounds/saude-clinicas-bg.png',
     pain: 'Agenda instável com contatos sem aderência clínica.',
     impact: 'Redução de desperdício e melhor ocupação da agenda.',
   },
   {
     title: 'E-commerce & Varejo',
     href: '/servicos/e-commerce-varejo',
-    iconImage: '/images/segment-icons/ecommerce-varejo-hd.png',
+    backgroundImage: '/images/segment-backgrounds/ecommerce-varejo-bg.png',
     pain: 'Tráfego alto sem conversão consistente em faturamento.',
     impact: 'Escala de vendas com foco em margem e ROAS sustentável.',
   },
   {
     title: 'Serviços Profissionais',
     href: '/servicos/servicos-profissionais',
-    iconImage: '/images/segment-icons/servicos-profissionais-hd.png',
+    backgroundImage: '/images/segment-backgrounds/servicos-profissionais-bg.png',
     pain: 'Dependência de indicação e pipeline comercial irregular.',
     impact: 'Fluxo recorrente de reuniões com perfil ideal.',
   },
   {
     title: 'Educação Digital',
     href: '/servicos/educacao-digital',
-    iconImage: '/images/segment-icons/educacao-digital-hd.png',
+    backgroundImage: '/images/segment-backgrounds/educacao-digital-bg.png',
     pain: 'Receita dependente de picos de lançamento.',
     impact: 'Matrículas previsíveis com sistema contínuo de aquisição.',
   },
@@ -968,39 +968,52 @@ export default function Suggestion3LandingPage() {
               Cada segmento tem uma lógica de compra diferente. Aqui você encontra páginas de captura específicas para reduzir desperdício e aumentar previsibilidade de receita.
             </p>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-6 flex flex-wrap justify-center gap-4">
               {segmentLandingCards.map((segment) => {
+                const hasBackgroundImage = Boolean(segment.backgroundImage);
+
                 return (
-                  <article
+                  <Link
                     key={segment.href}
-                    className="group rounded-[20px] border border-[#e9edf4] bg-white p-5 shadow-[0_10px_24px_rgba(16,24,40,0.05)] transition hover:-translate-y-0.5 hover:border-[#ffd4b2] hover:shadow-[0_14px_28px_rgba(255,122,36,0.13)]"
+                    href={segment.href}
+                    aria-label={`Abrir oportunidade de ${segment.title}`}
+                    className={`group relative w-full max-w-[420px] overflow-hidden rounded-[22px] border border-[#e9edf4] shadow-[0_10px_24px_rgba(16,24,40,0.05)] transition hover:-translate-y-0.5 hover:border-[#ffd4b2] hover:shadow-[0_14px_28px_rgba(255,122,36,0.13)] md:w-[calc(50%-0.5rem)] xl:w-[calc(33.333%-0.75rem)] ${
+                      hasBackgroundImage ? 'min-h-[360px] p-0 md:min-h-[420px]' : 'bg-white p-5'
+                    }`}
                   >
-                    <div className="inline-flex h-[58px] w-[58px] items-center justify-center rounded-[12px] bg-transparent">
-                      <Image
-                        src={segment.iconImage}
-                        alt={`Ícone ${segment.title}`}
-                        width={58}
-                        height={58}
-                        className="h-[58px] w-[58px] object-contain"
-                        sizes="58px"
-                      />
-                    </div>
-                    <h3 className="mt-4 text-[20px] font-extrabold leading-snug text-[#1f2531]">{segment.title}</h3>
-                    <p className="mt-2 text-[14px] leading-relaxed text-[#5b6577]">{segment.pain}</p>
-                    <p className="mt-3 text-[13px] font-semibold leading-relaxed text-[#2d3648]">{segment.impact}</p>
-                    <Link
-                      href={segment.href}
-                      className="mt-4 inline-flex items-center gap-2 text-[13px] font-extrabold text-[#ff6a00] transition group-hover:gap-2.5"
-                    >
-                      Ver página do segmento
-                      <ArrowRight size={13} />
-                    </Link>
-                  </article>
+                    {hasBackgroundImage ? (
+                      <>
+                        <Image src={segment.backgroundImage ?? ''} alt="" fill className="object-cover object-center" sizes="(max-width: 768px) 100vw, 50vw" aria-hidden />
+                        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[56%] bg-[linear-gradient(180deg,rgba(6,12,22,0)_0%,rgba(6,12,22,0.46)_44%,rgba(6,12,22,0.86)_100%)]" />
+                        <div className="relative z-10 flex min-h-[360px] flex-col justify-end p-4 md:min-h-[420px] md:p-5">
+                          <div className="rounded-[14px] border border-white/30 bg-white/12 p-4 backdrop-blur-[2.5px]">
+                            <h3 className="text-[22px] font-black leading-snug text-white [text-shadow:0_2px_10px_rgba(3,8,15,0.55)]">{segment.title}</h3>
+                            <p className="mt-2 text-[14px] leading-relaxed text-white/90 [text-shadow:0_1px_6px_rgba(3,8,15,0.5)]">{segment.pain}</p>
+                            <p className="mt-3 text-[13px] font-semibold leading-relaxed text-white/95 [text-shadow:0_1px_6px_rgba(3,8,15,0.45)]">{segment.impact}</p>
+                            <span className="mt-4 inline-flex items-center gap-2 text-[13px] font-extrabold text-[#ffd1ad] transition group-hover:gap-2.5">
+                              Conheça as oportunidades
+                              <ArrowRight size={13} />
+                            </span>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <h3 className="text-[20px] font-extrabold leading-snug text-[#1f2531]">{segment.title}</h3>
+                        <p className="mt-2 text-[14px] leading-relaxed text-[#5b6577]">{segment.pain}</p>
+                        <p className="mt-3 text-[13px] font-semibold leading-relaxed text-[#2d3648]">{segment.impact}</p>
+                        <span className="mt-4 inline-flex items-center gap-2 text-[13px] font-extrabold text-[#ff6a00] transition group-hover:gap-2.5">
+                          Conheça as oportunidades
+                          <ArrowRight size={13} />
+                        </span>
+                      </>
+                    )}
+                  </Link>
                 );
               })}
             </div>
 
-            <div className="mt-6 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-col items-center gap-2 text-center">
               <button
                 type="button"
                 onClick={handleOpenSpecialistChat}

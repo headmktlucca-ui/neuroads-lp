@@ -156,7 +156,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Captação previsível para clínicas',
-    poster: '/images/tools/servico-seo-geo-hero-ultrarealista-v2.png',
+    poster: '/images/segment-highlights/saude-clinicas-destaque.png',
   },
 };
 

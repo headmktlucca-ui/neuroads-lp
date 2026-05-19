@@ -2,14 +2,11 @@
 
 import OpenAI from 'openai';
 
-export type WinningConfiguration = {
-  channel: string;
-  angle: string;
-  ctaStyle: string;
-  ctr: number;
-  cvr: number;
-  cpl: number;
-  notes?: string;
+export type ReferenceCreativeInput = {
+  title: string;
+  source: string;
+  summary: string;
+  score?: number;
 };
 
 export type ConversionCopyRequest = {
@@ -27,7 +24,13 @@ export type ConversionCopyRequest = {
     cplTarget: number;
     roasTarget: number;
   };
-  winningConfigurations: WinningConfiguration[];
+  referenceCreatives?: ReferenceCreativeInput[];
+  creativeInstruction?: string;
+  suggestionImages?: Array<{
+    name: string;
+    type: string;
+    sizeKb: number;
+  }>;
   additionalContext?: string;
 };
 
@@ -73,17 +76,17 @@ function toNumber(value: unknown): number {
 }
 
 function fallbackResponse(input: ConversionCopyRequest): ConversionCopyResponse {
-  const bestConfig = [...input.winningConfigurations].sort((a, b) => b.cvr - a.cvr)[0];
-  const bestChannel = bestConfig?.channel || input.channels[0] || 'Canal principal';
-  const angle = bestConfig?.angle || 'Clareza de resultado financeiro';
-  const ctaStyle = bestConfig?.ctaStyle || 'Diagnostico estrategico';
+  const bestReference = [...(input.referenceCreatives ?? [])].sort((a, b) => (b.score ?? 0) - (a.score ?? 0))[0];
+  const bestChannel = input.channels[0] || 'Canal principal';
+  const angle = bestReference?.title || 'Clareza de resultado financeiro';
+  const ctaStyle = 'Diagnostico estrategico';
 
   return {
     insights: [
       {
         id: `insight-${Date.now()}-1`,
         title: 'Padrao de conversao dominante',
-        insight: `Os sinais mais fortes estao concentrados em ${bestChannel}, com angulo "${angle}".`,
+        insight: `Os sinais mais fortes estao concentrados em ${bestChannel}, com referencia criativa "${angle}".`,
         whyItMatters: 'Padroes com maior conversao reduzem tempo de teste e preservam caixa.',
         priority: 'Alta',
         confidence: 82,
@@ -112,7 +115,7 @@ function fallbackResponse(input: ConversionCopyRequest): ConversionCopyResponse 
         angle,
         headline: `${input.companyName}: pare de investir no escuro e escale com previsibilidade`,
         hook: 'Se os numeros parecem bons, mas as vendas nao batem, existe um vazamento invisivel na sua operacao.',
-        body: `Voce nao precisa de mais campanha solta. Precisa de um sistema que conecta estrategia, dados reais e execucao diaria. Com foco em ${input.objective.toLowerCase()}, sua operacao ganha clareza de decisao e reduz desperdicio com criterio financeiro.`,
+        body: `Voce nao precisa de mais campanha solta. Precisa de um sistema que conecta estrategia, dados reais e execucao diaria. Com foco em ${input.objective.toLowerCase()}, sua operacao ganha clareza de decisao e reduz desperdicio com criterio financeiro.${input.creativeInstruction ? ` Diretriz adicional: ${input.creativeInstruction}` : ''}`,
         cta: `Solicitar ${ctaStyle.toLowerCase()}`,
         creativeDirection: `${input.creativeFormat} com comparativo antes/depois e destaque visual para indicador de caixa.`,
         expectedImpact: `Prioridade em elevar conversao acima de ${input.metrics.conversionTarget}% mantendo CPL proximo de R$ ${input.metrics.cplTarget}.`,
@@ -290,4 +293,3 @@ ENTREGUE EXATAMENTE EM JSON COM ESTE SCHEMA:
     };
   }
 }
-

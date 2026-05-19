@@ -157,7 +157,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Escala de matrículas com previsibilidade',
-    poster: '/images/tools/servico-funil-conversao-hero-ultrarealista-v2.png',
+    poster: '/images/segment-highlights/educacao-digital-destaque.png',
   },
 };
 

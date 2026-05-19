@@ -156,7 +156,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Sistema de captação para imobiliárias',
-    poster: '/images/tools/gestao-trafego-controle-caixa-hero-ultrarealista-v2.png',
+    poster: '/images/segment-highlights/mercado-imobiliario-destaque.png',
   },
 };
 

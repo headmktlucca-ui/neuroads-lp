@@ -39,10 +39,12 @@ const ACTIVATABLE_AGENT_TITLES = new Set([
   'DNA da Marca',
   'SEO & GEO',
   'Simulador de ROAS',
+  'Preditor de Funil',
   'Auditor de Desperdício',
   'Otimizador de Orçamento',
   'Gerador de Criativos',
   'Gerador de Copies de Conversão',
+  'Análise Viral',
 ]);
 
 type AgentDetailsContent = {
@@ -76,6 +78,18 @@ const AGENT_DETAILS_MAP: Record<string, AgentDetailsContent> = {
       'Simulações por cenário, oportunidades priorizadas por canal e plano de alocação de verba para escala previsível.',
     effectiveResult:
       'Mais clareza sobre onde investir, quanto investir e qual retorno financeiro esperar antes de acelerar o orçamento.',
+  },
+  'Preditor de Funil': {
+    activities: [
+      'Consolida indicadores reais de mídia e conversão para mapear cada etapa do funil comercial.',
+      'Projeta cenários de cliques, leads, MQL, SQL e vendas para estimar receita, margem e risco operacional.',
+    ],
+    howItWorks:
+      'Cruza volume, custos e taxas de passagem entre etapas para estimar o esforço necessário para bater metas de faturamento com previsibilidade.',
+    deliveries:
+      'Diagnóstico do funil atual, meta operacional por etapa e cenários comparativos de escala com impacto financeiro.',
+    effectiveResult:
+      'Mais precisão para decidir orçamento e ritmo de execução sem depender de tentativa e erro.',
   },
   'Auditor de Desperdício': {
     activities: [
@@ -112,6 +126,18 @@ const AGENT_DETAILS_MAP: Record<string, AgentDetailsContent> = {
       'Plano criativo com oportunidades priorizadas, cadência recomendada de produção e simulações de uplift.',
     effectiveResult:
       'Mais consistência na geração de criativos com foco em reduzir CPL e aumentar previsibilidade comercial.',
+  },
+  'Análise Viral': {
+    activities: [
+      'Monitora conteúdos quentes do mercado nas últimas 24 horas, filtrando temas aderentes ao DNA da marca.',
+      'Converte tendências em variações de conteúdo com posicionamentos orientados a conversão e geração de demanda.',
+    ],
+    howItWorks:
+      'Cruza segmento, objetivos e temas estratégicos da marca com sinais de destaque recentes para recomendar narrativas e formatos acionáveis.',
+    deliveries:
+      'Top 10 referências atuais com variações de abordagem, canal recomendado e CTA sugerido por oportunidade.',
+    effectiveResult:
+      'Mais velocidade criativa com foco em relevância comercial e aumento da previsibilidade de performance.',
   },
 };
 

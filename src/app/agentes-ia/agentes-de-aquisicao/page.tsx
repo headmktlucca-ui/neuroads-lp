@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import SubmenuPageShell, { type SubmenuPageContent } from '@/components/neuroads/SubmenuPageShell';
+import { getAgentExamplesForStage } from '@/data/agent-examples';
 
 export const metadata: Metadata = {
   title: 'Agentes de Aquisição | NeuroAds',
@@ -45,6 +46,7 @@ const content: SubmenuPageContent = {
     'Integração de sinais de mídia com resultado comercial.',
   ],
   proofMetrics: [],
+  agentExamples: getAgentExamplesForStage('aquisicao'),
   faq: [
     {
       question: 'Como vocês medem qualidade de lead na aquisição?',

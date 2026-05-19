@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import SubmenuPageShell, { type SubmenuPageContent } from '@/components/neuroads/SubmenuPageShell';
+import { getAgentExamplesForStage, NEUROADS_AGENT_COUNT } from '@/data/agent-examples';
 
 export const metadata: Metadata = {
   title: 'Visão Geral dos Agentes IA | NeuroAds',
@@ -21,7 +22,7 @@ const content: SubmenuPageContent = {
     impactoFinanceiro:
       'Sem orquestração entre frentes, o custo por lead tende a subir, o CAC oscila e o caixa perde previsibilidade de entrada no mês.',
     prova:
-      'Hoje, a NeuroAds opera 18 agentes proprietários conectando tráfego, SEO + GEO e CRM para acelerar decisões com dados reais.',
+      `Hoje, a NeuroAds opera ${NEUROADS_AGENT_COUNT} agentes proprietários conectando tráfego, SEO + GEO e CRM para acelerar decisões com dados reais.`,
     metodo:
       'Mapeamos o estágio do funil, priorizamos agentes por impacto no caixa e implementamos uma rotina de otimização contínua com supervisão sênior.',
     cta: 'Solicite o diagnóstico e receba o plano de quais agentes ativar primeiro no seu cenário.',
@@ -61,40 +62,7 @@ const content: SubmenuPageContent = {
       detail: 'Taxa média de conversão com otimização contínua do funil de aquisição a fechamento.',
     },
   ],
-  agentExamples: [
-    {
-      name: 'Agente de Gestão de Tráfego',
-      icon: '🎯',
-      trigger: 'Oscilação de CPL e queda de qualidade dos leads em Google/Meta.',
-      action: 'Recalibra público, distribuição de budget e variações criativas com base em dados reais.',
-      result: 'Mais leads qualificados mantendo eficiência de investimento.',
-      metric: 'Foco: CPL + ROAS',
-    },
-    {
-      name: 'Agente de SEO + GEO',
-      icon: '🔎',
-      trigger: 'Baixa presença orgânica em buscas tradicionais e respostas de IA.',
-      action: 'Organiza pauta, estrutura semântica e intenção de busca para Google, ChatGPT e Gemini.',
-      result: 'Aumento de autoridade digital e geração recorrente de demanda qualificada.',
-      metric: 'Foco: demanda orgânica',
-    },
-    {
-      name: 'Agente de Relacionamento',
-      icon: '🤝',
-      trigger: 'Leads sem resposta e follow-up comercial inconsistente.',
-      action: 'Dispara cadências inteligentes por etapa do funil e prioriza oportunidades quentes.',
-      result: 'Redução de perdas no meio do funil e aumento da taxa de avanço para proposta.',
-      metric: 'Foco: taxa de avanço',
-    },
-    {
-      name: 'Agente de Posicionamento',
-      icon: '📍',
-      trigger: 'Mensagem comercial genérica e baixa diferenciação no mercado.',
-      action: 'Ajusta propostas de valor por segmento e reforça o DNA da marca em pontos críticos da jornada.',
-      result: 'Percepção de valor mais clara e maior consistência no discurso de venda.',
-      metric: 'Foco: conversão qualificada',
-    },
-  ],
+  agentExamples: getAgentExamplesForStage('visao-geral'),
   faq: [
     {
       question: 'Preciso ativar todos os agentes de uma vez?',

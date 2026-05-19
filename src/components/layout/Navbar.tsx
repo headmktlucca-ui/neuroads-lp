@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState, Fragment } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
-import { ChevronDown, LogOut, X, PlugZap, CheckCircle2, Database, Gauge, AlertTriangle } from 'lucide-react';
+import { ChevronDown, LogOut, X, PlugZap, CheckCircle2, Database, Gauge, AlertTriangle, CircleHelp } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
@@ -61,6 +61,45 @@ const DEFAULT_CONNECTOR_CONFIG = {
   attributionWindow: '7d-click / 1d-view',
   refreshFrequency: '15 min',
 };
+
+const CONNECTOR_CONFIG_OPTIONS = {
+  timezone: ['America/Sao_Paulo', 'UTC', 'America/New_York', 'Europe/Lisbon'],
+  currency: ['BRL', 'USD', 'EUR'],
+  attributionWindow: ['7d-click / 1d-view', '7d-click', '1d-click / 1d-view', '1d-click', '28d-click / 1d-view'],
+  refreshFrequency: ['5 min', '15 min', '30 min', '60 min', '6 h', '24 h'],
+} as const;
+
+const ATTRIBUTION_WINDOW_LABELS: Record<(typeof CONNECTOR_CONFIG_OPTIONS.attributionWindow)[number], string> = {
+  '7d-click / 1d-view': '7 dias clique / 1 dia visualização',
+  '7d-click': '7 dias clique',
+  '1d-click / 1d-view': '1 dia clique / 1 dia visualização',
+  '1d-click': '1 dia clique',
+  '28d-click / 1d-view': '28 dias clique / 1 dia visualização',
+};
+
+function ensureOption(value: string, options: readonly string[], fallback: string): string {
+  return options.includes(value) ? value : fallback;
+}
+
+function normalizeConnectorConfig(config: Partial<typeof DEFAULT_CONNECTOR_CONFIG>): typeof DEFAULT_CONNECTOR_CONFIG {
+  const timezone = ensureOption(readString(config.timezone), CONNECTOR_CONFIG_OPTIONS.timezone, DEFAULT_CONNECTOR_CONFIG.timezone);
+  const currency = ensureOption(
+    readString(config.currency).toUpperCase(),
+    CONNECTOR_CONFIG_OPTIONS.currency,
+    DEFAULT_CONNECTOR_CONFIG.currency
+  );
+  const attributionWindow = ensureOption(
+    readString(config.attributionWindow),
+    CONNECTOR_CONFIG_OPTIONS.attributionWindow,
+    DEFAULT_CONNECTOR_CONFIG.attributionWindow
+  );
+  const refreshFrequency = ensureOption(
+    readString(config.refreshFrequency),
+    CONNECTOR_CONFIG_OPTIONS.refreshFrequency,
+    DEFAULT_CONNECTOR_CONFIG.refreshFrequency
+  );
+  return { timezone, currency, attributionWindow, refreshFrequency };
+}
 
 const PLAN_AGENT_CAPACITY: Record<string, number> = {
   Lite: 5,
@@ -504,7 +543,7 @@ export default function Navbar() {
       const connectorsConfigRaw = window.localStorage.getItem(connectorsConfigKey);
       if (connectorsConfigRaw) {
         const parsed = JSON.parse(connectorsConfigRaw) as Partial<typeof connectorConfig>;
-        nextConnectorConfig = { ...DEFAULT_CONNECTOR_CONFIG, ...parsed };
+        nextConnectorConfig = normalizeConnectorConfig(parsed);
       }
 
       timeoutId = window.setTimeout(() => {
@@ -1640,42 +1679,73 @@ export default function Navbar() {
 
                 <div className={`${SETTINGS_PANEL} space-y-4`}>
                   <p className={SETTINGS_LABEL}>Configurações operacionais</p>
-                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                    <div>
-                      <label className={`${SETTINGS_LABEL} block`}>Timezone</label>
-                      <input
+                  <div className="grid grid-cols-1 gap-x-3 gap-y-4 md:grid-cols-2">
+                    <div className="flex flex-col gap-2">
+                      <label className={`${SETTINGS_LABEL} mb-0 flex min-h-[16px] items-center`}>Timezone</label>
+                      <select
                         value={connectorConfig.timezone}
                         onChange={(e) => setConnectorConfig((prev) => ({ ...prev, timezone: e.target.value }))}
                         className={SETTINGS_INPUT}
-                        placeholder="America/Sao_Paulo"
-                      />
+                      >
+                        {CONNECTOR_CONFIG_OPTIONS.timezone.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                    <div>
-                      <label className={`${SETTINGS_LABEL} block`}>Moeda</label>
-                      <input
+                    <div className="flex flex-col gap-2">
+                      <label className={`${SETTINGS_LABEL} mb-0 flex min-h-[16px] items-center`}>Moeda</label>
+                      <select
                         value={connectorConfig.currency}
                         onChange={(e) => setConnectorConfig((prev) => ({ ...prev, currency: e.target.value.toUpperCase() }))}
                         className={SETTINGS_INPUT}
-                        placeholder="BRL"
-                      />
+                      >
+                        {CONNECTOR_CONFIG_OPTIONS.currency.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                    <div>
-                      <label className={`${SETTINGS_LABEL} block`}>Janela de atribuição</label>
-                      <input
+                    <div className="flex flex-col gap-2">
+                      <label className={`${SETTINGS_LABEL} mb-0 flex min-h-[16px] items-center gap-1.5`}>
+                        <span>Janela de atribuição</span>
+                        <span className="group relative inline-flex items-center">
+                          <CircleHelp size={14} className="text-[#98A2B3]" aria-hidden />
+                          <span
+                            role="tooltip"
+                            className="pointer-events-none absolute left-1/2 top-[calc(100%+8px)] z-10 w-[260px] -translate-x-1/2 rounded-lg border border-[#DCE8FF] bg-white px-3 py-2 text-[11px] font-medium normal-case tracking-normal text-[#344054] opacity-0 shadow-[0_14px_30px_-18px_rgba(15,23,42,0.5)] transition-opacity group-hover:opacity-100"
+                          >
+                            Define por quanto tempo uma conversão pode ser atribuída após um clique ou visualização do anúncio.
+                          </span>
+                        </span>
+                      </label>
+                      <select
                         value={connectorConfig.attributionWindow}
                         onChange={(e) => setConnectorConfig((prev) => ({ ...prev, attributionWindow: e.target.value }))}
                         className={SETTINGS_INPUT}
-                        placeholder="7d-click / 1d-view"
-                      />
+                      >
+                        {CONNECTOR_CONFIG_OPTIONS.attributionWindow.map((option) => (
+                          <option key={option} value={option}>
+                            {ATTRIBUTION_WINDOW_LABELS[option]}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                    <div>
-                      <label className={`${SETTINGS_LABEL} block`}>Frequência de atualização</label>
-                      <input
+                    <div className="flex flex-col gap-2">
+                      <label className={`${SETTINGS_LABEL} mb-0 flex min-h-[16px] items-center`}>Frequência de atualização</label>
+                      <select
                         value={connectorConfig.refreshFrequency}
                         onChange={(e) => setConnectorConfig((prev) => ({ ...prev, refreshFrequency: e.target.value }))}
                         className={SETTINGS_INPUT}
-                        placeholder="15 min"
-                      />
+                      >
+                        {CONNECTOR_CONFIG_OPTIONS.refreshFrequency.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                   <div className="rounded-xl border border-[#DCE8FF] bg-[#F5F9FF] p-3">

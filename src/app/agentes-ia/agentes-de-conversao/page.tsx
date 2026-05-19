@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import SubmenuPageShell, { type SubmenuPageContent } from '@/components/neuroads/SubmenuPageShell';
+import { getAgentExamplesForStage } from '@/data/agent-examples';
 
 export const metadata: Metadata = {
   title: 'Agentes de Conversão | NeuroAds',
@@ -45,6 +46,7 @@ const content: SubmenuPageContent = {
     'Revisão contínua de copy, oferta e taxa de avanço por etapa.',
   ],
   proofMetrics: [],
+  agentExamples: getAgentExamplesForStage('conversao'),
   faq: [
     {
       question: 'Qual o primeiro ganho esperado com os agentes de conversão?',

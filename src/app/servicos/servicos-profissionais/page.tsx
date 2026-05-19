@@ -156,7 +156,7 @@ const content: SubmenuPageContent = {
   ],
   media: {
     title: 'Pipeline previsível para serviços',
-    poster: '/images/tools/servico-implantacao-agentes-hero-ultrarealista-v2.png',
+    poster: '/images/segment-highlights/servicos-profissionais-destaque.png',
   },
 };
 

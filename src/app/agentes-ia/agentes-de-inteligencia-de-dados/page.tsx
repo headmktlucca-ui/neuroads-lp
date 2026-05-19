@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import SubmenuPageShell, { type SubmenuPageContent } from '@/components/neuroads/SubmenuPageShell';
+import { getAgentExamplesForStage } from '@/data/agent-examples';
 
 export const metadata: Metadata = {
   title: 'Agentes de Inteligência de Dados | NeuroAds',
@@ -45,6 +46,7 @@ const content: SubmenuPageContent = {
     'Painel executivo com leitura financeira acionável.',
   ],
   proofMetrics: [],
+  agentExamples: getAgentExamplesForStage('inteligencia-de-dados'),
   faq: [
     {
       question: 'Vocês trabalham com dados em tempo real?',
