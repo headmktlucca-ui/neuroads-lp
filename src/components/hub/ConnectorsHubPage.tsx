@@ -942,7 +942,7 @@ export default function ConnectorsHubPage() {
               <aside className="space-y-4">
                 <section className="overflow-hidden rounded-2xl border border-[#DDE3F2] bg-white shadow-[0_10px_20px_rgba(15,23,42,0.08)]">
                   <header className="bg-[#123A6B] px-5 py-3 text-center">
-                    <h3 className="text-[26px] font-normal leading-[1.05] tracking-tight text-white">Saúde das Integrações</h3>
+                    <h3 className="text-[25px] leading-[1.1] font-black tracking-tight text-white">Saúde das Integrações</h3>
                   </header>
 
                   <div className="px-5 pb-5">
@@ -968,7 +968,7 @@ export default function ConnectorsHubPage() {
 
                 <section className="overflow-hidden rounded-2xl border border-[#DDE3F2] bg-white shadow-[0_10px_20px_rgba(15,23,42,0.08)]">
                   <header className="bg-[#123A6B] px-5 py-3 text-center">
-                    <h3 className="text-[26px] font-normal leading-[1.05] tracking-tight text-white">Alertas importantes</h3>
+                    <h3 className="text-[25px] leading-[1.1] font-black tracking-tight text-white">Alertas importantes</h3>
                   </header>
 
                   <article className="mt-4 px-5">
