@@ -164,7 +164,7 @@ export default function HubAutomacoesPage() {
           <section className="rounded-[30px] border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_18px_40px_rgba(2,8,22,0.35)]">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-[#8FB5FF]">Hub Operacional</p>
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-[#FF6A00]">Hub Operacional</p>
                 <h1 className="mt-2 text-3xl md:text-4xl font-black tracking-tight text-white">Automações</h1>
                 <p className="mt-3 max-w-2xl text-sm md:text-base text-[#C6D3E9]">
                   Gestão em tempo real das rotinas ativas dos seus agentes com previsibilidade de execução, governança e visibilidade operacional.
@@ -172,7 +172,7 @@ export default function HubAutomacoesPage() {
               </div>
               <Link
                 href="/hub/agentes-ativos"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#FF6A00] px-5 text-sm font-black text-[#FF6A00] transition hover:bg-[#FF6A00]/10"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#FF6A00] bg-[#FF6A00] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105"
               >
                 <Sparkles className="h-4 w-4" />
                 Ativar novas automações
@@ -407,9 +407,12 @@ export default function HubAutomacoesPage() {
             </section>
           )}
         </div>
+        <div className="relative z-10">
+          <div className="[&>footer]:!bg-transparent [&>footer]:!backdrop-blur-none">
+            <Footer />
+          </div>
+        </div>
       </div>
-
-      <Footer />
       <LuccaHubSupportWidget />
     </main>
   );

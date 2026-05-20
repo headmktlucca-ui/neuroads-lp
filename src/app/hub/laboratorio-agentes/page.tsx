@@ -336,7 +336,7 @@ function LaboratorioAgentesContent() {
 
         <section className="relative z-10 wrap py-8 md:py-12 space-y-6">
           <header className="rounded-3xl border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
-            <h1 className="mt-2 text-3xl font-black tracking-tight text-white md:text-4xl">
+            <h1 className="mt-2 text-3xl font-black tracking-tight text-[#FF6A00] md:text-4xl">
               Laboratório de Agentes
             </h1>
             <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-base">

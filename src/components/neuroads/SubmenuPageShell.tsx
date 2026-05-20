@@ -1050,7 +1050,12 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
           </section>
         </section>
 
-        <PrimaryFooter />
+        <div
+          className="[&>footer]:!bg-transparent bg-top bg-repeat-y bg-[length:100%_auto]"
+          style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
+        >
+          <PrimaryFooter />
+        </div>
 
         <LuccaSpecialistChatModal
           isOpen={isLuccaChatOpen}

@@ -1283,7 +1283,12 @@ export default function AgentEntryPage() {
         </div>
       )}
 
-      <Footer />
+      <div
+        className="[&>footer]:!bg-transparent [&>footer]:!backdrop-blur-none bg-top bg-repeat-y bg-[length:100%_auto]"
+        style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
+      >
+        <Footer />
+      </div>
       <LuccaHubSupportWidget />
     </main>
   );

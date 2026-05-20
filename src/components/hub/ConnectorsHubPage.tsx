@@ -271,8 +271,8 @@ function BrandTile({ id }: { id: UiConnectorId }) {
   if (id === 'googleAds') {
     return (
       <Image
-        src="/images/connectors/google-ads-logo-black-hd.png"
-        alt="Logo Google Ads"
+        src="/images/connectors/google-ads-icon-v2.png"
+        alt="Ícone Google Ads"
         width={88}
         height={88}
         className="h-full w-full rounded-xl object-cover"
@@ -693,29 +693,39 @@ export default function ConnectorsHubPage() {
 
         <section className="relative z-10 mx-auto w-full max-w-[1536px] px-4 pb-10 font-sans md:px-6 md:pb-14">
           <div className="rounded-[24px] bg-transparent p-4 md:p-6">
-            <header className="flex flex-col gap-4 pb-4 md:flex-row md:items-start md:justify-between">
-              <div>
-                <h1 className="text-[36px] font-bold leading-[0.95] tracking-tight text-[#0F172A]">
-                  Conectores
-                </h1>
-                <p className="mt-3 text-[18px] leading-tight text-[#475569]">Seu ecossistema conectado com dados reais</p>
-              </div>
+            <header className="rounded-[28px] border border-[#0A2A55] bg-[linear-gradient(120deg,#041A44_0%,#06265B_52%,#031739_100%)] px-5 py-6 shadow-[0_18px_44px_rgba(2,12,36,0.34)] md:px-8 md:py-8">
+              <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#FF7A00]">
+                    Gestão de Conectores
+                  </p>
+                  <h1 className="mt-2 text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
+                    Conectores
+                  </h1>
+                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-lg">
+                    Seu ecossistema conectado com dados reais para decisões mais rápidas e escala previsível.
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-[#FF7A00]">
+                    Menos ruptura entre canais, mais performance orientada por dados reais.
+                  </p>
+                </div>
 
-              <div className="flex flex-wrap items-center gap-3">
-                <Link
-                  href="/conteudos/materias-de-apoio"
-                  className="inline-flex h-12 items-center gap-2 rounded-[12px] border border-[#DDE3F2] bg-white px-5 text-[13px] font-black tracking-wide text-[#0F172A] transition hover:bg-[#F8FAFC]"
-                >
-                  <ExternalLink className="h-4 w-4" />
-                  Ver documentação
-                </Link>
-                <button
-                  type="button"
-                  className="inline-flex h-12 items-center gap-2 rounded-[12px] bg-[#FF7A00] px-5 text-[13px] font-black tracking-wide text-white shadow-[0_12px_24px_rgba(255,122,0,0.24)] transition hover:bg-[#E56B00]"
-                >
-                  <Plus className="h-4 w-4" />
-                  Adicionar conector
-                </button>
+                <div className="flex shrink-0 flex-wrap items-center gap-3 md:justify-end">
+                  <Link
+                    href="/conteudos/materias-de-apoio"
+                    className="inline-flex h-12 items-center gap-2 rounded-[14px] border border-[#365B8E] bg-[#0A2A55] px-5 text-[14px] font-black tracking-wide text-white transition hover:bg-[#10366D]"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Ver documentação
+                  </Link>
+                  <button
+                    type="button"
+                    className="inline-flex h-12 items-center gap-2 rounded-[14px] bg-[#FF7A00] px-5 text-[14px] font-black tracking-wide text-white shadow-[0_12px_24px_rgba(255,122,0,0.35)] transition hover:bg-[#E56B00]"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Adicionar conector
+                  </button>
+                </div>
               </div>
             </header>
 

@@ -10,11 +10,13 @@ import Navbar from '../../../components/layout/Navbar';
 import Footer from '../../../components/layout/Footer';
 import LuccaHubSupportWidget from '../../../components/hub/LuccaHubSupportWidget';
 import { useAuth } from '../../../context/AuthContext';
-import { agents } from '../../../data/agents';
+import { agents, type Agent } from '../../../data/agents';
 import { getContractedAgentsFromProfile, slugifyAgentTitle } from '../../../lib/hub-agents';
 import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../../lib/agent-status-cache';
 import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } from '../../../lib/hub-access';
 import { getFirebaseDb } from '../../../lib/firebase';
+
+const AGENT_CATEGORY_ORDER = ['Performance', 'Inteligência', 'Criativos', 'Técnico'] as const;
 
 export default function HubDashboardPage() {
   const { user, profile, loading, premiumSyncing } = useAuth();
@@ -24,6 +26,7 @@ export default function HubDashboardPage() {
   const [pendingActivationSlug, setPendingActivationSlug] = useState<string | null>(null);
   const [pendingDeactivateSlug, setPendingDeactivateSlug] = useState<string | null>(null);
   const [updatingSlug, setUpdatingSlug] = useState<string | null>(null);
+  const isAgentesAtivosPage = pathname === '/hub/agentes-ativos';
   const accessState = useMemo(
     () => resolveHubAccessState({ loading, user, profile }),
     [loading, profile, user]
@@ -83,6 +86,27 @@ export default function HubDashboardPage() {
 
     return agents.filter((agent) => activeTitles.has(agent.title));
   }, [effectiveContracts]);
+  const activeAgentsGroupedByCategory = useMemo(() => {
+    const groups = new Map<string, typeof activeAgents>();
+
+    for (const agent of activeAgents) {
+      const category = agent.category || 'Sem categoria';
+      const categoryAgents = groups.get(category) ?? [];
+      categoryAgents.push(agent);
+      groups.set(category, categoryAgents);
+    }
+
+    const knownCategories = AGENT_CATEGORY_ORDER.filter((category) => groups.has(category));
+    const extraCategories = Array.from(groups.keys())
+      .filter((category) => !AGENT_CATEGORY_ORDER.includes(category as (typeof AGENT_CATEGORY_ORDER)[number]))
+      .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+    const sortedCategories = [...knownCategories, ...extraCategories];
+
+    return sortedCategories.map((category) => ({
+      category,
+      agents: groups.get(category) ?? [],
+    }));
+  }, [activeAgents]);
   const recommendedAgents = useMemo(() => {
     const activeTitles = new Set(activeAgents.map((agent) => agent.title));
     return agents.filter((agent) => !activeTitles.has(agent.title)).slice(0, 4);
@@ -93,6 +117,50 @@ export default function HubDashboardPage() {
   const pendingActivationAgent = pendingActivationSlug
     ? recommendedAgents.find((agent) => slugifyAgentTitle(agent.title) === pendingActivationSlug) ?? null
     : null;
+  const activeAgentCardClass = isAgentesAtivosPage
+    ? 'rounded-xl border border-border bg-bg-secondary p-4'
+    : 'rounded-[12px] border border-[#D3DAE6] bg-[#F2F4F8] p-5';
+
+  const renderActiveAgentCard = (agent: Agent) => (
+    <article key={agent.title} className={activeAgentCardClass}>
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-sm font-black text-text-main">{agent.title}</p>
+        <button
+          type="button"
+          onClick={() => setPendingDeactivateSlug(slugifyAgentTitle(agent.title))}
+          disabled={updatingSlug === slugifyAgentTitle(agent.title)}
+          className="inline-flex items-center gap-1 text-[12px] font-black text-[#B42318] hover:text-[#912018] disabled:opacity-60"
+        >
+          <Power className="h-3.5 w-3.5" />
+          {updatingSlug === slugifyAgentTitle(agent.title) ? 'Desativando...' : 'Desativar Agente'}
+        </button>
+      </div>
+      <p className="mt-2 text-xs text-text-muted">{agent.description}</p>
+      <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          type="button"
+          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#0A9D57] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(10,157,87,0.30)]"
+        >
+          <CheckCircle2 className="h-4 w-4" />
+          Ativo
+        </button>
+        <Link
+          href={`/hub/agente/${slugifyAgentTitle(agent.title)}`}
+          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#2563EB] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(37,99,235,0.30)] transition hover:brightness-105"
+        >
+          <ExternalLink className="h-4 w-4" />
+          Acessar Agente
+        </Link>
+        <Link
+          href={`/hub/agente/${slugifyAgentTitle(agent.title)}`}
+          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#D3DAE6] bg-white px-6 text-[14px] leading-none font-black text-[#344054] shadow-[0_8px_16px_rgba(15,23,42,0.08)] transition hover:bg-[#F8FAFC]"
+        >
+          <Info className="h-4 w-4" />
+          Mais detalhes
+        </Link>
+      </div>
+    </article>
+  );
 
   const activateAgent = async (agentTitle: string, agentSlug: string) => {
     if (!user) return;
@@ -190,11 +258,17 @@ export default function HubDashboardPage() {
           <section className="rounded-3xl border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
-                <h1 className="text-3xl font-black tracking-tight text-white md:text-4xl">
+                <p className="text-xs font-bold uppercase tracking-widest text-[#FF6A00]">Gestão de Agentes</p>
+                <h1 className="mt-2 text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
                   Agentes Ativos
                 </h1>
-                <p className="mt-2 text-sm text-[#C6D3E9] md:text-base">
-                  Visualização inicial dos agentes atualmente ativos na sua conta.
+                <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-lg">
+                  {isAgentesAtivosPage
+                    ? 'Visibilidade operacional dos agentes em execução, com status e impacto em dados reais para decisões mais rápidas.'
+                    : 'Visualização inicial dos agentes atualmente ativos na sua conta.'}
+                </p>
+                <p className="mt-2 text-sm font-semibold text-[#FF6A00]">
+                  Foco em ativação contínua, menos gargalos operacionais e crescimento previsível no caixa.
                 </p>
               </div>
               <Link
@@ -205,69 +279,76 @@ export default function HubDashboardPage() {
                 Acessar Laboratório
               </Link>
             </div>
+          </section>
 
-            {activeAgents.length > 0 ? (
-              <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-3">
-                {activeAgents.map((agent) => (
-                  <article key={agent.title} className="rounded-[12px] border border-[#D3DAE6] bg-[#F2F4F8] p-5">
-                    <div className="flex items-start justify-between gap-3">
-                      <p className="text-sm font-black text-text-main">{agent.title}</p>
-                      <button
-                        type="button"
-                        onClick={() => setPendingDeactivateSlug(slugifyAgentTitle(agent.title))}
-                        disabled={updatingSlug === slugifyAgentTitle(agent.title)}
-                        className="inline-flex items-center gap-1 text-[12px] font-black text-[#B42318] hover:text-[#912018] disabled:opacity-60"
-                      >
-                        <Power className="h-3.5 w-3.5" />
-                        {updatingSlug === slugifyAgentTitle(agent.title) ? 'Desativando...' : 'Desativar Agente'}
-                      </button>
+          {isAgentesAtivosPage ? (
+            activeAgents.length > 0 ? (
+              <div className="mt-6 space-y-6">
+                {activeAgentsGroupedByCategory.map(({ category, agents: categoryAgents }) => (
+                  <section
+                    key={category}
+                    className="rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_14px_34px_rgba(15,23,42,0.05)]"
+                  >
+                    <h2 className="text-2xl font-black text-text-main">{category}</h2>
+                    <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                      {categoryAgents.map((agent) => renderActiveAgentCard(agent))}
                     </div>
-                    <p className="mt-2 text-xs text-text-muted">{agent.description}</p>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#0A9D57] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(10,157,87,0.30)]"
-                      >
-                        <CheckCircle2 className="h-4 w-4" />
-                        Ativo
-                      </button>
-                      <Link
-                        href={`/hub/agente/${slugifyAgentTitle(agent.title)}`}
-                        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#2563EB] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(37,99,235,0.30)] transition hover:brightness-105"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                        Acessar Agente
-                      </Link>
-                      <Link
-                        href={`/hub/agente/${slugifyAgentTitle(agent.title)}`}
-                        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#D3DAE6] bg-white px-6 text-[14px] leading-none font-black text-[#344054] shadow-[0_8px_16px_rgba(15,23,42,0.08)] transition hover:bg-[#F8FAFC]"
-                      >
-                        <Info className="h-4 w-4" />
-                        Mais detalhes
-                      </Link>
-                    </div>
-                  </article>
+                  </section>
                 ))}
               </div>
             ) : (
-              <div className="mt-6 rounded-2xl border border-border bg-[#FCFCFD] p-5 text-sm text-text-muted">
-                Nenhum agente ativo no momento.
-              </div>
-            )}
-          </section>
+              <section className="mt-6 rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
+                <div className="rounded-2xl border border-border bg-[#FCFCFD] p-5 text-sm text-text-muted">
+                  Nenhum agente ativo no momento.
+                </div>
+              </section>
+            )
+          ) : (
+            <section className="mt-6 rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
+              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-text-main">Agentes ativos</h2>
+              {activeAgents.length > 0 ? (
+                <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                  {activeAgents.map((agent) => renderActiveAgentCard(agent))}
+                </div>
+              ) : (
+                <div className="mt-6 rounded-2xl border border-border bg-[#FCFCFD] p-5 text-sm text-text-muted">
+                  Nenhum agente ativo no momento.
+                </div>
+              )}
+            </section>
+          )}
 
-          <section className="mt-6 rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
-            <h2 className="text-2xl md:text-3xl font-black tracking-tight text-text-main">Agentes recomendados</h2>
-            <p className="mt-2 text-sm md:text-base text-text-muted">
+          <section
+            className={`mt-6 rounded-3xl p-6 md:p-8 ${
+              isAgentesAtivosPage
+                ? 'border border-[#183A6B] bg-[linear-gradient(130deg,#071632_0%,#0A1D3F_55%,#081832_100%)] shadow-[0_18px_44px_rgba(2,8,22,0.36)]'
+                : 'border border-border bg-white shadow-[0_16px_40px_rgba(15,23,42,0.06)]'
+            }`}
+          >
+            <h2
+              className={`text-2xl md:text-3xl font-black tracking-tight ${
+                isAgentesAtivosPage ? 'text-white' : 'text-text-main'
+              }`}
+            >
+              Agentes recomendados
+            </h2>
+            <p className={`mt-2 text-sm md:text-base ${isAgentesAtivosPage ? 'text-[#C6D3E9]' : 'text-text-muted'}`}>
               Ao ativar estes agentes, sua operação tende a ganhar mais previsibilidade de demanda, redução de desperdício e maior velocidade de decisão com base em dados reais.
             </p>
 
             {recommendedAgents.length > 0 ? (
               <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-3">
                 {recommendedAgents.map((agent) => (
-                  <article key={agent.title} className="rounded-xl border border-border bg-bg-secondary p-4">
-                    <p className="text-sm font-black text-text-main">{agent.title}</p>
-                    <p className="mt-1 text-xs text-text-muted">{agent.description}</p>
+                  <article
+                    key={agent.title}
+                    className={`rounded-xl border p-4 ${
+                      isAgentesAtivosPage
+                        ? 'border-[#264671] bg-[linear-gradient(150deg,#0C2144_0%,#0A1E3D_100%)] shadow-[0_14px_28px_rgba(1,9,23,0.34)]'
+                        : 'border-border bg-bg-secondary'
+                    }`}
+                  >
+                    <p className={`text-sm font-black ${isAgentesAtivosPage ? 'text-white' : 'text-text-main'}`}>{agent.title}</p>
+                    <p className={`mt-1 text-xs ${isAgentesAtivosPage ? 'text-[#C6D3E9]' : 'text-text-muted'}`}>{agent.description}</p>
                     <div className="mt-3 flex flex-wrap gap-2">
                       <button
                         type="button"
@@ -280,7 +361,11 @@ export default function HubDashboardPage() {
                       </button>
                       <Link
                         href={`/hub/laboratorio-agentes?agente=${slugifyAgentTitle(agent.title)}`}
-                        className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#D3DAE6] bg-white px-6 text-[14px] leading-none font-black text-[#344054] shadow-[0_8px_16px_rgba(15,23,42,0.08)] transition hover:bg-[#F8FAFC]"
+                        className={`inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] px-6 text-[14px] leading-none font-black transition ${
+                          isAgentesAtivosPage
+                            ? 'border border-[#2A4870] bg-[#10284C] text-[#E8F1FF] shadow-[0_10px_22px_rgba(2,8,22,0.32)] hover:bg-[#15315D]'
+                            : 'border border-[#D3DAE6] bg-white text-[#344054] shadow-[0_8px_16px_rgba(15,23,42,0.08)] hover:bg-[#F8FAFC]'
+                        }`}
                       >
                         <Info className="h-4 w-4" />
                         Mais detalhes
@@ -290,11 +375,23 @@ export default function HubDashboardPage() {
                 ))}
               </div>
             ) : (
-              <div className="mt-6 rounded-2xl border border-border bg-[#FCFCFD] p-5 text-sm text-text-muted">
+              <div
+                className={`mt-6 rounded-2xl border p-5 text-sm ${
+                  isAgentesAtivosPage
+                    ? 'border-[#264671] bg-[#0A1E3D] text-[#C6D3E9]'
+                    : 'border-border bg-[#FCFCFD] text-text-muted'
+                }`}
+              >
                 Todos os agentes disponíveis já estão ativos na conta.
               </div>
             )}
           </section>
+
+          {isAgentesAtivosPage ? (
+            <div className="relative z-10 mt-6 [&>footer]:!bg-transparent [&>footer]:!backdrop-blur-none">
+              <Footer />
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -389,7 +486,7 @@ export default function HubDashboardPage() {
         </div>
       ) : null}
 
-      <Footer />
+      {!isAgentesAtivosPage ? <Footer /> : null}
       <LuccaHubSupportWidget />
     </main>
   );

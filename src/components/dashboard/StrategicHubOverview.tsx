@@ -289,7 +289,7 @@ export default function StrategicHubOverview() {
                   <div className="mt-6 max-w-[320px] space-y-3">
                     <Link
                       href="/hub?brand=1"
-                      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] border border-[#FF6A00] px-6 text-[15px] font-bold text-[#FF6A00] transition hover:bg-[#FF6A00]/10"
+                      className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] border border-[#FF6A00] bg-[#FF6A00] px-6 text-[15px] font-bold text-white shadow-[0_12px_20px_rgba(255,106,0,0.28)] transition hover:brightness-95"
                     >
                       <Cog className="h-5 w-5" />
                       Configurar
