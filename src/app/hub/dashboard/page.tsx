@@ -209,7 +209,7 @@ export default function HubDashboardPage() {
             {activeAgents.length > 0 ? (
               <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-3">
                 {activeAgents.map((agent) => (
-                  <article key={agent.title} className="rounded-xl border border-border bg-bg-secondary p-4">
+                  <article key={agent.title} className="rounded-[12px] border border-[#D3DAE6] bg-[#F2F4F8] p-5">
                     <div className="flex items-start justify-between gap-3">
                       <p className="text-sm font-black text-text-main">{agent.title}</p>
                       <button
@@ -222,8 +222,8 @@ export default function HubDashboardPage() {
                         {updatingSlug === slugifyAgentTitle(agent.title) ? 'Desativando...' : 'Desativar Agente'}
                       </button>
                     </div>
-                    <p className="mt-1 text-xs text-text-muted">{agent.description}</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
+                    <p className="mt-2 text-xs text-text-muted">{agent.description}</p>
+                    <div className="mt-4 flex flex-wrap gap-2">
                       <button
                         type="button"
                         className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#0A9D57] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(10,157,87,0.30)]"

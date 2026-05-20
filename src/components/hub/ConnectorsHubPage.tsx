@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { doc, setDoc } from 'firebase/firestore';
 import {
@@ -174,43 +175,43 @@ function getHealthTone(score: number): {
   panelClass: string;
   iconClass: string;
 } {
-  if (score >= 85) {
+  if (score >= 90) {
     return {
       label: 'Excelente',
       description: 'Tudo funcionando como esperado.',
-      textClass: 'text-[#FF8A2B]',
-      panelClass: 'border-[#2F5FA0] bg-[#0D2A54]',
-      iconClass: 'text-[#FF8A2B]',
+      textClass: 'text-[#12B76A]',
+      panelClass: 'border border-[#CDEEDB] bg-[#F1FCF6]',
+      iconClass: 'text-[#12B76A]',
     };
   }
-  if (score >= 70) {
+  if (score >= 75) {
     return {
       label: 'Bom',
       description: 'Integrações estáveis com pequenos ajustes pendentes.',
-      textClass: 'text-[#FFAB4D]',
-      panelClass: 'border-[#2F5FA0] bg-[#0D2A54]',
-      iconClass: 'text-[#FFAB4D]',
+      textClass: 'text-[#2D6CDF]',
+      panelClass: 'border border-[#D3E3FF] bg-[#F4F8FF]',
+      iconClass: 'text-[#2D6CDF]',
     };
   }
   if (score >= 50) {
     return {
       label: 'Atenção',
       description: 'Parte dos dados ainda depende de conectores pendentes.',
-      textClass: 'text-[#FFD08A]',
-      panelClass: 'border-[#2F5FA0] bg-[#0D2A54]',
-      iconClass: 'text-[#FFD08A]',
+      textClass: 'text-[#F59E0B]',
+      panelClass: 'border border-[#FDE7C2] bg-[#FFFAF0]',
+      iconClass: 'text-[#F59E0B]',
     };
   }
   return {
     label: 'Crítico',
     description: 'Risco alto de dados incompletos no dashboard.',
-    textClass: 'text-[#F87171]',
-    panelClass: 'border-transparent bg-transparent',
-    iconClass: 'text-[#F87171]',
+    textClass: 'text-[#EF4444]',
+    panelClass: '',
+    iconClass: 'text-[#EF4444]',
   };
 }
 
-function HealthGauge({ value, dark = false }: { value: number; dark?: boolean }) {
+function HealthGauge({ value }: { value: number }) {
   const boundedValue = Math.max(0, Math.min(value, 100));
   const cx = 120;
   const cy = 118;
@@ -222,11 +223,11 @@ function HealthGauge({ value, dark = false }: { value: number; dark?: boolean })
   const theta = Math.PI - (Math.PI * boundedValue) / 100;
   const indicatorX = cx + radius * Math.cos(theta);
   const indicatorY = cy - radius * Math.sin(theta);
-  const trackColor = dark ? '#2E3D56' : '#ECE8E2';
-  const progressColor = '#F36A10';
-  const indicatorColor = dark ? '#8B98AE' : '#E4DDD6';
-  const valueColorClass = dark ? 'text-[#EAF1FF]' : 'text-[#1F2937]';
-  const subtitleColorClass = dark ? 'text-[#C3CDE0]' : 'text-[#6B7280]';
+  const trackColor = '#DDE3F2';
+  const progressGradientId = 'connectorGaugeGradient';
+  const indicatorColor = '#F59E0B';
+  const valueColorClass = 'text-[#0F172A]';
+  const subtitleColorClass = 'text-[#475569]';
 
   return (
     <div className="relative mt-6 flex flex-col items-center">
@@ -246,12 +247,18 @@ function HealthGauge({ value, dark = false }: { value: number; dark?: boolean })
         <path
           d={`M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`}
           fill="none"
-          stroke={progressColor}
+          stroke={`url(#${progressGradientId})`}
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeDasharray={halfCircumference}
           strokeDashoffset={dashOffset}
         />
+        <defs>
+          <linearGradient id={progressGradientId} x1="32" y1="0" x2="208" y2="0" gradientUnits="userSpaceOnUse">
+            <stop offset="0%" stopColor="#FF7A00" />
+            <stop offset="100%" stopColor="#F59E0B" />
+          </linearGradient>
+        </defs>
         <circle cx={indicatorX} cy={indicatorY} r={7} fill={indicatorColor} />
       </svg>
       <p className={`-mt-5 text-[64px] font-light leading-none ${valueColorClass}`}>{boundedValue}</p>
@@ -263,11 +270,13 @@ function HealthGauge({ value, dark = false }: { value: number; dark?: boolean })
 function BrandTile({ id }: { id: UiConnectorId }) {
   if (id === 'googleAds') {
     return (
-      <svg viewBox="0 0 64 64" className="h-10 w-10" aria-hidden>
-        <path d="M22 50.5a8.5 8.5 0 1 1-15.6-6.7l13.2-30.7A8.5 8.5 0 0 1 35.2 20L22 50.5Z" fill="#4285F4" />
-        <path d="M40.8 13.1a8.5 8.5 0 0 1 7.8 5.1l12.4 28.8a8.5 8.5 0 1 1-15.6 6.7L33 24.9a8.5 8.5 0 0 1 7.8-11.8Z" fill="#34A853" />
-        <circle cx="18.5" cy="50.5" r="7" fill="#FBBC04" />
-      </svg>
+      <Image
+        src="/images/connectors/google-ads-logo-black-hd.png"
+        alt="Logo Google Ads"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
     );
   }
 
@@ -300,7 +309,7 @@ function BrandTile({ id }: { id: UiConnectorId }) {
 
   if (id === 'payments') {
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#EEF2FF] text-[34px] font-black leading-none text-[#6366F1]">
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FFF1E6] text-[34px] font-black leading-none text-[#F97316]">
         S
       </div>
     );
@@ -683,26 +692,26 @@ export default function ConnectorsHubPage() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent via-[#f7f8fa]/75 to-bg-main" />
 
         <section className="relative z-10 mx-auto w-full max-w-[1536px] px-4 pb-10 font-sans md:px-6 md:pb-14">
-          <div className="rounded-[24px] border border-[#E8ECF1] bg-white p-4 shadow-[0_12px_24px_rgba(15,23,42,0.06)] md:p-6">
-            <header className="flex flex-col gap-4 border-b border-[#EFEFEF] pb-4 md:flex-row md:items-start md:justify-between">
+          <div className="rounded-[24px] bg-transparent p-4 md:p-6">
+            <header className="flex flex-col gap-4 pb-4 md:flex-row md:items-start md:justify-between">
               <div>
-                <h1 className="text-[36px] font-bold leading-[0.95] tracking-tight text-text-main">
+                <h1 className="text-[36px] font-bold leading-[0.95] tracking-tight text-[#0F172A]">
                   Conectores
                 </h1>
-                <p className="mt-3 text-[18px] leading-tight text-text-muted">Seu ecossistema conectado com dados reais</p>
+                <p className="mt-3 text-[18px] leading-tight text-[#475569]">Seu ecossistema conectado com dados reais</p>
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
                 <Link
                   href="/conteudos/materias-de-apoio"
-                  className="inline-flex h-12 items-center gap-2 rounded-xl border border-[#E8E8E8] bg-white px-5 text-[13px] font-black tracking-wide text-[#4B5563] transition hover:bg-[#FAFAFA]"
+                  className="inline-flex h-12 items-center gap-2 rounded-[12px] border border-[#DDE3F2] bg-white px-5 text-[13px] font-black tracking-wide text-[#0F172A] transition hover:bg-[#F8FAFC]"
                 >
                   <ExternalLink className="h-4 w-4" />
                   Ver documentação
                 </Link>
                 <button
                   type="button"
-                  className="inline-flex h-12 items-center gap-2 rounded-xl bg-[#FF6A00] px-5 text-[13px] font-black tracking-wide text-white shadow-[0_12px_24px_rgba(255,106,0,0.24)] transition hover:brightness-95"
+                  className="inline-flex h-12 items-center gap-2 rounded-[12px] bg-[#FF7A00] px-5 text-[13px] font-black tracking-wide text-white shadow-[0_12px_24px_rgba(255,122,0,0.24)] transition hover:bg-[#E56B00]"
                 >
                   <Plus className="h-4 w-4" />
                   Adicionar conector
@@ -712,7 +721,7 @@ export default function ConnectorsHubPage() {
 
             <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px]">
               <div>
-                <div className="rounded-2xl border border-[#EEEEEE] bg-[#FCFCFC] p-3">
+                <div className="rounded-2xl border border-[#DDE3F2] bg-white p-3">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-2">
                       {(['todos', 'marketing', 'vendas', 'atendimento'] as const).map((filter) => {
@@ -722,25 +731,25 @@ export default function ConnectorsHubPage() {
                             key={filter}
                             type="button"
                             onClick={() => setActiveFilter(filter)}
-                            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-[14px] font-semibold transition ${
+                            className={`inline-flex items-center gap-2 rounded-[12px] border px-4 py-2 text-[14px] font-semibold transition ${
                               isActive
-                                ? 'border-[#FFB07A] bg-[#FFF4EC] text-[#FF6A00]'
-                                : 'border-[#ECECEC] bg-white text-[#6B7280] hover:text-[#374151]'
+                                ? 'border-[#FFB980] bg-[#FFF3E8] text-[#FF7A00]'
+                                : 'border-[#DDE3F2] bg-white text-[#334155] hover:text-[#0F172A]'
                             }`}
                           >
                             {CATEGORY_LABELS[filter]}
-                            <span className="text-[13px] text-[#9CA3AF]">{filterCount[filter]}</span>
+                            <span className="text-[13px] text-[#64748B]">{filterCount[filter]}</span>
                           </button>
                         );
                       })}
                     </div>
 
-                    <label className="inline-flex items-center gap-2 rounded-xl border border-[#E7E7E7] bg-white px-3 py-2 text-[13px] text-[#4B5563]">
+                    <label className="inline-flex items-center gap-2 rounded-xl border border-[#DDE3F2] bg-white px-3 py-2 text-[13px] text-[#475569]">
                       <span>Ordenar:</span>
                       <select
                         value={sortMode}
                         onChange={(event) => setSortMode(event.target.value as 'az')}
-                        className="bg-transparent text-[13px] font-semibold text-[#374151] outline-none"
+                        className="bg-transparent text-[13px] font-semibold text-[#0F172A] outline-none"
                       >
                         <option value="az">A-Z</option>
                       </select>
@@ -754,40 +763,38 @@ export default function ConnectorsHubPage() {
                       return (
                         <article
                           key={item.id}
-                          className="grid grid-cols-1 gap-4 rounded-2xl border border-[#ECECEC] bg-white p-4 md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center"
+                          className="grid grid-cols-1 gap-4 rounded-2xl border border-[#DDE3F2] bg-white p-4 shadow-[0_6px_14px_rgba(15,23,42,0.06)] transition-colors duration-200 hover:bg-[#F8FAFC] md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center"
                         >
-                          <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl border border-[#EFEFEF] bg-white">
+                          <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl border border-[#E7ECF5] bg-[#FAFCFF]">
                             <BrandTile id={item.id} />
                           </div>
 
                           <div>
-                            <h2 className="text-[26px] font-black leading-[1.1] tracking-tight text-[#1F2937]">{item.title}</h2>
-                            <p className="mt-1 text-[15px] leading-[1.45] text-[#6B7280]">{item.description}</p>
-                            <p className="mt-2 text-[12px] font-semibold text-[#9CA3AF]">
+                            <h2 className="text-[26px] font-semibold leading-[1.1] tracking-tight text-[#0F172A]">{item.title}</h2>
+                            <p className="mt-1 text-[15px] leading-[1.45] text-[#334155]">{item.description}</p>
+                            <p className="mt-2 text-[12px] font-semibold text-[#64748B]">
                               Categoria: {CATEGORY_LABELS[item.category]}
                             </p>
                           </div>
 
                           <div>
                             <span
-                              className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-[12px] font-bold ${
-                                isActive
-                                  ? 'border-[#BDEACF] bg-[#EEFBF3] text-[#0A9D57]'
-                                  : 'border-[#FFD8A8] bg-[#FFF7ED] text-[#D97706]'
+                              className={`inline-flex items-center gap-1 px-0 py-0 text-[12px] font-bold ${
+                                isActive ? 'text-[#12B76A]' : 'text-[#FF7A00]'
                               }`}
                             >
-                              <span className={`inline-block h-2 w-2 rounded-full ${isActive ? 'bg-[#0A9D57]' : 'bg-[#F59E0B]'}`} />
+                              <span className={`inline-block h-2 w-2 rounded-full ${isActive ? 'bg-[#12B76A]' : 'bg-[#FF7A00]'}`} />
                               {isActive ? 'Conectado' : 'Pendente'}
                             </span>
 
-                            <div className="mt-2 border-t border-[#F1F1F1] pt-2 text-[13px] text-[#6B7280]">
+                            <div className="mt-2 border-t border-[#E2E8F0] pt-2 text-[13px] text-[#64748B]">
                               <p>
-                                Última sincronização <span className="ml-2 font-semibold text-[#4B5563]">{isActive ? item.lastSyncLabelWhenActive : 'Nunca sincronizado'}</span>
+                                Última sincronização <span className="ml-2 font-semibold text-[#0F172A]">{isActive ? item.lastSyncLabelWhenActive : 'Nunca sincronizado'}</span>
                               </p>
-                              <p className="mt-1 flex items-center gap-2 text-[#6B7280]">
+                              <p className="mt-1 flex items-center gap-2 text-[#64748B]">
                                 Impacto estimado
-                                <Info className="h-4 w-4 text-[#9CA3AF]" />
-                                <span className="font-semibold text-[#0A9D57]">{item.impactLabel}</span>
+                                <Info className="h-4 w-4 text-[#94A3B8]" />
+                                <span className="font-semibold text-[#12B76A]">{item.impactLabel}</span>
                               </p>
                             </div>
                           </div>
@@ -808,7 +815,11 @@ export default function ConnectorsHubPage() {
                                 void handleConnect(item.id);
                               }}
                               disabled={Boolean(isBusy)}
-                              className="inline-flex h-12 items-center gap-2 rounded-xl border border-[#FFD4B2] bg-[#FFF8F2] px-4 text-[13px] font-black tracking-wide text-[#F97316] transition hover:bg-[#FFF1E6] disabled:opacity-60"
+                              className={`inline-flex h-12 items-center gap-2 rounded-[12px] px-4 text-[13px] font-black tracking-wide transition disabled:opacity-60 ${
+                                isActive
+                                  ? 'border border-[#FFD4B2] bg-[#FFF8F2] text-[#F97316] hover:bg-[#FFF1E6]'
+                                  : 'border border-[#FF7A00] bg-[#FF7A00] text-white shadow-[0_10px_20px_rgba(255,122,0,0.24)] hover:bg-[#E56B00]'
+                              }`}
                             >
                               <RefreshCw className={`h-4 w-4 ${isBusy ? 'animate-spin' : ''}`} />
                               {item.id === 'slack' ? 'Configurar' : isActive ? 'Sincronizar' : 'Configurar'}
@@ -819,7 +830,7 @@ export default function ConnectorsHubPage() {
                                 onClick={() =>
                                   setOpenConnectorMenuId((current) => (current === item.id ? null : item.id))
                                 }
-                                className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[#EFEFEF] text-[#9CA3AF] transition hover:text-[#6B7280]"
+                                className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#DDE3F2] bg-white text-[#64748B] transition hover:text-[#0F172A]"
                                 aria-label={`Mais ações para ${item.title}`}
                                 aria-expanded={openConnectorMenuId === item.id}
                                 aria-haspopup="menu"
@@ -829,41 +840,41 @@ export default function ConnectorsHubPage() {
 
                               {openConnectorMenuId === item.id ? (
                                 <div
-                                  className="absolute right-0 top-11 z-20 w-56 rounded-xl border border-[#E5E7EB] bg-white p-1.5 shadow-[0_16px_28px_rgba(15,23,42,0.14)]"
+                                  className="absolute right-0 top-11 z-20 w-56 rounded-2xl border border-[#E7EAF0] bg-white p-2 shadow-[0_14px_30px_rgba(15,23,42,0.12)]"
                                   role="menu"
                                   aria-label={`Ações para ${item.title}`}
                                 >
                                   <button
                                     type="button"
                                     onClick={() => void handleConnectorMenuAction(item, isActive, 'details')}
-                                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[13px] font-semibold text-[#374151] transition hover:bg-[#F8FAFC]"
+                                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
                                     role="menuitem"
                                   >
-                                    <Info className="h-4 w-4 text-[#6B7280]" />
+                                    <Info className="h-4 w-4 text-[#64748B]" />
                                     Ver detalhes
                                   </button>
                                   <button
                                     type="button"
                                     onClick={() => void handleConnectorMenuAction(item, isActive, 'docs')}
-                                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[13px] font-semibold text-[#374151] transition hover:bg-[#F8FAFC]"
+                                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
                                     role="menuitem"
                                   >
-                                    <BookOpenText className="h-4 w-4 text-[#6B7280]" />
+                                    <BookOpenText className="h-4 w-4 text-[#64748B]" />
                                     Documentação oficial
                                   </button>
                                   <button
                                     type="button"
                                     onClick={() => void handleConnectorMenuAction(item, isActive, 'copy-id')}
-                                    className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-[13px] font-semibold text-[#374151] transition hover:bg-[#F8FAFC]"
+                                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
                                     role="menuitem"
                                   >
-                                    <Copy className="h-4 w-4 text-[#6B7280]" />
+                                    <Copy className="h-4 w-4 text-[#64748B]" />
                                     Copiar ID técnico
                                   </button>
                                   <button
                                     type="button"
                                     onClick={() => void handleConnectorMenuAction(item, isActive, 'toggle')}
-                                    className="mt-1 flex w-full items-center gap-2 rounded-lg border border-[#FFE1CC] bg-[#FFF7F2] px-3 py-2 text-left text-[13px] font-bold text-[#F97316] transition hover:bg-[#FFF1E6]"
+                                    className="mt-1 flex w-full items-center gap-2 rounded-xl border border-[#FFD9BD] bg-[#FFF5EC] px-3 py-2 text-left text-[14px] font-semibold text-[#FF7A00] transition-colors hover:bg-[#FFEEDF]"
                                     role="menuitem"
                                   >
                                     <Link2 className="h-4 w-4" />
@@ -883,25 +894,25 @@ export default function ConnectorsHubPage() {
                   </div>
                 </div>
 
-                <section className="mt-4 grid grid-cols-1 gap-3 rounded-2xl border border-[#ECECEC] bg-white p-4 md:grid-cols-4">
+                <section className="mt-4 grid grid-cols-1 gap-3 rounded-2xl border border-[#DDE3F2] bg-white p-4 md:grid-cols-4">
                   <div>
-                    <p className="text-[13px] text-[#9CA3AF]">Conectores ativos</p>
-                    <p className="mt-1 text-[30px] font-black text-[#111827]">{connectedCount} <span className="text-[16px] font-semibold text-[#9CA3AF]">de {CONNECTOR_ITEMS.length}</span></p>
+                    <p className="text-[13px] text-[#64748B]">Conectores ativos</p>
+                    <p className="mt-1 text-[30px] font-black text-[#0F172A]">{connectedCount} <span className="text-[16px] font-semibold text-[#64748B]">de {CONNECTOR_ITEMS.length}</span></p>
                   </div>
                   <div>
-                    <p className="text-[13px] text-[#9CA3AF]">Impacto em receita rastreada</p>
-                    <p className="mt-1 text-[28px] font-black text-[#111827]">{estimatedRevenueLabel}</p>
-                    <p className="mt-1 text-[13px] text-[#0A9D57]">+18,7% vs. mês anterior</p>
+                    <p className="text-[13px] text-[#64748B]">Impacto em receita rastreada</p>
+                    <p className="mt-1 text-[28px] font-black text-[#0F172A]">{estimatedRevenueLabel}</p>
+                    <p className="mt-1 text-[13px] text-[#12B76A]">+18,7% vs. mês anterior</p>
                   </div>
                   <div>
-                    <p className="text-[13px] text-[#9CA3AF]">Dados sincronizados (24h)</p>
-                    <p className="mt-1 text-[28px] font-black text-[#111827]">1,2 mi</p>
-                    <p className="mt-1 text-[13px] text-[#0A9D57]">+12,4% vs. 24h anteriores</p>
+                    <p className="text-[13px] text-[#64748B]">Dados sincronizados (24h)</p>
+                    <p className="mt-1 text-[28px] font-black text-[#0F172A]">1,2 mi</p>
+                    <p className="mt-1 text-[13px] text-[#12B76A]">+12,4% vs. 24h anteriores</p>
                   </div>
                   <div>
-                    <p className="text-[13px] text-[#9CA3AF]">Taxa de sucesso (24h)</p>
-                    <p className="mt-1 text-[28px] font-black text-[#111827]">99,2%</p>
-                    <p className="mt-1 text-[13px] text-[#0A9D57]">Excelente</p>
+                    <p className="text-[13px] text-[#64748B]">Taxa de sucesso (24h)</p>
+                    <p className="mt-1 text-[28px] font-black text-[#0F172A]">99,2%</p>
+                    <p className="mt-1 text-[13px] text-[#12B76A]">Excelente</p>
                   </div>
                 </section>
 
@@ -909,8 +920,8 @@ export default function ConnectorsHubPage() {
                   <div
                     className={`mt-4 rounded-xl border px-4 py-3 text-[14px] font-semibold ${
                       connectorError
-                        ? 'border-[#FECACA] bg-[#FEF2F2] text-[#B42318]'
-                        : 'border-[#BDE8CF] bg-[#ECFDF3] text-[#0A9D57]'
+                        ? 'border-[#FFD8D8] bg-[#FFF5F5] text-[#EF4444]'
+                        : 'border-[#CDEEDB] bg-[#F1FCF6] text-[#12B76A]'
                     }`}
                   >
                     {connectorError || connectorFeedback}
@@ -919,63 +930,65 @@ export default function ConnectorsHubPage() {
               </div>
 
               <aside className="space-y-4">
-                <section className="rounded-2xl border border-[#173c6e] bg-[linear-gradient(130deg,#07162f_0%,#0A2145_55%,#081a36_100%)] p-5 shadow-[0_12px_24px_rgba(2,8,22,0.35)]">
-                  <header className="text-center">
-                    <h3 className="text-[26px] font-black leading-[1.05] tracking-tight text-[#FF6A00]">Saúde das Integrações</h3>
+                <section className="overflow-hidden rounded-2xl border border-[#DDE3F2] bg-white shadow-[0_10px_20px_rgba(15,23,42,0.08)]">
+                  <header className="bg-[#123A6B] px-5 py-3 text-center">
+                    <h3 className="text-[26px] font-normal leading-[1.05] tracking-tight text-white">Saúde das Integrações</h3>
                   </header>
 
-                  <HealthGauge value={healthScore} dark />
+                  <div className="px-5 pb-5">
+                    <HealthGauge value={healthScore} />
 
-                  <div className={`mt-5 rounded-xl border p-3 text-center ${healthTone.panelClass}`}>
-                    <p className={`inline-flex items-center gap-2 text-[26px] font-black ${healthTone.textClass}`}>
-                      <CheckCircle2 className={`h-5 w-5 ${healthTone.iconClass}`} />
-                      {healthTone.label}
-                    </p>
-                    <p className="mt-1 text-[16px] text-[#BED0EE]">{healthTone.description}</p>
-                  </div>
+                    <div className={`mt-5 rounded-xl p-3 text-center ${healthTone.panelClass}`}>
+                      <p className={`inline-flex items-center gap-2 text-[26px] font-black ${healthTone.textClass}`}>
+                        <CheckCircle2 className={`h-5 w-5 ${healthTone.iconClass}`} />
+                        {healthTone.label}
+                      </p>
+                      <p className="mt-1 text-[16px] text-[#475569]">{healthTone.description}</p>
+                    </div>
 
-                  <div className="mt-4 border-t border-[#214A7D] pt-4">
-                    <p className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#BED0EE]">
-                      <Clock3 className="h-4 w-4" />
-                      Última sincronização geral
-                    </p>
-                    <p className="mt-1 text-[24px] font-black text-[#F5F9FF]">{formatLastSyncLabel(latestSyncTimestamp)}</p>
+                    <div className="mt-4 border-t border-[#E2E8F0] pt-4">
+                      <p className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#64748B]">
+                        <Clock3 className="h-4 w-4" />
+                        Última sincronização geral
+                      </p>
+                      <p className="mt-1 text-[24px] font-black text-[#0F172A]">{formatLastSyncLabel(latestSyncTimestamp)}</p>
+                    </div>
                   </div>
                 </section>
 
-                <section className="rounded-2xl border border-[#173c6e] bg-[linear-gradient(130deg,#07162f_0%,#0A2145_55%,#081a36_100%)] p-5 shadow-[0_12px_24px_rgba(2,8,22,0.35)]">
-                  <header className="text-center">
-                    <h3 className="text-[26px] font-black leading-[1.05] tracking-tight text-[#FF6A00]">Alertas importantes</h3>
+                <section className="overflow-hidden rounded-2xl border border-[#DDE3F2] bg-white shadow-[0_10px_20px_rgba(15,23,42,0.08)]">
+                  <header className="bg-[#123A6B] px-5 py-3 text-center">
+                    <h3 className="text-[26px] font-normal leading-[1.05] tracking-tight text-white">Alertas importantes</h3>
                   </header>
 
-                  <article className="mt-4 p-3">
+                  <article className="mt-4 px-5">
                     <p className="inline-flex items-center gap-2 text-[16px] font-black text-[#FFAB4D]">
                       <TriangleAlert className="h-4 w-4 text-[#FFAB4D]" />
                       Taxa de erro acima do ideal
                     </p>
-                    <p className="mt-1 text-[14px] text-[#BED0EE]">Gateway de Pagamentos</p>
-                    <p className="text-[14px] text-[#BED0EE]">Erro em 2,1% dos registros.</p>
-                    <button type="button" className="mt-3 inline-flex items-center gap-2 text-[14px] font-bold text-[#FF8A2B]">
+                    <p className="mt-1 text-[14px] text-[#475569]">Gateway de Pagamentos</p>
+                    <p className="text-[14px] text-[#475569]">Erro em 2,1% dos registros.</p>
+                    <button type="button" className="mt-3 inline-flex items-center gap-2 text-[14px] font-bold text-[#E56B00]">
                       Ver detalhes <ArrowUpRight className="h-4 w-4" />
                     </button>
                   </article>
 
-                  <div className="mx-3 h-px bg-gradient-to-r from-transparent via-[#2F5FA0] to-transparent" aria-hidden />
+                  <div className="mx-5 my-4 h-px bg-[#E2E8F0]" aria-hidden />
 
-                  <article className="mt-3 p-3">
-                    <p className="inline-flex items-center gap-2 text-[16px] font-black text-[#8EC5FF]">
-                      <AlertCircle className="h-4 w-4 text-[#8EC5FF]" />
+                  <article className="px-5">
+                    <p className="inline-flex items-center gap-2 text-[16px] font-black text-[#2D6CDF]">
+                      <AlertCircle className="h-4 w-4 text-[#2D6CDF]" />
                       Conector pendente
                     </p>
-                    <p className="mt-1 text-[14px] text-[#BED0EE]">Slack ainda não foi configurado.</p>
-                    <button type="button" className="mt-3 inline-flex items-center gap-2 text-[14px] font-bold text-[#8EC5FF]">
+                    <p className="mt-1 text-[14px] text-[#475569]">Slack ainda não foi configurado.</p>
+                    <button type="button" className="mt-3 inline-flex items-center gap-2 text-[14px] font-bold text-[#E56B00]">
                       Configurar agora <ArrowUpRight className="h-4 w-4" />
                     </button>
                   </article>
 
                   <button
                     type="button"
-                    className="mt-4 inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#2F5FA0] bg-[#0D2A54] text-[14px] font-black tracking-wide text-[#FF8A2B] transition hover:bg-[#103261]"
+                    className="mx-5 my-5 inline-flex h-12 w-[calc(100%-40px)] items-center justify-center gap-2 rounded-xl border border-[#FFD9BD] bg-white text-[14px] font-black tracking-wide text-[#FF7A00] transition hover:bg-[#FFF5EC]"
                   >
                     <TriangleAlert className="h-4 w-4" />
                     Ver todos os alertas
