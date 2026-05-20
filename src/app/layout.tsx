@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from 'next/script';
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
@@ -45,6 +46,12 @@ export default function RootLayout({
       className="h-full antialiased scroll-smooth"
     >
       <body className={`${inter.variable} ${manrope.variable} min-h-full flex flex-col font-sans bg-[var(--background)] text-[var(--foreground)]`}>
+        {/* HubSpot tracking script - loads after the page is interactive */}
+        <Script
+          id="hs-script-loader"
+          src="//js.hs-scripts.com/51491374.js"
+          strategy="afterInteractive"
+        />
         <AuthProvider>
           {children}
         </AuthProvider>
