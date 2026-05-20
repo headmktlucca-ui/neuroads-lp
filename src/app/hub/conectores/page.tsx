@@ -1,7 +1,10 @@
-'use client';
-
+import { Suspense } from 'react';
 import ConnectorsHubPage from '../../../components/hub/ConnectorsHubPage';
 
 export default function HubConnectorsPage() {
-  return <ConnectorsHubPage />;
+  return (
+    <Suspense fallback={null}>
+      <ConnectorsHubPage />
+    </Suspense>
+  );
 }
