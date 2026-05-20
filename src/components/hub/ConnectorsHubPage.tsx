@@ -271,8 +271,8 @@ function BrandTile({ id }: { id: UiConnectorId }) {
   if (id === 'googleAds') {
     return (
       <Image
-        src="/images/connectors/google-ads-icon-v2.png"
-        alt="Ícone Google Ads"
+        src="/images/connectors/google-ads-icon-white-v1.png"
+        alt="Ícone Google Ads com fundo branco"
         width={88}
         height={88}
         className="h-full w-full rounded-xl object-cover"
