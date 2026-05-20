@@ -199,7 +199,7 @@ export default function HubDashboardPage() {
               </div>
               <Link
                 href="/hub/laboratorio-agentes"
-                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#FF6A00] bg-transparent px-6 text-[14px] leading-none font-black text-[#FF6A00] shadow-none transition hover:bg-[#FF6A00]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB98E]"
+                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#FF6A00] bg-[#FF6A00] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB98E]"
               >
                 <Wrench className="h-4 w-4" />
                 Acessar Laboratório

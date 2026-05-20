@@ -122,7 +122,7 @@ function TrailCard({
   const Icon = icon;
 
   return (
-    <article className={`flex h-full flex-col rounded-[16px] border ${palette.border} bg-white p-5`}>
+    <article className={`flex h-full flex-col rounded-[16px] border ${palette.border} bg-[#091A35] p-5 shadow-[0_10px_22px_rgba(2,8,22,0.25)]`}>
       <div className="mb-3 flex items-center gap-3">
         <span className={`inline-flex h-12 w-12 items-center justify-center rounded-2xl ${palette.iconBg}`}>
           <Icon className={`h-6 w-6 ${palette.iconColor}`} />
@@ -130,11 +130,11 @@ function TrailCard({
         <h3 className={`text-[24px] leading-none font-black tracking-tight ${palette.iconColor}`}>{title}</h3>
       </div>
 
-      <p className="mb-4 text-[16px] leading-[1.4] font-semibold tracking-tight text-[#111827]">{subtitle}</p>
+      <p className="mb-4 text-[16px] leading-[1.4] font-semibold tracking-tight text-[#E5ECFA]">{subtitle}</p>
 
       <ul className="mb-5 space-y-2">
         {points.map((point) => (
-          <li key={point} className="flex items-start gap-2 text-[14px] leading-[1.4] text-[#4B5563]">
+          <li key={point} className="flex items-start gap-2 text-[14px] leading-[1.4] text-[#BED0EE]">
             <CheckCircle2 className={`mt-0.5 h-5 w-5 ${palette.iconColor}`} />
             {point}
           </li>
@@ -143,7 +143,7 @@ function TrailCard({
 
       <Link
         href={href}
-        className={`mt-auto inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] border ${palette.buttonBorder} px-4 text-[15px] font-bold ${palette.buttonText} transition hover:brightness-95`}
+        className={`mt-auto inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] border ${palette.buttonBorder} bg-[#0D2347] px-4 text-[15px] font-bold ${palette.buttonText} transition hover:brightness-110`}
       >
         Acessar trilha
         <span aria-hidden>→</span>
@@ -550,42 +550,42 @@ export default function StrategicHubOverview() {
           </section>
 
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1fr_1.33fr]">
-            <article className="rounded-[24px] border border-[#E8ECF1] bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
-              <header className="mb-4 border-b border-[#EEF1F5] pb-4">
+            <article className="rounded-[24px] border border-[#173c6e] bg-[linear-gradient(130deg,#07162f_0%,#0A2145_55%,#081a36_100%)] p-5 shadow-[0_12px_24px_rgba(2,8,22,0.35)]">
+              <header className="mb-4 border-b border-[#214A7D] pb-4">
                 <h2 className="text-[18px] font-black tracking-tight text-[#FF5A00]">Ações de Hoje</h2>
-                <p className="text-[14px] text-[#4B5563]">Prioridades operacionais do dia</p>
+                <p className="text-[14px] text-[#BED0EE]">Prioridades operacionais do dia</p>
               </header>
 
               <div className="space-y-3">
                 {ACTIONS.length > 0 ? (
                   ACTIONS.map((item) => (
-                    <article key={item.id} className="rounded-[14px] border border-[#ECEFF4] bg-white p-4">
+                    <article key={item.id} className="rounded-[14px] border border-[#2B5A94] bg-[#091A35] p-4">
                       <div className="flex gap-3">
-                        <span className="inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[12px] bg-[#FFF3EC] text-[24px] font-black text-[#FF5A00]">
+                        <span className="inline-flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-[12px] bg-[#3A1F12] text-[24px] font-black text-[#FF5A00]">
                           {item.order}
                         </span>
                         <div>
-                          <h3 className="text-[16px] font-black leading-tight text-[#111827]">{item.title}</h3>
-                          <p className="mt-1 text-[14px] leading-tight text-[#4B5563]">{item.description}</p>
+                          <h3 className="text-[16px] font-black leading-tight text-[#EAF1FF]">{item.title}</h3>
+                          <p className="mt-1 text-[14px] leading-tight text-[#BED0EE]">{item.description}</p>
                         </div>
                       </div>
                     </article>
                   ))
                 ) : (
-                  <article className="rounded-[14px] border border-[#ECEFF4] bg-[#FCFCFD] p-4">
+                  <article className="rounded-[14px] border border-[#2B5A94] bg-[#091A35] p-4">
                     <div className="flex items-start gap-3">
-                      <span className="inline-flex h-11 w-11 items-center justify-center rounded-[12px] bg-[#FFF3EC] text-[#FF5A00]">
+                      <span className="inline-flex h-11 w-11 items-center justify-center rounded-[12px] bg-[#3A1F12] text-[#FF5A00]">
                         <PlugZap className="h-5 w-5" />
                       </span>
                       <div>
-                        <h3 className="text-[16px] font-black leading-tight text-[#111827]">Dados indisponíveis</h3>
-                        <p className="mt-1 text-[14px] leading-relaxed text-[#4B5563]">
+                        <h3 className="text-[16px] font-black leading-tight text-[#EAF1FF]">Dados indisponíveis</h3>
+                        <p className="mt-1 text-[14px] leading-relaxed text-[#BED0EE]">
                           Ainda não há insights reais para gerar prioridades automáticas.
                         </p>
-                        <p className="mt-3 text-[13px] font-semibold text-[#111827]">Para visualizar dados reais:</p>
+                        <p className="mt-3 text-[13px] font-semibold text-[#EAF1FF]">Para visualizar dados reais:</p>
                         <ul className="mt-2 space-y-2">
                           {REAL_DATA_REQUIREMENTS.map((requirement) => (
-                            <li key={requirement} className="flex items-start gap-2 text-[13px] leading-relaxed text-[#4B5563]">
+                            <li key={requirement} className="flex items-start gap-2 text-[13px] leading-relaxed text-[#BED0EE]">
                               <CheckCircle2 className="mt-0.5 h-4 w-4 text-[#0A9D57]" />
                               {requirement}
                             </li>
@@ -607,10 +607,10 @@ export default function StrategicHubOverview() {
               </div>
             </article>
 
-            <article className="rounded-[24px] border border-[#E8ECF1] bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
-              <header className="mb-4 border-b border-[#EEF1F5] pb-4">
+            <article className="rounded-[24px] border border-[#173c6e] bg-[linear-gradient(130deg,#07162f_0%,#0A2145_55%,#081a36_100%)] p-5 shadow-[0_12px_24px_rgba(2,8,22,0.35)]">
+              <header className="mb-4 border-b border-[#214A7D] pb-4">
                 <h2 className="text-[18px] font-black tracking-tight text-[#FF5A00]">Trilhas de Valor</h2>
-                <p className="text-[14px] text-[#4B5563]">Aquisição, Conversão e Operação</p>
+                <p className="text-[14px] text-[#BED0EE]">Aquisição, Conversão e Operação</p>
               </header>
 
               <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -626,10 +626,10 @@ export default function StrategicHubOverview() {
                   href="/hub/performance"
                   icon={Target}
                   palette={{
-                    iconBg: 'bg-[#EAFBF0]',
+                    iconBg: 'bg-[#103226]',
                     iconColor: 'text-[#0A9D57]',
-                    border: 'border-[#DCEFE3]',
-                    buttonBorder: 'border-[#7FD2A4]',
+                    border: 'border-[#2B845A]',
+                    buttonBorder: 'border-[#5CC891]',
                     buttonText: 'text-[#0A9D57]',
                   }}
                 />
@@ -646,11 +646,11 @@ export default function StrategicHubOverview() {
                   href="/hub/criativos"
                   icon={Funnel}
                   palette={{
-                    iconBg: 'bg-[#EEF4FF]',
-                    iconColor: 'text-[#2F6CF6]',
-                    border: 'border-[#DCE6FF]',
-                    buttonBorder: 'border-[#8CB2FF]',
-                    buttonText: 'text-[#2F6CF6]',
+                    iconBg: 'bg-[#122A55]',
+                    iconColor: 'text-[#6EA8FF]',
+                    border: 'border-[#3A5FA5]',
+                    buttonBorder: 'border-[#82ABFF]',
+                    buttonText: 'text-[#6EA8FF]',
                   }}
                 />
 
@@ -666,10 +666,10 @@ export default function StrategicHubOverview() {
                   href="/hub/tecnico"
                   icon={Cog}
                   palette={{
-                    iconBg: 'bg-[#FFF4EE]',
+                    iconBg: 'bg-[#3A1F12]',
                     iconColor: 'text-[#FF5A00]',
-                    border: 'border-[#FFE0CF]',
-                    buttonBorder: 'border-[#FFB38A]',
+                    border: 'border-[#A35A36]',
+                    buttonBorder: 'border-[#FF9B67]',
                     buttonText: 'text-[#FF5A00]',
                   }}
                 />
