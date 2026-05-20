@@ -846,6 +846,7 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
 
               <form className="mt-5 space-y-3" onSubmit={handleFormSubmit}>
                 <input
+                  name="name"
                   value={form.name}
                   onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
                   onFocus={() => {
@@ -857,28 +858,41 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
                     });
                   }}
                   placeholder="Seu nome"
+                  autoComplete="name"
+                  required
                   className="w-full rounded-xl border border-[#dbe2ef] bg-white px-4 py-3 text-[15px] font-medium text-[#1f2940] outline-none transition focus:border-[#ff9e63] focus:ring-2 focus:ring-[#ff6a00]/10"
                 />
                 <input
+                  name="email"
                   value={form.email}
                   onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
                   placeholder="E-mail profissional"
                   type="email"
+                  autoComplete="email"
+                  required
                   className="w-full rounded-xl border border-[#dbe2ef] bg-white px-4 py-3 text-[15px] font-medium text-[#1f2940] outline-none transition focus:border-[#ff9e63] focus:ring-2 focus:ring-[#ff6a00]/10"
                 />
                 <div className="grid gap-3 sm:grid-cols-2">
                   <input
+                    name="whatsapp"
                     value={form.whatsapp}
                     onChange={(e) => setForm((prev) => ({ ...prev, whatsapp: e.target.value }))}
                     placeholder="WhatsApp"
+                    type="tel"
+                    autoComplete="tel"
+                    required
                     className="w-full rounded-xl border border-[#dbe2ef] bg-white px-4 py-3 text-[15px] font-medium text-[#1f2940] outline-none transition focus:border-[#ff9e63] focus:ring-2 focus:ring-[#ff6a00]/10"
                   />
                   <input
+                    name="companySite"
                     value={form.companySite}
                     onChange={(e) =>
                       setForm((prev) => ({ ...prev, companySite: e.target.value }))
                     }
                     placeholder="Site da empresa"
+                    type="url"
+                    autoComplete="url"
+                    required
                     className="w-full rounded-xl border border-[#dbe2ef] bg-white px-4 py-3 text-[15px] font-medium text-[#1f2940] outline-none transition focus:border-[#ff9e63] focus:ring-2 focus:ring-[#ff6a00]/10"
                   />
                 </div>
