@@ -6,7 +6,6 @@ export type ConnectorProvider =
   | 'meta'
   | 'linkedin'
   | 'hubspot'
-  | 'pipedrive'
   | 'stripe'
   | 'bigquery';
 
@@ -143,15 +142,6 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
         scope: 'crm.objects.contacts.read crm.objects.deals.read oauth',
         clientIdEnvKeys: ['HUBSPOT_CLIENT_ID'],
         clientSecretEnvKeys: ['HUBSPOT_CLIENT_SECRET'],
-        tokenExchangeStyle: 'form-post',
-      },
-      {
-        provider: 'pipedrive',
-        authUrl: 'https://oauth.pipedrive.com/oauth/authorize',
-        tokenUrl: 'https://oauth.pipedrive.com/oauth/token',
-        scope: 'deals:read persons:read organizations:read users:read',
-        clientIdEnvKeys: ['PIPEDRIVE_CLIENT_ID'],
-        clientSecretEnvKeys: ['PIPEDRIVE_CLIENT_SECRET'],
         tokenExchangeStyle: 'form-post',
       },
     ],

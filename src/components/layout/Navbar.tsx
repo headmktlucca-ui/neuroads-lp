@@ -5,7 +5,7 @@ import { useCallback, useEffect, useMemo, useState, Fragment } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
-import { ChevronDown, LogOut, X, PlugZap, CheckCircle2, Database, Gauge, AlertTriangle, CircleHelp } from 'lucide-react';
+import { ChevronDown, LogOut, X, PlugZap, CheckCircle2, Gauge, AlertTriangle } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
@@ -56,25 +56,82 @@ const DEFAULT_COMPANY_FORM = {
 };
 
 const DEFAULT_CONNECTOR_CONFIG = {
-  timezone: 'America/Sao_Paulo',
-  currency: 'BRL',
-  attributionWindow: '7d-click / 1d-view',
+  hubspotPortalId: '',
+  hubspotPipelineId: '',
+  hubspotDealStageId: '',
+  hubspotLifecycleStageField: 'lifecyclestage',
   refreshFrequency: '15 min',
 };
 
 const CONNECTOR_CONFIG_OPTIONS = {
-  timezone: ['America/Sao_Paulo', 'UTC', 'America/New_York', 'Europe/Lisbon'],
-  currency: ['BRL', 'USD', 'EUR'],
-  attributionWindow: ['7d-click / 1d-view', '7d-click', '1d-click / 1d-view', '1d-click', '28d-click / 1d-view'],
   refreshFrequency: ['5 min', '15 min', '30 min', '60 min', '6 h', '24 h'],
 } as const;
 
-const ATTRIBUTION_WINDOW_LABELS: Record<(typeof CONNECTOR_CONFIG_OPTIONS.attributionWindow)[number], string> = {
-  '7d-click / 1d-view': '7 dias clique / 1 dia visualização',
-  '7d-click': '7 dias clique',
-  '1d-click / 1d-view': '1 dia clique / 1 dia visualização',
-  '1d-click': '1 dia clique',
-  '28d-click / 1d-view': '28 dias clique / 1 dia visualização',
+const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string[] }> = {
+  googleAds: {
+    title: 'Google Ads API',
+    steps: [
+      'Crie um app OAuth no Google Cloud e ative a Google Ads API.',
+      'Preencha GOOGLE_OAUTH_CLIENT_ID e GOOGLE_OAUTH_CLIENT_SECRET no ambiente.',
+      'Clique em Conectar e autorize a conta de mídia usada na operação.',
+    ],
+  },
+  metaAds: {
+    title: 'Meta Ads API',
+    steps: [
+      'Configure um app no Meta for Developers com produto Facebook Login.',
+      'Defina META_APP_ID e META_APP_SECRET nas variáveis do projeto.',
+      'Conecte a conta e valide acesso às contas de anúncio no Business Manager.',
+    ],
+  },
+  linkedinAds: {
+    title: 'LinkedIn Ads API',
+    steps: [
+      'Crie um app no LinkedIn Developer Portal com permissão de Ads Reporting.',
+      'Configure LINKEDIN_CLIENT_ID e LINKEDIN_CLIENT_SECRET no ambiente.',
+      'Autorize o app usando um usuário com acesso às contas de anúncio B2B.',
+    ],
+  },
+  ga4: {
+    title: 'GA4 Data API',
+    steps: [
+      'Ative a Google Analytics Data API no mesmo projeto OAuth do Google.',
+      'Garanta o redirect URI /api/auth/connectors/ga4/callback no app OAuth.',
+      'Conecte com um usuário que tenha permissão de leitura na propriedade GA4.',
+    ],
+  },
+  serverTracking: {
+    title: 'GTM Server + CAPI',
+    steps: [
+      'Valide se o container server-side está ativo e recebendo eventos.',
+      'Mantenha a frequência de atualização definida para evitar atraso no dashboard.',
+      'Ative este canal apenas após validar deduplicação entre web e server.',
+    ],
+  },
+  crm: {
+    title: 'CRM HubSpot',
+    steps: [
+      'No HubSpot Developer, configure o redirect URI: https://neuroads.com.br/api/auth/connectors/crm/callback.',
+      'Defina HUBSPOT_CLIENT_ID, HUBSPOT_CLIENT_SECRET e NEXT_PUBLIC_APP_URL no ambiente.',
+      'Use escopos mínimos oauth, crm.objects.contacts.read e crm.objects.deals.read antes de conectar.',
+    ],
+  },
+  payments: {
+    title: 'Stripe/Pagamentos',
+    steps: [
+      'Ative o Stripe Connect OAuth e configure STRIPE_CONNECT_CLIENT_ID.',
+      'Garanta STRIPE_SECRET_KEY válida no ambiente de produção e homologação.',
+      'Conecte a conta Stripe principal para liberar receita e LTV no dashboard.',
+    ],
+  },
+  warehouse: {
+    title: 'BigQuery/Data Warehouse',
+    steps: [
+      'Ative BigQuery API no Google Cloud e habilite acesso de leitura.',
+      'Use o mesmo OAuth do Google com redirect /api/auth/connectors/warehouse/callback.',
+      'Conecte somente após validar dataset e projeto de consolidação de dados.',
+    ],
+  },
 };
 
 function ensureOption(value: string, options: readonly string[], fallback: string): string {
@@ -82,23 +139,17 @@ function ensureOption(value: string, options: readonly string[], fallback: strin
 }
 
 function normalizeConnectorConfig(config: Partial<typeof DEFAULT_CONNECTOR_CONFIG>): typeof DEFAULT_CONNECTOR_CONFIG {
-  const timezone = ensureOption(readString(config.timezone), CONNECTOR_CONFIG_OPTIONS.timezone, DEFAULT_CONNECTOR_CONFIG.timezone);
-  const currency = ensureOption(
-    readString(config.currency).toUpperCase(),
-    CONNECTOR_CONFIG_OPTIONS.currency,
-    DEFAULT_CONNECTOR_CONFIG.currency
-  );
-  const attributionWindow = ensureOption(
-    readString(config.attributionWindow),
-    CONNECTOR_CONFIG_OPTIONS.attributionWindow,
-    DEFAULT_CONNECTOR_CONFIG.attributionWindow
-  );
+  const hubspotPortalId = readString(config.hubspotPortalId);
+  const hubspotPipelineId = readString(config.hubspotPipelineId);
+  const hubspotDealStageId = readString(config.hubspotDealStageId);
+  const hubspotLifecycleStageField =
+    readString(config.hubspotLifecycleStageField) || DEFAULT_CONNECTOR_CONFIG.hubspotLifecycleStageField;
   const refreshFrequency = ensureOption(
     readString(config.refreshFrequency),
     CONNECTOR_CONFIG_OPTIONS.refreshFrequency,
     DEFAULT_CONNECTOR_CONFIG.refreshFrequency
   );
-  return { timezone, currency, attributionWindow, refreshFrequency };
+  return { hubspotPortalId, hubspotPipelineId, hubspotDealStageId, hubspotLifecycleStageField, refreshFrequency };
 }
 
 const PLAN_AGENT_CAPACITY: Record<string, number> = {
@@ -314,11 +365,6 @@ export default function Navbar() {
   const openProfileModal = () => {
     setIsMenuOpen(false);
     setIsProfileOpen(true);
-  };
-
-  const openConnectorsModal = () => {
-    setIsMenuOpen(false);
-    setIsConnectorsOpen(true);
   };
 
   const openCompanyModal = () => {
@@ -733,6 +779,27 @@ export default function Navbar() {
       const connectorsConfigKey = `neuroads_dashboard_connectors_config_${user.uid}`;
       window.localStorage.setItem(connectorsKey, JSON.stringify(connectorStatus));
       window.localStorage.setItem(connectorsConfigKey, JSON.stringify(connectorConfig));
+      const db = getFirebaseDb();
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(
+        userRef,
+        {
+          connections: {
+            [CONNECTOR_CONNECTION_KEYS.crm]: {
+              metadata: {
+                hubspotPortalId: connectorConfig.hubspotPortalId,
+                hubspotPipelineId: connectorConfig.hubspotPipelineId,
+                hubspotDealStageId: connectorConfig.hubspotDealStageId,
+                hubspotLifecycleStageField: connectorConfig.hubspotLifecycleStageField,
+                refreshFrequency: connectorConfig.refreshFrequency,
+              },
+              updatedAt: Date.now(),
+            },
+          },
+          updatedAt: Date.now(),
+        },
+        { merge: true }
+      );
       setConnectorsSaved(true);
       setTimeout(() => setConnectorsSaved(false), 2200);
       showSettingsToast('Configurações de conectores salvas com sucesso.');
@@ -797,9 +864,10 @@ export default function Navbar() {
     const now = Date.now();
     const connectionKey = CONNECTOR_CONNECTION_KEYS[connectorKey];
     const metadata = {
-      timezone: connectorConfig.timezone,
-      currency: connectorConfig.currency,
-      attributionWindow: connectorConfig.attributionWindow,
+      hubspotPortalId: connectorConfig.hubspotPortalId,
+      hubspotPipelineId: connectorConfig.hubspotPipelineId,
+      hubspotDealStageId: connectorConfig.hubspotDealStageId,
+      hubspotLifecycleStageField: connectorConfig.hubspotLifecycleStageField,
       refreshFrequency: connectorConfig.refreshFrequency,
     };
 
@@ -1073,12 +1141,12 @@ export default function Navbar() {
                       >
                         Meu perfil
                       </button>
-                      <button
-                        onClick={openConnectorsModal}
-                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00] transition-colors"
+                      <Link
+                        href="/hub/conectores"
+                        className="block w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00] transition-colors"
                       >
                         Conectores
-                      </button>
+                      </Link>
                       <button
                         onClick={openCompanyModal}
                         className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00] transition-colors"
@@ -1246,12 +1314,13 @@ export default function Navbar() {
               >
                 MEU PERFIL
               </button>
-              <button
-                onClick={openConnectorsModal}
-                className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
+              <Link
+                href="/hub/conectores"
+                onClick={() => setIsMenuOpen(false)}
+                className="block w-full rounded-xl border border-border bg-bg-secondary py-5 text-center text-sm font-black tracking-widest uppercase text-text-muted"
               >
                 CONECTORES
-              </button>
+              </Link>
               <button
                 onClick={openCompanyModal}
                 className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
@@ -1577,8 +1646,8 @@ export default function Navbar() {
             className={SETTINGS_MODAL_BACKDROP}
           />
 
-          <div className={`${SETTINGS_MODAL_FRAME} w-[min(96vw,1360px)] max-w-none`}>
-            <div className={`${SETTINGS_MODAL_SURFACE} flex h-full flex-col overflow-hidden`}>
+          <div className={`${SETTINGS_MODAL_FRAME} w-[min(98vw,1440px)] max-h-[94vh] max-w-none`}>
+            <div className={`${SETTINGS_MODAL_SURFACE} max-h-[calc(94vh-4px)] flex h-full flex-col overflow-hidden`}>
               <div className={SETTINGS_MODAL_HEADER}>
                 <h3 className="text-2xl font-black text-text-main tracking-tight">Conectores</h3>
                 <p className="text-sm text-text-muted mt-1">
@@ -1592,181 +1661,126 @@ export default function Navbar() {
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto px-5 py-4">
-                <div className="grid grid-cols-1 gap-3 xl:grid-cols-[1.65fr_1fr]">
-                <div className="rounded-[22px] border border-[#FFE4D1] bg-[#FFF8F3] p-4 shadow-[0_10px_30px_-24px_rgba(180,83,9,0.75)] xl:col-span-2">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                    <div>
-                      <p className="text-xs uppercase tracking-widest text-[#B45309] font-bold mb-1">Prontidão do Dashboard</p>
-                      <p className="text-sm text-[#7C2D12]">Conectores obrigatórios ativos: {connectedRequired} de {requiredConnectors.length}</p>
+              <div className="flex-1 overflow-y-auto bg-[#F7F9FC] px-4 py-4">
+                <div className="grid grid-cols-1 gap-3">
+                  <div className="xl:col-span-2 grid grid-cols-1 gap-3 md:grid-cols-3">
+                    <div className="rounded-2xl border border-[#E4EAF2] bg-white p-3">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#98A2B3]">Prontidão</p>
+                      <div className="mt-2 flex items-center gap-2">
+                        <Gauge size={14} className="text-[#FF6A00]" />
+                        <p className="text-lg font-black text-text-main">{dashboardReadiness}%</p>
+                      </div>
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#F2F4F7]">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-r from-[#FFB36A] via-[#FF8A2B] to-[#D55A00] transition-all duration-500"
+                          style={{ width: `${dashboardReadiness}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-[#FFD2B5] bg-white">
-                      <Gauge size={14} className="text-primary" />
-                      <span className="text-sm font-black text-primary">{dashboardReadiness}%</span>
+                    <div className="rounded-2xl border border-[#E4EAF2] bg-white p-3">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#98A2B3]">Obrigatórios ativos</p>
+                      <p className="mt-2 text-lg font-black text-text-main">
+                        {connectedRequired}/{requiredConnectors.length}
+                      </p>
+                      <p className="mt-1 text-xs text-text-muted">Conectores com dados prontos para o dashboard.</p>
+                    </div>
+                    <div className="rounded-2xl border border-[#E4EAF2] bg-white p-3">
+                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#98A2B3]">Status da operação</p>
+                      <p className="mt-2 text-sm font-black text-[#344054]">
+                        {dashboardReadiness >= 100 ? 'Dados liberados para análise' : 'Sincronização parcial em andamento'}
+                      </p>
+                      <p className="mt-1 text-xs text-text-muted">Ative as integrações pendentes para liberar visão completa.</p>
                     </div>
                   </div>
-                  <div className="mt-3 h-2 rounded-full bg-[#FFE5D0] overflow-hidden">
-                    <div
-                      className="h-full bg-gradient-to-r from-[#FF6B00] to-[#FF9D00] transition-all duration-500"
-                      style={{ width: `${dashboardReadiness}%` }}
-                    />
-                  </div>
-                </div>
 
-                <div className={`${SETTINGS_PANEL} xl:row-span-2`}>
-                  <div className="mb-3 flex items-center justify-between gap-3">
-                    <p className={SETTINGS_LABEL}>Conectores obrigatórios</p>
-                    <span className="rounded-full border border-[#E6ECF2] bg-[#F8FAFC] px-2.5 py-1 text-[11px] font-bold text-[#667085]">
-                      {connectedRequired}/{requiredConnectors.length}
-                    </span>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                    {CONNECTOR_DEFINITIONS.map((connector) => (
-                      <div key={connector.key} className="h-[94px] rounded-xl border border-[#E6ECF2] bg-[#F8FAFC] p-2.5">
-                        <div className="flex h-full items-center justify-between gap-3">
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-2">
-                              <p className="truncate text-[13px] font-black leading-tight text-text-main">{connector.name}</p>
-                              <span
-                                className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-black uppercase tracking-wide ${
-                                  connectorStatus[connector.key]
-                                    ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]'
-                                    : 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]'
-                                }`}
-                              >
-                                {connectorStatus[connector.key] ? 'ATIVA' : 'INATIVA'}
-                              </span>
+                  <div className={`${SETTINGS_PANEL} p-4`}>
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div>
+                        <p className={SETTINGS_LABEL}>Matriz de conectores</p>
+                        <p className="text-xs text-text-muted">Visão única de todas as integrações essenciais.</p>
+                      </div>
+                      <span className="rounded-full border border-[#E4EAF2] bg-[#F8FAFC] px-2.5 py-1 text-[10px] font-black text-[#475467]">
+                        8 canais
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                      {CONNECTOR_DEFINITIONS.map((connector) => (
+                        <div
+                          key={connector.key}
+                          className={`rounded-xl border p-2.5 ${
+                            connectorStatus[connector.key]
+                              ? 'border-[#BFE7D3] bg-[#F4FFF8]'
+                              : 'border-[#E4EAF2] bg-white'
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <p className="truncate text-[12px] font-black text-text-main">{connector.name}</p>
+                                <span className="group relative inline-flex shrink-0 items-center justify-center">
+                                  <span
+                                    aria-hidden
+                                    className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#D0D5DD] bg-white text-[10px] font-black text-[#667085]"
+                                  >
+                                    ?
+                                  </span>
+                                  <span
+                                    role="tooltip"
+                                    className="pointer-events-none absolute left-0 top-[calc(100%+8px)] z-10 w-[310px] rounded-lg border border-[#DCE8FF] bg-white px-3 py-2 text-[11px] font-medium normal-case tracking-normal text-[#344054] opacity-0 shadow-[0_14px_30px_-18px_rgba(15,23,42,0.5)] transition-opacity group-hover:opacity-100"
+                                  >
+                                    <strong className="text-[#1D4ED8]">{CONNECTOR_HELP_BY_KEY[connector.key].title}</strong>
+                                    <span className="mt-1 block space-y-1">
+                                      {CONNECTOR_HELP_BY_KEY[connector.key].steps.map((step, index) => (
+                                        <span key={`${connector.key}-tip-${index}`} className="block">
+                                          {index + 1}. {step}
+                                        </span>
+                                      ))}
+                                    </span>
+                                  </span>
+                                </span>
+                              </div>
+                              <p className="mt-1 truncate text-[10px] leading-tight text-text-muted">{connector.source} • {connector.usedBy}</p>
                             </div>
-                            <p className="mt-1 truncate text-[11px] leading-tight text-text-muted">{connector.source} • {connector.usedBy}</p>
-                          </div>
-
-                          <div className="flex shrink-0 items-center gap-1.5 whitespace-nowrap">
-                            {connector.key === 'crm' && !connectorStatus[connector.key] ? (
-                              <a
-                                href={getConnectorOAuthHref(connector.key, 'pipedrive')}
-                                className="inline-flex h-8 min-w-[96px] items-center justify-center gap-1.5 rounded-lg border border-[#BFDBFE] bg-[#EFF6FF] px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wide text-[#1D4ED8]"
-                              >
-                                <PlugZap size={11} /> Pipedrive
-                              </a>
-                            ) : null}
-                            <button
-                              type="button"
-                              disabled={connectorBusyKey === connector.key}
-                              onClick={() =>
+                            <span
+                              className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-wider ${
                                 connectorStatus[connector.key]
-                                  ? void handleConnectorDisconnect(connector.key)
-                                  : void handleConnectorConnect(connector.key)
-                              }
-                              className={`inline-flex h-8 min-w-[120px] items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
-                                connectorStatus[connector.key]
-                                  ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]'
-                                  : 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]'
+                                  ? 'border-[#BDE8CF] bg-white text-[#0A9D57]'
+                                  : 'border-[#FECACA] bg-[#FFF7F7] text-[#B42318]'
                               }`}
                             >
-                              {connectorStatus[connector.key] ? (
-                                <>
-                                  <CheckCircle2 size={11} /> Conectado
-                                </>
-                              ) : (
-                                <>
-                                  <PlugZap size={11} /> Conectar
-                                </>
-                              )}
-                            </button>
+                              {connectorStatus[connector.key] ? 'Ativa' : 'Inativa'}
+                            </span>
                           </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className={`${SETTINGS_PANEL} space-y-4`}>
-                  <p className={SETTINGS_LABEL}>Configurações operacionais</p>
-                  <div className="grid grid-cols-1 gap-x-3 gap-y-4 md:grid-cols-2">
-                    <div className="flex flex-col gap-2">
-                      <label className={`${SETTINGS_LABEL} mb-0 flex min-h-[16px] items-center`}>Timezone</label>
-                      <select
-                        value={connectorConfig.timezone}
-                        onChange={(e) => setConnectorConfig((prev) => ({ ...prev, timezone: e.target.value }))}
-                        className={SETTINGS_INPUT}
-                      >
-                        {CONNECTOR_CONFIG_OPTIONS.timezone.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label className={`${SETTINGS_LABEL} mb-0 flex min-h-[16px] items-center`}>Moeda</label>
-                      <select
-                        value={connectorConfig.currency}
-                        onChange={(e) => setConnectorConfig((prev) => ({ ...prev, currency: e.target.value.toUpperCase() }))}
-                        className={SETTINGS_INPUT}
-                      >
-                        {CONNECTOR_CONFIG_OPTIONS.currency.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label className={`${SETTINGS_LABEL} mb-0 flex min-h-[16px] items-center gap-1.5`}>
-                        <span>Janela de atribuição</span>
-                        <span className="group relative inline-flex items-center">
-                          <CircleHelp size={14} className="text-[#98A2B3]" aria-hidden />
-                          <span
-                            role="tooltip"
-                            className="pointer-events-none absolute left-1/2 top-[calc(100%+8px)] z-10 w-[260px] -translate-x-1/2 rounded-lg border border-[#DCE8FF] bg-white px-3 py-2 text-[11px] font-medium normal-case tracking-normal text-[#344054] opacity-0 shadow-[0_14px_30px_-18px_rgba(15,23,42,0.5)] transition-opacity group-hover:opacity-100"
+                          <button
+                            type="button"
+                            disabled={connectorBusyKey === connector.key}
+                            onClick={() =>
+                              connectorStatus[connector.key]
+                                ? void handleConnectorDisconnect(connector.key)
+                                : void handleConnectorConnect(connector.key)
+                            }
+                            className={`mt-2 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-lg border px-2.5 text-[10px] font-black uppercase tracking-wide transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
+                              connectorStatus[connector.key]
+                                ? 'border-[#BDE8CF] bg-white text-[#0A9D57] hover:bg-[#F2FFF7]'
+                                : 'border-[#FFD4B5] bg-[#FFF5EE] text-[#B54708] hover:border-[#FFB77F]'
+                            }`}
                           >
-                            Define por quanto tempo uma conversão pode ser atribuída após um clique ou visualização do anúncio.
-                          </span>
-                        </span>
-                      </label>
-                      <select
-                        value={connectorConfig.attributionWindow}
-                        onChange={(e) => setConnectorConfig((prev) => ({ ...prev, attributionWindow: e.target.value }))}
-                        className={SETTINGS_INPUT}
-                      >
-                        {CONNECTOR_CONFIG_OPTIONS.attributionWindow.map((option) => (
-                          <option key={option} value={option}>
-                            {ATTRIBUTION_WINDOW_LABELS[option]}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                      <label className={`${SETTINGS_LABEL} mb-0 flex min-h-[16px] items-center`}>Frequência de atualização</label>
-                      <select
-                        value={connectorConfig.refreshFrequency}
-                        onChange={(e) => setConnectorConfig((prev) => ({ ...prev, refreshFrequency: e.target.value }))}
-                        className={SETTINGS_INPUT}
-                      >
-                        {CONNECTOR_CONFIG_OPTIONS.refreshFrequency.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
+                            {connectorStatus[connector.key] ? (
+                              <>
+                                <CheckCircle2 size={11} /> Conectado
+                              </>
+                            ) : (
+                              <>
+                                <PlugZap size={11} /> Conectar
+                              </>
+                            )}
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                  <div className="rounded-xl border border-[#DCE8FF] bg-[#F5F9FF] p-3">
-                    <p className="mb-2 text-[11px] font-bold uppercase tracking-wider text-[#1D4ED8]">Dependências do Dashboard</p>
-                    <div className="space-y-2">
-                      <p className="text-[11px] text-[#1D4ED8]"><strong>Resumo executivo:</strong> Google Ads + Meta + CRM + Pagamentos + Warehouse</p>
-                      <p className="text-[11px] text-[#1D4ED8]"><strong>Alertas:</strong> Mídia paga + GA4 + Tracking server-side</p>
-                      <p className="text-[11px] text-[#1D4ED8]"><strong>Status de agentes:</strong> Firestore + Scheduler + Warehouse</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-2 rounded-xl border border-[#DCE8FF] bg-[#F5F9FF] p-3 text-[11px] text-[#1D4ED8]">
-                    <Database size={14} className="mt-0.5" />
-                    <span>
-                      Recomendação: centralizar dados no BigQuery e sincronizar os conectores a cada 15 minutos para precisão operacional.
-                    </span>
-                  </div>
+
                 </div>
-              </div>
               </div>
 
               <div className="sticky bottom-0 z-20 flex flex-col gap-3 border-t border-border bg-white/95 px-5 py-4 backdrop-blur sm:flex-row sm:items-center sm:justify-between shadow-[0_-12px_28px_-24px_rgba(15,23,42,0.45)]">

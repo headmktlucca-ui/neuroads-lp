@@ -595,7 +595,7 @@ export default function AgentEntryPage() {
                   <p className="text-sm font-black text-text-main">Canais necessários para operação</p>
                   <button
                     type="button"
-                    onClick={() => router.push('/hub?connectors=1')}
+                    onClick={() => router.push('/hub/conectores')}
                     className="rounded-full border border-[#D9E2F4] bg-[#EEF4FF] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#1D4ED8] hover:bg-[#E2ECFF]"
                   >
                     Abrir Conectores
@@ -713,7 +713,7 @@ export default function AgentEntryPage() {
                       </div>
                       <button
                         type="button"
-                        onClick={() => router.push('/hub?connectors=1')}
+                        onClick={() => router.push('/hub/conectores')}
                         className="rounded-full border border-[#D9E2F4] bg-[#EEF4FF] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#1D4ED8] hover:bg-[#E2ECFF]"
                       >
                         Abrir Conectores
@@ -1288,3 +1288,4 @@ export default function AgentEntryPage() {
     </main>
   );
 }
+

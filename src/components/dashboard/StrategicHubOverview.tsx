@@ -296,7 +296,7 @@ export default function StrategicHubOverview() {
                     </Link>
 
                     <Link
-                      href="/hub?connectors=1"
+                      href="/hub/conectores"
                       className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-[12px] bg-[#FF6A00] px-4 text-[16px] font-bold text-white shadow-[0_12px_20px_rgba(255,106,0,0.28)] transition hover:brightness-95"
                     >
                       <Wrench className="h-5 w-5" />
@@ -599,7 +599,7 @@ export default function StrategicHubOverview() {
 
               <div className="mt-5 text-center">
                 <Link
-                  href="/hub?connectors=1"
+                  href="/hub/conectores"
                   className="inline-flex items-center gap-2 text-[16px] font-bold text-[#FF5A00] transition hover:text-[#E14B00]"
                 >
                   Configurar conectores para liberar dados <span aria-hidden>→</span>
@@ -681,3 +681,4 @@ export default function StrategicHubOverview() {
     </section>
   );
 }
+

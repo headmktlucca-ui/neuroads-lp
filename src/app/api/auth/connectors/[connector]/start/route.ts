@@ -26,8 +26,8 @@ export async function GET(
 ) {
   const appBaseUrl = getAppBaseUrlForRequest(request);
   const { searchParams } = new URL(request.url);
-  const next = searchParams.get('next') || '/hub?connectors=1';
-  const safeNext = next.startsWith('/') ? next : '/hub?connectors=1';
+  const next = searchParams.get('next') || '/hub/conectores';
+  const safeNext = next.startsWith('/') ? next : '/hub/conectores';
   const redirectWithError = (message: string) => {
     const base = new URL(appBaseUrl);
     const url = new URL(safeNext, base);
@@ -55,3 +55,4 @@ export async function GET(
 
   return NextResponse.redirect(built.url);
 }
+

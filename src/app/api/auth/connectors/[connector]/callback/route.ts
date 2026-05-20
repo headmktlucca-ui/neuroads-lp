@@ -23,7 +23,7 @@ function isSupportedConnector(value: string): value is ConnectorKey {
 
 function buildRedirectUrl(path: string, appBase: string) {
   if (path.startsWith('/')) return new URL(`${appBase}${path}`);
-  return new URL(`${appBase}/hub?connectors=1`);
+  return new URL(`${appBase}/hub/conectores`);
 }
 
 export async function GET(
@@ -33,7 +33,7 @@ export async function GET(
   const appBaseUrl = getAppBaseUrlForRequest(request);
   const { connector } = await context.params;
   if (!isSupportedConnector(connector)) {
-    return NextResponse.redirect(`${appBaseUrl}/hub?connectors=1&connector_auth_error=unsupported_connector`);
+    return NextResponse.redirect(`${appBaseUrl}/hub/conectores?connector_auth_error=unsupported_connector`);
   }
 
   const { searchParams } = new URL(request.url);
@@ -41,7 +41,7 @@ export async function GET(
   const error = searchParams.get('error');
   const state = parseAuthState(searchParams.get('state'));
 
-  const redirectPath = state?.next && state.next.startsWith('/') ? state.next : '/hub?connectors=1';
+  const redirectPath = state?.next && state.next.startsWith('/') ? state.next : '/hub/conectores';
   const redirectUrl = buildRedirectUrl(redirectPath, appBaseUrl);
   redirectUrl.searchParams.set('connector', connector);
 
@@ -82,3 +82,4 @@ export async function GET(
     return NextResponse.redirect(redirectUrl);
   }
 }
+
