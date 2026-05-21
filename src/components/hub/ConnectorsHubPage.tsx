@@ -38,6 +38,8 @@ import {
 type UiConnectorId =
   | ConnectorKey
   | 'rdStation'
+  | 'rdStationMarketing'
+  | 'rdStationConversas'
   | 'googleTrends'
   | 'linkedinPage'
   | 'instagram'
@@ -69,10 +71,28 @@ const CONNECTOR_ITEMS: UiConnector[] = [
   },
   {
     id: 'rdStation',
-    title: 'RD Station',
-    description: 'Centralize formulários, automações e estágio de lead para acelerar o repasse comercial.',
+    title: 'RD Station CRM',
+    description: 'Centralize contatos, empresas e estágios do pipeline para acelerar repasse e previsibilidade comercial.',
     category: 'vendas',
     impactLabel: 'R$ 640 mil / mês',
+    lastSyncLabelWhenActive: 'Nunca sincronizado',
+    isLiveConnector: false,
+  },
+  {
+    id: 'rdStationMarketing',
+    title: 'RD Station Marketing',
+    description: 'Conecte formulários, campanhas e automações para elevar a qualificação de leads com dados reais.',
+    category: 'marketing',
+    impactLabel: 'R$ 520 mil / mês',
+    lastSyncLabelWhenActive: 'Nunca sincronizado',
+    isLiveConnector: false,
+  },
+  {
+    id: 'rdStationConversas',
+    title: 'RD Station Conversas',
+    description: 'Integre WhatsApp e canais de atendimento para dar escala ao time comercial sem perder contexto.',
+    category: 'atendimento',
+    impactLabel: 'R$ 290 mil / mês',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: false,
   },
@@ -182,6 +202,8 @@ const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
 const CONNECTOR_DOCS_URLS: Partial<Record<UiConnectorId, string>> = {
   crm: 'https://developers.hubspot.com/docs/api/overview',
   rdStation: 'https://developers.rdstation.com/reference/overview',
+  rdStationMarketing: 'https://developers.rdstation.com/reference/api-rd-station-doc',
+  rdStationConversas: 'https://developers.rdstation.com/reference/acesse-a-api-do-rd-station-conversas',
   googleAds: 'https://developers.google.com/google-ads/api/docs/start',
   metaAds: 'https://developers.facebook.com/docs/marketing-apis',
   ga4: 'https://developers.google.com/analytics/devguides/reporting/data/v1',
@@ -342,9 +364,37 @@ function HealthGauge({ value }: { value: number }) {
 function BrandTile({ id }: { id: UiConnectorId }) {
   if (id === 'rdStation') {
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2563EB] text-[13px] font-black leading-none text-white">
-        RD
-      </div>
+      <Image
+        src="/images/connectors/rd-station-conversas-photorealistic-icon-hd-v1.png"
+        alt="Ícone RD Station foto realista em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
+    );
+  }
+
+  if (id === 'rdStationMarketing') {
+    return (
+      <Image
+        src="/images/connectors/rd-station-conversas-photorealistic-icon-hd-v1.png"
+        alt="Ícone RD Station Marketing foto realista em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
+    );
+  }
+
+  if (id === 'rdStationConversas') {
+    return (
+      <Image
+        src="/images/connectors/rd-station-conversas-photorealistic-icon-hd-v1.png"
+        alt="Ícone RD Station Conversas foto realista em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
     );
   }
 
@@ -410,24 +460,32 @@ function BrandTile({ id }: { id: UiConnectorId }) {
 
   if (id === 'linkedinPage') {
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E0EFFF] text-[14px] font-black leading-none text-[#0A66C2]">
-        in
-      </div>
+      <Image
+        src="/images/connectors/linkedin-page-photorealistic-icon-hd-v1.png"
+        alt="Ícone LinkedIn Page foto realista em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
     );
   }
 
   if (id === 'linkedinAds') {
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0A66C2] text-[10px] font-black leading-none text-white">
-        IN ADS
-      </div>
+      <Image
+        src="/images/connectors/linkedin-ads-photorealistic-icon-hd-v1.png"
+        alt="Ícone LinkedIn Ads foto realista em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
     );
   }
 
   if (id === 'instagram') {
     return (
       <Image
-        src="/images/connectors/instagram-photorealistic-icon-hd-v1.png"
+        src="/images/connectors/instagram-photorealistic-icon-hd-v2.png"
         alt="Ícone Instagram foto realista em fundo branco"
         width={88}
         height={88}
