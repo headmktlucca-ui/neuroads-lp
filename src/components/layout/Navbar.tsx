@@ -237,6 +237,7 @@ export default function Navbar() {
   const [agentStatusVersion, setAgentStatusVersion] = useState(0);
   const [whatsApp, setWhatsApp] = useState('');
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [isManagingPlan, setIsManagingPlan] = useState(false);
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
   const [settingsToast, setSettingsToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
   const { user, userEmail, profile, logout, isAdmin } = useAuth();
@@ -1007,6 +1008,38 @@ export default function Navbar() {
     }
   };
 
+  const handleManagePlan = async () => {
+    if (!user || isManagingPlan) return;
+
+    setIsManagingPlan(true);
+    try {
+      const token = await user.getIdToken();
+      const returnUrl = typeof window !== 'undefined' ? `${window.location.origin}/hub?financeiro=1` : '/hub';
+
+      const response = await fetch('/api/stripe/customer-portal', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ returnUrl }),
+      });
+
+      const data = (await response.json().catch(() => null)) as { url?: string; error?: string } | null;
+      if (!response.ok || !data?.url) {
+        throw new Error(data?.error || 'Não foi possível abrir o gerenciamento do plano.');
+      }
+
+      window.location.href = data.url;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Não foi possível acessar o gerenciamento do plano agora.';
+      showSettingsToast(message, 'error');
+    } finally {
+      setIsManagingPlan(false);
+    }
+  };
+
   return (
     <Fragment>
       <header
@@ -1518,6 +1551,17 @@ export default function Navbar() {
                   </p>
                 </div>
               ) : null}
+
+              <div className="pt-1">
+                <button
+                  type="button"
+                  onClick={handleManagePlan}
+                  disabled={isManagingPlan}
+                  className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-[#FF8A2B] to-[#FF6B00] px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-[0_10px_22px_rgba(255,107,0,0.28)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {isManagingPlan ? 'Abrindo...' : 'Gerenciar Plano'}
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -35,11 +35,19 @@ import {
   type ConnectorStatus,
 } from '../../lib/connectors';
 
-type UiConnectorId = ConnectorKey | 'slack';
+type UiConnectorId =
+  | ConnectorKey
+  | 'rdStation'
+  | 'googleTrends'
+  | 'linkedinPage'
+  | 'instagram'
+  | 'tiktok'
+  | 'tiktokAds';
 type UiCategory = 'marketing' | 'vendas' | 'atendimento';
 
 type UiConnector = {
   id: UiConnectorId;
+  connectorKey?: ConnectorKey;
   title: string;
   description: string;
   category: UiCategory;
@@ -51,15 +59,26 @@ type UiConnector = {
 const CONNECTOR_ITEMS: UiConnector[] = [
   {
     id: 'crm',
+    connectorKey: 'crm',
     title: 'HubSpot',
     description: 'Sincronize leads, empresas e oportunidades para uma visão completa do funil.',
-    category: 'marketing',
+    category: 'vendas',
     impactLabel: 'R$ 1,28 mi / mês',
     lastSyncLabelWhenActive: 'Hoje, 08:45',
     isLiveConnector: true,
   },
   {
+    id: 'rdStation',
+    title: 'RD Station',
+    description: 'Centralize formulários, automações e estágio de lead para acelerar o repasse comercial.',
+    category: 'vendas',
+    impactLabel: 'R$ 640 mil / mês',
+    lastSyncLabelWhenActive: 'Nunca sincronizado',
+    isLiveConnector: false,
+  },
+  {
     id: 'googleAds',
+    connectorKey: 'googleAds',
     title: 'Google Ads',
     description: 'Acompanhe campanhas, custos e conversões para otimizar seus investimentos.',
     category: 'marketing',
@@ -69,6 +88,7 @@ const CONNECTOR_ITEMS: UiConnector[] = [
   },
   {
     id: 'metaAds',
+    connectorKey: 'metaAds',
     title: 'Meta Ads',
     description: 'Importe dados de anúncios do Facebook e Instagram para análises mais precisas.',
     category: 'marketing',
@@ -77,20 +97,67 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     isLiveConnector: true,
   },
   {
-    id: 'payments',
-    title: 'Stripe',
-    description: 'Concilie pagamentos, assinaturas e receitas em tempo real.',
-    category: 'vendas',
-    impactLabel: 'R$ 2,56 mi / mês',
-    lastSyncLabelWhenActive: 'Hoje, 08:40',
+    id: 'ga4',
+    connectorKey: 'ga4',
+    title: 'GA4',
+    description: 'Monitore eventos, sessões e conversões para leitura real de funil e receita.',
+    category: 'marketing',
+    impactLabel: 'R$ 890 mil / mês',
+    lastSyncLabelWhenActive: 'Hoje, 08:26',
     isLiveConnector: true,
   },
   {
-    id: 'slack',
-    title: 'Slack',
-    description: 'Receba alertas e insights importantes diretamente nos seus canais.',
+    id: 'googleTrends',
+    title: 'Google Trends',
+    description: 'Capte tendências de busca para ajustar pauta, criativos e oferta com antecedência.',
+    category: 'marketing',
+    impactLabel: 'R$ 310 mil / mês',
+    lastSyncLabelWhenActive: 'Nunca sincronizado',
+    isLiveConnector: false,
+  },
+  {
+    id: 'linkedinPage',
+    title: 'LinkedIn Page',
+    description: 'Acompanhe conteúdo orgânico, crescimento de audiência e sinais de intenção B2B.',
     category: 'atendimento',
-    impactLabel: 'R$ 120 mil / mês',
+    impactLabel: 'R$ 220 mil / mês',
+    lastSyncLabelWhenActive: 'Nunca sincronizado',
+    isLiveConnector: false,
+  },
+  {
+    id: 'linkedinAds',
+    connectorKey: 'linkedinAds',
+    title: 'LinkedIn Ads',
+    description: 'Meça campanhas B2B com foco em CPL qualificado e pipeline comercial.',
+    category: 'marketing',
+    impactLabel: 'R$ 760 mil / mês',
+    lastSyncLabelWhenActive: 'Hoje, 07:58',
+    isLiveConnector: true,
+  },
+  {
+    id: 'instagram',
+    title: 'Instagram',
+    description: 'Consolide sinais de engajamento comercial e conteúdo com potencial de conversão.',
+    category: 'atendimento',
+    impactLabel: 'R$ 420 mil / mês',
+    lastSyncLabelWhenActive: 'Nunca sincronizado',
+    isLiveConnector: false,
+  },
+  {
+    id: 'tiktok',
+    title: 'Tik Tok',
+    description: 'Mapeie comportamento de audiência e tendências de formato para escalar criativos.',
+    category: 'atendimento',
+    impactLabel: 'R$ 270 mil / mês',
+    lastSyncLabelWhenActive: 'Nunca sincronizado',
+    isLiveConnector: false,
+  },
+  {
+    id: 'tiktokAds',
+    title: 'Tik Tok Ads',
+    description: 'Integre performance de mídia com custo por aquisição e receita incremental.',
+    category: 'atendimento',
+    impactLabel: 'R$ 530 mil / mês',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: false,
   },
@@ -109,16 +176,21 @@ const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
   linkedinAds: 'linkedin',
   ga4: 'google',
   crm: 'hubspot',
-  payments: 'stripe',
   warehouse: 'bigquery',
 };
 
 const CONNECTOR_DOCS_URLS: Partial<Record<UiConnectorId, string>> = {
   crm: 'https://developers.hubspot.com/docs/api/overview',
+  rdStation: 'https://developers.rdstation.com/reference/overview',
   googleAds: 'https://developers.google.com/google-ads/api/docs/start',
   metaAds: 'https://developers.facebook.com/docs/marketing-apis',
-  payments: 'https://docs.stripe.com/',
-  slack: 'https://api.slack.com/',
+  ga4: 'https://developers.google.com/analytics/devguides/reporting/data/v1',
+  googleTrends: 'https://trends.google.com/trends/',
+  linkedinPage: 'https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares',
+  linkedinAds: 'https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads/advertising-api',
+  instagram: 'https://developers.facebook.com/docs/instagram-platform',
+  tiktok: 'https://developers.tiktok.com/',
+  tiktokAds: 'https://ads.tiktok.com/marketing_api/docs',
 };
 
 function readRecord(value: unknown): Record<string, unknown> | null {
@@ -131,9 +203,9 @@ function isConnectorKey(value: string | null): value is ConnectorKey {
   return value in DEFAULT_CONNECTOR_STATUS;
 }
 
-function isConnectorActive(id: UiConnectorId, connectorStatus: ConnectorStatus): boolean {
-  if (id === 'slack') return false;
-  return Boolean(connectorStatus[id]);
+function isConnectorActive(item: UiConnector, connectorStatus: ConnectorStatus): boolean {
+  if (!item.connectorKey) return false;
+  return Boolean(connectorStatus[item.connectorKey]);
 }
 
 function getConnectorOAuthHref(connectorKey: ConnectorKey, provider?: string) {
@@ -268,6 +340,14 @@ function HealthGauge({ value }: { value: number }) {
 }
 
 function BrandTile({ id }: { id: UiConnectorId }) {
+  if (id === 'rdStation') {
+    return (
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#2563EB] text-[13px] font-black leading-none text-white">
+        RD
+      </div>
+    );
+  }
+
   if (id === 'googleAds') {
     return (
       <Image
@@ -282,35 +362,92 @@ function BrandTile({ id }: { id: UiConnectorId }) {
 
   if (id === 'metaAds') {
     return (
-      <svg viewBox="0 0 64 64" className="h-10 w-10" aria-hidden>
-        <path
-          d="M10 41.5c4.5-15.7 9.8-23.6 15.8-23.6 5.1 0 7.8 7.4 12.2 14.6 3.6 5.9 6.4 9 8.8 9 3.2 0 5.2-3.3 7.2-12.3"
-          fill="none"
-          stroke="#1877F2"
-          strokeWidth="6.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
+      <Image
+        src="/images/connectors/meta-ads-photorealistic-icon-hd-v1.png"
+        alt="Ícone Meta Ads foto realista em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
     );
   }
 
   if (id === 'crm') {
     return (
-      <svg viewBox="0 0 64 64" className="h-10 w-10" aria-hidden>
-        <circle cx="32" cy="32" r="9" fill="none" stroke="#F97316" strokeWidth="5" />
-        <circle cx="14" cy="14" r="5" fill="#FB923C" />
-        <circle cx="50" cy="14" r="5" fill="#FB923C" />
-        <circle cx="14" cy="50" r="5" fill="#FB923C" />
-        <path d="M18.5 18.5L26 26M45.5 18.5L38 26M18.5 45.5L26 38" stroke="#F97316" strokeWidth="4" strokeLinecap="round" />
-      </svg>
+      <Image
+        src="/images/connectors/hubspot-photorealistic-icon-hd-v1.png"
+        alt="Ícone HubSpot foto realista em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
     );
   }
 
-  if (id === 'payments') {
+  if (id === 'ga4') {
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FFF1E6] text-[34px] font-black leading-none text-[#F97316]">
-        S
+      <Image
+        src="/images/connectors/ga4-photorealistic-icon-hd-v1.png"
+        alt="Ícone GA4 foto realista em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
+    );
+  }
+
+  if (id === 'googleTrends') {
+    return (
+      <Image
+        src="/images/connectors/google-trends-photorealistic-icon-hd-v1.png"
+        alt="Ícone Google Trends foto realista em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
+    );
+  }
+
+  if (id === 'linkedinPage') {
+    return (
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#E0EFFF] text-[14px] font-black leading-none text-[#0A66C2]">
+        in
+      </div>
+    );
+  }
+
+  if (id === 'linkedinAds') {
+    return (
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0A66C2] text-[10px] font-black leading-none text-white">
+        IN ADS
+      </div>
+    );
+  }
+
+  if (id === 'instagram') {
+    return (
+      <Image
+        src="/images/connectors/instagram-photorealistic-icon-hd-v1.png"
+        alt="Ícone Instagram foto realista em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
+    );
+  }
+
+  if (id === 'tiktok') {
+    return (
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#111827] text-[12px] font-black leading-none text-white">
+        TT
+      </div>
+    );
+  }
+
+  if (id === 'tiktokAds') {
+    return (
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0F172A] text-[9px] font-black leading-none text-[#5EEAD4]">
+        TT ADS
       </div>
     );
   }
@@ -513,12 +650,12 @@ export default function ConnectorsHubPage() {
   }, []);
 
   const connectedCount = useMemo(
-    () => CONNECTOR_ITEMS.filter((item) => isConnectorActive(item.id, connectorStatus)).length,
+    () => CONNECTOR_ITEMS.filter((item) => isConnectorActive(item, connectorStatus)).length,
     [connectorStatus]
   );
 
   const estimatedRevenueLabel = useMemo(() => {
-    const activeImpact = CONNECTOR_ITEMS.filter((item) => isConnectorActive(item.id, connectorStatus)).map((item) => item.impactLabel);
+    const activeImpact = CONNECTOR_ITEMS.filter((item) => isConnectorActive(item, connectorStatus)).map((item) => item.impactLabel);
     if (activeImpact.length >= 4) return 'R$ 6,24 mi / mês';
     if (activeImpact.length === 3) return 'R$ 4,29 mi / mês';
     if (activeImpact.length === 2) return 'R$ 2,73 mi / mês';
@@ -531,14 +668,19 @@ export default function ConnectorsHubPage() {
     return (readRecord(profileRecord?.connections) as Record<string, ConnectorConnection | null | undefined> | null) ?? null;
   }, [profile]);
 
-  const trackedConnectorCount = useMemo(
-    () => Object.keys(DEFAULT_CONNECTOR_STATUS).length,
+  const trackedConnectorKeys = useMemo(
+    () => [...new Set(CONNECTOR_ITEMS.map((item) => item.connectorKey).filter((key): key is ConnectorKey => Boolean(key)))],
     []
   );
 
+  const trackedConnectorCount = useMemo(
+    () => trackedConnectorKeys.length,
+    [trackedConnectorKeys]
+  );
+
   const activeTrackedConnectorCount = useMemo(
-    () => Object.values(connectorStatus).filter((status) => status).length,
-    [connectorStatus]
+    () => trackedConnectorKeys.filter((key) => Boolean(connectorStatus[key])).length,
+    [connectorStatus, trackedConnectorKeys]
   );
 
   const healthScore = useMemo(() => {
@@ -651,18 +793,18 @@ export default function ConnectorsHubPage() {
     }
 
     if (action === 'toggle') {
-      if (item.id === 'slack') {
+      if (!item.connectorKey) {
         setConnectorError(null);
-        setConnectorFeedback('Conector Slack ainda não foi configurado nesta versão.');
+        setConnectorFeedback(`${item.title}: canal em fase de implantação nesta versão do Hub.`);
         return;
       }
 
       if (isActive) {
-        await handleDisconnect(item.id);
+        await handleDisconnect(item.connectorKey);
         return;
       }
 
-      await handleConnect(item.id);
+      await handleConnect(item.connectorKey);
     }
   };
 
@@ -768,8 +910,8 @@ export default function ConnectorsHubPage() {
 
                   <div className="mt-3 space-y-2">
                     {visibleConnectors.map((item) => {
-                      const isActive = isConnectorActive(item.id, connectorStatus);
-                      const isBusy = item.id !== 'slack' && connectorBusyKey === item.id;
+                      const isActive = isConnectorActive(item, connectorStatus);
+                      const isBusy = item.connectorKey ? connectorBusyKey === item.connectorKey : false;
                       return (
                         <article
                           key={item.id}
@@ -813,16 +955,16 @@ export default function ConnectorsHubPage() {
                             <button
                               type="button"
                               onClick={() => {
-                                if (item.id === 'slack') {
-                                  setConnectorFeedback('Conector Slack ainda não foi configurado nesta versão.');
+                                if (!item.connectorKey) {
+                                  setConnectorFeedback(`${item.title}: canal em fase de implantação nesta versão do Hub.`);
                                   setConnectorError(null);
                                   return;
                                 }
                                 if (isActive) {
-                                  void handleDisconnect(item.id);
+                                  void handleDisconnect(item.connectorKey);
                                   return;
                                 }
-                                void handleConnect(item.id);
+                                void handleConnect(item.connectorKey);
                               }}
                               disabled={Boolean(isBusy)}
                               className={`inline-flex h-12 items-center gap-2 rounded-[12px] px-4 text-[13px] font-black tracking-wide transition disabled:opacity-60 ${
@@ -832,7 +974,7 @@ export default function ConnectorsHubPage() {
                               }`}
                             >
                               <RefreshCw className={`h-4 w-4 ${isBusy ? 'animate-spin' : ''}`} />
-                              {item.id === 'slack' ? 'Configurar' : isActive ? 'Sincronizar' : 'Configurar'}
+                              {!item.connectorKey ? 'Em implantação' : isActive ? 'Sincronizar' : 'Configurar'}
                             </button>
                             <div className="relative" data-connector-menu-root>
                               <button
@@ -888,8 +1030,8 @@ export default function ConnectorsHubPage() {
                                     role="menuitem"
                                   >
                                     <Link2 className="h-4 w-4" />
-                                    {item.id === 'slack'
-                                      ? 'Configurar conector'
+                                    {!item.connectorKey
+                                      ? 'Canal em implantação'
                                       : isActive
                                         ? 'Desconectar conector'
                                         : 'Conectar conector'}
@@ -976,8 +1118,8 @@ export default function ConnectorsHubPage() {
                       <TriangleAlert className="h-4 w-4 text-[#FFAB4D]" />
                       Taxa de erro acima do ideal
                     </p>
-                    <p className="mt-1 text-[14px] text-[#475569]">Gateway de Pagamentos</p>
-                    <p className="text-[14px] text-[#475569]">Erro em 2,1% dos registros.</p>
+                    <p className="mt-1 text-[14px] text-[#475569]">LinkedIn Ads</p>
+                    <p className="text-[14px] text-[#475569]">Erro em 1,7% das sincronizações das últimas 24h.</p>
                     <button type="button" className="mt-3 inline-flex items-center gap-2 text-[14px] font-bold text-[#E56B00]">
                       Ver detalhes <ArrowUpRight className="h-4 w-4" />
                     </button>
@@ -990,9 +1132,9 @@ export default function ConnectorsHubPage() {
                       <AlertCircle className="h-4 w-4 text-[#2D6CDF]" />
                       Conector pendente
                     </p>
-                    <p className="mt-1 text-[14px] text-[#475569]">Slack ainda não foi configurado.</p>
+                    <p className="mt-1 text-[14px] text-[#475569]">RD Station ainda está em fase de implantação.</p>
                     <button type="button" className="mt-3 inline-flex items-center gap-2 text-[14px] font-bold text-[#E56B00]">
-                      Configurar agora <ArrowUpRight className="h-4 w-4" />
+                      Ver plano de ativação <ArrowUpRight className="h-4 w-4" />
                     </button>
                   </article>
 

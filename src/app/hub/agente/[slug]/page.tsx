@@ -559,7 +559,7 @@ export default function AgentEntryPage() {
   }
 
   return (
-    <main className="flex flex-col min-h-screen bg-bg-main">
+    <main className="agent-page-button-corners flex flex-col min-h-screen bg-bg-main">
       <Navbar />
 
       <div className="flex-grow pt-20 md:pt-28 relative overflow-hidden">
@@ -636,15 +636,15 @@ export default function AgentEntryPage() {
             </div>
           ) : (
             <div className="max-w-6xl mx-auto space-y-6">
-              <div className="rounded-[34px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_24px_56px_-28px_rgba(255,107,0,0.45)]">
-                <div className="rounded-[32px] bg-white/85 p-[1px]">
-                  <div className="rounded-[30px] border border-[#FFF1E8] bg-white p-6 md:p-8 min-h-[220px] md:min-h-[300px]">
+              <div className="rounded-[34px] p-[2px] bg-gradient-to-br from-[#3A465C] via-[#1A2536] to-[#FF6B00] shadow-[0_26px_58px_-28px_rgba(8,15,30,0.72)]">
+                <div className="rounded-[32px] bg-[#0F1A2B]/95 p-[1px]">
+                  <div className="rounded-[30px] border border-[#26344A] bg-[#0B1422] p-6 md:p-8 min-h-[220px] md:min-h-[300px]">
                     <div className="flex flex-col md:flex-row md:items-stretch md:justify-between gap-6">
                       <div className="flex-1">
                         <div>
-                          <p className="text-xs uppercase tracking-widest text-primary font-bold mb-2">{entry.category}</p>
-                          <h1 className="text-3xl md:text-4xl font-black text-text-main">{entry.title}</h1>
-                          {heroDescription ? <p className="mt-4 max-w-[760px] text-[13px] leading-relaxed text-text-muted">{heroDescription}</p> : null}
+                          <p className="text-xs uppercase tracking-widest text-[#FF9A4D] font-bold mb-2">{entry.category}</p>
+                          <h1 className="text-3xl md:text-4xl font-black text-white">{entry.title}</h1>
+                          {heroDescription ? <p className="mt-4 max-w-[760px] text-[13px] leading-relaxed text-[#C8D3E6] [&_strong]:text-white">{heroDescription}</p> : null}
                           <div className="mt-6 flex flex-wrap items-center gap-3">
                             <button
                               type="button"
@@ -673,14 +673,14 @@ export default function AgentEntryPage() {
                               onClick={() => {
                                 void openHistoryModal();
                               }}
-                              className="px-6 py-3 rounded-full border border-[#D9E2F4] text-[#1D4ED8] bg-[#EEF4FF] font-bold tracking-widest text-sm uppercase hover:bg-[#E2ECFF] transition-colors"
+                              className="px-6 py-3 rounded-full border border-[#30405A] text-[#DCE7FF] bg-[#172438] font-bold tracking-widest text-sm uppercase hover:bg-[#22344F] transition-colors"
                             >
                               <History size={14} className="inline mr-2 -mt-[2px]" />
                               Histórico
                             </button>
                             <button
                               onClick={() => router.push('/hub')}
-                              className="px-6 py-3 rounded-full border border-[#FFE1CF] text-text-main font-bold tracking-widest text-sm uppercase hover:bg-[#FFF8F3] transition-colors"
+                              className="px-6 py-3 rounded-full border border-[#30405A] text-[#F1F5FF] bg-transparent font-bold tracking-widest text-sm uppercase hover:bg-[#1B2940] transition-colors"
                             >
                               Voltar ao Hub
                             </button>
@@ -690,7 +690,7 @@ export default function AgentEntryPage() {
 
                       <div className="flex flex-col items-end justify-start self-start gap-3 md:min-w-[280px]">
                         <div className="w-[168px] h-[168px] rounded-[24px] p-[3px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_14px_28px_rgba(255,107,0,0.26)]">
-                          <div className="relative w-full h-full rounded-[20px] overflow-hidden bg-white">
+                          <div className="relative w-full h-full rounded-[20px] overflow-hidden bg-[#101A2B]">
                             <Image src={agent.icon} alt={entry.title} fill className="object-cover" />
                           </div>
                         </div>
@@ -1293,4 +1293,3 @@ export default function AgentEntryPage() {
     </main>
   );
 }
-
