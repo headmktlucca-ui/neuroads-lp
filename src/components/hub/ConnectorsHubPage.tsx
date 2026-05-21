@@ -973,7 +973,7 @@ export default function ConnectorsHubPage() {
                       return (
                         <article
                           key={item.id}
-                          className="grid grid-cols-1 gap-4 rounded-2xl border border-[#DDE3F2] bg-white p-4 shadow-[0_6px_14px_rgba(15,23,42,0.06)] transition-colors duration-200 hover:bg-[#F8FAFC] md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center"
+                          className="grid grid-cols-1 gap-4 rounded-2xl border border-[#DDE3F2] bg-white p-4 shadow-[0_6px_14px_rgba(15,23,42,0.06)] transition-colors duration-200 hover:bg-[#F1F3F5] md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center"
                         >
                           <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl border border-[#E7ECF5] bg-[#FAFCFF]">
                             <BrandTile id={item.id} />
@@ -1104,25 +1104,25 @@ export default function ConnectorsHubPage() {
                   </div>
                 </div>
 
-                <section className="mt-4 grid grid-cols-1 gap-3 rounded-2xl border border-[#DDE3F2] bg-white p-4 md:grid-cols-4">
+                <section className="mt-4 grid grid-cols-1 gap-3 rounded-2xl border border-[#243041] bg-[#0F172A] p-4 shadow-[0_12px_24px_rgba(2,6,23,0.35)] md:grid-cols-4">
                   <div>
-                    <p className="text-[13px] text-[#64748B]">Conectores ativos</p>
-                    <p className="mt-1 text-[30px] font-black text-[#0F172A]">{connectedCount} <span className="text-[16px] font-semibold text-[#64748B]">de {CONNECTOR_ITEMS.length}</span></p>
+                    <p className="text-[13px] text-[#9CB3D1]">Conectores ativos</p>
+                    <p className="mt-1 text-[30px] font-black text-[#F8FAFC]">{connectedCount} <span className="text-[16px] font-semibold text-[#9CB3D1]">de {CONNECTOR_ITEMS.length}</span></p>
                   </div>
                   <div>
-                    <p className="text-[13px] text-[#64748B]">Impacto em receita rastreada</p>
-                    <p className="mt-1 text-[28px] font-black text-[#0F172A]">{estimatedRevenueLabel}</p>
-                    <p className="mt-1 text-[13px] text-[#12B76A]">+18,7% vs. mês anterior</p>
+                    <p className="text-[13px] text-[#9CB3D1]">Impacto em receita rastreada</p>
+                    <p className="mt-1 text-[28px] font-black text-[#F8FAFC]">{estimatedRevenueLabel}</p>
+                    <p className="mt-1 text-[13px] text-[#4ADE80]">+18,7% vs. mês anterior</p>
                   </div>
                   <div>
-                    <p className="text-[13px] text-[#64748B]">Dados sincronizados (24h)</p>
-                    <p className="mt-1 text-[28px] font-black text-[#0F172A]">1,2 mi</p>
-                    <p className="mt-1 text-[13px] text-[#12B76A]">+12,4% vs. 24h anteriores</p>
+                    <p className="text-[13px] text-[#9CB3D1]">Dados sincronizados (24h)</p>
+                    <p className="mt-1 text-[28px] font-black text-[#F8FAFC]">1,2 mi</p>
+                    <p className="mt-1 text-[13px] text-[#4ADE80]">+12,4% vs. 24h anteriores</p>
                   </div>
                   <div>
-                    <p className="text-[13px] text-[#64748B]">Taxa de sucesso (24h)</p>
-                    <p className="mt-1 text-[28px] font-black text-[#0F172A]">99,2%</p>
-                    <p className="mt-1 text-[13px] text-[#12B76A]">Excelente</p>
+                    <p className="text-[13px] text-[#9CB3D1]">Taxa de sucesso (24h)</p>
+                    <p className="mt-1 text-[28px] font-black text-[#F8FAFC]">99,2%</p>
+                    <p className="mt-1 text-[13px] text-[#4ADE80]">Excelente</p>
                   </div>
                 </section>
 
