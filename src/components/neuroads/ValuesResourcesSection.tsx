@@ -6,10 +6,6 @@ import Image from 'next/image';
 import {
   ArrowRight,
   Check,
-  Clock3,
-  Lock,
-  ShieldCheck,
-  Users,
 } from 'lucide-react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
@@ -122,29 +118,6 @@ const planVisuals = [
       'Gestor de conta dedicado',
       'SLA e suporte premium',
     ],
-  },
-];
-
-const trustSignals = [
-  {
-    title: 'Segurança enterprise',
-    description: 'Seus dados protegidos em toda a jornada.',
-    icon: ShieldCheck,
-  },
-  {
-    title: 'Privacidade em primeiro lugar',
-    description: 'Seus dados não são vendidos para terceiros.',
-    icon: Lock,
-  },
-  {
-    title: '99,9% de uptime',
-    description: 'Confiabilidade para operar sem pausas.',
-    icon: Clock3,
-  },
-  {
-    title: 'Confiado por 10.000+ equipes',
-    description: 'De PMEs em crescimento a operações robustas.',
-    icon: Users,
   },
 ];
 
@@ -337,8 +310,8 @@ export default function ValuesResourcesSection() {
                   isRecommended ? 'pt-[126px]' : 'pt-[112px]'
                 } shadow-[0_18px_48px_rgba(13,23,45,0.14)] transition-[box-shadow,border-color,background-color] duration-300 ${
                   isRecommended
-                    ? 'border-0 bg-[linear-gradient(165deg,rgba(255,255,255,0.78),rgba(255,245,237,0.58))] hover:shadow-[0_30px_74px_rgba(255,110,35,0.24)]'
-                    : 'border-white/55 bg-[linear-gradient(165deg,rgba(255,255,255,0.74),rgba(245,250,255,0.54))] hover:border-white/70 hover:shadow-[0_26px_64px_rgba(15,33,70,0.18)]'
+                    ? 'border-0 bg-[linear-gradient(165deg,rgba(255,255,255,0.78),rgba(255,245,237,0.58))] hover:shadow-[0_36px_92px_rgba(255,110,35,0.38)]'
+                    : 'border-white/55 bg-[linear-gradient(165deg,rgba(255,255,255,0.74),rgba(245,250,255,0.54))] hover:border-white/70 hover:shadow-[0_34px_88px_rgba(15,33,70,0.30)]'
                 }`}
               >
                 <div
@@ -423,19 +396,6 @@ export default function ValuesResourcesSection() {
           })}
         </div>
 
-        <div className="relative z-10 mt-12 grid gap-3 border-t border-[#dde6f5] pt-6 sm:grid-cols-2 xl:grid-cols-4">
-          {trustSignals.map((signal, index) => (
-            <div key={signal.title} className={`flex items-start gap-3 ${index > 0 ? 'xl:border-l xl:border-[#dde6f5] xl:pl-5' : ''}`}>
-              <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#b9c8ea] bg-white text-[#345ccf]">
-                <signal.icon size={18} strokeWidth={2.2} />
-              </span>
-              <div>
-                <p className="text-[16px] font-bold leading-tight text-[#1f2a45]">{signal.title}</p>
-                <p className="text-[14px] leading-tight text-[#616f8b]">{signal.description}</p>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {showSuccessModal && (

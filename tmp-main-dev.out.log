@@ -16,3 +16,13 @@ Creating turbopack project {
 
  GET / 200 in 2.6s (next.js: 1592ms, application-code: 1048ms)
  GET / 200 in 431ms (next.js: 27ms, application-code: 404ms)
+✓ Compiled in 3.1s
+✓ Compiled in 399ms
+✓ Compiled in 1275ms
+✓ Compiled in 360ms
+✓ Compiled in 353ms
+✓ Compiled in 827ms
+✓ Compiled in 199ms
+ GET / 200 in 893ms (next.js: 347ms, application-code: 546ms)
+ POST /api/stripe/checkout 200 in 1110ms (next.js: 199ms, application-code: 911ms)
+ GET /?canceled=true 200 in 147ms (next.js: 8ms, application-code: 139ms)
