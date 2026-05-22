@@ -46,6 +46,8 @@ const planVisuals = [
     imageContainerClass: 'h-[124px] w-[124px]',
     imageClassName: 'scale-[1.22]',
     ctaLabel: 'Começar',
+    buttonGradientClass: 'bg-[linear-gradient(90deg,#6f42ff_0%,#8f62ff_100%)]',
+    buttonShadowClass: 'shadow-[0_14px_25px_rgba(111,66,255,0.30)]',
     titleClassName: 'text-[#6f42ff]',
     pricePrefixClassName: 'text-[#0a0f26]',
     priceSuffixClassName: 'text-[#6f42ff]',
@@ -64,6 +66,8 @@ const planVisuals = [
     imageContainerClass: 'h-[130px] w-[170px]',
     imageClassName: 'scale-[1.23]',
     ctaLabel: 'Escalar agora',
+    buttonGradientClass: 'bg-[linear-gradient(90deg,#1f58ff_0%,#2c8bff_100%)]',
+    buttonShadowClass: 'shadow-[0_14px_25px_rgba(31,88,255,0.28)]',
     titleClassName: 'text-[#1f58ff]',
     pricePrefixClassName: 'text-[#0a0f26]',
     priceSuffixClassName: 'text-[#1f58ff]',
@@ -83,6 +87,8 @@ const planVisuals = [
     imageContainerClass: 'h-[126px] w-[142px]',
     imageClassName: 'scale-[1.2]',
     ctaLabel: 'Escalar agora',
+    buttonGradientClass: 'bg-[linear-gradient(90deg,#ff5a00_0%,#ff9f1a_100%)]',
+    buttonShadowClass: 'shadow-[0_14px_25px_rgba(255,101,15,0.35)]',
     titleClassName: 'text-[#ff5a00]',
     pricePrefixClassName: 'text-[#0a0f26]',
     priceSuffixClassName: 'text-[#ff5a00]',
@@ -103,6 +109,8 @@ const planVisuals = [
     imageContainerClass: 'h-[126px] w-[144px]',
     imageClassName: 'scale-[1.2]',
     ctaLabel: 'Escalar agora',
+    buttonGradientClass: 'bg-[linear-gradient(90deg,#5f45ff_0%,#8a5cff_100%)]',
+    buttonShadowClass: 'shadow-[0_14px_25px_rgba(95,69,255,0.30)]',
     titleClassName: 'text-[#5f45ff]',
     pricePrefixClassName: 'text-[#0a0f26]',
     priceSuffixClassName: 'text-[#5f45ff]',
@@ -148,6 +156,8 @@ export default function ValuesResourcesSection() {
   const router = useRouter();
   const { user, loginWithGoogle } = useAuth();
   const prefersReducedMotion = useReducedMotion();
+  const [hoveredPlanSlug, setHoveredPlanSlug] = useState<string | null>(null);
+  const [selectedPlanSlug, setSelectedPlanSlug] = useState<string | null>(null);
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [successKind, setSuccessKind] = useState<'plano' | 'credito'>('plano');
@@ -310,48 +320,50 @@ export default function ValuesResourcesSection() {
           {planOffers.map((plan, index) => {
             const visual = planVisuals[index] ?? planVisuals[planVisuals.length - 1];
             const isRecommended = plan.slug === recommendedPlanSlug;
+            const isImageFloating =
+              !prefersReducedMotion &&
+              (isRecommended
+                ? (selectedPlanSlug === null || selectedPlanSlug === plan.slug) &&
+                  (hoveredPlanSlug === null || hoveredPlanSlug === plan.slug)
+                : hoveredPlanSlug === plan.slug);
 
             return (
               <motion.article
                 key={plan.slug}
-                whileHover={
-                  prefersReducedMotion
-                    ? undefined
-                    : {
-                        y: isRecommended ? -14 : -10,
-                        scale: isRecommended ? 1.025 : 1.018,
-                        rotateX: -3,
-                        rotateY: isRecommended ? 2 : -1.5,
-                      }
-                }
-                transition={{ type: 'spring', stiffness: 290, damping: 22, mass: 0.85 }}
-                className={`relative flex h-full flex-col overflow-visible rounded-[24px] border bg-white/96 px-6 pb-6 ${
+                onClick={() => setSelectedPlanSlug(plan.slug)}
+                onHoverStart={() => setHoveredPlanSlug(plan.slug)}
+                onHoverEnd={() => setHoveredPlanSlug((current) => (current === plan.slug ? null : current))}
+                className={`group relative flex h-full cursor-pointer flex-col overflow-visible rounded-[24px] border px-6 pb-6 backdrop-blur-xl ${
                   isRecommended ? 'pt-[126px]' : 'pt-[112px]'
-                } shadow-[0_16px_30px_rgba(10,20,40,0.07)] transition-[transform,box-shadow,border-color] duration-300 group ${
+                } shadow-[0_18px_48px_rgba(13,23,45,0.14)] transition-[box-shadow,border-color,background-color] duration-300 ${
                   isRecommended
-                    ? 'border-[#ff7a1b] xl:-translate-y-2 xl:scale-[1.01] xl:shadow-[0_30px_70px_rgba(255,97,19,0.22)] hover:shadow-[0_34px_82px_rgba(255,97,19,0.28)]'
-                    : 'border-[#dce3ef] hover:shadow-[0_26px_64px_rgba(15,33,70,0.18)]'
+                    ? 'border-0 bg-[linear-gradient(165deg,rgba(255,255,255,0.78),rgba(255,245,237,0.58))] hover:shadow-[0_30px_74px_rgba(255,110,35,0.24)]'
+                    : 'border-white/55 bg-[linear-gradient(165deg,rgba(255,255,255,0.74),rgba(245,250,255,0.54))] hover:border-white/70 hover:shadow-[0_26px_64px_rgba(15,33,70,0.18)]'
                 }`}
-                style={
-                  prefersReducedMotion
-                    ? undefined
-                    : { transformStyle: 'preserve-3d', transformOrigin: 'center bottom' }
-                }
               >
                 <div
-                  className={`pointer-events-none absolute inset-0 rounded-[24px] opacity-0 transition-opacity duration-300 group-hover:opacity-100 ${
+                  className={`pointer-events-none absolute inset-0 rounded-[24px] opacity-100 ${
                     isRecommended
-                      ? 'bg-[radial-gradient(circle_at_50%_-10%,rgba(255,135,40,0.28),rgba(255,255,255,0)_58%)]'
-                      : 'bg-[radial-gradient(circle_at_50%_-10%,rgba(96,125,255,0.18),rgba(255,255,255,0)_58%)]'
+                      ? 'bg-[radial-gradient(circle_at_35%_0%,rgba(255,162,82,0.22),rgba(255,255,255,0)_58%)]'
+                      : 'bg-[radial-gradient(circle_at_35%_0%,rgba(137,160,255,0.16),rgba(255,255,255,0)_58%)]'
                   }`}
                 />
+                <div className={`pointer-events-none absolute inset-0 rounded-[24px] ${isRecommended ? '' : 'border border-white/45'}`} />
                 {isRecommended ? (
                   <span className="absolute left-1/2 top-0 z-30 -translate-x-1/2 -translate-y-[58%] whitespace-nowrap rounded-full bg-[#ff5f0f] px-6 py-1 text-[13px] font-extrabold uppercase tracking-[0.03em] text-white">
                     ★ Mais escolhido
                   </span>
                 ) : null}
 
-                <div className={`pointer-events-none absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-[30%] transition-transform duration-300 group-hover:scale-[1.04] group-hover:-translate-y-[36%] ${visual.imageContainerClass}`}>
+                <motion.div
+                  animate={isImageFloating ? { y: [0, -11, 0] } : { y: 0 }}
+                  transition={
+                    isImageFloating
+                      ? { duration: 1.8, repeat: Number.POSITIVE_INFINITY, ease: 'easeInOut' }
+                      : { duration: 0.2, ease: 'easeOut' }
+                  }
+                  className={`pointer-events-none absolute left-1/2 top-0 z-20 -translate-x-1/2 -translate-y-[30%] ${visual.imageContainerClass}`}
+                >
                   <Image
                     src={visual.image}
                     alt={`Imagem do plano ${visual.title}`}
@@ -360,7 +372,7 @@ export default function ValuesResourcesSection() {
                     className={`object-contain drop-shadow-[0_16px_28px_rgba(10,20,40,0.18)] ${visual.imageClassName}`}
                     priority={index < 2}
                   />
-                </div>
+                </motion.div>
 
                 <h3 className={`text-[24px] font-black leading-none ${visual.titleClassName}`}>{visual.title}</h3>
                 <p className="mt-2 min-h-[68px] text-[16px] leading-[1.35] text-[#3f4a63]">{visual.subtitle}</p>
@@ -384,7 +396,7 @@ export default function ValuesResourcesSection() {
 
                 <ul className="mt-5 flex-1 space-y-2.5">
                   {visual.features.map((feature) => (
-                    <li key={feature} className="flex items-start gap-2.5 text-[14px] leading-[1.28] text-[#25324d] transition-transform duration-300 group-hover:translate-x-0.5">
+                    <li key={feature} className="flex items-start gap-2.5 text-[14px] leading-[1.28] text-[#25324d]">
                       <span
                         className={`mt-0.5 inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full ${
                           isRecommended ? 'bg-[#ff7a1b] text-white' : 'bg-[#2759de] text-white'
@@ -401,14 +413,10 @@ export default function ValuesResourcesSection() {
                   type="button"
                   onClick={() => handleCheckout(plan)}
                   disabled={loadingId === plan.slug}
-                  className={`mt-6 inline-flex items-center justify-center gap-2 rounded-[12px] border px-5 py-3 text-[17px] font-extrabold transition duration-300 disabled:opacity-60 ${
-                    isRecommended
-                      ? 'border-[#ff8a00] bg-[linear-gradient(90deg,#ff5a00_0%,#ff9f1a_100%)] text-white shadow-[0_14px_25px_rgba(255,101,15,0.35)] hover:brightness-105'
-                      : 'border-[#98afe6] bg-white text-[#204fcb] hover:bg-[#f4f8ff]'
-                  }`}
+                  className={`relative mt-6 inline-flex cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-[12px] border border-transparent px-5 py-3 text-[17px] font-extrabold text-white transition duration-300 disabled:opacity-60 hover:brightness-105 ${visual.buttonGradientClass} ${visual.buttonShadowClass}`}
                 >
-                  {loadingId === plan.slug ? 'Abrindo checkout...' : visual.ctaLabel}
-                  <ArrowRight size={20} className="transition-transform duration-300 group-hover:translate-x-1" />
+                  <span>{loadingId === plan.slug ? 'Abrindo checkout...' : visual.ctaLabel}</span>
+                  <ArrowRight size={20} />
                 </button>
               </motion.article>
             );

@@ -1,35 +1,25 @@
 'use client';
-import Image from 'next/image';
-import Navbar from './Navbar';
-import Footer from './Footer';
+import PrimaryTopMenu from './PrimaryTopMenu';
+import PrimaryFooter from './PrimaryFooter';
+import HomePageBackground from './HomePageBackground';
 
 export default function LegalLayout({ children }: { children: React.ReactNode }) {
   return (
-    <main className="min-h-screen bg-bg-main">
-      <Navbar />
+    <main className="relative min-h-screen overflow-hidden bg-white text-[#1a2234]">
+      <HomePageBackground />
+      <div className="relative z-10">
+        <PrimaryTopMenu />
 
-      <div className="relative pt-32 pb-24 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <Image
-            src="/images/background_neuroads_26.png"
-            alt="NeuroAds Background"
-            fill
-            className="object-cover object-top opacity-30"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-white/85 via-white/92 to-white" />
-        </div>
+        <section className="mx-auto max-w-[1260px] px-5 pb-14 pt-5 md:px-8">
+          <div className="h-[84px]" />
 
-        <div className="wrap relative z-10">
-          <div className="max-w-[900px] mx-auto p-1 rounded-[36px] bg-gradient-to-br from-white/40 via-orange-300 to-[#FF6B00] shadow-[0_30px_80px_-20px_rgba(255,107,0,0.25)]">
-            <div className="bg-white/85 rounded-[32px] p-6 sm:p-8 lg:p-10 border border-border/60">
-              {children}
-            </div>
+          <div className="mx-auto max-w-[900px] rounded-[28px] border border-[#e7ecf4] bg-white p-6 shadow-[0_16px_36px_rgba(12,22,38,0.06)] sm:p-8 lg:p-10">
+            {children}
           </div>
-        </div>
-      </div>
+        </section>
 
-      <Footer />
+        <PrimaryFooter />
+      </div>
     </main>
   );
 }
