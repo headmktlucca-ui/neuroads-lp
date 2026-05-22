@@ -1,0 +1,54 @@
+
+> temp-app@0.1.0 dev
+> next dev --hostname 0.0.0.0 --port 3000
+
+▲ Next.js 16.2.1 (Turbopack)
+- Local:         http://localhost:3000
+- Network:       http://0.0.0.0:3000
+- Environments: .env.local
+✓ Ready in 1212ms
+Creating turbopack project {
+  dir: 'C:\\Users\\claud\\OneDrive\\Documentos\\NeuroAds\\LP',
+  testMode: true
+}
+- Experiments (use with caution):
+  · serverActions
+
+ GET / 200 in 10.7s (next.js: 4.7s, application-code: 6.0s)
+ GET / 200 in 2.9s (next.js: 37ms, application-code: 2.8s)
+ GET / 200 in 373ms (next.js: 13ms, application-code: 360ms)
+ GET / 200 in 118ms (next.js: 6ms, application-code: 112ms)
+ GET /login 200 in 452ms (next.js: 359ms, application-code: 93ms)
+ GET /hub 200 in 93ms (next.js: 73ms, application-code: 19ms)
+ GET /hub/conectores 200 in 73ms (next.js: 52ms, application-code: 21ms)
+ GET / 200 in 25ms (next.js: 5ms, application-code: 20ms)
+ GET / 200 in 142ms (next.js: 18ms, application-code: 125ms)
+✓ Compiled in 7.9s
+ GET / 200 in 719ms (next.js: 598ms, application-code: 121ms)
+ GET / 200 in 142ms (next.js: 10ms, application-code: 132ms)
+ GET / 200 in 146ms (next.js: 11ms, application-code: 135ms)
+ GET / 200 in 69ms (next.js: 10ms, application-code: 59ms)
+ GET / 200 in 318ms (next.js: 6ms, application-code: 312ms)
+ GET / 200 in 128ms (next.js: 6ms, application-code: 122ms)
+ GET /login 200 in 280ms (next.js: 76ms, application-code: 204ms)
+ GET /hub 200 in 198ms (next.js: 137ms, application-code: 62ms)
+ GET /login?next=%2Fhub 200 in 38ms (next.js: 4ms, application-code: 33ms)
+ GET /hub 200 in 52ms (next.js: 10ms, application-code: 41ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 134ms (next.js: 97ms, application-code: 36ms)
+ GET /hub/conectores 200 in 11.8s (next.js: 11.6s, application-code: 206ms)
+ GET /hub/conectores 200 in 102ms (next.js: 14ms, application-code: 88ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 266ms (next.js: 36ms, application-code: 230ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 374ms (next.js: 14ms, application-code: 360ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 263ms (next.js: 19ms, application-code: 244ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 263ms (next.js: 102ms, application-code: 161ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 99ms (next.js: 13ms, application-code: 87ms)
+ GET /hub/performance 200 in 547ms (next.js: 274ms, application-code: 272ms)
+ GET /hub/performance 200 in 170ms (next.js: 37ms, application-code: 134ms)
+ GET /hub/agentes-ativos 200 in 468ms (next.js: 181ms, application-code: 287ms)
+ GET /hub/automacoes 200 in 375ms (next.js: 214ms, application-code: 160ms)
+ GET /hub/conectores 200 in 175ms (next.js: 95ms, application-code: 80ms)
+ GET /api/auth/connectors/metaAds/start?next=%2Fhub%2Fconectores&provider=meta 307 in 1145ms (next.js: 1090ms, application-code: 55ms)
+ GET /hub 200 in 303ms (next.js: 24ms, application-code: 279ms)
+ GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 42ms (next.js: 4ms, application-code: 38ms)
+ GET /hub 200 in 35ms (next.js: 5ms, application-code: 30ms)
+ GET /hub/conectores 200 in 68ms (next.js: 9ms, application-code: 59ms)
