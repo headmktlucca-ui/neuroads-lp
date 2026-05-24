@@ -95,6 +95,24 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
       },
     ],
   },
+  instagram: {
+    connector: 'instagram',
+    defaultProvider: 'meta',
+    providers: [
+      {
+        provider: 'meta',
+        authUrl: 'https://www.facebook.com/v23.0/dialog/oauth',
+        tokenUrl: 'https://graph.facebook.com/v23.0/oauth/access_token',
+        scope: 'instagram_basic,instagram_manage_insights,pages_show_list,pages_read_engagement,business_management',
+        clientIdEnvKeys: ['META_APP_ID'],
+        clientSecretEnvKeys: ['META_APP_SECRET'],
+        authExtraParams: {
+          display: 'popup',
+        },
+        tokenExchangeStyle: 'meta-get',
+      },
+    ],
+  },
   linkedinAds: {
     connector: 'linkedinAds',
     defaultProvider: 'linkedin',

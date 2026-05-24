@@ -33,3 +33,24 @@ Creating turbopack project {
  GET /hub/agentes-ativos 200 in 48ms (next.js: 8ms, application-code: 39ms)
  GET /hub/laboratorio-agentes?agente=auditor-de-desperdicio 200 in 128ms (next.js: 96ms, application-code: 31ms)
  GET /hub/agente/analista-de-trafego 200 in 41ms (next.js: 13ms, application-code: 28ms)
+✓ Compiled in 3.4s
+ GET /hub/agente/analista-de-trafego 200 in 821ms (next.js: 265ms, application-code: 557ms)
+ GET / 200 in 191ms (next.js: 14ms, application-code: 178ms)
+ GET /agentes-ia/visao-geral-dos-agentes 200 in 137ms (next.js: 101ms, application-code: 35ms)
+ GET /conteudos/alem-do-algoritmo 200 in 123ms (next.js: 80ms, application-code: 43ms)
+✓ Compiled in 1096ms
+ GET /hub/agentes-ativos 200 in 30ms (next.js: 8ms, application-code: 22ms)
+ GET /hub/agente/auditor-de-desperdicio 200 in 194ms (next.js: 146ms, application-code: 48ms)
+ GET /hub 200 in 27ms (next.js: 8ms, application-code: 19ms)
+ GET /hub/agentes-ativos 200 in 23ms (next.js: 3ms, application-code: 19ms)
+ GET /hub/agente/gerador-de-criativos 200 in 35ms (next.js: 10ms, application-code: 25ms)
+ GET /hub 200 in 25ms (next.js: 4ms, application-code: 21ms)
+ GET /hub/agentes-ativos 200 in 27ms (next.js: 4ms, application-code: 22ms)
+ GET /hub/agente/analise-viral 200 in 32ms (next.js: 13ms, application-code: 20ms)
+ POST /hub/agente/analise-viral 200 in 20.2s (next.js: 13ms, application-code: 20.2s)
+  └─ ƒ generateCreativeTrendAnalysis({"additionalGuidance":"","brandSegment":"E-commerce, Varejo, Saúde e Clínicas, Serviços Profissionais, Educação Digital","companyName":"NeuroAds","...":"4 items not stringified"}) in 20187ms src/app/actions/creative-trend-analysis.ts
+ GET /hub/agentes-ativos 200 in 24ms (next.js: 4ms, application-code: 20ms)
+ GET /hub/agente/gerador-de-copies-de-conversao 200 in 44ms (next.js: 14ms, application-code: 30ms)
+ POST /hub/agente/gerador-de-copies-de-conversao 200 in 7.9s (next.js: 12ms, application-code: 7.9s)
+  └─ ƒ generateConversionCopyReport({"additionalContext":"Diferencial","channels":["Google Ads","Meta Ads"],"companyName":"NeuroAds","...":"10 items not stringified"}) in 7892ms src/app/actions/conversion-copy-generator.ts
+ GET /hub/conectores 200 in 84ms (next.js: 65ms, application-code: 19ms)

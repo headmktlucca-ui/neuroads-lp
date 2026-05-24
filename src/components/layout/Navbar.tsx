@@ -84,6 +84,14 @@ const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string
       'Conecte a conta e valide acesso às contas de anúncio no Business Manager.',
     ],
   },
+  instagram: {
+    title: 'Instagram Graph API',
+    steps: [
+      'No app da Meta, habilite Instagram Graph API e Facebook Login.',
+      'Garanta permissões instagram_basic, pages_show_list e pages_read_engagement.',
+      'Conecte e selecione o perfil comercial/creator que será vinculado no Hub.',
+    ],
+  },
   linkedinAds: {
     title: 'LinkedIn Ads API',
     steps: [
@@ -164,6 +172,7 @@ const ACCOUNT_DELETE_FLAG_PREFIX = 'neuroads_account_delete_in_progress_';
 const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
   googleAds: 'google',
   metaAds: 'meta',
+  instagram: 'meta',
   linkedinAds: 'linkedin',
   ga4: 'google',
   crm: 'hubspot',
@@ -655,6 +664,23 @@ export default function Navbar() {
       setConnectorError('Conexão retornou sem dados suficientes para ativar o conector.');
       setConnectorFeedback(null);
       clearConnectorQueryParams();
+      return;
+    }
+
+    if ((connectorParam === 'metaAds' || connectorParam === 'instagram') && !accountId) {
+      const params = new URLSearchParams({
+        connector_auth_success: '1',
+        connector: connectorParam,
+        connector_provider: provider ?? '',
+        connector_access_token: accessToken,
+      });
+      if (refreshToken) {
+        params.set('connector_refresh_token', refreshToken);
+      }
+      if (typeof expiresIn === 'number' && Number.isFinite(expiresIn)) {
+        params.set('connector_expires_in', String(expiresIn));
+      }
+      router.replace(`/hub/conectores?${params.toString()}`, { scroll: false });
       return;
     }
 

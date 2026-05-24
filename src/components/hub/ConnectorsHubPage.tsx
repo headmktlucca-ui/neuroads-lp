@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
@@ -56,6 +56,31 @@ type UiConnector = {
   impactLabel: string;
   lastSyncLabelWhenActive: string;
   isLiveConnector: boolean;
+};
+
+type MetaAdsAccountOption = {
+  id: string;
+  name: string;
+  accountId: string;
+  currency: string;
+  status: string;
+};
+
+type InstagramAccountOption = {
+  id: string;
+  name: string;
+  username: string;
+  pageName: string;
+  pageId: string;
+};
+
+type PendingOAuthConnection = {
+  connector: ConnectorKey;
+  provider: string | null;
+  accessToken: string;
+  refreshToken: string | null;
+  expiresIn: number | null;
+  accountId: string | null;
 };
 
 const CONNECTOR_ITEMS: UiConnector[] = [
@@ -156,12 +181,13 @@ const CONNECTOR_ITEMS: UiConnector[] = [
   },
   {
     id: 'instagram',
+    connectorKey: 'instagram',
     title: 'Instagram',
     description: 'Consolide sinais de engajamento comercial e conteúdo com potencial de conversão.',
     category: 'atendimento',
     impactLabel: 'R$ 420 mil / mês',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
-    isLiveConnector: false,
+    isLiveConnector: true,
   },
   {
     id: 'tiktok',
@@ -193,6 +219,7 @@ const CATEGORY_LABELS: Record<UiCategory | 'todos', string> = {
 const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
   googleAds: 'google',
   metaAds: 'meta',
+  instagram: 'meta',
   linkedinAds: 'linkedin',
   ga4: 'google',
   crm: 'hubspot',
@@ -496,17 +523,25 @@ function BrandTile({ id }: { id: UiConnectorId }) {
 
   if (id === 'tiktok') {
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#111827] text-[12px] font-black leading-none text-white">
-        TT
-      </div>
+      <Image
+        src="/images/connectors/tiktok-icon-from-reference-v1.png"
+        alt="Ícone Tik Tok oficial em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
     );
   }
 
   if (id === 'tiktokAds') {
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#0F172A] text-[9px] font-black leading-none text-[#5EEAD4]">
-        TT ADS
-      </div>
+      <Image
+        src="/images/connectors/tiktok-photorealistic-icon-hd-v2.png"
+        alt="Ícone Tik Tok Ads foto realista em fundo branco"
+        width={88}
+        height={88}
+        className="h-full w-full rounded-xl object-cover"
+      />
     );
   }
 
@@ -529,6 +564,14 @@ export default function ConnectorsHubPage() {
   const [connectorBusyKey, setConnectorBusyKey] = useState<ConnectorKey | null>(null);
   const [connectorFeedback, setConnectorFeedback] = useState<string | null>(null);
   const [connectorError, setConnectorError] = useState<string | null>(null);
+  const [pendingMetaAdsConnection, setPendingMetaAdsConnection] = useState<PendingOAuthConnection | null>(null);
+  const [metaAdsAccounts, setMetaAdsAccounts] = useState<MetaAdsAccountOption[]>([]);
+  const [selectedMetaAdsAccountId, setSelectedMetaAdsAccountId] = useState('');
+  const [metaAdsSelectionSaving, setMetaAdsSelectionSaving] = useState(false);
+  const [pendingInstagramConnection, setPendingInstagramConnection] = useState<PendingOAuthConnection | null>(null);
+  const [instagramAccounts, setInstagramAccounts] = useState<InstagramAccountOption[]>([]);
+  const [selectedInstagramAccountId, setSelectedInstagramAccountId] = useState('');
+  const [instagramSelectionSaving, setInstagramSelectionSaving] = useState(false);
   const [openConnectorMenuId, setOpenConnectorMenuId] = useState<UiConnectorId | null>(null);
   const [activeFilter, setActiveFilter] = useState<UiCategory | 'todos'>('todos');
   const [sortMode, setSortMode] = useState<'az'>('az');
@@ -538,6 +581,70 @@ export default function ConnectorsHubPage() {
     [loading, profile, user]
   );
   const isSyncingAccess = accessState === 'forbidden' && premiumSyncing;
+
+  const clearPendingMetaAdsSelection = useCallback(() => {
+    setPendingMetaAdsConnection(null);
+    setMetaAdsAccounts([]);
+    setSelectedMetaAdsAccountId('');
+    setMetaAdsSelectionSaving(false);
+  }, []);
+
+  const clearPendingInstagramSelection = useCallback(() => {
+    setPendingInstagramConnection(null);
+    setInstagramAccounts([]);
+    setSelectedInstagramAccountId('');
+    setInstagramSelectionSaving(false);
+  }, []);
+
+  const persistOAuthConnection = useCallback(
+    async (payload: PendingOAuthConnection, successMessage: string) => {
+      if (!user) return false;
+
+      const now = Date.now();
+      const connectionKey = CONNECTOR_CONNECTION_KEYS[payload.connector];
+
+      setConnectorStatus((prev) => {
+        const nextStatus = { ...prev, [payload.connector]: true };
+        const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+        window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
+        return nextStatus;
+      });
+
+      try {
+        const db = getFirebaseDb();
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(
+          userRef,
+          {
+            connections: {
+              [connectionKey]: {
+                isActive: true,
+                provider: payload.provider ?? null,
+                accountId: payload.accountId ?? null,
+                accessToken: payload.accessToken,
+                refreshToken: payload.refreshToken ?? null,
+                expiresIn: Number.isFinite(payload.expiresIn || NaN) ? payload.expiresIn : null,
+                expiresAt: Number.isFinite(payload.expiresIn || NaN) ? now + Number(payload.expiresIn) * 1000 : null,
+                connectedAt: now,
+                updatedAt: now,
+              },
+            },
+            updatedAt: now,
+          },
+          { merge: true }
+        );
+        setConnectorFeedback(successMessage);
+        setConnectorError(null);
+        return true;
+      } catch (saveError) {
+        console.warn('Falha ao persistir conexão OAuth:', saveError);
+        setConnectorFeedback(null);
+        setConnectorError('Conexão concluída, mas não foi possível salvar no banco.');
+        return false;
+      }
+    },
+    [user]
+  );
 
   useEffect(() => {
     if (accessState === 'unauthenticated') {
@@ -617,6 +724,8 @@ export default function ConnectorsHubPage() {
     if (error) {
       setConnectorError(`Falha ao conectar: ${error}`);
       setConnectorFeedback(null);
+      clearPendingMetaAdsSelection();
+      clearPendingInstagramSelection();
       clearConnectorQueryParams();
       return;
     }
@@ -624,57 +733,142 @@ export default function ConnectorsHubPage() {
     if (!isConnectorKey(connectorParam) || !accessToken) {
       setConnectorError('Conexão retornou sem dados suficientes para ativar o conector.');
       setConnectorFeedback(null);
+      clearPendingMetaAdsSelection();
+      clearPendingInstagramSelection();
       clearConnectorQueryParams();
       return;
     }
 
-    const now = Date.now();
-    const connectionKey = CONNECTOR_CONNECTION_KEYS[connectorParam];
+    const pendingPayload: PendingOAuthConnection = {
+      connector: connectorParam,
+      provider: provider ?? null,
+      accessToken,
+      refreshToken: refreshToken ?? null,
+      expiresIn: Number.isFinite(expiresIn || NaN) ? Number(expiresIn) : null,
+      accountId: accountId ?? null,
+    };
 
-    setConnectorStatus((prev) => {
-      const nextStatus = { ...prev, [connectorParam]: true };
-      const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
-      window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
-      return nextStatus;
-    });
+    if (connectorParam === 'metaAds' && !pendingPayload.accountId) {
+      const hydrateMetaAdsAccounts = async () => {
+        try {
+          setConnectorBusyKey('metaAds');
+          const response = await fetch('/api/auth/connectors/metaAds/accounts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ accessToken }),
+          });
+          const payload = (await response.json()) as { accounts?: MetaAdsAccountOption[]; error?: string };
+
+          if (!response.ok) {
+            throw new Error(payload.error || 'Não foi possível listar as contas do Meta Ads.');
+          }
+
+          const accounts = Array.isArray(payload.accounts) ? payload.accounts : [];
+          if (accounts.length === 0) {
+            clearPendingMetaAdsSelection();
+            setConnectorFeedback(null);
+            setConnectorError('Autenticação concluída, mas nenhuma conta de anúncio disponível foi encontrada no Meta Ads.');
+            return;
+          }
+
+          if (accounts.length === 1) {
+            const persisted = await persistOAuthConnection(
+              { ...pendingPayload, accountId: accounts[0].id },
+              'Conector Meta Ads autenticado e conta vinculada com sucesso.'
+            );
+            if (persisted) {
+              clearPendingMetaAdsSelection();
+            }
+            return;
+          }
+
+          setPendingMetaAdsConnection(pendingPayload);
+          setMetaAdsAccounts(accounts);
+          setSelectedMetaAdsAccountId(accounts[0].id);
+          setConnectorError(null);
+          setConnectorFeedback('Autenticação concluída. Selecione a conta do Meta Ads para finalizar a vinculação.');
+        } catch (metaError) {
+          const message = metaError instanceof Error ? metaError.message : 'Falha ao carregar contas do Meta Ads.';
+          clearPendingMetaAdsSelection();
+          setConnectorFeedback(null);
+          setConnectorError(message);
+        } finally {
+          setConnectorBusyKey(null);
+          clearConnectorQueryParams();
+        }
+      };
+
+      void hydrateMetaAdsAccounts();
+      return;
+    }
+
+    if (connectorParam === 'instagram' && !pendingPayload.accountId) {
+      const hydrateInstagramAccounts = async () => {
+        try {
+          setConnectorBusyKey('instagram');
+          const response = await fetch('/api/auth/connectors/instagram/accounts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ accessToken }),
+          });
+          const payload = (await response.json()) as { accounts?: InstagramAccountOption[]; error?: string };
+
+          if (!response.ok) {
+            throw new Error(payload.error || 'Não foi possível listar as contas do Instagram.');
+          }
+
+          const accounts = Array.isArray(payload.accounts) ? payload.accounts : [];
+          if (accounts.length === 0) {
+            clearPendingInstagramSelection();
+            setConnectorFeedback(null);
+            setConnectorError('Autenticação concluída, mas nenhuma conta comercial do Instagram foi encontrada.');
+            return;
+          }
+
+          if (accounts.length === 1) {
+            const persisted = await persistOAuthConnection(
+              { ...pendingPayload, accountId: accounts[0].id },
+              'Conector Instagram autenticado e conta vinculada com sucesso.'
+            );
+            if (persisted) {
+              clearPendingInstagramSelection();
+            }
+            return;
+          }
+
+          setPendingInstagramConnection(pendingPayload);
+          setInstagramAccounts(accounts);
+          setSelectedInstagramAccountId(accounts[0].id);
+          setConnectorError(null);
+          setConnectorFeedback('Autenticação concluída. Selecione a conta do Instagram para finalizar a vinculação.');
+        } catch (instagramError) {
+          const message = instagramError instanceof Error ? instagramError.message : 'Falha ao carregar contas do Instagram.';
+          clearPendingInstagramSelection();
+          setConnectorFeedback(null);
+          setConnectorError(message);
+        } finally {
+          setConnectorBusyKey(null);
+          clearConnectorQueryParams();
+        }
+      };
+
+      void hydrateInstagramAccounts();
+      return;
+    }
 
     const upsertConnection = async () => {
-      try {
-        const db = getFirebaseDb();
-        const userRef = doc(db, 'users', user.uid);
-        await setDoc(
-          userRef,
-          {
-            connections: {
-              [connectionKey]: {
-                isActive: true,
-                provider: provider ?? null,
-                accountId: accountId ?? null,
-                accessToken,
-                refreshToken: refreshToken ?? null,
-                expiresIn: Number.isFinite(expiresIn || NaN) ? expiresIn : null,
-                expiresAt: Number.isFinite(expiresIn || NaN) ? now + Number(expiresIn) * 1000 : null,
-                connectedAt: now,
-                updatedAt: now,
-              },
-            },
-            updatedAt: now,
-          },
-          { merge: true }
-        );
-        setConnectorFeedback('Conector autenticado e salvo com sucesso.');
-        setConnectorError(null);
-      } catch (saveError) {
-        console.warn('Falha ao persistir conexão OAuth:', saveError);
-        setConnectorFeedback(null);
-        setConnectorError('Conexão concluída, mas não foi possível salvar no banco.');
-      } finally {
-        clearConnectorQueryParams();
-      }
+      await persistOAuthConnection(pendingPayload, 'Conector autenticado e salvo com sucesso.');
+      clearPendingMetaAdsSelection();
+      clearPendingInstagramSelection();
+      clearConnectorQueryParams();
     };
 
     void upsertConnection();
-  }, [pathname, router, searchParams, user]);
+  }, [clearPendingInstagramSelection, clearPendingMetaAdsSelection, pathname, persistOAuthConnection, router, searchParams, user]);
 
   useEffect(() => {
     const handleDocumentClick = (event: MouseEvent) => {
@@ -769,6 +963,12 @@ export default function ConnectorsHubPage() {
 
   const handleDisconnect = async (connectorKey: ConnectorKey) => {
     if (!user) return;
+    if (connectorKey === 'metaAds') {
+      clearPendingMetaAdsSelection();
+    }
+    if (connectorKey === 'instagram') {
+      clearPendingInstagramSelection();
+    }
     setConnectorBusyKey(connectorKey);
     setConnectorError(null);
     setConnectorFeedback(null);
@@ -804,6 +1004,52 @@ export default function ConnectorsHubPage() {
     } finally {
       setConnectorBusyKey(null);
     }
+  };
+
+  const handleMetaAdsAccountSelection = async () => {
+    if (!pendingMetaAdsConnection || !selectedMetaAdsAccountId) {
+      setConnectorError('Selecione uma conta Meta Ads para continuar.');
+      setConnectorFeedback(null);
+      return;
+    }
+
+    setMetaAdsSelectionSaving(true);
+    setConnectorBusyKey('metaAds');
+
+    const persisted = await persistOAuthConnection(
+      { ...pendingMetaAdsConnection, accountId: selectedMetaAdsAccountId },
+      'Conta Meta Ads vinculada com sucesso.'
+    );
+
+    if (persisted) {
+      clearPendingMetaAdsSelection();
+    }
+
+    setMetaAdsSelectionSaving(false);
+    setConnectorBusyKey(null);
+  };
+
+  const handleInstagramAccountSelection = async () => {
+    if (!pendingInstagramConnection || !selectedInstagramAccountId) {
+      setConnectorError('Selecione uma conta do Instagram para continuar.');
+      setConnectorFeedback(null);
+      return;
+    }
+
+    setInstagramSelectionSaving(true);
+    setConnectorBusyKey('instagram');
+
+    const persisted = await persistOAuthConnection(
+      { ...pendingInstagramConnection, accountId: selectedInstagramAccountId },
+      'Conta do Instagram vinculada com sucesso.'
+    );
+
+    if (persisted) {
+      clearPendingInstagramSelection();
+    }
+
+    setInstagramSelectionSaving(false);
+    setConnectorBusyKey(null);
   };
 
   const handleConnect = async (connectorKey: ConnectorKey) => {
@@ -1125,6 +1371,78 @@ export default function ConnectorsHubPage() {
                     <p className="mt-1 text-[13px] text-[#4ADE80]">Excelente</p>
                   </div>
                 </section>
+
+                {pendingMetaAdsConnection && metaAdsAccounts.length > 0 && (
+                  <section className="mt-4 rounded-2xl border border-[#FED7AA] bg-[#FFF7ED] p-4">
+                    <p className="text-[14px] font-black text-[#9A3412]">Selecione a conta Meta Ads para concluir</p>
+                    <p className="mt-1 text-[13px] text-[#7C2D12]">
+                      A autenticação foi concluída. Agora escolha qual conta de anúncios deve ser vinculada ao Hub.
+                    </p>
+
+                    <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+                      <label className="flex flex-col gap-1 text-[13px] font-semibold text-[#7C2D12]">
+                        Conta de anúncios
+                        <select
+                          value={selectedMetaAdsAccountId}
+                          onChange={(event) => setSelectedMetaAdsAccountId(event.target.value)}
+                          className="h-11 rounded-xl border border-[#FDBA74] bg-white px-3 text-[14px] font-semibold text-[#7C2D12] outline-none focus:border-[#F97316]"
+                        >
+                          {metaAdsAccounts.map((account) => (
+                            <option key={account.id} value={account.id}>
+                              {account.name} ({account.accountId}){account.currency ? ` • ${account.currency}` : ''}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => void handleMetaAdsAccountSelection()}
+                        disabled={!selectedMetaAdsAccountId || metaAdsSelectionSaving}
+                        className="inline-flex h-11 items-center justify-center rounded-xl bg-[#FF7A00] px-5 text-[14px] font-black text-white transition hover:bg-[#E66E00] disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {metaAdsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+                      </button>
+                    </div>
+                  </section>
+                )}
+
+                {pendingInstagramConnection && instagramAccounts.length > 0 && (
+                  <section className="mt-4 rounded-2xl border border-[#C7D2FE] bg-[#EEF2FF] p-4">
+                    <p className="text-[14px] font-black text-[#3730A3]">Selecione a conta Instagram para concluir</p>
+                    <p className="mt-1 text-[13px] text-[#4338CA]">
+                      A autenticação foi concluída. Agora escolha qual perfil comercial deve ser vinculado ao Hub.
+                    </p>
+
+                    <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+                      <label className="flex flex-col gap-1 text-[13px] font-semibold text-[#3730A3]">
+                        Conta Instagram
+                        <select
+                          value={selectedInstagramAccountId}
+                          onChange={(event) => setSelectedInstagramAccountId(event.target.value)}
+                          className="h-11 rounded-xl border border-[#A5B4FC] bg-white px-3 text-[14px] font-semibold text-[#312E81] outline-none focus:border-[#4F46E5]"
+                        >
+                          {instagramAccounts.map((account) => (
+                            <option key={account.id} value={account.id}>
+                              {account.name}
+                              {account.username ? ` (@${account.username})` : ''}
+                              {account.pageName ? ` • Página: ${account.pageName}` : ''}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+
+                      <button
+                        type="button"
+                        onClick={() => void handleInstagramAccountSelection()}
+                        disabled={!selectedInstagramAccountId || instagramSelectionSaving}
+                        className="inline-flex h-11 items-center justify-center rounded-xl bg-[#4F46E5] px-5 text-[14px] font-black text-white transition hover:bg-[#4338CA] disabled:cursor-not-allowed disabled:opacity-60"
+                      >
+                        {instagramSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+                      </button>
+                    </div>
+                  </section>
+                )}
 
                 {(connectorError || connectorFeedback) && (
                   <div

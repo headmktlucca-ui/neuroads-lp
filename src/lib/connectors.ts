@@ -1,6 +1,7 @@
 export type ConnectorStatus = {
   googleAds: boolean;
   metaAds: boolean;
+  instagram: boolean;
   linkedinAds: boolean;
   ga4: boolean;
   serverTracking: boolean;
@@ -35,6 +36,7 @@ export type ConnectorConnection = {
 export const DEFAULT_CONNECTOR_STATUS: ConnectorStatus = {
   googleAds: false,
   metaAds: false,
+  instagram: false,
   linkedinAds: false,
   ga4: false,
   serverTracking: false,
@@ -46,6 +48,7 @@ export const DEFAULT_CONNECTOR_STATUS: ConnectorStatus = {
 export const CONNECTOR_DEFINITIONS: ConnectorDefinition[] = [
   { key: 'googleAds', name: 'Google Ads API', source: 'Mídia paga', required: true, usedBy: 'ROAS, CAC, alertas de campanha' },
   { key: 'metaAds', name: 'Meta Ads API', source: 'Mídia paga', required: true, usedBy: 'CPL, CPA, desperdício e variações' },
+  { key: 'instagram', name: 'Instagram Graph API', source: 'Atendimento e conteúdo', required: false, usedBy: 'Sinais de engajamento, perfil e inteligência de conteúdo' },
   { key: 'linkedinAds', name: 'LinkedIn Ads API', source: 'Mídia paga B2B', required: true, usedBy: 'CPL B2B, qualidade de lead e CAC por conta' },
   { key: 'ga4', name: 'GA4 Data API', source: 'Analytics', required: true, usedBy: 'Funil, taxa de conversão e jornada' },
   { key: 'serverTracking', name: 'GTM Server + CAPI/Enhanced', source: 'Atribuição', required: true, usedBy: 'Atribuição confiável e deduplicação' },
@@ -57,6 +60,7 @@ export const CONNECTOR_DEFINITIONS: ConnectorDefinition[] = [
 export const CONNECTOR_CONNECTION_KEYS: Record<ConnectorKey, string> = {
   googleAds: 'google_ads',
   metaAds: 'meta_ads',
+  instagram: 'instagram',
   linkedinAds: 'linkedin_ads',
   ga4: 'ga4',
   serverTracking: 'gtm_server',
