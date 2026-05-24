@@ -358,3 +358,19 @@ Creating turbopack project {
  GET /api/auth/connectors/instagram/start?next=%2Fhub%2Fconectores&provider=meta 307 in 152ms (next.js: 120ms, application-code: 32ms)
  GET /hub/conectores 200 in 360ms (next.js: 116ms, application-code: 245ms)
  GET /api/auth/connectors/ga4/start?next=%2Fhub%2Fconectores&provider=google 307 in 79ms (next.js: 37ms, application-code: 41ms)
+ GET /hub/conectores 200 in 2.2s (next.js: 357ms, application-code: 1800ms)
+ GET /hub/conectores 200 in 93ms (next.js: 10ms, application-code: 83ms)
+✓ Compiled in 548ms
+✓ Compiled in 537ms
+✓ Compiled in 775ms
+✓ Compiled in 223ms
+✓ Compiled in 493ms
+✓ Compiled in 254ms
+✓ Compiled in 287ms
+✓ Compiled in 248ms
+✓ Compiled in 415ms
+✓ Compiled in 3s
+ GET /hub/conectores 200 in 1521ms (next.js: 598ms, application-code: 922ms)
+ GET /hub/conectores 200 in 1519ms (next.js: 706ms, application-code: 814ms)
+✓ Compiled in 755ms
+✓ Compiled in 304ms

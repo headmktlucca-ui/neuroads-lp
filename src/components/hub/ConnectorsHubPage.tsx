@@ -982,6 +982,10 @@ export default function ConnectorsHubPage() {
   );
 
   const healthTone = useMemo(() => getHealthTone(healthScore), [healthScore]);
+  const showMetaAdsSelectionModal = Boolean(pendingMetaAdsConnection && metaAdsAccounts.length > 0);
+  const showInstagramSelectionModal = Boolean(
+    !showMetaAdsSelectionModal && pendingInstagramConnection && instagramAccounts.length > 0
+  );
 
   const handleDisconnect = async (connectorKey: ConnectorKey) => {
     if (!user) return;
@@ -1399,78 +1403,6 @@ export default function ConnectorsHubPage() {
                   </div>
                 </div>
 
-                {pendingMetaAdsConnection && metaAdsAccounts.length > 0 && (
-                  <section className="mt-4 rounded-2xl border border-[#FED7AA] bg-[#FFF7ED] p-4">
-                    <p className="text-[14px] font-black text-[#9A3412]">Selecione a conta Meta Ads para concluir</p>
-                    <p className="mt-1 text-[13px] text-[#7C2D12]">
-                      A autenticação foi concluída. Agora escolha qual conta de anúncios deve ser vinculada ao Hub.
-                    </p>
-
-                    <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-                      <label className="flex flex-col gap-1 text-[13px] font-semibold text-[#7C2D12]">
-                        Conta de anúncios
-                        <select
-                          value={selectedMetaAdsAccountId}
-                          onChange={(event) => setSelectedMetaAdsAccountId(event.target.value)}
-                          className="h-11 rounded-xl border border-[#FDBA74] bg-white px-3 text-[14px] font-semibold text-[#7C2D12] outline-none focus:border-[#F97316]"
-                        >
-                          {metaAdsAccounts.map((account) => (
-                            <option key={account.id} value={account.id}>
-                              {account.name} ({account.accountId}){account.currency ? ` • ${account.currency}` : ''}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-
-                      <button
-                        type="button"
-                        onClick={() => void handleMetaAdsAccountSelection()}
-                        disabled={!selectedMetaAdsAccountId || metaAdsSelectionSaving}
-                        className="inline-flex h-11 items-center justify-center rounded-xl bg-[#FF7A00] px-5 text-[14px] font-black text-white transition hover:bg-[#E66E00] disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        {metaAdsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
-                      </button>
-                    </div>
-                  </section>
-                )}
-
-                {pendingInstagramConnection && instagramAccounts.length > 0 && (
-                  <section className="mt-4 rounded-2xl border border-[#C7D2FE] bg-[#EEF2FF] p-4">
-                    <p className="text-[14px] font-black text-[#3730A3]">Selecione a conta Instagram para concluir</p>
-                    <p className="mt-1 text-[13px] text-[#4338CA]">
-                      A autenticação foi concluída. Agora escolha qual perfil comercial deve ser vinculado ao Hub.
-                    </p>
-
-                    <div className="mt-3 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-                      <label className="flex flex-col gap-1 text-[13px] font-semibold text-[#3730A3]">
-                        Conta Instagram
-                        <select
-                          value={selectedInstagramAccountId}
-                          onChange={(event) => setSelectedInstagramAccountId(event.target.value)}
-                          className="h-11 rounded-xl border border-[#A5B4FC] bg-white px-3 text-[14px] font-semibold text-[#312E81] outline-none focus:border-[#4F46E5]"
-                        >
-                          {instagramAccounts.map((account) => (
-                            <option key={account.id} value={account.id}>
-                              {account.name}
-                              {account.username ? ` (@${account.username})` : ''}
-                              {account.pageName ? ` • Página: ${account.pageName}` : ''}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-
-                      <button
-                        type="button"
-                        onClick={() => void handleInstagramAccountSelection()}
-                        disabled={!selectedInstagramAccountId || instagramSelectionSaving}
-                        className="inline-flex h-11 items-center justify-center rounded-xl bg-[#4F46E5] px-5 text-[14px] font-black text-white transition hover:bg-[#4338CA] disabled:cursor-not-allowed disabled:opacity-60"
-                      >
-                        {instagramSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
-                      </button>
-                    </div>
-                  </section>
-                )}
-
                 {(connectorError || connectorFeedback) && (
                   <div
                     className={`mt-4 rounded-xl border px-4 py-3 text-[14px] font-semibold ${
@@ -1557,6 +1489,84 @@ export default function ConnectorsHubPage() {
 
       <Footer />
       <LuccaHubSupportWidget />
+
+      {showMetaAdsSelectionModal && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+          <section className="relative z-[1201] w-full max-w-5xl rounded-2xl border border-[#FED7AA] bg-[#FFF7ED] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
+            <p className="text-[22px] font-black text-[#9A3412]">Selecione a conta Meta Ads para concluir</p>
+            <p className="mt-2 text-[18px] text-[#7C2D12]">
+              A autenticação foi concluída. Agora escolha qual conta de anúncios deve ser vinculada ao Hub.
+            </p>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#7C2D12]">
+                Conta de anúncios
+                <select
+                  value={selectedMetaAdsAccountId}
+                  onChange={(event) => setSelectedMetaAdsAccountId(event.target.value)}
+                  className="h-11 rounded-xl border border-[#FDBA74] bg-white px-3 text-[14px] font-semibold text-[#7C2D12] outline-none focus:border-[#F97316]"
+                >
+                  {metaAdsAccounts.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name} ({account.accountId}){account.currency ? ` • ${account.currency}` : ''}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <button
+                type="button"
+                onClick={() => void handleMetaAdsAccountSelection()}
+                disabled={!selectedMetaAdsAccountId || metaAdsSelectionSaving}
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#FF7A00] px-5 text-[14px] font-black text-white transition hover:bg-[#E66E00] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {metaAdsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {showInstagramSelectionModal && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+          <section className="relative z-[1201] w-full max-w-5xl rounded-2xl border border-[#C7D2FE] bg-[#EEF2FF] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
+            <p className="text-[22px] font-black text-[#3730A3]">Selecione a conta Instagram para concluir</p>
+            <p className="mt-2 text-[18px] text-[#4338CA]">
+              A autenticação foi concluída. Agora escolha qual perfil comercial deve ser vinculado ao Hub.
+            </p>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#3730A3]">
+                Conta Instagram
+                <select
+                  value={selectedInstagramAccountId}
+                  onChange={(event) => setSelectedInstagramAccountId(event.target.value)}
+                  className="h-11 rounded-xl border border-[#A5B4FC] bg-white px-3 text-[14px] font-semibold text-[#312E81] outline-none focus:border-[#4F46E5]"
+                >
+                  {instagramAccounts.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name}
+                      {account.username ? ` (@${account.username})` : ''}
+                      {account.pageName ? ` • Página: ${account.pageName}` : ''}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <button
+                type="button"
+                onClick={() => void handleInstagramAccountSelection()}
+                disabled={!selectedInstagramAccountId || instagramSelectionSaving}
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#4F46E5] px-5 text-[14px] font-black text-white transition hover:bg-[#4338CA] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {instagramSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
     </main>
   );
 }

@@ -80,6 +80,8 @@ const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string
     title: 'Meta Ads API',
     steps: [
       'Configure um app no Meta for Developers com produto Facebook Login.',
+      'Ative Client OAuth Login e Web OAuth Login no Facebook Login > Settings.',
+      'Adicione os redirects: https://neuroads.com.br/api/auth/connectors/metaAds/callback e http://localhost:3000/api/auth/connectors/metaAds/callback.',
       'Defina META_APP_ID e META_APP_SECRET nas variáveis do projeto.',
       'Conecte a conta e valide acesso às contas de anúncio no Business Manager.',
     ],
@@ -88,6 +90,8 @@ const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string
     title: 'Instagram Graph API',
     steps: [
       'No app da Meta, habilite Instagram Graph API e Facebook Login.',
+      'Ative Client OAuth Login e Web OAuth Login no Facebook Login > Settings.',
+      'Adicione os redirects: https://neuroads.com.br/api/auth/connectors/instagram/callback e http://localhost:3000/api/auth/connectors/instagram/callback.',
       'Garanta permissões instagram_basic, pages_show_list e pages_read_engagement.',
       'Conecte e selecione o perfil comercial/creator que será vinculado no Hub.',
     ],
