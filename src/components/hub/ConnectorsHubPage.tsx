@@ -10,7 +10,6 @@ import {
   ArrowUpRight,
   BookOpenText,
   CheckCircle2,
-  Copy,
   Clock3,
   EllipsisVertical,
   ExternalLink,
@@ -53,7 +52,6 @@ type UiConnector = {
   title: string;
   description: string;
   category: UiCategory;
-  impactLabel: string;
   lastSyncLabelWhenActive: string;
   isLiveConnector: boolean;
 };
@@ -81,6 +79,7 @@ type PendingOAuthConnection = {
   refreshToken: string | null;
   expiresIn: number | null;
   accountId: string | null;
+  metadata?: Record<string, unknown> | null;
 };
 
 const CONNECTOR_ITEMS: UiConnector[] = [
@@ -90,7 +89,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'HubSpot',
     description: 'Sincronize leads, empresas e oportunidades para uma visão completa do funil.',
     category: 'vendas',
-    impactLabel: 'R$ 1,28 mi / mês',
     lastSyncLabelWhenActive: 'Hoje, 08:45',
     isLiveConnector: true,
   },
@@ -99,7 +97,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'RD Station CRM',
     description: 'Centralize contatos, empresas e estágios do pipeline para acelerar repasse e previsibilidade comercial.',
     category: 'vendas',
-    impactLabel: 'R$ 640 mil / mês',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: false,
   },
@@ -108,7 +105,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'RD Station Marketing',
     description: 'Conecte formulários, campanhas e automações para elevar a qualificação de leads com dados reais.',
     category: 'marketing',
-    impactLabel: 'R$ 520 mil / mês',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: false,
   },
@@ -117,7 +113,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'RD Station Conversas',
     description: 'Integre WhatsApp e canais de atendimento para dar escala ao time comercial sem perder contexto.',
     category: 'atendimento',
-    impactLabel: 'R$ 290 mil / mês',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: false,
   },
@@ -127,7 +122,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'Google Ads',
     description: 'Acompanhe campanhas, custos e conversões para otimizar seus investimentos.',
     category: 'marketing',
-    impactLabel: 'R$ 980 mil / mês',
     lastSyncLabelWhenActive: 'Hoje, 08:32',
     isLiveConnector: true,
   },
@@ -137,7 +131,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'Meta Ads',
     description: 'Importe dados de anúncios do Facebook e Instagram para análises mais precisas.',
     category: 'marketing',
-    impactLabel: 'R$ 1,45 mi / mês',
     lastSyncLabelWhenActive: 'Hoje, 08:15',
     isLiveConnector: true,
   },
@@ -147,7 +140,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'GA4',
     description: 'Monitore eventos, sessões e conversões para leitura real de funil e receita.',
     category: 'marketing',
-    impactLabel: 'R$ 890 mil / mês',
     lastSyncLabelWhenActive: 'Hoje, 08:26',
     isLiveConnector: true,
   },
@@ -156,7 +148,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'Google Trends',
     description: 'Capte tendências de busca para ajustar pauta, criativos e oferta com antecedência.',
     category: 'marketing',
-    impactLabel: 'R$ 310 mil / mês',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: false,
   },
@@ -165,7 +156,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'LinkedIn Page',
     description: 'Acompanhe conteúdo orgânico, crescimento de audiência e sinais de intenção B2B.',
     category: 'atendimento',
-    impactLabel: 'R$ 220 mil / mês',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: false,
   },
@@ -175,7 +165,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'LinkedIn Ads',
     description: 'Meça campanhas B2B com foco em CPL qualificado e pipeline comercial.',
     category: 'marketing',
-    impactLabel: 'R$ 760 mil / mês',
     lastSyncLabelWhenActive: 'Hoje, 07:58',
     isLiveConnector: true,
   },
@@ -185,7 +174,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'Instagram',
     description: 'Consolide sinais de engajamento comercial e conteúdo com potencial de conversão.',
     category: 'atendimento',
-    impactLabel: 'R$ 420 mil / mês',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: true,
   },
@@ -194,7 +182,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'Tik Tok',
     description: 'Mapeie comportamento de audiência e tendências de formato para escalar criativos.',
     category: 'atendimento',
-    impactLabel: 'R$ 270 mil / mês',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: false,
   },
@@ -203,7 +190,6 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'Tik Tok Ads',
     description: 'Integre performance de mídia com custo por aquisição e receita incremental.',
     category: 'atendimento',
-    impactLabel: 'R$ 530 mil / mês',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: false,
   },
@@ -245,6 +231,10 @@ const CONNECTOR_DOCS_URLS: Partial<Record<UiConnectorId, string>> = {
 function readRecord(value: unknown): Record<string, unknown> | null {
   if (!value || typeof value !== 'object') return null;
   return value as Record<string, unknown>;
+}
+
+function readString(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
 }
 
 function isConnectorKey(value: string | null): value is ConnectorKey {
@@ -625,6 +615,7 @@ export default function ConnectorsHubPage() {
                 refreshToken: payload.refreshToken ?? null,
                 expiresIn: Number.isFinite(payload.expiresIn || NaN) ? payload.expiresIn : null,
                 expiresAt: Number.isFinite(payload.expiresIn || NaN) ? now + Number(payload.expiresIn) * 1000 : null,
+                metadata: payload.metadata ?? null,
                 connectedAt: now,
                 updatedAt: now,
               },
@@ -746,6 +737,7 @@ export default function ConnectorsHubPage() {
       refreshToken: refreshToken ?? null,
       expiresIn: Number.isFinite(expiresIn || NaN) ? Number(expiresIn) : null,
       accountId: accountId ?? null,
+      metadata: null,
     };
 
     if (connectorParam === 'metaAds' && !pendingPayload.accountId) {
@@ -774,8 +766,17 @@ export default function ConnectorsHubPage() {
           }
 
           if (accounts.length === 1) {
+            const selectedAccount = accounts[0];
             const persisted = await persistOAuthConnection(
-              { ...pendingPayload, accountId: accounts[0].id },
+              {
+                ...pendingPayload,
+                accountId: selectedAccount.id,
+                metadata: {
+                  accountName: selectedAccount.name,
+                  accountCurrency: selectedAccount.currency,
+                  accountStatus: selectedAccount.status,
+                },
+              },
               'Conector Meta Ads autenticado e conta vinculada com sucesso.'
             );
             if (persisted) {
@@ -830,8 +831,18 @@ export default function ConnectorsHubPage() {
           }
 
           if (accounts.length === 1) {
+            const selectedAccount = accounts[0];
             const persisted = await persistOAuthConnection(
-              { ...pendingPayload, accountId: accounts[0].id },
+              {
+                ...pendingPayload,
+                accountId: selectedAccount.id,
+                metadata: {
+                  accountName: selectedAccount.name,
+                  username: selectedAccount.username,
+                  pageName: selectedAccount.pageName,
+                  pageId: selectedAccount.pageId,
+                },
+              },
               'Conector Instagram autenticado e conta vinculada com sucesso.'
             );
             if (persisted) {
@@ -901,20 +912,6 @@ export default function ConnectorsHubPage() {
     };
   }, []);
 
-  const connectedCount = useMemo(
-    () => CONNECTOR_ITEMS.filter((item) => isConnectorActive(item, connectorStatus)).length,
-    [connectorStatus]
-  );
-
-  const estimatedRevenueLabel = useMemo(() => {
-    const activeImpact = CONNECTOR_ITEMS.filter((item) => isConnectorActive(item, connectorStatus)).map((item) => item.impactLabel);
-    if (activeImpact.length >= 4) return 'R$ 6,24 mi / mês';
-    if (activeImpact.length === 3) return 'R$ 4,29 mi / mês';
-    if (activeImpact.length === 2) return 'R$ 2,73 mi / mês';
-    if (activeImpact.length === 1) return 'R$ 1,28 mi / mês';
-    return 'R$ 0 / mês';
-  }, [connectorStatus]);
-
   const profileConnections = useMemo(() => {
     const profileRecord = (profile as Record<string, unknown> | null) ?? null;
     return (readRecord(profileRecord?.connections) as Record<string, ConnectorConnection | null | undefined> | null) ?? null;
@@ -958,6 +955,31 @@ export default function ConnectorsHubPage() {
     }
     return latest;
   }, [profileConnections]);
+
+  const getConnectorAccountLabel = useCallback(
+    (item: UiConnector, isActive: boolean): string => {
+      if (!item.connectorKey) return 'Canal em implantação';
+      if (!isActive) return 'Não autenticada';
+
+      const connectionKey = CONNECTOR_CONNECTION_KEYS[item.connectorKey];
+      const connection = profileConnections?.[connectionKey] ?? null;
+      if (!connection) return 'Conta autenticada';
+
+      const metadata = readRecord(connection.metadata);
+      const accountName =
+        readString(metadata?.accountName) ||
+        readString(metadata?.name) ||
+        readString(metadata?.username) ||
+        readString(metadata?.pageName);
+      const accountId = readString(connection.accountId);
+
+      if (accountName && accountId) return `${accountName} (${accountId})`;
+      if (accountName) return accountName;
+      if (accountId) return accountId;
+      return 'Conta autenticada';
+    },
+    [profileConnections]
+  );
 
   const healthTone = useMemo(() => getHealthTone(healthScore), [healthScore]);
 
@@ -1013,11 +1035,23 @@ export default function ConnectorsHubPage() {
       return;
     }
 
+    const selectedAccount = metaAdsAccounts.find((account) => account.id === selectedMetaAdsAccountId);
+
     setMetaAdsSelectionSaving(true);
     setConnectorBusyKey('metaAds');
 
     const persisted = await persistOAuthConnection(
-      { ...pendingMetaAdsConnection, accountId: selectedMetaAdsAccountId },
+      {
+        ...pendingMetaAdsConnection,
+        accountId: selectedMetaAdsAccountId,
+        metadata: selectedAccount
+          ? {
+              accountName: selectedAccount.name,
+              accountCurrency: selectedAccount.currency,
+              accountStatus: selectedAccount.status,
+            }
+          : pendingMetaAdsConnection.metadata ?? null,
+      },
       'Conta Meta Ads vinculada com sucesso.'
     );
 
@@ -1036,11 +1070,24 @@ export default function ConnectorsHubPage() {
       return;
     }
 
+    const selectedAccount = instagramAccounts.find((account) => account.id === selectedInstagramAccountId);
+
     setInstagramSelectionSaving(true);
     setConnectorBusyKey('instagram');
 
     const persisted = await persistOAuthConnection(
-      { ...pendingInstagramConnection, accountId: selectedInstagramAccountId },
+      {
+        ...pendingInstagramConnection,
+        accountId: selectedInstagramAccountId,
+        metadata: selectedAccount
+          ? {
+              accountName: selectedAccount.name,
+              username: selectedAccount.username,
+              pageName: selectedAccount.pageName,
+              pageId: selectedAccount.pageId,
+            }
+          : pendingInstagramConnection.metadata ?? null,
+      },
       'Conta do Instagram vinculada com sucesso.'
     );
 
@@ -1067,13 +1114,18 @@ export default function ConnectorsHubPage() {
     setConnectorBusyKey(null);
   };
 
-  const handleConnectorMenuAction = async (item: UiConnector, isActive: boolean, action: 'details' | 'docs' | 'copy-id' | 'toggle') => {
+  const handleConnectorMenuAction = async (
+    item: UiConnector,
+    isActive: boolean,
+    action: 'details' | 'docs' | 'change-account' | 'disconnect'
+  ) => {
     setOpenConnectorMenuId(null);
 
     if (action === 'details') {
+      const accountLabel = getConnectorAccountLabel(item, isActive);
       setConnectorError(null);
       setConnectorFeedback(
-        `${item.title}: ${isActive ? 'conector ativo' : 'conector pendente'} • impacto estimado ${item.impactLabel}.`
+        `${item.title}: ${isActive ? 'conector ativo' : 'conector pendente'} • conta sincronizada: ${accountLabel}.`
       );
       return;
     }
@@ -1084,31 +1136,32 @@ export default function ConnectorsHubPage() {
       return;
     }
 
-    if (action === 'copy-id') {
-      try {
-        await navigator.clipboard.writeText(item.id);
-        setConnectorError(null);
-        setConnectorFeedback(`ID técnico copiado: ${item.id}`);
-      } catch {
-        setConnectorFeedback(null);
-        setConnectorError('Não foi possível copiar o ID técnico deste conector.');
-      }
-      return;
-    }
-
-    if (action === 'toggle') {
+    if (action === 'change-account') {
       if (!item.connectorKey) {
         setConnectorError(null);
         setConnectorFeedback(`${item.title}: canal em fase de implantação nesta versão do Hub.`);
         return;
       }
 
-      if (isActive) {
-        await handleDisconnect(item.connectorKey);
+      await handleConnect(item.connectorKey);
+      return;
+    }
+
+    if (action === 'disconnect') {
+      if (!item.connectorKey) {
+        setConnectorError(null);
+        setConnectorFeedback(`${item.title}: canal em fase de implantação nesta versão do Hub.`);
         return;
       }
 
-      await handleConnect(item.connectorKey);
+      if (!isActive) {
+        setConnectorError(null);
+        setConnectorFeedback(`${item.title}: conector já está desconectado.`);
+        return;
+      }
+
+      await handleDisconnect(item.connectorKey);
+      return;
     }
   };
 
@@ -1216,6 +1269,7 @@ export default function ConnectorsHubPage() {
                     {visibleConnectors.map((item) => {
                       const isActive = isConnectorActive(item, connectorStatus);
                       const isBusy = item.connectorKey ? connectorBusyKey === item.connectorKey : false;
+                      const accountLabel = getConnectorAccountLabel(item, isActive);
                       return (
                         <article
                           key={item.id}
@@ -1248,9 +1302,8 @@ export default function ConnectorsHubPage() {
                                 Última sincronização <span className="ml-2 font-semibold text-[#0F172A]">{isActive ? item.lastSyncLabelWhenActive : 'Nunca sincronizado'}</span>
                               </p>
                               <p className="mt-1 flex items-center gap-2 text-[#64748B]">
-                                Impacto estimado
-                                <Info className="h-4 w-4 text-[#94A3B8]" />
-                                <span className="font-semibold text-[#12B76A]">{item.impactLabel}</span>
+                                Conta sincronizada
+                                <span className="font-semibold text-[#0F172A]">{accountLabel}</span>
                               </p>
                             </div>
                           </div>
@@ -1320,25 +1373,21 @@ export default function ConnectorsHubPage() {
                                   </button>
                                   <button
                                     type="button"
-                                    onClick={() => void handleConnectorMenuAction(item, isActive, 'copy-id')}
+                                    onClick={() => void handleConnectorMenuAction(item, isActive, 'change-account')}
                                     className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
                                     role="menuitem"
                                   >
-                                    <Copy className="h-4 w-4 text-[#64748B]" />
-                                    Copiar ID técnico
+                                    <Link2 className="h-4 w-4 text-[#64748B]" />
+                                    Alterar conta
                                   </button>
                                   <button
                                     type="button"
-                                    onClick={() => void handleConnectorMenuAction(item, isActive, 'toggle')}
+                                    onClick={() => void handleConnectorMenuAction(item, isActive, 'disconnect')}
                                     className="mt-1 flex w-full items-center gap-2 rounded-xl border border-[#FFD9BD] bg-[#FFF5EC] px-3 py-2 text-left text-[14px] font-semibold text-[#FF7A00] transition-colors hover:bg-[#FFEEDF]"
                                     role="menuitem"
                                   >
                                     <Link2 className="h-4 w-4" />
-                                    {!item.connectorKey
-                                      ? 'Canal em implantação'
-                                      : isActive
-                                        ? 'Desconectar conector'
-                                        : 'Conectar conector'}
+                                    Desconectar
                                   </button>
                                 </div>
                               ) : null}
@@ -1349,28 +1398,6 @@ export default function ConnectorsHubPage() {
                     })}
                   </div>
                 </div>
-
-                <section className="mt-4 grid grid-cols-1 gap-3 rounded-2xl border border-[#243041] bg-[#0F172A] p-4 shadow-[0_12px_24px_rgba(2,6,23,0.35)] md:grid-cols-4">
-                  <div>
-                    <p className="text-[13px] text-[#9CB3D1]">Conectores ativos</p>
-                    <p className="mt-1 text-[30px] font-black text-[#F8FAFC]">{connectedCount} <span className="text-[16px] font-semibold text-[#9CB3D1]">de {CONNECTOR_ITEMS.length}</span></p>
-                  </div>
-                  <div>
-                    <p className="text-[13px] text-[#9CB3D1]">Impacto em receita rastreada</p>
-                    <p className="mt-1 text-[28px] font-black text-[#F8FAFC]">{estimatedRevenueLabel}</p>
-                    <p className="mt-1 text-[13px] text-[#4ADE80]">+18,7% vs. mês anterior</p>
-                  </div>
-                  <div>
-                    <p className="text-[13px] text-[#9CB3D1]">Dados sincronizados (24h)</p>
-                    <p className="mt-1 text-[28px] font-black text-[#F8FAFC]">1,2 mi</p>
-                    <p className="mt-1 text-[13px] text-[#4ADE80]">+12,4% vs. 24h anteriores</p>
-                  </div>
-                  <div>
-                    <p className="text-[13px] text-[#9CB3D1]">Taxa de sucesso (24h)</p>
-                    <p className="mt-1 text-[28px] font-black text-[#F8FAFC]">99,2%</p>
-                    <p className="mt-1 text-[13px] text-[#4ADE80]">Excelente</p>
-                  </div>
-                </section>
 
                 {pendingMetaAdsConnection && metaAdsAccounts.length > 0 && (
                   <section className="mt-4 rounded-2xl border border-[#FED7AA] bg-[#FFF7ED] p-4">

@@ -19,3 +19,186 @@
 [browser] Image with src "/images/tools/gerador_criativos.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [browser] Image with src "/images/tools/analise_viral.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
 [browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/tools/gerador_copies.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] The final argument passed to useEffect changed size between renders. The order and size of this array must remain constant.
+
+Previous: [/hub/conectores, [object Object], , [object Object]]
+Incoming: [()=>{
+            setPendingMetaAdsConnection(null);
+            setMetaAdsAccounts([]);
+            setSelectedMetaAdsAccountId('');
+            setMetaAdsSelectionSaving(false);
+        }, /hub/conectores, async (payload, successMessage)=>{
+            if (!user) return false;
+            const now = Date.now();
+            const connectionKey = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$connectors$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CONNECTOR_CONNECTION_KEYS"][payload.connector];
+            setConnectorStatus({
+                "ConnectorsHubPage.useCallback[persistOAuthConnection]": (prev)=>{
+                    const nextStatus = {
+                        ...prev,
+                        [payload.connector]: true
+                    };
+                    const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+                    window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
+                    return nextStatus;
+                }
+            }["ConnectorsHubPage.useCallback[persistOAuthConnection]"]);
+            try {
+                const db = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getFirebaseDb"])();
+                const userRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$common$2d$7a7519be$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__a6__as__doc$3e$__["doc"])(db, 'users', user.uid);
+                await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["setDoc"])(userRef, {
+                    connections: {
+                        [connectionKey]: {
+                            isActive: true,
+                            provider: payload.provider ?? null,
+                            accountId: payload.accountId ?? null,
+                            accessToken: payload.accessToken,
+                            refreshToken: payload.refreshToken ?? null,
+                            expiresIn: Number.isFinite(payload.expiresIn || NaN) ? payload.expiresIn : null,
+                            expiresAt: Number.isFinite(payload.expiresIn || NaN) ? now + Number(payload.expiresIn) * 1000 : null,
+                            connectedAt: now,
+                            updatedAt: now
+                        }
+                    },
+                    updatedAt: now
+                }, {
+                    merge: true
+                });
+                setConnectorFeedback(successMessage);
+                setConnectorError(null);
+                return true;
+            } catch (saveError) {
+                console.warn('Falha ao persistir conexão OAuth:', saveError);
+                setConnectorFeedback(null);
+                setConnectorError('Conexão concluída, mas não foi possível salvar no banco.');
+                return false;
+            }
+        }, [object Object], , [object Object]] 
+    at ConnectorsHubPage (src/components/hub/ConnectorsHubPage.tsx:663:12)
+    at Set.forEach (<anonymous>)
+  661 |   }, [profile, user]);
+  662 |
+> 663 |   useEffect(() => {
+      |            ^
+  664 |     if (!user) return;
+  665 |
+  666 |     const success = searchParams.get('connector_auth_success'); (src/components/hub/ConnectorsHubPage.tsx:663:12)
+[browser] The final argument passed to useEffect changed size between renders. The order and size of this array must remain constant.
+
+Previous: [()=>{
+            setPendingMetaAdsConnection(null);
+            setMetaAdsAccounts([]);
+            setSelectedMetaAdsAccountId('');
+            setMetaAdsSelectionSaving(false);
+        }, /hub/conectores, async (payload, successMessage)=>{
+            if (!user) return false;
+            const now = Date.now();
+            const connectionKey = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$connectors$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CONNECTOR_CONNECTION_KEYS"][payload.connector];
+            setConnectorStatus({
+                "ConnectorsHubPage.useCallback[persistOAuthConnection]": (prev)=>{
+                    const nextStatus = {
+                        ...prev,
+                        [payload.connector]: true
+                    };
+                    const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+                    window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
+                    return nextStatus;
+                }
+            }["ConnectorsHubPage.useCallback[persistOAuthConnection]"]);
+            try {
+                const db = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getFirebaseDb"])();
+                const userRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$common$2d$7a7519be$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__a6__as__doc$3e$__["doc"])(db, 'users', user.uid);
+                await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["setDoc"])(userRef, {
+                    connections: {
+                        [connectionKey]: {
+                            isActive: true,
+                            provider: payload.provider ?? null,
+                            accountId: payload.accountId ?? null,
+                            accessToken: payload.accessToken,
+                            refreshToken: payload.refreshToken ?? null,
+                            expiresIn: Number.isFinite(payload.expiresIn || NaN) ? payload.expiresIn : null,
+                            expiresAt: Number.isFinite(payload.expiresIn || NaN) ? now + Number(payload.expiresIn) * 1000 : null,
+                            connectedAt: now,
+                            updatedAt: now
+                        }
+                    },
+                    updatedAt: now
+                }, {
+                    merge: true
+                });
+                setConnectorFeedback(successMessage);
+                setConnectorError(null);
+                return true;
+            } catch (saveError) {
+                console.warn('Falha ao persistir conexão OAuth:', saveError);
+                setConnectorFeedback(null);
+                setConnectorError('Conexão concluída, mas não foi possível salvar no banco.');
+                return false;
+            }
+        }, [object Object], , [object Object]]
+Incoming: [()=>{
+            setPendingInstagramConnection(null);
+            setInstagramAccounts([]);
+            setSelectedInstagramAccountId('');
+            setInstagramSelectionSaving(false);
+        }, ()=>{
+            setPendingMetaAdsConnection(null);
+            setMetaAdsAccounts([]);
+            setSelectedMetaAdsAccountId('');
+            setMetaAdsSelectionSaving(false);
+        }, /hub/conectores, async (payload, successMessage)=>{
+            if (!user) return false;
+            const now = Date.now();
+            const connectionKey = __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$connectors$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["CONNECTOR_CONNECTION_KEYS"][payload.connector];
+            setConnectorStatus({
+                "ConnectorsHubPage.useCallback[persistOAuthConnection]": (prev)=>{
+                    const nextStatus = {
+                        ...prev,
+                        [payload.connector]: true
+                    };
+                    const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+                    window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
+                    return nextStatus;
+                }
+            }["ConnectorsHubPage.useCallback[persistOAuthConnection]"]);
+            try {
+                const db = (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$firebase$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["getFirebaseDb"])();
+                const userRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$common$2d$7a7519be$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__a6__as__doc$3e$__["doc"])(db, 'users', user.uid);
+                await (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f40$firebase$2f$firestore$2f$dist$2f$index$2e$esm$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$locals$3e$__["setDoc"])(userRef, {
+                    connections: {
+                        [connectionKey]: {
+                            isActive: true,
+                            provider: payload.provider ?? null,
+                            accountId: payload.accountId ?? null,
+                            accessToken: payload.accessToken,
+                            refreshToken: payload.refreshToken ?? null,
+                            expiresIn: Number.isFinite(payload.expiresIn || NaN) ? payload.expiresIn : null,
+                            expiresAt: Number.isFinite(payload.expiresIn || NaN) ? now + Number(payload.expiresIn) * 1000 : null,
+                            connectedAt: now,
+                            updatedAt: now
+                        }
+                    },
+                    updatedAt: now
+                }, {
+                    merge: true
+                });
+                setConnectorFeedback(successMessage);
+                setConnectorError(null);
+                return true;
+            } catch (saveError) {
+                console.warn('Falha ao persistir conexão OAuth:', saveError);
+                setConnectorFeedback(null);
+                setConnectorError('Conexão concluída, mas não foi possível salvar no banco.');
+                return false;
+            }
+        }, [object Object], , [object Object]] 
+    at ConnectorsHubPage (src/components/hub/ConnectorsHubPage.tsx:688:12)
+    at Set.forEach (<anonymous>)
+  686 |   }, [profile, user]);
+  687 |
+> 688 |   useEffect(() => {
+      |            ^
+  689 |     if (!user) return;
+  690 |
+  691 |     const success = searchParams.get('connector_auth_success'); (src/components/hub/ConnectorsHubPage.tsx:688:12)
