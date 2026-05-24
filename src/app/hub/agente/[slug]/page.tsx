@@ -559,15 +559,13 @@ export default function AgentEntryPage() {
   }
 
   return (
-    <main className="agent-page-button-corners flex flex-col min-h-screen bg-bg-main">
+    <main
+      className="agent-page-button-corners flex flex-col min-h-screen bg-bg-main bg-top bg-repeat-y bg-[length:100%_auto]"
+      style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
+    >
       <Navbar />
 
-      <div className="flex-grow pt-20 md:pt-28 relative overflow-hidden">
-        <div
-          className="absolute inset-0 pointer-events-none bg-top bg-repeat-y bg-[length:100%_auto]"
-          style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
-        />
-
+      <div className="flex-grow pt-20 md:pt-28 relative">
         <div className="relative z-10 wrap py-8 md:py-12">
           {!agent || !entry ? (
             <div className="max-w-3xl mx-auto rounded-3xl border border-border bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)] p-8 md:p-10">
@@ -1283,10 +1281,7 @@ export default function AgentEntryPage() {
         </div>
       )}
 
-      <div
-        className="[&>footer]:!bg-transparent [&>footer]:!backdrop-blur-none bg-top bg-repeat-y bg-[length:100%_auto]"
-        style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
-      >
+      <div className="[&>footer]:!bg-transparent [&>footer]:!backdrop-blur-none">
         <Footer />
       </div>
       <LuccaHubSupportWidget />
