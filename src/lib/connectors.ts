@@ -1,5 +1,6 @@
 export type ConnectorStatus = {
   googleAds: boolean;
+  googleTrends: boolean;
   metaAds: boolean;
   instagram: boolean;
   linkedinAds: boolean;
@@ -36,6 +37,7 @@ export type ConnectorConnection = {
 
 export const DEFAULT_CONNECTOR_STATUS: ConnectorStatus = {
   googleAds: false,
+  googleTrends: false,
   metaAds: false,
   instagram: false,
   linkedinAds: false,
@@ -48,6 +50,7 @@ export const DEFAULT_CONNECTOR_STATUS: ConnectorStatus = {
 
 export const CONNECTOR_DEFINITIONS: ConnectorDefinition[] = [
   { key: 'googleAds', name: 'Google Ads API', source: 'Mídia paga', required: true, usedBy: 'ROAS, CAC, alertas de campanha' },
+  { key: 'googleTrends', name: 'Google Trends', source: 'Inteligência de demanda', required: false, usedBy: 'Tendências de busca e pauta sazonal' },
   { key: 'metaAds', name: 'Meta Ads API', source: 'Mídia paga', required: true, usedBy: 'CPL, CPA, desperdício e variações' },
   { key: 'instagram', name: 'Instagram Graph API', source: 'Atendimento e conteúdo', required: false, usedBy: 'Sinais de engajamento, perfil e inteligência de conteúdo' },
   { key: 'linkedinAds', name: 'LinkedIn Ads API', source: 'Mídia paga B2B', required: true, usedBy: 'CPL B2B, qualidade de lead e CAC por conta' },
@@ -60,6 +63,7 @@ export const CONNECTOR_DEFINITIONS: ConnectorDefinition[] = [
 
 export const CONNECTOR_CONNECTION_KEYS: Record<ConnectorKey, string> = {
   googleAds: 'google_ads',
+  googleTrends: 'google_trends',
   metaAds: 'meta_ads',
   instagram: 'instagram',
   linkedinAds: 'linkedin_ads',

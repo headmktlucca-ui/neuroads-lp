@@ -167,11 +167,12 @@ const CONNECTOR_ITEMS: UiConnector[] = [
   },
   {
     id: 'googleTrends',
+    connectorKey: 'googleTrends',
     title: 'Google Trends',
     description: 'Capte tendências de busca para ajustar pauta, criativos e oferta com antecedência.',
     category: 'marketing',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
-    isLiveConnector: false,
+    isLiveConnector: true,
   },
   {
     id: 'linkedinPage',
@@ -226,6 +227,7 @@ const CATEGORY_LABELS: Record<UiCategory | 'todos', string> = {
 
 const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
   googleAds: 'google',
+  googleTrends: 'google',
   metaAds: 'meta',
   instagram: 'meta',
   linkedinAds: 'linkedin',
@@ -275,6 +277,16 @@ function getConnectorOAuthHref(connectorKey: ConnectorKey, provider?: string) {
   });
   if (provider) params.set('provider', provider);
   return `/api/auth/connectors/${connectorKey}/start?${params.toString()}`;
+}
+
+async function parseJsonOrThrow<T>(response: Response, defaultErrorMessage: string): Promise<T> {
+  const raw = await response.text();
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    const statusLabel = response.status ? ` (${response.status})` : '';
+    throw new Error(`${defaultErrorMessage}${statusLabel}`);
+  }
 }
 
 function formatLastSyncLabel(timestamp: number | null): string {
@@ -594,6 +606,10 @@ export default function ConnectorsHubPage() {
   const [ga4Accounts, setGa4Accounts] = useState<Ga4AccountOption[]>([]);
   const [selectedGa4AccountId, setSelectedGa4AccountId] = useState('');
   const [ga4SelectionSaving, setGa4SelectionSaving] = useState(false);
+  const [pendingGoogleTrendsConnection, setPendingGoogleTrendsConnection] = useState<PendingOAuthConnection | null>(null);
+  const [googleTrendsAccounts, setGoogleTrendsAccounts] = useState<Ga4AccountOption[]>([]);
+  const [selectedGoogleTrendsAccountId, setSelectedGoogleTrendsAccountId] = useState('');
+  const [googleTrendsSelectionSaving, setGoogleTrendsSelectionSaving] = useState(false);
   const [openConnectorMenuId, setOpenConnectorMenuId] = useState<UiConnectorId | null>(null);
   const [activeFilter, setActiveFilter] = useState<UiCategory | 'todos'>('todos');
   const [sortMode, setSortMode] = useState<'az'>('az');
@@ -630,6 +646,13 @@ export default function ConnectorsHubPage() {
     setGa4Accounts([]);
     setSelectedGa4AccountId('');
     setGa4SelectionSaving(false);
+  }, []);
+
+  const clearPendingGoogleTrendsSelection = useCallback(() => {
+    setPendingGoogleTrendsConnection(null);
+    setGoogleTrendsAccounts([]);
+    setSelectedGoogleTrendsAccountId('');
+    setGoogleTrendsSelectionSaving(false);
   }, []);
 
   const persistOAuthConnection = useCallback(
@@ -766,6 +789,7 @@ export default function ConnectorsHubPage() {
       clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
       clearPendingGa4Selection();
+      clearPendingGoogleTrendsSelection();
       clearConnectorQueryParams();
       return;
     }
@@ -777,6 +801,7 @@ export default function ConnectorsHubPage() {
       clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
       clearPendingGa4Selection();
+      clearPendingGoogleTrendsSelection();
       clearConnectorQueryParams();
       return;
     }
@@ -795,17 +820,51 @@ export default function ConnectorsHubPage() {
       const hydrateGoogleAdsAccounts = async () => {
         try {
           setConnectorBusyKey('googleAds');
-          const response = await fetch('/api/auth/connectors/googleAds/accounts', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ accessToken }),
-          });
-          const payload = (await response.json()) as { accounts?: GoogleAdsAccountOption[]; error?: string };
+          const endpointCandidates = [
+            '/api/auth/connectors/google-ads/accounts',
+            '/api/auth/connectors/googleAds/accounts',
+          ];
 
-          if (!response.ok) {
-            throw new Error(payload.error || 'Não foi possível listar as contas do Google Ads.');
+          let payload: { accounts?: GoogleAdsAccountOption[]; error?: string } | null = null;
+          let responseOk = false;
+          let lastErrorMessage = '';
+
+          for (const endpoint of endpointCandidates) {
+            try {
+              const response = await fetch(endpoint, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ accessToken }),
+              });
+
+              const parsed = await parseJsonOrThrow<{ accounts?: GoogleAdsAccountOption[]; error?: string }>(
+                response,
+                'Falha ao processar a resposta de contas do Google Ads.'
+              );
+
+              if (response.ok) {
+                payload = parsed;
+                responseOk = true;
+                break;
+              }
+
+              lastErrorMessage = parsed.error || '';
+              if (response.status !== 404) {
+                payload = parsed;
+                break;
+              }
+            } catch (candidateError) {
+              lastErrorMessage =
+                candidateError instanceof Error
+                  ? candidateError.message
+                  : 'Falha ao processar a resposta de contas do Google Ads.';
+            }
+          }
+
+          if (!responseOk || !payload) {
+            throw new Error(lastErrorMessage || 'Não foi possível listar as contas do Google Ads.');
           }
 
           const accounts = Array.isArray(payload.accounts) ? payload.accounts : [];
@@ -1052,12 +1111,79 @@ export default function ConnectorsHubPage() {
       return;
     }
 
+    if (connectorParam === 'googleTrends' && !pendingPayload.accountId) {
+      const hydrateGoogleTrendsAccounts = async () => {
+        try {
+          setConnectorBusyKey('googleTrends');
+          const response = await fetch('/api/auth/connectors/googleTrends/accounts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ accessToken }),
+          });
+          const payload = (await response.json()) as { accounts?: Ga4AccountOption[]; error?: string };
+
+          if (!response.ok) {
+            throw new Error(payload.error || 'Não foi possível listar as contas do Google Trends.');
+          }
+
+          const accounts = Array.isArray(payload.accounts) ? payload.accounts : [];
+          if (accounts.length === 0) {
+            clearPendingGoogleTrendsSelection();
+            setConnectorFeedback(null);
+            setConnectorError('Autenticação concluída, mas nenhuma conta Google disponível foi encontrada para o canal.');
+            return;
+          }
+
+          if (accounts.length === 1) {
+            const selectedAccount = accounts[0];
+            const persisted = await persistOAuthConnection(
+              {
+                ...pendingPayload,
+                accountId: selectedAccount.accountId,
+                metadata: {
+                  accountName: selectedAccount.name,
+                },
+              },
+              'Conector Google Trends autenticado e conta vinculada com sucesso.'
+            );
+            if (persisted) {
+              clearPendingGoogleTrendsSelection();
+            }
+            return;
+          }
+
+          setPendingGoogleTrendsConnection(pendingPayload);
+          setGoogleTrendsAccounts(accounts);
+          setSelectedGoogleTrendsAccountId(accounts[0].accountId);
+          setConnectorError(null);
+          setConnectorFeedback('Autenticação concluída. Selecione a conta Google para finalizar o Google Trends.');
+        } catch (googleTrendsError) {
+          const message =
+            googleTrendsError instanceof Error
+              ? googleTrendsError.message
+              : 'Falha ao carregar contas do Google Trends.';
+          clearPendingGoogleTrendsSelection();
+          setConnectorFeedback(null);
+          setConnectorError(message);
+        } finally {
+          setConnectorBusyKey(null);
+          clearConnectorQueryParams();
+        }
+      };
+
+      void hydrateGoogleTrendsAccounts();
+      return;
+    }
+
     const upsertConnection = async () => {
       await persistOAuthConnection(pendingPayload, 'Conector autenticado e salvo com sucesso.');
       clearPendingMetaAdsSelection();
       clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
       clearPendingGa4Selection();
+      clearPendingGoogleTrendsSelection();
       clearConnectorQueryParams();
     };
 
@@ -1065,6 +1191,7 @@ export default function ConnectorsHubPage() {
   }, [
     clearPendingGa4Selection,
     clearPendingGoogleAdsSelection,
+    clearPendingGoogleTrendsSelection,
     clearPendingInstagramSelection,
     clearPendingMetaAdsSelection,
     pathname,
@@ -1227,6 +1354,14 @@ export default function ConnectorsHubPage() {
       pendingGa4Connection &&
       ga4Accounts.length > 0
   );
+  const showGoogleTrendsSelectionModal = Boolean(
+    !showGoogleAdsSelectionModal &&
+      !showMetaAdsSelectionModal &&
+      !showInstagramSelectionModal &&
+      !showGa4SelectionModal &&
+      pendingGoogleTrendsConnection &&
+      googleTrendsAccounts.length > 0
+  );
 
   const handleDisconnect = async (connectorKey: ConnectorKey) => {
     if (!user) return;
@@ -1241,6 +1376,9 @@ export default function ConnectorsHubPage() {
     }
     if (connectorKey === 'ga4') {
       clearPendingGa4Selection();
+    }
+    if (connectorKey === 'googleTrends') {
+      clearPendingGoogleTrendsSelection();
     }
     setConnectorBusyKey(connectorKey);
     setConnectorError(null);
@@ -1420,6 +1558,39 @@ export default function ConnectorsHubPage() {
     }
 
     setGa4SelectionSaving(false);
+    setConnectorBusyKey(null);
+  };
+
+  const handleGoogleTrendsAccountSelection = async () => {
+    if (!pendingGoogleTrendsConnection || !selectedGoogleTrendsAccountId) {
+      setConnectorError('Selecione uma conta Google para continuar.');
+      setConnectorFeedback(null);
+      return;
+    }
+
+    const selectedAccount = googleTrendsAccounts.find((account) => account.accountId === selectedGoogleTrendsAccountId);
+
+    setGoogleTrendsSelectionSaving(true);
+    setConnectorBusyKey('googleTrends');
+
+    const persisted = await persistOAuthConnection(
+      {
+        ...pendingGoogleTrendsConnection,
+        accountId: selectedGoogleTrendsAccountId,
+        metadata: selectedAccount
+          ? {
+              accountName: selectedAccount.name,
+            }
+          : pendingGoogleTrendsConnection.metadata ?? null,
+      },
+      'Conta Google Trends vinculada com sucesso.'
+    );
+
+    if (persisted) {
+      clearPendingGoogleTrendsSelection();
+    }
+
+    setGoogleTrendsSelectionSaving(false);
     setConnectorBusyKey(null);
   };
 
@@ -2049,6 +2220,44 @@ export default function ConnectorsHubPage() {
                 className="inline-flex h-11 items-center justify-center rounded-xl bg-[#1D4ED8] px-5 text-[14px] font-black text-white transition hover:bg-[#1E40AF] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {ga4SelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {showGoogleTrendsSelectionModal && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+          <section className="relative z-[1201] w-full max-w-5xl rounded-2xl border border-[#86EFAC] bg-[#F0FDF4] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
+            <p className="text-[22px] font-black text-[#166534]">Selecione a conta Google para concluir o Google Trends</p>
+            <p className="mt-2 text-[18px] text-[#166534]">
+              A autenticação foi concluída. Agora escolha qual conta Google deve ser usada no canal Google Trends.
+            </p>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#166534]">
+                Conta Google
+                <select
+                  value={selectedGoogleTrendsAccountId}
+                  onChange={(event) => setSelectedGoogleTrendsAccountId(event.target.value)}
+                  className="h-11 rounded-xl border border-[#86EFAC] bg-white px-3 text-[14px] font-semibold text-[#14532D] outline-none focus:border-[#22C55E]"
+                >
+                  {googleTrendsAccounts.map((account) => (
+                    <option key={account.id} value={account.accountId}>
+                      {account.name} ({account.accountId})
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <button
+                type="button"
+                onClick={() => void handleGoogleTrendsAccountSelection()}
+                disabled={!selectedGoogleTrendsAccountId || googleTrendsSelectionSaving}
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#16A34A] px-5 text-[14px] font-black text-white transition hover:bg-[#15803D] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {googleTrendsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
               </button>
             </div>
           </section>

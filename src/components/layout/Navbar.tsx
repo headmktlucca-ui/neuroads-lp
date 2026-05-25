@@ -115,6 +115,15 @@ const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string
       'Conecte com um usuário que tenha permissão de leitura na propriedade GA4.',
     ],
   },
+  googleTrends: {
+    title: 'Google Trends',
+    steps: [
+      'Ative o fluxo OAuth Google no mesmo projeto usado pelos conectores GA4/Google Ads.',
+      'Adicione os Redirect URIs exatos: https://neuroads.com.br/api/auth/connectors/googleTrends/callback e http://localhost:3000/api/auth/connectors/googleTrends/callback.',
+      'Conecte com um usuário Google que tenha as contas que serão usadas para leitura de tendências.',
+      'Durante o login, selecione a conta correta quando o Google exibir múltiplas contas.',
+    ],
+  },
   serverTracking: {
     title: 'GTM Server + CAPI',
     steps: [
@@ -178,6 +187,7 @@ const PLAN_AGENT_CAPACITY: Record<string, number> = {
 const ACCOUNT_DELETE_FLAG_PREFIX = 'neuroads_account_delete_in_progress_';
 const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
   googleAds: 'google',
+  googleTrends: 'google',
   metaAds: 'meta',
   instagram: 'meta',
   linkedinAds: 'linkedin',
@@ -1777,7 +1787,7 @@ export default function Navbar() {
                         <p className="text-xs text-text-muted">Visão única de todas as integrações essenciais.</p>
                       </div>
                       <span className="rounded-full border border-[#E4EAF2] bg-[#F8FAFC] px-2.5 py-1 text-[10px] font-black text-[#475467]">
-                        8 canais
+                        {CONNECTOR_DEFINITIONS.length} canais
                       </span>
                     </div>
                     <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
