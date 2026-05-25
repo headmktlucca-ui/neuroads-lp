@@ -82,6 +82,12 @@ type PendingOAuthConnection = {
   metadata?: Record<string, unknown> | null;
 };
 
+type InlineConnectorNotice = {
+  connectorId: UiConnectorId;
+  message: string;
+  tone: 'info' | 'success' | 'error';
+};
+
 const CONNECTOR_ITEMS: UiConnector[] = [
   {
     id: 'crm',
@@ -554,6 +560,8 @@ export default function ConnectorsHubPage() {
   const [connectorBusyKey, setConnectorBusyKey] = useState<ConnectorKey | null>(null);
   const [connectorFeedback, setConnectorFeedback] = useState<string | null>(null);
   const [connectorError, setConnectorError] = useState<string | null>(null);
+  const [inlineConnectorNotice, setInlineConnectorNotice] = useState<InlineConnectorNotice | null>(null);
+  const [connectorSyncOverrides, setConnectorSyncOverrides] = useState<Partial<Record<ConnectorKey, number>>>({});
   const [pendingMetaAdsConnection, setPendingMetaAdsConnection] = useState<PendingOAuthConnection | null>(null);
   const [metaAdsAccounts, setMetaAdsAccounts] = useState<MetaAdsAccountOption[]>([]);
   const [selectedMetaAdsAccountId, setSelectedMetaAdsAccountId] = useState('');
@@ -938,9 +946,16 @@ export default function ConnectorsHubPage() {
   }, [activeTrackedConnectorCount, trackedConnectorCount]);
 
   const latestSyncTimestamp = useMemo(() => {
-    if (!profileConnections) return null;
-
     let latest: number | null = null;
+
+    for (const value of Object.values(connectorSyncOverrides)) {
+      if (typeof value === 'number' && Number.isFinite(value)) {
+        latest = latest == null ? value : Math.max(latest, value);
+      }
+    }
+
+    if (!profileConnections) return latest;
+
     for (const connection of Object.values(profileConnections)) {
       if (!connection) continue;
       const candidate =
@@ -954,7 +969,7 @@ export default function ConnectorsHubPage() {
       }
     }
     return latest;
-  }, [profileConnections]);
+  }, [connectorSyncOverrides, profileConnections]);
 
   const getConnectorAccountLabel = useCallback(
     (item: UiConnector, isActive: boolean): string => {
@@ -981,6 +996,33 @@ export default function ConnectorsHubPage() {
     [profileConnections]
   );
 
+  const getConnectorLastSyncLabel = useCallback(
+    (item: UiConnector, isActive: boolean): string => {
+      if (!item.connectorKey || !isActive) return 'Nunca sincronizado';
+
+      const overrideTs = connectorSyncOverrides[item.connectorKey];
+      if (typeof overrideTs === 'number' && Number.isFinite(overrideTs)) {
+        return formatLastSyncLabel(overrideTs);
+      }
+
+      const connectionKey = CONNECTOR_CONNECTION_KEYS[item.connectorKey];
+      const connection = profileConnections?.[connectionKey] ?? null;
+      const syncTs =
+        connection && typeof connection.updatedAt === 'number'
+          ? connection.updatedAt
+          : connection && typeof connection.connectedAt === 'number'
+            ? connection.connectedAt
+            : null;
+
+      if (syncTs != null && Number.isFinite(syncTs)) {
+        return formatLastSyncLabel(syncTs);
+      }
+
+      return item.lastSyncLabelWhenActive;
+    },
+    [connectorSyncOverrides, profileConnections]
+  );
+
   const healthTone = useMemo(() => getHealthTone(healthScore), [healthScore]);
   const showMetaAdsSelectionModal = Boolean(pendingMetaAdsConnection && metaAdsAccounts.length > 0);
   const showInstagramSelectionModal = Boolean(
@@ -998,6 +1040,7 @@ export default function ConnectorsHubPage() {
     setConnectorBusyKey(connectorKey);
     setConnectorError(null);
     setConnectorFeedback(null);
+    setInlineConnectorNotice(null);
 
     setConnectorStatus((prev) => {
       const nextStatus = { ...prev, [connectorKey]: false };
@@ -1108,6 +1151,7 @@ export default function ConnectorsHubPage() {
     setConnectorBusyKey(connectorKey);
     setConnectorError(null);
     setConnectorFeedback(null);
+    setInlineConnectorNotice(null);
 
     const oauthProvider = OAUTH_CONNECTOR_PROVIDERS[connectorKey];
     if (oauthProvider) {
@@ -1116,6 +1160,62 @@ export default function ConnectorsHubPage() {
     }
 
     setConnectorBusyKey(null);
+  };
+
+  const handleSync = async (item: UiConnector) => {
+    if (!user || !item.connectorKey) return;
+
+    const connectorKey = item.connectorKey;
+    const connectionKey = CONNECTOR_CONNECTION_KEYS[connectorKey];
+    const now = Date.now();
+
+    setConnectorBusyKey(connectorKey);
+    setConnectorError(null);
+    setConnectorFeedback(null);
+    setInlineConnectorNotice(null);
+
+    try {
+      const db = getFirebaseDb();
+      const userRef = doc(db, 'users', user.uid);
+
+      await setDoc(
+        userRef,
+        {
+          connections: {
+            [connectionKey]: {
+              isActive: true,
+              updatedAt: now,
+            },
+          },
+          updatedAt: now,
+        },
+        { merge: true }
+      );
+
+      setConnectorStatus((prev) => {
+        const nextStatus = { ...prev, [connectorKey]: true };
+        const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+        window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
+        return nextStatus;
+      });
+
+      setConnectorSyncOverrides((prev) => ({ ...prev, [connectorKey]: now }));
+      setInlineConnectorNotice({
+        connectorId: item.id,
+        message: `${item.title}: sincronização executada com sucesso.`,
+        tone: 'success',
+      });
+    } catch (syncError) {
+      console.warn('Falha ao sincronizar conector:', syncError);
+      setInlineConnectorNotice({
+        connectorId: item.id,
+        message: `${item.title}: não foi possível sincronizar agora.`,
+        tone: 'error',
+      });
+      setConnectorError('Não foi possível sincronizar o conector no banco.');
+    } finally {
+      setConnectorBusyKey(null);
+    }
   };
 
   const handleConnectorMenuAction = async (
@@ -1127,10 +1227,11 @@ export default function ConnectorsHubPage() {
 
     if (action === 'details') {
       const accountLabel = getConnectorAccountLabel(item, isActive);
-      setConnectorError(null);
-      setConnectorFeedback(
-        `${item.title}: ${isActive ? 'conector ativo' : 'conector pendente'} • conta sincronizada: ${accountLabel}.`
-      );
+      setInlineConnectorNotice({
+        connectorId: item.id,
+        message: `${item.title}: ${isActive ? 'conector ativo' : 'conector pendente'} • conta sincronizada: ${accountLabel}.`,
+        tone: 'info',
+      });
       return;
     }
 
@@ -1142,8 +1243,11 @@ export default function ConnectorsHubPage() {
 
     if (action === 'change-account') {
       if (!item.connectorKey) {
-        setConnectorError(null);
-        setConnectorFeedback(`${item.title}: canal em fase de implantação nesta versão do Hub.`);
+        setInlineConnectorNotice({
+          connectorId: item.id,
+          message: `${item.title}: canal em fase de implantação nesta versão do Hub.`,
+          tone: 'success',
+        });
         return;
       }
 
@@ -1153,14 +1257,20 @@ export default function ConnectorsHubPage() {
 
     if (action === 'disconnect') {
       if (!item.connectorKey) {
-        setConnectorError(null);
-        setConnectorFeedback(`${item.title}: canal em fase de implantação nesta versão do Hub.`);
+        setInlineConnectorNotice({
+          connectorId: item.id,
+          message: `${item.title}: canal em fase de implantação nesta versão do Hub.`,
+          tone: 'success',
+        });
         return;
       }
 
       if (!isActive) {
-        setConnectorError(null);
-        setConnectorFeedback(`${item.title}: conector já está desconectado.`);
+        setInlineConnectorNotice({
+          connectorId: item.id,
+          message: `${item.title}: conector já está desconectado.`,
+          tone: 'info',
+        });
         return;
       }
 
@@ -1274,6 +1384,7 @@ export default function ConnectorsHubPage() {
                       const isActive = isConnectorActive(item, connectorStatus);
                       const isBusy = item.connectorKey ? connectorBusyKey === item.connectorKey : false;
                       const accountLabel = getConnectorAccountLabel(item, isActive);
+                      const cardNotice = inlineConnectorNotice?.connectorId === item.id ? inlineConnectorNotice : null;
                       return (
                         <article
                           key={item.id}
@@ -1303,7 +1414,7 @@ export default function ConnectorsHubPage() {
 
                             <div className="mt-2 border-t border-[#E2E8F0] pt-2 text-[13px] text-[#64748B]">
                               <p>
-                                Última sincronização <span className="ml-2 font-semibold text-[#0F172A]">{isActive ? item.lastSyncLabelWhenActive : 'Nunca sincronizado'}</span>
+                                Última sincronização <span className="ml-2 font-semibold text-[#0F172A]">{getConnectorLastSyncLabel(item, isActive)}</span>
                               </p>
                               <p className="mt-1 flex items-center gap-2 text-[#64748B]">
                                 Conta sincronizada
@@ -1312,90 +1423,108 @@ export default function ConnectorsHubPage() {
                             </div>
                           </div>
 
-                          <div className="flex items-center gap-2">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                if (!item.connectorKey) {
-                                  setConnectorFeedback(`${item.title}: canal em fase de implantação nesta versão do Hub.`);
-                                  setConnectorError(null);
-                                  return;
-                                }
-                                if (isActive) {
-                                  void handleDisconnect(item.connectorKey);
-                                  return;
-                                }
-                                void handleConnect(item.connectorKey);
-                              }}
-                              disabled={Boolean(isBusy)}
-                              className={`inline-flex h-12 items-center gap-2 rounded-[12px] px-4 text-[13px] font-black tracking-wide transition disabled:opacity-60 ${
-                                isActive
-                                  ? 'border border-[#FFD4B2] bg-[#FFF8F2] text-[#F97316] hover:bg-[#FFF1E6]'
-                                  : 'border border-[#FF7A00] bg-[#FF7A00] text-white shadow-[0_10px_20px_rgba(255,122,0,0.24)] hover:bg-[#E56B00]'
-                              }`}
-                            >
-                              <RefreshCw className={`h-4 w-4 ${isBusy ? 'animate-spin' : ''}`} />
-                              {!item.connectorKey ? 'Em implantação' : isActive ? 'Sincronizar' : 'Configurar'}
-                            </button>
-                            <div className="relative" data-connector-menu-root>
+                          <div className="flex min-w-[220px] flex-col items-stretch gap-2">
+                            <div className="flex items-center gap-2">
                               <button
                                 type="button"
-                                onClick={() =>
-                                  setOpenConnectorMenuId((current) => (current === item.id ? null : item.id))
-                                }
-                                className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#DDE3F2] bg-white text-[#64748B] transition hover:text-[#0F172A]"
-                                aria-label={`Mais ações para ${item.title}`}
-                                aria-expanded={openConnectorMenuId === item.id}
-                                aria-haspopup="menu"
+                                onClick={() => {
+                                  if (!item.connectorKey) {
+                                    setInlineConnectorNotice({
+                                      connectorId: item.id,
+                                      message: `${item.title}: canal em fase de implantação nesta versão do Hub.`,
+                                      tone: 'success',
+                                    });
+                                    return;
+                                  }
+                                  if (isActive) {
+                                    void handleSync(item);
+                                    return;
+                                  }
+                                  void handleConnect(item.connectorKey);
+                                }}
+                                disabled={Boolean(isBusy)}
+                                className={`inline-flex h-12 items-center gap-2 rounded-[12px] px-4 text-[13px] font-black tracking-wide transition disabled:opacity-60 ${
+                                  isActive
+                                    ? 'border border-[#FFD4B2] bg-[#FFF8F2] text-[#F97316] hover:bg-[#FFF1E6]'
+                                    : 'border border-[#FF7A00] bg-[#FF7A00] text-white shadow-[0_10px_20px_rgba(255,122,0,0.24)] hover:bg-[#E56B00]'
+                                }`}
                               >
-                                <EllipsisVertical className="h-4 w-4" />
+                                <RefreshCw className={`h-4 w-4 ${isBusy ? 'animate-spin' : ''}`} />
+                                {!item.connectorKey ? 'Em implantação' : isActive ? 'Sincronizar' : 'Configurar'}
                               </button>
-
-                              {openConnectorMenuId === item.id ? (
-                                <div
-                                  className="absolute right-0 top-11 z-20 w-56 rounded-2xl border border-[#E7EAF0] bg-white p-2 shadow-[0_14px_30px_rgba(15,23,42,0.12)]"
-                                  role="menu"
-                                  aria-label={`Ações para ${item.title}`}
+                              <div className="relative" data-connector-menu-root>
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setOpenConnectorMenuId((current) => (current === item.id ? null : item.id))
+                                  }
+                                  className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#DDE3F2] bg-white text-[#64748B] transition hover:text-[#0F172A]"
+                                  aria-label={`Mais ações para ${item.title}`}
+                                  aria-expanded={openConnectorMenuId === item.id}
+                                  aria-haspopup="menu"
                                 >
-                                  <button
-                                    type="button"
-                                    onClick={() => void handleConnectorMenuAction(item, isActive, 'details')}
-                                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
-                                    role="menuitem"
+                                  <EllipsisVertical className="h-4 w-4" />
+                                </button>
+
+                                {openConnectorMenuId === item.id ? (
+                                  <div
+                                    className="absolute right-0 top-11 z-20 w-56 rounded-2xl border border-[#E7EAF0] bg-white p-2 shadow-[0_14px_30px_rgba(15,23,42,0.12)]"
+                                    role="menu"
+                                    aria-label={`Ações para ${item.title}`}
                                   >
-                                    <Info className="h-4 w-4 text-[#64748B]" />
-                                    Ver detalhes
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => void handleConnectorMenuAction(item, isActive, 'docs')}
-                                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
-                                    role="menuitem"
-                                  >
-                                    <BookOpenText className="h-4 w-4 text-[#64748B]" />
-                                    Documentação oficial
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => void handleConnectorMenuAction(item, isActive, 'change-account')}
-                                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
-                                    role="menuitem"
-                                  >
-                                    <Link2 className="h-4 w-4 text-[#64748B]" />
-                                    Alterar conta
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => void handleConnectorMenuAction(item, isActive, 'disconnect')}
-                                    className="mt-1 flex w-full items-center gap-2 rounded-xl border border-[#FFD9BD] bg-[#FFF5EC] px-3 py-2 text-left text-[14px] font-semibold text-[#FF7A00] transition-colors hover:bg-[#FFEEDF]"
-                                    role="menuitem"
-                                  >
-                                    <Link2 className="h-4 w-4" />
-                                    Desconectar
-                                  </button>
-                                </div>
-                              ) : null}
+                                    <button
+                                      type="button"
+                                      onClick={() => void handleConnectorMenuAction(item, isActive, 'details')}
+                                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
+                                      role="menuitem"
+                                    >
+                                      <Info className="h-4 w-4 text-[#64748B]" />
+                                      Ver detalhes
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => void handleConnectorMenuAction(item, isActive, 'docs')}
+                                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
+                                      role="menuitem"
+                                    >
+                                      <BookOpenText className="h-4 w-4 text-[#64748B]" />
+                                      Documentação oficial
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => void handleConnectorMenuAction(item, isActive, 'change-account')}
+                                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
+                                      role="menuitem"
+                                    >
+                                      <Link2 className="h-4 w-4 text-[#64748B]" />
+                                      Alterar conta
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => void handleConnectorMenuAction(item, isActive, 'disconnect')}
+                                      className="mt-1 flex w-full items-center gap-2 rounded-xl border border-[#FFD9BD] bg-[#FFF5EC] px-3 py-2 text-left text-[14px] font-semibold text-[#FF7A00] transition-colors hover:bg-[#FFEEDF]"
+                                      role="menuitem"
+                                    >
+                                      <Link2 className="h-4 w-4" />
+                                      Desconectar
+                                    </button>
+                                  </div>
+                                ) : null}
+                              </div>
                             </div>
+                            {cardNotice ? (
+                              <div
+                                className={`rounded-[12px] border px-3 py-2 text-[13px] font-semibold ${
+                                  cardNotice.tone === 'error'
+                                    ? 'border-[#FFD8D8] bg-[#FFF5F5] text-[#EF4444]'
+                                    : cardNotice.tone === 'success'
+                                      ? 'border-[#BFE7CF] bg-[#F1FCF6] text-[#0F9D58]'
+                                      : 'border-[#DDE3F2] bg-[#F8FAFC] text-[#334155]'
+                                }`}
+                              >
+                                {cardNotice.message}
+                              </div>
+                            ) : null}
                           </div>
                         </article>
                       );
