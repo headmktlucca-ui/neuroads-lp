@@ -72,6 +72,8 @@ const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string
     title: 'Google Ads API',
     steps: [
       'Crie um app OAuth no Google Cloud e ative a Google Ads API.',
+      'Adicione os Redirect URIs exatos: https://neuroads.com.br/api/auth/connectors/googleAds/callback e http://localhost:3000/api/auth/connectors/googleAds/callback.',
+      'Se o fluxo legado ainda estiver em uso (ex.: alguns agentes), também adicione: https://neuroads.com.br/api/auth/google-ads/callback e http://localhost:3000/api/auth/google-ads/callback.',
       'Preencha GOOGLE_OAUTH_CLIENT_ID e GOOGLE_OAUTH_CLIENT_SECRET no ambiente.',
       'Clique em Conectar e autorize a conta de mídia usada na operação.',
     ],
@@ -109,7 +111,7 @@ const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string
     title: 'GA4 Data API',
     steps: [
       'Ative a Google Analytics Data API no mesmo projeto OAuth do Google.',
-      'Garanta o redirect URI /api/auth/connectors/ga4/callback no app OAuth.',
+      'Adicione os Redirect URIs exatos: https://neuroads.com.br/api/auth/connectors/ga4/callback e http://localhost:3000/api/auth/connectors/ga4/callback.',
       'Conecte com um usuário que tenha permissão de leitura na propriedade GA4.',
     ],
   },
