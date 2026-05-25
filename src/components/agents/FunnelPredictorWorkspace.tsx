@@ -312,7 +312,6 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
     (Object.keys(hydrated) as ChannelKey[]).forEach((key) => {
       hydrated[key].isActive =
         hydrated[key].oauthConnected &&
-        hydrated[key].isActive &&
         Boolean(hydrated[key].accountId.trim());
     });
 
@@ -750,7 +749,7 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
           <section className="rounded-2xl border border-[#E4EAF2] bg-[#FBFCFF] p-5">
             <h3 className="text-sm font-black text-text-main">1. Inteligência integrada multicanal</h3>
             <p className="mt-1 text-sm text-text-muted">
-              Esta página apenas valida status. Ative ou reative conexões exclusivamente na janela <strong>Conectores</strong>. As demais fontes (CRM, WhatsApp, E-mail, LP, BI, ERP) entram no radar como próximas integrações estratégicas.
+              Esta página valida status e extrai apenas dos canais ativos. Ative ou reative conexões exclusivamente na janela <strong>Conectores</strong>. As demais fontes (CRM, WhatsApp, E-mail, LP, BI, ERP) entram no radar como próximas integrações estratégicas.
             </p>
 
             <div className="mt-3 flex flex-wrap gap-2">

@@ -374,3 +374,16 @@ Creating turbopack project {
  GET /hub/conectores 200 in 1519ms (next.js: 706ms, application-code: 814ms)
 ✓ Compiled in 755ms
 ✓ Compiled in 304ms
+ GET / 200 in 842ms (next.js: 424ms, application-code: 419ms)
+ GET / 200 in 141ms (next.js: 7ms, application-code: 134ms)
+Hostinger Reach: contato sincronizado com sucesso. { message: 'Request accepted' }
+ POST / 200 in 531ms (next.js: 6ms, application-code: 525ms)
+  └─ ƒ syncToHostingerReach({"email":"headmktlucca@gmail.com","name":"Lucca","tags":["Usuários Ativos"]}) in 495ms src/app/actions/hostinger.ts
+ GET /login 200 in 161ms (next.js: 80ms, application-code: 82ms)
+ GET /onboarding?next=%2Fhub 200 in 179ms (next.js: 146ms, application-code: 33ms)
+ GET / 200 in 124ms (next.js: 4ms, application-code: 121ms)
+ GET /login 200 in 62ms (next.js: 4ms, application-code: 58ms)
+ GET /onboarding?next=%2Fhub 200 in 32ms (next.js: 5ms, application-code: 27ms)
+ GET / 200 in 138ms (next.js: 6ms, application-code: 132ms)
+ POST /api/stripe/checkout 200 in 971ms (next.js: 142ms, application-code: 829ms)
+ GET /?canceled=true 200 in 132ms (next.js: 5ms, application-code: 128ms)

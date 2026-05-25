@@ -100,6 +100,7 @@ const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string
     title: 'LinkedIn Ads API',
     steps: [
       'Crie um app no LinkedIn Developer Portal com permissão de Ads Reporting.',
+      'Configure o redirect URI: https://neuroads.com.br/api/auth/connectors/linkedinAds/callback (e localhost para testes).',
       'Configure LINKEDIN_CLIENT_ID e LINKEDIN_CLIENT_SECRET no ambiente.',
       'Autorize o app usando um usuário com acesso às contas de anúncio B2B.',
     ],

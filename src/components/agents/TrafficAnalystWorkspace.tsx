@@ -145,7 +145,6 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
     (Object.keys(hydrated) as ChannelKey[]).forEach((key) => {
       hydrated[key].isActive =
         hydrated[key].oauthConnected &&
-        hydrated[key].isActive &&
         Boolean(hydrated[key].accountId.trim());
     });
 
@@ -252,9 +251,9 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
           <h2 className="text-sm uppercase tracking-widest text-primary font-bold">Área de implantação</h2>
 
           <section className="rounded-2xl border border-[#E4EAF2] bg-[#FBFCFF] p-5">
-            <h3 className="text-sm font-black text-text-main">1. Canais obrigatórios para extração</h3>
+            <h3 className="text-sm font-black text-text-main">1. Canais disponíveis para extração</h3>
             <p className="mt-1 text-sm text-text-muted">
-              Esta página apenas valida status. Ative ou reative conexões exclusivamente na janela <strong>Conectores</strong>.
+              Esta página valida status e extrai apenas dos canais ativos. Ative ou reative conexões exclusivamente na janela <strong>Conectores</strong>.
             </p>
 
             <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-3">
