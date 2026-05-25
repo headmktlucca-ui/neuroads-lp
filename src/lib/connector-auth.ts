@@ -5,11 +5,14 @@ export type ConnectorProvider =
   | 'google'
   | 'meta'
   | 'linkedin'
+  | 'rdstation'
+  | 'tiktok'
+  | 'tiktokAds'
   | 'hubspot'
   | 'stripe'
   | 'bigquery';
 
-type TokenExchangeStyle = 'form-post' | 'meta-get' | 'stripe-post';
+type TokenExchangeStyle = 'form-post' | 'meta-get' | 'stripe-post' | 'json-post';
 
 type ConnectorProviderConfig = {
   provider: ConnectorProvider;
@@ -18,7 +21,15 @@ type ConnectorProviderConfig = {
   scope: string;
   clientIdEnvKeys: string[];
   clientSecretEnvKeys: string[];
+  authUrlEnvKeys?: string[];
+  tokenUrlEnvKeys?: string[];
+  scopeEnvKeys?: string[];
   authExtraParams?: Record<string, string>;
+  authClientIdParamName?: string;
+  tokenClientIdParamName?: string;
+  tokenClientSecretParamName?: string;
+  tokenCodeParamName?: string;
+  tokenRefreshTokenParamName?: string;
   tokenExchangeStyle: TokenExchangeStyle;
 };
 
@@ -148,6 +159,119 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
       },
     ],
   },
+  linkedinPage: {
+    connector: 'linkedinPage',
+    defaultProvider: 'linkedin',
+    providers: [
+      {
+        provider: 'linkedin',
+        authUrl: 'https://www.linkedin.com/oauth/v2/authorization',
+        tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
+        scope: 'r_liteprofile r_emailaddress rw_organization_admin r_organization_social',
+        scopeEnvKeys: ['LINKEDIN_PAGE_SCOPE'],
+        clientIdEnvKeys: ['LINKEDIN_PAGE_CLIENT_ID', 'LINKEDIN_ADS_CLIENT_ID', 'LINKEDIN_CLIENT_ID'],
+        clientSecretEnvKeys: ['LINKEDIN_PAGE_CLIENT_SECRET', 'LINKEDIN_ADS_CLIENT_SECRET', 'LINKEDIN_CLIENT_SECRET'],
+        tokenExchangeStyle: 'form-post',
+      },
+    ],
+  },
+  rdStation: {
+    connector: 'rdStation',
+    defaultProvider: 'rdstation',
+    providers: [
+      {
+        provider: 'rdstation',
+        authUrl: 'https://api.rd.services/auth/dialog',
+        tokenUrl: 'https://api.rd.services/auth/token?token_by=code',
+        scope: 'full',
+        authUrlEnvKeys: ['RD_STATION_CRM_AUTH_URL'],
+        tokenUrlEnvKeys: ['RD_STATION_CRM_TOKEN_URL'],
+        scopeEnvKeys: ['RD_STATION_CRM_SCOPE'],
+        clientIdEnvKeys: ['RD_STATION_CRM_CLIENT_ID', 'RD_STATION_CLIENT_ID', 'RDSTATION_CLIENT_ID'],
+        clientSecretEnvKeys: ['RD_STATION_CRM_CLIENT_SECRET', 'RD_STATION_CLIENT_SECRET', 'RDSTATION_CLIENT_SECRET'],
+        tokenExchangeStyle: 'json-post',
+      },
+    ],
+  },
+  rdStationMarketing: {
+    connector: 'rdStationMarketing',
+    defaultProvider: 'rdstation',
+    providers: [
+      {
+        provider: 'rdstation',
+        authUrl: 'https://api.rd.services/auth/dialog',
+        tokenUrl: 'https://api.rd.services/auth/token?token_by=code',
+        scope: 'full',
+        authUrlEnvKeys: ['RD_STATION_MARKETING_AUTH_URL'],
+        tokenUrlEnvKeys: ['RD_STATION_MARKETING_TOKEN_URL'],
+        scopeEnvKeys: ['RD_STATION_MARKETING_SCOPE'],
+        clientIdEnvKeys: ['RD_STATION_MARKETING_CLIENT_ID', 'RD_STATION_CLIENT_ID', 'RDSTATION_CLIENT_ID'],
+        clientSecretEnvKeys: ['RD_STATION_MARKETING_CLIENT_SECRET', 'RD_STATION_CLIENT_SECRET', 'RDSTATION_CLIENT_SECRET'],
+        tokenExchangeStyle: 'json-post',
+      },
+    ],
+  },
+  rdStationConversas: {
+    connector: 'rdStationConversas',
+    defaultProvider: 'rdstation',
+    providers: [
+      {
+        provider: 'rdstation',
+        authUrl: 'https://api.rd.services/auth/dialog',
+        tokenUrl: 'https://api.rd.services/auth/token?token_by=code',
+        scope: 'full',
+        authUrlEnvKeys: ['RD_STATION_CONVERSAS_AUTH_URL'],
+        tokenUrlEnvKeys: ['RD_STATION_CONVERSAS_TOKEN_URL'],
+        scopeEnvKeys: ['RD_STATION_CONVERSAS_SCOPE'],
+        clientIdEnvKeys: ['RD_STATION_CONVERSAS_CLIENT_ID', 'RD_STATION_CLIENT_ID', 'RDSTATION_CLIENT_ID'],
+        clientSecretEnvKeys: ['RD_STATION_CONVERSAS_CLIENT_SECRET', 'RD_STATION_CLIENT_SECRET', 'RDSTATION_CLIENT_SECRET'],
+        tokenExchangeStyle: 'json-post',
+      },
+    ],
+  },
+  tiktok: {
+    connector: 'tiktok',
+    defaultProvider: 'tiktok',
+    providers: [
+      {
+        provider: 'tiktok',
+        authUrl: 'https://www.tiktok.com/v2/auth/authorize/',
+        tokenUrl: 'https://open.tiktokapis.com/v2/oauth/token/',
+        scope: 'user.info.basic',
+        authUrlEnvKeys: ['TIKTOK_AUTH_URL'],
+        tokenUrlEnvKeys: ['TIKTOK_TOKEN_URL'],
+        scopeEnvKeys: ['TIKTOK_SCOPE'],
+        clientIdEnvKeys: ['TIKTOK_CLIENT_KEY', 'TIKTOK_CLIENT_ID'],
+        clientSecretEnvKeys: ['TIKTOK_CLIENT_SECRET'],
+        authClientIdParamName: 'client_key',
+        tokenClientIdParamName: 'client_key',
+        tokenClientSecretParamName: 'client_secret',
+        tokenExchangeStyle: 'form-post',
+      },
+    ],
+  },
+  tiktokAds: {
+    connector: 'tiktokAds',
+    defaultProvider: 'tiktokAds',
+    providers: [
+      {
+        provider: 'tiktokAds',
+        authUrl: 'https://ads.tiktok.com/marketing_api/auth/',
+        tokenUrl: 'https://business-api.tiktok.com/open_api/v1.3/oauth2/access_token/',
+        scope: 'user.info.basic',
+        authUrlEnvKeys: ['TIKTOK_ADS_AUTH_URL'],
+        tokenUrlEnvKeys: ['TIKTOK_ADS_TOKEN_URL'],
+        scopeEnvKeys: ['TIKTOK_ADS_SCOPE'],
+        clientIdEnvKeys: ['TIKTOK_ADS_APP_ID', 'TIKTOK_ADS_CLIENT_ID', 'TIKTOK_APP_ID'],
+        clientSecretEnvKeys: ['TIKTOK_ADS_SECRET', 'TIKTOK_ADS_CLIENT_SECRET', 'TIKTOK_APP_SECRET'],
+        authClientIdParamName: 'app_id',
+        tokenClientIdParamName: 'app_id',
+        tokenClientSecretParamName: 'secret',
+        tokenCodeParamName: 'auth_code',
+        tokenExchangeStyle: 'json-post',
+      },
+    ],
+  },
   ga4: {
     connector: 'ga4',
     defaultProvider: 'google',
@@ -227,6 +351,18 @@ function getEnvValue(envKeys: string[]): string | null {
     if (value) return value;
   }
   return null;
+}
+
+function getResolvedProviderAuthUrl(providerConfig: ConnectorProviderConfig): string {
+  return getEnvValue(providerConfig.authUrlEnvKeys ?? []) || providerConfig.authUrl;
+}
+
+function getResolvedProviderTokenUrl(providerConfig: ConnectorProviderConfig): string {
+  return getEnvValue(providerConfig.tokenUrlEnvKeys ?? []) || providerConfig.tokenUrl;
+}
+
+function getResolvedProviderScope(providerConfig: ConnectorProviderConfig): string {
+  return getEnvValue(providerConfig.scopeEnvKeys ?? []) || providerConfig.scope;
 }
 
 function toBase64Url(value: string): string {
@@ -364,9 +500,17 @@ export function buildOAuthAuthorizationUrl(
 
   const clientId = getEnvValue(providerConfig.clientIdEnvKeys);
   const clientSecret = getEnvValue(providerConfig.clientSecretEnvKeys);
+  const resolvedAuthUrl = getResolvedProviderAuthUrl(providerConfig).trim();
+  const resolvedScope = getResolvedProviderScope(providerConfig).trim();
   const missingEnv: string[] = [];
   if (!clientId) missingEnv.push(providerConfig.clientIdEnvKeys.join(' | '));
   if (!clientSecret) missingEnv.push(providerConfig.clientSecretEnvKeys.join(' | '));
+  if (!resolvedAuthUrl && providerConfig.authUrlEnvKeys?.length) {
+    missingEnv.push(providerConfig.authUrlEnvKeys.join(' | '));
+  }
+  if (!resolvedScope && providerConfig.scopeEnvKeys?.length) {
+    missingEnv.push(providerConfig.scopeEnvKeys.join(' | '));
+  }
   if (missingEnv.length > 0) {
     return {
       error: `Credenciais OAuth ausentes para ${providerConfig.provider}.`,
@@ -382,20 +526,23 @@ export function buildOAuthAuthorizationUrl(
 
   const callbackUrl = buildCallbackUrl(connector, options?.appBaseUrl);
   const state = createAuthState(connector, providerConfig.provider, next);
+  const authClientIdParamName = providerConfig.authClientIdParamName || 'client_id';
   const params = new URLSearchParams({
     response_type: 'code',
-    client_id: clientId,
+    [authClientIdParamName]: clientId,
     redirect_uri: callbackUrl,
     state,
-    scope: providerConfig.scope,
   });
+  if (resolvedScope) {
+    params.set('scope', resolvedScope);
+  }
 
   Object.entries(providerConfig.authExtraParams ?? {}).forEach(([key, value]) => {
     params.set(key, value);
   });
 
   return {
-    url: `${providerConfig.authUrl}?${params.toString()}`,
+    url: `${resolvedAuthUrl}?${params.toString()}`,
     provider: providerConfig.provider,
   };
 }
@@ -416,11 +563,19 @@ export async function exchangeOAuthCodeForToken(args: {
   if (!clientId || !clientSecret) {
     throw new Error(`Credenciais OAuth ausentes para ${args.provider}.`);
   }
+  const resolvedTokenUrl = getResolvedProviderTokenUrl(providerConfig).trim();
+  if (!resolvedTokenUrl) {
+    throw new Error(`Token URL não configurada para ${args.provider}.`);
+  }
 
   const callbackUrl = buildCallbackUrl(args.connector, args.appBaseUrl);
+  const tokenClientIdParamName = providerConfig.tokenClientIdParamName || 'client_id';
+  const tokenClientSecretParamName = providerConfig.tokenClientSecretParamName || 'client_secret';
+  const tokenCodeParamName = providerConfig.tokenCodeParamName || 'code';
+  const tokenRefreshTokenParamName = providerConfig.tokenRefreshTokenParamName || 'refresh_token';
 
   if (providerConfig.tokenExchangeStyle === 'meta-get') {
-    const tokenUrl = new URL(providerConfig.tokenUrl);
+    const tokenUrl = new URL(resolvedTokenUrl);
     tokenUrl.searchParams.set('client_id', clientId);
     tokenUrl.searchParams.set('client_secret', clientSecret);
     tokenUrl.searchParams.set('redirect_uri', callbackUrl);
@@ -443,7 +598,7 @@ export async function exchangeOAuthCodeForToken(args: {
       code: args.code,
       client_secret: clientSecret,
     });
-    const response = await fetch(providerConfig.tokenUrl, {
+    const response = await fetch(resolvedTokenUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -468,14 +623,51 @@ export async function exchangeOAuthCodeForToken(args: {
     };
   }
 
+  if (providerConfig.tokenExchangeStyle === 'json-post') {
+    const jsonPayload: Record<string, string> = {
+      grant_type: 'authorization_code',
+      [tokenCodeParamName]: args.code,
+      redirect_uri: callbackUrl,
+      [tokenClientIdParamName]: clientId,
+      [tokenClientSecretParamName]: clientSecret,
+      [tokenRefreshTokenParamName]: '',
+    };
+    delete jsonPayload[tokenRefreshTokenParamName];
+
+    const response = await fetch(resolvedTokenUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(jsonPayload),
+    });
+    const payload = (await response.json()) as Record<string, unknown>;
+    if (!response.ok || !payload.access_token) {
+      throw new Error(extractErrorMessage(payload, 'Falha ao trocar código OAuth por token.'));
+    }
+
+    return {
+      accessToken: String(payload.access_token),
+      refreshToken: typeof payload.refresh_token === 'string' ? payload.refresh_token : undefined,
+      expiresIn: Number(payload.expires_in || 0) || undefined,
+      accountId:
+        typeof payload.account_id === 'string'
+          ? payload.account_id
+          : typeof payload.advertiser_id === 'string'
+            ? payload.advertiser_id
+            : undefined,
+      raw: payload,
+    };
+  }
+
   const body = new URLSearchParams({
     grant_type: 'authorization_code',
-    code: args.code,
+    [tokenCodeParamName]: args.code,
     redirect_uri: callbackUrl,
-    client_id: clientId,
-    client_secret: clientSecret,
+    [tokenClientIdParamName]: clientId,
+    [tokenClientSecretParamName]: clientSecret,
   });
-  const response = await fetch(providerConfig.tokenUrl, {
+  const response = await fetch(resolvedTokenUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',

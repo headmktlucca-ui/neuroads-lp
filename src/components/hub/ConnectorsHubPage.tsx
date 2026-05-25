@@ -104,6 +104,8 @@ type InlineConnectorNotice = {
   tone: 'info' | 'success' | 'error';
 };
 
+type RdTokenConnectorKey = 'rdStation' | 'rdStationMarketing';
+
 const CONNECTOR_ITEMS: UiConnector[] = [
   {
     id: 'crm',
@@ -116,27 +118,30 @@ const CONNECTOR_ITEMS: UiConnector[] = [
   },
   {
     id: 'rdStation',
+    connectorKey: 'rdStation',
     title: 'RD Station CRM',
     description: 'Centralize contatos, empresas e estágios do pipeline para acelerar repasse e previsibilidade comercial.',
     category: 'vendas',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
-    isLiveConnector: false,
+    isLiveConnector: true,
   },
   {
     id: 'rdStationMarketing',
+    connectorKey: 'rdStationMarketing',
     title: 'RD Station Marketing',
     description: 'Conecte formulários, campanhas e automações para elevar a qualificação de leads com dados reais.',
     category: 'marketing',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
-    isLiveConnector: false,
+    isLiveConnector: true,
   },
   {
     id: 'rdStationConversas',
+    connectorKey: 'rdStationConversas',
     title: 'RD Station Conversas',
     description: 'Integre WhatsApp e canais de atendimento para dar escala ao time comercial sem perder contexto.',
     category: 'atendimento',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
-    isLiveConnector: false,
+    isLiveConnector: true,
   },
   {
     id: 'googleAds',
@@ -176,11 +181,12 @@ const CONNECTOR_ITEMS: UiConnector[] = [
   },
   {
     id: 'linkedinPage',
+    connectorKey: 'linkedinPage',
     title: 'LinkedIn Page',
     description: 'Acompanhe conteúdo orgânico, crescimento de audiência e sinais de intenção B2B.',
     category: 'atendimento',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
-    isLiveConnector: false,
+    isLiveConnector: true,
   },
   {
     id: 'linkedinAds',
@@ -202,19 +208,21 @@ const CONNECTOR_ITEMS: UiConnector[] = [
   },
   {
     id: 'tiktok',
+    connectorKey: 'tiktok',
     title: 'Tik Tok',
     description: 'Mapeie comportamento de audiência e tendências de formato para escalar criativos.',
     category: 'atendimento',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
-    isLiveConnector: false,
+    isLiveConnector: true,
   },
   {
     id: 'tiktokAds',
+    connectorKey: 'tiktokAds',
     title: 'Tik Tok Ads',
     description: 'Integre performance de mídia com custo por aquisição e receita incremental.',
     category: 'atendimento',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
-    isLiveConnector: false,
+    isLiveConnector: true,
   },
 ];
 
@@ -231,7 +239,10 @@ const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
   metaAds: 'meta',
   instagram: 'meta',
   linkedinAds: 'linkedin',
+  linkedinPage: 'linkedin',
   ga4: 'google',
+  tiktok: 'tiktok',
+  tiktokAds: 'tiktokAds',
   crm: 'hubspot',
   warehouse: 'bigquery',
 };
@@ -610,6 +621,11 @@ export default function ConnectorsHubPage() {
   const [googleTrendsAccounts, setGoogleTrendsAccounts] = useState<Ga4AccountOption[]>([]);
   const [selectedGoogleTrendsAccountId, setSelectedGoogleTrendsAccountId] = useState('');
   const [googleTrendsSelectionSaving, setGoogleTrendsSelectionSaving] = useState(false);
+  const [rdTokenModalConnector, setRdTokenModalConnector] = useState<RdTokenConnectorKey | null>(null);
+  const [rdPublicTokenInput, setRdPublicTokenInput] = useState('');
+  const [rdPrivateTokenInput, setRdPrivateTokenInput] = useState('');
+  const [rdTokenSaving, setRdTokenSaving] = useState(false);
+  const [isRdConversasWebhookModalOpen, setIsRdConversasWebhookModalOpen] = useState(false);
   const [openConnectorMenuId, setOpenConnectorMenuId] = useState<UiConnectorId | null>(null);
   const [activeFilter, setActiveFilter] = useState<UiCategory | 'todos'>('todos');
   const [sortMode, setSortMode] = useState<'az'>('az');
@@ -653,6 +669,13 @@ export default function ConnectorsHubPage() {
     setGoogleTrendsAccounts([]);
     setSelectedGoogleTrendsAccountId('');
     setGoogleTrendsSelectionSaving(false);
+  }, []);
+
+  const clearRdTokenModal = useCallback(() => {
+    setRdTokenModalConnector(null);
+    setRdPublicTokenInput('');
+    setRdPrivateTokenInput('');
+    setRdTokenSaving(false);
   }, []);
 
   const persistOAuthConnection = useCallback(
@@ -701,6 +724,59 @@ export default function ConnectorsHubPage() {
         console.warn('Falha ao persistir conexão OAuth:', saveError);
         setConnectorFeedback(null);
         setConnectorError('Conexão concluída, mas não foi possível salvar no banco.');
+        return false;
+      }
+    },
+    [user]
+  );
+
+  const persistRdTokenConnection = useCallback(
+    async (connectorKey: RdTokenConnectorKey, publicToken: string, privateToken: string) => {
+      if (!user) return false;
+
+      const now = Date.now();
+      const trimmedPublicToken = publicToken.trim();
+      const trimmedPrivateToken = privateToken.trim();
+      const connectionKey = CONNECTOR_CONNECTION_KEYS[connectorKey];
+
+      setConnectorStatus((prev) => {
+        const nextStatus = { ...prev, [connectorKey]: true };
+        const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+        window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
+        return nextStatus;
+      });
+
+      try {
+        const db = getFirebaseDb();
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(
+          userRef,
+          {
+            connections: {
+              [connectionKey]: {
+                isActive: true,
+                provider: 'rdstation-webhook',
+                accessToken: trimmedPrivateToken,
+                refreshToken: null,
+                metadata: {
+                  publicToken: trimmedPublicToken,
+                  authMode: 'public-private-token',
+                },
+                connectedAt: now,
+                updatedAt: now,
+              },
+            },
+            updatedAt: now,
+          },
+          { merge: true }
+        );
+        setConnectorError(null);
+        setConnectorFeedback('Credenciais RD Station salvas e integração ativada.');
+        return true;
+      } catch (saveError) {
+        console.warn('Falha ao persistir credenciais RD Station:', saveError);
+        setConnectorFeedback(null);
+        setConnectorError('Não foi possível salvar as credenciais RD Station no banco.');
         return false;
       }
     },
@@ -1362,6 +1438,14 @@ export default function ConnectorsHubPage() {
       pendingGoogleTrendsConnection &&
       googleTrendsAccounts.length > 0
   );
+  const rdTokenModalTitle =
+    rdTokenModalConnector === 'rdStation'
+      ? 'RD Station CRM'
+      : rdTokenModalConnector === 'rdStationMarketing'
+        ? 'RD Station Marketing'
+        : '';
+  const rdConversasWebhookUrl =
+    `${(process.env.NEXT_PUBLIC_APP_URL || 'https://neuroads.com.br').replace(/\/+$/g, '')}/api/webhooks/rd-station/conversas`;
 
   const handleDisconnect = async (connectorKey: ConnectorKey) => {
     if (!user) return;
@@ -1379,6 +1463,12 @@ export default function ConnectorsHubPage() {
     }
     if (connectorKey === 'googleTrends') {
       clearPendingGoogleTrendsSelection();
+    }
+    if (connectorKey === 'rdStation' || connectorKey === 'rdStationMarketing') {
+      clearRdTokenModal();
+    }
+    if (connectorKey === 'rdStationConversas') {
+      setIsRdConversasWebhookModalOpen(false);
     }
     setConnectorBusyKey(connectorKey);
     setConnectorError(null);
@@ -1594,12 +1684,43 @@ export default function ConnectorsHubPage() {
     setConnectorBusyKey(null);
   };
 
+  const handleSaveRdTokenConnection = async () => {
+    if (!rdTokenModalConnector) return;
+    if (!rdPublicTokenInput.trim() || !rdPrivateTokenInput.trim()) {
+      setConnectorFeedback(null);
+      setConnectorError('Preencha Token Público e Token Privado para concluir a integração RD Station.');
+      return;
+    }
+
+    setRdTokenSaving(true);
+    setConnectorBusyKey(rdTokenModalConnector);
+    const saved = await persistRdTokenConnection(rdTokenModalConnector, rdPublicTokenInput, rdPrivateTokenInput);
+    setConnectorBusyKey(null);
+    setRdTokenSaving(false);
+
+    if (saved) {
+      clearRdTokenModal();
+    }
+  };
+
   const handleConnect = async (connectorKey: ConnectorKey) => {
     if (!user) return;
     setConnectorBusyKey(connectorKey);
     setConnectorError(null);
     setConnectorFeedback(null);
     setInlineConnectorNotice(null);
+
+    if (connectorKey === 'rdStation' || connectorKey === 'rdStationMarketing') {
+      setConnectorBusyKey(null);
+      setRdTokenModalConnector(connectorKey);
+      return;
+    }
+
+    if (connectorKey === 'rdStationConversas') {
+      setConnectorBusyKey(null);
+      setIsRdConversasWebhookModalOpen(true);
+      return;
+    }
 
     const oauthProvider = OAUTH_CONNECTOR_PROVIDERS[connectorKey];
     if (oauthProvider) {
@@ -2066,6 +2187,141 @@ export default function ConnectorsHubPage() {
 
       <Footer />
       <LuccaHubSupportWidget />
+
+      {rdTokenModalConnector && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+          <section className="relative z-[1201] w-full max-w-3xl rounded-2xl border border-[#FDBA74] bg-[#FFF7ED] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
+            <p className="text-[22px] font-black text-[#9A3412]">Conectar {rdTokenModalTitle} via webhook</p>
+            <p className="mt-2 text-[16px] text-[#7C2D12]">
+              Informe os tokens da conta RD para manter a autenticação ativa no Hub. Esses dados serão salvos no seu perfil
+              de integração para sincronizações futuras.
+            </p>
+
+            <div className="mt-5 grid gap-3">
+              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#7C2D12]">
+                Token Público
+                <input
+                  type="text"
+                  value={rdPublicTokenInput}
+                  onChange={(event) => setRdPublicTokenInput(event.target.value)}
+                  className="h-11 rounded-xl border border-[#FDBA74] bg-white px-3 text-[14px] font-semibold text-[#7C2D12] outline-none focus:border-[#F97316]"
+                  placeholder="Cole o Token Público do RD Station"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#7C2D12]">
+                Token Privado
+                <input
+                  type="password"
+                  value={rdPrivateTokenInput}
+                  onChange={(event) => setRdPrivateTokenInput(event.target.value)}
+                  className="h-11 rounded-xl border border-[#FDBA74] bg-white px-3 text-[14px] font-semibold text-[#7C2D12] outline-none focus:border-[#F97316]"
+                  placeholder="Cole o Token Privado do RD Station"
+                />
+              </label>
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={clearRdTokenModal}
+                className="inline-flex h-11 items-center justify-center rounded-xl border border-[#FDBA74] bg-white px-5 text-[14px] font-bold text-[#9A3412] transition hover:bg-[#FFF1E5]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleSaveRdTokenConnection()}
+                disabled={rdTokenSaving}
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#FF7A00] px-5 text-[14px] font-black text-white transition hover:bg-[#E66E00] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {rdTokenSaving ? 'Salvando...' : 'Salvar integração'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {isRdConversasWebhookModalOpen && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+          <section className="relative z-[1201] w-full max-w-4xl rounded-2xl border border-[#BFDBFE] bg-[#EFF6FF] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
+            <p className="text-[22px] font-black text-[#1E40AF]">RD Station Conversas via webhook</p>
+            <p className="mt-2 text-[15px] text-[#1E3A8A]">
+              Configure o webhook no RD Station Conversas e depois marque como configurado para ativar o canal no Hub.
+            </p>
+            <ol className="mt-4 list-decimal space-y-2 pl-5 text-[14px] text-[#1E3A8A]">
+              <li>Acesse o painel do RD Station Conversas e abra as integrações/webhooks do workspace.</li>
+              <li>Crie um webhook com método `POST` apontando para a URL abaixo.</li>
+              <li>Garanta resposta HTTP `2xx` no teste de validação do RD.</li>
+              <li>Defina um segredo de assinatura no RD e guarde esse valor em ambiente seguro (recomendado).</li>
+            </ol>
+            <div className="mt-4 rounded-xl border border-[#93C5FD] bg-white p-3">
+              <p className="text-[12px] font-bold uppercase tracking-wide text-[#1D4ED8]">URL de webhook (NeuroAds)</p>
+              <p className="mt-1 break-all text-[14px] font-semibold text-[#1E3A8A]">{rdConversasWebhookUrl}</p>
+            </div>
+            <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setIsRdConversasWebhookModalOpen(false)}
+                className="inline-flex h-11 items-center justify-center rounded-xl border border-[#93C5FD] bg-white px-5 text-[14px] font-bold text-[#1E3A8A] transition hover:bg-[#E8F1FF]"
+              >
+                Fechar
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!user) return;
+                  const now = Date.now();
+                  const connectionKey = CONNECTOR_CONNECTION_KEYS.rdStationConversas;
+                  setConnectorBusyKey('rdStationConversas');
+                  try {
+                    const db = getFirebaseDb();
+                    const userRef = doc(db, 'users', user.uid);
+                    await setDoc(
+                      userRef,
+                      {
+                        connections: {
+                          [connectionKey]: {
+                            isActive: true,
+                            provider: 'rdstation-webhook',
+                            metadata: {
+                              authMode: 'webhook',
+                              webhookUrl: rdConversasWebhookUrl,
+                            },
+                            connectedAt: now,
+                            updatedAt: now,
+                          },
+                        },
+                        updatedAt: now,
+                      },
+                      { merge: true }
+                    );
+                    setConnectorStatus((prev) => {
+                      const nextStatus = { ...prev, rdStationConversas: true };
+                      const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+                      window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
+                      return nextStatus;
+                    });
+                    setConnectorFeedback('RD Station Conversas marcado como configurado via webhook.');
+                    setConnectorError(null);
+                    setIsRdConversasWebhookModalOpen(false);
+                  } catch (error) {
+                    console.warn('Falha ao salvar configuração do RD Station Conversas:', error);
+                    setConnectorFeedback(null);
+                    setConnectorError('Não foi possível salvar a configuração de webhook do RD Station Conversas.');
+                  } finally {
+                    setConnectorBusyKey(null);
+                  }
+                }}
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#1D4ED8] px-5 text-[14px] font-black text-white transition hover:bg-[#1E40AF]"
+              >
+                Marcar como configurado
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
 
       {showGoogleAdsSelectionModal && (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">

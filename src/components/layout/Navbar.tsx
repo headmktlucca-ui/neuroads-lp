@@ -107,6 +107,42 @@ const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string
       'Autorize o app usando um usuário com acesso às contas de anúncio B2B.',
     ],
   },
+  linkedinPage: {
+    title: 'LinkedIn Page API',
+    steps: [
+      'No LinkedIn Developer Portal, habilite produtos de Community Management para leitura/publicação em páginas.',
+      'Configure o redirect URI: https://neuroads.com.br/api/auth/connectors/linkedinPage/callback (e localhost para testes).',
+      'Configure LINKEDIN_PAGE_CLIENT_ID e LINKEDIN_PAGE_CLIENT_SECRET (ou reutilize as chaves do LinkedIn Ads).',
+      'Autorize com um usuário admin da página que será sincronizada no Hub.',
+    ],
+  },
+  rdStation: {
+    title: 'RD Station CRM API',
+    steps: [
+      'Use integração via webhook com Token Público e Token Privado (sem OAuth).',
+      'No Hub, clique em conectar e informe os dois tokens da conta RD CRM.',
+      'Os tokens serão salvos no perfil da integração para manter autenticação ativa.',
+      'Recomendado: rotacionar tokens periodicamente e atualizar no Hub.',
+    ],
+  },
+  rdStationMarketing: {
+    title: 'RD Station Marketing API',
+    steps: [
+      'Use integração via webhook com Token Público e Token Privado (sem OAuth).',
+      'No Hub, clique em conectar e informe os dois tokens da conta RD Marketing.',
+      'Os tokens ficam vinculados ao usuário para manter sincronização ativa.',
+      'Valide os eventos de webhook que devem ser enviados para a NeuroAds.',
+    ],
+  },
+  rdStationConversas: {
+    title: 'RD Station Conversas API',
+    steps: [
+      'Configure a integração via webhook no RD Station Conversas.',
+      'Use a URL de destino do Hub: https://neuroads.com.br/api/webhooks/rd-station/conversas.',
+      'Garanta método POST e resposta 2xx na validação do webhook.',
+      'Após configurar no RD, marque o canal como configurado no Hub.',
+    ],
+  },
   ga4: {
     title: 'GA4 Data API',
     steps: [
@@ -130,6 +166,24 @@ const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string
       'Valide se o container server-side está ativo e recebendo eventos.',
       'Mantenha a frequência de atualização definida para evitar atraso no dashboard.',
       'Ative este canal apenas após validar deduplicação entre web e server.',
+    ],
+  },
+  tiktok: {
+    title: 'TikTok API',
+    steps: [
+      'No TikTok for Developers, habilite Login Kit e registre o callback https://neuroads.com.br/api/auth/connectors/tiktok/callback.',
+      'Defina TIKTOK_CLIENT_KEY e TIKTOK_CLIENT_SECRET no ambiente.',
+      'Se precisar sobrescrever rotas, use TIKTOK_AUTH_URL e TIKTOK_TOKEN_URL.',
+      'Configure TIKTOK_SCOPE conforme os dados que deseja sincronizar (ex.: user.info.basic).',
+    ],
+  },
+  tiktokAds: {
+    title: 'TikTok Ads API',
+    steps: [
+      'No TikTok Ads Marketing API, libere OAuth do app para a conta anunciante.',
+      'Registre callback https://neuroads.com.br/api/auth/connectors/tiktokAds/callback.',
+      'Defina TIKTOK_ADS_APP_ID (ou TIKTOK_ADS_CLIENT_ID) e TIKTOK_ADS_SECRET (ou TIKTOK_ADS_CLIENT_SECRET).',
+      'Se necessário, sobrescreva endpoints via TIKTOK_ADS_AUTH_URL e TIKTOK_ADS_TOKEN_URL.',
     ],
   },
   crm: {
@@ -191,9 +245,12 @@ const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
   metaAds: 'meta',
   instagram: 'meta',
   linkedinAds: 'linkedin',
+  linkedinPage: 'linkedin',
   ga4: 'google',
   crm: 'hubspot',
   payments: 'stripe',
+  tiktok: 'tiktok',
+  tiktokAds: 'tiktokAds',
   warehouse: 'bigquery',
 };
 
@@ -897,6 +954,74 @@ export default function Navbar() {
     setConnectorBusyKey(connectorKey);
     setConnectorError(null);
     setConnectorFeedback(null);
+
+    if (connectorKey === 'rdStation' || connectorKey === 'rdStationMarketing') {
+      const publicToken = window.prompt(
+        `${connectorKey === 'rdStation' ? 'RD Station CRM' : 'RD Station Marketing'}: informe o Token Público`
+      );
+      if (!publicToken?.trim()) {
+        setConnectorBusyKey(null);
+        return;
+      }
+
+      const privateToken = window.prompt(
+        `${connectorKey === 'rdStation' ? 'RD Station CRM' : 'RD Station Marketing'}: informe o Token Privado`
+      );
+      if (!privateToken?.trim()) {
+        setConnectorBusyKey(null);
+        return;
+      }
+
+      const now = Date.now();
+      const connectionKey = CONNECTOR_CONNECTION_KEYS[connectorKey];
+      setConnectorStatus((prev) => {
+        const nextStatus = { ...prev, [connectorKey]: true };
+        persistConnectorStatusLocal(nextStatus);
+        return nextStatus;
+      });
+
+      try {
+        const db = getFirebaseDb();
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(
+          userRef,
+          {
+            connections: {
+              [connectionKey]: {
+                isActive: true,
+                provider: 'rdstation-webhook',
+                accessToken: privateToken.trim(),
+                refreshToken: null,
+                metadata: {
+                  publicToken: publicToken.trim(),
+                  authMode: 'public-private-token',
+                },
+                connectedAt: now,
+                updatedAt: now,
+              },
+            },
+            updatedAt: now,
+          },
+          { merge: true }
+        );
+        setConnectorFeedback('Credenciais RD Station salvas e integração ativada.');
+      } catch (connectError) {
+        console.warn('Falha ao salvar integração RD Station:', connectError);
+        setConnectorError('Não foi possível salvar a integração RD Station no banco.');
+      } finally {
+        setConnectorBusyKey(null);
+      }
+      return;
+    }
+
+    if (connectorKey === 'rdStationConversas') {
+      setConnectorBusyKey(null);
+      const webhookUrl = `${(process.env.NEXT_PUBLIC_APP_URL || 'https://neuroads.com.br').replace(/\/+$/g, '')}/api/webhooks/rd-station/conversas`;
+      setConnectorFeedback(
+        `Configure o webhook RD Conversas com método POST em ${webhookUrl} e depois clique novamente para marcar ativo.`
+      );
+      return;
+    }
 
     const oauthProvider = OAUTH_CONNECTOR_PROVIDERS[connectorKey];
     if (oauthProvider) {

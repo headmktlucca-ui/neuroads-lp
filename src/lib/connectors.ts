@@ -4,8 +4,14 @@ export type ConnectorStatus = {
   metaAds: boolean;
   instagram: boolean;
   linkedinAds: boolean;
+  linkedinPage: boolean;
+  rdStation: boolean;
+  rdStationMarketing: boolean;
+  rdStationConversas: boolean;
   ga4: boolean;
   serverTracking: boolean;
+  tiktok: boolean;
+  tiktokAds: boolean;
   crm: boolean;
   payments: boolean;
   warehouse: boolean;
@@ -41,8 +47,14 @@ export const DEFAULT_CONNECTOR_STATUS: ConnectorStatus = {
   metaAds: false,
   instagram: false,
   linkedinAds: false,
+  linkedinPage: false,
+  rdStation: false,
+  rdStationMarketing: false,
+  rdStationConversas: false,
   ga4: false,
   serverTracking: false,
+  tiktok: false,
+  tiktokAds: false,
   crm: false,
   payments: false,
   warehouse: false,
@@ -54,8 +66,14 @@ export const CONNECTOR_DEFINITIONS: ConnectorDefinition[] = [
   { key: 'metaAds', name: 'Meta Ads API', source: 'Mídia paga', required: true, usedBy: 'CPL, CPA, desperdício e variações' },
   { key: 'instagram', name: 'Instagram Graph API', source: 'Atendimento e conteúdo', required: false, usedBy: 'Sinais de engajamento, perfil e inteligência de conteúdo' },
   { key: 'linkedinAds', name: 'LinkedIn Ads API', source: 'Mídia paga B2B', required: true, usedBy: 'CPL B2B, qualidade de lead e CAC por conta' },
+  { key: 'linkedinPage', name: 'LinkedIn Page API', source: 'Conteúdo orgânico B2B', required: false, usedBy: 'Engajamento orgânico, audiência e sinais de intenção' },
+  { key: 'rdStation', name: 'RD Station CRM API', source: 'Vendas', required: false, usedBy: 'Pipeline, etapas e repasse comercial por origem' },
+  { key: 'rdStationMarketing', name: 'RD Station Marketing API', source: 'Marketing', required: false, usedBy: 'Leads, automações e qualificação por campanha' },
+  { key: 'rdStationConversas', name: 'RD Station Conversas API', source: 'Atendimento', required: false, usedBy: 'Mensagens, contexto e produtividade do time comercial' },
   { key: 'ga4', name: 'GA4 Data API', source: 'Analytics', required: true, usedBy: 'Funil, taxa de conversão e jornada' },
   { key: 'serverTracking', name: 'GTM Server + CAPI/Enhanced', source: 'Atribuição', required: true, usedBy: 'Atribuição confiável e deduplicação' },
+  { key: 'tiktok', name: 'TikTok API', source: 'Atendimento e conteúdo', required: false, usedBy: 'Audiência, tendências e inteligência criativa' },
+  { key: 'tiktokAds', name: 'TikTok Ads API', source: 'Mídia paga', required: false, usedBy: 'CPL, CPA e performance incremental no TikTok' },
   { key: 'crm', name: 'CRM HubSpot', source: 'Vendas', required: true, usedBy: 'MQL, SQL e ganhos reais por estágio' },
   { key: 'payments', name: 'Stripe/Pagamentos', source: 'Receita', required: true, usedBy: 'Receita confirmada e LTV' },
   { key: 'warehouse', name: 'BigQuery/Data Warehouse', source: 'Consolidação', required: true, usedBy: 'Visão unificada e projeções' },
@@ -67,8 +85,14 @@ export const CONNECTOR_CONNECTION_KEYS: Record<ConnectorKey, string> = {
   metaAds: 'meta_ads',
   instagram: 'instagram',
   linkedinAds: 'linkedin_ads',
+  linkedinPage: 'linkedin_page',
+  rdStation: 'rd_station_crm',
+  rdStationMarketing: 'rd_station_marketing',
+  rdStationConversas: 'rd_station_conversas',
   ga4: 'ga4',
   serverTracking: 'gtm_server',
+  tiktok: 'tiktok',
+  tiktokAds: 'tiktok_ads',
   crm: 'crm',
   payments: 'stripe',
   warehouse: 'bigquery',
