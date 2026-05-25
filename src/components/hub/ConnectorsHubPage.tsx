@@ -72,6 +72,21 @@ type InstagramAccountOption = {
   pageId: string;
 };
 
+type Ga4AccountOption = {
+  id: string;
+  name: string;
+  accountId: string;
+};
+
+type GoogleAdsAccountOption = {
+  id: string;
+  name: string;
+  accountId: string;
+  isManager: boolean;
+  loginCustomerId: string | null;
+  managerName: string | null;
+};
+
 type PendingOAuthConnection = {
   connector: ConnectorKey;
   provider: string | null;
@@ -79,6 +94,7 @@ type PendingOAuthConnection = {
   refreshToken: string | null;
   expiresIn: number | null;
   accountId: string | null;
+  loginCustomerId?: string | null;
   metadata?: Record<string, unknown> | null;
 };
 
@@ -566,10 +582,18 @@ export default function ConnectorsHubPage() {
   const [metaAdsAccounts, setMetaAdsAccounts] = useState<MetaAdsAccountOption[]>([]);
   const [selectedMetaAdsAccountId, setSelectedMetaAdsAccountId] = useState('');
   const [metaAdsSelectionSaving, setMetaAdsSelectionSaving] = useState(false);
+  const [pendingGoogleAdsConnection, setPendingGoogleAdsConnection] = useState<PendingOAuthConnection | null>(null);
+  const [googleAdsAccounts, setGoogleAdsAccounts] = useState<GoogleAdsAccountOption[]>([]);
+  const [selectedGoogleAdsAccountKey, setSelectedGoogleAdsAccountKey] = useState('');
+  const [googleAdsSelectionSaving, setGoogleAdsSelectionSaving] = useState(false);
   const [pendingInstagramConnection, setPendingInstagramConnection] = useState<PendingOAuthConnection | null>(null);
   const [instagramAccounts, setInstagramAccounts] = useState<InstagramAccountOption[]>([]);
   const [selectedInstagramAccountId, setSelectedInstagramAccountId] = useState('');
   const [instagramSelectionSaving, setInstagramSelectionSaving] = useState(false);
+  const [pendingGa4Connection, setPendingGa4Connection] = useState<PendingOAuthConnection | null>(null);
+  const [ga4Accounts, setGa4Accounts] = useState<Ga4AccountOption[]>([]);
+  const [selectedGa4AccountId, setSelectedGa4AccountId] = useState('');
+  const [ga4SelectionSaving, setGa4SelectionSaving] = useState(false);
   const [openConnectorMenuId, setOpenConnectorMenuId] = useState<UiConnectorId | null>(null);
   const [activeFilter, setActiveFilter] = useState<UiCategory | 'todos'>('todos');
   const [sortMode, setSortMode] = useState<'az'>('az');
@@ -587,11 +611,25 @@ export default function ConnectorsHubPage() {
     setMetaAdsSelectionSaving(false);
   }, []);
 
+  const clearPendingGoogleAdsSelection = useCallback(() => {
+    setPendingGoogleAdsConnection(null);
+    setGoogleAdsAccounts([]);
+    setSelectedGoogleAdsAccountKey('');
+    setGoogleAdsSelectionSaving(false);
+  }, []);
+
   const clearPendingInstagramSelection = useCallback(() => {
     setPendingInstagramConnection(null);
     setInstagramAccounts([]);
     setSelectedInstagramAccountId('');
     setInstagramSelectionSaving(false);
+  }, []);
+
+  const clearPendingGa4Selection = useCallback(() => {
+    setPendingGa4Connection(null);
+    setGa4Accounts([]);
+    setSelectedGa4AccountId('');
+    setGa4SelectionSaving(false);
   }, []);
 
   const persistOAuthConnection = useCallback(
@@ -619,6 +657,7 @@ export default function ConnectorsHubPage() {
                 isActive: true,
                 provider: payload.provider ?? null,
                 accountId: payload.accountId ?? null,
+                loginCustomerId: payload.loginCustomerId ?? null,
                 accessToken: payload.accessToken,
                 refreshToken: payload.refreshToken ?? null,
                 expiresIn: Number.isFinite(payload.expiresIn || NaN) ? payload.expiresIn : null,
@@ -724,7 +763,9 @@ export default function ConnectorsHubPage() {
       setConnectorError(`Falha ao conectar: ${error}`);
       setConnectorFeedback(null);
       clearPendingMetaAdsSelection();
+      clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
+      clearPendingGa4Selection();
       clearConnectorQueryParams();
       return;
     }
@@ -733,7 +774,9 @@ export default function ConnectorsHubPage() {
       setConnectorError('Conexão retornou sem dados suficientes para ativar o conector.');
       setConnectorFeedback(null);
       clearPendingMetaAdsSelection();
+      clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
+      clearPendingGa4Selection();
       clearConnectorQueryParams();
       return;
     }
@@ -747,6 +790,73 @@ export default function ConnectorsHubPage() {
       accountId: accountId ?? null,
       metadata: null,
     };
+
+    if (connectorParam === 'googleAds' && !pendingPayload.accountId) {
+      const hydrateGoogleAdsAccounts = async () => {
+        try {
+          setConnectorBusyKey('googleAds');
+          const response = await fetch('/api/auth/connectors/googleAds/accounts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ accessToken }),
+          });
+          const payload = (await response.json()) as { accounts?: GoogleAdsAccountOption[]; error?: string };
+
+          if (!response.ok) {
+            throw new Error(payload.error || 'Não foi possível listar as contas do Google Ads.');
+          }
+
+          const accounts = Array.isArray(payload.accounts) ? payload.accounts : [];
+          if (accounts.length === 0) {
+            clearPendingGoogleAdsSelection();
+            setConnectorFeedback(null);
+            setConnectorError('Autenticação concluída, mas nenhuma conta Google Ads disponível foi encontrada.');
+            return;
+          }
+
+          if (accounts.length === 1) {
+            const selectedAccount = accounts[0];
+            const persisted = await persistOAuthConnection(
+              {
+                ...pendingPayload,
+                accountId: selectedAccount.accountId,
+                loginCustomerId: selectedAccount.loginCustomerId,
+                metadata: {
+                  accountName: selectedAccount.name,
+                  isManager: selectedAccount.isManager,
+                  managerName: selectedAccount.managerName,
+                },
+              },
+              'Conector Google Ads autenticado e conta vinculada com sucesso.'
+            );
+            if (persisted) {
+              clearPendingGoogleAdsSelection();
+            }
+            return;
+          }
+
+          setPendingGoogleAdsConnection(pendingPayload);
+          setGoogleAdsAccounts(accounts);
+          setSelectedGoogleAdsAccountKey(accounts[0].id);
+          setConnectorError(null);
+          setConnectorFeedback('Autenticação concluída. Selecione a conta Google Ads para finalizar a vinculação.');
+        } catch (googleAdsError) {
+          const message =
+            googleAdsError instanceof Error ? googleAdsError.message : 'Falha ao carregar contas do Google Ads.';
+          clearPendingGoogleAdsSelection();
+          setConnectorFeedback(null);
+          setConnectorError(message);
+        } finally {
+          setConnectorBusyKey(null);
+          clearConnectorQueryParams();
+        }
+      };
+
+      void hydrateGoogleAdsAccounts();
+      return;
+    }
 
     if (connectorParam === 'metaAds' && !pendingPayload.accountId) {
       const hydrateMetaAdsAccounts = async () => {
@@ -879,15 +989,90 @@ export default function ConnectorsHubPage() {
       return;
     }
 
+    if (connectorParam === 'ga4' && !pendingPayload.accountId) {
+      const hydrateGa4Accounts = async () => {
+        try {
+          setConnectorBusyKey('ga4');
+          const response = await fetch('/api/auth/connectors/ga4/accounts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ accessToken }),
+          });
+          const payload = (await response.json()) as { accounts?: Ga4AccountOption[]; error?: string };
+
+          if (!response.ok) {
+            throw new Error(payload.error || 'Não foi possível listar as contas do GA4.');
+          }
+
+          const accounts = Array.isArray(payload.accounts) ? payload.accounts : [];
+          if (accounts.length === 0) {
+            clearPendingGa4Selection();
+            setConnectorFeedback(null);
+            setConnectorError('Autenticação concluída, mas nenhuma conta GA4 disponível foi encontrada.');
+            return;
+          }
+
+          if (accounts.length === 1) {
+            const selectedAccount = accounts[0];
+            const persisted = await persistOAuthConnection(
+              {
+                ...pendingPayload,
+                accountId: selectedAccount.accountId,
+                metadata: {
+                  accountName: selectedAccount.name,
+                },
+              },
+              'Conector GA4 autenticado e conta vinculada com sucesso.'
+            );
+            if (persisted) {
+              clearPendingGa4Selection();
+            }
+            return;
+          }
+
+          setPendingGa4Connection(pendingPayload);
+          setGa4Accounts(accounts);
+          setSelectedGa4AccountId(accounts[0].accountId);
+          setConnectorError(null);
+          setConnectorFeedback('Autenticação concluída. Selecione a conta GA4 para finalizar a vinculação.');
+        } catch (ga4Error) {
+          const message = ga4Error instanceof Error ? ga4Error.message : 'Falha ao carregar contas do GA4.';
+          clearPendingGa4Selection();
+          setConnectorFeedback(null);
+          setConnectorError(message);
+        } finally {
+          setConnectorBusyKey(null);
+          clearConnectorQueryParams();
+        }
+      };
+
+      void hydrateGa4Accounts();
+      return;
+    }
+
     const upsertConnection = async () => {
       await persistOAuthConnection(pendingPayload, 'Conector autenticado e salvo com sucesso.');
       clearPendingMetaAdsSelection();
+      clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
+      clearPendingGa4Selection();
       clearConnectorQueryParams();
     };
 
     void upsertConnection();
-  }, [clearPendingInstagramSelection, clearPendingMetaAdsSelection, pathname, persistOAuthConnection, router, searchParams, user]);
+  }, [
+    clearPendingGa4Selection,
+    clearPendingGoogleAdsSelection,
+    clearPendingInstagramSelection,
+    clearPendingMetaAdsSelection,
+    pathname,
+    persistOAuthConnection,
+    router,
+    searchParams,
+    user,
+  ]);
 
   useEffect(() => {
     const handleDocumentClick = (event: MouseEvent) => {
@@ -987,6 +1172,12 @@ export default function ConnectorsHubPage() {
         readString(metadata?.username) ||
         readString(metadata?.pageName);
       const accountId = readString(connection.accountId);
+      const loginCustomerId = readString(connection.loginCustomerId);
+
+      if (item.connectorKey === 'googleAds' && loginCustomerId) {
+        if (accountName && accountId) return `${accountName} (${accountId}) • via MCC ${loginCustomerId}`;
+        if (accountId) return `${accountId} • via MCC ${loginCustomerId}`;
+      }
 
       if (accountName && accountId) return `${accountName} (${accountId})`;
       if (accountName) return accountName;
@@ -1024,9 +1215,17 @@ export default function ConnectorsHubPage() {
   );
 
   const healthTone = useMemo(() => getHealthTone(healthScore), [healthScore]);
-  const showMetaAdsSelectionModal = Boolean(pendingMetaAdsConnection && metaAdsAccounts.length > 0);
+  const showGoogleAdsSelectionModal = Boolean(pendingGoogleAdsConnection && googleAdsAccounts.length > 0);
+  const showMetaAdsSelectionModal = Boolean(!showGoogleAdsSelectionModal && pendingMetaAdsConnection && metaAdsAccounts.length > 0);
   const showInstagramSelectionModal = Boolean(
-    !showMetaAdsSelectionModal && pendingInstagramConnection && instagramAccounts.length > 0
+    !showGoogleAdsSelectionModal && !showMetaAdsSelectionModal && pendingInstagramConnection && instagramAccounts.length > 0
+  );
+  const showGa4SelectionModal = Boolean(
+    !showGoogleAdsSelectionModal &&
+      !showMetaAdsSelectionModal &&
+      !showInstagramSelectionModal &&
+      pendingGa4Connection &&
+      ga4Accounts.length > 0
   );
 
   const handleDisconnect = async (connectorKey: ConnectorKey) => {
@@ -1034,8 +1233,14 @@ export default function ConnectorsHubPage() {
     if (connectorKey === 'metaAds') {
       clearPendingMetaAdsSelection();
     }
+    if (connectorKey === 'googleAds') {
+      clearPendingGoogleAdsSelection();
+    }
     if (connectorKey === 'instagram') {
       clearPendingInstagramSelection();
+    }
+    if (connectorKey === 'ga4') {
+      clearPendingGa4Selection();
     }
     setConnectorBusyKey(connectorKey);
     setConnectorError(null);
@@ -1073,6 +1278,45 @@ export default function ConnectorsHubPage() {
     } finally {
       setConnectorBusyKey(null);
     }
+  };
+
+  const handleGoogleAdsAccountSelection = async () => {
+    if (!pendingGoogleAdsConnection || !selectedGoogleAdsAccountKey) {
+      setConnectorError('Selecione uma conta Google Ads para continuar.');
+      setConnectorFeedback(null);
+      return;
+    }
+
+    const selectedAccount = googleAdsAccounts.find((account) => account.id === selectedGoogleAdsAccountKey);
+    if (!selectedAccount) {
+      setConnectorError('A conta selecionada não foi encontrada. Tente novamente.');
+      setConnectorFeedback(null);
+      return;
+    }
+
+    setGoogleAdsSelectionSaving(true);
+    setConnectorBusyKey('googleAds');
+
+    const persisted = await persistOAuthConnection(
+      {
+        ...pendingGoogleAdsConnection,
+        accountId: selectedAccount.accountId,
+        loginCustomerId: selectedAccount.loginCustomerId,
+        metadata: {
+          accountName: selectedAccount.name,
+          isManager: selectedAccount.isManager,
+          managerName: selectedAccount.managerName,
+        },
+      },
+      'Conta Google Ads vinculada com sucesso.'
+    );
+
+    if (persisted) {
+      clearPendingGoogleAdsSelection();
+    }
+
+    setGoogleAdsSelectionSaving(false);
+    setConnectorBusyKey(null);
   };
 
   const handleMetaAdsAccountSelection = async () => {
@@ -1143,6 +1387,39 @@ export default function ConnectorsHubPage() {
     }
 
     setInstagramSelectionSaving(false);
+    setConnectorBusyKey(null);
+  };
+
+  const handleGa4AccountSelection = async () => {
+    if (!pendingGa4Connection || !selectedGa4AccountId) {
+      setConnectorError('Selecione uma conta GA4 para continuar.');
+      setConnectorFeedback(null);
+      return;
+    }
+
+    const selectedAccount = ga4Accounts.find((account) => account.accountId === selectedGa4AccountId);
+
+    setGa4SelectionSaving(true);
+    setConnectorBusyKey('ga4');
+
+    const persisted = await persistOAuthConnection(
+      {
+        ...pendingGa4Connection,
+        accountId: selectedGa4AccountId,
+        metadata: selectedAccount
+          ? {
+              accountName: selectedAccount.name,
+            }
+          : pendingGa4Connection.metadata ?? null,
+      },
+      'Conta GA4 vinculada com sucesso.'
+    );
+
+    if (persisted) {
+      clearPendingGa4Selection();
+    }
+
+    setGa4SelectionSaving(false);
     setConnectorBusyKey(null);
   };
 
@@ -1619,6 +1896,49 @@ export default function ConnectorsHubPage() {
       <Footer />
       <LuccaHubSupportWidget />
 
+      {showGoogleAdsSelectionModal && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+          <section className="relative z-[1201] w-full max-w-5xl rounded-2xl border border-[#FCD34D] bg-[#FFFBEB] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
+            <p className="text-[22px] font-black text-[#92400E]">Selecione a conta Google Ads para concluir</p>
+            <p className="mt-2 text-[18px] text-[#A16207]">
+              A autenticação foi concluída. Escolha a conta para vincular ao Hub. Se a origem for MCC, o vínculo já
+              será salvo com o Login Customer ID correto.
+            </p>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#92400E]">
+                Conta Google Ads
+                <select
+                  value={selectedGoogleAdsAccountKey}
+                  onChange={(event) => setSelectedGoogleAdsAccountKey(event.target.value)}
+                  className="h-11 rounded-xl border border-[#FCD34D] bg-white px-3 text-[14px] font-semibold text-[#78350F] outline-none focus:border-[#F59E0B]"
+                >
+                  {googleAdsAccounts.map((account) => {
+                    const suffixMcc = account.loginCustomerId ? ` • via MCC ${account.loginCustomerId}` : '';
+                    const type = account.isManager ? 'MCC' : 'Conta';
+                    return (
+                      <option key={account.id} value={account.id}>
+                        [{type}] {account.name} ({account.accountId}){suffixMcc}
+                      </option>
+                    );
+                  })}
+                </select>
+              </label>
+
+              <button
+                type="button"
+                onClick={() => void handleGoogleAdsAccountSelection()}
+                disabled={!selectedGoogleAdsAccountKey || googleAdsSelectionSaving}
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#F59E0B] px-5 text-[14px] font-black text-white transition hover:bg-[#D97706] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {googleAdsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
       {showMetaAdsSelectionModal && (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
@@ -1691,6 +2011,44 @@ export default function ConnectorsHubPage() {
                 className="inline-flex h-11 items-center justify-center rounded-xl bg-[#4F46E5] px-5 text-[14px] font-black text-white transition hover:bg-[#4338CA] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {instagramSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {showGa4SelectionModal && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+          <section className="relative z-[1201] w-full max-w-5xl rounded-2xl border border-[#BFDBFE] bg-[#EFF6FF] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
+            <p className="text-[22px] font-black text-[#1D4ED8]">Selecione a conta GA4 para concluir</p>
+            <p className="mt-2 text-[18px] text-[#1E40AF]">
+              A autenticação foi concluída. Agora escolha qual conta do Google Analytics deve ser vinculada ao Hub.
+            </p>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#1E40AF]">
+                Conta GA4
+                <select
+                  value={selectedGa4AccountId}
+                  onChange={(event) => setSelectedGa4AccountId(event.target.value)}
+                  className="h-11 rounded-xl border border-[#93C5FD] bg-white px-3 text-[14px] font-semibold text-[#1E3A8A] outline-none focus:border-[#3B82F6]"
+                >
+                  {ga4Accounts.map((account) => (
+                    <option key={account.id} value={account.accountId}>
+                      {account.name} ({account.accountId})
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <button
+                type="button"
+                onClick={() => void handleGa4AccountSelection()}
+                disabled={!selectedGa4AccountId || ga4SelectionSaving}
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#1D4ED8] px-5 text-[14px] font-black text-white transition hover:bg-[#1E40AF] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {ga4SelectionSaving ? 'Vinculando...' : 'Vincular conta'}
               </button>
             </div>
           </section>

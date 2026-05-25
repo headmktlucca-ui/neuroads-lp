@@ -24,6 +24,7 @@ export type ConnectorConnection = {
   isActive?: boolean;
   provider?: string;
   accountId?: string;
+  loginCustomerId?: string;
   accessToken?: string;
   refreshToken?: string;
   connectedAt?: number;
