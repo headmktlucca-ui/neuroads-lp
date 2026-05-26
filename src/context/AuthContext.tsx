@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useEffect, useRef, useState } from 'react';
+import React, { createContext, useContext, useEffect, useRef, useState, useMemo } from 'react';
 import { 
   User, 
   onAuthStateChanged, 
@@ -13,9 +13,9 @@ import {
   signOut 
 } from 'firebase/auth';
 import { getFirebaseAuth, getFirebaseDb } from '../lib/firebase';
-import { doc, onSnapshot, setDoc } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, collection, query } from 'firebase/firestore';
 import { syncToHostingerReach } from '../app/actions/hostinger';
-import { getPrimaryAuthEmail, isAdminEmail } from '../lib/admin-auth';
+import { getPrimaryAuthEmail, isAdminEmail, isSuperAdminEmail } from '../lib/admin-auth';
 
 interface UserProfile {
   [key: string]: unknown;
@@ -53,6 +53,10 @@ interface AuthContextType {
   loading: boolean;
   premiumSyncing: boolean;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
+  actingUid: string | null;
+  setActingUid: (uid: string | null) => void;
+  availableCompanies: Array<{ uid: string; companyName: string; email: string }>;
   hasPasswordProvider: boolean;
   loginWithGoogle: () => Promise<void>;
   loginWithEmailPassword: (email: string, password: string) => Promise<void>;
@@ -205,17 +209,86 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [premiumSyncing, setPremiumSyncing] = useState(false);
   const premiumSyncAttemptRef = useRef<Record<string, boolean>>({});
 
+  const [actingUid, setActingUidState] = useState<string | null>(null);
+  const [availableCompanies, setAvailableCompanies] = useState<Array<{ uid: string; companyName: string; email: string }>>([]);
+
+  const isSuperAdmin = useMemo(() => isSuperAdminEmail(userEmail), [userEmail]);
+
+  // Load actingUid from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const stored = window.localStorage.getItem('neuroads_acting_uid');
+      if (stored) {
+        setActingUidState(stored);
+      }
+    }
+  }, []);
+
+  const setActingUid = (uid: string | null) => {
+    setActingUidState(uid);
+    if (typeof window !== 'undefined') {
+      if (uid) {
+        window.localStorage.setItem('neuroads_acting_uid', uid);
+      } else {
+        window.localStorage.removeItem('neuroads_acting_uid');
+      }
+    }
+  };
+
+  // Fetch all companies if the user is Super Admin
+  useEffect(() => {
+    if (!user || !isSuperAdmin) {
+      setAvailableCompanies([]);
+      return;
+    }
+
+    const db = getFirebaseDb();
+    const usersQuery = query(collection(db, 'users'));
+    const unsubscribe = onSnapshot(
+      usersQuery,
+      (snapshot) => {
+        const companiesList: Array<{ uid: string; companyName: string; email: string }> = [];
+        snapshot.docs.forEach((doc) => {
+          const data = doc.data();
+          const email = String(data.authEmail || data.email || '').trim();
+          const profileDetails = data.profileDetails as Record<string, unknown> | null;
+          const onboarding = data.onboarding as Record<string, unknown> | null;
+
+          const companyName = String(
+            data.companyName ??
+            data.company ??
+            onboarding?.companyName ??
+            onboarding?.company ??
+            profileDetails?.companyName ??
+            profileDetails?.company ??
+            ''
+          ).trim();
+
+          if (email && companyName && companyName.toLowerCase() !== 'sua empresa' && companyName !== 'undefined') {
+            companiesList.push({
+              uid: doc.id,
+              companyName,
+              email,
+            });
+          }
+        });
+
+        // Sort A-Z by company name
+        companiesList.sort((a, b) => a.companyName.localeCompare(b.companyName, 'pt-BR'));
+        setAvailableCompanies(companiesList);
+      },
+      (err) => {
+        console.warn('Failed to listen to available companies:', err);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user, isSuperAdmin]);
+
+  // Auth state listener
   useEffect(() => {
     const auth = getFirebaseAuth();
-    const db = getFirebaseDb();
-    let profileUnsubscribe: (() => void) | null = null;
-
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (profileUnsubscribe) {
-        profileUnsubscribe();
-        profileUnsubscribe = null;
-      }
-
       setUser(firebaseUser);
       const primaryEmail = await resolvePrimaryAuthEmail(firebaseUser);
       setUserEmail(primaryEmail);
@@ -223,145 +296,181 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         cacheAuthEmail(firebaseUser.uid, primaryEmail);
       }
 
-      if (firebaseUser) {
-        const userRef = doc(db, 'users', firebaseUser.uid);
-        profileUnsubscribe = onSnapshot(
-          userRef,
-          (userDoc) => {
-            if (userDoc.exists()) {
-              clearAccountDeletionFlag(firebaseUser.uid);
-              const snapshotProfile = userDoc.data() as UserProfile;
-              const normalizedFromCache = normalizeProfileWithLocalFallback(snapshotProfile, firebaseUser.uid);
-              const registrationTimestamp =
-                (typeof normalizedFromCache.registeredAt === 'number' && Number.isFinite(normalizedFromCache.registeredAt)
-                  ? normalizedFromCache.registeredAt
-                  : typeof normalizedFromCache.createdAt === 'number' && Number.isFinite(normalizedFromCache.createdAt)
-                    ? normalizedFromCache.createdAt
-                    : typeof normalizedFromCache.updatedAt === 'number' && Number.isFinite(normalizedFromCache.updatedAt)
-                      ? normalizedFromCache.updatedAt
-                      : Date.now());
-
-              const normalizedProfile: UserProfile = {
-                ...normalizedFromCache,
-                registeredAt: registrationTimestamp,
-              };
-
-              setProfile(normalizedProfile);
-              setPremiumSyncing(false);
-
-              if (snapshotProfile.registeredAt !== registrationTimestamp) {
-                void setDoc(
-                  userRef,
-                  {
-                    registeredAt: registrationTimestamp,
-                    updatedAt: Date.now(),
-                  },
-                  { merge: true }
-                ).catch((writeErr) => {
-                  if (!isFirestoreOfflineError(writeErr)) {
-                    console.warn('Falha ao normalizar timestamp de cadastro:', writeErr);
-                  }
-                });
-              }
-
-              if (
-                primaryEmail &&
-                (
-                  snapshotProfile.authEmail !== primaryEmail ||
-                  (snapshotProfile as Record<string, unknown>).email !== primaryEmail
-                )
-              ) {
-                void setDoc(
-                  userRef,
-                  {
-                    authEmail: primaryEmail,
-                    email: primaryEmail,
-                    updatedAt: Date.now(),
-                  },
-                  { merge: true }
-                ).catch((writeErr) => {
-                  if (!isFirestoreOfflineError(writeErr)) {
-                    console.warn('Falha ao atualizar e-mail primário no perfil:', writeErr);
-                  }
-                });
-              }
-            } else {
-              if (isAccountDeletionInProgress(firebaseUser.uid)) {
-                setPremiumSyncing(false);
-                setProfile(null);
-                setLoading(false);
-                return;
-              }
-
-              setPremiumSyncing(true);
-              const now = Date.now();
-              const newProfile: UserProfile = {
-                isPremium: false,
-                usageStats: {},
-                registeredAt: now,
-                createdAt: now,
-                updatedAt: now,
-                ...(primaryEmail ? { authEmail: primaryEmail, email: primaryEmail } : {}),
-              };
-
-              void setDoc(
-                userRef,
-                newProfile,
-                { merge: true }
-              )
-                .then(() => {
-                  if (primaryEmail) {
-                    syncToHostingerReach({
-                      email: primaryEmail,
-                      name: firebaseUser.displayName || 'Usuário NeuroAds',
-                      tags: ['Usuários Ativos'],
-                    }).catch(err => console.error('Reach sync failed:', err));
-                  }
-                })
-                .catch((writeErr) => {
-                  setPremiumSyncing(false);
-                  setProfile(null);
-                  setLoading(false);
-                  if (isFirestoreOfflineError(writeErr)) {
-                    console.info('Firestore temporariamente offline. Não foi possível concluir o cadastro.');
-                  } else {
-                    console.warn('Firestore write failed:', writeErr);
-                  }
-                });
-
-              return;
-            }
-
-            setLoading(false);
-          },
-          (err) => {
-            setPremiumSyncing(false);
-            if (isFirestoreOfflineError(err)) {
-              console.info('Firestore temporariamente offline. Não foi possível validar cadastro no Hub.');
-            } else {
-              console.warn('Firestore profile snapshot failed:', err);
-            }
-            setProfile(null);
-            setLoading(false);
-          }
-        );
-      } else {
+      if (!firebaseUser) {
         setProfile(null);
-        setUserEmail(null);
         setPremiumSyncing(false);
         premiumSyncAttemptRef.current = {};
         setLoading(false);
       }
     });
 
-    return () => {
-      unsubscribe();
-      if (profileUnsubscribe) {
-        profileUnsubscribe();
-      }
-    };
+    return () => unsubscribe();
   }, []);
 
+  // Profile real-time listener (handles regular or acting user profile subscription)
+  useEffect(() => {
+    if (!user) {
+      setProfile(null);
+      setLoading(false);
+      return;
+    }
+
+    const db = getFirebaseDb();
+    setLoading(true);
+
+    const targetUid = (isSuperAdmin && actingUid) ? actingUid : user.uid;
+    const userRef = doc(db, 'users', targetUid);
+
+    const unsubscribe = onSnapshot(
+      userRef,
+      (userDoc) => {
+        if (userDoc.exists()) {
+          clearAccountDeletionFlag(targetUid);
+          const snapshotProfile = userDoc.data() as UserProfile;
+          const normalizedFromCache = normalizeProfileWithLocalFallback(snapshotProfile, targetUid);
+          const registrationTimestamp =
+            (typeof normalizedFromCache.registeredAt === 'number' && Number.isFinite(normalizedFromCache.registeredAt)
+              ? normalizedFromCache.registeredAt
+              : typeof normalizedFromCache.createdAt === 'number' && Number.isFinite(normalizedFromCache.createdAt)
+                ? normalizedFromCache.createdAt
+                : typeof normalizedFromCache.updatedAt === 'number' && Number.isFinite(normalizedFromCache.updatedAt)
+                  ? normalizedFromCache.updatedAt
+                  : Date.now());
+
+          const normalizedProfile: UserProfile = {
+            ...normalizedFromCache,
+            registeredAt: registrationTimestamp,
+          };
+
+          setProfile(normalizedProfile);
+          setPremiumSyncing(false);
+
+          // Only auto-correct profile details if operating on own profile
+          if (targetUid === user.uid) {
+            if (snapshotProfile.registeredAt !== registrationTimestamp) {
+              void setDoc(
+                userRef,
+                {
+                  registeredAt: registrationTimestamp,
+                  updatedAt: Date.now(),
+                },
+                { merge: true }
+              ).catch((writeErr) => {
+                if (!isFirestoreOfflineError(writeErr)) {
+                  console.warn('Falha ao normalizar timestamp de cadastro:', writeErr);
+                }
+              });
+            }
+
+            if (
+              userEmail &&
+              (
+                snapshotProfile.authEmail !== userEmail ||
+                (snapshotProfile as Record<string, unknown>).email !== userEmail
+              )
+            ) {
+              void setDoc(
+                userRef,
+                {
+                  authEmail: userEmail,
+                  email: userEmail,
+                  updatedAt: Date.now(),
+                },
+                { merge: true }
+              ).catch((writeErr) => {
+                if (!isFirestoreOfflineError(writeErr)) {
+                  console.warn('Falha ao atualizar e-mail primário no perfil:', writeErr);
+                }
+              });
+            }
+          }
+        } else {
+          // If own profile doesn't exist, create it
+          if (targetUid === user.uid) {
+            if (isAccountDeletionInProgress(user.uid)) {
+              setPremiumSyncing(false);
+              setProfile(null);
+              setLoading(false);
+              return;
+            }
+
+            setPremiumSyncing(true);
+            const now = Date.now();
+            const newProfile: UserProfile = {
+              isPremium: false,
+              usageStats: {},
+              registeredAt: now,
+              createdAt: now,
+              updatedAt: now,
+              ...(userEmail ? { authEmail: userEmail, email: userEmail } : {}),
+            };
+
+            void setDoc(
+              userRef,
+              newProfile,
+              { merge: true }
+            )
+              .then(() => {
+                if (userEmail) {
+                  syncToHostingerReach({
+                    email: userEmail,
+                    name: user.displayName || 'Usuário NeuroAds',
+                    tags: ['Usuários Ativos'],
+                  }).catch(err => console.error('Reach sync failed:', err));
+                }
+              })
+              .catch((writeErr) => {
+                setPremiumSyncing(false);
+                setProfile(null);
+                setLoading(false);
+                if (isFirestoreOfflineError(writeErr)) {
+                  console.info('Firestore temporariamente offline. Não foi possível concluir o cadastro.');
+                } else {
+                  console.warn('Firestore write failed:', writeErr);
+                }
+              });
+
+            return;
+          } else {
+            // Acting profile target not found
+            setProfile(null);
+            setPremiumSyncing(false);
+          }
+        }
+
+        setLoading(false);
+      },
+      (err) => {
+        setPremiumSyncing(false);
+        if (isFirestoreOfflineError(err)) {
+          console.info('Firestore temporariamente offline. Não foi possível validar cadastro no Hub.');
+        } else {
+          console.warn('Firestore profile snapshot failed:', err);
+        }
+        setProfile(null);
+        setLoading(false);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user, userEmail, actingUid, isSuperAdmin]);
+
+  // Intercept the user object with a Proxy to fake the uid when actingUid is active
+  const activeUser = useMemo(() => {
+    if (!user || !actingUid || !isSuperAdmin) return user;
+    return new Proxy(user, {
+      get(target, prop, receiver) {
+        if (prop === 'uid') {
+          return actingUid;
+        }
+        const value = Reflect.get(target, prop, receiver);
+        if (typeof value === 'function') {
+          return value.bind(target);
+        }
+        return value;
+      }
+    });
+  }, [user, actingUid, isSuperAdmin]);
 
   const loginWithGoogle = async () => {
     const auth = getFirebaseAuth();
@@ -424,6 +533,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     const auth = getFirebaseAuth();
+    if (typeof window !== 'undefined') {
+      window.localStorage.removeItem('neuroads_acting_uid');
+    }
+    setActingUidState(null);
     await signOut(auth);
   };
 
@@ -438,12 +551,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   return (
     <AuthContext.Provider
       value={{
-        user,
-        userEmail,
+        user: activeUser,
+        userEmail: (isSuperAdmin && actingUid) 
+          ? (typeof profile?.authEmail === 'string' ? profile.authEmail : typeof profile?.email === 'string' ? profile.email : userEmail) 
+          : userEmail,
         profile,
         loading,
         premiumSyncing,
         isAdmin: isAdminEmail(userEmail),
+        isSuperAdmin,
+        actingUid,
+        setActingUid,
+        availableCompanies,
         hasPasswordProvider,
         loginWithGoogle,
         loginWithEmailPassword,

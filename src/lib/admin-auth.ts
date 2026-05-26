@@ -1,4 +1,5 @@
 export const ADMIN_ALLOWED_EMAIL = 'contato.neuroads@gmail.com';
+export const SUPER_ADM_EMAIL = 'headmktlucca@gmail.com';
 
 function normalizeGmailAddress(rawEmail: string): string {
   const email = rawEmail.trim().toLowerCase();
@@ -12,9 +13,18 @@ function normalizeGmailAddress(rawEmail: string): string {
   return email;
 }
 
+export function isSuperAdminEmail(email: string | null | undefined): boolean {
+  if (!email) return false;
+  return normalizeGmailAddress(email) === normalizeGmailAddress(SUPER_ADM_EMAIL);
+}
+
 export function isAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false;
-  return normalizeGmailAddress(email) === normalizeGmailAddress(ADMIN_ALLOWED_EMAIL);
+  const normalized = normalizeGmailAddress(email);
+  return (
+    normalized === normalizeGmailAddress(ADMIN_ALLOWED_EMAIL) ||
+    normalized === normalizeGmailAddress(SUPER_ADM_EMAIL)
+  );
 }
 
 type ProviderDataLike = { email?: string | null } | null | undefined;

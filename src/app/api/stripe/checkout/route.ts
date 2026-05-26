@@ -9,7 +9,7 @@ function getStripeClient() {
   }
 
   return new Stripe(stripeSecretKey, {
-    apiVersion: '2026-02-25.clover' as never,
+    apiVersion: '2022-11-15' as never,
   });
 }
 
@@ -76,3 +76,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }
+

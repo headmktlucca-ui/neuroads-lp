@@ -565,7 +565,7 @@ export default function AgentEntryPage() {
     >
       <Navbar />
 
-      <div className="flex-grow pt-20 md:pt-28 relative">
+      <div className="flex-grow pt-24 md:pt-40 relative">
         <div className="relative z-10 wrap py-8 md:py-12">
           {!agent || !entry ? (
             <div className="max-w-3xl mx-auto rounded-3xl border border-border bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)] p-8 md:p-10">

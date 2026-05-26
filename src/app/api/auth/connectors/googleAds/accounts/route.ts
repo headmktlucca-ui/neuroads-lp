@@ -94,8 +94,7 @@ async function fetchManagerClients(
       customer_client.manager,
       customer_client.status
     FROM customer_client
-    WHERE customer_client.level <= 1
-      AND customer_client.status = 'ENABLED'
+    WHERE customer_client.status = 'ENABLED'
   `;
 
   const response = await fetch(`https://googleads.googleapis.com/v17/customers/${managerId}/googleAds:search`, {

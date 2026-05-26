@@ -44,7 +44,7 @@ type UiConnectorId =
   | 'instagram'
   | 'tiktok'
   | 'tiktokAds';
-type UiCategory = 'marketing' | 'vendas' | 'atendimento';
+type UiCategory = 'marketing' | 'ads' | 'crm' | 'social';
 
 type UiConnector = {
   id: UiConnectorId;
@@ -112,7 +112,7 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     connectorKey: 'crm',
     title: 'HubSpot',
     description: 'Sincronize leads, empresas e oportunidades para uma visão completa do funil.',
-    category: 'vendas',
+    category: 'crm',
     lastSyncLabelWhenActive: 'Hoje, 08:45',
     isLiveConnector: true,
   },
@@ -121,7 +121,7 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     connectorKey: 'rdStation',
     title: 'RD Station CRM',
     description: 'Centralize contatos, empresas e estágios do pipeline para acelerar repasse e previsibilidade comercial.',
-    category: 'vendas',
+    category: 'crm',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: true,
   },
@@ -139,7 +139,7 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     connectorKey: 'rdStationConversas',
     title: 'RD Station Conversas',
     description: 'Integre WhatsApp e canais de atendimento para dar escala ao time comercial sem perder contexto.',
-    category: 'atendimento',
+    category: 'social',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: true,
   },
@@ -148,7 +148,7 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     connectorKey: 'googleAds',
     title: 'Google Ads',
     description: 'Acompanhe campanhas, custos e conversões para otimizar seus investimentos.',
-    category: 'marketing',
+    category: 'ads',
     lastSyncLabelWhenActive: 'Hoje, 08:32',
     isLiveConnector: true,
   },
@@ -157,7 +157,7 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     connectorKey: 'metaAds',
     title: 'Meta Ads',
     description: 'Importe dados de anúncios do Facebook e Instagram para análises mais precisas.',
-    category: 'marketing',
+    category: 'ads',
     lastSyncLabelWhenActive: 'Hoje, 08:15',
     isLiveConnector: true,
   },
@@ -184,7 +184,7 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     connectorKey: 'linkedinPage',
     title: 'LinkedIn Page',
     description: 'Acompanhe conteúdo orgânico, crescimento de audiência e sinais de intenção B2B.',
-    category: 'atendimento',
+    category: 'social',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: true,
   },
@@ -193,7 +193,7 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     connectorKey: 'linkedinAds',
     title: 'LinkedIn Ads',
     description: 'Meça campanhas B2B com foco em CPL qualificado e pipeline comercial.',
-    category: 'marketing',
+    category: 'ads',
     lastSyncLabelWhenActive: 'Hoje, 07:58',
     isLiveConnector: true,
   },
@@ -202,7 +202,7 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     connectorKey: 'instagram',
     title: 'Instagram',
     description: 'Consolide sinais de engajamento comercial e conteúdo com potencial de conversão.',
-    category: 'atendimento',
+    category: 'social',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: true,
   },
@@ -211,7 +211,7 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     connectorKey: 'tiktok',
     title: 'Tik Tok',
     description: 'Mapeie comportamento de audiência e tendências de formato para escalar criativos.',
-    category: 'atendimento',
+    category: 'social',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: true,
   },
@@ -220,7 +220,7 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     connectorKey: 'tiktokAds',
     title: 'Tik Tok Ads',
     description: 'Integre performance de mídia com custo por aquisição e receita incremental.',
-    category: 'atendimento',
+    category: 'ads',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: true,
   },
@@ -229,8 +229,9 @@ const CONNECTOR_ITEMS: UiConnector[] = [
 const CATEGORY_LABELS: Record<UiCategory | 'todos', string> = {
   todos: 'Todos',
   marketing: 'Marketing',
-  vendas: 'Vendas',
-  atendimento: 'Atendimento',
+  ads: 'Ads',
+  crm: 'CRM',
+  social: 'Social',
 };
 
 const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
@@ -623,6 +624,7 @@ export default function ConnectorsHubPage() {
   const [googleAdsAccounts, setGoogleAdsAccounts] = useState<GoogleAdsAccountOption[]>([]);
   const [selectedGoogleAdsAccountKey, setSelectedGoogleAdsAccountKey] = useState('');
   const [googleAdsSelectionSaving, setGoogleAdsSelectionSaving] = useState(false);
+  const [customClientCustomerId, setCustomClientCustomerId] = useState('');
   const [pendingInstagramConnection, setPendingInstagramConnection] = useState<PendingOAuthConnection | null>(null);
   const [instagramAccounts, setInstagramAccounts] = useState<InstagramAccountOption[]>([]);
   const [selectedInstagramAccountId, setSelectedInstagramAccountId] = useState('');
@@ -647,7 +649,7 @@ export default function ConnectorsHubPage() {
   const [isRdConversasWebhookModalOpen, setIsRdConversasWebhookModalOpen] = useState(false);
   const [openConnectorMenuId, setOpenConnectorMenuId] = useState<UiConnectorId | null>(null);
   const [activeFilter, setActiveFilter] = useState<UiCategory | 'todos'>('todos');
-  const [sortMode, setSortMode] = useState<'az'>('az');
+  const sortMode = 'az';
 
   const accessState = useMemo(
     () => resolveHubAccessState({ loading, user, profile }),
@@ -667,6 +669,7 @@ export default function ConnectorsHubPage() {
     setGoogleAdsAccounts([]);
     setSelectedGoogleAdsAccountKey('');
     setGoogleAdsSelectionSaving(false);
+    setCustomClientCustomerId('');
   }, []);
 
   const clearPendingInstagramSelection = useCallback(() => {
@@ -1398,8 +1401,9 @@ export default function ConnectorsHubPage() {
     return {
       todos: CONNECTOR_ITEMS.length,
       marketing: CONNECTOR_ITEMS.filter((item) => item.category === 'marketing').length,
-      vendas: CONNECTOR_ITEMS.filter((item) => item.category === 'vendas').length,
-      atendimento: CONNECTOR_ITEMS.filter((item) => item.category === 'atendimento').length,
+      ads: CONNECTOR_ITEMS.filter((item) => item.category === 'ads').length,
+      crm: CONNECTOR_ITEMS.filter((item) => item.category === 'crm').length,
+      social: CONNECTOR_ITEMS.filter((item) => item.category === 'social').length,
     };
   }, []);
 
@@ -1617,18 +1621,41 @@ export default function ConnectorsHubPage() {
       return;
     }
 
+    let finalAccountId = selectedAccount.accountId;
+    let finalLoginCustomerId = selectedAccount.loginCustomerId;
+    let finalAccountName = selectedAccount.name;
+    let finalIsManager = selectedAccount.isManager;
+
+    if (selectedAccount.isManager) {
+      const cleanCustomId = customClientCustomerId.replace(/[-\s]/g, '');
+      if (!cleanCustomId) {
+        setConnectorError('Por favor, informe o ID da conta cliente específica para a conta MCC.');
+        setConnectorFeedback(null);
+        return;
+      }
+      if (!/^\d{10}$/.test(cleanCustomId)) {
+        setConnectorError('O ID da conta cliente deve conter exatamente 10 dígitos numéricos.');
+        setConnectorFeedback(null);
+        return;
+      }
+      finalAccountId = cleanCustomId;
+      finalLoginCustomerId = selectedAccount.accountId; // The MCC ID acts as the login customer ID
+      finalAccountName = `Conta ${cleanCustomId} (MCC: ${selectedAccount.name})`;
+      finalIsManager = false; // It connects to a client, not manager itself
+    }
+
     setGoogleAdsSelectionSaving(true);
     setConnectorBusyKey('googleAds');
 
     const persisted = await persistOAuthConnection(
       {
         ...pendingGoogleAdsConnection,
-        accountId: selectedAccount.accountId,
-        loginCustomerId: selectedAccount.loginCustomerId,
+        accountId: finalAccountId,
+        loginCustomerId: finalLoginCustomerId,
         metadata: {
-          accountName: selectedAccount.name,
-          isManager: selectedAccount.isManager,
-          managerName: selectedAccount.managerName,
+          accountName: finalAccountName,
+          isManager: finalIsManager,
+          managerName: selectedAccount.name,
         },
       },
       'Conta Google Ads vinculada com sucesso.'
@@ -1985,7 +2012,7 @@ export default function ConnectorsHubPage() {
     <main className="flex min-h-screen flex-col bg-bg-main">
       <Navbar />
 
-      <div className="relative flex-grow overflow-hidden pt-20 md:pt-28">
+      <div className="relative flex-grow overflow-hidden pt-24 md:pt-40">
         <div
           className="pointer-events-none absolute inset-0 bg-top bg-repeat-y bg-[length:100%_auto]"
           style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
@@ -2035,7 +2062,7 @@ export default function ConnectorsHubPage() {
                 <div className="rounded-2xl border border-[#DDE3F2] bg-white p-3">
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div className="flex flex-wrap items-center gap-2">
-                      {(['todos', 'marketing', 'vendas', 'atendimento'] as const).map((filter) => {
+                      {(['todos', 'marketing', 'ads', 'crm', 'social'] as const).map((filter) => {
                         const isActive = activeFilter === filter;
                         return (
                           <button
@@ -2054,17 +2081,6 @@ export default function ConnectorsHubPage() {
                         );
                       })}
                     </div>
-
-                    <label className="inline-flex items-center gap-2 rounded-xl border border-[#DDE3F2] bg-white px-3 py-2 text-[13px] text-[#475569]">
-                      <span>Ordenar:</span>
-                      <select
-                        value={sortMode}
-                        onChange={(event) => setSortMode(event.target.value as 'az')}
-                        className="bg-transparent text-[13px] font-semibold text-[#0F172A] outline-none"
-                      >
-                        <option value="az">A-Z</option>
-                      </select>
-                    </label>
                   </div>
 
                   <div className="mt-3 space-y-2">
@@ -2511,48 +2527,70 @@ export default function ConnectorsHubPage() {
         </div>
       )}
 
-      {showGoogleAdsSelectionModal && (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
-          <section className={ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME} style={ACCOUNT_SELECTION_MODAL_PANEL_STYLE}>
-            <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a conta Google Ads para concluir</p>
-            <p className={ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME}>
-              A autenticação foi concluída. Escolha a conta para vincular ao Hub. Se a origem for MCC, o vínculo já
-              será salvo com o Login Customer ID correto.
-            </p>
+      {showGoogleAdsSelectionModal && (() => {
+        const selectedAccount = googleAdsAccounts.find((acc) => acc.id === selectedGoogleAdsAccountKey);
+        return (
+          <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+            <section className={ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME} style={ACCOUNT_SELECTION_MODAL_PANEL_STYLE}>
+              <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a conta Google Ads para concluir</p>
+              <p className={ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME}>
+                A autenticação foi concluída. Escolha a conta para vincular ao Hub. Se a origem for MCC, você poderá informar o ID da conta cliente específica.
+              </p>
 
-            <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-              <label className={ACCOUNT_SELECTION_MODAL_LABEL_CLASSNAME}>
-                Conta Google Ads
-                <select
-                  value={selectedGoogleAdsAccountKey}
-                  onChange={(event) => setSelectedGoogleAdsAccountKey(event.target.value)}
-                  className={ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME}
-                >
-                  {googleAdsAccounts.map((account) => {
-                    const suffixMcc = account.loginCustomerId ? ` • via MCC ${account.loginCustomerId}` : '';
-                    const type = account.isManager ? 'MCC' : 'Conta';
-                    return (
-                      <option key={account.id} value={account.id}>
-                        [{type}] {account.name} ({account.accountId}){suffixMcc}
-                      </option>
-                    );
-                  })}
-                </select>
-              </label>
+              <div className="mt-4 flex flex-col gap-4">
+                <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+                  <label className={ACCOUNT_SELECTION_MODAL_LABEL_CLASSNAME}>
+                    Conta Google Ads
+                    <select
+                      value={selectedGoogleAdsAccountKey}
+                      onChange={(event) => setSelectedGoogleAdsAccountKey(event.target.value)}
+                      className={ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME}
+                    >
+                      {googleAdsAccounts.map((account) => {
+                        const suffixMcc = account.loginCustomerId ? ` • via MCC ${account.loginCustomerId}` : '';
+                        const type = account.isManager ? 'MCC' : 'Conta';
+                        return (
+                          <option key={account.id} value={account.id}>
+                            [{type}] {account.name} ({account.accountId}){suffixMcc}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </label>
 
-              <button
-                type="button"
-                onClick={() => void handleGoogleAdsAccountSelection()}
-                disabled={!selectedGoogleAdsAccountKey || googleAdsSelectionSaving}
-                className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
-              >
-                {googleAdsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
-              </button>
-            </div>
-          </section>
-        </div>
-      )}
+                  <button
+                    type="button"
+                    onClick={() => void handleGoogleAdsAccountSelection()}
+                    disabled={!selectedGoogleAdsAccountKey || googleAdsSelectionSaving}
+                    className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
+                  >
+                    {googleAdsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+                  </button>
+                </div>
+
+                {selectedAccount?.isManager && (
+                  <div className="mt-2 flex flex-col gap-2 rounded-xl border border-[#FFD9BD]/30 bg-[#FFF5EC]/10 p-4">
+                    <label className="flex flex-col gap-2 text-[18px] font-semibold text-white">
+                      ID da Conta Cliente Específica (10 dígitos) *
+                      <input
+                        type="text"
+                        value={customClientCustomerId}
+                        onChange={(event) => setCustomClientCustomerId(event.target.value)}
+                        placeholder="Ex: 123-456-7890"
+                        className="h-11 rounded-xl border border-[#A7B8D8] bg-white px-3 text-[14px] font-semibold text-[#0F172A] outline-none focus:border-[#FF8A3D]"
+                      />
+                    </label>
+                    <p className="text-[13px] text-[#C6D3E9]">
+                      Como você selecionou uma conta administradora (MCC), informe o ID da conta cliente de 10 dígitos que deseja conectar para carregar as campanhas e métricas.
+                    </p>
+                  </div>
+                )}
+              </div>
+            </section>
+          </div>
+        );
+      })()}
 
       {showMetaAdsSelectionModal && (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">

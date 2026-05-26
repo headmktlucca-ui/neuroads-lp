@@ -309,24 +309,22 @@ export default function StrategicHubOverview() {
                   <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
                       <p className="text-[13px] text-[#B7C4DF]">Acesso</p>
-                      <p className="mt-1 flex items-center gap-2 text-[20px] font-black text-white">
+                      <p className="mt-1 flex items-center gap-2 text-[18px] font-black text-white whitespace-nowrap">
                         <Gem className="h-5 w-5 text-[#FF6A00]" />
                         {hubProfile.accessLabel}
                       </p>
                     </div>
                     <div>
                       <p className="text-[13px] text-[#B7C4DF]">Status</p>
-                      <p className={`mt-1 text-[20px] font-black ${hubProfile.isSubscriptionActive ? 'text-[#FF6A00]' : 'text-[#F59E0B]'}`}>
+                      <p className={`mt-1 text-[18px] font-black whitespace-nowrap ${hubProfile.isSubscriptionActive ? 'text-[#FF6A00]' : 'text-[#F59E0B]'}`}>
                         ● {hubProfile.statusLabel}
                       </p>
                     </div>
-                    <div>
+                    <div className="sm:col-span-2">
                       <p className="text-[13px] text-[#B7C4DF]">Recursos</p>
-                      <p className="mt-1 text-[20px] font-black text-white">{hubProfile.resourcesLabel}</p>
-                    </div>
-                    <div>
-                      <p className="text-[13px] text-[#B7C4DF]">Operação</p>
-                      <p className="mt-1 text-[20px] font-black text-white">{operationLabel}</p>
+                      <p className="mt-1 text-[18px] font-black text-white whitespace-nowrap overflow-hidden text-ellipsis">
+                        {hubProfile.resourcesLabel}
+                      </p>
                     </div>
                   </div>
 

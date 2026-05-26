@@ -11,10 +11,12 @@ service cloud.firestore {
 
     match /users/{userId} {
       allow read, write: if isSignedIn() && request.auth.uid == userId;
+      allow read: if isSignedIn() && request.auth.token.email == 'headmktlucca@gmail.com';
     }
 
     match /users/{userId}/{document=**} {
       allow read, write: if isSignedIn() && request.auth.uid == userId;
+      allow read: if isSignedIn() && request.auth.token.email == 'headmktlucca@gmail.com';
     }
 
     match /admin_workspaces/{workspaceUserId} {

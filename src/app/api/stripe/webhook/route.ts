@@ -17,7 +17,7 @@ function getStripeConfig() {
 
   return {
     stripe: new Stripe(stripeSecretKey, {
-      apiVersion: '2026-02-25.clover' as never,
+      apiVersion: '2022-11-15' as never,
     }),
     webhookSecret,
   };
@@ -106,3 +106,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Erro ao processar webhook' }, { status: 500 });
   }
 }
+

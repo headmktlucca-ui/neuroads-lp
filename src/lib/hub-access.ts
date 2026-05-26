@@ -408,6 +408,7 @@ export function resolveHubAccessState({
 }): HubAccessStatus {
   if (loading) return 'loading';
   if (!user) return 'unauthenticated';
+  if (!profile) return 'loading';
   if (!hasHubPlanAccess(profile)) return 'forbidden';
   return 'allowed';
 }

@@ -94,7 +94,7 @@ export async function listGoogleAdsAccounts(accessToken: string) {
                   customer_client.descriptive_name,
                   customer_client.status
                 FROM customer_client 
-                WHERE customer_client.level <= 1 AND customer_client.status = 'ENABLED'
+                WHERE customer_client.status = 'ENABLED'
               `;
               
               const clientRes = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {

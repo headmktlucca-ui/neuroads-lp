@@ -1,15 +1,16 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useCallback, useEffect, useMemo, useState, Fragment } from 'react';
+import { useCallback, useEffect, useMemo, useState, Fragment, useRef } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { collection, deleteDoc, doc, getDocs, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
-import { ChevronDown, LogOut, X, PlugZap, CheckCircle2, Gauge, AlertTriangle } from 'lucide-react';
+import { ChevronDown, LogOut, X, PlugZap, CheckCircle2, Gauge, AlertTriangle, Building2, Crown, ShieldCheck, Workflow, User, Mail, Phone, Globe, BookOpen, CreditCard, DollarSign, Calendar, Fingerprint, Activity, Trash2, ShieldAlert, RefreshCw } from 'lucide-react';
 import { getFirebaseDb } from '../../lib/firebase';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
 import { getHubProfileSummary } from '../../lib/hub-profile';
+import { getHubAutomationsFromProfile } from '../../lib/hub-automations';
 import {
   AGENT_STATUS_UPDATED_EVENT,
   readAgentStatusOverrides,
@@ -283,22 +284,22 @@ function formatTrialRemaining(remainingMs: number | null): string {
 
 const SETTINGS_MODAL_VIEWPORT =
   'fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-3 py-3 sm:px-4 sm:py-4';
-const SETTINGS_MODAL_BACKDROP = 'absolute inset-0 bg-charcoal/60 backdrop-blur-sm';
+const SETTINGS_MODAL_BACKDROP = 'absolute inset-0 bg-[#0F172A]/40 backdrop-blur-md transition-opacity duration-300';
 const SETTINGS_MODAL_FRAME =
-  'relative w-full max-h-[90vh] rounded-[32px] p-[2px] bg-gradient-to-br from-[#FFEBDD] via-[#FFBE94] to-[#FF7A00] shadow-[0_24px_56px_rgba(255,107,0,0.22)] animate-in fade-in zoom-in duration-300';
-const SETTINGS_MODAL_SURFACE = 'max-h-[calc(90vh-4px)] overflow-hidden rounded-[30px] border border-[#FFF1E8] bg-white';
-const SETTINGS_MODAL_HEADER = 'relative border-b border-[#E8EDF4] bg-gradient-to-b from-[#FFF4EC] to-white px-6 py-5';
+  'relative w-full max-h-[92vh] rounded-[24px] bg-white border border-slate-100/80 shadow-[0_24px_60px_-15px_rgba(15,23,42,0.12)] overflow-hidden animate-in fade-in zoom-in-95 duration-250';
+const SETTINGS_MODAL_SURFACE = 'max-h-[calc(92vh-4px)] flex flex-col overflow-hidden h-full bg-white';
+const SETTINGS_MODAL_HEADER = 'relative border-b border-slate-100 bg-[#FAFBFC] px-6 py-5 flex flex-col';
 const SETTINGS_MODAL_CLOSE_BUTTON =
-  'absolute right-4 top-4 rounded-full border border-[#E3E8EF] bg-white p-2 text-[#2C3444] transition-colors hover:bg-[#F8FAFC]';
+  'absolute right-5 top-5 rounded-full border border-slate-200/80 bg-white p-2 text-slate-500 transition-all hover:bg-slate-50 hover:text-slate-700 hover:scale-105 active:scale-95 shadow-sm';
 const SETTINGS_PANEL =
-  'rounded-[22px] border border-[#E8EDF4] bg-white p-5 shadow-[0_10px_30px_-24px_rgba(15,23,42,0.55)]';
-const SETTINGS_LABEL = 'mb-2 text-xs font-bold uppercase tracking-widest text-[#98A2B3]';
+  'rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.02)] transition-all duration-200 hover:border-slate-200/80 hover:shadow-[0_8px_30px_-6px_rgba(15,23,42,0.04)]';
+const SETTINGS_LABEL = 'mb-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400';
 const SETTINGS_INPUT =
-  'w-full rounded-xl border border-[#E3E8EF] bg-[#F8FAFC] px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-[#FF8A2B] focus:bg-white';
+  'w-full rounded-xl border border-slate-200 bg-[#F8FAFC] px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition-all duration-200 focus:border-[#FF7A00] focus:bg-white focus:ring-2 focus:ring-[#FF7A00]/10';
 const SETTINGS_SECONDARY_BUTTON =
-  'rounded-xl border border-[#E3E8EF] px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#667085] transition-colors hover:bg-[#F8FAFC]';
+  'rounded-xl border border-slate-200 px-5 py-3 text-xs font-black uppercase tracking-widest text-[#667085] transition-all hover:bg-[#F8FAFC] hover:text-slate-700 hover:border-slate-300 active:scale-98';
 const SETTINGS_PRIMARY_BUTTON =
-  'rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(8,183,96,0.25)] transition-transform hover:-translate-y-0.5';
+  'rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(10,157,87,0.15)] transition-all hover:brightness-105 active:scale-98';
 const SETTINGS_TOAST_BASE =
   'fixed bottom-4 right-4 z-[10020] rounded-xl px-4 py-3 text-sm font-bold shadow-[0_16px_35px_-20px_rgba(15,23,42,0.6)] animate-in fade-in slide-in-from-bottom-2 duration-200';
 
@@ -323,9 +324,80 @@ export default function Navbar() {
   const [isManagingPlan, setIsManagingPlan] = useState(false);
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
   const [settingsToast, setSettingsToast] = useState<{ message: string; variant: 'success' | 'error' } | null>(null);
-  const { user, userEmail, profile, logout, isAdmin } = useAuth();
+  const [isCompanySelectorOpen, setIsCompanySelectorOpen] = useState(false);
+  const [localCompanies, setLocalCompanies] = useState<Array<{ uid: string; companyName: string; email: string }> | null>(null);
+  const [isRefreshingCompanies, setIsRefreshingCompanies] = useState(false);
+  const [isMetricsVisible, setIsMetricsVisible] = useState(true);
+  const lastScrollY = useRef(0);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Scroll down -> hide, Scroll up -> show
+      if (currentScrollY > lastScrollY.current && currentScrollY > 60) {
+        setIsMetricsVisible(false);
+      } else if (currentScrollY < lastScrollY.current) {
+        setIsMetricsVisible(true);
+      }
+      
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const { user, userEmail, profile, logout, isAdmin, isSuperAdmin, actingUid, setActingUid, availableCompanies } = useAuth();
   const pathname = usePathname();
   const router = useRouter();
+  const displayCompanies = localCompanies || availableCompanies;
+
+  const handleRefreshCompanies = async () => {
+    setIsRefreshingCompanies(true);
+    try {
+      const db = getFirebaseDb();
+      const snapshot = await getDocs(collection(db, 'users'));
+      const companiesList: Array<{ uid: string; companyName: string; email: string }> = [];
+      
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        const email = String(data.authEmail || data.email || '').trim();
+        const profileDetails = data.profileDetails as Record<string, unknown> | null;
+        const onboarding = data.onboarding as Record<string, unknown> | null;
+
+        const companyName = String(
+          data.companyName ??
+          data.company ??
+          onboarding?.companyName ??
+          onboarding?.company ??
+          profileDetails?.companyName ??
+          profileDetails?.company ??
+          ''
+        ).trim();
+
+        if (email && companyName && companyName.toLowerCase() !== 'sua empresa' && companyName !== 'undefined') {
+          companiesList.push({
+            uid: doc.id,
+            companyName,
+            email,
+          });
+        }
+      });
+
+      // Sort A-Z
+      companiesList.sort((a, b) => a.companyName.localeCompare(b.companyName, 'pt-BR'));
+      setLocalCompanies(companiesList);
+      showSettingsToast('Lista de empresas atualizada com sucesso!', 'success');
+    } catch (err) {
+      console.error('Failed to refresh companies:', err);
+      showSettingsToast('Falha ao atualizar a lista de empresas.', 'error');
+    } finally {
+      setIsRefreshingCompanies(false);
+    }
+  };
   const searchParams = useSearchParams();
   const [currentHash, setCurrentHash] = useState('');
 
@@ -572,6 +644,9 @@ export default function Navbar() {
   const financialPlanAmount = formatCurrencyFromCents(hubProfile.planAmountCents);
   const trialEndsAtLabel = formatDateTime(hubProfile.trialEndsAt);
   const trialRemainingLabel = formatTrialRemaining(hubProfile.trialRemainingMs);
+  const activeAutomationsCount = useMemo(() => {
+    return getHubAutomationsFromProfile(profile).filter((a) => a.status === 'active').length;
+  }, [profile]);
 
   useEffect(() => {
     if (!user) return;
@@ -1246,7 +1321,9 @@ export default function Navbar() {
         throw new Error(data?.error || 'Não foi possível abrir o gerenciamento do plano.');
       }
 
-      window.location.href = data.url;
+      if (typeof window !== 'undefined') {
+        window.open(data.url, '_blank');
+      }
     } catch (error) {
       const message =
         error instanceof Error ? error.message : 'Não foi possível acessar o gerenciamento do plano agora.';
@@ -1433,6 +1510,8 @@ export default function Navbar() {
                 Agentes Ativos: {String(activeAgentsCount).padStart(2, '0')} de {String(planCapacity).padStart(2, '0')}
               </span>
             )}
+
+
           </div>
 
           {/* Mobile Menu Button */}
@@ -1456,6 +1535,154 @@ export default function Navbar() {
           </div>
         </div>
       </nav>
+
+      {isHubNavbarStyle && user && (
+        <div className={`hidden md:flex items-center justify-between w-full rounded-2xl border border-black/[0.04] bg-white/80 backdrop-blur-md px-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] select-none transition-all duration-300 ease-in-out transform origin-top ${
+          isMetricsVisible 
+            ? 'max-h-24 my-2.5 py-3 opacity-100 translate-y-0' 
+            : 'max-h-0 my-0 py-0 opacity-0 -translate-y-6 pointer-events-none'
+        }`}>
+          {/* Item 1: Empresa */}
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF7A00]/10 text-[#FF7A00] flex-shrink-0">
+              <Building2 size={16} />
+            </div>
+            <div className="flex flex-col relative">
+              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 leading-none">Empresa</p>
+              <p className="mt-1 text-sm font-bold text-slate-800 leading-none">{companyForm.companyName || 'Sua Empresa'}</p>
+              
+              {isSuperAdmin && (
+                <div className="relative mt-1 flex items-center gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsCompanySelectorOpen((prev) => !prev)}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-black/[0.08] bg-[#F8FAFC] hover:bg-[#F1F5F9] px-2.5 py-1 text-[10px] font-bold text-slate-700 transition-all duration-200 shadow-sm cursor-pointer whitespace-nowrap"
+                  >
+                    <Building2 size={11} className="text-slate-500" />
+                    <span className="max-w-[120px] truncate">
+                      {displayCompanies.find((c) => c.uid === actingUid)?.companyName || 'Selecionar Empresa'}
+                    </span>
+                    <ChevronDown size={10} className={`text-slate-400 transition-transform duration-200 ${isCompanySelectorOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={handleRefreshCompanies}
+                    disabled={isRefreshingCompanies}
+                    title="Atualizar lista de empresas"
+                    className="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full border border-black/[0.08] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-slate-500 hover:text-slate-700 transition-all duration-200 shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <RefreshCw size={10} className={`${isRefreshingCompanies ? 'animate-spin' : ''}`} />
+                  </button>
+
+                  {isCompanySelectorOpen && (
+                    <>
+                      <div 
+                        className="fixed inset-0 z-[140]" 
+                        onClick={() => setIsCompanySelectorOpen(false)} 
+                      />
+                      <div className="absolute left-0 top-full z-[150] mt-2 w-[280px] rounded-2xl border border-black/[0.06] bg-white p-2 shadow-[0_12px_30px_rgba(15,23,42,0.12)] animate-in fade-in slide-in-from-top-2 duration-200">
+                        <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                          Empresas Cadastradas ({displayCompanies.length})
+                        </div>
+                        
+                        <div className="my-1.5 h-px w-full bg-slate-100" />
+                        
+                        <div className="max-h-[220px] overflow-y-auto space-y-0.5 custom-scrollbar">
+                          {actingUid && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setActingUid(null);
+                                setIsCompanySelectorOpen(false);
+                              }}
+                              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-black text-[#FF6B00] hover:bg-orange-50 transition-colors"
+                            >
+                              <Building2 size={13} />
+                              Restaurar Painel Original
+                            </button>
+                          )}
+                          
+                          {displayCompanies.map((company) => (
+                            <button
+                              key={company.uid}
+                              type="button"
+                              onClick={() => {
+                                setActingUid(company.uid);
+                                setIsCompanySelectorOpen(false);
+                              }}
+                              className={`flex w-full flex-col rounded-xl px-3 py-2 text-left transition-colors ${
+                                actingUid === company.uid
+                                  ? 'bg-orange-50 text-[#FF6B00]'
+                                  : 'hover:bg-slate-50 text-slate-700'
+                              }`}
+                            >
+                              <span className="text-xs font-bold truncate">{company.companyName}</span>
+                              <span className="text-[10px] text-slate-400 truncate">{company.email}</span>
+                            </button>
+                          ))}
+
+                          {displayCompanies.length === 0 && (
+                            <div className="px-3 py-4 text-center text-xs font-bold text-slate-400">
+                              Nenhuma empresa cadastrada.
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Separator */}
+          <div className="h-6 w-px bg-slate-200" />
+
+          {/* Item 2: Plano Ativo */}
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FFB900]/10 text-[#FFB900]">
+              <Crown size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 leading-none">Plano Ativo</p>
+              <p className="mt-1 text-sm font-black text-[#FF7A00] leading-none">{planDisplayLabel}</p>
+            </div>
+          </div>
+
+          {/* Separator */}
+          <div className="h-6 w-px bg-slate-200" />
+
+          {/* Item 3: Limite Disponível */}
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0A9D57]/10 text-[#0A9D57]">
+              <ShieldCheck size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 leading-none">Agentes Disponíveis</p>
+              <p className="mt-1 text-sm font-bold text-slate-800 leading-none">
+                {planCapacity - activeAgentsCount} de {planCapacity} livres
+              </p>
+            </div>
+          </div>
+
+          {/* Separator */}
+          <div className="h-6 w-px bg-slate-200" />
+
+          {/* Item 4: Automações Ativas */}
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2D6CDF]/10 text-[#2D6CDF]">
+              <Workflow size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 leading-none">Automações Ativas</p>
+              <p className="mt-1 text-sm font-bold text-slate-800 leading-none">
+                {activeAutomationsCount} {activeAutomationsCount === 1 ? 'ativa' : 'ativas'}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {isHubNavbarStyle && isMenuOpen ? (
         <button
@@ -1605,40 +1832,56 @@ export default function Navbar() {
         <div className={`${SETTINGS_MODAL_FRAME} max-w-xl`}>
           <div className={SETTINGS_MODAL_SURFACE}>
             <div className={SETTINGS_MODAL_HEADER}>
-              <h3 className="text-2xl font-black text-text-main tracking-tight">Meu perfil</h3>
-              <p className="text-sm text-text-muted mt-1">Informações da conta do usuário</p>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-[#FF6B00]">
+                  <User size={20} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Meu perfil</h3>
+                  <p className="text-xs font-semibold text-slate-400 mt-0.5">Informações da conta do usuário</p>
+                </div>
+              </div>
               <button
                 onClick={() => setIsProfileOpen(false)}
                 className={SETTINGS_MODAL_CLOSE_BUTTON}
               >
-                <X size={18} className="text-text-main" />
+                <X size={16} />
               </button>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-2 overflow-y-auto custom-scrollbar">
               <div className={SETTINGS_PANEL}>
-                <p className={SETTINGS_LABEL}>Nome</p>
-                <p className="text-base font-bold text-text-main">{user.displayName || 'Não informado'}</p>
+                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                  <User size={13} />
+                  <span className={SETTINGS_LABEL}>Nome</span>
+                </div>
+                <p className="text-sm font-bold text-slate-800">{user.displayName || 'Não informado'}</p>
               </div>
 
               <div className={SETTINGS_PANEL}>
-                <p className={SETTINGS_LABEL}>E-mail</p>
-                <p className="text-base font-bold text-text-main">{user.email || 'Não informado'}</p>
+                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                  <Mail size={13} />
+                  <span className={SETTINGS_LABEL}>E-mail</span>
+                </div>
+                <p className="text-sm font-bold text-slate-800 truncate" title={user.email || ''}>{user.email || 'Não informado'}</p>
               </div>
 
               <div className={`${SETTINGS_PANEL} sm:col-span-2`}>
-                <p className={SETTINGS_LABEL}>WhatsApp</p>
-                <div className="flex flex-col gap-2 sm:flex-row">
+                <div className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                  <Phone size={13} />
+                  <span className={SETTINGS_LABEL}>WhatsApp</span>
+                </div>
+                <div className="flex flex-col gap-2 sm:flex-row relative">
                   <input
                     value={whatsApp}
                     onChange={(e) => setWhatsApp(e.target.value)}
-                    placeholder="(00) 00000-0000"
-                    className={`flex-1 ${SETTINGS_INPUT}`}
+                    placeholder="(51) 98175-8382"
+                    className={SETTINGS_INPUT}
                   />
                   <button
                     type="button"
                     onClick={handleSaveWhatsApp}
-                    className={SETTINGS_PRIMARY_BUTTON}
+                    className={`${SETTINGS_PRIMARY_BUTTON} sm:px-6 h-[46px] flex items-center justify-center`}
                   >
                     Salvar
                   </button>
@@ -1646,42 +1889,62 @@ export default function Navbar() {
               </div>
 
               <div className={SETTINGS_PANEL}>
-                <p className={SETTINGS_LABEL}>Plano</p>
-                <p className={`text-base font-black ${hubProfile.isSubscriptionActive ? 'text-[#0A9D57]' : 'text-primary'}`}>
+                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                  <Crown size={13} />
+                  <span className={SETTINGS_LABEL}>Plano</span>
+                </div>
+                <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-black uppercase tracking-wider ${
+                  hubProfile.isSubscriptionActive 
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
+                    : 'bg-orange-50 text-[#FF6B00] border border-orange-100'
+                }`}>
                   {planDisplayLabel}
-                </p>
-              </div>
-              <div className={SETTINGS_PANEL}>
-                <p className={SETTINGS_LABEL}>Plataformas conectadas</p>
-                <p className="text-base font-black text-text-main">{connectedPlatforms}</p>
+                </span>
               </div>
 
               <div className={SETTINGS_PANEL}>
-                <p className={SETTINGS_LABEL}>Aplicações em uso</p>
-                <p className="text-base font-black text-text-main">{usageCount}</p>
+                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                  <Activity size={13} />
+                  <span className={SETTINGS_LABEL}>Plataformas conectadas</span>
+                </div>
+                <p className="text-sm font-bold text-slate-800">{connectedPlatforms}</p>
               </div>
 
               <div className={SETTINGS_PANEL}>
-                <p className={SETTINGS_LABEL}>ID do usuário</p>
-                <p className="text-sm font-semibold text-text-main break-all">{user.uid}</p>
+                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                  <Workflow size={13} />
+                  <span className={SETTINGS_LABEL}>Aplicações em uso</span>
+                </div>
+                <p className="text-sm font-bold text-slate-800">{usageCount}</p>
               </div>
 
-              <div className="rounded-[22px] border border-red-200 bg-[#FFF4F4] p-4 shadow-[0_10px_30px_-24px_rgba(185,28,28,0.75)] space-y-2 sm:col-span-2">
-                <p className="text-xs uppercase tracking-widest text-red-600 font-black">Zona de risco</p>
-                <p className="text-sm text-red-700">
-                  Ao excluir a conta, seu plano será cancelado e o cadastro será removido do banco de dados.
+              <div className={SETTINGS_PANEL}>
+                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                  <Fingerprint size={13} />
+                  <span className={SETTINGS_LABEL}>ID do usuário</span>
+                </div>
+                <p className="text-xs font-semibold text-slate-600 break-all select-all font-mono bg-slate-50 px-2 py-1 rounded border border-slate-100">{user.uid}</p>
+              </div>
+
+              <div className="rounded-2xl border border-rose-100 bg-rose-50/20 p-5 space-y-3 sm:col-span-2">
+                <div className="flex items-center gap-1.5 text-rose-600">
+                  <ShieldAlert size={16} />
+                  <span className="text-xs uppercase tracking-wider font-black">Zona de risco</span>
+                </div>
+                <p className="text-xs text-rose-700/80 font-medium leading-relaxed">
+                  Ao excluir a conta, seu plano será cancelado imediatamente e o cadastro será removido do banco de dados de forma definitiva.
                 </p>
                 <button
                   type="button"
                   onClick={handleDeleteAccount}
                   disabled={isDeletingAccount}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-red-600 text-white text-xs font-black tracking-widest uppercase hover:bg-red-700 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 h-[42px] rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black tracking-wider uppercase transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
                 >
-                  <AlertTriangle size={15} />
+                  <Trash2 size={13} />
                   {isDeletingAccount ? 'Excluindo...' : 'Excluir conta'}
                 </button>
                 {deleteAccountError ? (
-                  <p className="text-xs font-semibold text-red-700">{deleteAccountError}</p>
+                  <p className="text-xs font-semibold text-rose-600 mt-1">{deleteAccountError}</p>
                 ) : null}
               </div>
             </div>
@@ -1702,79 +1965,115 @@ export default function Navbar() {
         <div className={`${SETTINGS_MODAL_FRAME} max-w-2xl`}>
           <div className={SETTINGS_MODAL_SURFACE}>
             <div className={SETTINGS_MODAL_HEADER}>
-              <h3 className="text-2xl font-black text-text-main tracking-tight">Financeiro</h3>
-              <p className="text-sm text-text-muted mt-1">Detalhes do plano, assinatura e período de acesso</p>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-[#FF6B00]">
+                  <CreditCard size={20} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Financeiro</h3>
+                  <p className="text-xs font-semibold text-slate-400 mt-0.5">Detalhes do plano, assinatura e período de acesso</p>
+                </div>
+              </div>
               <button
                 onClick={closeFinanceModal}
                 className={SETTINGS_MODAL_CLOSE_BUTTON}
               >
-                <X size={18} className="text-text-main" />
+                <X size={16} />
               </button>
             </div>
 
-            <div className="p-5 space-y-3">
+            <div className="p-5 space-y-3 overflow-y-auto custom-scrollbar">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className={SETTINGS_PANEL}>
-                  <p className={SETTINGS_LABEL}>Plano atual</p>
-                  <p className="text-base font-black text-text-main">{financialPlanName}</p>
+                  <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                    <Crown size={13} />
+                    <span className={SETTINGS_LABEL}>Plano atual</span>
+                  </div>
+                  <p className="text-sm font-black text-slate-800">{financialPlanName}</p>
                 </div>
                 <div className={SETTINGS_PANEL}>
-                  <p className={SETTINGS_LABEL}>Valor mensal</p>
-                  <p className="text-base font-black text-text-main">{financialPlanAmount}</p>
+                  <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                    <DollarSign size={13} />
+                    <span className={SETTINGS_LABEL}>Valor mensal</span>
+                  </div>
+                  <p className="text-sm font-black text-slate-800">{financialPlanAmount}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <div className={SETTINGS_PANEL}>
-                  <p className={SETTINGS_LABEL}>Status da assinatura</p>
-                  <p className={`text-base font-black ${hubProfile.isSubscriptionActive ? 'text-[#0A9D57]' : 'text-primary'}`}>
+                  <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                    <Activity size={13} />
+                    <span className={SETTINGS_LABEL}>Status da assinatura</span>
+                  </div>
+                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-black uppercase tracking-wider ${
+                    hubProfile.isSubscriptionActive 
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
+                      : 'bg-orange-50 text-[#FF6B00] border border-orange-100'
+                  }`}>
                     {hubProfile.statusLabel}
-                  </p>
+                  </span>
                 </div>
                 <div className={SETTINGS_PANEL}>
-                  <p className={SETTINGS_LABEL}>Acesso operacional</p>
-                  <p className="text-base font-black text-text-main">{hubProfile.accessLabel}</p>
+                  <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                    <ShieldCheck size={13} />
+                    <span className={SETTINGS_LABEL}>Acesso operacional</span>
+                  </div>
+                  <p className="text-sm font-bold text-slate-800">{hubProfile.accessLabel}</p>
                 </div>
               </div>
 
               <div className={SETTINGS_PANEL}>
-                <p className={SETTINGS_LABEL}>Recursos incluídos</p>
-                <p className="text-sm font-bold text-text-main">
+                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                  <Workflow size={13} />
+                  <span className={SETTINGS_LABEL}>Recursos incluídos</span>
+                </div>
+                <p className="text-sm font-bold text-slate-800">
                   {hubProfile.operationLabel}
                 </p>
                 {hubProfile.includedExecutions != null ? (
-                  <p className="text-xs text-text-muted mt-2">
-                    Execuções inclusas por mês: {hubProfile.includedExecutions.toLocaleString('pt-BR')}
-                  </p>
+                  <div className="mt-3 flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-lg p-2.5">
+                    <Gauge size={14} className="text-slate-400" />
+                    <p className="text-xs font-semibold text-slate-600">
+                      Execuções inclusas por mês: <span className="font-bold text-slate-800">{hubProfile.includedExecutions.toLocaleString('pt-BR')}</span>
+                    </p>
+                  </div>
                 ) : null}
               </div>
 
               {hubProfile.isTrialing && (hubProfile.trialRemainingMs ?? 0) > 0 ? (
-                <div className="rounded-2xl border border-[#FFD2B5] bg-[#FFF8F3] p-4">
-                  <p className="text-xs uppercase tracking-widest text-[#B45309] font-bold mb-2">Período gratuito ativo</p>
-                  <p className="text-base font-black text-[#7C2D12]">{trialRemainingLabel}</p>
-                  <p className="text-sm text-[#7C2D12] mt-2">
-                    Sua primeira cobrança está prevista para: <span className="font-bold">{trialEndsAtLabel}</span>.
+                <div className="rounded-2xl border border-orange-100 bg-orange-50/20 p-5 space-y-2.5">
+                  <div className="flex items-center gap-1.5 text-[#FF6B00]">
+                    <Calendar size={16} />
+                    <span className="text-xs uppercase tracking-wider font-black">Período gratuito ativo</span>
+                  </div>
+                  <p className="text-base font-black text-slate-800">{trialRemainingLabel}</p>
+                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                    Sua primeira cobrança no valor de <span className="font-bold text-slate-800">{financialPlanAmount}</span> está prevista para: <span className="font-bold text-slate-700 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">{trialEndsAtLabel}</span>.
                   </p>
                 </div>
               ) : null}
 
               {!hubProfile.isTrialing ? (
                 <div className={SETTINGS_PANEL}>
-                  <p className={SETTINGS_LABEL}>Período gratuito</p>
-                  <p className="text-sm font-bold text-text-main">
+                  <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+                    <Calendar size={13} />
+                    <span className={SETTINGS_LABEL}>Período gratuito</span>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-600">
                     {hubProfile.trialEndsAt ? `Encerrado em ${trialEndsAtLabel}` : 'Não aplicável ao status atual'}
                   </p>
                 </div>
               ) : null}
 
-              <div className="pt-1">
+              <div className="pt-2">
                 <button
                   type="button"
                   onClick={handleManagePlan}
                   disabled={isManagingPlan}
-                  className="w-full sm:w-auto inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-[#FF8A2B] to-[#FF6B00] px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-[0_10px_22px_rgba(255,107,0,0.28)] transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#FF8A2B] to-[#FF6B00] px-6 h-[46px] text-xs font-black uppercase tracking-widest text-white shadow-[0_6px_20px_rgba(255,107,0,0.2)] hover:brightness-105 active:scale-98 transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
                 >
+                  <CreditCard size={14} />
                   {isManagingPlan ? 'Abrindo...' : 'Gerenciar Plano'}
                 </button>
               </div>
@@ -1795,86 +2094,141 @@ export default function Navbar() {
           <div className={`${SETTINGS_MODAL_FRAME} max-w-2xl`}>
             <div className={SETTINGS_MODAL_SURFACE}>
               <div className={SETTINGS_MODAL_HEADER}>
-                <h3 className="text-2xl font-black text-text-main tracking-tight">Sobre sua Marca</h3>
-                <p className="text-sm text-text-muted mt-1">Cadastro das informações institucionais</p>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-[#FF6B00]">
+                    <Building2 size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-black text-slate-800 tracking-tight">Sobre sua Marca</h3>
+                    <p className="text-xs font-semibold text-slate-400 mt-0.5">Cadastro das informações institucionais</p>
+                  </div>
+                </div>
                 <button
                   onClick={closeCompanyModal}
                   className={SETTINGS_MODAL_CLOSE_BUTTON}
                 >
-                  <X size={18} className="text-text-main" />
+                  <X size={16} />
                 </button>
               </div>
 
-              <div className={`${SETTINGS_PANEL} m-5 grid grid-cols-1 gap-3 sm:grid-cols-2`}>
+              <div className="p-5 grid grid-cols-1 gap-4 sm:grid-cols-2 overflow-y-auto custom-scrollbar">
                 <div className="sm:col-span-2">
-                  <label className={`${SETTINGS_LABEL} block`}>Nome da Empresa</label>
-                  <input
-                    value={companyForm.companyName}
-                    onChange={(e) => setCompanyForm((prev) => ({ ...prev, companyName: e.target.value }))}
-                    className={SETTINGS_INPUT}
-                    placeholder="Nome da empresa"
-                  />
+                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                    <Building2 size={13} />
+                    <span className={SETTINGS_LABEL}>Nome da Empresa</span>
+                  </label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-4 text-slate-400 pointer-events-none">
+                      <Building2 size={16} />
+                    </span>
+                    <input
+                      value={companyForm.companyName}
+                      onChange={(e) => setCompanyForm((prev) => ({ ...prev, companyName: e.target.value }))}
+                      className={`${SETTINGS_INPUT} pl-11`}
+                      placeholder="Nome da empresa"
+                    />
+                  </div>
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label className={`${SETTINGS_LABEL} block`}>Site</label>
-                  <input
-                    value={companyForm.site}
-                    onChange={(e) =>
-                      setCompanyForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))
-                    }
-                    onBlur={(e) =>
-                      setCompanyForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))
-                    }
-                    className={SETTINGS_INPUT}
-                    placeholder="https://..."
-                  />
+                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                    <Globe size={13} />
+                    <span className={SETTINGS_LABEL}>Site</span>
+                  </label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-4 text-slate-400 pointer-events-none">
+                      <Globe size={16} />
+                    </span>
+                    <input
+                      value={companyForm.site}
+                      onChange={(e) =>
+                        setCompanyForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))
+                      }
+                      onBlur={(e) =>
+                        setCompanyForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))
+                      }
+                      className={`${SETTINGS_INPUT} pl-11`}
+                      placeholder="https://..."
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className={`${SETTINGS_LABEL} block`}>Instagram</label>
-                  <input
-                    value={companyForm.instagram}
-                    onChange={(e) => setCompanyForm((prev) => ({ ...prev, instagram: e.target.value }))}
-                    className={SETTINGS_INPUT}
-                    placeholder="@perfil"
-                  />
+                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                    <Globe size={13} />
+                    <span className={SETTINGS_LABEL}>Instagram</span>
+                  </label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-4 text-slate-400 pointer-events-none">
+                      <Globe size={16} />
+                    </span>
+                    <input
+                      value={companyForm.instagram}
+                      onChange={(e) => setCompanyForm((prev) => ({ ...prev, instagram: e.target.value }))}
+                      className={`${SETTINGS_INPUT} pl-11`}
+                      placeholder="@perfil"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className={`${SETTINGS_LABEL} block`}>LinkedIn</label>
-                  <input
-                    value={companyForm.linkedin}
-                    onChange={(e) => setCompanyForm((prev) => ({ ...prev, linkedin: e.target.value }))}
-                    className={SETTINGS_INPUT}
-                    placeholder="linkedin.com/company/..."
-                  />
+                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                    <Globe size={13} />
+                    <span className={SETTINGS_LABEL}>LinkedIn</span>
+                  </label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-4 text-slate-400 pointer-events-none">
+                      <Globe size={16} />
+                    </span>
+                    <input
+                      value={companyForm.linkedin}
+                      onChange={(e) => setCompanyForm((prev) => ({ ...prev, linkedin: e.target.value }))}
+                      className={`${SETTINGS_INPUT} pl-11`}
+                      placeholder="linkedin.com/company/..."
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className={`${SETTINGS_LABEL} block`}>TikTok</label>
-                  <input
-                    value={companyForm.tiktok}
-                    onChange={(e) => setCompanyForm((prev) => ({ ...prev, tiktok: e.target.value }))}
-                    className={SETTINGS_INPUT}
-                    placeholder="tiktok.com/@perfil"
-                  />
+                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                    <Globe size={13} />
+                    <span className={SETTINGS_LABEL}>TikTok</span>
+                  </label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-4 text-slate-400 pointer-events-none">
+                      <Globe size={16} />
+                    </span>
+                    <input
+                      value={companyForm.tiktok}
+                      onChange={(e) => setCompanyForm((prev) => ({ ...prev, tiktok: e.target.value }))}
+                      className={`${SETTINGS_INPUT} pl-11`}
+                      placeholder="tiktok.com/@perfil"
+                    />
+                  </div>
                 </div>
 
                 <div>
-                  <label className={`${SETTINGS_LABEL} block`}>Blog</label>
-                  <input
-                    value={companyForm.blog}
-                    onChange={(e) => setCompanyForm((prev) => ({ ...prev, blog: e.target.value }))}
-                    className={SETTINGS_INPUT}
-                    placeholder="blog.seudominio.com"
-                  />
+                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                    <BookOpen size={13} />
+                    <span className={SETTINGS_LABEL}>Blog</span>
+                  </label>
+                  <div className="relative flex items-center">
+                    <span className="absolute left-4 text-slate-400 pointer-events-none">
+                      <BookOpen size={16} />
+                    </span>
+                    <input
+                      value={companyForm.blog}
+                      onChange={(e) => setCompanyForm((prev) => ({ ...prev, blog: e.target.value }))}
+                      className={`${SETTINGS_INPUT} pl-11`}
+                      placeholder="blog.seudominio.com"
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="px-5 pb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                <p className={`text-sm ${companySaved ? 'text-[#0A9D57]' : 'text-text-muted'}`}>
-                  {companySaved ? 'Dados salvos com sucesso.' : 'Preencha os dados da empresa.'}
+              <div className="px-5 pb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 pt-4 bg-[#FAFBFC]">
+                <p className={`text-xs font-semibold ${companySaved ? 'text-emerald-600' : 'text-slate-400'}`}>
+                  {companySaved ? '✓ Dados salvos com sucesso.' : 'Preencha os dados da empresa.'}
                 </p>
                 <div className="flex gap-3">
                   <button

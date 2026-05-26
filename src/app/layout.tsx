@@ -25,8 +25,9 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: '/images/icon_neuroads_transparente.png' },
-      { url: '/images/icon_neuroads_transparente.png', sizes: '32x32', type: 'image/png' },
+      { url: '/favicon.png', type: 'image/png' },
+      { url: '/icon.png', sizes: '32x32', type: 'image/png' },
+      { url: '/images/icon_neuroads_transparente.png', sizes: '192x192', type: 'image/png' },
     ],
     apple: [
       { url: '/images/icon_neuroads_transparente.png' },

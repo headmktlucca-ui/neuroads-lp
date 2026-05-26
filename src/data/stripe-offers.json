@@ -1,7 +1,7 @@
 {
   "generatedAt": "2026-05-05T21:38:31.749Z",
   "currency": "brl",
-  "stripeApiVersion": "2026-02-25.clover",
+  "stripeApiVersion": "2022-11-15",
   "deactivation": {
     "deactivatedProducts": 1,
     "deactivatedPrices": 0,
@@ -111,3 +111,4 @@
     }
   ]
 }
+

@@ -48,7 +48,7 @@ export default function HubPage() {
     <main className="flex flex-col min-h-screen bg-bg-main">
       <Navbar />
 
-      <div className="flex-grow pt-20 md:pt-28 relative overflow-hidden">
+      <div className="flex-grow pt-24 md:pt-40 relative overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none bg-top bg-repeat-y bg-[length:100%_auto]"
           style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
