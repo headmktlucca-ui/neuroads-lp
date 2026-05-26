@@ -239,6 +239,69 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
     }
   };
 
+  const runMockExtraction = async () => {
+    setLoading(true);
+    setError(null);
+    setExtraction(null);
+
+    window.setTimeout(async () => {
+      try {
+        const mockPayload: ExtractResponse = {
+          success: true,
+          channels: [
+            { platform: 'googleAds', spend: 4500, impressions: 280000, clicks: 4200, conversions: 110 },
+            { platform: 'metaAds', spend: 5200, impressions: 450000, clicks: 6800, conversions: 180 },
+          ],
+          totals: {
+            spend: 9700,
+            impressions: 730000,
+            clicks: 11000,
+            conversions: 290,
+          }
+        };
+
+        setExtraction(mockPayload);
+        const totals = mockPayload.totals!;
+        const insights = calculateInsights(totals);
+        const generatedAt = new Date().toISOString();
+        const diagnosisMarkdown = `${insights.executive}\n\n[MODO SIMULAÇÃO]\n\nPrioridades:\n${insights.priorities
+          .map((p, i) => `${i + 1}. ${p}`)
+          .join('\n')}`;
+
+        if (userId) {
+          await saveAgentReportToDb({
+            userId,
+            agentKey: agentSlug,
+            agentTitle,
+            agentCategory,
+            reportTitle: `[DEMO] Diagnóstico de Tráfego ${dateFrom} a ${dateTo}`,
+            reportContent: diagnosisMarkdown,
+            reportFormat: 'plain_text',
+            generatedAt,
+            metadata: {
+              campaignName: `Consolidação Simulada (Google Ads + Meta Ads)`,
+              periodLabel: `${dateFrom} a ${dateTo}`,
+              investment: Number(totals.spend.toFixed(2)),
+              leads: totals.conversions,
+              ctr: Number(insights.ctr.toFixed(2)),
+              cpc: Number(insights.cpc.toFixed(2)),
+              conversionRate: Number(insights.convRate.toFixed(2)),
+              channels: 'googleAds, metaAds',
+              isDemo: true
+            },
+          });
+
+          const entries = await getLatestAgentReportsFromDb(userId, agentSlug, 10);
+          setHistoryCount(entries.length);
+        }
+      } catch (err) {
+        setError('Erro ao gerar simulação de demonstração.');
+      } finally {
+        setLoading(false);
+      }
+    }, 1200);
+  };
+
   const insights = useMemo(() => {
     if (!extraction?.totals) return null;
     return calculateInsights(extraction.totals);
@@ -310,15 +373,27 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
               </label>
             </div>
 
-            <button
-              type="button"
-              onClick={runExtraction}
-              disabled={loading}
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] disabled:opacity-60"
-            >
-              <Sparkles className="h-4 w-4" />
-              {loading ? 'Extraindo...' : 'Extrair indicadores'}
-            </button>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={runExtraction}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] disabled:opacity-60"
+              >
+                <Sparkles className="h-4 w-4" />
+                {loading ? 'Extraindo...' : 'Extrair indicadores'}
+              </button>
+
+              <button
+                type="button"
+                onClick={runMockExtraction}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-full border border-primary bg-primary/5 px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-primary shadow-sm hover:bg-primary/10 transition"
+              >
+                <CheckCircle2 className="h-4 w-4" />
+                Simular com Dados Exemplo
+              </button>
+            </div>
           </section>
 
           {error ? <p className="text-sm font-semibold text-[#B42318]">{error}</p> : null}

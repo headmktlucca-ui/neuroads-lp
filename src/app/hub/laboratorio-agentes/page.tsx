@@ -46,6 +46,14 @@ const ACTIVATABLE_AGENT_TITLES = new Set([
   'Gerador de Copies de Conversão',
   'Diagnóstico de Landing Page',
   'Análise Viral',
+  'Rastreador Cirúrgico',
+  'Analisador de Público',
+  'Diagnóstico de Funil',
+  'Gerador de Testes A/B',
+  'Avaliador de Oferta',
+  'Radar de Oportunidades',
+  'Análise de Concorrentes',
+  'Público-Alvo Ideal',
 ]);
 
 type AgentDetailsContent = {
@@ -335,13 +343,26 @@ function LaboratorioAgentesContent() {
         <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none bg-gradient-to-b from-transparent via-[#f7f8fa]/75 to-bg-main" />
 
         <section className="relative z-10 wrap py-8 md:py-12 space-y-6">
-          <header className="rounded-3xl border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
-            <h1 className="mt-2 text-3xl font-black tracking-tight text-[#FF6A00] md:text-4xl">
-              Laboratório de Agentes
-            </h1>
-            <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-base">
-              Esta área centraliza a ativação dos agentes da sua operação, com foco em coerência estratégica, previsibilidade e impacto financeiro real.
-            </p>
+          <header className="relative overflow-hidden rounded-3xl border border-[#122034] bg-[#040a13] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
+            <Image
+              src="/images/template-match/metrics-wave-v1.png"
+              alt=""
+              fill
+              className="pointer-events-none object-cover object-bottom opacity-[1]"
+              priority
+            />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,15,0.9)_0%,rgba(3,8,15,0.92)_40%,rgba(3,8,15,0.14)_100%)]" />
+
+            <div className="relative z-10">
+              <h1 className="mt-2 text-3xl font-black tracking-tight text-white md:text-4xl">
+                <span className="bg-[linear-gradient(90deg,#ffb36a_0%,#ff8a2b_45%,#d55a00_100%)] bg-clip-text text-transparent">
+                  Laboratório de Agentes
+                </span>
+              </h1>
+              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-base">
+                Esta área centraliza a ativação dos agentes da sua operação, com foco em coerência estratégica, previsibilidade e impacto financeiro real.
+              </p>
+            </div>
           </header>
 
           {visibleCategories.map((category) => {

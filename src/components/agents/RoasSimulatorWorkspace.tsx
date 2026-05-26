@@ -228,6 +228,35 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
     }
   };
 
+  const runMockExtraction = async () => {
+    setLoading(true);
+    setError(null);
+    setExtraction(null);
+
+    window.setTimeout(() => {
+      try {
+        const mockPayload: ExtractResponse = {
+          success: true,
+          channels: [
+            { platform: 'googleAds', spend: 3200, impressions: 180000, clicks: 2800, conversions: 75 },
+            { platform: 'metaAds', spend: 4100, impressions: 320000, clicks: 5100, conversions: 125 },
+          ],
+          totals: {
+            spend: 7300,
+            impressions: 500000,
+            clicks: 7900,
+            conversions: 200,
+          }
+        };
+        setExtraction(mockPayload);
+      } catch (err) {
+        setError('Erro ao gerar simulação de demonstração.');
+      } finally {
+        setLoading(false);
+      }
+    }, 1200);
+  };
+
   const simulation = useMemo(() => {
     if (!extraction?.totals) return null;
 
@@ -456,15 +485,27 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
               </label>
             </div>
 
-            <button
-              type="button"
-              onClick={runExtraction}
-              disabled={loading}
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] disabled:opacity-60"
-            >
-              <Sparkles className="h-4 w-4" />
-              {loading ? 'Extraindo...' : 'Extrair indicadores'}
-            </button>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={runExtraction}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] disabled:opacity-60"
+              >
+                <Sparkles className="h-4 w-4" />
+                {loading ? 'Extraindo...' : 'Extrair indicadores'}
+              </button>
+
+              <button
+                type="button"
+                onClick={runMockExtraction}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-full border border-primary bg-primary/5 px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-primary shadow-sm hover:bg-primary/10 transition"
+              >
+                <CheckCircle2 className="h-4 w-4" />
+                Simular com Dados Exemplo
+              </button>
+            </div>
           </section>
 
           <section className="rounded-2xl border border-[#E4EAF2] bg-[#FBFCFF] p-5">

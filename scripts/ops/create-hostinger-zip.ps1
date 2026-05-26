@@ -45,7 +45,11 @@ $excludePatterns = @(
   "*.tsbuildinfo",
   "*.log",
   "*.tmp",
-  "tmp_*"
+  "tmp_*",
+  "*.zip",
+  "*.rar",
+  "*.tar",
+  "*.gz"
 )
 
 Write-Host "Preparing deploy package from: $root"
