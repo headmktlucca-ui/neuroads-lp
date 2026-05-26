@@ -1,4 +1,5 @@
 import stripeOffersCatalog from '../data/stripe-offers.json';
+import { hasActiveHubSubscription } from './hub-access';
 
 type PlanLimits = {
   agents: number;
@@ -88,21 +89,7 @@ function normalizeToken(value: string | null): string {
 }
 
 function isSubscriptionActive(profileRecord: Record<string, unknown>): boolean {
-  if (profileRecord.isPremium === true) return true;
-  if (readString(profileRecord.stripeSubscriptionId)) return true;
-  const onboarding = readRecord(profileRecord.onboarding);
-  if (onboarding?.isPremium === true) return true;
-  if (readString(onboarding?.stripeSubscriptionId)) return true;
-
-  const status = normalizeToken(
-    readString(profileRecord.subscriptionStatus) ??
-      readString(profileRecord.stripeSubscriptionStatus) ??
-      readString(profileRecord.status) ??
-      readString(onboarding?.subscriptionStatus) ??
-      readString(onboarding?.stripeSubscriptionStatus) ??
-      readString(onboarding?.status)
-  );
-  return ['trialing', 'active', 'past_due', 'unpaid', 'incomplete', 'ativo'].includes(status);
+  return hasActiveHubSubscription(profileRecord);
 }
 
 function resolveSubscriptionStatus(

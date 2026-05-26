@@ -313,10 +313,6 @@ function isWithinInitialTrialWindow(
   profileRecord: Record<string, unknown>,
   onboardingRecord: Record<string, unknown> | null
 ): boolean {
-  if (!hasPlanOrSubscriptionSignal(profileRecord, onboardingRecord)) {
-    return false;
-  }
-
   const now = Date.now();
   const registeredAt =
     readTimestamp(profileRecord.onboardingCompletedAt) ??
@@ -344,8 +340,8 @@ function isWithinInitialTrialWindow(
     return false;
   }
 
-  // Fallback operacional: mantém o trial inicial apenas para quem já tem sinal de
-  // contratação/plano, evitando liberação por cadastro incompleto de billing.
+  // Fallback operacional: mantém o trial inicial apenas para quem já concluiu
+  // o cadastro da empresa, exigindo preenchimento dos dados do onboarding.
   return hasCompletedCompanyRegistration(profileRecord);
 }
 
