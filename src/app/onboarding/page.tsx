@@ -3,7 +3,8 @@
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { doc, setDoc } from 'firebase/firestore';
-import { ArrowRight, Building2, CheckCircle2, Globe, Lock, Mail, Phone, Sparkles } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowRight, Building2, Check, CheckCircle2, Globe, Lock, Mail, Phone } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
 import { getHubLoginRedirect, hasHubPlanAccess, normalizeHubNextPath } from '../../lib/hub-access';
@@ -12,6 +13,7 @@ import { formatWhatsappInput } from '../../lib/phone-mask';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { verifyStripeCheckoutSession } from '../../lib/stripe-session-verifier';
 import stripeOffersCatalog from '../../data/stripe-offers.json';
+import { AuthPagesBackdrop } from '../../components/auth/AuthPagesBackdrop';
 
 type OnboardingStep = 1 | 2;
 
@@ -43,6 +45,62 @@ const DEFAULT_COMPANY_FORM: CompanyForm = {
   linkedin: '',
 };
 const ONBOARDING_DRAFT_STORAGE_PREFIX = 'neuroads_onboarding_checkout_draft_';
+
+type PlanVisual = {
+  image: string;
+  imageContainerClass: string;
+  imageClassName: string;
+  titleClassName: string;
+  suffixClassName: string;
+  bulletClassName: string;
+  cardClassName: string;
+  description: string;
+  badge?: string;
+};
+
+const PLAN_VISUAL_BY_SLUG: Record<string, PlanVisual> = {
+  'starter-5': {
+    image: '/images/pricing-plans/icon_start_001.png',
+    imageContainerClass: 'h-[54px] w-[54px]',
+    imageClassName: 'scale-[1.02]',
+    titleClassName: 'text-[#6f42ff]',
+    suffixClassName: 'text-[#6f42ff]',
+    bulletClassName: 'bg-[#2759de] text-white',
+    cardClassName: 'bg-[linear-gradient(165deg,rgba(255,255,255,0.92),rgba(245,250,255,0.78))]',
+    description: 'Tudo que você precisa para começar com IA agêntica.',
+  },
+  'growth-10': {
+    image: '/images/pricing-plans/icon_growth_001.png',
+    imageContainerClass: 'h-[54px] w-[74px]',
+    imageClassName: 'scale-[1.03]',
+    titleClassName: 'text-[#1f58ff]',
+    suffixClassName: 'text-[#1f58ff]',
+    bulletClassName: 'bg-[#2759de] text-white',
+    cardClassName: 'bg-[linear-gradient(165deg,rgba(255,255,255,0.92),rgba(245,250,255,0.78))]',
+    description: 'Mais insights, mais automação e mais formas de crescer.',
+  },
+  'scale-15': {
+    image: '/images/pricing-plans/icon_pro_scale_001.png',
+    imageContainerClass: 'h-[54px] w-[68px]',
+    imageClassName: 'scale-[1.02]',
+    titleClassName: 'text-[#ff5a00]',
+    suffixClassName: 'text-[#ff5a00]',
+    bulletClassName: 'bg-[#ff7a1b] text-white',
+    cardClassName: 'bg-[linear-gradient(165deg,rgba(255,255,255,0.95),rgba(255,245,236,0.92))]',
+    description: 'IA avançada e inteligência profunda para escalar sua operação.',
+    badge: 'Mais escolhido',
+  },
+  'performance-20': {
+    image: '/images/pricing-plans/icon_enterprise_001.png',
+    imageContainerClass: 'h-[54px] w-[70px]',
+    imageClassName: 'scale-[1.02]',
+    titleClassName: 'text-[#5f45ff]',
+    suffixClassName: 'text-[#5f45ff]',
+    bulletClassName: 'bg-[#2759de] text-white',
+    cardClassName: 'bg-[linear-gradient(165deg,rgba(255,255,255,0.92),rgba(245,250,255,0.78))]',
+    description: 'Soluções sob medida, escala ilimitada e operação de alta performance.',
+  },
+};
 
 function formatCurrencyFromCents(value: number, currency = 'BRL'): string {
   return new Intl.NumberFormat('pt-BR', {
@@ -526,16 +584,18 @@ function OnboardingPageContent() {
 
   if (loading || (user && premiumSyncing)) {
     return (
-      <main className="min-h-screen bg-bg-main flex items-center justify-center px-5">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <main className="relative min-h-screen bg-bg-main flex items-center justify-center px-5">
+        <AuthPagesBackdrop />
+        <div className="relative z-10 w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </main>
     );
   }
 
   if (isProcessingReturn) {
     return (
-      <main className="min-h-screen bg-bg-main flex items-center justify-center px-5">
-        <div className="max-w-md rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-6 py-5 text-center">
+      <main className="relative min-h-screen bg-bg-main flex items-center justify-center px-5">
+        <AuthPagesBackdrop />
+        <div className="relative z-10 max-w-md rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-6 py-5 text-center">
           <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#C2410C]">Validando pagamento</p>
           <p className="mt-2 text-sm text-[#9A3412]">
             Estamos confirmando sua contratação no Stripe para liberar seu Hub.
@@ -547,27 +607,34 @@ function OnboardingPageContent() {
 
   if (!user) {
     return (
-      <main className="min-h-screen bg-bg-main flex items-center justify-center px-5">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      <main className="relative min-h-screen bg-bg-main flex items-center justify-center px-5">
+        <AuthPagesBackdrop />
+        <div className="relative z-10 w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-bg-main text-text-main">
-      <div className="mx-auto w-full max-w-[1160px] px-5 py-10 sm:py-14">
-        <section className="mx-auto w-full max-w-[860px] rounded-[30px] border border-border bg-white p-6 shadow-[0_24px_54px_rgba(15,23,42,0.08)] sm:p-9">
+    <main className={`relative min-h-screen bg-bg-main text-text-main ${step === 2 ? 'h-dvh overflow-hidden' : ''}`}>
+      <AuthPagesBackdrop />
+      <div
+        className={`relative z-10 mx-auto w-full max-w-[1160px] px-5 ${
+          step === 2 ? 'flex h-full items-center py-3 sm:py-4' : 'py-10 sm:py-14'
+        }`}
+      >
+        <section
+          className={`mx-auto w-full rounded-[30px] border border-border bg-white shadow-[0_24px_54px_rgba(15,23,42,0.08)] ${
+            step === 2 ? 'max-w-[900px] p-4 sm:p-5' : 'max-w-[860px] p-6 sm:p-9'
+          }`}
+        >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">Onboarding do Hub</p>
-              <h1 className="mt-2 text-[30px] font-extrabold leading-tight text-text-main">
+              <h1 className={`mt-2 font-extrabold leading-tight text-text-main ${step === 2 ? 'text-[24px] sm:text-[28px]' : 'text-[30px]'}`}>
                 Configure seu acesso em 2 etapas
               </h1>
-              <p className="mt-2 text-sm text-text-muted">
-                Primeiro registramos os dados da sua empresa. Depois você seleciona o plano contratado.
-              </p>
-              <p className="mt-3 text-xs font-bold uppercase tracking-[0.08em] text-[#9A3412]">
-                Campos obrigatórios: Empresa, Site e WhatsApp.
+              <p className={`mt-2 text-text-muted ${step === 2 ? 'text-[13px]' : 'text-sm'}`}>
+                Complete os dados e selecione o plano ideal:
               </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-secondary px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-text-dim">
@@ -753,48 +820,82 @@ function OnboardingPageContent() {
               </div>
             </div>
           ) : (
-            <div className="mt-8 space-y-6">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="mt-4 space-y-3 sm:space-y-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {planOffers.map((plan) => {
                   const isSelected = plan.slug === selectedPlanSlug;
+                  const visual = PLAN_VISUAL_BY_SLUG[plan.slug] ?? PLAN_VISUAL_BY_SLUG['growth-10'];
+                  const agentsLimit = Math.max(1, Number(plan.limits?.agents ?? 0));
+                  const planBenefits = [
+                    `Ative até ${agentsLimit} Agentes Especialistas`,
+                  ];
                   return (
-                    <button
-                      type="button"
+                    <article
                       key={plan.slug}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => setSelectedPlanSlug(plan.slug)}
-                      className={`rounded-2xl border p-5 text-left transition-all ${
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          setSelectedPlanSlug(plan.slug);
+                        }
+                      }}
+                      className={`group relative flex w-full cursor-pointer flex-col overflow-visible rounded-[20px] border px-3.5 pb-[18px] pt-[18px] text-left shadow-[0_14px_34px_rgba(13,23,45,0.12)] transition-all ${
                         isSelected
-                          ? 'border-[#0A9D57] bg-[#F2FFF7] shadow-[0_12px_24px_rgba(10,157,87,0.16)]'
-                          : 'border-border bg-bg-secondary hover:border-[#B7C1D0]'
+                          ? 'border-[#ff7a1b] bg-[linear-gradient(165deg,rgba(255,255,255,0.97),rgba(255,244,236,0.95))] shadow-[0_18px_42px_rgba(255,122,27,0.28)]'
+                          : `border-white/60 ${visual.cardClassName} hover:border-white/75 hover:shadow-[0_22px_50px_rgba(15,33,70,0.22)]`
                       }`}
                     >
-                      <p className="text-sm font-black text-text-main">{plan.name}</p>
-                      <p className="mt-2 text-2xl font-black text-text-main">
-                        {formatCurrencyFromCents(plan.amount, currencyCode)}
-                        <span className="ml-1 text-xs font-bold uppercase tracking-wider text-text-dim">/mês</span>
-                      </p>
-                      <p className="mt-2 text-xs leading-relaxed text-text-muted">{plan.description}</p>
-                      {plan.limits?.agents ? (
-                        <p className="mt-3 text-xs font-bold uppercase tracking-wider text-[#0A9D57]">
-                          {plan.limits.agents} agentes inclusos
-                        </p>
-                      ) : null}
-                    </button>
+                      <div className="pointer-events-none absolute inset-0 rounded-[20px] bg-[radial-gradient(circle_at_35%_0%,rgba(137,160,255,0.12),rgba(255,255,255,0)_60%)]" />
+                      <div className="flex items-start gap-4">
+                        <div className={`pointer-events-none relative shrink-0 ${visual.imageContainerClass}`}>
+                          <Image
+                            src={visual.image}
+                            alt={`Ícone do plano ${plan.name}`}
+                            fill
+                            sizes="80px"
+                            className={`object-contain drop-shadow-[0_10px_20px_rgba(10,20,40,0.16)] ${visual.imageClassName}`}
+                            priority={plan.slug === 'starter-5' || plan.slug === 'growth-10'}
+                          />
+                        </div>
+                        <div className="min-w-0">
+                          <p className={`text-[22px] font-black leading-[1.05] ${visual.titleClassName}`}>{plan.name}</p>
+                          <p className="mt-[5px] min-h-[44px] text-[12.5px] leading-[1.3] text-[#3f4a63]">{visual.description}</p>
+                        </div>
+                      </div>
+
+                      <div className="mt-2.5 border-b border-[#e7edf7] pb-2.5">
+                        <div className="flex items-end justify-between gap-2">
+                          <div className="flex items-end gap-1.5">
+                            <span className="text-[28px] font-black leading-none text-[#0a0f26]">
+                              {formatCurrencyFromCents(plan.amount, currencyCode)}
+                            </span>
+                            <span className={`mb-1 text-[18px] font-black leading-none ${visual.suffixClassName}`}>/mês</span>
+                          </div>
+                          {visual.badge ? (
+                            <span className="whitespace-nowrap rounded-full bg-[#ff5f0f] px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.04em] text-white">
+                              {visual.badge}
+                            </span>
+                          ) : null}
+                        </div>
+                        <p className="mt-[5px] text-[12px] font-semibold text-[#6f7b95]">Cobrança mensal</p>
+                      </div>
+
+                      <ul className="mt-2.5 flex-1 space-y-2">
+                        {planBenefits.map((feature) => (
+                          <li key={`${plan.slug}-${feature}`} className="flex items-start gap-2.5 text-[12px] leading-[1.24] text-[#25324d]">
+                            <span className={`mt-0.5 inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-full ${visual.bulletClassName}`}>
+                              <Check size={11} strokeWidth={3.1} />
+                            </span>
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </article>
                   );
                 })}
               </div>
-
-              {selectedPlan ? (
-                <div className="rounded-2xl border border-[#DCE8FF] bg-[#F5F9FF] p-4 text-sm text-[#1D4ED8]">
-                  <div className="flex items-center gap-2 font-bold">
-                    <Sparkles size={14} />
-                    Plano selecionado: {selectedPlan.name}
-                  </div>
-                  <p className="mt-1">
-                    Valor: {formatCurrencyFromCents(selectedPlan.amount, currencyCode)} por mês
-                  </p>
-                </div>
-              ) : null}
 
               {errorMessage ? (
                 <p className="rounded-xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-sm text-[#9A3412]">
@@ -802,14 +903,14 @@ function OnboardingPageContent() {
                 </p>
               ) : null}
 
-              <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
+              <div className="flex flex-col-reverse items-stretch justify-between gap-2 sm:flex-row sm:items-center">
                 <button
                   type="button"
                   onClick={() => {
                     setErrorMessage(null);
                     setStep(1);
                   }}
-                  className="rounded-xl border border-border px-5 py-3 text-xs font-bold uppercase tracking-widest text-text-muted hover:bg-bg-secondary"
+                  className="rounded-xl border border-border px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest text-text-muted hover:bg-bg-secondary"
                 >
                   Voltar
                 </button>
@@ -817,9 +918,9 @@ function OnboardingPageContent() {
                   type="button"
                   onClick={handleStartCheckout}
                   disabled={isSaving || !selectedPlan}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(8,183,96,0.25)] disabled:opacity-60"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(8,183,96,0.25)] disabled:opacity-60"
                 >
-                  {isSaving ? 'Redirecionando...' : 'Contratar plano no Stripe'}
+                  {isSaving ? 'Redirecionando...' : 'Começar Agora'}
                 </button>
               </div>
             </div>
@@ -832,7 +933,13 @@ function OnboardingPageContent() {
 
 export default function OnboardingPage() {
   return (
-    <Suspense fallback={<main className="min-h-screen bg-bg-main" />}>
+    <Suspense
+      fallback={
+        <main className="relative min-h-screen bg-bg-main">
+          <AuthPagesBackdrop />
+        </main>
+      }
+    >
       <OnboardingPageContent />
     </Suspense>
   );

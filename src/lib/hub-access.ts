@@ -231,6 +231,17 @@ function hasSelectedPlan(profileRecord: Record<string, unknown>, onboardingRecor
   return Boolean(onboardingPlan);
 }
 
+function hasPlanOrSubscriptionSignal(
+  profileRecord: Record<string, unknown>,
+  onboardingRecord: Record<string, unknown> | null
+): boolean {
+  const hasSubscriptionSignal = Boolean(
+    readString(profileRecord.stripeSubscriptionId) ?? readString(onboardingRecord?.stripeSubscriptionId)
+  );
+
+  return hasSelectedPlan(profileRecord, onboardingRecord) || hasSubscriptionSignal;
+}
+
 function resolveTrialEndsAt(
   profileRecord: Record<string, unknown>,
   onboardingRecord: Record<string, unknown> | null
@@ -295,17 +306,17 @@ function hasActiveTrialPeriod(profileRecord: Record<string, unknown>, onboarding
   );
 
   const statusIndicatesTrial = normalizedStatus.includes('trial') || normalizedStatus === 'teste' || normalizedStatus === 'em_teste';
-  const hasSubscriptionSignal = Boolean(
-    readString(profileRecord.stripeSubscriptionId) ?? readString(onboardingRecord?.stripeSubscriptionId)
-  );
-
-  return (hasSelectedPlan(profileRecord, onboardingRecord) || hasSubscriptionSignal) && (statusIndicatesTrial || !normalizedStatus);
+  return hasPlanOrSubscriptionSignal(profileRecord, onboardingRecord) && (statusIndicatesTrial || !normalizedStatus);
 }
 
 function isWithinInitialTrialWindow(
   profileRecord: Record<string, unknown>,
   onboardingRecord: Record<string, unknown> | null
 ): boolean {
+  if (!hasPlanOrSubscriptionSignal(profileRecord, onboardingRecord)) {
+    return false;
+  }
+
   const now = Date.now();
   const registeredAt =
     readTimestamp(profileRecord.onboardingCompletedAt) ??
@@ -333,8 +344,8 @@ function isWithinInitialTrialWindow(
     return false;
   }
 
-  // Fallback operacional: durante os primeiros 14 dias, não bloquear usuários com
-  // cadastro completo por ausência de sinalização premium já sincronizada.
+  // Fallback operacional: mantém o trial inicial apenas para quem já tem sinal de
+  // contratação/plano, evitando liberação por cadastro incompleto de billing.
   return hasCompletedCompanyRegistration(profileRecord);
 }
 
