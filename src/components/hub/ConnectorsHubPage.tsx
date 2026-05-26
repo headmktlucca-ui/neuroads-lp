@@ -590,6 +590,20 @@ function BrandTile({ id }: { id: UiConnectorId }) {
   );
 }
 
+const ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME =
+  'relative z-[1201] w-full max-w-5xl overflow-hidden rounded-2xl border border-[#173C6E] bg-[#060F24] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6';
+const ACCOUNT_SELECTION_MODAL_PANEL_STYLE = {
+  backgroundImage:
+    'radial-gradient(circle at 18% 18%, rgba(255,122,33,0.34) 0%, rgba(255,122,33,0.12) 28%, rgba(255,122,33,0) 52%), radial-gradient(circle at 88% 12%, rgba(45,128,255,0.28) 0%, rgba(45,128,255,0.10) 30%, rgba(45,128,255,0) 54%), linear-gradient(130deg, #07162F 0%, #0A2145 55%, #081A36 100%)',
+} as const;
+const ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME = 'text-[22px] font-black text-white';
+const ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME = 'mt-2 text-[18px] text-white';
+const ACCOUNT_SELECTION_MODAL_LABEL_CLASSNAME = 'flex flex-col gap-2 text-[20px] font-semibold text-white';
+const ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME =
+  'h-11 rounded-xl border border-[#A7B8D8] bg-white px-3 text-[14px] font-semibold text-[#0F172A] outline-none focus:border-[#FF8A3D]';
+const ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME =
+  'inline-flex h-11 items-center justify-center rounded-xl bg-[#FF7A00] px-5 text-[14px] font-black text-white transition hover:bg-[#E66E00] disabled:cursor-not-allowed disabled:opacity-60';
+
 export default function ConnectorsHubPage() {
   const { user, profile, loading, premiumSyncing } = useAuth();
   const router = useRouter();
@@ -2500,20 +2514,20 @@ export default function ConnectorsHubPage() {
       {showGoogleAdsSelectionModal && (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
-          <section className="relative z-[1201] w-full max-w-5xl rounded-2xl border border-[#FCD34D] bg-[#FFFBEB] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
-            <p className="text-[22px] font-black text-[#92400E]">Selecione a conta Google Ads para concluir</p>
-            <p className="mt-2 text-[18px] text-[#A16207]">
+          <section className={ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME} style={ACCOUNT_SELECTION_MODAL_PANEL_STYLE}>
+            <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a conta Google Ads para concluir</p>
+            <p className={ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME}>
               A autenticação foi concluída. Escolha a conta para vincular ao Hub. Se a origem for MCC, o vínculo já
               será salvo com o Login Customer ID correto.
             </p>
 
             <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-              <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#92400E]">
+              <label className={ACCOUNT_SELECTION_MODAL_LABEL_CLASSNAME}>
                 Conta Google Ads
                 <select
                   value={selectedGoogleAdsAccountKey}
                   onChange={(event) => setSelectedGoogleAdsAccountKey(event.target.value)}
-                  className="h-11 rounded-xl border border-[#FCD34D] bg-white px-3 text-[14px] font-semibold text-[#78350F] outline-none focus:border-[#F59E0B]"
+                  className={ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME}
                 >
                   {googleAdsAccounts.map((account) => {
                     const suffixMcc = account.loginCustomerId ? ` • via MCC ${account.loginCustomerId}` : '';
@@ -2531,7 +2545,7 @@ export default function ConnectorsHubPage() {
                 type="button"
                 onClick={() => void handleGoogleAdsAccountSelection()}
                 disabled={!selectedGoogleAdsAccountKey || googleAdsSelectionSaving}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#F59E0B] px-5 text-[14px] font-black text-white transition hover:bg-[#D97706] disabled:cursor-not-allowed disabled:opacity-60"
+                className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
               >
                 {googleAdsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
               </button>
@@ -2543,19 +2557,19 @@ export default function ConnectorsHubPage() {
       {showMetaAdsSelectionModal && (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
-          <section className="relative z-[1201] w-full max-w-5xl rounded-2xl border border-[#FED7AA] bg-[#FFF7ED] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
-            <p className="text-[22px] font-black text-[#9A3412]">Selecione a conta Meta Ads para concluir</p>
-            <p className="mt-2 text-[18px] text-[#7C2D12]">
+          <section className={ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME} style={ACCOUNT_SELECTION_MODAL_PANEL_STYLE}>
+            <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a conta Meta Ads para concluir</p>
+            <p className={ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME}>
               A autenticação foi concluída. Agora escolha qual conta de anúncios deve ser vinculada ao Hub.
             </p>
 
             <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-              <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#7C2D12]">
+              <label className={ACCOUNT_SELECTION_MODAL_LABEL_CLASSNAME}>
                 Conta de anúncios
                 <select
                   value={selectedMetaAdsAccountId}
                   onChange={(event) => setSelectedMetaAdsAccountId(event.target.value)}
-                  className="h-11 rounded-xl border border-[#FDBA74] bg-white px-3 text-[14px] font-semibold text-[#7C2D12] outline-none focus:border-[#F97316]"
+                  className={ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME}
                 >
                   {metaAdsAccounts.map((account) => (
                     <option key={account.id} value={account.id}>
@@ -2569,7 +2583,7 @@ export default function ConnectorsHubPage() {
                 type="button"
                 onClick={() => void handleMetaAdsAccountSelection()}
                 disabled={!selectedMetaAdsAccountId || metaAdsSelectionSaving}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#FF7A00] px-5 text-[14px] font-black text-white transition hover:bg-[#E66E00] disabled:cursor-not-allowed disabled:opacity-60"
+                className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
               >
                 {metaAdsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
               </button>
@@ -2581,19 +2595,19 @@ export default function ConnectorsHubPage() {
       {showInstagramSelectionModal && (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
-          <section className="relative z-[1201] w-full max-w-5xl rounded-2xl border border-[#C7D2FE] bg-[#EEF2FF] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
-            <p className="text-[22px] font-black text-[#3730A3]">Selecione a conta Instagram para concluir</p>
-            <p className="mt-2 text-[18px] text-[#4338CA]">
+          <section className={ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME} style={ACCOUNT_SELECTION_MODAL_PANEL_STYLE}>
+            <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a conta Instagram para concluir</p>
+            <p className={ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME}>
               A autenticação foi concluída. Agora escolha qual perfil comercial deve ser vinculado ao Hub.
             </p>
 
             <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-              <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#3730A3]">
+              <label className={ACCOUNT_SELECTION_MODAL_LABEL_CLASSNAME}>
                 Conta Instagram
                 <select
                   value={selectedInstagramAccountId}
                   onChange={(event) => setSelectedInstagramAccountId(event.target.value)}
-                  className="h-11 rounded-xl border border-[#A5B4FC] bg-white px-3 text-[14px] font-semibold text-[#312E81] outline-none focus:border-[#4F46E5]"
+                  className={ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME}
                 >
                   {instagramAccounts.map((account) => (
                     <option key={account.id} value={account.id}>
@@ -2609,7 +2623,7 @@ export default function ConnectorsHubPage() {
                 type="button"
                 onClick={() => void handleInstagramAccountSelection()}
                 disabled={!selectedInstagramAccountId || instagramSelectionSaving}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#4F46E5] px-5 text-[14px] font-black text-white transition hover:bg-[#4338CA] disabled:cursor-not-allowed disabled:opacity-60"
+                className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
               >
                 {instagramSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
               </button>
@@ -2621,19 +2635,19 @@ export default function ConnectorsHubPage() {
       {showGa4SelectionModal && (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
-          <section className="relative z-[1201] w-full max-w-5xl rounded-2xl border border-[#BFDBFE] bg-[#EFF6FF] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
-            <p className="text-[22px] font-black text-[#1D4ED8]">Selecione a conta GA4 para concluir</p>
-            <p className="mt-2 text-[18px] text-[#1E40AF]">
+          <section className={ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME} style={ACCOUNT_SELECTION_MODAL_PANEL_STYLE}>
+            <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a conta GA4 para concluir</p>
+            <p className={ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME}>
               A autenticação foi concluída. Agora escolha qual conta do Google Analytics deve ser vinculada ao Hub.
             </p>
 
             <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-              <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#1E40AF]">
+              <label className={ACCOUNT_SELECTION_MODAL_LABEL_CLASSNAME}>
                 Conta GA4
                 <select
                   value={selectedGa4AccountId}
                   onChange={(event) => setSelectedGa4AccountId(event.target.value)}
-                  className="h-11 rounded-xl border border-[#93C5FD] bg-white px-3 text-[14px] font-semibold text-[#1E3A8A] outline-none focus:border-[#3B82F6]"
+                  className={ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME}
                 >
                   {ga4Accounts.map((account) => (
                     <option key={account.id} value={account.accountId}>
@@ -2647,7 +2661,7 @@ export default function ConnectorsHubPage() {
                 type="button"
                 onClick={() => void handleGa4AccountSelection()}
                 disabled={!selectedGa4AccountId || ga4SelectionSaving}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#1D4ED8] px-5 text-[14px] font-black text-white transition hover:bg-[#1E40AF] disabled:cursor-not-allowed disabled:opacity-60"
+                className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
               >
                 {ga4SelectionSaving ? 'Vinculando...' : 'Vincular conta'}
               </button>
@@ -2659,19 +2673,19 @@ export default function ConnectorsHubPage() {
       {showGoogleTrendsSelectionModal && (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
-          <section className="relative z-[1201] w-full max-w-5xl rounded-2xl border border-[#86EFAC] bg-[#F0FDF4] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
-            <p className="text-[22px] font-black text-[#166534]">Selecione a conta Google para concluir o Google Trends</p>
-            <p className="mt-2 text-[18px] text-[#166534]">
+          <section className={ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME} style={ACCOUNT_SELECTION_MODAL_PANEL_STYLE}>
+            <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a conta Google para concluir o Google Trends</p>
+            <p className={ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME}>
               A autenticação foi concluída. Agora escolha qual conta Google deve ser usada no canal Google Trends.
             </p>
 
             <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-              <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#166534]">
+              <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#FFD6B6]">
                 Conta Google
                 <select
                   value={selectedGoogleTrendsAccountId}
                   onChange={(event) => setSelectedGoogleTrendsAccountId(event.target.value)}
-                  className="h-11 rounded-xl border border-[#86EFAC] bg-white px-3 text-[14px] font-semibold text-[#14532D] outline-none focus:border-[#22C55E]"
+                  className={ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME}
                 >
                   {googleTrendsAccounts.map((account) => (
                     <option key={account.id} value={account.accountId}>
@@ -2685,7 +2699,7 @@ export default function ConnectorsHubPage() {
                 type="button"
                 onClick={() => void handleGoogleTrendsAccountSelection()}
                 disabled={!selectedGoogleTrendsAccountId || googleTrendsSelectionSaving}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#16A34A] px-5 text-[14px] font-black text-white transition hover:bg-[#15803D] disabled:cursor-not-allowed disabled:opacity-60"
+                className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
               >
                 {googleTrendsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
               </button>

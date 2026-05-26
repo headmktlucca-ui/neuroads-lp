@@ -1,0 +1,126 @@
+Stripe Premium Sync Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at readRequiredEnv (src\lib\firebase-admin.ts:8:11)
+    at getFirebaseAdminApp (src\lib\firebase-admin.ts:27:20)
+    at getAdminDb (src\lib\firebase-admin.ts:34:23)
+    at POST (src\app\api\stripe\sync-premium\route.ts:36:15)
+   6 | function readRequiredEnv(name: string, value: string | undefined): string {
+   7 |   if (!value || !value.trim()) {
+>  8 |     throw new Error(`Firebase Admin env ausente: ${name}`);
+     |           ^
+   9 |   }
+  10 |   return value;
+  11 | }
+[browser] Image with src "/images/auth/logo-neuroads23.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+Stripe Premium Sync Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at readRequiredEnv (src\lib\firebase-admin.ts:8:11)
+    at getFirebaseAdminApp (src\lib\firebase-admin.ts:27:20)
+    at getAdminDb (src\lib\firebase-admin.ts:34:23)
+    at POST (src\app\api\stripe\sync-premium\route.ts:36:15)
+   6 | function readRequiredEnv(name: string, value: string | undefined): string {
+   7 |   if (!value || !value.trim()) {
+>  8 |     throw new Error(`Firebase Admin env ausente: ${name}`);
+     |           ^
+   9 |   }
+  10 |   return value;
+  11 | }
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/auth/logo-neuroads23.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/auth/logo-neuroads23.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/auth/logo-neuroads23.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/auth/logo-neuroads23.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/auth/logo-neuroads23.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/auth/logo-neuroads23.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/auth/logo-neuroads23.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+Stripe Premium Sync Error: Error: Firebase Admin env ausente: FIREBASE_CLIENT_EMAIL
+    at readRequiredEnv (src\lib\firebase-admin.ts:8:11)
+    at getFirebaseAdminApp (src\lib\firebase-admin.ts:27:20)
+    at getAdminDb (src\lib\firebase-admin.ts:34:23)
+    at POST (src\app\api\stripe\sync-premium\route.ts:36:15)
+   6 | function readRequiredEnv(name: string, value: string | undefined): string {
+   7 |   if (!value || !value.trim()) {
+>  8 |     throw new Error(`Firebase Admin env ausente: ${name}`);
+     |           ^
+   9 |   }
+  10 |   return value;
+  11 | }
+[browser] Image with src "/images/auth/logo-neuroads23-generated.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/auth/logo-neuroads23-generated.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/auth/logo-neuroads23-generated.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Uncaught TypeError: Cannot read properties of undefined (reading 'map')
+    at eval (src/app/onboarding/page.tsx:895:42)
+    at Array.map (<anonymous>)
+    at OnboardingPageContent (src/app/onboarding/page.tsx:843:29)
+    at Set.forEach (<anonymous>)
+    at OnboardingPage (src/app/onboarding/page.tsx:973:25)
+  893 |
+  894 |                       <ul className="mt-2 flex-1 space-y-1.5">
+> 895 |                         {visual.features.map((feature) => (
+      |                                          ^
+  896 |                           <li key={`${plan.slug}-${feature}`} className="flex items-start...
+  897 |                             <span className={`mt-0.5 inline-flex h-[16px] w-[16px] shrink...
+  898 |                               <Check size={11} strokeWidth={3.1} />
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[browser] Image with src "/images/auth/logo-neuroads23-generated.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Uncaught ReferenceError: Sparkles is not defined
+    at OnboardingPageContent (src/app/onboarding/page.tsx:919:22)
+    at OnboardingPage (src/app/onboarding/page.tsx:962:25)
+  917 |                 <div className="rounded-2xl border border-[#DCE8FF] bg-[#F5F9FF] p-3 text...
+  918 |                   <div className="flex items-center gap-2 font-bold">
+> 919 |                     <Sparkles size={13} />
+      |                      ^
+  920 |                     Plano selecionado: {selectedPlan.name}
+  921 |                   </div>
+  922 |                   <p className="mt-1">
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+⚠ Fast Refresh had to perform a full reload due to a runtime error.
+[browser] Image with src "/images/auth/logo-neuroads23-generated.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/auth/logo-neuroads23-generated.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/auth/logo-neuroads23-generated.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/auth/logo-neuroads23-generated.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
+[browser] Image with src "/images/auth/logo-neuroads23-generated.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/logo2026.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Image with src "/images/template-match/process/process-step-01-dor-chaos-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-02-impacto-caixa-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/template-match/process/process-step-03-solucao-agentes-v2.png" has "fill" but is missing "sizes" prop. Please add it to improve page performance. Read more: https://nextjs.org/docs/api-reference/next/image#sizes
+[browser] Image with src "/images/auth/logo-neuroads23-generated.png" has either width or height modified, but not the other. If you use CSS to change the size of your image, also include the styles 'width: "auto"' or 'height: "auto"' to maintain the aspect ratio.
+[browser] Detected `scroll-behavior: smooth` on the `<html>` element. To disable smooth scrolling during route transitions, add `data-scroll-behavior="smooth"` to your <html> element. Learn more: https://nextjs.org/docs/messages/missing-data-scroll-behavior
