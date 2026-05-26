@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { CheckCircle2, Calculator, Sparkles, TrendingUp } from 'lucide-react';
+import { CheckCircle2, Calculator, Network, Sparkles, TrendingUp } from 'lucide-react';
 import { getLatestAgentReportsFromDb, saveAgentReportToDb } from '../../lib/agent-report-history';
 import { useAuth } from '../../context/AuthContext';
 
@@ -124,6 +124,7 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
   const { profile } = useAuth();
 
   const [connectors, setConnectors] = useState<ConnectorState>(DEFAULT_CONNECTORS);
+  const [operationalMode, setOperationalMode] = useState<'real' | 'demo'>('real');
   const [dateFrom, setDateFrom] = useState(() => new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString().slice(0, 10));
   const [dateTo, setDateTo] = useState(() => new Date().toISOString().slice(0, 10));
   const [loading, setLoading] = useState(false);
@@ -464,6 +465,58 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
               })}
             </div>
 
+            {/* Mode Selector Switch */}
+            <div className="flex rounded-xl bg-[#F8FAFC] p-1 border border-[#E2E8F0] mb-4">
+              <button
+                type="button"
+                onClick={() => setOperationalMode('real')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition ${
+                  operationalMode === 'real'
+                    ? 'bg-white text-[#0F172A] shadow-sm border border-[#E2E8F0]'
+                    : 'text-[#64748B] hover:text-[#0F172A]'
+                }`}
+              >
+                <Network className="h-3.5 w-3.5" />
+                Modo Real (Conexão Ativa)
+              </button>
+              <button
+                type="button"
+                onClick={() => setOperationalMode('demo')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition ${
+                  operationalMode === 'demo'
+                    ? 'bg-white text-[#0F172A] shadow-sm border border-[#E2E8F0]'
+                    : 'text-[#64748B] hover:text-[#0F172A]'
+                }`}
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Modo Demonstração (Simulado)
+              </button>
+            </div>
+
+            {operationalMode === 'real' ? (
+              <div className="rounded-xl border border-[#FF6B00]/20 bg-[#FF6B00]/5 p-4 text-xs space-y-2 mb-4">
+                <p className="font-bold text-[#FF6B00] flex items-center gap-1.5 uppercase tracking-wide">
+                  <Network size={14} />
+                  Canais necessários para o uso do Modo Real:
+                </p>
+                <ul className="list-disc pl-4 space-y-1 text-text-muted">
+                  <li><strong>Google Ads & Meta Ads & LinkedIn Ads:</strong> Extração direta de investimento ({activeChannels.length > 0 ? 'Conectado ✅' : 'Pendente Conexão ⚠️'})</li>
+                  <li><strong>Google Analytics 4:</strong> Para consolidação complementar ({profileConnections.ga4?.isActive ? 'Ativo ✅' : 'Inativo ⚠️'})</li>
+                  <li><strong>CRM & Pagamentos:</strong> Sincronização de leads e receita no funil ({profileConnections.crm?.isActive ? 'Ativo ✅' : 'Inativo ⚠️'})</li>
+                </ul>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-border bg-bg-secondary p-4 text-xs mb-4">
+                <p className="font-bold text-text-main flex items-center gap-1.5 uppercase tracking-wide">
+                  <Sparkles size={14} className="text-primary animate-pulse" />
+                  Usando dados integrados de simulação rápida:
+                </p>
+                <p className="mt-1 text-text-muted">
+                  Este modo gera dados fictícios realistas de tráfego para testar o agente sem precisar de conexões com gerenciadores.
+                </p>
+              </div>
+            )}
+
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
               <label className="space-y-1">
                 <span className="text-xs font-bold uppercase tracking-wide text-text-dim">Data inicial</span>
@@ -488,22 +541,12 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
             <div className="mt-4 flex flex-wrap gap-3">
               <button
                 type="button"
-                onClick={runExtraction}
+                onClick={operationalMode === 'real' ? runExtraction : runMockExtraction}
                 disabled={loading}
                 className="inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] disabled:opacity-60"
               >
-                <Sparkles className="h-4 w-4" />
-                {loading ? 'Extraindo...' : 'Extrair indicadores'}
-              </button>
-
-              <button
-                type="button"
-                onClick={runMockExtraction}
-                disabled={loading}
-                className="inline-flex items-center gap-2 rounded-full border border-primary bg-primary/5 px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-primary shadow-sm hover:bg-primary/10 transition"
-              >
-                <CheckCircle2 className="h-4 w-4" />
-                Simular com Dados Exemplo
+                {operationalMode === 'real' ? <Network className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
+                {loading ? 'Processando...' : operationalMode === 'real' ? 'Extrair Indicadores Reais' : 'Simular Dados Exemplo'}
               </button>
             </div>
           </section>

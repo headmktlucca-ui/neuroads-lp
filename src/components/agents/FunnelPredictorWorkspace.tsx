@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { AlertTriangle, CheckCircle2, Sparkles, Target, TrendingUp } from 'lucide-react';
+import { AlertTriangle, CheckCircle2, Network, Sparkles, Target, TrendingUp } from 'lucide-react';
 import { getLatestAgentReportsFromDb, saveAgentReportToDb } from '../../lib/agent-report-history';
 import { useAuth } from '../../context/AuthContext';
 
@@ -245,6 +245,7 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
   const { profile } = useAuth();
 
   const [connectors, setConnectors] = useState<ConnectorState>(DEFAULT_CONNECTORS);
+  const [operationalMode, setOperationalMode] = useState<'real' | 'demo'>('real');
   const [dateFrom, setDateFrom] = useState(() => new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString().slice(0, 10));
   const [dateTo, setDateTo] = useState(() => new Date().toISOString().slice(0, 10));
   const [loading, setLoading] = useState(false);
@@ -376,6 +377,35 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
     } finally {
       setLoading(false);
     }
+  };
+
+  const runMockExtraction = async () => {
+    setLoading(true);
+    setError(null);
+    setExtraction(null);
+
+    window.setTimeout(() => {
+      try {
+        const mockPayload: ExtractResponse = {
+          success: true,
+          channels: [
+            { platform: 'googleAds', spend: 3800, impressions: 240000, clicks: 3600, conversions: 85 },
+            { platform: 'metaAds', spend: 4900, impressions: 390000, clicks: 6100, conversions: 115 },
+          ],
+          totals: {
+            spend: 8700,
+            impressions: 630000,
+            clicks: 9700,
+            conversions: 200,
+          }
+        };
+        setExtraction(mockPayload);
+      } catch (err) {
+        setError('Erro ao gerar simulação de demonstração.');
+      } finally {
+        setLoading(false);
+      }
+    }, 1200);
   };
 
   const projection = useMemo(() => {
@@ -789,6 +819,61 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
               })}
             </div>
 
+            {/* Mode Selector Switch */}
+            <div className="mt-6 flex rounded-xl bg-[#F8FAFC] p-1 border border-[#E2E8F0] mb-4">
+              <button
+                type="button"
+                onClick={() => setOperationalMode('real')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition ${
+                  operationalMode === 'real'
+                    ? 'bg-white text-[#0F172A] shadow-sm border border-[#E2E8F0]'
+                    : 'text-[#64748B] hover:text-[#0F172A]'
+                }`}
+              >
+                <Network className="h-3.5 w-3.5" />
+                Modo Real (Conexão Ativa)
+              </button>
+              <button
+                type="button"
+                onClick={() => setOperationalMode('demo')}
+                className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition ${
+                  operationalMode === 'demo'
+                    ? 'bg-white text-[#0F172A] shadow-sm border border-[#E2E8F0]'
+                    : 'text-[#64748B] hover:text-[#0F172A]'
+                }`}
+              >
+                <Sparkles className="h-3.5 w-3.5" />
+                Modo Demonstração (Simulado)
+              </button>
+            </div>
+
+            {operationalMode === 'real' ? (
+              <div className="rounded-xl border border-[#FF6B00]/20 bg-[#FF6B00]/5 p-4 text-xs space-y-2 mb-4">
+                <p className="font-bold text-[#FF6B00] flex items-center gap-1.5 uppercase tracking-wide">
+                  <Network size={14} />
+                  Canais necessários para o uso do Modo Real:
+                </p>
+                <ul className="list-disc pl-4 space-y-1 text-text-muted">
+                  <li><strong>Google Ads:</strong> Para cruzar indicadores de Pesquisa e PMax ({connectors.googleAds.isActive ? 'Conectado ✅' : 'Não conectado ⚠️'})</li>
+                  <li><strong>Meta Ads:</strong> Para auditar taxas de clique e leads de tráfego pago ({connectors.metaAds.isActive ? 'Conectado ✅' : 'Não conectado ⚠️'})</li>
+                  <li><strong>LinkedIn Ads:</strong> Para mapear funil de atração B2B ({connectors.linkedinAds.isActive ? 'Conectado ✅' : 'Não conectado ⚠️'})</li>
+                  <li><strong>Google Analytics 4:</strong> Para obter taxas de conversão de cliques em leads qualificados ({profileConnections.ga4?.isActive ? 'Ativo ✅' : 'Inativo ⚠️'})</li>
+                  <li><strong>CRM (Hubspot/RD Station):</strong> Para extrair as taxas de agendamento, reunião e propostas ({profileConnections.crm?.isActive ? 'Ativo ✅' : 'Inativo ⚠️'})</li>
+                  <li><strong>Gateway de Pagamento:</strong> Para conciliar receita bruta e taxas financeiras ({profileConnections.gateway?.isActive ? 'Ativo ✅' : 'Inativo ⚠️'})</li>
+                </ul>
+              </div>
+            ) : (
+              <div className="rounded-xl border border-border bg-bg-secondary p-4 text-xs mb-4">
+                <p className="font-bold text-text-main flex items-center gap-1.5 uppercase tracking-wide">
+                  <Sparkles size={14} className="text-primary animate-pulse" />
+                  Usando dados integrados de simulação rápida:
+                </p>
+                <p className="mt-1 text-text-muted">
+                  Este modo gera dados fictícios realistas de tráfego para testar o agente sem precisar de conexões com gerenciadores.
+                </p>
+              </div>
+            )}
+
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3">
               <label className="text-xs font-bold uppercase tracking-wide text-text-dim">
                 Data inicial
@@ -810,17 +895,23 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
               </label>
             </div>
 
-            <button
-              type="button"
-              onClick={() => {
-                void runExtraction();
-              }}
-              disabled={loading}
-              className="mt-4 inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] disabled:opacity-60"
-            >
-              <Sparkles className="h-4 w-4" />
-              {loading ? 'Extraindo...' : 'Extrair indicadores'}
-            </button>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  if (operationalMode === 'real') {
+                    void runExtraction();
+                  } else {
+                    void runMockExtraction();
+                  }
+                }}
+                disabled={loading}
+                className="inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] disabled:opacity-60"
+              >
+                {operationalMode === 'real' ? <Network className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
+                {loading ? 'Processando...' : operationalMode === 'real' ? 'Extrair Indicadores Reais' : 'Simular Dados Exemplo'}
+              </button>
+            </div>
           </section>
 
           <section className="rounded-2xl border border-[#E4EAF2] bg-[#FBFCFF] p-5">
