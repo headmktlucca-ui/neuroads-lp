@@ -55,7 +55,8 @@ async function fetchSeedCustomer(
     LIMIT 1
   `;
 
-  const response = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
+  // Try first without login-customer-id (for simple client accounts)
+  let response = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
     method: 'POST',
     cache: 'no-store',
     headers: {
@@ -65,6 +66,21 @@ async function fetchSeedCustomer(
     },
     body: JSON.stringify({ query }),
   });
+
+  // If it fails (common for MCC/Manager accounts), retry with login-customer-id header
+  if (!response.ok) {
+    response = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
+      method: 'POST',
+      cache: 'no-store',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'developer-token': developerToken,
+        'login-customer-id': customerId,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query }),
+    });
+  }
 
   if (!response.ok) return null;
   const payload = (await response.json()) as GoogleAdsSearchResponse;

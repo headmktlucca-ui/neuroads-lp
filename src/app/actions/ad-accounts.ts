@@ -65,7 +65,7 @@ export async function listGoogleAdsAccounts(accessToken: string) {
       `;
 
       try {
-        const searchRes = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
+        let searchRes = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -74,6 +74,19 @@ export async function listGoogleAdsAccounts(accessToken: string) {
           },
           body: JSON.stringify({ query })
         });
+
+        if (!searchRes.ok) {
+          searchRes = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'developer-token': developerToken,
+              'login-customer-id': customerId,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ query })
+          });
+        }
 
         if (searchRes.ok) {
           const searchData = await searchRes.json();
