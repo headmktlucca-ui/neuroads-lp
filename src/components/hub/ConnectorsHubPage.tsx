@@ -104,7 +104,7 @@ type InlineConnectorNotice = {
   tone: 'info' | 'success' | 'error';
 };
 
-type RdTokenConnectorKey = 'rdStation' | 'rdStationMarketing';
+type RdTokenConnectorKey = 'rdStationMarketing';
 
 const CONNECTOR_ITEMS: UiConnector[] = [
   {
@@ -621,6 +621,11 @@ export default function ConnectorsHubPage() {
   const [googleTrendsAccounts, setGoogleTrendsAccounts] = useState<Ga4AccountOption[]>([]);
   const [selectedGoogleTrendsAccountId, setSelectedGoogleTrendsAccountId] = useState('');
   const [googleTrendsSelectionSaving, setGoogleTrendsSelectionSaving] = useState(false);
+  const [isRdCrmConfigModalOpen, setIsRdCrmConfigModalOpen] = useState(false);
+  const [rdCrmAccessTokenInput, setRdCrmAccessTokenInput] = useState('');
+  const [rdCrmRefreshTokenInput, setRdCrmRefreshTokenInput] = useState('');
+  const [rdCrmWebhookIdInput, setRdCrmWebhookIdInput] = useState('');
+  const [rdCrmSaving, setRdCrmSaving] = useState(false);
   const [rdTokenModalConnector, setRdTokenModalConnector] = useState<RdTokenConnectorKey | null>(null);
   const [rdPublicTokenInput, setRdPublicTokenInput] = useState('');
   const [rdPrivateTokenInput, setRdPrivateTokenInput] = useState('');
@@ -669,6 +674,14 @@ export default function ConnectorsHubPage() {
     setGoogleTrendsAccounts([]);
     setSelectedGoogleTrendsAccountId('');
     setGoogleTrendsSelectionSaving(false);
+  }, []);
+
+  const clearRdCrmConfigModal = useCallback(() => {
+    setIsRdCrmConfigModalOpen(false);
+    setRdCrmAccessTokenInput('');
+    setRdCrmRefreshTokenInput('');
+    setRdCrmWebhookIdInput('');
+    setRdCrmSaving(false);
   }, []);
 
   const clearRdTokenModal = useCallback(() => {
@@ -783,6 +796,60 @@ export default function ConnectorsHubPage() {
     [user]
   );
 
+  const persistRdCrmConnection = useCallback(
+    async (accessToken: string, refreshToken: string, webhookId: string) => {
+      if (!user) return false;
+
+      const now = Date.now();
+      const connectionKey = CONNECTOR_CONNECTION_KEYS.rdStation;
+      const trimmedAccessToken = accessToken.trim();
+      const trimmedRefreshToken = refreshToken.trim();
+      const trimmedWebhookId = webhookId.trim();
+
+      setConnectorStatus((prev) => {
+        const nextStatus = { ...prev, rdStation: true };
+        const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+        window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
+        return nextStatus;
+      });
+
+      try {
+        const db = getFirebaseDb();
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(
+          userRef,
+          {
+            connections: {
+              [connectionKey]: {
+                isActive: true,
+                provider: 'rdstation-crm-v2-oauth2',
+                accessToken: trimmedAccessToken,
+                refreshToken: trimmedRefreshToken || null,
+                metadata: {
+                  authMode: 'oauth2-bearer',
+                  webhookId: trimmedWebhookId || null,
+                },
+                connectedAt: now,
+                updatedAt: now,
+              },
+            },
+            updatedAt: now,
+          },
+          { merge: true }
+        );
+        setConnectorError(null);
+        setConnectorFeedback('RD Station CRM configurado com OAuth2 Bearer e salvo com sucesso.');
+        return true;
+      } catch (saveError) {
+        console.warn('Falha ao persistir configuração do RD Station CRM:', saveError);
+        setConnectorFeedback(null);
+        setConnectorError('Não foi possível salvar a configuração do RD Station CRM no banco.');
+        return false;
+      }
+    },
+    [user]
+  );
+
   useEffect(() => {
     if (accessState === 'unauthenticated') {
       router.replace(getHubLoginRedirect(pathname));
@@ -838,8 +905,19 @@ export default function ConnectorsHubPage() {
     const accountId = searchParams.get('connector_account_id');
     const expiresInRaw = searchParams.get('connector_expires_in');
     const expiresIn = expiresInRaw ? Number(expiresInRaw) : undefined;
+    const legacyGoogleAdsError = searchParams.get('google_ads_error');
+    const legacyGoogleAdsToken = searchParams.get('google_ads_token');
+    const legacyGoogleAdsRefresh = searchParams.get('google_ads_refresh');
 
-    if (!success && !error) return;
+    const normalizedError = error ?? legacyGoogleAdsError;
+    const normalizedAccessToken = accessToken ?? legacyGoogleAdsToken;
+    const normalizedRefreshToken = refreshToken ?? legacyGoogleAdsRefresh;
+    const normalizedConnectorParam =
+      connectorParam ?? (legacyGoogleAdsError || legacyGoogleAdsToken ? 'googleAds' : null);
+    const normalizedProvider = provider ?? (normalizedConnectorParam === 'googleAds' ? 'google' : null);
+    const hasNormalizedSuccess = Boolean(success || legacyGoogleAdsToken);
+
+    if (!hasNormalizedSuccess && !normalizedError) return;
 
     const clearConnectorQueryParams = () => {
       const cleaned = new URLSearchParams(searchParams.toString());
@@ -852,14 +930,17 @@ export default function ConnectorsHubPage() {
         'connector_refresh_token',
         'connector_account_id',
         'connector_expires_in',
+        'google_ads_error',
+        'google_ads_token',
+        'google_ads_refresh',
       ].forEach((param) => cleaned.delete(param));
       const query = cleaned.toString();
       const basePath = pathname || '/hub/conectores';
       router.replace(query ? `${basePath}?${query}` : basePath, { scroll: false });
     };
 
-    if (error) {
-      setConnectorError(`Falha ao conectar: ${error}`);
+    if (normalizedError) {
+      setConnectorError(`Falha ao conectar: ${normalizedError}`);
       setConnectorFeedback(null);
       clearPendingMetaAdsSelection();
       clearPendingGoogleAdsSelection();
@@ -870,7 +951,7 @@ export default function ConnectorsHubPage() {
       return;
     }
 
-    if (!isConnectorKey(connectorParam) || !accessToken) {
+    if (!isConnectorKey(normalizedConnectorParam) || !normalizedAccessToken) {
       setConnectorError('Conexão retornou sem dados suficientes para ativar o conector.');
       setConnectorFeedback(null);
       clearPendingMetaAdsSelection();
@@ -883,16 +964,16 @@ export default function ConnectorsHubPage() {
     }
 
     const pendingPayload: PendingOAuthConnection = {
-      connector: connectorParam,
-      provider: provider ?? null,
-      accessToken,
-      refreshToken: refreshToken ?? null,
+      connector: normalizedConnectorParam,
+      provider: normalizedProvider,
+      accessToken: normalizedAccessToken,
+      refreshToken: normalizedRefreshToken ?? null,
       expiresIn: Number.isFinite(expiresIn || NaN) ? Number(expiresIn) : null,
       accountId: accountId ?? null,
       metadata: null,
     };
 
-    if (connectorParam === 'googleAds' && !pendingPayload.accountId) {
+    if (normalizedConnectorParam === 'googleAds' && !pendingPayload.accountId) {
       const hydrateGoogleAdsAccounts = async () => {
         try {
           setConnectorBusyKey('googleAds');
@@ -912,7 +993,7 @@ export default function ConnectorsHubPage() {
                 headers: {
                   'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ accessToken }),
+                body: JSON.stringify({ accessToken: normalizedAccessToken }),
               });
 
               const parsed = await parseJsonOrThrow<{ accounts?: GoogleAdsAccountOption[]; error?: string }>(
@@ -993,7 +1074,7 @@ export default function ConnectorsHubPage() {
       return;
     }
 
-    if (connectorParam === 'metaAds' && !pendingPayload.accountId) {
+    if (normalizedConnectorParam === 'metaAds' && !pendingPayload.accountId) {
       const hydrateMetaAdsAccounts = async () => {
         try {
           setConnectorBusyKey('metaAds');
@@ -1002,7 +1083,7 @@ export default function ConnectorsHubPage() {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ accessToken }),
+            body: JSON.stringify({ accessToken: normalizedAccessToken }),
           });
           const payload = (await response.json()) as { accounts?: MetaAdsAccountOption[]; error?: string };
 
@@ -1058,7 +1139,7 @@ export default function ConnectorsHubPage() {
       return;
     }
 
-    if (connectorParam === 'instagram' && !pendingPayload.accountId) {
+    if (normalizedConnectorParam === 'instagram' && !pendingPayload.accountId) {
       const hydrateInstagramAccounts = async () => {
         try {
           setConnectorBusyKey('instagram');
@@ -1067,7 +1148,7 @@ export default function ConnectorsHubPage() {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ accessToken }),
+            body: JSON.stringify({ accessToken: normalizedAccessToken }),
           });
           const payload = (await response.json()) as { accounts?: InstagramAccountOption[]; error?: string };
 
@@ -1124,7 +1205,7 @@ export default function ConnectorsHubPage() {
       return;
     }
 
-    if (connectorParam === 'ga4' && !pendingPayload.accountId) {
+    if (normalizedConnectorParam === 'ga4' && !pendingPayload.accountId) {
       const hydrateGa4Accounts = async () => {
         try {
           setConnectorBusyKey('ga4');
@@ -1133,7 +1214,7 @@ export default function ConnectorsHubPage() {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ accessToken }),
+            body: JSON.stringify({ accessToken: normalizedAccessToken }),
           });
           const payload = (await response.json()) as { accounts?: Ga4AccountOption[]; error?: string };
 
@@ -1187,7 +1268,7 @@ export default function ConnectorsHubPage() {
       return;
     }
 
-    if (connectorParam === 'googleTrends' && !pendingPayload.accountId) {
+    if (normalizedConnectorParam === 'googleTrends' && !pendingPayload.accountId) {
       const hydrateGoogleTrendsAccounts = async () => {
         try {
           setConnectorBusyKey('googleTrends');
@@ -1196,7 +1277,7 @@ export default function ConnectorsHubPage() {
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ accessToken }),
+            body: JSON.stringify({ accessToken: normalizedAccessToken }),
           });
           const payload = (await response.json()) as { accounts?: Ga4AccountOption[]; error?: string };
 
@@ -1438,12 +1519,9 @@ export default function ConnectorsHubPage() {
       pendingGoogleTrendsConnection &&
       googleTrendsAccounts.length > 0
   );
-  const rdTokenModalTitle =
-    rdTokenModalConnector === 'rdStation'
-      ? 'RD Station CRM'
-      : rdTokenModalConnector === 'rdStationMarketing'
-        ? 'RD Station Marketing'
-        : '';
+  const rdTokenModalTitle = rdTokenModalConnector === 'rdStationMarketing' ? 'RD Station Marketing' : '';
+  const rdCrmWebhookUrl =
+    `${(process.env.NEXT_PUBLIC_APP_URL || 'https://neuroads.com.br').replace(/\/+$/g, '')}/api/webhooks/rd-station/crm`;
   const rdConversasWebhookUrl =
     `${(process.env.NEXT_PUBLIC_APP_URL || 'https://neuroads.com.br').replace(/\/+$/g, '')}/api/webhooks/rd-station/conversas`;
 
@@ -1464,7 +1542,10 @@ export default function ConnectorsHubPage() {
     if (connectorKey === 'googleTrends') {
       clearPendingGoogleTrendsSelection();
     }
-    if (connectorKey === 'rdStation' || connectorKey === 'rdStationMarketing') {
+    if (connectorKey === 'rdStation') {
+      clearRdCrmConfigModal();
+    }
+    if (connectorKey === 'rdStationMarketing') {
       clearRdTokenModal();
     }
     if (connectorKey === 'rdStationConversas') {
@@ -1684,11 +1765,29 @@ export default function ConnectorsHubPage() {
     setConnectorBusyKey(null);
   };
 
+  const handleSaveRdCrmConfig = async () => {
+    if (!rdCrmAccessTokenInput.trim()) {
+      setConnectorFeedback(null);
+      setConnectorError('Preencha o Access Token (OAuth2 Bearer) para concluir a configuração do RD Station CRM.');
+      return;
+    }
+
+    setRdCrmSaving(true);
+    setConnectorBusyKey('rdStation');
+    const saved = await persistRdCrmConnection(rdCrmAccessTokenInput, rdCrmRefreshTokenInput, rdCrmWebhookIdInput);
+    setConnectorBusyKey(null);
+    setRdCrmSaving(false);
+
+    if (saved) {
+      clearRdCrmConfigModal();
+    }
+  };
+
   const handleSaveRdTokenConnection = async () => {
     if (!rdTokenModalConnector) return;
     if (!rdPublicTokenInput.trim() || !rdPrivateTokenInput.trim()) {
       setConnectorFeedback(null);
-      setConnectorError('Preencha Token Público e Token Privado para concluir a integração RD Station.');
+      setConnectorError('Preencha Token Público e Token Privado para concluir a integração do RD Station Marketing.');
       return;
     }
 
@@ -1710,7 +1809,13 @@ export default function ConnectorsHubPage() {
     setConnectorFeedback(null);
     setInlineConnectorNotice(null);
 
-    if (connectorKey === 'rdStation' || connectorKey === 'rdStationMarketing') {
+    if (connectorKey === 'rdStation') {
+      setConnectorBusyKey(null);
+      setIsRdCrmConfigModalOpen(true);
+      return;
+    }
+
+    if (connectorKey === 'rdStationMarketing') {
       setConnectorBusyKey(null);
       setRdTokenModalConnector(connectorKey);
       return;
@@ -2188,14 +2293,83 @@ export default function ConnectorsHubPage() {
       <Footer />
       <LuccaHubSupportWidget />
 
+      {isRdCrmConfigModalOpen && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+          <section className="relative z-[1201] w-full max-w-3xl rounded-2xl border border-[#BFDBFE] bg-[#EFF6FF] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
+            <p className="text-[22px] font-black text-[#1E40AF]">Configurar RD Station CRM (API v2)</p>
+            <p className="mt-2 text-[15px] text-[#1E3A8A]">
+              Conforme a documentação oficial do CRM v2, a autenticação é via OAuth2 Bearer Token. Informe o Access Token
+              ativo e, se disponível, o Refresh Token para renovação operacional.
+            </p>
+
+            <div className="mt-4 rounded-xl border border-[#93C5FD] bg-white p-3">
+              <p className="text-[12px] font-bold uppercase tracking-wide text-[#1D4ED8]">Webhook receptor recomendado</p>
+              <p className="mt-1 break-all text-[14px] font-semibold text-[#1E3A8A]">{rdCrmWebhookUrl}</p>
+            </div>
+
+            <div className="mt-5 grid gap-3">
+              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#1E3A8A]">
+                Access Token (Bearer) *
+                <input
+                  type="password"
+                  value={rdCrmAccessTokenInput}
+                  onChange={(event) => setRdCrmAccessTokenInput(event.target.value)}
+                  className="h-11 rounded-xl border border-[#93C5FD] bg-white px-3 text-[14px] font-semibold text-[#1E3A8A] outline-none focus:border-[#3B82F6]"
+                  placeholder="Cole o access_token OAuth2 do RD Station CRM"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#1E3A8A]">
+                Refresh Token (opcional)
+                <input
+                  type="password"
+                  value={rdCrmRefreshTokenInput}
+                  onChange={(event) => setRdCrmRefreshTokenInput(event.target.value)}
+                  className="h-11 rounded-xl border border-[#93C5FD] bg-white px-3 text-[14px] font-semibold text-[#1E3A8A] outline-none focus:border-[#3B82F6]"
+                  placeholder="Cole o refresh_token para rotação de credenciais"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#1E3A8A]">
+                ID do webhook no RD (opcional)
+                <input
+                  type="text"
+                  value={rdCrmWebhookIdInput}
+                  onChange={(event) => setRdCrmWebhookIdInput(event.target.value)}
+                  className="h-11 rounded-xl border border-[#93C5FD] bg-white px-3 text-[14px] font-semibold text-[#1E3A8A] outline-none focus:border-[#3B82F6]"
+                  placeholder="Ex.: UUID retornado em /crm/v2/webhooks"
+                />
+              </label>
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={clearRdCrmConfigModal}
+                className="inline-flex h-11 items-center justify-center rounded-xl border border-[#93C5FD] bg-white px-5 text-[14px] font-bold text-[#1E3A8A] transition hover:bg-[#E8F1FF]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleSaveRdCrmConfig()}
+                disabled={rdCrmSaving}
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#1D4ED8] px-5 text-[14px] font-black text-white transition hover:bg-[#1E40AF] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {rdCrmSaving ? 'Salvando...' : 'Salvar configuração CRM'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
       {rdTokenModalConnector && (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
           <section className="relative z-[1201] w-full max-w-3xl rounded-2xl border border-[#FDBA74] bg-[#FFF7ED] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
-            <p className="text-[22px] font-black text-[#9A3412]">Conectar {rdTokenModalTitle} via webhook</p>
+            <p className="text-[22px] font-black text-[#9A3412]">Conectar {rdTokenModalTitle} via tokens</p>
             <p className="mt-2 text-[16px] text-[#7C2D12]">
-              Informe os tokens da conta RD para manter a autenticação ativa no Hub. Esses dados serão salvos no seu perfil
-              de integração para sincronizações futuras.
+              Informe Token Público e Token Privado para manter a autenticação ativa no Hub. Esses dados serão salvos no
+              perfil de integração para sincronizações futuras.
             </p>
 
             <div className="mt-5 grid gap-3">

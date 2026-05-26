@@ -119,10 +119,10 @@ const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string
   rdStation: {
     title: 'RD Station CRM API',
     steps: [
-      'Use integração via webhook com Token Público e Token Privado (sem OAuth).',
-      'No Hub, clique em conectar e informe os dois tokens da conta RD CRM.',
-      'Os tokens serão salvos no perfil da integração para manter autenticação ativa.',
-      'Recomendado: rotacionar tokens periodicamente e atualizar no Hub.',
+      'A API v2 do RD CRM usa OAuth2 Bearer Token.',
+      'No Hub, clique em conectar e informe o Access Token (e opcionalmente Refresh Token).',
+      'Configure webhooks no endpoint /crm/v2/webhooks para enviar eventos ao endpoint da NeuroAds.',
+      'Os dados de autenticação ficam salvos no perfil para manter a integração ativa.',
     ],
   },
   rdStationMarketing: {
@@ -955,27 +955,75 @@ export default function Navbar() {
     setConnectorError(null);
     setConnectorFeedback(null);
 
-    if (connectorKey === 'rdStation' || connectorKey === 'rdStationMarketing') {
-      const publicToken = window.prompt(
-        `${connectorKey === 'rdStation' ? 'RD Station CRM' : 'RD Station Marketing'}: informe o Token Público`
+    if (connectorKey === 'rdStation') {
+      const accessToken = window.prompt('RD Station CRM (API v2): informe o Access Token (OAuth2 Bearer)');
+      if (!accessToken?.trim()) {
+        setConnectorBusyKey(null);
+        return;
+      }
+
+      const refreshToken = window.prompt('RD Station CRM (opcional): informe o Refresh Token');
+      const webhookId = window.prompt('RD Station CRM (opcional): informe o ID do webhook cadastrado no RD');
+
+      const now = Date.now();
+      const connectionKey = CONNECTOR_CONNECTION_KEYS.rdStation;
+      setConnectorStatus((prev) => {
+        const nextStatus = { ...prev, rdStation: true };
+        persistConnectorStatusLocal(nextStatus);
+        return nextStatus;
+      });
+
+      try {
+        const db = getFirebaseDb();
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(
+          userRef,
+          {
+            connections: {
+            [connectionKey]: {
+              isActive: true,
+              provider: 'rdstation-crm-v2-oauth2',
+              accessToken: accessToken.trim(),
+              refreshToken: refreshToken?.trim() || null,
+              metadata: {
+                authMode: 'oauth2-bearer',
+                webhookId: webhookId?.trim() || null,
+              },
+              connectedAt: now,
+              updatedAt: now,
+            },
+          },
+          updatedAt: now,
+        },
+        { merge: true }
       );
+      setConnectorFeedback('RD Station CRM configurado com OAuth2 Bearer e salvo com sucesso.');
+      } catch (connectError) {
+        console.warn('Falha ao salvar integração RD Station CRM:', connectError);
+        setConnectorError('Não foi possível salvar a integração do RD Station CRM no banco.');
+      } finally {
+        setConnectorBusyKey(null);
+      }
+      return;
+    }
+
+    if (connectorKey === 'rdStationMarketing') {
+      const publicToken = window.prompt('RD Station Marketing: informe o Token Público');
       if (!publicToken?.trim()) {
         setConnectorBusyKey(null);
         return;
       }
 
-      const privateToken = window.prompt(
-        `${connectorKey === 'rdStation' ? 'RD Station CRM' : 'RD Station Marketing'}: informe o Token Privado`
-      );
+      const privateToken = window.prompt('RD Station Marketing: informe o Token Privado');
       if (!privateToken?.trim()) {
         setConnectorBusyKey(null);
         return;
       }
 
       const now = Date.now();
-      const connectionKey = CONNECTOR_CONNECTION_KEYS[connectorKey];
+      const connectionKey = CONNECTOR_CONNECTION_KEYS.rdStationMarketing;
       setConnectorStatus((prev) => {
-        const nextStatus = { ...prev, [connectorKey]: true };
+        const nextStatus = { ...prev, rdStationMarketing: true };
         persistConnectorStatusLocal(nextStatus);
         return nextStatus;
       });
@@ -1004,10 +1052,10 @@ export default function Navbar() {
           },
           { merge: true }
         );
-        setConnectorFeedback('Credenciais RD Station salvas e integração ativada.');
+        setConnectorFeedback('Credenciais RD Station Marketing salvas e integração ativada.');
       } catch (connectError) {
-        console.warn('Falha ao salvar integração RD Station:', connectError);
-        setConnectorError('Não foi possível salvar a integração RD Station no banco.');
+        console.warn('Falha ao salvar integração RD Station Marketing:', connectError);
+        setConnectorError('Não foi possível salvar a integração RD Station Marketing no banco.');
       } finally {
         setConnectorBusyKey(null);
       }
