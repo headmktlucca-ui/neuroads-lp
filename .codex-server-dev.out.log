@@ -138,3 +138,5 @@ Hostinger Reach: contato sincronizado com sucesso. { message: 'Request accepted'
  GET /hub 200 in 41ms (next.js: 14ms, application-code: 27ms)
  GET /hub/conectores 200 in 271ms (next.js: 225ms, application-code: 46ms)
  GET /api/auth/connectors/googleAds/start?next=%2Fhub%2Fconectores&provider=google 307 in 177ms (next.js: 151ms, application-code: 26ms)
+  Reload env: .env.local
+✓ Compiled in 7.2s
