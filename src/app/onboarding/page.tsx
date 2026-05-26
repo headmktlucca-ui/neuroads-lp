@@ -808,11 +808,20 @@ function OnboardingPageContent() {
                 </p>
               ) : null}
 
-              <div className="flex items-center justify-end">
+              <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
+                <button
+                  type="button"
+                  onClick={() => {
+                    router.push('/');
+                  }}
+                  className="rounded-xl border border-border px-5 py-3 text-xs font-bold uppercase tracking-widest text-text-muted hover:bg-bg-secondary"
+                >
+                  Voltar
+                </button>
                 <button
                   type="button"
                   onClick={handleContinueToPlans}
-                  className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(8,183,96,0.25)]"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(8,183,96,0.25)]"
                 >
                   Continuar
                   <ArrowRight size={14} />

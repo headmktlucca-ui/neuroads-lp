@@ -8,6 +8,20 @@ export type DnaBrandInput = {
   linkedinUrl: string;
 };
 
+export type DnaBrandColor = {
+  hex: string;
+  name: string;
+  type: 'primary' | 'secondary' | 'accent' | 'neutral_light' | 'neutral_dark';
+  usage: string;
+};
+
+export type DnaBrandColorPalette = {
+  colors: DnaBrandColor[];
+  psychologicalImpact: string;
+  contrastAccessibility: string;
+  visualStyleDescription: string;
+};
+
 export type DnaBrandSource = {
   label: 'site' | 'instagram' | 'linkedin';
   requestedUrl: string;
@@ -16,6 +30,7 @@ export type DnaBrandSource = {
   description?: string;
   snippet?: string;
   error?: string;
+  colors?: string[];
 };
 
 export type DnaBrandSlide = {
@@ -67,6 +82,7 @@ export type DnaBrandPresentation = {
   presentationTitle: string;
   executiveSummary: string;
   positioningStatement: string;
+  colorPalette: DnaBrandColorPalette;
   idealCustomerProfile: DnaIdealCustomerProfile;
   audienceContentProfile: DnaAudienceContentProfile;
   practicalOpportunities?: DnaPracticalOpportunities;
@@ -100,6 +116,31 @@ function normalizePresentation(raw: unknown): DnaBrandPresentation {
   const idealRaw = (data.idealCustomerProfile as Record<string, unknown>) ?? {};
   const audienceRaw = (data.audienceContentProfile as Record<string, unknown>) ?? {};
   const practicalRaw = (data.practicalOpportunities as Record<string, unknown>) ?? {};
+  const paletteRaw = (data.colorPalette as Record<string, unknown>) ?? {};
+
+  const colorsRaw = Array.isArray(paletteRaw.colors) ? paletteRaw.colors : [];
+  const colors: DnaBrandColor[] = colorsRaw.map((item) => {
+    const current = (item && typeof item === 'object' ? item : {}) as Record<string, unknown>;
+    const type = current.type as DnaBrandColor['type'];
+    return {
+      hex: typeof current.hex === 'string' ? current.hex.trim() : '#000000',
+      name: typeof current.name === 'string' ? current.name.trim() : 'Cor',
+      type: ['primary', 'secondary', 'accent', 'neutral_light', 'neutral_dark'].includes(type)
+        ? type
+        : 'primary',
+      usage: typeof current.usage === 'string' ? current.usage.trim() : '',
+    };
+  });
+
+  const colorPalette: DnaBrandColorPalette = {
+    colors: colors.length > 0 ? colors : [
+      { hex: '#FF6B00', name: 'Laranja Neuro', type: 'primary', usage: 'Cor principal da marca para botões e destaque.' },
+      { hex: '#111827', name: 'Cinza Escuro', type: 'neutral_dark', usage: 'Textos principais e fundos escuros.' }
+    ],
+    psychologicalImpact: typeof paletteRaw.psychologicalImpact === 'string' ? paletteRaw.psychologicalImpact.trim() : '',
+    contrastAccessibility: typeof paletteRaw.contrastAccessibility === 'string' ? paletteRaw.contrastAccessibility.trim() : '',
+    visualStyleDescription: typeof paletteRaw.visualStyleDescription === 'string' ? paletteRaw.visualStyleDescription.trim() : '',
+  };
 
   const slidesRaw = Array.isArray(data.slides) ? data.slides : [];
   const slides: DnaBrandSlide[] = slidesRaw.map((item) => {
@@ -128,6 +169,7 @@ function normalizePresentation(raw: unknown): DnaBrandPresentation {
     presentationTitle: typeof data.presentationTitle === 'string' ? data.presentationTitle : 'DNA da Marca',
     executiveSummary: typeof data.executiveSummary === 'string' ? data.executiveSummary : '',
     positioningStatement: typeof data.positioningStatement === 'string' ? data.positioningStatement : '',
+    colorPalette,
     idealCustomerProfile: {
       headline: typeof idealRaw.headline === 'string' ? idealRaw.headline : '',
       segment: typeof idealRaw.segment === 'string' ? idealRaw.segment : '',
@@ -213,6 +255,23 @@ function htmlToSnippet(html: string, maxChars = 2800): string {
   return text.slice(0, maxChars);
 }
 
+function extractColorsFromHtml(html: string): string[] {
+  if (!html) return [];
+  const hexRegex = /#([0-9a-fA-F]{6}|[0-9a-fA-F]{3}|[0-9a-fA-F]{8})\b/g;
+  const matches = html.match(hexRegex) || [];
+  
+  const counts: Record<string, number> = {};
+  for (const match of matches) {
+    const color = match.toLowerCase();
+    counts[color] = (counts[color] || 0) + 1;
+  }
+  
+  return Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([color]) => color)
+    .slice(0, 15);
+}
+
 async function fetchSource(label: DnaBrandSource['label'], rawUrl: string): Promise<DnaBrandSource> {
   const requestedUrl = normalizeUrl(rawUrl);
   if (!requestedUrl) {
@@ -246,6 +305,7 @@ async function fetchSource(label: DnaBrandSource['label'], rawUrl: string): Prom
     const title = extractTitle(html);
     const description = extractMetaContent(html, 'description') || extractMetaContent(html, 'og:description');
     const snippet = htmlToSnippet(html);
+    const colors = label === 'site' ? extractColorsFromHtml(html) : undefined;
 
     return {
       label,
@@ -254,6 +314,7 @@ async function fetchSource(label: DnaBrandSource['label'], rawUrl: string): Prom
       title,
       description,
       snippet,
+      colors,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Falha ao capturar a fonte.';
@@ -284,6 +345,12 @@ function buildMarkdown(presentation: DnaBrandPresentation, sources: DnaBrandSour
     })
     .join('\n');
 
+  const colorsList = presentation.colorPalette.colors
+    .map(c => `- **${c.name}** (\`${c.hex}\` - ${c.type}): ${c.usage}`)
+    .join('\n');
+
+  const paletteBlock = `### Cores da Marca\n${colorsList}\n\n### Psicologia e Estilo Visual\n- **Impacto Psicológico:** ${presentation.colorPalette.psychologicalImpact}\n- **Contraste e Acessibilidade:** ${presentation.colorPalette.contrastAccessibility}\n- **Diretrizes de Estilo Visual:** ${presentation.colorPalette.visualStyleDescription}`;
+
   return `# ${presentation.presentationTitle}
 
 ## Resumo Executivo
@@ -291,6 +358,9 @@ ${presentation.executiveSummary}
 
 ## Posicionamento Central
 ${presentation.positioningStatement}
+
+## Identidade Visual e Paleta de Cores
+${paletteBlock}
 
 ## Perfil Ideal De Cliente (Maior Probabilidade E Necessidade)
 - Headline: ${presentation.idealCustomerProfile.headline}
@@ -376,11 +446,15 @@ export async function generateDnaBrandReport(input: DnaBrandInput): Promise<DnaB
     fetchSource('instagram', input.instagramUrl),
     fetchSource('linkedin', input.linkedinUrl),
   ]);
-
   try {
     const client = getClient();
 
     const sourcePayload = sources.map((item) => JSON.stringify(item)).join('\n');
+    const siteSource = sources.find((s) => s.label === 'site');
+    const extractedColorsHint =
+      siteSource?.colors && siteSource.colors.length > 0
+        ? `\nCORES HEXADECIMAIS REAIS EXTRAÍDAS DO CÓDIGO FONTE DO SITE (Use como base principal para identificar a paleta real da marca): ${siteSource.colors.join(', ')}\n`
+        : '';
 
     const response = await client.chat.completions.create({
       model: 'gpt-4o',
@@ -395,7 +469,7 @@ export async function generateDnaBrandReport(input: DnaBrandInput): Promise<DnaB
         {
           role: 'user',
           content: `Analise profundamente as fontes e monte uma apresentação estratégica completa de DNA da Marca com foco em crescimento previsível e impacto financeiro.
-
+${extractedColorsHint}
 Fontes coletadas:
 ${sourcePayload}
 
@@ -404,6 +478,19 @@ Retorne JSON com esta estrutura EXATA:
   "presentationTitle": "string",
   "executiveSummary": "string",
   "positioningStatement": "string",
+  "colorPalette": {
+    "colors": [
+      {
+        "hex": "#HEX",
+        "name": "Nome da cor (ex: Laranja NeuroAds, Azul Corporativo)",
+        "type": "primary | secondary | accent | neutral_light | neutral_dark",
+        "usage": "Explicar onde e como essa cor deve ser usada"
+      }
+    ],
+    "psychologicalImpact": "O significado emocional dessas cores e o impacto no público-alvo",
+    "contrastAccessibility": "Comentários sobre contraste para legibilidade (ex: texto claro em fundo escuro)",
+    "visualStyleDescription": "Estilo visual recomendado para imagens, design e mood da marca"
+  },
   "idealCustomerProfile": {
     "headline": "string",
     "segment": "string",

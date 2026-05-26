@@ -4,8 +4,10 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   BarChart3,
   BriefcaseBusiness,
+  Check,
   CheckCircle2,
   CircleGauge,
+  Copy,
   Download,
   FileText,
   HandCoins,
@@ -14,6 +16,7 @@ import {
   Loader2,
   Mail,
   Megaphone,
+  Palette,
   Save,
   Sparkles,
   Target,
@@ -25,6 +28,8 @@ import {
   type DnaBrandInput,
   type DnaBrandPresentation,
   type DnaBrandSource,
+  type DnaBrandColor,
+  type DnaBrandColorPalette,
 } from '../../app/actions/dna-brand';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
@@ -205,6 +210,21 @@ async function downloadBrandDnaPdf(result: GenerateState) {
   writeText(result.presentation.executiveSummary);
   writeText('Posicionamento Central', { size: 13, bold: true, gapTop: 10 });
   writeText(result.presentation.positioningStatement);
+
+  const palette = result.presentation.colorPalette;
+  if (palette && palette.colors) {
+    writeText('Paleta de Cores da Marca', { size: 13, bold: true, gapTop: 10 });
+    palette.colors.forEach((c) => {
+      writeText(`- ${c.name} (${c.hex} - ${c.type}): ${c.usage}`);
+    });
+    if (palette.psychologicalImpact) {
+      writeText(`Impacto Psicologico: ${palette.psychologicalImpact}`, { gapTop: 4 });
+    }
+    if (palette.visualStyleDescription) {
+      writeText(`Diretrizes de Estilo: ${palette.visualStyleDescription}`, { gapTop: 4 });
+    }
+  }
+
   writeText('Perfil Ideal De Cliente', { size: 13, bold: true, gapTop: 10 });
   writeText(`Headline: ${result.presentation.idealCustomerProfile.headline}`);
   writeText(`Segmento: ${result.presentation.idealCustomerProfile.segment}`);
@@ -644,6 +664,219 @@ function IconList({
   );
 }
 
+function ColorCard({ color }: { color: DnaBrandColor }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(color.hex);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy hex color', err);
+    }
+  };
+
+  const typeLabels: Record<string, string> = {
+    primary: 'Primária',
+    secondary: 'Secundária',
+    accent: 'Destaque',
+    neutral_light: 'Neutro Claro',
+    neutral_dark: 'Neutro Escuro',
+  };
+
+  const isLight = color.type === 'neutral_light';
+
+  return (
+    <div
+      onClick={handleCopy}
+      style={{ '--color-glow': color.hex } as React.CSSProperties}
+      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-[#E7ECF3] bg-white p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_12px_28px_-6px_var(--color-glow)] hover:border-gray-300"
+    >
+      <div className="flex items-center gap-3">
+        <div
+          className={`h-12 w-12 rounded-xl shadow-inner border transition-all duration-300 group-hover:scale-105 ${
+            isLight ? 'border-gray-200' : 'border-transparent'
+          }`}
+          style={{ backgroundColor: color.hex }}
+        />
+        
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-bold uppercase tracking-wider text-text-dim">
+            {typeLabels[color.type] || color.type}
+          </p>
+          <h5 className="text-sm font-black text-text-main truncate mt-0.5">
+            {color.name}
+          </h5>
+          <p className="font-mono text-xs text-text-muted mt-0.5">
+            {color.hex.toUpperCase()}
+          </p>
+        </div>
+
+        <div className="rounded-lg p-2 bg-[#F8FAFC] border border-[#E2E8F0] transition-colors group-hover:bg-[#FFF1E8] group-hover:border-[#FFD0B3]">
+          {copied ? (
+            <Check size={14} className="text-[#08B760] animate-bounce" />
+          ) : (
+            <Copy size={14} className="text-[#64748B] group-hover:text-[#FF6B00]" />
+          )}
+        </div>
+      </div>
+      
+      <p className="mt-3 text-xs leading-relaxed text-text-muted border-t border-[#EEF2F7] pt-2">
+        {color.usage}
+      </p>
+    </div>
+  );
+}
+
+function DesignTokensExporter({ colors }: { colors: DnaBrandColor[] }) {
+  const [activeTab, setActiveTab] = useState<'css' | 'tailwind'>('css');
+  const [copied, setCopied] = useState(false);
+
+  const cssVariables = useMemo(() => {
+    return `:root {
+${colors
+  .map(
+    (c) =>
+      `  --color-${c.type.replace('_', '-')}: ${c.hex}; /* ${c.name} */`
+  )
+  .join('\n')}
+}`;
+  }, [colors]);
+
+  const tailwindConfig = useMemo(() => {
+    const colorEntries = colors
+      .map(
+        (c) =>
+          `        "${c.type.replace('_', '-')}": "${c.hex}", // ${c.name}`
+      )
+      .join('\n');
+    return `module.exports = {
+  theme: {
+    extend: {
+      colors: {
+${colorEntries}
+      }
+    }
+  }
+}`;
+  }, [colors]);
+
+  const codeToCopy = activeTab === 'css' ? cssVariables : tailwindConfig;
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(codeToCopy);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy design tokens', err);
+    }
+  };
+
+  return (
+    <div className="rounded-2xl border border-[#E7ECF3] bg-[#F8FAFC] p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+        <div className="flex gap-1.5 p-1 rounded-xl bg-white border border-[#E4EAF2]">
+          <button
+            type="button"
+            onClick={() => setActiveTab('css')}
+            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+              activeTab === 'css'
+                ? 'bg-gradient-to-br from-[#FF6B00] to-[#FF9D00] text-white shadow-sm'
+                : 'text-[#64748B] hover:text-text-main'
+            }`}
+          >
+            CSS Variables
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('tailwind')}
+            className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
+              activeTab === 'tailwind'
+                ? 'bg-gradient-to-br from-[#FF6B00] to-[#FF9D00] text-white shadow-sm'
+                : 'text-[#64748B] hover:text-text-main'
+            }`}
+          >
+            Tailwind CSS
+          </button>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-[#E2E8F0] bg-white px-3 py-1 text-xs font-bold text-text-main transition-all hover:bg-gray-50 active:scale-95"
+        >
+          {copied ? (
+            <>
+              <Check size={12} className="text-[#08B760]" />
+              <span className="text-[#08B760]">Copiado!</span>
+            </>
+          ) : (
+            <>
+              <Copy size={12} className="text-[#64748B]" />
+              <span>Copiar Código</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      <pre className="font-mono text-xs overflow-x-auto p-3.5 rounded-xl border border-[#EEF2F7] bg-white text-[#0F172A] leading-relaxed max-h-48">
+        <code>{codeToCopy}</code>
+      </pre>
+    </div>
+  );
+}
+
+function BrandColorPaletteSection({ palette }: { palette: DnaBrandColorPalette }) {
+  if (!palette || !palette.colors || palette.colors.length === 0) return null;
+
+  return (
+    <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] space-y-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Palette className="h-5 w-5 text-[#FF6B00]" />
+        <h4 className="text-base font-black text-text-main">🎨 Paleta de Cores e Identidade Visual</h4>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {palette.colors.map((color, index) => (
+          <ColorCard key={`${color.hex}-${index}`} color={color} />
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+        <div className="space-y-4">
+          {palette.psychologicalImpact ? (
+            <div className="rounded-2xl border border-[#EEF2F7] bg-white p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-text-dim mb-1">🧠 Impacto Psicológico</p>
+              <p className="text-sm leading-relaxed text-text-muted">{palette.psychologicalImpact}</p>
+            </div>
+          ) : null}
+
+          {palette.contrastAccessibility ? (
+            <div className="rounded-2xl border border-[#EEF2F7] bg-white p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-text-dim mb-1">♿ Contraste e Acessibilidade</p>
+              <p className="text-sm leading-relaxed text-text-muted">{palette.contrastAccessibility}</p>
+            </div>
+          ) : null}
+
+          {palette.visualStyleDescription ? (
+            <div className="rounded-2xl border border-[#EEF2F7] bg-white p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-text-dim mb-1">📸 Estilo Visual Recomendado</p>
+              <p className="text-sm leading-relaxed text-text-muted">{palette.visualStyleDescription}</p>
+            </div>
+          ) : null}
+        </div>
+
+        <div className="space-y-2">
+          <p className="text-xs font-bold uppercase tracking-wide text-text-dim px-1">💻 Exportador de Design Tokens</p>
+          <DesignTokensExporter colors={palette.colors} />
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export function DnaBrandPresentationPanel({
   presentation,
   sources,
@@ -678,6 +911,8 @@ export function DnaBrandPresentationPanel({
             <h4 className="text-base font-black text-text-main mb-2">🎯 Posicionamento Central</h4>
             <p className="text-sm leading-relaxed text-text-muted">{presentation.positioningStatement}</p>
           </article>
+
+          <BrandColorPaletteSection palette={presentation.colorPalette} />
 
           <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
             <div className="flex flex-wrap items-center gap-2">
