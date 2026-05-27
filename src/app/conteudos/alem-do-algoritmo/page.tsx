@@ -44,26 +44,33 @@ export default function Page() {
         <PrimaryTopMenu />
         <div className="h-[84px]" />
 
-        <section className="wrap relative overflow-hidden pb-8 pt-14 sm:pt-18">
-          <div className="relative z-10 grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
+        <section className="relative overflow-hidden bg-transparent pb-8 pt-14 sm:pt-18">
+          <div className="wrap relative z-10 grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
             <div className="max-w-4xl">
-              <h1 className="max-w-5xl text-balance text-4xl font-black leading-[1.04] tracking-[-0.03em] sm:text-5xl md:text-6xl grad-text-animated">
-                Além do Algoritmo
+              <h1 className="max-w-5xl text-balance text-4xl font-black leading-[1.04] tracking-[-0.03em] sm:text-5xl md:text-6xl text-[#0f172a]">
+                Além do <span className="bg-gradient-to-r from-[#ff5f00] via-[#ff8a00] to-[#ffb800] bg-clip-text text-transparent">Algoritmo</span>
               </h1>
 
-              <p className="mt-6 max-w-3xl text-lg leading-relaxed text-[#40506a]">
-                Estratégia aplicada para empresários que precisam de crescimento previsível. Aqui cada conteúdo traduz SEO + GEO, IA agêntica e performance para impacto real no caixa.
+              <div className="mt-5 h-[3px] w-24 rounded-full bg-gradient-to-r from-[#ff5f00] to-[#ff9f00]" />
+
+              <p className="mt-8 max-w-3xl text-[17px] font-medium leading-relaxed text-[#40506a] sm:text-lg">
+                Estratégia aplicada para empresários que precisam de crescimento previsível. Aqui cada conteúdo traduz{' '}
+                <span className="bg-gradient-to-r from-[#ff5f00] to-[#ff9f00] bg-clip-text text-transparent font-extrabold">SEO + GEO</span>,{' '}
+                <span className="bg-gradient-to-r from-[#ff5f00] to-[#ff9f00] bg-clip-text text-transparent font-extrabold">IA agêntica</span>{' '}
+                e{' '}
+                <span className="bg-gradient-to-r from-[#ff5f00] to-[#ff9f00] bg-clip-text text-transparent font-extrabold">performance</span>{' '}
+                para impacto real no caixa.
               </p>
             </div>
 
             <div className="relative flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-[460px] bg-transparent shadow-none">
+              <div className="relative w-full max-w-[440px] bg-transparent shadow-none">
                 <Image
-                  src="/images/editorial/alem-do-algoritmo/bus-quad-clean.png"
-                  alt="Bússola estratégica para crescimento previsível"
+                  src="/images/editorial/alem-do-algoritmo/optimization-timer.png"
+                  alt="Ampulheta de Otimização e IA"
                   width={820}
                   height={861}
-                  className="h-auto w-full object-contain"
+                  className="h-auto w-full object-contain rotate-[8deg] hover:rotate-[2deg] hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer drop-shadow-[0_25px_60px_rgba(255,95,0,0.18)]"
                   priority
                 />
               </div>
