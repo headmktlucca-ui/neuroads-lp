@@ -342,7 +342,7 @@ function isWithinInitialTrialWindow(
 
   // Fallback operacional: mantém o trial inicial apenas para quem já concluiu
   // o cadastro da empresa, exigindo preenchimento dos dados do onboarding.
-  return hasCompletedCompanyRegistration(profileRecord);
+  return hasCompletedCompanyRegistration(profileRecord) && hasSelectedPlan(profileRecord, onboardingRecord);
 }
 
 export function hasActiveHubSubscription(profile: unknown): boolean {
