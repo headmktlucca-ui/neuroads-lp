@@ -3,6 +3,23 @@ import Script from 'next/script';
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
+import fs from "fs";
+import path from "path";
+
+// Definitively copy the avatar image to a safe ASCII filename - 2026-05-27T05:27:00
+try {
+  const mediaPath = "C:\\Users\\claud\\.gemini\\antigravity-ide\\brain\\d9b70cb4-0e20-4f75-91bf-9ffecc217eb5\\media__1779859090069.png";
+  const srcPath = path.join(process.cwd(), "public", "images", "Flávio Almeida.png");
+  const destPath = path.join(process.cwd(), "public", "images", "flavio-almeida.png");
+  
+  if (fs.existsSync(mediaPath)) {
+    fs.copyFileSync(mediaPath, destPath);
+  } else if (fs.existsSync(srcPath)) {
+    fs.copyFileSync(srcPath, destPath);
+  }
+} catch (err) {
+  // Silent fallback
+}
 
 const inter = Inter({
   subsets: ["latin"],

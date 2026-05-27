@@ -171,7 +171,7 @@ const testimonials = [
     quote: 'Essencial para impulsionar sua empresa, recomendo!!',
     name: 'Flávio Almeida',
     role: 'CEO, FJR TELEPROMPTER',
-    avatar: '/images/Flávio Almeida.png',
+    avatar: '/images/flavio-almeida.png',
   },
   {
     quote: 'Excelente profissional de tráfego pago! Sempre muito estratégico, atencioso e focado em performance.',
