@@ -413,7 +413,7 @@ export default function StrategicHubOverview() {
           </section>
 
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.05fr_1fr]">
-            <article className="overflow-hidden rounded-[24px] border border-[#E8ECF1] bg-white shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
+            <article className="overflow-hidden rounded-[24px] border border-[#E8ECF1] glassmorphism-light shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
               <header className="flex items-center justify-between gap-4 bg-[#0d1e3d] px-5 py-4 border-b border-[#1a365d]/40">
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
@@ -431,19 +431,19 @@ export default function StrategicHubOverview() {
 
               <div className="p-5">
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                  <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                  <article className="rounded-[14px] border border-[#E9EDF4] glassmorphism-light p-3">
                     <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Programadas</p>
                     <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{trackedAutomations.length}</p>
                   </article>
-                  <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                  <article className="rounded-[14px] border border-[#E9EDF4] glassmorphism-light p-3">
                     <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Ativas</p>
                     <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{activeAutomationsCount}</p>
                   </article>
-                  <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                  <article className="rounded-[14px] border border-[#E9EDF4] glassmorphism-light p-3">
                     <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Executando</p>
                     <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{runningAutomationsCount}</p>
                   </article>
-                  <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                  <article className="rounded-[14px] border border-[#E9EDF4] glassmorphism-light p-3">
                     <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Atrasadas</p>
                     <p className="mt-1 text-[24px] leading-none font-black text-[#B42318]">{overdueAutomationsCount}</p>
                   </article>
@@ -454,7 +454,7 @@ export default function StrategicHubOverview() {
                     {trackedAutomations.slice(0, 3).map((automation) => {
                       const runtimeState = getAutomationRuntimeState(automation, nowMs);
                       return (
-                        <article key={automation.key} className="rounded-[14px] border border-[#E9EDF4] bg-white p-3">
+                        <article key={automation.key} className="rounded-[14px] border border-[#E9EDF4] glassmorphism-light p-3">
                           <div className="flex flex-wrap items-center justify-between gap-2">
                             <p className="text-[14px] font-black text-[#111827]">{automation.agentTitle}</p>
                             <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold ${getAutomationRuntimeTone(runtimeState)}`}>
@@ -479,7 +479,7 @@ export default function StrategicHubOverview() {
                     })}
                   </div>
                 ) : (
-                  <div className="mt-4 rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-4 text-[14px] text-[#4B5563]">
+                  <div className="mt-4 rounded-[14px] border border-[#E9EDF4] glassmorphism-light p-4 text-[14px] text-[#4B5563]">
                     Nenhuma automação programada ainda. Ative uma automação em um agente para acompanhar status em tempo real.
                   </div>
                 )}
@@ -501,7 +501,7 @@ export default function StrategicHubOverview() {
               </div>
             </article>
 
-            <article className="overflow-hidden rounded-[24px] border border-[#E8ECF1] bg-white shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
+            <article className="overflow-hidden rounded-[24px] border border-[#E8ECF1] glassmorphism-light shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
               <header className="flex items-center justify-between gap-4 bg-[#0d1e3d] px-5 py-4 border-b border-[#1a365d]/40">
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
@@ -530,7 +530,7 @@ export default function StrategicHubOverview() {
 
                     <div className="space-y-2">
                       {activeAgentEntries.slice(0, 5).map((agent) => (
-                        <article key={agent.title} className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                        <article key={agent.title} className="rounded-[14px] border border-[#E9EDF4] glassmorphism-light p-3">
                           <p className="text-[14px] font-black text-[#111827]">{agent.title}</p>
                           <p className="mt-1 text-[12px] text-[#4B5563]">{agent.description}</p>
                           <div className="mt-2">
@@ -543,7 +543,7 @@ export default function StrategicHubOverview() {
                     </div>
                   </>
                 ) : (
-                  <div className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-4">
+                  <div className="rounded-[14px] border border-[#E9EDF4] glassmorphism-light p-4">
                     <div className="flex items-start gap-2">
                       <Bot className="mt-0.5 h-5 w-5 text-[#667085]" />
                       <p className="text-[14px] text-[#4B5563]">

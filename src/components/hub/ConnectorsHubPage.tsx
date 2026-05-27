@@ -2331,26 +2331,9 @@ export default function ConnectorsHubPage() {
                   <p className="mt-2 text-sm font-semibold text-[#FF6A00]">
                     Menos ruptura entre canais, mais performance orientada por dados reais.
                   </p>
-                </div>
-
-                <div className="flex shrink-0 flex-wrap items-center gap-3 md:justify-end">
-                  <Link
-                    href="/conteudos/materias-de-apoio"
-                    className="inline-flex h-12 items-center gap-2 rounded-[14px] border border-[#365B8E] bg-[#0A2A55] px-5 text-[14px] font-black tracking-wide text-white transition hover:bg-[#10366D]"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    Ver documentação
-                  </Link>
-                  <button
-                    type="button"
-                    className="inline-flex h-12 items-center gap-2 rounded-[14px] bg-[#FF7A00] px-5 text-[14px] font-black tracking-wide text-white shadow-[0_12px_24px_rgba(255,122,0,0.35)] transition hover:bg-[#E56B00]"
-                  >
-                    <Plus className="h-4 w-4" />
-                    Adicionar conector
-                  </button>
-                </div>
               </div>
-            </header>
+            </div>
+          </header>
 
             <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px]">
               <div>
