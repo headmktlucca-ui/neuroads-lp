@@ -45,7 +45,7 @@ export default function Page() {
         <div className="h-[84px]" />
 
         <section className="relative overflow-hidden bg-transparent pb-8 pt-14 sm:pt-18">
-          <div className="wrap relative z-10 grid items-center gap-10 lg:grid-cols-[1.08fr_0.92fr]">
+          <div className="wrap relative z-10 grid items-center gap-8 lg:grid-cols-[1.3fr_0.7fr]">
             <div className="max-w-4xl">
               <h1 className="max-w-5xl text-balance text-4xl font-black leading-[1.04] tracking-[-0.03em] sm:text-5xl md:text-6xl text-[#0f172a]">
                 Além do <span className="bg-gradient-to-r from-[#ff5f00] via-[#ff8a00] to-[#ffb800] bg-clip-text text-transparent">Algoritmo</span>
@@ -63,14 +63,14 @@ export default function Page() {
               </p>
             </div>
 
-            <div className="relative flex justify-center lg:justify-end">
-              <div className="relative w-full max-w-[440px] bg-transparent shadow-none">
+            <div className="relative flex justify-center lg:justify-end mt-8 lg:mt-0">
+              <div className="relative w-[160px] h-[196px] sm:w-[180px] sm:h-[220px] lg:w-[180px] lg:h-[220px]">
                 <Image
-                  src="/images/editorial/alem-do-algoritmo/optimization-timer.png"
-                  alt="Ampulheta de Otimização e IA"
-                  width={820}
-                  height={861}
-                  className="h-auto w-full object-contain rotate-[8deg] hover:rotate-[2deg] hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer drop-shadow-[0_25px_60px_rgba(255,95,0,0.18)]"
+                  src="/images/editorial/alem-do-algoritmo/caps111.png"
+                  alt="Especialista e Cérebro de IA"
+                  fill
+                  sizes="(max-width: 768px) 180px, 180px"
+                  className="object-contain hover:scale-[1.03] transition-transform duration-500 ease-out"
                   priority
                 />
               </div>
