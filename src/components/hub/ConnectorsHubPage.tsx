@@ -243,7 +243,6 @@ const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
   ga4: 'google',
   tiktok: 'tiktok',
   tiktokAds: 'tiktokAds',
-  crm: 'hubspot',
   warehouse: 'bigquery',
 };
 
@@ -771,6 +770,12 @@ export default function ConnectorsHubPage() {
   const [rdPrivateTokenInput, setRdPrivateTokenInput] = useState('');
   const [rdTokenSaving, setRdTokenSaving] = useState(false);
   const [isRdConversasWebhookModalOpen, setIsRdConversasWebhookModalOpen] = useState(false);
+  const [isHubSpotConfigModalOpen, setIsHubSpotConfigModalOpen] = useState(false);
+  const [hubspotClientIdInput, setHubspotClientIdInput] = useState('');
+  const [hubspotClientSecretInput, setHubspotClientSecretInput] = useState('');
+  const [hubspotPrivateAppTokenInput, setHubspotPrivateAppTokenInput] = useState('');
+  const [hubspotRedirectUriInput, setHubspotRedirectUriInput] = useState('http://localhost:3000/api/auth/connectors/crm/callback');
+  const [hubspotSaving, setHubspotSaving] = useState(false);
   const [openConnectorMenuId, setOpenConnectorMenuId] = useState<UiConnectorId | null>(null);
   const [activeFilter, setActiveFilter] = useState<UiCategory | 'todos'>('todos');
   const sortMode = 'az';
@@ -846,6 +851,72 @@ export default function ConnectorsHubPage() {
     setRdCrmWebhookIdInput('');
     setRdCrmSaving(false);
   }, []);
+
+  const clearHubSpotConfigModal = useCallback(() => {
+    setIsHubSpotConfigModalOpen(false);
+    setHubspotClientIdInput('');
+    setHubspotClientSecretInput('');
+    setHubspotPrivateAppTokenInput('');
+    setHubspotRedirectUriInput('http://localhost:3000/api/auth/connectors/crm/callback');
+    setHubspotSaving(false);
+  }, []);
+
+  const persistHubSpotConnection = useCallback(
+    async (clientId: string, clientSecret: string, privateAppToken: string, redirectUri: string) => {
+      if (!user) return false;
+
+      const now = Date.now();
+      const connectionKey = CONNECTOR_CONNECTION_KEYS.crm;
+      const trimmedClientId = clientId.trim();
+      const trimmedClientSecret = clientSecret.trim();
+      const trimmedPrivateAppToken = privateAppToken.trim();
+      const trimmedRedirectUri = redirectUri.trim();
+
+      setConnectorStatus((prev) => {
+        const nextStatus = { ...prev, crm: true };
+        const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+        window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
+        return nextStatus;
+      });
+
+      try {
+        const db = getFirebaseDb();
+        const userRef = doc(db, 'users', user.uid);
+        await setDoc(
+          userRef,
+          {
+            connections: {
+              [connectionKey]: {
+                isActive: true,
+                provider: 'hubspot-custom-oauth2',
+                accessToken: trimmedPrivateAppToken || null,
+                metadata: {
+                  authMode: 'custom-credentials',
+                  clientId: trimmedClientId || null,
+                  clientSecret: trimmedClientSecret || null,
+                  privateAppToken: trimmedPrivateAppToken || null,
+                  redirectUri: trimmedRedirectUri || null,
+                },
+                connectedAt: now,
+                updatedAt: now,
+              },
+            },
+            updatedAt: now,
+          },
+          { merge: true }
+        );
+        setConnectorError(null);
+        setConnectorFeedback('HubSpot configurado e credenciais salvas com sucesso.');
+        return true;
+      } catch (saveError) {
+        console.warn('Falha ao persistir credenciais do HubSpot:', saveError);
+        setConnectorFeedback(null);
+        setConnectorError('Não foi possível salvar a configuração do HubSpot no banco.');
+        return false;
+      }
+    },
+    [user]
+  );
 
   const clearRdTokenModal = useCallback(() => {
     setRdTokenModalConnector(null);
@@ -2028,6 +2099,12 @@ export default function ConnectorsHubPage() {
     setConnectorFeedback(null);
     setInlineConnectorNotice(null);
 
+    if (connectorKey === 'crm') {
+      setConnectorBusyKey(null);
+      setIsHubSpotConfigModalOpen(true);
+      return;
+    }
+
     if (connectorKey === 'rdStation') {
       setConnectorBusyKey(null);
       setIsRdCrmConfigModalOpen(true);
@@ -2625,6 +2702,111 @@ export default function ConnectorsHubPage() {
 
       <Footer />
       <LuccaHubSupportWidget />
+
+      {isHubSpotConfigModalOpen && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" onClick={clearHubSpotConfigModal} />
+          <section className="relative z-[1201] w-full max-w-4xl rounded-2xl border border-[#FFD7BD] bg-[#FFF8F2] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6 max-h-[90vh] overflow-y-auto">
+            <p className="text-[22px] font-black text-[#C2410C]">Configurar HubSpot CRM (Credenciais Personalizadas)</p>
+            
+            <div className="mt-4 rounded-xl border border-[#FFD7BD] bg-white p-4 text-[14px] text-[#9A3412] space-y-3 leading-relaxed">
+              <p className="font-bold flex items-center gap-1.5"><Info className="h-4 w-4 shrink-0" /> Como obter suas credenciais no HubSpot:</p>
+              <ol className="list-decimal pl-5 space-y-2 text-[#7C2D12] font-semibold">
+                <li>
+                  Acesse sua conta HubSpot e clique no ícone de <strong className="text-[#C2410C]">Configurações (engrenagem)</strong> no menu superior.
+                </li>
+                <li>
+                  No menu lateral esquerdo, navegue até <strong className="text-[#C2410C]">Integrações &gt; Aplicativos Privados</strong> (Private Apps).
+                </li>
+                <li>
+                  Clique em <strong className="text-[#C2410C]">Criar aplicativo privado</strong>. Dê um nome (ex.: "NeuroAds Conector") e conceda os escopos necessários (como <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.contacts</code> e <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.companies</code>).
+                </li>
+                <li>
+                  Após criar, acesse a aba <strong className="text-[#C2410C]">Access Token</strong> e clique em "Mostrar token" para copiar o <strong className="text-[#C2410C]">Token de Acesso do Aplicativo Privado</strong>.
+                </li>
+                <li>
+                  Para obter o <strong className="text-[#C2410C]">Client ID</strong> e <strong className="text-[#C2410C]">Client Secret</strong> de OAuth 2.1: acesse o <a href="https://developers.hubspot.com/" target="_blank" rel="noopener noreferrer" className="underline font-bold hover:text-[#C2410C]">HubSpot Developer Portal</a>, crie um Aplicativo Público, configure a URL de redirecionamento abaixo e copie os dados de autenticação da aba "Auth".
+                </li>
+              </ol>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-[#FFD7BD] bg-white p-3">
+              <p className="text-[12px] font-bold uppercase tracking-wide text-[#C2410C]">URL de Redirecionamento (Redirect URI) para o HubSpot</p>
+              <p className="mt-1 break-all text-[14px] font-semibold text-[#9A3412]">{hubspotRedirectUriInput}</p>
+            </div>
+
+            <div className="mt-5 grid gap-3">
+              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#9A3412]">
+                ID do Cliente (Client ID)
+                <input
+                  type="text"
+                  value={hubspotClientIdInput}
+                  onChange={(event) => setHubspotClientIdInput(event.target.value)}
+                  className="h-11 rounded-xl border border-[#FFD7BD] bg-white px-3 text-[14px] font-semibold text-[#9A3412] outline-none focus:border-[#F97316]"
+                  placeholder="ID do cliente obtido no HubSpot Developer Portal"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#9A3412]">
+                Segredo do Cliente (Client Secret)
+                <input
+                  type="password"
+                  value={hubspotClientSecretInput}
+                  onChange={(event) => setHubspotClientSecretInput(event.target.value)}
+                  className="h-11 rounded-xl border border-[#FFD7BD] bg-white px-3 text-[14px] font-semibold text-[#9A3412] outline-none focus:border-[#F97316]"
+                  placeholder="Segredo do cliente obtido no HubSpot Developer Portal"
+                />
+              </label>
+              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#9A3412]">
+                Token de Aplicativo Privado (Private App Access Token) *
+                <input
+                  type="password"
+                  value={hubspotPrivateAppTokenInput}
+                  onChange={(event) => setHubspotPrivateAppTokenInput(event.target.value)}
+                  className="h-11 rounded-xl border border-[#FFD7BD] bg-white px-3 text-[14px] font-semibold text-[#9A3412] outline-none focus:border-[#F97316]"
+                  placeholder="Cole o Access Token de Aplicativo Privado (começa com pat-...)"
+                />
+              </label>
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={clearHubSpotConfigModal}
+                className="inline-flex h-11 items-center justify-center rounded-xl border border-[#FFD7BD] bg-white px-5 text-[14px] font-bold text-[#9A3412] transition hover:bg-[#FFF1E5]"
+              >
+                Cancelar
+              </button>
+              <button
+                type="button"
+                onClick={async () => {
+                  if (!hubspotPrivateAppTokenInput.trim()) {
+                    setConnectorFeedback(null);
+                    setConnectorError('Preencha o Token de Aplicativo Privado (Private App Access Token) para concluir.');
+                    return;
+                  }
+                  setHubspotSaving(true);
+                  setConnectorBusyKey('crm');
+                  const saved = await persistHubSpotConnection(
+                    hubspotClientIdInput,
+                    hubspotClientSecretInput,
+                    hubspotPrivateAppTokenInput,
+                    hubspotRedirectUriInput
+                  );
+                  setConnectorBusyKey(null);
+                  setHubspotSaving(false);
+                  if (saved) {
+                    clearHubSpotConfigModal();
+                  }
+                }}
+                disabled={hubspotSaving}
+                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#FF7A00] px-5 text-[14px] font-black text-white shadow-[0_10px_20px_rgba(255,122,0,0.24)] hover:bg-[#E56B00] disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {hubspotSaving ? 'Salvando...' : 'Salvar credenciais'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
 
       {isRdCrmConfigModalOpen && (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">

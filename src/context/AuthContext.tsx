@@ -5,6 +5,7 @@ import {
   User, 
   onAuthStateChanged, 
   signInWithPopup, 
+  signInWithRedirect,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -479,12 +480,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     provider.addScope('profile');
     provider.setCustomParameters({ prompt: 'select_account' });
 
-    const result = await signInWithPopup(auth, provider);
-    const primaryEmail = await resolvePrimaryAuthEmail(result.user);
-    if (primaryEmail) {
-      setUserEmail(primaryEmail);
-      cacheAuthEmail(result.user.uid, primaryEmail);
-    }
+    // Usa signInWithRedirect para evitar bloqueios de políticas de Cross-Origin (COOP)
+    await signInWithRedirect(auth, provider);
   };
 
   const loginWithEmailPassword = async (email: string, password: string) => {
