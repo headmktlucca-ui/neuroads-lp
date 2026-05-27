@@ -2,6 +2,7 @@
     "recommendations": [
         "warm3snow.vscode-ollama",
         "google.geminicodeassist",
-        "openai.chatgpt"
+        "openai.chatgpt",
+        "timkmecl.chatgpt"
     ]
 }

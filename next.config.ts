@@ -29,4 +29,7 @@ const nextConfig: NextConfig = {
   },
 };
 
+// Trigger dev server restart to reload corrected environment variables
+// 2026-05-27T01:29:00
 export default nextConfig;
+
