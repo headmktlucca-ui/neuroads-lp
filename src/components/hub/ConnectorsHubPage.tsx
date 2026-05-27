@@ -17,6 +17,23 @@ import {
   RefreshCw,
   TriangleAlert,
   X,
+  Building2,
+  PlugZap,
+  Globe,
+  BookOpen,
+  Crown,
+  ShieldCheck,
+  Workflow,
+  User,
+  Mail,
+  Phone,
+  CreditCard,
+  DollarSign,
+  Calendar,
+  Fingerprint,
+  Activity,
+  Trash2,
+  ShieldAlert,
 } from 'lucide-react';
 import Navbar from '../layout/Navbar';
 import Footer from '../layout/Footer';
@@ -24,6 +41,18 @@ import LuccaHubSupportWidget from './LuccaHubSupportWidget';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
 import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } from '../../lib/hub-access';
+
+const SETTINGS_MODAL_VIEWPORT = 'fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-3 py-3 sm:px-4 sm:py-4';
+const SETTINGS_MODAL_BACKDROP = 'absolute inset-0 bg-[#0F172A]/40 backdrop-blur-md transition-opacity duration-300';
+const SETTINGS_MODAL_FRAME = 'relative w-full max-h-[92vh] rounded-[24px] bg-white border border-slate-100/80 shadow-[0_24px_60px_-15px_rgba(15,23,42,0.12)] overflow-hidden animate-in fade-in zoom-in-95 duration-250';
+const SETTINGS_MODAL_SURFACE = 'max-h-[calc(92vh-4px)] flex flex-col overflow-hidden h-full bg-white';
+const PREMIUM_MODAL_HEADER = 'relative border-b border-[#1a365d]/40 bg-[#0d1e3d] px-6 py-5 flex flex-col gap-1 overflow-hidden';
+const PREMIUM_MODAL_CLOSE_BUTTON = 'absolute right-5 top-5 rounded-full border border-white/10 bg-white/5 p-2 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm z-50';
+const SETTINGS_PANEL = 'rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.02)] transition-all duration-200 hover:border-slate-200/80 hover:shadow-[0_8px_30px_-6px_rgba(15,23,42,0.04)]';
+const SETTINGS_LABEL = 'mb-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400';
+const SETTINGS_INPUT = 'w-full rounded-xl border border-slate-200 bg-[#F8FAFC] px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition-all duration-200 focus:border-[#FF7A00] focus:bg-white focus:ring-2 focus:ring-[#FF7A00]/10';
+const SETTINGS_SECONDARY_BUTTON = 'rounded-xl border border-slate-200 px-5 py-3 text-xs font-black uppercase tracking-widest text-[#667085] transition-all hover:bg-[#F8FAFC] hover:text-slate-700 hover:border-slate-300 active:scale-98';
+const SETTINGS_PRIMARY_BUTTON = 'rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(10,157,87,0.15)] transition-all hover:brightness-105 active:scale-98';
 import {
   CONNECTOR_CONNECTION_KEYS,
   DEFAULT_CONNECTOR_STATUS,
@@ -2704,311 +2733,470 @@ export default function ConnectorsHubPage() {
       <LuccaHubSupportWidget />
 
       {isHubSpotConfigModalOpen && (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" onClick={clearHubSpotConfigModal} />
-          <section className="relative z-[1201] w-full max-w-4xl rounded-2xl border border-[#FFD7BD] bg-[#FFF8F2] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6 max-h-[90vh] overflow-y-auto">
-            <p className="text-[22px] font-black text-[#C2410C]">Configurar HubSpot CRM (Credenciais Personalizadas)</p>
-            
-            <div className="mt-4 rounded-xl border border-[#FFD7BD] bg-white p-4 text-[14px] text-[#9A3412] space-y-3 leading-relaxed">
-              <p className="font-bold flex items-center gap-1.5"><Info className="h-4 w-4 shrink-0" /> Como obter suas credenciais no HubSpot:</p>
-              <ol className="list-decimal pl-5 space-y-2 text-[#7C2D12] font-semibold">
-                <li>
-                  Acesse sua conta HubSpot e clique no ícone de <strong className="text-[#C2410C]">Configurações (engrenagem)</strong> no menu superior.
-                </li>
-                <li>
-                  No menu lateral esquerdo, navegue até <strong className="text-[#C2410C]">Integrações &gt; Aplicativos Privados</strong> (Private Apps).
-                </li>
-                <li>
-                  Clique em <strong className="text-[#C2410C]">Criar aplicativo privado</strong>. Dê um nome (ex.: "NeuroAds Conector") e conceda os escopos necessários (como <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.contacts</code> e <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.companies</code>).
-                </li>
-                <li>
-                  Após criar, acesse a aba <strong className="text-[#C2410C]">Access Token</strong> e clique em "Mostrar token" para copiar o <strong className="text-[#C2410C]">Token de Acesso do Aplicativo Privado</strong>.
-                </li>
-                <li>
-                  Para obter o <strong className="text-[#C2410C]">Client ID</strong> e <strong className="text-[#C2410C]">Client Secret</strong> de OAuth 2.1: acesse o <a href="https://developers.hubspot.com/" target="_blank" rel="noopener noreferrer" className="underline font-bold hover:text-[#C2410C]">HubSpot Developer Portal</a>, crie um Aplicativo Público, configure a URL de redirecionamento abaixo e copie os dados de autenticação da aba "Auth".
-                </li>
-              </ol>
-            </div>
+        <div className={SETTINGS_MODAL_VIEWPORT}>
+          <div
+            onClick={clearHubSpotConfigModal}
+            className={SETTINGS_MODAL_BACKDROP}
+          />
 
-            <div className="mt-4 rounded-xl border border-[#FFD7BD] bg-white p-3">
-              <p className="text-[12px] font-bold uppercase tracking-wide text-[#C2410C]">URL de Redirecionamento (Redirect URI) para o HubSpot</p>
-              <p className="mt-1 break-all text-[14px] font-semibold text-[#9A3412]">{hubspotRedirectUriInput}</p>
-            </div>
+          <div className={`${SETTINGS_MODAL_FRAME} max-w-4xl`}>
+            <div className={SETTINGS_MODAL_SURFACE}>
+              <div className={PREMIUM_MODAL_HEADER}>
+                <div className="flex items-center justify-between w-full pr-12">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                      <h3 className="text-xl font-black text-white tracking-tight">HubSpot CRM</h3>
+                    </div>
+                    <p className="text-xs font-semibold text-slate-300">Configurar HubSpot CRM (Credenciais Personalizadas)</p>
+                  </div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
+                    <Building2 size={20} />
+                  </div>
+                </div>
+                <button
+                  onClick={clearHubSpotConfigModal}
+                  className={PREMIUM_MODAL_CLOSE_BUTTON}
+                >
+                  <X size={16} />
+                </button>
+              </div>
 
-            <div className="mt-5 grid gap-3">
-              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#9A3412]">
-                ID do Cliente (Client ID)
-                <input
-                  type="text"
-                  value={hubspotClientIdInput}
-                  onChange={(event) => setHubspotClientIdInput(event.target.value)}
-                  className="h-11 rounded-xl border border-[#FFD7BD] bg-white px-3 text-[14px] font-semibold text-[#9A3412] outline-none focus:border-[#F97316]"
-                  placeholder="ID do cliente obtido no HubSpot Developer Portal"
-                />
-              </label>
-              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#9A3412]">
-                Segredo do Cliente (Client Secret)
-                <input
-                  type="password"
-                  value={hubspotClientSecretInput}
-                  onChange={(event) => setHubspotClientSecretInput(event.target.value)}
-                  className="h-11 rounded-xl border border-[#FFD7BD] bg-white px-3 text-[14px] font-semibold text-[#9A3412] outline-none focus:border-[#F97316]"
-                  placeholder="Segredo do cliente obtido no HubSpot Developer Portal"
-                />
-              </label>
-              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#9A3412]">
-                Token de Aplicativo Privado (Private App Access Token) *
-                <input
-                  type="password"
-                  value={hubspotPrivateAppTokenInput}
-                  onChange={(event) => setHubspotPrivateAppTokenInput(event.target.value)}
-                  className="h-11 rounded-xl border border-[#FFD7BD] bg-white px-3 text-[14px] font-semibold text-[#9A3412] outline-none focus:border-[#F97316]"
-                  placeholder="Cole o Access Token de Aplicativo Privado (começa com pat-...)"
-                />
-              </label>
-            </div>
+              <div className="p-5 flex-1 overflow-y-auto custom-scrollbar space-y-4">
+                <div className="rounded-2xl border border-orange-100 bg-orange-50/20 p-5 space-y-3">
+                  <p className="font-bold flex items-center gap-1.5 text-[#FF6B00]"><Info size={16} className="shrink-0" /> Como obter suas credenciais no HubSpot:</p>
+                  <ol className="list-decimal pl-5 space-y-2 text-[#7C2D12] font-semibold text-sm">
+                    <li>
+                      Acesse sua conta HubSpot e clique no ícone de <strong className="text-[#FF6B00]">Configurações (engrenagem)</strong> no menu superior.
+                    </li>
+                    <li>
+                      No menu lateral esquerdo, navegue até <strong className="text-[#FF6B00]">Integrações &gt; Aplicativos Privados</strong> (Private Apps).
+                    </li>
+                    <li>
+                      Clique em <strong className="text-[#FF6B00]">Criar aplicativo privado</strong>. Dê um nome (ex.: "NeuroAds Conector") e conceda os escopos necessários (como <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.contacts</code> e <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.companies</code>).
+                    </li>
+                    <li>
+                      Após criar, acesse a aba <strong className="text-[#FF6B00]">Access Token</strong> e clique em "Mostrar token" para copiar o <strong className="text-[#FF6B00]">Token de Acesso do Aplicativo Privado</strong>.
+                    </li>
+                    <li>
+                      Para obter o <strong className="text-[#FF6B00]">Client ID</strong> e <strong className="text-[#FF6B00]">Client Secret</strong> de OAuth 2.1: acesse o <a href="https://developers.hubspot.com/" target="_blank" rel="noopener noreferrer" className="underline font-bold hover:text-[#FF6B00]">HubSpot Developer Portal</a>, crie um Aplicativo Público, configure a URL de redirecionamento abaixo e copie os dados de autenticação da aba "Auth".
+                    </li>
+                  </ol>
+                </div>
 
-            <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={clearHubSpotConfigModal}
-                className="inline-flex h-11 items-center justify-center rounded-xl border border-[#FFD7BD] bg-white px-5 text-[14px] font-bold text-[#9A3412] transition hover:bg-[#FFF1E5]"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  if (!hubspotPrivateAppTokenInput.trim()) {
-                    setConnectorFeedback(null);
-                    setConnectorError('Preencha o Token de Aplicativo Privado (Private App Access Token) para concluir.');
-                    return;
-                  }
-                  setHubspotSaving(true);
-                  setConnectorBusyKey('crm');
-                  const saved = await persistHubSpotConnection(
-                    hubspotClientIdInput,
-                    hubspotClientSecretInput,
-                    hubspotPrivateAppTokenInput,
-                    hubspotRedirectUriInput
-                  );
-                  setConnectorBusyKey(null);
-                  setHubspotSaving(false);
-                  if (saved) {
-                    clearHubSpotConfigModal();
-                  }
-                }}
-                disabled={hubspotSaving}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#FF7A00] px-5 text-[14px] font-black text-white shadow-[0_10px_20px_rgba(255,122,0,0.24)] hover:bg-[#E56B00] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {hubspotSaving ? 'Salvando...' : 'Salvar credenciais'}
-              </button>
+                <div className={SETTINGS_PANEL}>
+                  <p className={SETTINGS_LABEL}>URL de Redirecionamento (Redirect URI) para o HubSpot</p>
+                  <p className="break-all text-sm font-bold text-slate-800">{hubspotRedirectUriInput}</p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <User size={13} />
+                      <span className={SETTINGS_LABEL}>ID do Cliente (Client ID)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={hubspotClientIdInput}
+                      onChange={(event) => setHubspotClientIdInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="ID do cliente obtido no HubSpot Developer Portal"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <PlugZap size={13} />
+                      <span className={SETTINGS_LABEL}>Segredo do Cliente (Client Secret)</span>
+                    </label>
+                    <input
+                      type="password"
+                      value={hubspotClientSecretInput}
+                      onChange={(event) => setHubspotClientSecretInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="Segredo do cliente obtido no HubSpot Developer Portal"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <PlugZap size={13} />
+                      <span className={SETTINGS_LABEL}>Token de Aplicativo Privado (Private App Access Token) *</span>
+                    </label>
+                    <input
+                      type="password"
+                      value={hubspotPrivateAppTokenInput}
+                      onChange={(event) => setHubspotPrivateAppTokenInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="Cole o Access Token de Aplicativo Privado (começa com pat-...)"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-5 pb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 pt-4 bg-[#FAFBFC]">
+                <p className="text-xs font-semibold text-slate-400">
+                  Preencha os dados de autenticação.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={clearHubSpotConfigModal}
+                    className={SETTINGS_SECONDARY_BUTTON}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!hubspotPrivateAppTokenInput.trim()) {
+                        setConnectorFeedback(null);
+                        setConnectorError('Preencha o Token de Aplicativo Privado (Private App Access Token) para concluir.');
+                        return;
+                      }
+                      setHubspotSaving(true);
+                      setConnectorBusyKey('crm');
+                      const saved = await persistHubSpotConnection(
+                        hubspotClientIdInput,
+                        hubspotClientSecretInput,
+                        hubspotPrivateAppTokenInput,
+                        hubspotRedirectUriInput
+                      );
+                      setConnectorBusyKey(null);
+                      setHubspotSaving(false);
+                      if (saved) {
+                        clearHubSpotConfigModal();
+                      }
+                    }}
+                    disabled={hubspotSaving}
+                    className={SETTINGS_PRIMARY_BUTTON}
+                  >
+                    {hubspotSaving ? 'Salvando...' : 'Salvar credenciais'}
+                  </button>
+                </div>
+              </div>
             </div>
-          </section>
+          </div>
         </div>
       )}
 
       {isRdCrmConfigModalOpen && (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
-          <section className="relative z-[1201] w-full max-w-3xl rounded-2xl border border-[#BFDBFE] bg-[#EFF6FF] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
-            <p className="text-[22px] font-black text-[#1E40AF]">Configurar RD Station CRM (API v2)</p>
-            <p className="mt-2 text-[15px] text-[#1E3A8A]">
-              Conforme a documentação oficial do CRM v2, a autenticação é via OAuth2 Bearer Token. Informe o Access Token
-              ativo e, se disponível, o Refresh Token para renovação operacional.
-            </p>
+        <div className={SETTINGS_MODAL_VIEWPORT}>
+          <div
+            onClick={clearRdCrmConfigModal}
+            className={SETTINGS_MODAL_BACKDROP}
+          />
 
-            <div className="mt-4 rounded-xl border border-[#93C5FD] bg-white p-3">
-              <p className="text-[12px] font-bold uppercase tracking-wide text-[#1D4ED8]">Webhook receptor recomendado</p>
-              <p className="mt-1 break-all text-[14px] font-semibold text-[#1E3A8A]">{rdCrmWebhookUrl}</p>
-            </div>
+          <div className={`${SETTINGS_MODAL_FRAME} max-w-3xl`}>
+            <div className={SETTINGS_MODAL_SURFACE}>
+              <div className={PREMIUM_MODAL_HEADER}>
+                <div className="flex items-center justify-between w-full pr-12">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                      <h3 className="text-xl font-black text-white tracking-tight">RD Station CRM</h3>
+                    </div>
+                    <p className="text-xs font-semibold text-slate-300">Configurar RD Station CRM (API v2)</p>
+                  </div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
+                    <PlugZap size={20} />
+                  </div>
+                </div>
+                <button
+                  onClick={clearRdCrmConfigModal}
+                  className={PREMIUM_MODAL_CLOSE_BUTTON}
+                >
+                  <X size={16} />
+                </button>
+              </div>
 
-            <div className="mt-5 grid gap-3">
-              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#1E3A8A]">
-                Access Token (Bearer) *
-                <input
-                  type="password"
-                  value={rdCrmAccessTokenInput}
-                  onChange={(event) => setRdCrmAccessTokenInput(event.target.value)}
-                  className="h-11 rounded-xl border border-[#93C5FD] bg-white px-3 text-[14px] font-semibold text-[#1E3A8A] outline-none focus:border-[#3B82F6]"
-                  placeholder="Cole o access_token OAuth2 do RD Station CRM"
-                />
-              </label>
-              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#1E3A8A]">
-                Refresh Token (opcional)
-                <input
-                  type="password"
-                  value={rdCrmRefreshTokenInput}
-                  onChange={(event) => setRdCrmRefreshTokenInput(event.target.value)}
-                  className="h-11 rounded-xl border border-[#93C5FD] bg-white px-3 text-[14px] font-semibold text-[#1E3A8A] outline-none focus:border-[#3B82F6]"
-                  placeholder="Cole o refresh_token para rotação de credenciais"
-                />
-              </label>
-              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#1E3A8A]">
-                ID do webhook no RD (opcional)
-                <input
-                  type="text"
-                  value={rdCrmWebhookIdInput}
-                  onChange={(event) => setRdCrmWebhookIdInput(event.target.value)}
-                  className="h-11 rounded-xl border border-[#93C5FD] bg-white px-3 text-[14px] font-semibold text-[#1E3A8A] outline-none focus:border-[#3B82F6]"
-                  placeholder="Ex.: UUID retornado em /crm/v2/webhooks"
-                />
-              </label>
-            </div>
+              <div className="p-5 flex-1 overflow-y-auto custom-scrollbar space-y-4">
+                <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                  Conforme a documentação oficial do CRM v2, a autenticação é via OAuth2 Bearer Token. Informe o Access Token ativo e, se disponível, o Refresh Token para renovação operacional.
+                </p>
 
-            <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={clearRdCrmConfigModal}
-                className="inline-flex h-11 items-center justify-center rounded-xl border border-[#93C5FD] bg-white px-5 text-[14px] font-bold text-[#1E3A8A] transition hover:bg-[#E8F1FF]"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={() => void handleSaveRdCrmConfig()}
-                disabled={rdCrmSaving}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#1D4ED8] px-5 text-[14px] font-black text-white transition hover:bg-[#1E40AF] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {rdCrmSaving ? 'Salvando...' : 'Salvar configuração CRM'}
-              </button>
+                <div className={SETTINGS_PANEL}>
+                  <p className={SETTINGS_LABEL}>Webhook receptor recomendado</p>
+                  <p className="break-all text-sm font-bold text-slate-800">{rdCrmWebhookUrl}</p>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <PlugZap size={13} />
+                      <span className={SETTINGS_LABEL}>Access Token (Bearer) *</span>
+                    </label>
+                    <input
+                      type="password"
+                      value={rdCrmAccessTokenInput}
+                      onChange={(event) => setRdCrmAccessTokenInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="Cole o access_token OAuth2 do RD Station CRM"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <PlugZap size={13} />
+                      <span className={SETTINGS_LABEL}>Refresh Token (opcional)</span>
+                    </label>
+                    <input
+                      type="password"
+                      value={rdCrmRefreshTokenInput}
+                      onChange={(event) => setRdCrmRefreshTokenInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="Cole o refresh_token para rotação de credenciais"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <Building2 size={13} />
+                      <span className={SETTINGS_LABEL}>ID do webhook no RD (opcional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={rdCrmWebhookIdInput}
+                      onChange={(event) => setRdCrmWebhookIdInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="Ex.: UUID retornado em /crm/v2/webhooks"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-5 pb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 pt-4 bg-[#FAFBFC]">
+                <p className="text-xs font-semibold text-slate-400">
+                  Preencha os dados da integração.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={clearRdCrmConfigModal}
+                    className={SETTINGS_SECONDARY_BUTTON}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void handleSaveRdCrmConfig()}
+                    disabled={rdCrmSaving}
+                    className={SETTINGS_PRIMARY_BUTTON}
+                  >
+                    {rdCrmSaving ? 'Salvando...' : 'Salvar configuração CRM'}
+                  </button>
+                </div>
+              </div>
             </div>
-          </section>
+          </div>
         </div>
       )}
-
       {rdTokenModalConnector && (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
-          <section className="relative z-[1201] w-full max-w-3xl rounded-2xl border border-[#FDBA74] bg-[#FFF7ED] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
-            <p className="text-[22px] font-black text-[#9A3412]">Conectar {rdTokenModalTitle} via tokens</p>
-            <p className="mt-2 text-[16px] text-[#7C2D12]">
-              Informe Token Público e Token Privado para manter a autenticação ativa no Hub. Esses dados serão salvos no
-              perfil de integração para sincronizações futuras.
-            </p>
+        <div className={SETTINGS_MODAL_VIEWPORT}>
+          <div
+            onClick={clearRdTokenModal}
+            className={SETTINGS_MODAL_BACKDROP}
+          />
 
-            <div className="mt-5 grid gap-3">
-              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#7C2D12]">
-                Token Público
-                <input
-                  type="text"
-                  value={rdPublicTokenInput}
-                  onChange={(event) => setRdPublicTokenInput(event.target.value)}
-                  className="h-11 rounded-xl border border-[#FDBA74] bg-white px-3 text-[14px] font-semibold text-[#7C2D12] outline-none focus:border-[#F97316]"
-                  placeholder="Cole o Token Público do RD Station"
-                />
-              </label>
-              <label className="flex flex-col gap-2 text-[14px] font-semibold text-[#7C2D12]">
-                Token Privado
-                <input
-                  type="password"
-                  value={rdPrivateTokenInput}
-                  onChange={(event) => setRdPrivateTokenInput(event.target.value)}
-                  className="h-11 rounded-xl border border-[#FDBA74] bg-white px-3 text-[14px] font-semibold text-[#7C2D12] outline-none focus:border-[#F97316]"
-                  placeholder="Cole o Token Privado do RD Station"
-                />
-              </label>
-            </div>
+          <div className={`${SETTINGS_MODAL_FRAME} max-w-3xl`}>
+            <div className={SETTINGS_MODAL_SURFACE}>
+              <div className={PREMIUM_MODAL_HEADER}>
+                <div className="flex items-center justify-between w-full pr-12">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                      <h3 className="text-xl font-black text-white tracking-tight">RD Station Marketing</h3>
+                    </div>
+                    <p className="text-xs font-semibold text-slate-300">Conectar RD Station Marketing via tokens</p>
+                  </div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
+                    <PlugZap size={20} />
+                  </div>
+                </div>
+                <button
+                  onClick={clearRdTokenModal}
+                  className={PREMIUM_MODAL_CLOSE_BUTTON}
+                >
+                  <X size={16} />
+                </button>
+              </div>
 
-            <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={clearRdTokenModal}
-                className="inline-flex h-11 items-center justify-center rounded-xl border border-[#FDBA74] bg-white px-5 text-[14px] font-bold text-[#9A3412] transition hover:bg-[#FFF1E5]"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={() => void handleSaveRdTokenConnection()}
-                disabled={rdTokenSaving}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#FF7A00] px-5 text-[14px] font-black text-white transition hover:bg-[#E66E00] disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {rdTokenSaving ? 'Salvando...' : 'Salvar integração'}
-              </button>
+              <div className="p-5 flex-1 overflow-y-auto custom-scrollbar space-y-4">
+                <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                  Informe Token Público e Token Privado para manter a autenticação ativa no Hub. Esses dados serão salvos no perfil de integração para sincronizações futuras.
+                </p>
+
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <Globe size={13} />
+                      <span className={SETTINGS_LABEL}>Token Público</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={rdPublicTokenInput}
+                      onChange={(event) => setRdPublicTokenInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="Cole o Token Público do RD Station"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <PlugZap size={13} />
+                      <span className={SETTINGS_LABEL}>Token Privado</span>
+                    </label>
+                    <input
+                      type="password"
+                      value={rdPrivateTokenInput}
+                      onChange={(event) => setRdPrivateTokenInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="Cole o Token Privado do RD Station"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-5 pb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 pt-4 bg-[#FAFBFC]">
+                <p className="text-xs font-semibold text-slate-400">
+                  Preencha os dados da integração.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={clearRdTokenModal}
+                    className={SETTINGS_SECONDARY_BUTTON}
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void handleSaveRdTokenConnection()}
+                    disabled={rdTokenSaving}
+                    className={SETTINGS_PRIMARY_BUTTON}
+                  >
+                    {rdTokenSaving ? 'Salvando...' : 'Salvar integração'}
+                  </button>
+                </div>
+              </div>
             </div>
-          </section>
+          </div>
         </div>
       )}
 
       {isRdConversasWebhookModalOpen && (
-        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
-          <section className="relative z-[1201] w-full max-w-4xl rounded-2xl border border-[#BFDBFE] bg-[#EFF6FF] p-5 shadow-[0_24px_48px_rgba(15,23,42,0.28)] md:p-6">
-            <p className="text-[22px] font-black text-[#1E40AF]">RD Station Conversas via webhook</p>
-            <p className="mt-2 text-[15px] text-[#1E3A8A]">
-              Configure o webhook no RD Station Conversas e depois marque como configurado para ativar o canal no Hub.
-            </p>
-            <ol className="mt-4 list-decimal space-y-2 pl-5 text-[14px] text-[#1E3A8A]">
-              <li>Acesse o painel do RD Station Conversas e abra as integrações/webhooks do workspace.</li>
-              <li>Crie um webhook com método `POST` apontando para a URL abaixo.</li>
-              <li>Garanta resposta HTTP `2xx` no teste de validação do RD.</li>
-              <li>Defina um segredo de assinatura no RD e guarde esse valor em ambiente seguro (recomendado).</li>
-            </ol>
-            <div className="mt-4 rounded-xl border border-[#93C5FD] bg-white p-3">
-              <p className="text-[12px] font-bold uppercase tracking-wide text-[#1D4ED8]">URL de webhook (NeuroAds)</p>
-              <p className="mt-1 break-all text-[14px] font-semibold text-[#1E3A8A]">{rdConversasWebhookUrl}</p>
-            </div>
-            <div className="mt-5 flex flex-wrap items-center justify-end gap-2">
-              <button
-                type="button"
-                onClick={() => setIsRdConversasWebhookModalOpen(false)}
-                className="inline-flex h-11 items-center justify-center rounded-xl border border-[#93C5FD] bg-white px-5 text-[14px] font-bold text-[#1E3A8A] transition hover:bg-[#E8F1FF]"
-              >
-                Fechar
-              </button>
-              <button
-                type="button"
-                onClick={async () => {
-                  if (!user) return;
-                  const now = Date.now();
-                  const connectionKey = CONNECTOR_CONNECTION_KEYS.rdStationConversas;
-                  setConnectorBusyKey('rdStationConversas');
-                  try {
-                    const db = getFirebaseDb();
-                    const userRef = doc(db, 'users', user.uid);
-                    await setDoc(
-                      userRef,
-                      {
-                        connections: {
-                          [connectionKey]: {
-                            isActive: true,
-                            provider: 'rdstation-webhook',
-                            metadata: {
-                              authMode: 'webhook',
-                              webhookUrl: rdConversasWebhookUrl,
+        <div className={SETTINGS_MODAL_VIEWPORT}>
+          <div
+            onClick={() => setIsRdConversasWebhookModalOpen(false)}
+            className={SETTINGS_MODAL_BACKDROP}
+          />
+
+          <div className={`${SETTINGS_MODAL_FRAME} max-w-4xl`}>
+            <div className={SETTINGS_MODAL_SURFACE}>
+              <div className={PREMIUM_MODAL_HEADER}>
+                <div className="flex items-center justify-between w-full pr-12">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                      <h3 className="text-xl font-black text-white tracking-tight">RD Station Conversas</h3>
+                    </div>
+                    <p className="text-xs font-semibold text-slate-300">Configurar RD Station Conversas via webhook</p>
+                  </div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
+                    <PlugZap size={20} />
+                  </div>
+                </div>
+                <button
+                  onClick={() => setIsRdConversasWebhookModalOpen(false)}
+                  className={PREMIUM_MODAL_CLOSE_BUTTON}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="p-5 flex-1 overflow-y-auto custom-scrollbar space-y-4">
+                <div className="rounded-2xl border border-orange-100 bg-orange-50/20 p-5 space-y-3">
+                  <p className="font-bold flex items-center gap-1.5 text-[#FF6B00]"><Info size={16} className="shrink-0" /> Como configurar o webhook no RD Station Conversas:</p>
+                  <ol className="list-decimal pl-5 space-y-2 text-[#7C2D12] font-semibold text-sm">
+                    <li>Acesse o painel do RD Station Conversas e abra as integrações/webhooks do workspace.</li>
+                    <li>Crie um webhook com método `POST` apontando para a URL indicada abaixo.</li>
+                    <li>Garanta resposta HTTP `2xx` no teste de validação do RD.</li>
+                    <li>Defina um segredo de assinatura no RD e guarde esse valor em ambiente seguro (recomendado).</li>
+                  </ol>
+                </div>
+
+                <div className={SETTINGS_PANEL}>
+                  <p className={SETTINGS_LABEL}>URL de webhook (NeuroAds)</p>
+                  <p className="break-all text-sm font-bold text-slate-800 font-mono bg-slate-50 px-3 py-2 rounded border border-slate-100">{rdConversasWebhookUrl}</p>
+                </div>
+              </div>
+
+              <div className="px-5 pb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 pt-4 bg-[#FAFBFC]">
+                <p className="text-xs font-semibold text-slate-400">
+                  Após configurar no RD, clique em marcar como configurado para ativar.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsRdConversasWebhookModalOpen(false)}
+                    className={SETTINGS_SECONDARY_BUTTON}
+                  >
+                    Fechar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      if (!user) return;
+                      const now = Date.now();
+                      const connectionKey = CONNECTOR_CONNECTION_KEYS.rdStationConversas;
+                      setConnectorBusyKey('rdStationConversas');
+                      try {
+                        const db = getFirebaseDb();
+                        const userRef = doc(db, 'users', user.uid);
+                        await setDoc(
+                          userRef,
+                          {
+                            connections: {
+                              [connectionKey]: {
+                                isActive: true,
+                                provider: 'rdstation-webhook',
+                                metadata: {
+                                  authMode: 'webhook',
+                                  webhookUrl: rdConversasWebhookUrl,
+                                },
+                                connectedAt: now,
+                                updatedAt: now,
+                              },
                             },
-                            connectedAt: now,
                             updatedAt: now,
                           },
-                        },
-                        updatedAt: now,
-                      },
-                      { merge: true }
-                    );
-                    setConnectorStatus((prev) => {
-                      const nextStatus = { ...prev, rdStationConversas: true };
-                      const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
-                      window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
-                      return nextStatus;
-                    });
-                    setConnectorFeedback('RD Station Conversas marcado como configurado via webhook.');
-                    setConnectorError(null);
-                    setIsRdConversasWebhookModalOpen(false);
-                  } catch (error) {
-                    console.warn('Falha ao salvar configuração do RD Station Conversas:', error);
-                    setConnectorFeedback(null);
-                    setConnectorError('Não foi possível salvar a configuração de webhook do RD Station Conversas.');
-                  } finally {
-                    setConnectorBusyKey(null);
-                  }
-                }}
-                className="inline-flex h-11 items-center justify-center rounded-xl bg-[#1D4ED8] px-5 text-[14px] font-black text-white transition hover:bg-[#1E40AF]"
-              >
-                Marcar como configurado
-              </button>
+                          { merge: true }
+                        );
+                        setConnectorStatus((prev) => {
+                          const nextStatus = { ...prev, rdStationConversas: true };
+                          const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
+                          window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
+                          return nextStatus;
+                        });
+                        setConnectorFeedback('RD Station Conversas marcado como configurado via webhook.');
+                        setConnectorError(null);
+                        setIsRdConversasWebhookModalOpen(false);
+                      } catch (error) {
+                        console.warn('Falha ao salvar configuração do RD Station Conversas:', error);
+                        setConnectorFeedback(null);
+                        setConnectorError('Não foi possível salvar a configuração de webhook do RD Station Conversas.');
+                      } finally {
+                        setConnectorBusyKey(null);
+                      }
+                    }}
+                    className={SETTINGS_PRIMARY_BUTTON}
+                  >
+                    Marcar como configurado
+                  </button>
+                </div>
+              </div>
             </div>
-          </section>
+          </div>
         </div>
       )}
 
