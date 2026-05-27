@@ -15,7 +15,9 @@ import {
   PauseCircle,
   PlayCircle,
   RefreshCw,
+  Search,
   Sparkles,
+  X,
 } from 'lucide-react';
 import Navbar from '../../../components/layout/Navbar';
 import Footer from '../../../components/layout/Footer';
@@ -99,21 +101,34 @@ export default function HubAutomacoesPage() {
     }
   }, [accessState, pathname, premiumSyncing, router]);
 
+  const [searchQuery, setSearchQuery] = useState('');
   const automations = useMemo(() => getHubAutomationsFromProfile(profile), [profile]);
   const trackedAutomations = useMemo(
     () => automations.filter((automation) => automation.status === 'active' || automation.status === 'paused'),
     [automations]
   );
+  const filteredAutomations = useMemo(() => {
+    return trackedAutomations.filter((automation) => {
+      if (!searchQuery) return true;
+      const query = searchQuery.toLowerCase();
+      return (
+        automation.agentTitle.toLowerCase().includes(query) ||
+        automation.agentCategory.toLowerCase().includes(query) ||
+        automation.cadenceTitle.toLowerCase().includes(query) ||
+        (automation.objective && automation.objective.toLowerCase().includes(query))
+      );
+    });
+  }, [trackedAutomations, searchQuery]);
   const effectiveSelectedKey = useMemo(() => {
-    if (!trackedAutomations.length) return null;
-    if (!selectedKey) return trackedAutomations[0].key;
-    return trackedAutomations.some((automation) => automation.key === selectedKey)
+    if (!filteredAutomations.length) return null;
+    if (!selectedKey) return filteredAutomations[0].key;
+    return filteredAutomations.some((automation) => automation.key === selectedKey)
       ? selectedKey
-      : trackedAutomations[0].key;
-  }, [trackedAutomations, selectedKey]);
+      : filteredAutomations[0].key;
+  }, [filteredAutomations, selectedKey]);
   const selectedAutomation = useMemo(
-    () => trackedAutomations.find((automation) => automation.key === effectiveSelectedKey) ?? null,
-    [trackedAutomations, effectiveSelectedKey]
+    () => filteredAutomations.find((automation) => automation.key === effectiveSelectedKey) ?? null,
+    [filteredAutomations, effectiveSelectedKey]
   );
 
   useEffect(() => {
@@ -218,6 +233,32 @@ export default function HubAutomacoesPage() {
             </div>
           </header>
 
+          {/* Search Bar Container with Glassmorphism Translúcido styling */}
+          <div className="rounded-3xl border border-white/50 bg-white/80 backdrop-blur-md p-5 md:p-6 shadow-[0_16px_36px_rgba(15,23,42,0.04)]">
+            <div className="relative w-full max-w-lg">
+              <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-muted">
+                <Search size={18} />
+              </span>
+              <input
+                type="text"
+                placeholder="Pesquisar agentes ativos por nome ou descrição..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-12 pl-11 pr-10 rounded-[12px] border border-[#D3DAE6] bg-[#F8FAFC] text-[15px] font-medium text-text-main placeholder-[#94A3B8] transition-all duration-300 focus:outline-none focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FFBE94]/50 focus:bg-white"
+              />
+              {searchQuery ? (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute inset-y-0 right-3 flex items-center px-1 text-text-muted hover:text-text-main transition"
+                  aria-label="Limpar pesquisa"
+                >
+                  <X size={16} />
+                </button>
+              ) : null}
+            </div>
+          </div>
+
           {trackedAutomations.length === 0 ? (
             <section className="rounded-[30px] border border-[#E5EAF2] bg-white p-8 md:p-10 shadow-[0_16px_36px_rgba(15,23,42,0.08)] text-center">
               <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF6A00]">
@@ -242,6 +283,23 @@ export default function HubAutomacoesPage() {
                 </Link>
               </div>
             </section>
+          ) : filteredAutomations.length === 0 ? (
+            <section className="rounded-[30px] border border-[#E5EAF2] bg-white p-8 md:p-10 shadow-[0_16px_36px_rgba(15,23,42,0.08)] text-center">
+              <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#FFF3EC] text-[#FF6A00]">
+                <Bot className="h-7 w-7" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-black text-text-main">Nenhuma automação encontrada</h2>
+              <p className="mt-3 text-sm md:text-base text-text-muted max-w-2xl mx-auto">
+                Não encontramos nenhuma automação ativa correspondente à pesquisa &quot;{searchQuery}&quot;.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="mt-6 inline-flex h-11 items-center justify-center rounded-[12px] bg-[#FF6A00] px-5 text-sm font-black text-white shadow-[0_12px_24px_rgba(255,106,0,0.25)] transition hover:brightness-105"
+              >
+                Limpar pesquisa
+              </button>
+            </section>
           ) : (
             <section className="grid grid-cols-1 gap-6 xl:grid-cols-[1.05fr_1fr]">
               <article className="rounded-[30px] border border-[#E5EAF2] bg-white p-5 md:p-6 shadow-[0_16px_36px_rgba(15,23,42,0.08)]">
@@ -253,7 +311,7 @@ export default function HubAutomacoesPage() {
                 </header>
 
                 <div className="space-y-3">
-                  {trackedAutomations.map((automation) => {
+                  {filteredAutomations.map((automation) => {
                     const isSelected = selectedAutomation?.key === automation.key;
                     const runtime = getRuntimeInfo(automation, nowTs);
                     return (

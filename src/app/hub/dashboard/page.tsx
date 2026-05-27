@@ -306,8 +306,8 @@ export default function HubDashboardPage() {
             </div>
           </header>
 
-          {/* Search Bar Container */}
-          <div className="mt-6 rounded-3xl border border-border bg-white p-5 md:p-6 shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
+          {/* Search Bar Container with Glassmorphism Translúcido styling */}
+          <div className="mt-6 rounded-3xl border border-white/50 bg-white/80 backdrop-blur-md p-5 md:p-6 shadow-[0_16px_36px_rgba(15,23,42,0.04)]">
             <div className="relative w-full max-w-lg">
               <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-muted">
                 <Search size={18} />
