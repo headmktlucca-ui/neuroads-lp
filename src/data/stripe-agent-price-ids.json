@@ -420,6 +420,32 @@
         }
       }
     },
+    "Agente Editorial": {
+      "productId": "prod_UQEditorialAgent",
+      "productName": "Agente IA • Agente Editorial",
+      "category": "Inteligência",
+      "tier": "Intermediario",
+      "plans": {
+        "Lite": {
+          "priceId": "price_1TRWEditorialLite",
+          "lookupKey": "neuroads_agent_agente-editorial_lite_month_brl",
+          "monthlyPrice": 39.9,
+          "monthlyLimit": 8
+        },
+        "Growth": {
+          "priceId": "price_1TRWEditorialGrowth",
+          "lookupKey": "neuroads_agent_agente-editorial_growth_month_brl",
+          "monthlyPrice": 59.9,
+          "monthlyLimit": 20
+        },
+        "Pro": {
+          "priceId": "price_1TRWEditorialPro",
+          "lookupKey": "neuroads_agent_agente-editorial_pro_month_brl",
+          "monthlyPrice": 79.9,
+          "monthlyLimit": 40
+        }
+      }
+    },
     "DNA da Marca": {
       "productId": "prod_UQM2vFYfibRq5U",
       "productName": "Agente IA • DNA da Marca",

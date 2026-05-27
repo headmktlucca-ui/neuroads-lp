@@ -47,11 +47,11 @@ export default function Page() {
         <section className="relative overflow-hidden bg-transparent pb-8 pt-14 sm:pt-18">
           <div className="wrap relative z-10 grid items-center gap-8 lg:grid-cols-[1.3fr_0.7fr]">
             <div className="max-w-4xl">
-              <h1 className="max-w-5xl text-balance text-4xl font-black leading-[1.04] tracking-[-0.03em] sm:text-5xl md:text-6xl text-[#0f172a]">
-                Além do <span className="bg-gradient-to-r from-[#ff5f00] via-[#ff8a00] to-[#ffb800] bg-clip-text text-transparent">Algoritmo</span>
+              <h1 className="max-w-5xl text-balance text-4xl font-black leading-[1.12] tracking-[-0.03em] sm:text-5xl md:text-6xl bg-gradient-to-r from-[#ff5f00] via-[#ff8a00] to-[#ffb800] bg-clip-text text-transparent pb-3">
+                Além do Algoritmo
               </h1>
 
-              <div className="mt-5 h-[3px] w-24 rounded-full bg-gradient-to-r from-[#ff5f00] to-[#ff9f00]" />
+              <div className="mt-2 h-[3px] w-24 rounded-full bg-gradient-to-r from-[#ff5f00] to-[#ff9f00]" />
 
               <p className="mt-8 max-w-3xl text-[17px] font-medium leading-relaxed text-[#40506a] sm:text-lg">
                 Estratégia aplicada para empresários que precisam de crescimento previsível. Aqui cada conteúdo traduz{' '}
@@ -64,15 +64,17 @@ export default function Page() {
             </div>
 
             <div className="relative flex justify-center lg:justify-end mt-8 lg:mt-0">
-              <div className="relative w-[160px] h-[196px] sm:w-[180px] sm:h-[220px] lg:w-[180px] lg:h-[220px]">
-                <Image
-                  src="/images/editorial/alem-do-algoritmo/caps111.png"
-                  alt="Especialista e Cérebro de IA"
-                  fill
-                  sizes="(max-width: 768px) 180px, 180px"
-                  className="object-contain hover:scale-[1.03] transition-transform duration-500 ease-out"
-                  priority
-                />
+              <div className="relative flex justify-center lg:w-[320px]">
+                <div className="relative w-[192px] h-[235px] sm:w-[216px] sm:h-[264px] lg:w-[216px] lg:h-[264px]">
+                  <Image
+                    src="/images/cp_lp.png"
+                    alt="Especialista e Cérebro de IA"
+                    fill
+                    sizes="(max-width: 768px) 216px, 216px"
+                    className="object-contain hover:scale-[1.03] transition-transform duration-500 ease-out"
+                    priority
+                  />
+                </div>
               </div>
             </div>
           </div>

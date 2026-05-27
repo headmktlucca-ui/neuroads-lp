@@ -1342,11 +1342,11 @@ export default function Navbar() {
           : 'fixed top-0 left-0 w-full z-[200] pt-3 px-4 lg:px-6'
       }
     >
-      <nav className={isHubNavbarStyle ? 'w-full transition-all duration-700' : 'mx-auto max-w-[1240px] transition-all duration-700'}>
+      <nav className="relative z-30">
         <div
           className={
             isHubNavbarStyle
-              ? 'flex items-center justify-between rounded-full border border-black/[0.06] bg-white px-4 py-3 shadow-[0_8px_26px_rgba(10,18,30,0.04)] transition-all duration-500 sm:px-5 md:px-7'
+              ? 'flex items-center justify-between rounded-full border border-[#122034] bg-[#040a13]/90 backdrop-blur-md px-4 py-3 shadow-[0_12px_40px_rgba(2,8,22,0.35)] transition-all duration-500 sm:px-5 md:px-7'
               : 'flex items-center justify-between rounded-[32px] border border-[#E7EAF0] bg-white px-6 py-3 shadow-[0_10px_28px_rgba(15,23,42,0.06)] transition-all duration-500 lg:px-10'
           }
         >
@@ -1358,7 +1358,7 @@ export default function Navbar() {
                 alt="NeuroAds Logo"
                 width={192}
                 height={48}
-                className={isHubNavbarStyle ? 'h-8 w-auto object-contain' : 'h-9 w-auto object-contain lg:h-10'}
+                className={isHubNavbarStyle ? 'h-8 w-auto object-contain brightness-0 invert' : 'h-9 w-auto object-contain lg:h-10'}
               />
             </Link>
           </div>
@@ -1376,7 +1376,7 @@ export default function Navbar() {
                       ? 'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-semibold'
                       : 'text-[15px] leading-none font-semibold'
                   } ${
-                    isLinkActive(link.href) ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#1c2230]'
+                    isLinkActive(link.href) ? 'text-[#0A9D57]' : isHubNavbarStyle ? 'text-slate-300 hover:text-[#FF6A00]' : 'text-[#5f6572] hover:text-[#1c2230]'
                   }`}
                 >
                   {link.name}
@@ -1391,7 +1391,11 @@ export default function Navbar() {
                     ? 'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-semibold'
                     : 'text-[15px] leading-none font-semibold'
                 } ${
-                  isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#FF6A00]'
+                  isLinkActive('/hub') 
+                    ? 'text-[#0A9D57]' 
+                    : isHubNavbarStyle 
+                      ? 'text-slate-300 hover:text-[#FF6A00]' 
+                      : 'text-[#5f6572] hover:text-[#FF6A00]'
                   }`}
                 >
                   Hub Estratégico
@@ -1400,26 +1404,28 @@ export default function Navbar() {
                   <button
                     type="button"
                     className={`inline-flex items-center gap-1 text-[13px] font-semibold transition-colors duration-200 ${
-                      isHubNavbarStyle ? 'rounded-full px-2 py-1 text-[#5f6572] group-hover:text-[#FF6A00]' : 'text-[#344054] group-hover:text-[#FF6A00]'
+                      isHubNavbarStyle ? 'rounded-full px-2 py-1 text-slate-300 group-hover:text-[#FF6A00]' : 'text-[#344054] group-hover:text-[#FF6A00]'
                     }`}
                   >
                     Agentes IA
                     <ChevronDown size={14} />
                   </button>
-                  <div className="invisible absolute left-1/2 top-full z-[120] mt-3 w-[300px] -translate-x-1/2 rounded-2xl border border-[#E7EAF0] bg-white p-2 opacity-0 shadow-[0_14px_30px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:opacity-100">
+                  <div className={`invisible absolute left-1/2 top-full z-[120] mt-3 w-[300px] -translate-x-1/2 rounded-2xl border p-2 opacity-0 shadow-[0_14px_30px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:opacity-100 ${
+                    isHubNavbarStyle ? 'bg-[#081120] border-[#122034] shadow-[0_14px_30px_rgba(2,8,22,0.4)]' : 'bg-white border-[#E7EAF0]'
+                  }`}>
                     {laboratorySubLinks.map((link, index) => (
                       <div key={link.name}>
                         <Link
                           href={link.href}
                           className={`block w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
                             isLinkActive(link.href)
-                              ? 'text-[#FF6A00] bg-[#F3F4F6]'
-                              : 'text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
+                              ? isHubNavbarStyle ? 'text-[#FF6A00] bg-[#122034]' : 'text-[#FF6A00] bg-[#F3F4F6]'
+                              : isHubNavbarStyle ? 'text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]' : 'text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
                           }`}
                         >
                           {link.name}
                         </Link>
-                        {index === 0 ? <div className="my-2 h-px w-full bg-[#E5E7EB]" /> : null}
+                        {index === 0 ? <div className={`my-2 h-px w-full ${isHubNavbarStyle ? 'bg-[#122034]' : 'bg-[#E5E7EB]'}`} /> : null}
                       </div>
                     ))}
                   </div>
@@ -1431,7 +1437,11 @@ export default function Navbar() {
                       ? 'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-semibold'
                       : 'text-[15px] leading-none font-semibold'
                   } ${
-                    isLinkActive('/hub/agentes-ativos') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#FF6A00]'
+                    isLinkActive('/hub/agentes-ativos') 
+                      ? 'text-[#0A9D57]' 
+                      : isHubNavbarStyle 
+                        ? 'text-slate-300 hover:text-[#FF6A00]' 
+                        : 'text-[#5f6572] hover:text-[#FF6A00]'
                   }`}
                 >
                   Agentes Ativos
@@ -1443,7 +1453,11 @@ export default function Navbar() {
                       ? 'inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[13px] font-semibold'
                       : 'text-[15px] leading-none font-semibold'
                   } ${
-                    isLinkActive('/hub/automacoes') ? 'text-[#0A9D57]' : 'text-[#5f6572] hover:text-[#FF6A00]'
+                    isLinkActive('/hub/automacoes') 
+                      ? 'text-[#0A9D57]' 
+                      : isHubNavbarStyle 
+                        ? 'text-slate-300 hover:text-[#FF6A00]' 
+                        : 'text-[#5f6572] hover:text-[#FF6A00]'
                   }`}
                 >
                   Automações
@@ -1453,42 +1467,54 @@ export default function Navbar() {
                     type="button"
                     className={`inline-flex items-center gap-1 text-[13px] font-semibold transition-colors duration-200 ${
                       isHubNavbarStyle
-                        ? 'rounded-full px-2 py-1 text-[#5f6572] group-hover:text-[#FF6A00]'
+                        ? 'rounded-full px-2 py-1 text-slate-300 group-hover:text-[#FF6A00]'
                         : 'text-[#344054] group-hover:text-[#FF6A00]'
                     }`}
                   >
                     Configurações
                     <ChevronDown size={14} />
                   </button>
-                  <div className="invisible absolute left-1/2 top-full z-[120] mt-3 w-[300px] -translate-x-1/2 rounded-2xl border border-[#E7EAF0] bg-white p-2 opacity-0 shadow-[0_14px_30px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:opacity-100">
+                  <div className={`invisible absolute left-1/2 top-full z-[120] mt-3 w-[300px] -translate-x-1/2 rounded-2xl border p-2 opacity-0 shadow-[0_14px_30px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:opacity-100 ${
+                    isHubNavbarStyle ? 'bg-[#081120] border-[#122034] shadow-[0_14px_30px_rgba(2,8,22,0.4)]' : 'bg-white border-[#E7EAF0]'
+                  }`}>
                       <button
                         onClick={openProfileModal}
-                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00] transition-colors"
+                        className={`w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
+                          isHubNavbarStyle ? 'text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]' : 'text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
+                        }`}
                       >
                         Meu perfil
                       </button>
                       <Link
                         href="/hub/conectores"
-                        className="block w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00] transition-colors"
+                        className={`block w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
+                          isHubNavbarStyle ? 'text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]' : 'text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
+                        }`}
                       >
                         Conectores
                       </Link>
                       <button
                         onClick={openCompanyModal}
-                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00] transition-colors"
+                        className={`w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
+                          isHubNavbarStyle ? 'text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]' : 'text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
+                        }`}
                       >
                         Sua Empresa
                       </button>
                       <button
                         onClick={openFinanceModal}
-                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00] transition-colors"
+                        className={`w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
+                          isHubNavbarStyle ? 'text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]' : 'text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
+                        }`}
                       >
                         Financeiro
                       </button>
-                      <div className="my-2 h-px w-full bg-[#E5E7EB]" />
+                      <div className={`my-2 h-px w-full ${isHubNavbarStyle ? 'bg-[#122034]' : 'bg-[#E5E7EB]'}`} />
                       <button
                         onClick={handleLogout}
-                        className="w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-red-500 hover:bg-red-50 transition-colors"
+                        className={`w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
+                          isHubNavbarStyle ? 'text-red-400 hover:bg-[#122034]' : 'text-red-500 hover:bg-red-50'
+                        }`}
                       >
                         Sair
                       </button>
@@ -1502,16 +1528,16 @@ export default function Navbar() {
             {!pathname?.startsWith('/admin') && (
               <span
                 className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-black ${
-                  isCapacityAbove80
-                    ? 'text-[#C2410C] shadow-[0_0_0_1px_rgba(245,158,11,0.30),0_0_14px_rgba(245,158,11,0.35)] animate-pulse'
-                    : 'text-[#0A9D57] shadow-[0_0_0_1px_rgba(10,157,87,0.25),0_0_14px_rgba(10,157,87,0.30)] animate-pulse'
+                  isHubNavbarStyle
+                    ? 'text-[#FF6A00] bg-[#FF6A00]/10 border border-[#FF6A00]/20 shadow-[0_0_14px_rgba(255,106,0,0.15)] animate-pulse'
+                    : isCapacityAbove80
+                      ? 'text-[#C2410C] shadow-[0_0_0_1px_rgba(245,158,11,0.30),0_0_14px_rgba(245,158,11,0.35)] animate-pulse'
+                      : 'text-[#0A9D57] shadow-[0_0_0_1px_rgba(10,157,87,0.25),0_0_14px_rgba(10,157,87,0.30)] animate-pulse'
                 }`}
               >
                 Agentes Ativos: {String(activeAgentsCount).padStart(2, '0')} de {String(planCapacity).padStart(2, '0')}
               </span>
             )}
-
-
           </div>
 
           {/* Mobile Menu Button */}
@@ -1520,7 +1546,7 @@ export default function Navbar() {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className={
                 isHubNavbarStyle
-                  ? 'inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#dbe2ee] bg-white p-0 text-[#2b3240] transition hover:border-[#ffc8a5] hover:text-[#ff6a00] focus:outline-none'
+                  ? 'inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#122034] bg-[#081120]/60 p-0 text-slate-300 transition hover:border-[#FF6A00]/50 hover:text-[#FF6A00] focus:outline-none'
                   : 'p-2 text-text-main focus:outline-none'
               }
             >
@@ -1537,32 +1563,32 @@ export default function Navbar() {
       </nav>
 
       {isHubNavbarStyle && user && (
-        <div className={`hidden md:flex items-center justify-between w-full rounded-2xl border border-black/[0.04] bg-white/80 backdrop-blur-md px-8 shadow-[0_8px_30px_rgba(15,23,42,0.04)] select-none transition-all duration-300 ease-in-out transform origin-top ${
+        <div className={`hidden md:flex items-center justify-between w-full rounded-2xl border border-white/10 bg-gradient-to-r from-[#FF7A00] to-[#E65C00] backdrop-blur-md px-8 shadow-[0_12px_40px_rgba(255,106,0,0.22)] select-none transition-all duration-300 ease-in-out transform origin-top relative z-10 ${
           isMetricsVisible 
             ? 'max-h-24 my-2.5 py-3 opacity-100 translate-y-0' 
             : 'max-h-0 my-0 py-0 opacity-0 -translate-y-6 pointer-events-none'
         }`}>
           {/* Item 1: Empresa */}
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF7A00]/10 text-[#FF7A00] flex-shrink-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 text-white flex-shrink-0">
               <Building2 size={16} />
             </div>
             <div className="flex flex-col relative">
-              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 leading-none">Empresa</p>
-              <p className="mt-1 text-sm font-bold text-slate-800 leading-none">{companyForm.companyName || 'Sua Empresa'}</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-white/75 leading-none">Empresa</p>
+              <p className="mt-1 text-sm font-black text-white leading-none">{companyForm.companyName || 'Sua Empresa'}</p>
               
               {isSuperAdmin && (
                 <div className="relative mt-1 flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => setIsCompanySelectorOpen((prev) => !prev)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-black/[0.08] bg-[#F8FAFC] hover:bg-[#F1F5F9] px-2.5 py-1 text-[10px] font-bold text-slate-700 transition-all duration-200 shadow-sm cursor-pointer whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 hover:bg-white/20 px-2.5 py-1 text-[10px] font-bold text-white transition-all duration-200 shadow-sm cursor-pointer whitespace-nowrap"
                   >
-                    <Building2 size={11} className="text-slate-500" />
+                    <Building2 size={11} className="text-white/80" />
                     <span className="max-w-[120px] truncate">
                       {displayCompanies.find((c) => c.uid === actingUid)?.companyName || 'Selecionar Empresa'}
                     </span>
-                    <ChevronDown size={10} className={`text-slate-400 transition-transform duration-200 ${isCompanySelectorOpen ? 'rotate-180' : ''}`} />
+                    <ChevronDown size={10} className={`text-white/80 transition-transform duration-200 ${isCompanySelectorOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   <button
@@ -1570,7 +1596,7 @@ export default function Navbar() {
                     onClick={handleRefreshCompanies}
                     disabled={isRefreshingCompanies}
                     title="Atualizar lista de empresas"
-                    className="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full border border-black/[0.08] bg-[#F8FAFC] hover:bg-[#F1F5F9] text-slate-500 hover:text-slate-700 transition-all duration-200 shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="inline-flex h-[22px] w-[22px] items-center justify-center rounded-full border border-white/15 bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all duration-200 shadow-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <RefreshCw size={10} className={`${isRefreshingCompanies ? 'animate-spin' : ''}`} />
                   </button>
@@ -1581,12 +1607,12 @@ export default function Navbar() {
                         className="fixed inset-0 z-[140]" 
                         onClick={() => setIsCompanySelectorOpen(false)} 
                       />
-                      <div className="absolute left-0 top-full z-[150] mt-2 w-[280px] rounded-2xl border border-black/[0.06] bg-white p-2 shadow-[0_12px_30px_rgba(15,23,42,0.12)] animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div className="absolute left-0 top-full z-[150] mt-2 w-[280px] rounded-2xl border border-white/10 bg-[#081120] p-2 shadow-[0_12px_30px_rgba(2,8,22,0.4)] animate-in fade-in slide-in-from-top-2 duration-200">
                         <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400">
                           Empresas Cadastradas ({displayCompanies.length})
                         </div>
                         
-                        <div className="my-1.5 h-px w-full bg-slate-100" />
+                        <div className="my-1.5 h-px w-full bg-white/10" />
                         
                         <div className="max-h-[220px] overflow-y-auto space-y-0.5 custom-scrollbar">
                           {actingUid && (
@@ -1596,7 +1622,7 @@ export default function Navbar() {
                                 setActingUid(null);
                                 setIsCompanySelectorOpen(false);
                               }}
-                              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-black text-[#FF6B00] hover:bg-orange-50 transition-colors"
+                              className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-xs font-black text-[#FF6B00] hover:bg-[#FF6B00]/10 transition-colors"
                             >
                               <Building2 size={13} />
                               Restaurar Painel Original
@@ -1613,8 +1639,8 @@ export default function Navbar() {
                               }}
                               className={`flex w-full flex-col rounded-xl px-3 py-2 text-left transition-colors ${
                                 actingUid === company.uid
-                                  ? 'bg-orange-50 text-[#FF6B00]'
-                                  : 'hover:bg-slate-50 text-slate-700'
+                                  ? 'bg-[#FF6B00]/10 text-[#FF6B00]'
+                                  : 'hover:bg-[#122034] text-slate-200'
                               }`}
                             >
                               <span className="text-xs font-bold truncate">{company.companyName}</span>
@@ -1637,46 +1663,46 @@ export default function Navbar() {
           </div>
 
           {/* Separator */}
-          <div className="h-6 w-px bg-slate-200" />
+          <div className="h-6 w-px bg-white/20" />
 
           {/* Item 2: Plano Ativo */}
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FFB900]/10 text-[#FFB900]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 text-white">
               <Crown size={16} />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 leading-none">Plano Ativo</p>
-              <p className="mt-1 text-sm font-black text-[#FF7A00] leading-none">{planDisplayLabel}</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-white/75 leading-none">Plano Ativo</p>
+              <p className="mt-1 text-sm font-black text-white leading-none">{planDisplayLabel}</p>
             </div>
           </div>
 
           {/* Separator */}
-          <div className="h-6 w-px bg-slate-200" />
+          <div className="h-6 w-px bg-white/20" />
 
           {/* Item 3: Limite Disponível */}
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0A9D57]/10 text-[#0A9D57]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 text-white">
               <ShieldCheck size={16} />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 leading-none">Agentes Disponíveis</p>
-              <p className="mt-1 text-sm font-bold text-slate-800 leading-none">
+              <p className="text-[10px] font-black uppercase tracking-wider text-white/75 leading-none">Agentes Disponíveis</p>
+              <p className="mt-1 text-sm font-bold text-white leading-none">
                 {planCapacity - activeAgentsCount} de {planCapacity} livres
               </p>
             </div>
           </div>
 
           {/* Separator */}
-          <div className="h-6 w-px bg-slate-200" />
+          <div className="h-6 w-px bg-white/20" />
 
           {/* Item 4: Automações Ativas */}
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#2D6CDF]/10 text-[#2D6CDF]">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/15 text-white">
               <Workflow size={16} />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 leading-none">Automações Ativas</p>
-              <p className="mt-1 text-sm font-bold text-slate-800 leading-none">
+              <p className="text-[10px] font-black uppercase tracking-wider text-white/75 leading-none">Automações Ativas</p>
+              <p className="mt-1 text-sm font-bold text-white leading-none">
                 {activeAutomationsCount} {activeAutomationsCount === 1 ? 'ativa' : 'ativas'}
               </p>
             </div>
@@ -1695,16 +1721,20 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] z-[210] overflow-y-auto transition-all duration-300 ${
+        className={`md:hidden z-[210] overflow-y-auto transition-all duration-300 ${
           isHubNavbarStyle
-            ? 'fixed left-1/2 top-[84px] max-h-[calc(100dvh-108px)] w-[min(calc(100%-1.5rem),460px)] -translate-x-1/2 rounded-[20px] p-4 sm:w-[min(calc(100%-2.5rem),460px)]'
-            : 'absolute top-24 left-4 right-4 max-h-[calc(100dvh-120px)] rounded-[24px] p-5'
+            ? 'fixed left-1/2 top-[84px] max-h-[calc(100dvh-108px)] w-[min(calc(100%-1.5rem),460px)] -translate-x-1/2 rounded-[20px] p-4 border border-[#122034] bg-[#040a13]/95 backdrop-blur-md text-white shadow-[0_20px_50px_rgba(2,8,22,0.5)] sm:w-[min(calc(100%-2.5rem),460px)]'
+            : 'absolute top-24 left-4 right-4 max-h-[calc(100dvh-120px)] rounded-[24px] p-5 bg-white border border-border shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)]'
         } ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
       >
         <div className="w-full space-y-2">
           {isAdminContext ? (
             navLinks.map((link) => (
-              <div key={link.name} className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee] transition-all">
+              <div key={link.name} className={`rounded-[14px] border transition-all ${
+                isHubNavbarStyle
+                  ? 'border-[#122034] bg-[#081120]/60 hover:bg-[#122034]/60 hover:border-[#FF6A00]/30'
+                  : 'border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee]'
+              }`}>
                 <div className="flex items-center gap-2 px-3.5 py-3">
                   <Link
                     href={link.href}
@@ -1712,7 +1742,9 @@ export default function Navbar() {
                       handleNavLinkClick(link.href);
                       setIsMenuOpen(false);
                     }}
-                    className="grow text-[14px] font-black text-[#1f2a44]"
+                    className={`grow text-[14px] font-black ${
+                      isHubNavbarStyle ? 'text-slate-200 hover:text-[#FF6A00]' : 'text-[#1f2a44]'
+                    }`}
                   >
                     {link.name}
                   </Link>
@@ -1722,12 +1754,18 @@ export default function Navbar() {
           ) : (
             <>
               {/* Hub Estratégico */}
-              <div className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee] transition-all">
+              <div className={`rounded-[14px] border transition-all ${
+                isHubNavbarStyle
+                  ? 'border-[#122034] bg-[#081120]/60 hover:bg-[#122034]/60 hover:border-[#FF6A00]/30'
+                  : 'border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee]'
+              }`}>
                 <div className="flex items-center gap-2 px-3.5 py-3">
                   <Link
                     href="/hub"
                     onClick={() => setIsMenuOpen(false)}
-                    className="grow text-[14px] font-black text-[#1f2a44]"
+                    className={`grow text-[14px] font-black ${
+                      isHubNavbarStyle ? 'text-slate-200 hover:text-[#FF6A00]' : 'text-[#1f2a44]'
+                    }`}
                   >
                     Hub Estratégico
                   </Link>
@@ -1735,38 +1773,52 @@ export default function Navbar() {
               </div>
 
               {/* Agentes IA */}
-              <div className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff]">
+              <div className={`rounded-[14px] border transition-all ${
+                isHubNavbarStyle
+                  ? 'border-[#122034] bg-[#081120]/60'
+                  : 'border-[#edf1f7] bg-[#fafcff]'
+              }`}>
                 <div className="flex items-center justify-between px-3.5 py-3">
                   <Link
                     href="/hub"
                     onClick={() => setIsMenuOpen(false)}
-                    className="grow text-[14px] font-black text-[#1f2a44]"
+                    className={`grow text-[14px] font-black ${
+                      isHubNavbarStyle ? 'text-slate-200 hover:text-[#FF6A00]' : 'text-[#1f2a44]'
+                    }`}
                   >
                     Agentes IA
                   </Link>
                   <button
                     type="button"
                     onClick={() => setIsLabSubmenuOpen((prev) => !prev)}
-                    className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#dde4ee] text-[#7d889d] transition hover:text-[#ff6a00] hover:border-[#ffc8a5]"
+                    className={`inline-flex h-7 w-7 items-center justify-center rounded-full border transition-all ${
+                      isHubNavbarStyle
+                        ? 'border-[#122034] bg-[#081120] text-slate-300 hover:text-[#ff6a00] hover:border-[#FF6A00]/30'
+                        : 'border-[#dde4ee] text-[#7d889d] hover:text-[#ff6a00] hover:border-[#ffc8a5]'
+                    }`}
                     aria-label="Abrir submenu Agentes IA"
                   >
                     <ChevronDown size={15} className={`shrink-0 transition-transform duration-300 ${isLabSubmenuOpen ? 'rotate-180' : ''}`} />
                   </button>
                 </div>
                 {isLabSubmenuOpen && (
-                  <div className="border-t border-[#edf1f7] px-2 py-2 space-y-1 bg-white rounded-b-[14px]">
+                  <div className={`border-t px-2 py-2 space-y-1 rounded-b-[14px] ${
+                    isHubNavbarStyle ? 'border-[#122034] bg-[#040a13]' : 'border-[#edf1f7] bg-white'
+                  }`}>
                     {laboratorySubLinks.map((link, index) => (
                       <div key={link.name}>
                         <Link
                           href={link.href}
                           onClick={() => setIsMenuOpen(false)}
                           className={`block rounded-xl px-3 py-2 text-[13px] font-semibold transition ${
-                            isLinkActive(link.href) ? 'bg-[#F3F4F6] text-[#FF6A00]' : 'text-[#42506a] hover:bg-[#fff5ee] hover:text-[#ff6a00]'
+                            isLinkActive(link.href)
+                              ? isHubNavbarStyle ? 'bg-[#122034] text-[#FF6A00]' : 'bg-[#F3F4F6] text-[#FF6A00]'
+                              : isHubNavbarStyle ? 'text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]' : 'text-[#42506a] hover:bg-[#fff5ee] hover:text-[#ff6a00]'
                           }`}
                         >
                           {link.name}
                         </Link>
-                        {index === 0 ? <div className="my-1.5 h-px w-full bg-[#E5E7EB]" /> : null}
+                        {index === 0 ? <div className={`my-1.5 h-px w-full ${isHubNavbarStyle ? 'bg-[#122034]' : 'bg-[#E5E7EB]'}`} /> : null}
                       </div>
                     ))}
                   </div>
@@ -1774,12 +1826,18 @@ export default function Navbar() {
               </div>
 
               {/* Agentes Ativos */}
-              <div className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee] transition-all">
+              <div className={`rounded-[14px] border transition-all ${
+                isHubNavbarStyle
+                  ? 'border-[#122034] bg-[#081120]/60 hover:bg-[#122034]/60 hover:border-[#FF6A00]/30'
+                  : 'border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee]'
+              }`}>
                 <div className="flex items-center gap-2 px-3.5 py-3">
                   <Link
                     href="/hub/agentes-ativos"
                     onClick={() => setIsMenuOpen(false)}
-                    className="grow text-[14px] font-black text-[#1f2a44]"
+                    className={`grow text-[14px] font-black ${
+                      isHubNavbarStyle ? 'text-slate-200 hover:text-[#FF6A00]' : 'text-[#1f2a44]'
+                    }`}
                   >
                     Agentes Ativos
                   </Link>
@@ -1787,12 +1845,18 @@ export default function Navbar() {
               </div>
 
               {/* Automações */}
-              <div className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee] transition-all">
+              <div className={`rounded-[14px] border transition-all ${
+                isHubNavbarStyle
+                  ? 'border-[#122034] bg-[#081120]/60 hover:bg-[#122034]/60 hover:border-[#FF6A00]/30'
+                  : 'border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee]'
+              }`}>
                 <div className="flex items-center gap-2 px-3.5 py-3">
                   <Link
                     href="/hub/automacoes"
                     onClick={() => setIsMenuOpen(false)}
-                    className="grow text-[14px] font-black text-[#1f2a44]"
+                    className={`grow text-[14px] font-black ${
+                      isHubNavbarStyle ? 'text-slate-200 hover:text-[#FF6A00]' : 'text-[#1f2a44]'
+                    }`}
                   >
                     Automações
                   </Link>
@@ -1802,7 +1866,7 @@ export default function Navbar() {
           )}
 
           {user && (
-            <div className="pt-4 mt-2 border-t border-[#edf1f7] w-full">
+            <div className={`pt-4 mt-2 border-t w-full ${isHubNavbarStyle ? 'border-[#122034]' : 'border-[#edf1f7]'}`}>
               <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#ff6a00] text-center mb-4">
                 {getGreeting()}, {getFirstName(user.displayName || user.email)}!
               </p>
@@ -1810,32 +1874,52 @@ export default function Navbar() {
               <div className="grid gap-2">
                 <button
                   onClick={openProfileModal}
-                  className="w-full py-3.5 rounded-full border border-slate-100 bg-[#F8FAFC]/60 px-5 text-center text-[12px] font-extrabold uppercase tracking-wider text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A] transition-all"
+                  className={`w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
+                    isHubNavbarStyle
+                      ? 'border-[#122034] bg-[#081120] text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]'
+                      : 'border-slate-100 bg-[#F8FAFC]/60 text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
+                  }`}
                 >
                   Meu perfil
                 </button>
                 <Link
                   href="/hub/conectores"
                   onClick={() => setIsMenuOpen(false)}
-                  className="block w-full py-3.5 rounded-full border border-slate-100 bg-[#F8FAFC]/60 px-5 text-center text-[12px] font-extrabold uppercase tracking-wider text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A] transition-all"
+                  className={`block w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
+                    isHubNavbarStyle
+                      ? 'border-[#122034] bg-[#081120] text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]'
+                      : 'border-slate-100 bg-[#F8FAFC]/60 text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
+                  }`}
                 >
                   Conectores
                 </Link>
                 <button
                   onClick={openCompanyModal}
-                  className="w-full py-3.5 rounded-full border border-slate-100 bg-[#F8FAFC]/60 px-5 text-center text-[12px] font-extrabold uppercase tracking-wider text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A] transition-all"
+                  className={`w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
+                    isHubNavbarStyle
+                      ? 'border-[#122034] bg-[#081120] text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]'
+                      : 'border-slate-100 bg-[#F8FAFC]/60 text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
+                  }`}
                 >
                   Sua empresa
                 </button>
                 <button
                   onClick={openFinanceModal}
-                  className="w-full py-3.5 rounded-full border border-slate-100 bg-[#F8FAFC]/60 px-5 text-center text-[12px] font-extrabold uppercase tracking-wider text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A] transition-all"
+                  className={`w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
+                    isHubNavbarStyle
+                      ? 'border-[#122034] bg-[#081120] text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]'
+                      : 'border-slate-100 bg-[#F8FAFC]/60 text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
+                  }`}
                 >
                   Financeiro
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="w-full py-3.5 rounded-full border border-red-100 bg-rose-50/50 px-5 text-center text-[12px] font-extrabold uppercase tracking-wider text-red-500 hover:bg-rose-100/50 transition-all flex items-center justify-center gap-2"
+                  className={`w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                    isHubNavbarStyle
+                      ? 'border-red-950/20 bg-rose-950/20 text-rose-400 hover:bg-rose-900/30'
+                      : 'border-red-100 bg-rose-50/50 text-red-500 hover:bg-rose-100/50'
+                  }`}
                 >
                   <LogOut size={14} /> Sair
                 </button>

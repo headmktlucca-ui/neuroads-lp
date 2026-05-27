@@ -2199,19 +2199,30 @@ export default function ConnectorsHubPage() {
 
         <section className="relative z-10 mx-auto w-full max-w-[1536px] px-4 pb-10 font-sans md:px-6 md:pb-14">
           <div className="rounded-[24px] bg-transparent p-4 md:p-6">
-            <header className="rounded-[28px] border border-[#0A2A55] bg-[linear-gradient(120deg,#041A44_0%,#06265B_52%,#031739_100%)] px-5 py-6 shadow-[0_18px_44px_rgba(2,12,36,0.34)] md:px-8 md:py-8">
-              <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+            <header className="relative overflow-hidden rounded-3xl border border-[#122034] bg-[#040a13] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
+              <Image
+                src="/images/template-match/metrics-wave-v1.png"
+                alt=""
+                fill
+                className="pointer-events-none object-cover object-bottom opacity-[1]"
+                priority
+              />
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,15,0.9)_0%,rgba(3,8,15,0.92)_40%,rgba(3,8,15,0.14)_100%)]" />
+
+              <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#FF7A00]">
-                    Gestão de Conectores
-                  </p>
-                  <h1 className="mt-2 text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
-                    Conectores
+                  <h1 className="text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
+                    <span
+                      className="bg-[length:200%_200%] bg-clip-text text-transparent"
+                      style={{ backgroundImage: 'linear-gradient(135deg, #ff9a35 0%, #ff6a00 55%, #c84a00 100%)' }}
+                    >
+                      Conectores
+                    </span>
                   </h1>
                   <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-lg">
                     Seu ecossistema conectado com dados reais para decisões mais rápidas e escala previsível.
                   </p>
-                  <p className="mt-2 text-sm font-semibold text-[#FF7A00]">
+                  <p className="mt-2 text-sm font-semibold text-[#FF6A00]">
                     Menos ruptura entre canais, mais performance orientada por dados reais.
                   </p>
                 </div>

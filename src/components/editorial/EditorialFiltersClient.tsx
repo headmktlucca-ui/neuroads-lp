@@ -1,23 +1,13 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, CalendarDays, Clock3, Eye, Flame } from 'lucide-react';
-import type { EditorialOrder, EditorialPost, EditorialTag } from '@/lib/editorial/alem-do-algoritmo';
-import { sortPostsByOrder } from '@/lib/editorial/alem-do-algoritmo';
+import type { EditorialPost } from '@/lib/editorial/alem-do-algoritmo';
 import NewsletterSignup from './NewsletterSignup';
 
-interface Props {
-  posts: EditorialPost[];
-}
-
-const orderOptions: { key: EditorialOrder; label: string }[] = [
-  { key: 'latest24h', label: 'Ultimas 24 horas' },
-  { key: 'mostAccessed', label: 'Mais acessadas' },
-  { key: 'recent', label: 'Recentes' },
-];
 
 function formatPostDate(isoDate: string) {
   return new Intl.DateTimeFormat('pt-BR', {
@@ -27,25 +17,36 @@ function formatPostDate(isoDate: string) {
   }).format(new Date(isoDate));
 }
 
-export default function EditorialFiltersClient({ posts }: Props) {
-  const [order, setOrder] = useState<EditorialOrder>('latest24h');
-  const [activeTag, setActiveTag] = useState<string>('Todos');
+export default function EditorialFiltersClient({ posts }: { posts: EditorialPost[] }) {
+  const latestPost = posts[0];
+  const otherPosts = posts.slice(1);
 
-  const tagCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    counts.set('Todos', posts.length);
-    for (const post of posts) {
-      for (const tag of post.tags) {
-        counts.set(tag, (counts.get(tag) ?? 0) + 1);
-      }
-    }
-    return Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
-  }, [posts]);
-
-  const visiblePosts = useMemo(() => {
-    const byTag = activeTag === 'Todos' ? posts : posts.filter((post) => post.tags.includes(activeTag as EditorialTag));
-    return sortPostsByOrder(byTag, order);
-  }, [posts, order, activeTag]);
+  const maisLidas = [
+    {
+      number: 1,
+      title: 'IA generativa no marketing: como usar com estratégia',
+      image: '/images/tools/servico-implantacao-agentes-hero-ultrarealista-v2.png',
+      href: '/conteudos/alem-do-algoritmo/ia-agentica-no-comercial-sem-perder-controle-humano',
+    },
+    {
+      number: 2,
+      title: 'Dashboards que geram decisão, não só relatórios',
+      image: '/images/tools/servico-funil-conversao-hero-ultrarealista-v2.png',
+      href: '/conteudos/alem-do-algoritmo/cpl-baixo-sem-venda-o-gargalo-esta-no-funil',
+    },
+    {
+      number: 3,
+      title: 'Dados primários: o ativo mais valioso do futuro',
+      image: '/images/tools/agentes-inteligencia-dados-hero-ultrarealista-v2.png',
+      href: '/conteudos/alem-do-algoritmo/seo-geo-para-pme-que-quer-escala-previsivel',
+    },
+    {
+      number: 4,
+      title: 'Automação com inteligência: o novo padrão de escala',
+      image: '/images/tools/automacao.png',
+      href: '/conteudos/alem-do-algoritmo/operacao-comercial-com-menos-ferramenta-e-mais-sistema',
+    },
+  ];
 
   const top24h = useMemo(
     () =>
@@ -59,41 +60,66 @@ export default function EditorialFiltersClient({ posts }: Props) {
   return (
     <section className="wrap grid gap-8 pb-16 pt-8 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div>
-        <div className="mb-6 rounded-[24px] border border-[#252a34] bg-[#0d121b] p-5 shadow-[0_12px_30px_rgba(0,0,0,0.35)]">
-          <div className="flex flex-wrap items-center gap-2">
-            {orderOptions.map((option) => (
-              <button
-                type="button"
-                key={option.key}
-                onClick={() => setOrder(option.key)}
-                className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-[0.11em] transition ${
-                  order === option.key
-                    ? 'bg-[#ff7a00] text-white shadow-[0_10px_20px_rgba(255,122,33,0.24)]'
-                    : 'border border-white/10 bg-white/5 text-slate-300 hover:border-[#384361] hover:bg-white/10'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+        {/* Featured Post (Latest Published Content) */}
+        {latestPost && (
+          <div className="mb-10 overflow-hidden rounded-[24px] border border-[#e4ebf4] bg-white p-6 shadow-[0_16px_34px_rgba(11,23,44,0.06)] transition hover:shadow-[0_20px_40px_rgba(11,23,44,0.1)]">
+            <div className="grid gap-6 md:grid-cols-12 items-center">
+              <div className="relative h-64 md:col-span-5 w-full overflow-hidden rounded-2xl">
+                <Image
+                  src={latestPost.coverImage}
+                  alt={latestPost.coverAlt}
+                  fill
+                  className="object-cover transition duration-500 hover:scale-[1.03]"
+                  sizes="(max-width: 768px) 100vw, 40vw"
+                  priority
+                />
+              </div>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            {tagCounts.map(([tag, count]) => (
-              <button
-                type="button"
-                key={tag}
-                onClick={() => setActiveTag(tag)}
-                className={`rounded-full border px-3 py-1.5 text-xs font-bold transition ${
-                  activeTag === tag
-                    ? 'border-[#ff7a00] bg-[#ff7a00]/10 text-[#ffcc9a]'
-                    : 'border-white/10 bg-white/5 text-slate-400 hover:border-[#384361] hover:bg-white/10'
-                }`}
-              >
-                {tag} ({count})
-              </button>
-            ))}
+              <div className="md:col-span-7 flex flex-col justify-center">
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  {latestPost.tags.slice(0, 3).map((tag) => (
+                    <span key={`featured-${tag}`} className="rounded-full bg-[#fff3ea] px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.11em] text-[#ff5f00]">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+
+                <h2 className="text-2xl font-black leading-tight tracking-[-0.02em] text-[#10203d]">
+                  {latestPost.title}
+                </h2>
+
+                <p className="mt-3 text-sm leading-relaxed text-[#4d5d78]">
+                  {latestPost.excerpt}
+                </p>
+
+                <div className="mt-4 flex flex-wrap items-center gap-4 text-xs font-semibold text-[#61708a]">
+                  <span className="inline-flex items-center gap-1.5">
+                    <CalendarDays size={13} />
+                    {formatPostDate(latestPost.publishedAt)}
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Clock3 size={13} />
+                    {latestPost.readTimeMinutes} min
+                  </span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Eye size={13} />
+                    {latestPost.viewsTotal.toLocaleString('pt-BR')}
+                  </span>
+                </div>
+
+                <div className="mt-5">
+                  <Link
+                    href={`/conteudos/alem-do-algoritmo/${latestPost.slug}`}
+                    className="inline-flex items-center gap-2 rounded-full bg-[#ff5f00] px-5 py-2.5 text-xs font-extrabold uppercase tracking-[0.11em] text-white transition hover:bg-[#e55600] shadow-[0_8px_20px_rgba(255,95,0,0.2)]"
+                  >
+                    Ler conteúdo completo
+                    <ArrowRight size={14} />
+                  </Link>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+        )}
 
         <motion.div
           layout
@@ -102,7 +128,7 @@ export default function EditorialFiltersClient({ posts }: Props) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          {visiblePosts.map((post, index) => (
+          {otherPosts.map((post, index) => (
             <motion.article
               layout
               key={post.slug}
@@ -187,6 +213,41 @@ export default function EditorialFiltersClient({ posts }: Props) {
         </div>
 
         <NewsletterSignup />
+
+        {/* Mais Lidas */}
+        <div className="rounded-[24px] border border-[#dfe7f1] bg-white/95 p-6 shadow-[0_18px_38px_rgba(9,23,44,0.08)]">
+          <h2 className="text-lg font-black text-[#0f1730] uppercase tracking-wider mb-5">
+            Mais Lidas
+          </h2>
+
+          <div className="space-y-4">
+            {maisLidas.map((item) => (
+              <Link
+                key={`mais-lidas-${item.number}`}
+                href={item.href}
+                className="group flex gap-4 items-center transition"
+              >
+                <div className="relative w-16 h-16 flex-shrink-0 overflow-hidden rounded-xl border border-[#e2e8f0]">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover transition duration-300 group-hover:scale-105"
+                    sizes="64px"
+                  />
+                </div>
+                <div className="flex gap-2.5 items-start">
+                  <span className="text-xl font-black text-[#64748b] leading-none pt-0.5">
+                    {item.number}
+                  </span>
+                  <p className="text-sm font-bold text-[#1e293b] leading-snug transition group-hover:text-[#ff5f00]">
+                    {item.title}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
       </aside>
     </section>
   );

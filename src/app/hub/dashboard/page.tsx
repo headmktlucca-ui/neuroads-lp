@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useState } from 'react';
-import { CheckCircle2, ExternalLink, Info, Power, Wrench, X } from 'lucide-react';
+import Image from 'next/image';
+import { CheckCircle2, ExternalLink, Info, Power, Search, Wrench, X } from 'lucide-react';
 import { doc, setDoc } from 'firebase/firestore';
 import Navbar from '../../../components/layout/Navbar';
 import Footer from '../../../components/layout/Footer';
@@ -23,6 +23,7 @@ export default function HubDashboardPage() {
   const router = useRouter();
   const pathname = usePathname();
   const [statusOverrides, setStatusOverrides] = useState<Record<string, boolean>>({});
+  const [searchQuery, setSearchQuery] = useState('');
   const [pendingActivationSlug, setPendingActivationSlug] = useState<string | null>(null);
   const [pendingDeactivateSlug, setPendingDeactivateSlug] = useState<string | null>(null);
   const [updatingSlug, setUpdatingSlug] = useState<string | null>(null);
@@ -86,10 +87,21 @@ export default function HubDashboardPage() {
 
     return agents.filter((agent) => activeTitles.has(agent.title));
   }, [effectiveContracts]);
-  const activeAgentsGroupedByCategory = useMemo(() => {
-    const groups = new Map<string, typeof activeAgents>();
 
-    for (const agent of activeAgents) {
+  const filteredActiveAgents = useMemo(() => {
+    return activeAgents.filter((agent) => {
+      if (!searchQuery) return true;
+      return (
+        agent.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        agent.description.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    });
+  }, [activeAgents, searchQuery]);
+
+  const activeAgentsGroupedByCategory = useMemo(() => {
+    const groups = new Map<string, typeof filteredActiveAgents>();
+
+    for (const agent of filteredActiveAgents) {
       const category = agent.category || 'Sem categoria';
       const categoryAgents = groups.get(category) ?? [];
       categoryAgents.push(agent);
@@ -106,7 +118,7 @@ export default function HubDashboardPage() {
       category,
       agents: groups.get(category) ?? [],
     }));
-  }, [activeAgents]);
+  }, [filteredActiveAgents]);
   const recommendedAgents = useMemo(() => {
     const activeTitles = new Set(activeAgents.map((agent) => agent.title));
     return agents.filter((agent) => !activeTitles.has(agent.title)).slice(0, 4);
@@ -255,12 +267,25 @@ export default function HubDashboardPage() {
           style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
         />
         <div className="relative z-10 wrap py-8 md:py-12">
-          <section className="rounded-3xl border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
-            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <header className="relative overflow-hidden rounded-3xl border border-[#122034] bg-[#040a13] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
+            <Image
+              src="/images/template-match/metrics-wave-v1.png"
+              alt=""
+              fill
+              className="pointer-events-none object-cover object-bottom opacity-[1]"
+              priority
+            />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,15,0.9)_0%,rgba(3,8,15,0.92)_40%,rgba(3,8,15,0.14)_100%)]" />
+
+            <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-[#FF6A00]">Gestão de Agentes</p>
-                <h1 className="mt-2 text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
-                  Agentes Ativos
+                <h1 className="text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
+                  <span
+                    className="bg-[length:200%_200%] bg-clip-text text-transparent"
+                    style={{ backgroundImage: 'linear-gradient(135deg, #ff9a35 0%, #ff6a00 55%, #c84a00 100%)' }}
+                  >
+                    {isAgentesAtivosPage ? 'Agentes Ativos' : 'Hub de Agentes'}
+                  </span>
                 </h1>
                 <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-lg">
                   {isAgentesAtivosPage
@@ -279,10 +304,52 @@ export default function HubDashboardPage() {
                 Acessar Laboratório
               </Link>
             </div>
-          </section>
+          </header>
+
+          {/* Search Bar Container */}
+          <div className="mt-6 rounded-3xl border border-border bg-white p-5 md:p-6 shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
+            <div className="relative w-full max-w-lg">
+              <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-muted">
+                <Search size={18} />
+              </span>
+              <input
+                type="text"
+                placeholder="Pesquisar agentes ativos por nome ou descrição..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-12 pl-11 pr-10 rounded-[12px] border border-[#D3DAE6] bg-[#F8FAFC] text-[15px] font-medium text-text-main placeholder-[#94A3B8] transition-all duration-300 focus:outline-none focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FFBE94]/50 focus:bg-white"
+              />
+              {searchQuery ? (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute inset-y-0 right-3 flex items-center px-1 text-text-muted hover:text-text-main transition"
+                  aria-label="Limpar pesquisa"
+                >
+                  <X size={16} />
+                </button>
+              ) : null}
+            </div>
+          </div>
+
+          {searchQuery && filteredActiveAgents.length === 0 ? (
+            <div className="mt-6 rounded-3xl border border-border bg-white p-12 text-center shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
+              <p className="text-lg font-black text-text-main">Nenhum agente ativo encontrado</p>
+              <p className="mt-1 text-sm text-text-muted">
+                Não encontramos nenhum agente ativo correspondente à busca &quot;{searchQuery}&quot;.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="mt-4 inline-flex h-10 items-center justify-center rounded-[12px] bg-[#FF6B00] px-5 text-sm font-black text-white shadow-[0_10px_20px_rgba(255,107,0,0.20)] hover:brightness-105 transition"
+              >
+                Limpar busca
+              </button>
+            </div>
+          ) : null}
 
           {isAgentesAtivosPage ? (
-            activeAgents.length > 0 ? (
+            filteredActiveAgents.length > 0 ? (
               <div className="mt-6 space-y-6">
                 {activeAgentsGroupedByCategory.map(({ category, agents: categoryAgents }) => (
                   <section
@@ -297,23 +364,27 @@ export default function HubDashboardPage() {
                 ))}
               </div>
             ) : (
-              <section className="mt-6 rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
-                <div className="rounded-2xl border border-border bg-[#FCFCFD] p-5 text-sm text-text-muted">
-                  Nenhum agente ativo no momento.
-                </div>
-              </section>
+              !searchQuery ? (
+                <section className="mt-6 rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
+                  <div className="rounded-2xl border border-border bg-[#FCFCFD] p-5 text-sm text-text-muted">
+                    Nenhum agente ativo no momento.
+                  </div>
+                </section>
+              ) : null
             )
           ) : (
             <section className="mt-6 rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
               <h2 className="text-2xl md:text-3xl font-black tracking-tight text-text-main">Agentes ativos</h2>
-              {activeAgents.length > 0 ? (
+              {filteredActiveAgents.length > 0 ? (
                 <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-3">
-                  {activeAgents.map((agent) => renderActiveAgentCard(agent))}
+                  {filteredActiveAgents.map((agent) => renderActiveAgentCard(agent))}
                 </div>
               ) : (
-                <div className="mt-6 rounded-2xl border border-border bg-[#FCFCFD] p-5 text-sm text-text-muted">
-                  Nenhum agente ativo no momento.
-                </div>
+                !searchQuery ? (
+                  <div className="mt-6 rounded-2xl border border-border bg-[#FCFCFD] p-5 text-sm text-text-muted">
+                    Nenhum agente ativo no momento.
+                  </div>
+                ) : null
               )}
             </section>
           )}

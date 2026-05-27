@@ -229,12 +229,22 @@ function getAgentHeroDescription(title: string) {
     );
   }
 
+  if (title === 'Agente Editorial') {
+    return (
+      <>
+        O <strong className="text-text-main">Agente Editorial</strong> automatiza a produção completa de conteúdo estratégico e matérias de apoio para o canal Além do Algoritmo. Ele atua na pesquisa de palavras-chave, redação otimizada para SEO e GEO, briefing visual de imagens ultra-realistas com controle rígido de logos e textos, além de disparar rascunhos em e-mail operacional para aprovação direta dos administradores e coordenar um cronograma dinâmico de postagens para maximizar picos de audiência comercial.
+      </>
+    );
+  }
+
   return null;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getRequiredConnectorKeysForAgent(title: string, category: string): ConnectorKey[] {
   if (title === 'SEO & GEO') return ['ga4', 'crm', 'warehouse'];
   if (title === 'DNA da Marca') return ['crm', 'ga4'];
+  if (title === 'Agente Editorial') return ['ga4', 'crm'];
   if (title === 'Diagnóstico de Landing Page') return ['ga4', 'googleAds', 'metaAds', 'crm'];
   if (title === 'Gerador de Copies de Conversão') return ['ga4', 'crm', 'googleAds', 'metaAds'];
   if (title === 'Gerador de Criativos' || title === 'Análise Viral') return ['googleAds', 'metaAds', 'linkedinAds', 'ga4'];

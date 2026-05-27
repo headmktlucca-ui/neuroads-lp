@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Activity,
@@ -161,43 +162,61 @@ export default function HubAutomacoesPage() {
           style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
         />
         <div className="relative z-10 wrap py-8 md:py-12 space-y-6">
-          <section className="rounded-[30px] border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_18px_40px_rgba(2,8,22,0.35)]">
-            <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-[#FF6A00]">Hub Operacional</p>
-                <h1 className="mt-2 text-3xl md:text-4xl font-black tracking-tight text-white">Automações</h1>
-                <p className="mt-3 max-w-2xl text-sm md:text-base text-[#C6D3E9]">
-                  Gestão em tempo real das rotinas ativas dos seus agentes com previsibilidade de execução, governança e visibilidade operacional.
-                </p>
-              </div>
-              <Link
-                href="/hub/agentes-ativos"
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#FF6A00] bg-[#FF6A00] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105"
-              >
-                <Sparkles className="h-4 w-4" />
-                Ativar novas automações
-              </Link>
-            </div>
+          <header className="relative overflow-hidden rounded-3xl border border-[#122034] bg-[#040a13] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
+            <Image
+              src="/images/template-match/metrics-wave-v1.png"
+              alt=""
+              fill
+              className="pointer-events-none object-cover object-bottom opacity-[1]"
+              priority
+            />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,15,0.9)_0%,rgba(3,8,15,0.92)_40%,rgba(3,8,15,0.14)_100%)]" />
 
-            <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-4">
-              <article className="rounded-2xl border border-[#173c6e] bg-[#081a38] p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Programadas/execução</p>
-                <p className="mt-2 text-3xl font-black text-white">{trackedAutomations.length}</p>
-              </article>
-              <article className="rounded-2xl border border-[#173c6e] bg-[#081a38] p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Ativas</p>
-                <p className="mt-2 text-3xl font-black text-white">{activeAutomationsCount}</p>
-              </article>
-              <article className="rounded-2xl border border-[#173c6e] bg-[#081a38] p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Em execução</p>
-                <p className="mt-2 text-3xl font-black text-white">{runningNowCount}</p>
-              </article>
-              <article className="rounded-2xl border border-[#173c6e] bg-[#081a38] p-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Execuções/mês</p>
-                <p className="mt-2 text-3xl font-black text-white">{totalMonthlyExecutions.toLocaleString('pt-BR')}</p>
-              </article>
+            <div className="relative z-10">
+              <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#FF6A00]">Hub Operacional</p>
+                  <h1 className="mt-2 text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
+                    <span
+                      className="bg-[length:200%_200%] bg-clip-text text-transparent"
+                      style={{ backgroundImage: 'linear-gradient(135deg, #ff9a35 0%, #ff6a00 55%, #c84a00 100%)' }}
+                    >
+                      Automações
+                    </span>
+                  </h1>
+                  <p className="mt-3 max-w-2xl text-sm md:text-base text-[#C6D3E9]">
+                    Gestão em tempo real das rotinas ativas dos seus agentes com previsibilidade de execução, governança e visibilidade operacional.
+                  </p>
+                </div>
+                <Link
+                  href="/hub/agentes-ativos"
+                  className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#FF6A00] bg-[#FF6A00] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  Ativar novas automações
+                </Link>
+              </div>
+
+              <div className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-4">
+                <article className="rounded-2xl border border-[#122034] bg-[#020813]/60 backdrop-blur-sm shadow-inner p-4">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Programadas/execução</p>
+                  <p className="mt-2 text-3xl font-black text-white">{trackedAutomations.length}</p>
+                </article>
+                <article className="rounded-2xl border border-[#122034] bg-[#020813]/60 backdrop-blur-sm shadow-inner p-4">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Ativas</p>
+                  <p className="mt-2 text-3xl font-black text-white">{activeAutomationsCount}</p>
+                </article>
+                <article className="rounded-2xl border border-[#122034] bg-[#020813]/60 backdrop-blur-sm shadow-inner p-4">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Em execução</p>
+                  <p className="mt-2 text-3xl font-black text-white">{runningNowCount}</p>
+                </article>
+                <article className="rounded-2xl border border-[#122034] bg-[#020813]/60 backdrop-blur-sm shadow-inner p-4">
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#95ABD6]">Execuções/mês</p>
+                  <p className="mt-2 text-3xl font-black text-white">{totalMonthlyExecutions.toLocaleString('pt-BR')}</p>
+                </article>
+              </div>
             </div>
-          </section>
+          </header>
 
           {trackedAutomations.length === 0 ? (
             <section className="rounded-[30px] border border-[#E5EAF2] bg-white p-8 md:p-10 shadow-[0_16px_36px_rgba(15,23,42,0.08)] text-center">

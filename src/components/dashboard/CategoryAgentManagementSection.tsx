@@ -210,12 +210,25 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
       <div className="relative z-10 wrap py-8 md:py-12 space-y-6">
         {isPerformance ? (
           <>
-            <header className="rounded-3xl border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
-              <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <header className="relative overflow-hidden rounded-3xl border border-[#122034] bg-[#040a13] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
+              <Image
+                src="/images/template-match/metrics-wave-v1.png"
+                alt=""
+                fill
+                className="pointer-events-none object-cover object-bottom opacity-[1]"
+                priority
+              />
+              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,15,0.9)_0%,rgba(3,8,15,0.92)_40%,rgba(3,8,15,0.14)_100%)]" />
+
+              <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                 <div>
-                  <p className="text-xs font-bold uppercase tracking-widest text-[#FF6A00]">Gestão de Agentes</p>
-                <h1 className="mt-2 text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
-                    Performance
+                  <h1 className="text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
+                    <span
+                      className="bg-[length:200%_200%] bg-clip-text text-transparent"
+                      style={{ backgroundImage: 'linear-gradient(135deg, #ff9a35 0%, #ff6a00 55%, #c84a00 100%)' }}
+                    >
+                      Performance
+                    </span>
                   </h1>
                   <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-lg">
                     Oportunidades e estratégias a partir de dados e comportamento. Escale com inteligência.
@@ -230,15 +243,27 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
                 </Link>
               </div>
             </header>
-
           </>
         ) : (
-          <header className="rounded-3xl border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
-            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+          <header className="relative overflow-hidden rounded-3xl border border-[#122034] bg-[#040a13] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
+            <Image
+              src="/images/template-match/metrics-wave-v1.png"
+              alt=""
+              fill
+              className="pointer-events-none object-cover object-bottom opacity-[1]"
+              priority
+            />
+            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,15,0.9)_0%,rgba(3,8,15,0.92)_40%,rgba(3,8,15,0.14)_100%)]" />
+
+            <div className="relative z-10 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-[#FF6A00]">Gestão de Agentes</p>
-                <h1 className="mt-2 text-3xl font-black tracking-tight text-white md:text-4xl">
-                  {category.label}
+                <h1 className="text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
+                  <span
+                    className="bg-[length:200%_200%] bg-clip-text text-transparent"
+                    style={{ backgroundImage: 'linear-gradient(135deg, #ff9a35 0%, #ff6a00 55%, #c84a00 100%)' }}
+                  >
+                    {category.label}
+                  </span>
                 </h1>
                 <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-base">{category.summary}</p>
                 <p className="mt-2 text-sm font-semibold text-[#FF6A00]">{category.financialImpact}</p>

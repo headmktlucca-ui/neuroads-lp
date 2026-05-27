@@ -4,7 +4,7 @@ import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { CheckCircle2, ExternalLink, Info, Power, Wrench, X } from 'lucide-react';
+import { CheckCircle2, ExternalLink, Info, Power, Search, Wrench, X } from 'lucide-react';
 import { doc, setDoc } from 'firebase/firestore';
 import Navbar from '../../../components/layout/Navbar';
 import Footer from '../../../components/layout/Footer';
@@ -170,6 +170,22 @@ function LaboratorioAgentesContent() {
   const categoryFilter = searchParams.get('categoria');
   const contractedAgents = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
   const [statusOverrides, setStatusOverrides] = useState<Record<string, boolean>>({});
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredAgents = useMemo(() => {
+    return agents.filter((agent) => {
+      const matchesSearch = searchQuery
+        ? agent.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          agent.description.toLowerCase().includes(searchQuery.toLowerCase())
+        : true;
+      const matchesCategoryFilter = categoryFilter
+        ? slugifyAgentTitle(agent.category) === categoryFilter
+        : true;
+      return matchesSearch && matchesCategoryFilter;
+    });
+  }, [searchQuery, categoryFilter]);
+
+  const totalVisibleAgents = filteredAgents.length;
   const effectiveContracts = useMemo(() => {
     if (Object.keys(statusOverrides).length === 0) return contractedAgents;
 
@@ -355,7 +371,10 @@ function LaboratorioAgentesContent() {
 
             <div className="relative z-10">
               <h1 className="mt-2 text-3xl font-black tracking-tight text-white md:text-4xl">
-                <span className="bg-[linear-gradient(90deg,#ffb36a_0%,#ff8a2b_45%,#d55a00_100%)] bg-clip-text text-transparent">
+                <span
+                  className="bg-[length:200%_200%] bg-clip-text text-transparent"
+                  style={{ backgroundImage: 'linear-gradient(135deg, #ff9a35 0%, #ff6a00 55%, #c84a00 100%)' }}
+                >
                   Laboratório de Agentes
                 </span>
               </h1>
@@ -365,8 +384,51 @@ function LaboratorioAgentesContent() {
             </div>
           </header>
 
+          {/* Search Bar Container */}
+          <div className="rounded-3xl border border-border bg-white p-5 md:p-6 shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
+            <div className="relative w-full max-w-lg">
+              <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-muted">
+                <Search size={18} />
+              </span>
+              <input
+                type="text"
+                placeholder="Pesquisar agentes por nome ou descrição..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full h-12 pl-11 pr-10 rounded-[12px] border border-[#D3DAE6] bg-[#F8FAFC] text-[15px] font-medium text-text-main placeholder-[#94A3B8] transition-all duration-300 focus:outline-none focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FFBE94]/50 focus:bg-white"
+              />
+              {searchQuery ? (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute inset-y-0 right-3 flex items-center px-1 text-text-muted hover:text-text-main transition"
+                  aria-label="Limpar pesquisa"
+                >
+                  <X size={16} />
+                </button>
+              ) : null}
+            </div>
+          </div>
+
+          {totalVisibleAgents === 0 ? (
+            <div className="rounded-3xl border border-border bg-white p-12 text-center shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
+              <p className="text-lg font-black text-text-main">Nenhum agente encontrado</p>
+              <p className="mt-1 text-sm text-text-muted">
+                Não encontramos nenhum agente que corresponda à sua busca &quot;{searchQuery}&quot;.
+              </p>
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="mt-4 inline-flex h-10 items-center justify-center rounded-[12px] bg-[#FF6B00] px-5 text-sm font-black text-white shadow-[0_10px_20px_rgba(255,107,0,0.20)] hover:brightness-105 transition"
+              >
+                Limpar busca
+              </button>
+            </div>
+          ) : null}
+
           {visibleCategories.map((category) => {
-            const categoryAgents = agents.filter((agent) => agent.category === category.label);
+            const categoryAgents = filteredAgents.filter((agent) => agent.category === category.label);
+            if (categoryAgents.length === 0) return null;
             return (
               <section
                 key={category.slug}

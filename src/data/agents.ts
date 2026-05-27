@@ -137,6 +137,14 @@ export const agents: Agent[] = [
     category: 'Inteligência'
   },
   {
+    title: 'Agente Editorial',
+    description: 'Redação sênior focada em SEO/GEO com geração de imagens ultra-realistas, fluxo por e-mail e agendamento inteligente.',
+    longDescription: 'O Agente Autônomo Editorial da NeuroAds é responsável pela criação ponta a ponta de conteúdo premium de negócios para o blog Além do Algoritmo. Ele estrutura redações ricas e otimizadas para busca e IA (SEO + GEO), projeta briefings visuais realistas (prompts limpos em inglês sem texto para DALL-E/Midjourney), dispara fluxos automatizados de rascunho por e-mail para aprovação do administrador e gerencia o agendamento distribuído de forma inteligente em dias e horários de pico de tráfego.',
+    icon: '/images/tools/automacao.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Inteligência'
+  },
+  {
     title: 'DNA da Marca',
     description: 'Elaboração de documento estratégico com tom de voz e pilares.',
     longDescription: 'Define a identidade neural da sua marca para anúncios. Cria um guia de comunicação que garante unidade visual e verbal através de todos os canais, aumentando a lembrança de marca e a confiança mútua entre cliente e empresa.',
