@@ -411,7 +411,7 @@ function LaboratorioAgentesContent() {
           </div>
 
           {totalVisibleAgents === 0 ? (
-            <div className="rounded-3xl border border-border bg-white p-12 text-center shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
+            <div className="rounded-3xl border border-border glassmorphism-light p-12 text-center shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
               <p className="text-lg font-black text-text-main">Nenhum agente encontrado</p>
               <p className="mt-1 text-sm text-text-muted">
                 Não encontramos nenhum agente que corresponda à sua busca &quot;{searchQuery}&quot;.
@@ -439,7 +439,7 @@ function LaboratorioAgentesContent() {
             return (
               <section
                 key={category.slug}
-                className="overflow-hidden rounded-3xl border border-border bg-white shadow-[0_14px_34px_rgba(15,23,42,0.05)]"
+                className="overflow-hidden rounded-3xl border border-border glassmorphism-light shadow-[0_14px_34px_rgba(15,23,42,0.05)]"
               >
                 <header className="flex items-center justify-between gap-4 bg-[#0d1e3d] px-6 py-4.5 border-b border-[#1a365d]/40">
                   <div className="flex flex-col gap-1">

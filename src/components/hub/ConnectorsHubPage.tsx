@@ -2248,7 +2248,7 @@ export default function ConnectorsHubPage() {
 
             <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px]">
               <div>
-                <div className="relative overflow-hidden rounded-3xl border border-[#DDE3F2] bg-white shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
+                <div className="relative overflow-hidden rounded-3xl border border-[#DDE3F2] glassmorphism-light shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
                   <header className="bg-[#0d1e3d] px-6 py-5 border-b border-[#1a365d]/40 flex flex-wrap items-center justify-between gap-4">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
