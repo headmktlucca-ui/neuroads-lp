@@ -276,7 +276,7 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
           </header>
         )}
 
-        <section className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
+        <section className="relative overflow-hidden rounded-3xl border border-border glassmorphism-light shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
           <header className="bg-[#0d1e3d] px-6 py-5 border-b border-[#1a365d]/40 flex flex-wrap items-center justify-between gap-4">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">

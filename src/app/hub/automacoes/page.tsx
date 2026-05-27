@@ -234,7 +234,7 @@ export default function HubAutomacoesPage() {
           </header>
 
           {/* Search Bar Container with Glassmorphism Translúcido styling */}
-          <div className="rounded-3xl border border-white/50 bg-white/80 backdrop-blur-md p-5 md:p-6 shadow-[0_16px_36px_rgba(15,23,42,0.04)]">
+          <div className="rounded-3xl glassmorphism-light p-5 md:p-6">
             <div className="relative w-full max-w-lg">
               <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-muted">
                 <Search size={18} />
