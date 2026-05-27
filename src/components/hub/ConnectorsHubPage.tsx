@@ -6,11 +6,9 @@ import Image from 'next/image';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { doc, setDoc } from 'firebase/firestore';
 import {
-  AlertCircle,
-  ArrowUpRight,
+  ArrowRight,
   BookOpenText,
-  CheckCircle2,
-  Clock3,
+  Check,
   EllipsisVertical,
   ExternalLink,
   Info,
@@ -18,6 +16,7 @@ import {
   Plus,
   RefreshCw,
   TriangleAlert,
+  X,
 } from 'lucide-react';
 import Navbar from '../layout/Navbar';
 import Footer from '../layout/Footer';
@@ -325,66 +324,52 @@ function formatLastSyncLabel(timestamp: number | null): string {
   }).format(date);
 }
 
-function getHealthTone(score: number): {
-  label: string;
-  description: string;
-  textClass: string;
-  panelClass: string;
-  iconClass: string;
-} {
-  if (score >= 90) {
-    return {
-      label: 'Excelente',
-      description: 'Tudo funcionando como esperado.',
-      textClass: 'text-[#12B76A]',
-      panelClass: 'border border-[#CDEEDB] bg-[#F1FCF6]',
-      iconClass: 'text-[#12B76A]',
-    };
-  }
-  if (score >= 75) {
-    return {
-      label: 'Bom',
-      description: 'Integrações estáveis com pequenos ajustes pendentes.',
-      textClass: 'text-[#2D6CDF]',
-      panelClass: 'border border-[#D3E3FF] bg-[#F4F8FF]',
-      iconClass: 'text-[#2D6CDF]',
-    };
-  }
-  if (score >= 50) {
-    return {
-      label: 'Atenção',
-      description: 'Parte dos dados ainda depende de conectores pendentes.',
-      textClass: 'text-[#F59E0B]',
-      panelClass: 'border border-[#FDE7C2] bg-[#FFFAF0]',
-      iconClass: 'text-[#F59E0B]',
-    };
-  }
-  return {
-    label: 'Crítico',
-    description: 'Risco alto de dados incompletos no dashboard.',
-    textClass: 'text-[#EF4444]',
-    panelClass: '',
-    iconClass: 'text-[#EF4444]',
-  };
-}
+
 
 function HealthGauge({ value }: { value: number }) {
   const boundedValue = Math.max(0, Math.min(value, 100));
   const cx = 120;
-  const cy = 118;
-  const radius = 88;
-  const strokeWidth = 16;
-  const halfCircumference = Math.PI * radius;
-  const dashOffset = halfCircumference * (1 - boundedValue / 100);
+  const cy = 120;
+  const radius = 80;
+  const strokeWidth = 14;
 
-  const theta = Math.PI - (Math.PI * boundedValue) / 100;
-  const indicatorX = cx + radius * Math.cos(theta);
-  const indicatorY = cy - radius * Math.sin(theta);
-  const trackColor = '#DDE3F2';
-  const progressGradientId = 'connectorGaugeGradient';
-  const indicatorColor = '#F59E0B';
-  const valueColorClass = 'text-[#0F172A]';
-  const subtitleColorClass = 'text-[#475569]';
+  const totalSegments = 8;
+  const segmentAngle = Math.PI / totalSegments;
+  const gapRad = 0.05;
+
+  const segments = Array.from({ length: totalSegments }).map((_, idx) => {
+    const startAngle = Math.PI - idx * segmentAngle - gapRad / 2;
+    const endAngle = Math.PI - (idx + 1) * segmentAngle + gapRad / 2;
+
+    const startX = cx + radius * Math.cos(startAngle);
+    const startY = cy - radius * Math.sin(startAngle);
+    const endX = cx + radius * Math.cos(endAngle);
+    const endY = cy - radius * Math.sin(endAngle);
+
+    let color = '#10B981';
+    if (idx >= 4 && idx <= 5) {
+      color = '#F59E0B';
+    } else if (idx >= 6) {
+      color = '#EF4444';
+    }
+
+    const segmentPercentageEnd = ((idx + 1) / totalSegments) * 100;
+    const isActive = boundedValue >= segmentPercentageEnd - 5;
+
+    return {
+      path: `M ${startX} ${startY} A ${radius} ${radius} 0 0 1 ${endX} ${endY}`,
+      color,
+      isActive,
+    };
+  });
+
+  const angleRad = Math.PI - (Math.PI * boundedValue) / 100;
+  const needleLenStart = radius - 30;
+  const needleLenEnd = radius + 15;
+  const needleX1 = cx + needleLenStart * Math.cos(angleRad);
+  const needleY1 = cy - needleLenStart * Math.sin(angleRad);
+  const needleX2 = cx + needleLenEnd * Math.cos(angleRad);
+  const needleY2 = cy - needleLenEnd * Math.sin(angleRad);
 
   return (
     <div className="relative mt-6 flex flex-col items-center">
@@ -394,32 +379,35 @@ function HealthGauge({ value }: { value: number }) {
         aria-label={`Saúde ${boundedValue} de 100`}
         role="img"
       >
-        <path
-          d={`M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`}
-          fill="none"
-          stroke={trackColor}
-          strokeWidth={strokeWidth}
+        {segments.map((seg, i) => (
+          <path
+            key={i}
+            d={seg.path}
+            fill="none"
+            stroke={seg.color}
+            strokeWidth={strokeWidth}
+            strokeLinecap="round"
+            className="transition-all duration-500"
+            style={{
+              opacity: seg.isActive ? 1 : 0.12,
+            }}
+          />
+        ))}
+
+        <line
+          x1={needleX1}
+          y1={needleY1}
+          x2={needleX2}
+          y2={needleY2}
+          stroke="#F59E0B"
+          strokeWidth="3.5"
           strokeLinecap="round"
         />
-        <path
-          d={`M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`}
-          fill="none"
-          stroke={`url(#${progressGradientId})`}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeDasharray={halfCircumference}
-          strokeDashoffset={dashOffset}
-        />
-        <defs>
-          <linearGradient id={progressGradientId} x1="32" y1="0" x2="208" y2="0" gradientUnits="userSpaceOnUse">
-            <stop offset="0%" stopColor="#FF7A00" />
-            <stop offset="100%" stopColor="#F59E0B" />
-          </linearGradient>
-        </defs>
-        <circle cx={indicatorX} cy={indicatorY} r={7} fill={indicatorColor} />
       </svg>
-      <p className={`-mt-5 text-[64px] font-light leading-none ${valueColorClass}`}>{boundedValue}</p>
-      <p className={`text-[34px] leading-none ${subtitleColorClass}`}>de 100</p>
+
+      <p className="absolute top-[58px] text-[58px] font-black leading-none text-slate-900 tracking-tight">
+        {boundedValue}%
+      </p>
     </div>
   );
 }
@@ -605,6 +593,142 @@ const ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME =
 const ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME =
   'inline-flex h-11 items-center justify-center rounded-xl bg-[#FF7A00] px-5 text-[14px] font-black text-white transition hover:bg-[#E66E00] disabled:cursor-not-allowed disabled:opacity-60';
 
+export type AlertPriority = 'critico' | 'alto' | 'medio' | 'info';
+
+export type AlertItem = {
+  id: string;
+  priority: AlertPriority;
+  badgeText: string;
+  hasGlowOrange?: boolean;
+  time: string;
+  title: string;
+  description: string;
+  detailText: string;
+  status: 'active' | 'read' | 'completed';
+  completedBy?: 'Você' | 'Agente NeuroAds';
+  insights: string[];
+  actionLink?: { label: string; url: string };
+  readAt?: number;
+  completedAt?: number;
+};
+
+const DEFAULT_ALERTS: AlertItem[] = [
+  {
+    id: 'alert-1',
+    priority: 'critico',
+    badgeText: 'Crítico',
+    time: '11:04',
+    title: 'Falha de Conexão API Pagamentos',
+    description: '(Timeout: 15s)',
+    detailText: 'A conexão com a API do gateway de pagamentos falhou repetidamente por timeout de 15 segundos durante a tentativa de sincronizar as últimas transações operacionais.',
+    status: 'active',
+    insights: [
+      'O tempo de resposta do gateway excedeu o limite máximo configurado de 15 segundos.',
+      'Verifique se há alguma instabilidade geral declarada no painel oficial de status do provedor.',
+      'Uma nova tentativa de sincronização automática será executada em 10 minutos, ou você pode reconfigurar as credenciais caso o problema persista.'
+    ],
+    actionLink: { label: 'Verificar Status do Provedor', url: 'https://status.stripe.com' },
+  },
+  {
+    id: 'alert-2',
+    priority: 'critico',
+    badgeText: 'Crítico',
+    hasGlowOrange: true,
+    time: '10:58',
+    title: 'Alta Latência DB Clientes',
+    description: '(Nível 4: 840ms)',
+    detailText: 'O tempo médio de resposta do banco de dados de clientes ultrapassou o limite operacional seguro de 200ms, registrando latências elevadas de 840ms (Alerta Crítico Nível 4).',
+    status: 'active',
+    insights: [
+      'A latência elevada afeta diretamente a sincronização de leads e o carregamento do funil comercial.',
+      'Identificamos consultas concorrentes pesadas nas tabelas de histórico que podem ser otimizadas.',
+      'Recomenda-se realizar a criação de um índice composto nas colunas mais acessadas do banco.'
+    ],
+    actionLink: { label: 'Otimizar Banco de Dados', url: '/hub/conectores' }
+  },
+  {
+    id: 'alert-3',
+    priority: 'medio',
+    badgeText: 'Médio',
+    time: '10:45',
+    title: 'Sincronização ERP SAP parcial',
+    description: '(Lote ID #881)',
+    detailText: 'A sincronização diária com o ERP SAP falhou em alguns registros específicos processados no lote operacional #881.',
+    status: 'active',
+    insights: [
+      'Os registros ignorados apresentam formatação inconsistente nos campos de SKU.',
+      'O processamento dos demais 438 registros foi concluído com sucesso e está atualizado.',
+      'Você pode consultar o log de sincronização para corrigir manualmente os dados afetados.'
+    ],
+    actionLink: { label: 'Ver Detalhes do Lote #881', url: '/hub/conectores' }
+  },
+  {
+    id: 'alert-4',
+    priority: 'alto',
+    badgeText: 'Alto',
+    time: '10:32',
+    title: 'Erro de Autenticação OAuth2',
+    description: '(HubSpot API)',
+    detailText: 'A autenticação OAuth2 com o HubSpot foi interrompida porque o token de acesso expirou ou foi revogado nas configurações externas.',
+    status: 'active',
+    insights: [
+      'A conexão está inativa, impedindo a sincronização em tempo real de novos contatos e empresas.',
+      'Isso acontece frequentemente quando a senha da conta HubSpot é alterada ou o aplicativo integrado é desconectado.',
+      'A reautenticação resolverá o problema imediatamente e restaurará a fila de sincronização.'
+    ],
+    actionLink: { label: 'Reconfigurar HubSpot CRM', url: '/hub/conectores' }
+  },
+  {
+    id: 'alert-5',
+    priority: 'info',
+    badgeText: 'Info',
+    time: '09:55',
+    title: 'Nova Versão API Stripe disponível',
+    description: 'v3.4.1',
+    detailText: 'O Stripe disponibilizou uma nova versão (v3.4.1) da sua API de pagamentos recomendando a migração.',
+    status: 'active',
+    insights: [
+      'A versão atual v3.2.0 continuará funcionando normalmente sem impactos operacionais imediatos.',
+      'A nova versão traz melhorias no processamento de assinaturas e suporte a novos métodos de pagamento.',
+      'Recomendamos planejar a migração da biblioteca técnica junto ao seu time de engenharia.'
+    ],
+    actionLink: { label: 'Documentação da API Stripe', url: 'https://stripe.com/docs/api' }
+  },
+  {
+    id: 'alert-solved-1',
+    priority: 'alto',
+    badgeText: 'Alto',
+    time: 'Ontem, 16:40',
+    title: 'Flutuação Anômala de Tráfego API',
+    description: '(Resolvido automaticamente)',
+    detailText: 'Foi detectado um pico de tráfego 400% acima do padrão na API do Google Analytics 4, sugerindo um teste automatizado ou varredura anormal.',
+    status: 'completed',
+    completedBy: 'Agente NeuroAds',
+    insights: [
+      'A taxa de requisições foi normalizada após 15 minutos.',
+      'O Agente de Infraestrutura da NeuroAds aplicou regras de rate-limiting temporárias.',
+      'Nenhuma ação do usuário é necessária.'
+    ],
+    completedAt: Date.now() - 24 * 60 * 60 * 1000,
+  },
+  {
+    id: 'alert-solved-2',
+    priority: 'medio',
+    badgeText: 'Médio',
+    time: 'Ontem, 14:15',
+    title: 'Sincronização de Tags de Remarketing',
+    description: '(Lido pelo usuário)',
+    detailText: 'Algumas tags de remarketing do Google Ads não estavam disparando nos pixels de checkout devido a uma atualização no container do GTM.',
+    status: 'read',
+    completedBy: 'Você',
+    insights: [
+      'O container do GTM foi republicado contendo as tags corrigidas.',
+      'Os pixels voltaram a registrar eventos de compra normalmente.'
+    ],
+    readAt: Date.now() - 26 * 60 * 60 * 1000,
+  }
+];
+
 export default function ConnectorsHubPage() {
   const { user, profile, loading, premiumSyncing } = useAuth();
   const router = useRouter();
@@ -650,6 +774,28 @@ export default function ConnectorsHubPage() {
   const [openConnectorMenuId, setOpenConnectorMenuId] = useState<UiConnectorId | null>(null);
   const [activeFilter, setActiveFilter] = useState<UiCategory | 'todos'>('todos');
   const sortMode = 'az';
+
+  const [alerts, setAlerts] = useState<AlertItem[]>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = window.localStorage.getItem('neuroads_hub_alerts');
+      if (saved) {
+        try {
+          return JSON.parse(saved) as AlertItem[];
+        } catch {
+          // fallback
+        }
+      }
+    }
+    return DEFAULT_ALERTS;
+  });
+
+  useEffect(() => {
+    window.localStorage.setItem('neuroads_hub_alerts', JSON.stringify(alerts));
+  }, [alerts]);
+
+  const [selectedAlert, setSelectedAlert] = useState<AlertItem | null>(null);
+  const [isAllAlertsModalOpen, setIsAllAlertsModalOpen] = useState(false);
+  const [activeAlertsTab, setActiveAlertsTab] = useState<'ativos' | 'historico'>('ativos');
 
   const accessState = useMemo(
     () => resolveHubAccessState({ loading, user, profile }),
@@ -1432,6 +1578,38 @@ export default function ConnectorsHubPage() {
     return Math.round((activeTrackedConnectorCount / trackedConnectorCount) * 100);
   }, [activeTrackedConnectorCount, trackedConnectorCount]);
 
+  const activeAlerts = useMemo(() => alerts.filter((a) => a.status === 'active'), [alerts]);
+  const historyAlerts = useMemo(() => alerts.filter((a) => a.status === 'read' || a.status === 'completed'), [alerts]);
+
+  const healthStatus = useMemo(() => {
+    if (healthScore >= 90) return { label: 'Excelente', bg: 'border-[#10B981]/20 bg-[#10B981]/8 text-[#10B981]' };
+    if (healthScore >= 70) return { label: 'Bom', bg: 'border-[#10B981]/20 bg-[#10B981]/8 text-[#10B981]' };
+    if (healthScore >= 50) return { label: 'Atenção', bg: 'border-[#F59E0B]/20 bg-[#F59E0B]/8 text-[#F59E0B]' };
+    return { label: 'Crítico', bg: 'border-[#EF4444]/20 bg-[#EF4444]/8 text-[#EF4444]' };
+  }, [healthScore]);
+
+  const handleMarkAlertAsRead = useCallback((alertId: string) => {
+    setAlerts((prev) =>
+      prev.map((a) =>
+        a.id === alertId
+          ? { ...a, status: 'read', readAt: Date.now() }
+          : a
+      )
+    );
+    setSelectedAlert((prev) => (prev && prev.id === alertId ? { ...prev, status: 'read', readAt: Date.now() } : prev));
+  }, []);
+
+  const handleMarkAlertAsCompleted = useCallback((alertId: string) => {
+    setAlerts((prev) =>
+      prev.map((a) =>
+        a.id === alertId
+          ? { ...a, status: 'completed', completedBy: 'Você', completedAt: Date.now() }
+          : a
+      )
+    );
+    setSelectedAlert((prev) => (prev && prev.id === alertId ? { ...prev, status: 'completed', completedBy: 'Você', completedAt: Date.now() } : prev));
+  }, []);
+
   const latestSyncTimestamp = useMemo(() => {
     let latest: number | null = null;
 
@@ -1516,7 +1694,7 @@ export default function ConnectorsHubPage() {
     [connectorSyncOverrides, profileConnections]
   );
 
-  const healthTone = useMemo(() => getHealthTone(healthScore), [healthScore]);
+
   const showGoogleAdsSelectionModal = Boolean(pendingGoogleAdsConnection && googleAdsAccounts.length > 0);
   const showMetaAdsSelectionModal = Boolean(!showGoogleAdsSelectionModal && pendingMetaAdsConnection && metaAdsAccounts.length > 0);
   const showInstagramSelectionModal = Boolean(
@@ -2250,65 +2428,140 @@ export default function ConnectorsHubPage() {
               </div>
 
               <aside className="space-y-4">
-                <section className="overflow-hidden rounded-2xl border border-[#DDE3F2] bg-white shadow-[0_10px_20px_rgba(15,23,42,0.08)]">
-                  <header className="bg-[#123A6B] px-5 py-3 text-center">
-                    <h3 className="text-[25px] leading-[1.1] font-black tracking-tight text-white">Saúde das Integrações</h3>
+                {/* CARD 1: Saúde das Integrações */}
+                <section className="relative overflow-hidden rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
+                  {/* Top border ambient subtle accent */}
+                  <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
+                  
+                  <header className="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <h3 className="text-[14px] font-extrabold tracking-wider uppercase text-slate-800">
+                      Saúde das Integrações
+                    </h3>
+                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
+                      800x480px
+                    </span>
                   </header>
 
-                  <div className="px-5 pb-5">
+                  <div className="px-1 pb-2">
                     <HealthGauge value={healthScore} />
 
-                    <div className={`mt-5 rounded-xl p-3 text-center ${healthTone.panelClass}`}>
-                      <p className={`inline-flex items-center gap-2 text-[26px] font-black ${healthTone.textClass}`}>
-                        <CheckCircle2 className={`h-5 w-5 ${healthTone.iconClass}`} />
-                        {healthTone.label}
-                      </p>
-                      <p className="mt-1 text-[16px] text-[#475569]">{healthTone.description}</p>
+                    <div className="mt-4 flex flex-col items-center">
+                      <span className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-[13px] font-bold ${healthStatus.bg}`}>
+                        <span className="h-2 w-2 rounded-full bg-current animate-pulse" />
+                        {healthStatus.label}
+                      </span>
+                      <p className="mt-4 text-[14px] font-bold uppercase tracking-wider text-slate-800">Saúde Global</p>
+                      <p className="mt-1 text-[12px] text-slate-400 font-semibold">{formatLastSyncLabel(latestSyncTimestamp) || 'Sem sincronização'}</p>
                     </div>
 
-                    <div className="mt-4 border-t border-[#E2E8F0] pt-4">
-                      <p className="inline-flex items-center gap-2 text-[14px] font-semibold text-[#64748B]">
-                        <Clock3 className="h-4 w-4" />
-                        Última sincronização geral
-                      </p>
-                      <p className="mt-1 text-[24px] font-black text-[#0F172A]">{formatLastSyncLabel(latestSyncTimestamp)}</p>
+                    <div className="mt-6 grid grid-cols-3 gap-2 border-t border-slate-100 pt-4 text-center">
+                      <div className="border-r border-slate-100">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Integrações Ativas</p>
+                        <p className="mt-1 text-[16px] font-black text-slate-800">
+                          {activeTrackedConnectorCount}/{trackedConnectorCount}
+                        </p>
+                      </div>
+                      <div className="border-r border-slate-100">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Latência Média</p>
+                        <p className="mt-1 text-[16px] font-black text-slate-800">112ms</p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Falhas (24h)</p>
+                        <p className="mt-1 text-[16px] font-black text-slate-800">3</p>
+                      </div>
                     </div>
                   </div>
                 </section>
 
-                <section className="overflow-hidden rounded-2xl border border-[#DDE3F2] bg-white shadow-[0_10px_20px_rgba(15,23,42,0.08)]">
-                  <header className="bg-[#123A6B] px-5 py-3 text-center">
-                    <h3 className="text-[25px] leading-[1.1] font-black tracking-tight text-white">Alertas importantes</h3>
+                {/* CARD 2: Alertas Importantes */}
+                <section className="relative overflow-hidden rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
+                  {/* Top border ambient subtle accent */}
+                  <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
+
+                  <header className="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <h3 className="text-[14px] font-extrabold tracking-wider uppercase text-slate-800">
+                      Alertas Importantes <span className="text-[#FF7A00] font-semibold">({activeAlerts.length} Ativos)</span>
+                    </h3>
+                    <span className="text-[11px] text-slate-400 font-semibold">
+                      Atualizado há 2 min
+                    </span>
                   </header>
 
-                  <article className="mt-4 px-5">
-                    <p className="inline-flex items-center gap-2 text-[16px] font-black text-[#FFAB4D]">
-                      <TriangleAlert className="h-4 w-4 text-[#FFAB4D]" />
-                      Taxa de erro acima do ideal
-                    </p>
-                    <p className="mt-1 text-[14px] text-[#475569]">LinkedIn Ads</p>
-                    <p className="text-[14px] text-[#475569]">Erro em 1,7% das sincronizações das últimas 24h.</p>
-                    <button type="button" className="mt-3 inline-flex items-center gap-2 text-[14px] font-bold text-[#E56B00]">
-                      Ver detalhes <ArrowUpRight className="h-4 w-4" />
-                    </button>
-                  </article>
+                  <div className="mt-4 space-y-3">
+                    {activeAlerts.length === 0 ? (
+                      <div className="py-6 text-center text-slate-400 text-sm font-medium">
+                        Não há alertas ativos no momento.
+                      </div>
+                    ) : (
+                      activeAlerts.slice(0, 5).map((alert) => {
+                        let borderLeftColor = 'bg-slate-400';
+                        let badgeStyle = 'border-slate-400/20 bg-slate-500/8 text-slate-600';
+                        let icon = <Info className="h-5 w-5 text-slate-500 shrink-0 mt-0.5" />;
 
-                  <div className="mx-5 my-4 h-px bg-[#E2E8F0]" aria-hidden />
+                        if (alert.priority === 'critico') {
+                          borderLeftColor = alert.hasGlowOrange ? 'bg-[#FF8A3D]' : 'bg-[#EF4444]';
+                          badgeStyle = alert.hasGlowOrange
+                            ? 'border-[#FF8A3D]/20 bg-[#FF8A3D]/8 text-[#FF8A3D]'
+                            : 'border-[#EF4444]/20 bg-[#EF4444]/8 text-[#EF4444]';
+                          icon = <TriangleAlert className={`h-5 w-5 shrink-0 mt-0.5 ${alert.hasGlowOrange ? 'text-[#FF8A3D]' : 'text-[#EF4444]'}`} />;
+                        } else if (alert.priority === 'alto') {
+                          borderLeftColor = 'bg-[#FF7A00]';
+                          badgeStyle = 'border-[#FF7A00]/20 bg-[#FF7A00]/8 text-[#FF7A00]';
+                          icon = <Link2 className="h-5 w-5 text-[#FF7A00] shrink-0 mt-0.5" />;
+                        } else if (alert.priority === 'medio') {
+                          borderLeftColor = 'bg-[#F59E0B]';
+                          badgeStyle = 'border-[#F59E0B]/20 bg-[#F59E0B]/8 text-[#D97706]';
+                          icon = <TriangleAlert className="h-5 w-5 text-[#F59E0B] shrink-0 mt-0.5" />;
+                        }
 
-                  <article className="px-5">
-                    <p className="inline-flex items-center gap-2 text-[16px] font-black text-[#2D6CDF]">
-                      <AlertCircle className="h-4 w-4 text-[#2D6CDF]" />
-                      Conector pendente
-                    </p>
-                    <p className="mt-1 text-[14px] text-[#475569]">RD Station ainda está em fase de implantação.</p>
-                    <button type="button" className="mt-3 inline-flex items-center gap-2 text-[14px] font-bold text-[#E56B00]">
-                      Ver plano de ativação <ArrowUpRight className="h-4 w-4" />
-                    </button>
-                  </article>
+                        return (
+                          <article
+                            key={alert.id}
+                            onClick={() => setSelectedAlert(alert)}
+                            className="group relative overflow-hidden rounded-[12px] border border-slate-100/80 bg-slate-50/60 pl-4 pr-3 py-3 shadow-sm transition hover:bg-slate-100/80 cursor-pointer flex items-center justify-between"
+                          >
+                            <div className={`absolute top-0 bottom-0 left-0 w-[3.5px] ${borderLeftColor}`} />
+                            <div className="flex items-start gap-3">
+                              {icon}
+                              <div>
+                                <div className="flex flex-wrap items-center gap-2">
+                                  <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${badgeStyle}`}>
+                                    {alert.badgeText}
+                                  </span>
+                                  {alert.hasGlowOrange && (
+                                    <span className="inline-flex items-center rounded-full border border-amber-500/20 bg-amber-500/8 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600">
+                                      Glow Orange
+                                    </span>
+                                  )}
+                                  <span className="text-[11px] text-slate-400 font-semibold">{alert.time}</span>
+                                </div>
+                                <h4 className="text-[13px] font-bold text-slate-800 mt-1">
+                                  {alert.title}
+                                </h4>
+                                <p className="text-[12px] text-slate-500 mt-0.5">
+                                  {alert.description}{' '}
+                                  {alert.priority === 'critico' && !alert.hasGlowOrange && (
+                                    <span className="text-[#FF7A00] font-semibold hover:underline">
+                                      [Mais Detalhes]
+                                    </span>
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                            <ArrowRight className="h-4 w-4 text-[#FF7A00] transition group-hover:translate-x-1 shrink-0 ml-2" />
+                          </article>
+                        );
+                      })
+                    )}
+                  </div>
 
                   <button
                     type="button"
-                    className="mx-5 my-5 inline-flex h-12 w-[calc(100%-40px)] items-center justify-center gap-2 rounded-xl border border-[#FFD9BD] bg-white text-[14px] font-black tracking-wide text-[#FF7A00] transition hover:bg-[#FFF5EC]"
+                    onClick={() => {
+                      setIsAllAlertsModalOpen(true);
+                      setActiveAlertsTab('ativos');
+                    }}
+                    className="mt-6 w-full py-3 rounded-xl border border-[#FF7A00]/40 hover:border-[#FF7A00] text-[#FF7A00] font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:bg-[#FF7A00]/5 flex items-center justify-center gap-2"
                   >
                     <TriangleAlert className="h-4 w-4" />
                     Ver todos os alertas
@@ -2740,6 +2993,324 @@ export default function ConnectorsHubPage() {
                 className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
               >
                 {googleTrendsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {/* MODAL 1: Detalhes do Alerta */}
+      {selectedAlert && (
+        <div className="fixed inset-0 z-[1250] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-[6px] transition-opacity duration-300" 
+            onClick={() => setSelectedAlert(null)}
+          />
+          
+          <section className="relative z-[1251] w-full max-w-2xl overflow-hidden rounded-[24px] border border-slate-200/80 bg-white p-6 md:p-8 shadow-[0_24px_50px_rgba(15,23,42,0.15)] animate-in fade-in zoom-in-95 duration-200">
+            <div className={`absolute top-0 left-0 right-0 h-[4px] ${
+              selectedAlert.priority === 'critico' ? 'bg-[#EF4444]' :
+              selectedAlert.priority === 'alto' ? 'bg-[#FF7A00]' :
+              selectedAlert.priority === 'medio' ? 'bg-[#F59E0B]' : 'bg-slate-400'
+            }`} />
+
+            <div className="flex items-start justify-between">
+              <div className="flex items-center gap-3">
+                <span className={`inline-flex items-center rounded-full border px-3 py-1 text-[10px] font-bold uppercase tracking-wider ${
+                  selectedAlert.priority === 'critico' ? 'border-[#EF4444]/20 bg-[#EF4444]/8 text-[#EF4444]' :
+                  selectedAlert.priority === 'alto' ? 'border-[#FF7A00]/20 bg-[#FF7A00]/8 text-[#FF7A00]' :
+                  selectedAlert.priority === 'medio' ? 'border-[#F59E0B]/20 bg-[#F59E0B]/8 text-[#D97706]' :
+                  'border-slate-400/20 bg-slate-500/8 text-slate-600'
+                }`}>
+                  {selectedAlert.badgeText}
+                </span>
+                <span className="text-[12px] text-slate-400 font-semibold">Emitido às {selectedAlert.time}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedAlert(null)}
+                className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+                aria-label="Fechar"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="mt-4 flex items-start gap-4">
+              <div className="mt-1 shrink-0">
+                {selectedAlert.priority === 'critico' ? (
+                  <TriangleAlert className={`h-7 w-7 ${selectedAlert.hasGlowOrange ? 'text-[#FF8A3D]' : 'text-[#EF4444]'}`} />
+                ) : selectedAlert.priority === 'alto' ? (
+                  <Link2 className="h-7 w-7 text-[#FF7A00]" />
+                ) : selectedAlert.priority === 'medio' ? (
+                  <TriangleAlert className="h-7 w-7 text-[#F59E0B]" />
+                ) : (
+                  <Info className="h-7 w-7 text-slate-500" />
+                )}
+              </div>
+              <div>
+                <h3 className="text-[20px] font-black text-slate-900 tracking-tight">{selectedAlert.title}</h3>
+                <p className="mt-2 text-[15px] font-semibold text-slate-600 leading-relaxed">{selectedAlert.detailText}</p>
+              </div>
+            </div>
+
+            <div className="mt-6 border-t border-slate-100 pt-6">
+              <h4 className="text-[12px] font-extrabold uppercase tracking-wider text-slate-400">Insights de Resolução</h4>
+              <ul className="mt-3 space-y-3">
+                {selectedAlert.insights.map((insight, index) => (
+                  <li key={index} className="flex items-start gap-3 text-[14px] text-slate-700">
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#FF7A00]/10 text-[#FF7A00] text-[11px] font-bold mt-0.5">
+                      {index + 1}
+                    </span>
+                    <span className="font-medium leading-relaxed">{insight}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {selectedAlert.actionLink && selectedAlert.status === 'active' && (
+              <div className="mt-6 rounded-2xl border border-[#FF7A00]/25 bg-[#FF7A00]/5 p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                  <p className="text-[13px] font-bold text-slate-800">Link de Apoio Sugerido</p>
+                  <p className="text-[12px] text-slate-600 mt-0.5">Use este link externo para realizar o diagnóstico direto.</p>
+                </div>
+                <a
+                  href={selectedAlert.actionLink.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex h-10 items-center gap-1.5 rounded-xl bg-[#FF7A00] px-4 text-[13px] font-extrabold text-white shadow-[0_4px_12px_rgba(255,122,0,0.2)] hover:bg-[#E66E00] hover:shadow-none transition"
+                >
+                  {selectedAlert.actionLink.label}
+                  <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            )}
+
+            <div className="mt-8 flex flex-wrap items-center justify-end gap-3 border-t border-slate-100 pt-6">
+              <button
+                type="button"
+                onClick={() => setSelectedAlert(null)}
+                className="h-11 rounded-xl border border-slate-200 px-5 text-[14px] font-bold text-slate-600 hover:bg-slate-50 transition"
+              >
+                Voltar
+              </button>
+
+              {selectedAlert.status === 'active' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleMarkAlertAsRead(selectedAlert.id);
+                    }}
+                    className="h-11 rounded-xl border border-[#FF7A00]/30 text-[#FF7A00] px-5 text-[14px] font-bold hover:bg-[#FF7A00]/5 transition"
+                  >
+                    Marcar como Lido
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      handleMarkAlertAsCompleted(selectedAlert.id);
+                    }}
+                    className="h-11 rounded-xl bg-[#10B981] px-5 text-[14px] font-extrabold text-white shadow-[0_4px_12px_rgba(16,185,129,0.2)] hover:bg-[#0E9F6E] transition flex items-center gap-1.5"
+                  >
+                    <Check className="h-4 w-4" />
+                    Resolver Alerta
+                  </button>
+                </>
+              )}
+            </div>
+          </section>
+        </div>
+      )}
+
+      {/* MODAL 2: Lista Completa e Histórico de Alertas */}
+      {isAllAlertsModalOpen && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div 
+            className="absolute inset-0 bg-slate-900/40 backdrop-blur-[6px] transition-opacity duration-300" 
+            onClick={() => setIsAllAlertsModalOpen(false)}
+          />
+          
+          <section className="relative z-[1201] w-full max-w-3xl overflow-hidden rounded-[24px] border border-slate-200/80 bg-white p-6 md:p-8 shadow-[0_24px_50px_rgba(15,23,42,0.15)] animate-in fade-in zoom-in-95 duration-200 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 shrink-0">
+              <div>
+                <h3 className="text-[20px] font-black text-slate-900 tracking-tight">Painel Central de Alertas</h3>
+                <p className="text-[13px] text-slate-400 font-semibold mt-0.5">Gerenciamento e rastreamento de instabilidades</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAllAlertsModalOpen(false)}
+                className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition"
+                aria-label="Fechar"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="mt-4 flex gap-1 rounded-xl bg-slate-100 p-1 shrink-0">
+              <button
+                type="button"
+                onClick={() => setActiveAlertsTab('ativos')}
+                className={`flex-1 py-2.5 rounded-lg text-[13px] font-bold transition flex items-center justify-center gap-2 ${
+                  activeAlertsTab === 'ativos'
+                    ? 'bg-white text-[#FF7A00] shadow-sm'
+                    : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <TriangleAlert className="h-4 w-4" />
+                Alertas Ativos ({activeAlerts.length})
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveAlertsTab('historico')}
+                className={`flex-1 py-2.5 rounded-lg text-[13px] font-bold transition flex items-center justify-center gap-2 ${
+                  activeAlertsTab === 'historico'
+                    ? 'bg-white text-[#FF7A00] shadow-sm'
+                    : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <Check className="h-4 w-4" />
+                Histórico de Soluções ({historyAlerts.length})
+              </button>
+            </div>
+
+            <div className="mt-5 overflow-y-auto pr-1 flex-1 min-h-[300px]">
+              {activeAlertsTab === 'ativos' ? (
+                <div className="space-y-3">
+                  {activeAlerts.length === 0 ? (
+                    <div className="py-12 text-center text-slate-400 text-[14px] font-semibold">
+                      Parabéns! Não há nenhum alerta ativo em seu Connectors Hub.
+                    </div>
+                  ) : (
+                    activeAlerts.map((alert) => {
+                      let borderLeftColor = 'bg-slate-400';
+                      let badgeStyle = 'border-slate-400/20 bg-slate-500/8 text-slate-600';
+                      let icon = <Info className="h-5 w-5 text-slate-500 shrink-0 mt-0.5" />;
+
+                      if (alert.priority === 'critico') {
+                        borderLeftColor = alert.hasGlowOrange ? 'bg-[#FF8A3D]' : 'bg-[#EF4444]';
+                        badgeStyle = alert.hasGlowOrange
+                          ? 'border-[#FF8A3D]/20 bg-[#FF8A3D]/8 text-[#FF8A3D]'
+                          : 'border-[#EF4444]/20 bg-[#EF4444]/8 text-[#EF4444]';
+                        icon = <TriangleAlert className={`h-5 w-5 shrink-0 mt-0.5 ${alert.hasGlowOrange ? 'text-[#FF8A3D]' : 'text-[#EF4444]'}`} />;
+                      } else if (alert.priority === 'alto') {
+                        borderLeftColor = 'bg-[#FF7A00]';
+                        badgeStyle = 'border-[#FF7A00]/20 bg-[#FF7A00]/8 text-[#FF7A00]';
+                        icon = <Link2 className="h-5 w-5 text-[#FF7A00] shrink-0 mt-0.5" />;
+                      } else if (alert.priority === 'medio') {
+                        borderLeftColor = 'bg-[#F59E0B]';
+                        badgeStyle = 'border-[#F59E0B]/20 bg-[#F59E0B]/8 text-[#D97706]';
+                        icon = <TriangleAlert className="h-5 w-5 text-[#F59E0B] shrink-0 mt-0.5" />;
+                      }
+
+                      return (
+                        <div
+                          key={alert.id}
+                          onClick={() => {
+                            setSelectedAlert(alert);
+                          }}
+                          className="group relative overflow-hidden rounded-[16px] border border-slate-100/90 bg-slate-50/50 hover:bg-slate-50 pl-4 pr-3 py-4 shadow-sm transition hover:shadow cursor-pointer flex items-center justify-between"
+                        >
+                          <div className={`absolute top-0 bottom-0 left-0 w-[4.5px] ${borderLeftColor}`} />
+                          <div className="flex items-start gap-3">
+                            {icon}
+                            <div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${badgeStyle}`}>
+                                  {alert.badgeText}
+                                </span>
+                                {alert.hasGlowOrange && (
+                                  <span className="inline-flex items-center rounded-full border border-amber-500/20 bg-amber-500/8 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600">
+                                    Glow Orange
+                                  </span>
+                                )}
+                                <span className="text-[11px] text-slate-400 font-semibold">{alert.time}</span>
+                              </div>
+                              <h4 className="text-[14px] font-bold text-slate-800 mt-1">
+                                {alert.title}
+                              </h4>
+                              <p className="text-[12px] text-slate-500 mt-0.5">
+                                {alert.detailText}
+                              </p>
+                            </div>
+                          </div>
+                          <ArrowRight className="h-4 w-4 text-[#FF7A00] transition group-hover:translate-x-1 shrink-0 ml-2" />
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {historyAlerts.length === 0 ? (
+                    <div className="py-12 text-center text-slate-400 text-[14px] font-semibold">
+                      Não há histórico de alertas lidos ou concluídos.
+                    </div>
+                  ) : (
+                    historyAlerts.map((alert) => {
+                      const isCompleted = alert.status === 'completed';
+                      const actionLabel = isCompleted ? 'Concluído' : 'Lido';
+                      const solvedBy = alert.completedBy || 'Você';
+                      
+                      return (
+                        <div
+                          key={alert.id}
+                          className="relative overflow-hidden rounded-[16px] border border-slate-100 bg-slate-50/20 pl-4 pr-4 py-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4"
+                        >
+                          <div className={`absolute top-0 bottom-0 left-0 w-[4.5px] ${isCompleted ? 'bg-[#10B981]' : 'bg-slate-300'}`} />
+                          
+                          <div className="flex items-start gap-3">
+                            {isCompleted ? (
+                              <Check className="h-5 w-5 text-[#10B981] shrink-0 mt-0.5" />
+                            ) : (
+                              <Info className="h-5 w-5 text-slate-400 shrink-0 mt-0.5" />
+                            )}
+                            <div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${
+                                  isCompleted ? 'border-[#10B981]/20 bg-[#10B981]/8 text-[#10B981]' : 'border-slate-300 bg-slate-100 text-slate-500'
+                                }`}>
+                                  {actionLabel}
+                                </span>
+                                <span className="text-[11px] text-slate-400 font-semibold">{alert.time}</span>
+                              </div>
+                              <h4 className="text-[14px] font-bold text-slate-700 mt-1 line-through opacity-75">
+                                {alert.title}
+                              </h4>
+                              <p className="text-[12px] text-slate-400 mt-0.5">
+                                {alert.description}
+                              </p>
+                              <p className="text-[11px] mt-2 font-semibold text-slate-500 flex items-center gap-1.5 bg-slate-100/80 px-2 py-0.5 rounded-md w-max">
+                                <span>Ação executada por:</span>
+                                <span className={solvedBy.includes('Agente') ? 'text-[#10B981] font-bold' : 'text-[#FF7A00] font-bold'}>
+                                  {solvedBy}
+                                </span>
+                              </p>
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => setSelectedAlert(alert)}
+                            className="self-end md:self-center shrink-0 text-xs font-bold text-[#FF7A00] hover:underline"
+                          >
+                            Ver detalhes do histórico
+                          </button>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+              )}
+            </div>
+
+            <div className="mt-6 border-t border-slate-100 pt-4 shrink-0 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsAllAlertsModalOpen(false)}
+                className="h-11 rounded-xl bg-slate-900 hover:bg-slate-800 px-6 text-[14px] font-extrabold text-white transition shadow-sm"
+              >
+                Fechar Painel
               </button>
             </div>
           </section>

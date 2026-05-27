@@ -1,0 +1,14 @@
+defaultPortal: neuroads
+portals:
+  - name: neuroads
+    env: prod
+    authType: personalaccesskey
+    accountType: STANDARD
+    personalAccessKey: >-
+      CiRuYTEtNTRmNy1iZjhiLTQxMzMtYjk4ZC0zNmQ4NDM3YzhlOTUQruTGGBiduZQsKhkABeaRgmp00PFEzxmIIVaPZtRHou2Glm49SgNuYTE
+    auth:
+      tokenInfo:
+        accessToken: >-
+          CI_f2rvmMxIgQlNQMl8kQEwrAhMACAkCFBwBAgEQAwoBAgMHGygCeAEYruTGGCCduZQsKO7pDDIU-KhoY9M76-TJ5Lv8oPW7zOCv2uE6S0JTUDJfJEBMKwMnAAKDAgTLAgYTGR-QAbsBjgKPApUClwKrAq8CxwLUAtUC2gLbAu0C9gL5AvoCqwOsA4MEmgSbBN0EsQeyB7DxBUIUUljJNMP-dwibNeCPqM0ThH9d20hKA25hMVIAWgBgAWiduZQscAB4AA
+        expiresAt: '2026-05-27T03:24:52.011Z'
+    portalId: 51491374

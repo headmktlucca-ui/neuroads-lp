@@ -1701,120 +1701,145 @@ export default function Navbar() {
             : 'absolute top-24 left-4 right-4 max-h-[calc(100dvh-120px)] rounded-[24px] p-5'
         } ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible pointer-events-none'}`}
       >
-        <div className="flex flex-col items-center gap-8 px-2">
+        <div className="w-full space-y-2">
           {isAdminContext ? (
             navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                onClick={() => {
-                  handleNavLinkClick(link.href);
-                  setIsMenuOpen(false);
-                }}
-                className={`text-lg font-black tracking-[0.08em] transition-colors ${
-                  isLinkActive(link.href) ? 'text-[#0A9D57]' : 'text-text-main hover:text-primary'
-                }`}
-              >
-                {link.name}
-              </Link>
+              <div key={link.name} className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee] transition-all">
+                <div className="flex items-center gap-2 px-3.5 py-3">
+                  <Link
+                    href={link.href}
+                    onClick={() => {
+                      handleNavLinkClick(link.href);
+                      setIsMenuOpen(false);
+                    }}
+                    className="grow text-[14px] font-black text-[#1f2a44]"
+                  >
+                    {link.name}
+                  </Link>
+                </div>
+              </div>
             ))
           ) : (
             <>
-              <Link
-                href="/hub"
-                onClick={() => setIsMenuOpen(false)}
-                className={`text-lg font-black tracking-[0.08em] transition-colors ${
-                  isLinkActive('/hub') ? 'text-[#0A9D57]' : 'text-text-main hover:text-[#FF6A00]'
-                }`}
-              >
-                Hub Estratégico
-              </Link>
-
-              <div className="w-full">
-                <button
-                  type="button"
-                  onClick={() => setIsLabSubmenuOpen((prev) => !prev)}
-                  className="mx-auto flex items-center gap-2 text-lg font-black tracking-[0.08em] text-text-main transition-colors hover:text-[#FF6A00]"
-                >
-                  Agentes IA
-                  <ChevronDown size={16} className={`transition-transform ${isLabSubmenuOpen ? 'rotate-180' : ''}`} />
-                </button>
-                <div className={`mt-3 space-y-2 ${isLabSubmenuOpen ? 'block' : 'hidden'}`}>
-                  {laboratorySubLinks.map((link, index) => (
-                    <div key={link.name}>
-                      <Link
-                        href={link.href}
-                        onClick={() => setIsMenuOpen(false)}
-                        className={`block rounded-xl px-4 py-2 text-center text-sm font-bold tracking-wide transition-colors ${
-                          isLinkActive(link.href) ? 'bg-[#F3F4F6] text-[#FF6A00]' : 'text-text-muted hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
-                        }`}
-                      >
-                        {link.name}
-                      </Link>
-                      {index === 0 ? <div className="my-2 h-px w-full bg-[#E5E7EB]" /> : null}
-                    </div>
-                  ))}
-                  </div>
+              {/* Hub Estratégico */}
+              <div className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee] transition-all">
+                <div className="flex items-center gap-2 px-3.5 py-3">
+                  <Link
+                    href="/hub"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="grow text-[14px] font-black text-[#1f2a44]"
+                  >
+                    Hub Estratégico
+                  </Link>
                 </div>
-              <Link
-                href="/hub/agentes-ativos"
-                onClick={() => setIsMenuOpen(false)}
-                className={`text-lg font-black tracking-[0.08em] transition-colors ${
-                  isLinkActive('/hub/agentes-ativos') ? 'text-[#0A9D57]' : 'text-text-main hover:text-[#FF6A00]'
-                }`}
-              >
-                Agentes Ativos
-              </Link>
-              <Link
-                href="/hub/automacoes"
-                onClick={() => setIsMenuOpen(false)}
-                className={`text-lg font-black tracking-[0.08em] transition-colors ${
-                  isLinkActive('/hub/automacoes') ? 'text-[#0A9D57]' : 'text-text-main hover:text-[#FF6A00]'
-                }`}
-              >
-                Automações
-              </Link>
+              </div>
+
+              {/* Agentes IA */}
+              <div className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff]">
+                <div className="flex items-center justify-between px-3.5 py-3">
+                  <Link
+                    href="/hub"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="grow text-[14px] font-black text-[#1f2a44]"
+                  >
+                    Agentes IA
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => setIsLabSubmenuOpen((prev) => !prev)}
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-full border border-[#dde4ee] text-[#7d889d] transition hover:text-[#ff6a00] hover:border-[#ffc8a5]"
+                    aria-label="Abrir submenu Agentes IA"
+                  >
+                    <ChevronDown size={15} className={`shrink-0 transition-transform duration-300 ${isLabSubmenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+                {isLabSubmenuOpen && (
+                  <div className="border-t border-[#edf1f7] px-2 py-2 space-y-1 bg-white rounded-b-[14px]">
+                    {laboratorySubLinks.map((link, index) => (
+                      <div key={link.name}>
+                        <Link
+                          href={link.href}
+                          onClick={() => setIsMenuOpen(false)}
+                          className={`block rounded-xl px-3 py-2 text-[13px] font-semibold transition ${
+                            isLinkActive(link.href) ? 'bg-[#F3F4F6] text-[#FF6A00]' : 'text-[#42506a] hover:bg-[#fff5ee] hover:text-[#ff6a00]'
+                          }`}
+                        >
+                          {link.name}
+                        </Link>
+                        {index === 0 ? <div className="my-1.5 h-px w-full bg-[#E5E7EB]" /> : null}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* Agentes Ativos */}
+              <div className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee] transition-all">
+                <div className="flex items-center gap-2 px-3.5 py-3">
+                  <Link
+                    href="/hub/agentes-ativos"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="grow text-[14px] font-black text-[#1f2a44]"
+                  >
+                    Agentes Ativos
+                  </Link>
+                </div>
+              </div>
+
+              {/* Automações */}
+              <div className="rounded-[14px] border border-[#edf1f7] bg-[#fafcff] hover:bg-[#fff5ee] transition-all">
+                <div className="flex items-center gap-2 px-3.5 py-3">
+                  <Link
+                    href="/hub/automacoes"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="grow text-[14px] font-black text-[#1f2a44]"
+                  >
+                    Automações
+                  </Link>
+                </div>
+              </div>
             </>
           )}
 
-          <div className="w-full h-px bg-border" />
-
           {user && (
-            <div className="w-full space-y-4">
-              <p className="text-center text-sm font-black tracking-widest uppercase italic text-primary">
+            <div className="pt-4 mt-2 border-t border-[#edf1f7] w-full">
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.14em] text-[#ff6a00] text-center mb-4">
                 {getGreeting()}, {getFirstName(user.displayName || user.email)}!
               </p>
-              <button
-                onClick={openProfileModal}
-                className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
-              >
-                MEU PERFIL
-              </button>
-              <Link
-                href="/hub/conectores"
-                onClick={() => setIsMenuOpen(false)}
-                className="block w-full rounded-xl border border-border bg-bg-secondary py-5 text-center text-sm font-black tracking-widest uppercase text-text-muted"
-              >
-                CONECTORES
-              </Link>
-              <button
-                onClick={openCompanyModal}
-                className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
-              >
-                SUA EMPRESA
-              </button>
-              <button
-                onClick={openFinanceModal}
-                className="w-full py-5 text-sm font-black text-text-muted tracking-widest uppercase border border-border rounded-xl bg-bg-secondary"
-              >
-                FINANCEIRO
-              </button>
-              <button
-                onClick={handleLogout}
-                className="w-full py-5 text-sm font-black text-red-500 tracking-widest uppercase border border-red-200 rounded-xl bg-red-50 flex items-center justify-center gap-3"
-              >
-                <LogOut size={18} /> SAIR
-              </button>
+              
+              <div className="grid gap-2">
+                <button
+                  onClick={openProfileModal}
+                  className="w-full py-3.5 rounded-full border border-slate-100 bg-[#F8FAFC]/60 px-5 text-center text-[12px] font-extrabold uppercase tracking-wider text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A] transition-all"
+                >
+                  Meu perfil
+                </button>
+                <Link
+                  href="/hub/conectores"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="block w-full py-3.5 rounded-full border border-slate-100 bg-[#F8FAFC]/60 px-5 text-center text-[12px] font-extrabold uppercase tracking-wider text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A] transition-all"
+                >
+                  Conectores
+                </Link>
+                <button
+                  onClick={openCompanyModal}
+                  className="w-full py-3.5 rounded-full border border-slate-100 bg-[#F8FAFC]/60 px-5 text-center text-[12px] font-extrabold uppercase tracking-wider text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A] transition-all"
+                >
+                  Sua empresa
+                </button>
+                <button
+                  onClick={openFinanceModal}
+                  className="w-full py-3.5 rounded-full border border-slate-100 bg-[#F8FAFC]/60 px-5 text-center text-[12px] font-extrabold uppercase tracking-wider text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A] transition-all"
+                >
+                  Financeiro
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="w-full py-3.5 rounded-full border border-red-100 bg-rose-50/50 px-5 text-center text-[12px] font-extrabold uppercase tracking-wider text-red-500 hover:bg-rose-100/50 transition-all flex items-center justify-center gap-2"
+                >
+                  <LogOut size={14} /> Sair
+                </button>
+              </div>
             </div>
           )}
         </div>
