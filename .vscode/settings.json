@@ -1,3 +1,9 @@
 {
-    "github-enterprise.uri": ""
+    "github-enterprise.uri": "",
+    "git.ignoredRepositories": [
+        ".claude/worktrees",
+        ".codex/worktrees",
+        "**/.claude/worktrees/**",
+        "**/.codex/worktrees/**"
+    ]
 }
