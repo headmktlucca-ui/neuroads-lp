@@ -47,7 +47,7 @@ export default function Page() {
         <section className="relative overflow-hidden bg-transparent pb-8 pt-14 sm:pt-18">
           <div className="wrap relative z-10 grid items-center gap-8 lg:grid-cols-[1.3fr_0.7fr]">
             <div className="max-w-4xl">
-              <h1 className="max-w-5xl text-balance text-4xl font-black leading-[1.12] tracking-[-0.03em] sm:text-5xl md:text-6xl bg-gradient-to-r from-[#ff5f00] via-[#ff8a00] to-[#ffb800] bg-clip-text text-transparent pb-3">
+              <h1 className="max-w-5xl text-balance text-4xl font-black leading-[1.12] tracking-[-0.03em] sm:text-5xl md:text-6xl bg-gradient-to-r from-[#ff5f00] via-[#ff8a00] to-[#ffb800] bg-clip-text text-transparent pb-3 animate-gradient-x">
                 Além do Algoritmo
               </h1>
 

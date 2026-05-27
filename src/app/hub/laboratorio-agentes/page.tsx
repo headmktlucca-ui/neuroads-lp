@@ -17,10 +17,10 @@ import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } 
 import { getFirebaseDb } from '../../../lib/firebase';
 
 const categories = [
-  { slug: 'performance', label: 'Performance' },
-  { slug: 'criativos', label: 'Criativos' },
-  { slug: 'tecnico', label: 'Técnico' },
-  { slug: 'inteligencia', label: 'Inteligência' },
+  { slug: 'performance', label: 'Performance', desc: 'Análise de canais, otimização de lances e escala previsível.' },
+  { slug: 'criativos', label: 'Criativos', desc: 'Criação de anúncios, copies de alta conversão e testes de peças.' },
+  { slug: 'tecnico', label: 'Técnico', desc: 'Tagging, tracking avançado e conexões cirúrgicas de infraestrutura.' },
+  { slug: 'inteligencia', label: 'Inteligência', desc: 'Predições de funil, concorrência e simulação de cenários.' },
 ];
 
 const HUB_CONNECTOR_BUTTON_CLASS =
@@ -384,8 +384,8 @@ function LaboratorioAgentesContent() {
             </div>
           </header>
 
-          {/* Search Bar Container */}
-          <div className="rounded-3xl border border-border bg-white p-5 md:p-6 shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
+          {/* Search Bar Container with Option 2 Glassmorphism styling */}
+          <div className="rounded-3xl border border-white/50 bg-white/80 backdrop-blur-md p-5 md:p-6 shadow-[0_16px_36px_rgba(15,23,42,0.04)]">
             <div className="relative w-full max-w-lg">
               <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-muted">
                 <Search size={18} />
@@ -429,18 +429,35 @@ function LaboratorioAgentesContent() {
           {visibleCategories.map((category) => {
             const categoryAgents = filteredAgents.filter((agent) => agent.category === category.label);
             if (categoryAgents.length === 0) return null;
+
+            const categoryTotalCount = categoryAgents.length;
+            const categoryActiveCount = categoryAgents.filter((agent) => {
+              const entry = getAgentEntryDefinition(agent, effectiveContracts);
+              return entry.isActive;
+            }).length;
+
             return (
               <section
                 key={category.slug}
-                className="rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_14px_34px_rgba(15,23,42,0.05)]"
+                className="overflow-hidden rounded-3xl border border-border bg-white shadow-[0_14px_34px_rgba(15,23,42,0.05)]"
               >
-                <div className="flex items-center justify-between gap-3">
-                  <h2 className="text-2xl font-black text-text-main">
-                    {category.label}
-                  </h2>
-                </div>
+                <header className="flex items-center justify-between gap-4 bg-[#0d1e3d] px-6 py-4.5 border-b border-[#1a365d]/40">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse"></span>
+                      <h2 className="text-[16px] md:text-[18px] font-black tracking-tight text-white">{category.label}</h2>
+                    </div>
+                    <p className="text-[12px] font-medium text-[#c5d3e9] leading-tight">
+                      {category.desc}
+                    </p>
+                  </div>
+                  <div className="rounded-full border border-[#FF6A00] bg-[#FF6A00]/5 px-3 py-1 text-[11px] font-bold text-[#FF6A00] tracking-tight whitespace-nowrap">
+                    Ativos: {categoryActiveCount} de {categoryTotalCount}
+                  </div>
+                </header>
 
-                <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                <div className="p-6 md:p-8">
+                  <div className="mt-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
                   {categoryAgents.map((agent) => {
                     const entry = getAgentEntryDefinition(agent, effectiveContracts);
                     const isActive = entry.isActive;
@@ -527,6 +544,7 @@ function LaboratorioAgentesContent() {
                       </article>
                     );
                   })}
+                </div>
                 </div>
               </section>
             );

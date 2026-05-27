@@ -613,10 +613,10 @@ export default function AgentEntryPage() {
                   {requiredConnectors.map((connector) => (
                     <div
                       key={connector.key}
-                      className={`rounded-lg border px-3 py-2 ${
+                      className={`rounded-full border px-5 py-2.5 ${
                         connector.isActive
-                          ? 'border-[#BDE8CF] bg-[#F2FFF7]'
-                          : 'border-[#FECACA] bg-[#FFF1F2]'
+                           ? 'border-[#BDE8CF] bg-[#F2FFF7]'
+                           : 'border-[#FECACA] bg-[#FFF1F2]'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-3">
@@ -732,7 +732,7 @@ export default function AgentEntryPage() {
                       {requiredConnectors.map((connector) => (
                         <div
                           key={connector.key}
-                          className={`rounded-xl border px-4 py-3 ${
+                          className={`rounded-full border px-6 py-3.5 ${
                             connector.isActive
                               ? 'border-[#BDE8CF] bg-[#F2FFF7]'
                               : 'border-[#FECACA] bg-[#FFF1F2]'

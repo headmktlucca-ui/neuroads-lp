@@ -413,136 +413,160 @@ export default function StrategicHubOverview() {
           </section>
 
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.05fr_1fr]">
-            <article className="rounded-[24px] border border-[#E8ECF1] bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
-              <header className="mb-4 border-b border-[#EEF1F5] pb-4">
-                <h2 className="text-[18px] font-black tracking-tight text-[#FF5A00]">Resumo das Automações</h2>
-                <p className="text-[14px] text-[#4B5563]">Status operacional das atividades programadas</p>
+            <article className="overflow-hidden rounded-[24px] border border-[#E8ECF1] bg-white shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
+              <header className="flex items-center justify-between gap-4 bg-[#0d1e3d] px-5 py-4 border-b border-[#1a365d]/40">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse"></span>
+                    <h2 className="text-[15px] font-black tracking-tight text-white">Resumo das Automações</h2>
+                  </div>
+                  <p className="text-[12px] font-medium text-[#c5d3e9] leading-tight">
+                    Status operacional das atividades programadas
+                  </p>
+                </div>
+                <div className="rounded-full border border-[#FF6A00] bg-[#FF6A00]/5 px-3 py-1 text-[11px] font-bold text-[#FF6A00] tracking-tight whitespace-nowrap">
+                  Automações: {activeAutomationsCount} de {trackedAutomations.length}
+                </div>
               </header>
 
-              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-                <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Programadas</p>
-                  <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{trackedAutomations.length}</p>
-                </article>
-                <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Ativas</p>
-                  <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{activeAutomationsCount}</p>
-                </article>
-                <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Executando</p>
-                  <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{runningAutomationsCount}</p>
-                </article>
-                <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
-                  <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Atrasadas</p>
-                  <p className="mt-1 text-[24px] leading-none font-black text-[#B42318]">{overdueAutomationsCount}</p>
-                </article>
-              </div>
-
-              {trackedAutomations.length > 0 ? (
-                <div className="mt-4 space-y-2">
-                  {trackedAutomations.slice(0, 3).map((automation) => {
-                    const runtimeState = getAutomationRuntimeState(automation, nowMs);
-                    return (
-                      <article key={automation.key} className="rounded-[14px] border border-[#E9EDF4] bg-white p-3">
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <p className="text-[14px] font-black text-[#111827]">{automation.agentTitle}</p>
-                          <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold ${getAutomationRuntimeTone(runtimeState)}`}>
-                            {runtimeState === 'running' ? (
-                              <PlayCircle className="h-3.5 w-3.5" />
-                            ) : runtimeState === 'paused' ? (
-                              <PauseCircle className="h-3.5 w-3.5" />
-                            ) : runtimeState === 'overdue' || runtimeState === 'inactive' ? (
-                              <AlertCircle className="h-3.5 w-3.5" />
-                            ) : (
-                              <Activity className="h-3.5 w-3.5" />
-                            )}
-                            {getAutomationRuntimeLabel(runtimeState)}
-                          </span>
-                        </div>
-                        <p className="mt-1 text-[12px] text-[#4B5563]">{automation.cadenceTitle}</p>
-                        <p className="mt-1 text-[12px] text-[#1D4ED8]">
-                          Próxima atualização: {formatAutomationDateTime(automation.nextUpdateAt)}
-                        </p>
-                      </article>
-                    );
-                  })}
+              <div className="p-5">
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                  <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Programadas</p>
+                    <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{trackedAutomations.length}</p>
+                  </article>
+                  <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Ativas</p>
+                    <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{activeAutomationsCount}</p>
+                  </article>
+                  <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Executando</p>
+                    <p className="mt-1 text-[24px] leading-none font-black text-[#111827]">{runningAutomationsCount}</p>
+                  </article>
+                  <article className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                    <p className="text-[11px] font-bold uppercase tracking-widest text-[#667085]">Atrasadas</p>
+                    <p className="mt-1 text-[24px] leading-none font-black text-[#B42318]">{overdueAutomationsCount}</p>
+                  </article>
                 </div>
-              ) : (
-                <div className="mt-4 rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-4 text-[14px] text-[#4B5563]">
-                  Nenhuma automação programada ainda. Ative uma automação em um agente para acompanhar status em tempo real.
-                </div>
-              )}
 
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <p className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#4B5563]">
-                  <CalendarClock className="h-4 w-4 text-[#1D4ED8]" />
-                  {nextAutomation
-                    ? `Próxima execução: ${formatAutomationDateTime(nextAutomation.nextUpdateAt)}`
-                    : 'Sem execução programada no momento'}
-                </p>
-                <Link
-                  href="/hub/automacoes"
-                  className="inline-flex items-center gap-2 text-[14px] font-bold text-[#FF5A00] transition hover:text-[#E14B00]"
-                >
-                  Abrir painel completo <ArrowRight className="h-4 w-4" />
-                </Link>
+                {trackedAutomations.length > 0 ? (
+                  <div className="mt-4 space-y-2">
+                    {trackedAutomations.slice(0, 3).map((automation) => {
+                      const runtimeState = getAutomationRuntimeState(automation, nowMs);
+                      return (
+                        <article key={automation.key} className="rounded-[14px] border border-[#E9EDF4] bg-white p-3">
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="text-[14px] font-black text-[#111827]">{automation.agentTitle}</p>
+                            <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold ${getAutomationRuntimeTone(runtimeState)}`}>
+                              {runtimeState === 'running' ? (
+                                <PlayCircle className="h-3.5 w-3.5" />
+                              ) : runtimeState === 'paused' ? (
+                                <PauseCircle className="h-3.5 w-3.5" />
+                              ) : runtimeState === 'overdue' || runtimeState === 'inactive' ? (
+                                <AlertCircle className="h-3.5 w-3.5" />
+                              ) : (
+                                <Activity className="h-3.5 w-3.5" />
+                              )}
+                              {getAutomationRuntimeLabel(runtimeState)}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-[12px] text-[#4B5563]">{automation.cadenceTitle}</p>
+                          <p className="mt-1 text-[12px] text-[#1D4ED8]">
+                            Próxima atualização: {formatAutomationDateTime(automation.nextUpdateAt)}
+                          </p>
+                        </article>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="mt-4 rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-4 text-[14px] text-[#4B5563]">
+                    Nenhuma automação programada ainda. Ative uma automação em um agente para acompanhar status em tempo real.
+                  </div>
+                )}
+
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+                  <p className="inline-flex items-center gap-2 text-[13px] font-semibold text-[#4B5563]">
+                    <CalendarClock className="h-4 w-4 text-[#1D4ED8]" />
+                    {nextAutomation
+                      ? `Próxima execução: ${formatAutomationDateTime(nextAutomation.nextUpdateAt)}`
+                      : 'Sem execução programada no momento'}
+                  </p>
+                  <Link
+                    href="/hub/automacoes"
+                    className="inline-flex items-center gap-2 text-[14px] font-bold text-[#FF5A00] transition hover:text-[#E14B00]"
+                  >
+                    Abrir painel completo <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </div>
               </div>
             </article>
 
-            <article className="rounded-[24px] border border-[#E8ECF1] bg-white p-5 shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
-              <header className="mb-4 border-b border-[#EEF1F5] pb-4">
-                <h2 className="text-[18px] font-black tracking-tight text-[#FF5A00]">Agentes IA Ativos na Conta</h2>
-                <p className="text-[14px] text-[#4B5563]">Visão rápida dos agentes em operação no seu ecossistema</p>
+            <article className="overflow-hidden rounded-[24px] border border-[#E8ECF1] bg-white shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
+              <header className="flex items-center justify-between gap-4 bg-[#0d1e3d] px-5 py-4 border-b border-[#1a365d]/40">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse"></span>
+                    <h2 className="text-[15px] font-black tracking-tight text-white">Agentes IA Ativos na Conta</h2>
+                  </div>
+                  <p className="text-[12px] font-medium text-[#c5d3e9] leading-tight">
+                    Visão rápida dos agentes em operação no seu ecossistema
+                  </p>
+                </div>
+                <div className="rounded-full border border-[#FF6A00] bg-[#FF6A00]/5 px-3 py-1 text-[11px] font-bold text-[#FF6A00] tracking-tight whitespace-nowrap">
+                  Agentes Ativos: {activeAgentsCount} de {hubProfile.agentLimit ?? '--'}
+                </div>
               </header>
 
-              {activeAgentEntries.length > 0 ? (
-                <>
-                  <div className="mb-3 flex flex-wrap items-center gap-2">
-                    {activeAgentsByCategory.map(([category, count]) => (
-                      <span key={category} className="inline-flex items-center rounded-full bg-[#EEF4FF] px-3 py-1 text-[11px] font-bold text-[#1D4ED8]">
-                        {category}: {count}
-                      </span>
-                    ))}
-                  </div>
+              <div className="p-5">
+                {activeAgentEntries.length > 0 ? (
+                  <>
+                    <div className="mb-3 flex flex-wrap items-center gap-2">
+                      {activeAgentsByCategory.map(([category, count]) => (
+                        <span key={category} className="inline-flex items-center rounded-full bg-[#EEF4FF] px-3 py-1 text-[11px] font-bold text-[#1D4ED8]">
+                          {category}: {count}
+                        </span>
+                      ))}
+                    </div>
 
-                  <div className="space-y-2">
-                    {activeAgentEntries.slice(0, 5).map((agent) => (
-                      <article key={agent.title} className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
-                        <p className="text-[14px] font-black text-[#111827]">{agent.title}</p>
-                        <p className="mt-1 text-[12px] text-[#4B5563]">{agent.description}</p>
-                        <div className="mt-2">
-                          <span className="inline-flex items-center rounded-full bg-[#FFF3EC] px-2.5 py-1 text-[11px] font-bold text-[#C2410C]">
-                            {agent.category}
-                          </span>
-                        </div>
-                      </article>
-                    ))}
+                    <div className="space-y-2">
+                      {activeAgentEntries.slice(0, 5).map((agent) => (
+                        <article key={agent.title} className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-3">
+                          <p className="text-[14px] font-black text-[#111827]">{agent.title}</p>
+                          <p className="mt-1 text-[12px] text-[#4B5563]">{agent.description}</p>
+                          <div className="mt-2">
+                            <span className="inline-flex items-center rounded-full bg-[#FFF3EC] px-2.5 py-1 text-[11px] font-bold text-[#C2410C]">
+                              {agent.category}
+                            </span>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <div className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-4">
+                    <div className="flex items-start gap-2">
+                      <Bot className="mt-0.5 h-5 w-5 text-[#667085]" />
+                      <p className="text-[14px] text-[#4B5563]">
+                        Ainda não há agentes ativos na conta. Ative agentes no laboratório para iniciar sua operação assistida por IA.
+                      </p>
+                    </div>
                   </div>
-                </>
-              ) : (
-                <div className="rounded-[14px] border border-[#E9EDF4] bg-[#FCFCFD] p-4">
-                  <div className="flex items-start gap-2">
-                    <Bot className="mt-0.5 h-5 w-5 text-[#667085]" />
-                    <p className="text-[14px] text-[#4B5563]">
-                      Ainda não há agentes ativos na conta. Ative agentes no laboratório para iniciar sua operação assistida por IA.
-                    </p>
-                  </div>
+                )}
+
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <Link
+                    href="/hub/agentes-ativos"
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] bg-[#FF6A00] px-4 text-[13px] font-black text-white shadow-[0_10px_18px_rgba(255,106,0,0.25)] transition hover:brightness-95"
+                  >
+                    Ver todos os agentes
+                  </Link>
+                  <Link
+                    href="/hub/laboratorio-agentes"
+                    className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] border border-[#D3DAE6] bg-white px-4 text-[13px] font-black text-[#344054] transition hover:bg-[#F8FAFC]"
+                  >
+                    Gerenciar ativações
+                  </Link>
                 </div>
-              )}
-
-              <div className="mt-4 flex flex-wrap gap-3">
-                <Link
-                  href="/hub/agentes-ativos"
-                  className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] bg-[#FF6A00] px-4 text-[13px] font-black text-white shadow-[0_10px_18px_rgba(255,106,0,0.25)] transition hover:brightness-95"
-                >
-                  Ver todos os agentes
-                </Link>
-                <Link
-                  href="/hub/laboratorio-agentes"
-                  className="inline-flex h-10 items-center justify-center gap-2 rounded-[10px] border border-[#D3DAE6] bg-white px-4 text-[13px] font-black text-[#344054] transition hover:bg-[#F8FAFC]"
-                >
-                  Gerenciar ativações
-                </Link>
               </div>
             </article>
           </section>
@@ -679,4 +703,3 @@ export default function StrategicHubOverview() {
     </section>
   );
 }
-

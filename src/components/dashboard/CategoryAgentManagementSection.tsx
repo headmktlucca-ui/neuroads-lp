@@ -276,15 +276,25 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
           </header>
         )}
 
-        <section className="rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
-          <div className="mb-5 flex items-center justify-between gap-3">
-            <div>
-              <h2 className="text-2xl md:text-3xl font-black text-text-main">
-                Agentes da categoria
-              </h2>
-              {isPerformance ? <p className="mt-1 text-sm text-text-muted">Gestão operacional dos agentes de Performance.</p> : null}
+        <section className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
+          <header className="bg-[#0d1e3d] px-6 py-5 border-b border-[#1a365d]/40 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                  Agentes da categoria
+                </h2>
+              </div>
+              <p className="text-xs font-semibold text-slate-300">
+                Gestão operacional dos agentes de {category.label}.
+              </p>
             </div>
-          </div>
+            <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
+              Ativos: {activeAgentsCount}
+            </span>
+          </header>
+
+          <div className="p-6 md:p-8">
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {categoryAgents.map(({ agent, entry }) => {
@@ -351,16 +361,29 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
               );
             })}
           </div>
-        </section>
+        </div>
+      </section>
 
         {isPerformance ? (
-          <section className="rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
-            <div className="mb-6">
-              <h2 className="text-2xl md:text-3xl font-black text-text-main">Prioridade da Semana</h2>
-              <p className="mt-2 text-sm md:text-base text-text-muted">
-                Lista dinâmica gerada somente com agentes ativos desta categoria.
-              </p>
-            </div>
+          <section className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
+            <header className="bg-[#0d1e3d] px-6 py-5 border-b border-[#1a365d]/40 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#FF6A00] animate-pulse" />
+                  <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                    Prioridade da Semana
+                  </h2>
+                </div>
+                <p className="text-xs font-semibold text-slate-300">
+                  Lista dinâmica gerada somente com agentes ativos desta categoria.
+                </p>
+              </div>
+              <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
+                Prioridades: {activePerformanceItems.length}
+              </span>
+            </header>
+
+            <div className="p-6 md:p-8">
 
             {activePerformanceItems.length > 0 ? (
               <div className="space-y-3">
@@ -383,8 +406,9 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
                 Nenhum agente ativo nesta categoria no momento. Ative um agente para receber prioridades reais e sugestões operacionais.
               </div>
             )}
-          </section>
-        ) : null}
+          </div>
+        </section>
+      ) : null}
       </div>
 
       {detailsAgent ? (
@@ -520,7 +544,7 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
                 type="button"
                 onClick={() => deactivateAgent(pendingDeactivateAgent.title, slugifyAgentTitle(pendingDeactivateAgent.title))}
                 disabled={deactivatingSlug === slugifyAgentTitle(pendingDeactivateAgent.title)}
-                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-[#B42318] bg-[#B42318] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(180,35,24,0.30)] disabled:opacity-60"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#B42318] bg-[#B42318] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(180,35,24,0.30)] disabled:opacity-60"
               >
                 {deactivatingSlug === slugifyAgentTitle(pendingDeactivateAgent.title) ? 'Desativando...' : 'Confirmar desativação'}
               </button>

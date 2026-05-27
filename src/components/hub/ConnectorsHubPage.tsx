@@ -2248,180 +2248,199 @@ export default function ConnectorsHubPage() {
 
             <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px]">
               <div>
-                <div className="rounded-2xl border border-[#DDE3F2] bg-white p-3">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      {(['todos', 'marketing', 'ads', 'crm', 'social'] as const).map((filter) => {
-                        const isActive = activeFilter === filter;
+                <div className="relative overflow-hidden rounded-3xl border border-[#DDE3F2] bg-white shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
+                  <header className="bg-[#0d1e3d] px-6 py-5 border-b border-[#1a365d]/40 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                        <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                          Conectores Disponíveis
+                        </h2>
+                      </div>
+                      <p className="text-xs font-semibold text-slate-300">
+                        Ative e sincronize suas plataformas de anúncios, marketing e vendas.
+                      </p>
+                    </div>
+                    <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
+                      Canais: {filterCount.todos}
+                    </span>
+                  </header>
+
+                  <div className="p-5 md:p-6">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex flex-wrap items-center gap-2">
+                        {(['todos', 'marketing', 'ads', 'crm', 'social'] as const).map((filter) => {
+                          const isActive = activeFilter === filter;
+                          return (
+                            <button
+                              key={filter}
+                              type="button"
+                              onClick={() => setActiveFilter(filter)}
+                              className={`inline-flex items-center gap-2 rounded-[12px] border px-4 py-2 text-[14px] font-semibold transition ${
+                                isActive
+                                  ? 'border-[#FFB980] bg-[#FFF3E8] text-[#FF7A00]'
+                                  : 'border-[#DDE3F2] bg-white text-[#334155] hover:text-[#0F172A]'
+                              }`}
+                            >
+                              {CATEGORY_LABELS[filter]}
+                              <span className="text-[13px] text-[#64748B]">{filterCount[filter]}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    <div className="mt-3 space-y-2">
+                      {visibleConnectors.map((item) => {
+                        const isActive = isConnectorActive(item, connectorStatus);
+                        const isBusy = item.connectorKey ? connectorBusyKey === item.connectorKey : false;
+                        const accountLabel = getConnectorAccountLabel(item, isActive);
+                        const cardNotice = inlineConnectorNotice?.connectorId === item.id ? inlineConnectorNotice : null;
                         return (
-                          <button
-                            key={filter}
-                            type="button"
-                            onClick={() => setActiveFilter(filter)}
-                            className={`inline-flex items-center gap-2 rounded-[12px] border px-4 py-2 text-[14px] font-semibold transition ${
-                              isActive
-                                ? 'border-[#FFB980] bg-[#FFF3E8] text-[#FF7A00]'
-                                : 'border-[#DDE3F2] bg-white text-[#334155] hover:text-[#0F172A]'
-                            }`}
+                          <article
+                            key={item.id}
+                            className="grid grid-cols-1 gap-4 rounded-2xl border border-[#DDE3F2] bg-white p-4 shadow-[0_6px_14px_rgba(15,23,42,0.06)] transition-colors duration-200 hover:bg-[#F1F3F5] md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center"
                           >
-                            {CATEGORY_LABELS[filter]}
-                            <span className="text-[13px] text-[#64748B]">{filterCount[filter]}</span>
-                          </button>
+                            <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl border border-[#E7ECF5] bg-[#FAFCFF]">
+                              <BrandTile id={item.id} />
+                            </div>
+
+                            <div>
+                              <h2 className="text-[26px] font-semibold leading-[1.1] tracking-tight text-[#0F172A]">{item.title}</h2>
+                              <p className="mt-1 text-[15px] leading-[1.45] text-[#334155]">{item.description}</p>
+                              <p className="mt-2 text-[12px] font-semibold text-[#64748B]">
+                                Categoria: {CATEGORY_LABELS[item.category]}
+                              </p>
+                            </div>
+
+                            <div>
+                              <span
+                                className={`inline-flex items-center gap-1 px-0 py-0 text-[12px] font-bold ${
+                                  isActive ? 'text-[#12B76A]' : 'text-[#FF7A00]'
+                                }`}
+                              >
+                                <span className={`inline-block h-2 w-2 rounded-full ${isActive ? 'bg-[#12B76A]' : 'bg-[#FF7A00]'}`} />
+                                {isActive ? 'Conectado' : 'Pendente'}
+                              </span>
+
+                              <div className="mt-2 border-t border-[#E2E8F0] pt-2 text-[13px] text-[#64748B]">
+                                <p>
+                                  Última sincronização <span className="ml-2 font-semibold text-[#0F172A]">{getConnectorLastSyncLabel(item, isActive)}</span>
+                                </p>
+                                <p className="mt-1 flex items-center gap-2 text-[#64748B]">
+                                  Conta sincronizada
+                                  <span className="font-semibold text-[#0F172A]">{accountLabel}</span>
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="flex min-w-[220px] flex-col items-stretch gap-2">
+                              <div className="flex items-center gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (!item.connectorKey) {
+                                      setInlineConnectorNotice({
+                                        connectorId: item.id,
+                                        message: `${item.title}: canal em fase de implantação nesta versão do Hub.`,
+                                        tone: 'success',
+                                      });
+                                      return;
+                                    }
+                                    if (isActive) {
+                                      void handleSync(item);
+                                      return;
+                                    }
+                                    void handleConnect(item.connectorKey);
+                                  }}
+                                  disabled={Boolean(isBusy)}
+                                  className={`inline-flex h-12 items-center gap-2 rounded-[12px] px-4 text-[13px] font-black tracking-wide transition disabled:opacity-60 ${
+                                    isActive
+                                      ? 'border border-[#FFD4B2] bg-[#FFF8F2] text-[#F97316] hover:bg-[#FFF1E6]'
+                                      : 'border border-[#FF7A00] bg-[#FF7A00] text-white shadow-[0_10px_20px_rgba(255,122,0,0.24)] hover:bg-[#E56B00]'
+                                  }`}
+                                >
+                                  <RefreshCw className={`h-4 w-4 ${isBusy ? 'animate-spin' : ''}`} />
+                                  {!item.connectorKey ? 'Em implantação' : isActive ? 'Sincronizar' : 'Configurar'}
+                                </button>
+                                <div className="relative" data-connector-menu-root>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setOpenConnectorMenuId((current) => (current === item.id ? null : item.id))
+                                    }
+                                    className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#DDE3F2] bg-white text-[#64748B] transition hover:text-[#0F172A]"
+                                    aria-label={`Mais ações para ${item.title}`}
+                                    aria-expanded={openConnectorMenuId === item.id}
+                                    aria-haspopup="menu"
+                                  >
+                                    <EllipsisVertical className="h-4 w-4" />
+                                  </button>
+
+                                  {openConnectorMenuId === item.id ? (
+                                    <div
+                                      className="absolute right-0 top-11 z-20 w-56 rounded-2xl border border-[#E7EAF0] bg-white p-2 shadow-[0_14px_30px_rgba(15,23,42,0.12)]"
+                                      role="menu"
+                                      aria-label={`Ações para ${item.title}`}
+                                    >
+                                      <button
+                                        type="button"
+                                        onClick={() => void handleConnectorMenuAction(item, isActive, 'details')}
+                                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
+                                        role="menuitem"
+                                      >
+                                        <Info className="h-4 w-4 text-[#64748B]" />
+                                        Ver detalhes
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => void handleConnectorMenuAction(item, isActive, 'docs')}
+                                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
+                                        role="menuitem"
+                                      >
+                                        <BookOpenText className="h-4 w-4 text-[#64748B]" />
+                                        Documentação oficial
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => void handleConnectorMenuAction(item, isActive, 'change-account')}
+                                        className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
+                                        role="menuitem"
+                                      >
+                                        <Link2 className="h-4 w-4 text-[#64748B]" />
+                                        Alterar conta
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => void handleConnectorMenuAction(item, isActive, 'disconnect')}
+                                        className="mt-1 flex w-full items-center gap-2 rounded-xl border border-[#FFD9BD] bg-[#FFF5EC] px-3 py-2 text-left text-[14px] font-semibold text-[#FF7A00] transition-colors hover:bg-[#FFEEDF]"
+                                        role="menuitem"
+                                      >
+                                        <Link2 className="h-4 w-4" />
+                                        Desconectar
+                                      </button>
+                                    </div>
+                                  ) : null}
+                                </div>
+                              </div>
+                              {cardNotice ? (
+                                <div
+                                  className={`rounded-[12px] border px-3 py-2 text-[13px] font-semibold ${
+                                    cardNotice.tone === 'error'
+                                      ? 'border-[#FFD8D8] bg-[#FFF5F5] text-[#EF4444]'
+                                      : cardNotice.tone === 'success'
+                                        ? 'border-[#BFE7CF] bg-[#F1FCF6] text-[#0F9D58]'
+                                        : 'border-[#DDE3F2] bg-[#F8FAFC] text-[#334155]'
+                                  }`}
+                                >
+                                  {cardNotice.message}
+                                </div>
+                              ) : null}
+                            </div>
+                          </article>
                         );
                       })}
                     </div>
-                  </div>
-
-                  <div className="mt-3 space-y-2">
-                    {visibleConnectors.map((item) => {
-                      const isActive = isConnectorActive(item, connectorStatus);
-                      const isBusy = item.connectorKey ? connectorBusyKey === item.connectorKey : false;
-                      const accountLabel = getConnectorAccountLabel(item, isActive);
-                      const cardNotice = inlineConnectorNotice?.connectorId === item.id ? inlineConnectorNotice : null;
-                      return (
-                        <article
-                          key={item.id}
-                          className="grid grid-cols-1 gap-4 rounded-2xl border border-[#DDE3F2] bg-white p-4 shadow-[0_6px_14px_rgba(15,23,42,0.06)] transition-colors duration-200 hover:bg-[#F1F3F5] md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center"
-                        >
-                          <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl border border-[#E7ECF5] bg-[#FAFCFF]">
-                            <BrandTile id={item.id} />
-                          </div>
-
-                          <div>
-                            <h2 className="text-[26px] font-semibold leading-[1.1] tracking-tight text-[#0F172A]">{item.title}</h2>
-                            <p className="mt-1 text-[15px] leading-[1.45] text-[#334155]">{item.description}</p>
-                            <p className="mt-2 text-[12px] font-semibold text-[#64748B]">
-                              Categoria: {CATEGORY_LABELS[item.category]}
-                            </p>
-                          </div>
-
-                          <div>
-                            <span
-                              className={`inline-flex items-center gap-1 px-0 py-0 text-[12px] font-bold ${
-                                isActive ? 'text-[#12B76A]' : 'text-[#FF7A00]'
-                              }`}
-                            >
-                              <span className={`inline-block h-2 w-2 rounded-full ${isActive ? 'bg-[#12B76A]' : 'bg-[#FF7A00]'}`} />
-                              {isActive ? 'Conectado' : 'Pendente'}
-                            </span>
-
-                            <div className="mt-2 border-t border-[#E2E8F0] pt-2 text-[13px] text-[#64748B]">
-                              <p>
-                                Última sincronização <span className="ml-2 font-semibold text-[#0F172A]">{getConnectorLastSyncLabel(item, isActive)}</span>
-                              </p>
-                              <p className="mt-1 flex items-center gap-2 text-[#64748B]">
-                                Conta sincronizada
-                                <span className="font-semibold text-[#0F172A]">{accountLabel}</span>
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="flex min-w-[220px] flex-col items-stretch gap-2">
-                            <div className="flex items-center gap-2">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  if (!item.connectorKey) {
-                                    setInlineConnectorNotice({
-                                      connectorId: item.id,
-                                      message: `${item.title}: canal em fase de implantação nesta versão do Hub.`,
-                                      tone: 'success',
-                                    });
-                                    return;
-                                  }
-                                  if (isActive) {
-                                    void handleSync(item);
-                                    return;
-                                  }
-                                  void handleConnect(item.connectorKey);
-                                }}
-                                disabled={Boolean(isBusy)}
-                                className={`inline-flex h-12 items-center gap-2 rounded-[12px] px-4 text-[13px] font-black tracking-wide transition disabled:opacity-60 ${
-                                  isActive
-                                    ? 'border border-[#FFD4B2] bg-[#FFF8F2] text-[#F97316] hover:bg-[#FFF1E6]'
-                                    : 'border border-[#FF7A00] bg-[#FF7A00] text-white shadow-[0_10px_20px_rgba(255,122,0,0.24)] hover:bg-[#E56B00]'
-                                }`}
-                              >
-                                <RefreshCw className={`h-4 w-4 ${isBusy ? 'animate-spin' : ''}`} />
-                                {!item.connectorKey ? 'Em implantação' : isActive ? 'Sincronizar' : 'Configurar'}
-                              </button>
-                              <div className="relative" data-connector-menu-root>
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    setOpenConnectorMenuId((current) => (current === item.id ? null : item.id))
-                                  }
-                                  className="inline-flex h-10 w-10 items-center justify-center rounded-[12px] border border-[#DDE3F2] bg-white text-[#64748B] transition hover:text-[#0F172A]"
-                                  aria-label={`Mais ações para ${item.title}`}
-                                  aria-expanded={openConnectorMenuId === item.id}
-                                  aria-haspopup="menu"
-                                >
-                                  <EllipsisVertical className="h-4 w-4" />
-                                </button>
-
-                                {openConnectorMenuId === item.id ? (
-                                  <div
-                                    className="absolute right-0 top-11 z-20 w-56 rounded-2xl border border-[#E7EAF0] bg-white p-2 shadow-[0_14px_30px_rgba(15,23,42,0.12)]"
-                                    role="menu"
-                                    aria-label={`Ações para ${item.title}`}
-                                  >
-                                    <button
-                                      type="button"
-                                      onClick={() => void handleConnectorMenuAction(item, isActive, 'details')}
-                                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
-                                      role="menuitem"
-                                    >
-                                      <Info className="h-4 w-4 text-[#64748B]" />
-                                      Ver detalhes
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => void handleConnectorMenuAction(item, isActive, 'docs')}
-                                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
-                                      role="menuitem"
-                                    >
-                                      <BookOpenText className="h-4 w-4 text-[#64748B]" />
-                                      Documentação oficial
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => void handleConnectorMenuAction(item, isActive, 'change-account')}
-                                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-[14px] font-semibold text-[#344054] transition-colors hover:bg-[#F8FAFC] hover:text-[#FF6A00]"
-                                      role="menuitem"
-                                    >
-                                      <Link2 className="h-4 w-4 text-[#64748B]" />
-                                      Alterar conta
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => void handleConnectorMenuAction(item, isActive, 'disconnect')}
-                                      className="mt-1 flex w-full items-center gap-2 rounded-xl border border-[#FFD9BD] bg-[#FFF5EC] px-3 py-2 text-left text-[14px] font-semibold text-[#FF7A00] transition-colors hover:bg-[#FFEEDF]"
-                                      role="menuitem"
-                                    >
-                                      <Link2 className="h-4 w-4" />
-                                      Desconectar
-                                    </button>
-                                  </div>
-                                ) : null}
-                              </div>
-                            </div>
-                            {cardNotice ? (
-                              <div
-                                className={`rounded-[12px] border px-3 py-2 text-[13px] font-semibold ${
-                                  cardNotice.tone === 'error'
-                                    ? 'border-[#FFD8D8] bg-[#FFF5F5] text-[#EF4444]'
-                                    : cardNotice.tone === 'success'
-                                      ? 'border-[#BFE7CF] bg-[#F1FCF6] text-[#0F9D58]'
-                                      : 'border-[#DDE3F2] bg-[#F8FAFC] text-[#334155]'
-                                }`}
-                              >
-                                {cardNotice.message}
-                              </div>
-                            ) : null}
-                          </div>
-                        </article>
-                      );
-                    })}
                   </div>
                 </div>
 
@@ -2440,130 +2459,150 @@ export default function ConnectorsHubPage() {
 
               <aside className="space-y-4">
                 {/* CARD 1: Saúde das Integrações */}
-                <section className="relative overflow-hidden rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
+                <section className="relative overflow-hidden rounded-[24px] border border-slate-200/80 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
                   {/* Top border ambient subtle accent */}
                   <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
                   
-                  <header className="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <h3 className="text-[14px] font-extrabold tracking-wider uppercase text-slate-800">
-                      Saúde das Integrações
-                    </h3>
-                    <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-                      800x480px
+                  <header className="bg-[#0d1e3d] px-5 py-4 border-b border-[#1a365d]/40 flex items-center justify-between">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className={`h-2 w-2 rounded-full animate-pulse ${healthScore > 50 ? 'bg-[#10b981]' : 'bg-[#EF4444]'}`} />
+                        <h3 className="text-[13px] font-black tracking-wider uppercase text-white">
+                          Saúde das Integrações
+                        </h3>
+                      </div>
+                      <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest leading-none">
+                        800x480px
+                      </p>
+                    </div>
+                    <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
+                      {healthStatus.label}
                     </span>
                   </header>
 
-                  <div className="px-1 pb-2">
-                    <HealthGauge value={healthScore} />
+                  <div className="p-5">
+                    <div className="px-1 pb-2">
+                      <HealthGauge value={healthScore} />
 
-                    <div className="mt-4 flex flex-col items-center">
-                      <span className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-[13px] font-bold ${healthStatus.bg}`}>
-                        <span className="h-2 w-2 rounded-full bg-current animate-pulse" />
-                        {healthStatus.label}
-                      </span>
-                      <p className="mt-4 text-[14px] font-bold uppercase tracking-wider text-slate-800">Saúde Global</p>
-                      <p className="mt-1 text-[12px] text-slate-400 font-semibold">{formatLastSyncLabel(latestSyncTimestamp) || 'Sem sincronização'}</p>
-                    </div>
+                      <div className="mt-4 flex flex-col items-center">
+                        <span className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-[13px] font-bold ${healthStatus.bg}`}>
+                          <span className="h-2 w-2 rounded-full bg-current animate-pulse" />
+                          {healthStatus.label}
+                        </span>
+                        <p className="mt-4 text-[14px] font-bold uppercase tracking-wider text-slate-800">Saúde Global</p>
+                        <p className="mt-1 text-[12px] text-slate-400 font-semibold">{formatLastSyncLabel(latestSyncTimestamp) || 'Sem sincronização'}</p>
+                      </div>
 
-                    <div className="mt-6 grid grid-cols-3 gap-2 border-t border-slate-100 pt-4 text-center">
-                      <div className="border-r border-slate-100">
-                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Integrações Ativas</p>
-                        <p className="mt-1 text-[16px] font-black text-slate-800">
-                          {activeTrackedConnectorCount}/{trackedConnectorCount}
-                        </p>
-                      </div>
-                      <div className="border-r border-slate-100">
-                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Latência Média</p>
-                        <p className="mt-1 text-[16px] font-black text-slate-800">112ms</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Falhas (24h)</p>
-                        <p className="mt-1 text-[16px] font-black text-slate-800">3</p>
+                      <div className="mt-6 grid grid-cols-3 gap-2 border-t border-slate-100 pt-4 text-center">
+                        <div className="border-r border-slate-100">
+                          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Integrações Ativas</p>
+                          <p className="mt-1 text-[16px] font-black text-slate-800">
+                            {activeTrackedConnectorCount}/{trackedConnectorCount}
+                          </p>
+                        </div>
+                        <div className="border-r border-slate-100">
+                          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Latência Média</p>
+                          <p className="mt-1 text-[16px] font-black text-slate-800">112ms</p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Falhas (24h)</p>
+                          <p className="mt-1 text-[16px] font-black text-slate-800">3</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </section>
 
                 {/* CARD 2: Alertas Importantes */}
-                <section className="relative overflow-hidden rounded-[24px] border border-slate-200/80 bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
+                <section className="relative overflow-hidden rounded-[24px] border border-slate-200/80 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
                   {/* Top border ambient subtle accent */}
                   <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
 
-                  <header className="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <h3 className="text-[14px] font-extrabold tracking-wider uppercase text-slate-800">
-                      Alertas Importantes <span className="text-[#FF7A00] font-semibold">({activeAlerts.length} Ativos)</span>
-                    </h3>
-                    <span className="text-[11px] text-slate-400 font-semibold">
-                      Atualizado há 2 min
+                  <header className="bg-[#0d1e3d] px-5 py-4 border-b border-[#1a365d]/40 flex items-center justify-between">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <span className="h-2 w-2 rounded-full bg-[#EF4444] animate-pulse" />
+                        <h3 className="text-[13px] font-black tracking-wider uppercase text-white">
+                          Alertas Importantes
+                        </h3>
+                      </div>
+                      <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest leading-none">
+                        Atualizado há 2 min
+                      </p>
+                    </div>
+                    <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
+                      {activeAlerts.length} Ativos
                     </span>
                   </header>
 
-                  <div className="mt-4 space-y-3">
-                    {activeAlerts.length === 0 ? (
-                      <div className="py-6 text-center text-slate-400 text-sm font-medium">
-                        Não há alertas ativos no momento.
-                      </div>
-                    ) : (
-                      activeAlerts.slice(0, 5).map((alert) => {
-                        let borderLeftColor = 'bg-slate-400';
-                        let badgeStyle = 'border-slate-400/20 bg-slate-500/8 text-slate-600';
-                        let icon = <Info className="h-5 w-5 text-slate-500 shrink-0 mt-0.5" />;
+                  <div className="p-5">
+                    <div className="space-y-3">
+                      {activeAlerts.length === 0 ? (
+                        <div className="py-6 text-center text-slate-400 text-sm font-medium">
+                          Não há alertas ativos no momento.
+                        </div>
+                      ) : (
+                        activeAlerts.slice(0, 5).map((alert) => {
+                          let borderLeftColor = 'bg-slate-400';
+                          let badgeStyle = 'border-slate-400/20 bg-slate-500/8 text-slate-600';
+                          let icon = <Info className="h-5 w-5 text-slate-500 shrink-0 mt-0.5" />;
 
-                        if (alert.priority === 'critico') {
-                          borderLeftColor = alert.hasGlowOrange ? 'bg-[#FF8A3D]' : 'bg-[#EF4444]';
-                          badgeStyle = alert.hasGlowOrange
-                            ? 'border-[#FF8A3D]/20 bg-[#FF8A3D]/8 text-[#FF8A3D]'
-                            : 'border-[#EF4444]/20 bg-[#EF4444]/8 text-[#EF4444]';
-                          icon = <TriangleAlert className={`h-5 w-5 shrink-0 mt-0.5 ${alert.hasGlowOrange ? 'text-[#FF8A3D]' : 'text-[#EF4444]'}`} />;
-                        } else if (alert.priority === 'alto') {
-                          borderLeftColor = 'bg-[#FF7A00]';
-                          badgeStyle = 'border-[#FF7A00]/20 bg-[#FF7A00]/8 text-[#FF7A00]';
-                          icon = <Link2 className="h-5 w-5 text-[#FF7A00] shrink-0 mt-0.5" />;
-                        } else if (alert.priority === 'medio') {
-                          borderLeftColor = 'bg-[#F59E0B]';
-                          badgeStyle = 'border-[#F59E0B]/20 bg-[#F59E0B]/8 text-[#D97706]';
-                          icon = <TriangleAlert className="h-5 w-5 text-[#F59E0B] shrink-0 mt-0.5" />;
-                        }
+                          if (alert.priority === 'critico') {
+                            borderLeftColor = alert.hasGlowOrange ? 'bg-[#FF8A3D]' : 'bg-[#EF4444]';
+                            badgeStyle = alert.hasGlowOrange
+                              ? 'border-[#FF8A3D]/20 bg-[#FF8A3D]/8 text-[#FF8A3D]'
+                              : 'border-[#EF4444]/20 bg-[#EF4444]/8 text-[#EF4444]';
+                            icon = <TriangleAlert className={`h-5 w-5 shrink-0 mt-0.5 ${alert.hasGlowOrange ? 'text-[#FF8A3D]' : 'text-[#EF4444]'}`} />;
+                          } else if (alert.priority === 'alto') {
+                            borderLeftColor = 'bg-[#FF7A00]';
+                            badgeStyle = 'border-[#FF7A00]/20 bg-[#FF7A00]/8 text-[#FF7A00]';
+                            icon = <Link2 className="h-5 w-5 text-[#FF7A00] shrink-0 mt-0.5" />;
+                          } else if (alert.priority === 'medio') {
+                            borderLeftColor = 'bg-[#F59E0B]';
+                            badgeStyle = 'border-[#F59E0B]/20 bg-[#F59E0B]/8 text-[#D97706]';
+                            icon = <TriangleAlert className="h-5 w-5 text-[#F59E0B] shrink-0 mt-0.5" />;
+                          }
 
-                        return (
-                          <article
-                            key={alert.id}
-                            onClick={() => setSelectedAlert(alert)}
-                            className="group relative overflow-hidden rounded-[12px] border border-slate-100/80 bg-slate-50/60 pl-4 pr-3 py-3 shadow-sm transition hover:bg-slate-100/80 cursor-pointer flex items-center justify-between"
-                          >
-                            <div className={`absolute top-0 bottom-0 left-0 w-[3.5px] ${borderLeftColor}`} />
-                            <div className="flex items-start gap-3">
-                              {icon}
-                              <div>
-                                <div className="flex flex-wrap items-center gap-2">
-                                  <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${badgeStyle}`}>
-                                    {alert.badgeText}
-                                  </span>
-                                  {alert.hasGlowOrange && (
-                                    <span className="inline-flex items-center rounded-full border border-amber-500/20 bg-amber-500/8 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600">
-                                      Glow Orange
+                          return (
+                            <article
+                              key={alert.id}
+                              onClick={() => setSelectedAlert(alert)}
+                              className="group relative overflow-hidden rounded-[12px] border border-slate-100/80 bg-slate-50/60 pl-4 pr-3 py-3 shadow-sm transition hover:bg-slate-100/80 cursor-pointer flex items-center justify-between"
+                            >
+                              <div className={`absolute top-0 bottom-0 left-0 w-[3.5px] ${borderLeftColor}`} />
+                              <div className="flex items-start gap-3">
+                                {icon}
+                                <div>
+                                  <div className="flex flex-wrap items-center gap-2">
+                                    <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider ${badgeStyle}`}>
+                                      {alert.badgeText}
                                     </span>
-                                  )}
-                                  <span className="text-[11px] text-slate-400 font-semibold">{alert.time}</span>
+                                    {alert.hasGlowOrange && (
+                                      <span className="inline-flex items-center rounded-full border border-amber-500/20 bg-amber-500/8 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600">
+                                        Glow Orange
+                                      </span>
+                                    )}
+                                    <span className="text-[11px] text-slate-400 font-semibold">{alert.time}</span>
+                                  </div>
+                                  <h4 className="text-[13px] font-bold text-slate-800 mt-1">
+                                    {alert.title}
+                                  </h4>
+                                  <p className="text-[12px] text-slate-500 mt-0.5">
+                                    {alert.description}{' '}
+                                    {alert.priority === 'critico' && !alert.hasGlowOrange && (
+                                      <span className="text-[#FF7A00] font-semibold hover:underline">
+                                        [Mais Detalhes]
+                                      </span>
+                                    )}
+                                  </p>
                                 </div>
-                                <h4 className="text-[13px] font-bold text-slate-800 mt-1">
-                                  {alert.title}
-                                </h4>
-                                <p className="text-[12px] text-slate-500 mt-0.5">
-                                  {alert.description}{' '}
-                                  {alert.priority === 'critico' && !alert.hasGlowOrange && (
-                                    <span className="text-[#FF7A00] font-semibold hover:underline">
-                                      [Mais Detalhes]
-                                    </span>
-                                  )}
-                                </p>
                               </div>
-                            </div>
-                            <ArrowRight className="h-4 w-4 text-[#FF7A00] transition group-hover:translate-x-1 shrink-0 ml-2" />
-                          </article>
-                        );
-                      })
-                    )}
+                              <ArrowRight className="h-4 w-4 text-[#FF7A00] transition group-hover:translate-x-1 shrink-0 ml-2" />
+                            </article>
+                          );
+                        })
+                      )}
+                    </div>
                   </div>
 
                   <button

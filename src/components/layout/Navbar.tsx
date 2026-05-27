@@ -291,6 +291,8 @@ const SETTINGS_MODAL_SURFACE = 'max-h-[calc(92vh-4px)] flex flex-col overflow-hi
 const SETTINGS_MODAL_HEADER = 'relative border-b border-slate-100 bg-[#FAFBFC] px-6 py-5 flex flex-col';
 const SETTINGS_MODAL_CLOSE_BUTTON =
   'absolute right-5 top-5 rounded-full border border-slate-200/80 bg-white p-2 text-slate-500 transition-all hover:bg-slate-50 hover:text-slate-700 hover:scale-105 active:scale-95 shadow-sm';
+const PREMIUM_MODAL_HEADER = 'relative border-b border-[#1a365d]/40 bg-[#0d1e3d] px-6 py-5 flex flex-col gap-1 overflow-hidden';
+const PREMIUM_MODAL_CLOSE_BUTTON = 'absolute right-5 top-5 rounded-full border border-white/10 bg-white/5 p-2 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm z-50';
 const SETTINGS_PANEL =
   'rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.02)] transition-all duration-200 hover:border-slate-200/80 hover:shadow-[0_8px_30px_-6px_rgba(15,23,42,0.04)]';
 const SETTINGS_LABEL = 'mb-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400';
@@ -1940,19 +1942,22 @@ export default function Navbar() {
 
         <div className={`${SETTINGS_MODAL_FRAME} max-w-xl`}>
           <div className={SETTINGS_MODAL_SURFACE}>
-            <div className={SETTINGS_MODAL_HEADER}>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-[#FF6B00]">
-                  <User size={20} />
+            <div className={PREMIUM_MODAL_HEADER}>
+              <div className="flex items-center justify-between w-full pr-12">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                    <h3 className="text-xl font-black text-white tracking-tight">Meu perfil</h3>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-300">Informações da conta do usuário</p>
                 </div>
-                <div>
-                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Meu perfil</h3>
-                  <p className="text-xs font-semibold text-slate-400 mt-0.5">Informações da conta do usuário</p>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
+                  <User size={20} />
                 </div>
               </div>
               <button
                 onClick={() => setIsProfileOpen(false)}
-                className={SETTINGS_MODAL_CLOSE_BUTTON}
+                className={PREMIUM_MODAL_CLOSE_BUTTON}
               >
                 <X size={16} />
               </button>
@@ -2073,19 +2078,22 @@ export default function Navbar() {
 
         <div className={`${SETTINGS_MODAL_FRAME} max-w-2xl`}>
           <div className={SETTINGS_MODAL_SURFACE}>
-            <div className={SETTINGS_MODAL_HEADER}>
-              <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-[#FF6B00]">
-                  <CreditCard size={20} />
+            <div className={PREMIUM_MODAL_HEADER}>
+              <div className="flex items-center justify-between w-full pr-12">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                    <h3 className="text-xl font-black text-white tracking-tight">Financeiro</h3>
+                  </div>
+                  <p className="text-xs font-semibold text-slate-300">Detalhes do plano, assinatura e período de acesso</p>
                 </div>
-                <div>
-                  <h3 className="text-xl font-black text-slate-800 tracking-tight">Financeiro</h3>
-                  <p className="text-xs font-semibold text-slate-400 mt-0.5">Detalhes do plano, assinatura e período de acesso</p>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
+                  <CreditCard size={20} />
                 </div>
               </div>
               <button
                 onClick={closeFinanceModal}
-                className={SETTINGS_MODAL_CLOSE_BUTTON}
+                className={PREMIUM_MODAL_CLOSE_BUTTON}
               >
                 <X size={16} />
               </button>
@@ -2202,19 +2210,22 @@ export default function Navbar() {
 
           <div className={`${SETTINGS_MODAL_FRAME} max-w-2xl`}>
             <div className={SETTINGS_MODAL_SURFACE}>
-              <div className={SETTINGS_MODAL_HEADER}>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-50 text-[#FF6B00]">
-                    <Building2 size={20} />
+              <div className={PREMIUM_MODAL_HEADER}>
+                <div className="flex items-center justify-between w-full pr-12">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                      <h3 className="text-xl font-black text-white tracking-tight">Sobre sua Marca</h3>
+                    </div>
+                    <p className="text-xs font-semibold text-slate-300">Cadastro das informações institucionais</p>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-black text-slate-800 tracking-tight">Sobre sua Marca</h3>
-                    <p className="text-xs font-semibold text-slate-400 mt-0.5">Cadastro das informações institucionais</p>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
+                    <Building2 size={20} />
                   </div>
                 </div>
                 <button
                   onClick={closeCompanyModal}
-                  className={SETTINGS_MODAL_CLOSE_BUTTON}
+                  className={PREMIUM_MODAL_CLOSE_BUTTON}
                 >
                   <X size={16} />
                 </button>
@@ -2371,16 +2382,26 @@ export default function Navbar() {
 
           <div className={`${SETTINGS_MODAL_FRAME} w-[min(98vw,1440px)] max-h-[94vh] max-w-none`}>
             <div className={`${SETTINGS_MODAL_SURFACE} max-h-[calc(94vh-4px)] flex h-full flex-col overflow-hidden`}>
-              <div className={SETTINGS_MODAL_HEADER}>
-                <h3 className="text-2xl font-black text-text-main tracking-tight">Conectores</h3>
-                <p className="text-sm text-text-muted mt-1">
-                  Configure as integrações e parâmetros essenciais para exibir dados reais e corretos no Dashboard.
-                </p>
+              <div className={PREMIUM_MODAL_HEADER}>
+                <div className="flex items-center justify-between w-full pr-12">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                      <h3 className="text-xl md:text-2xl font-black text-white tracking-tight">Conectores</h3>
+                    </div>
+                    <p className="text-xs font-semibold text-slate-300">
+                      Configure as integrações e parâmetros essenciais para exibir dados reais e corretos no Dashboard.
+                    </p>
+                  </div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
+                    <PlugZap size={20} />
+                  </div>
+                </div>
                 <button
                   onClick={closeConnectorsModal}
-                  className={SETTINGS_MODAL_CLOSE_BUTTON}
+                  className={PREMIUM_MODAL_CLOSE_BUTTON}
                 >
-                  <X size={18} className="text-text-main" />
+                  <X size={18} />
                 </button>
               </div>
 

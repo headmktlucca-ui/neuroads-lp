@@ -410,7 +410,7 @@ export default function BudgetOptimizerWorkspace({ userId, agentSlug, agentTitle
                 return (
                   <div
                     key={key}
-                    className={`rounded-xl border p-4 ${
+                    className={`rounded-full border px-5 py-2.5 ${
                       connectors[key].isActive
                         ? 'border-[#BDE8CF] bg-[#F2FFF7]'
                         : 'border-[#FECACA] bg-[#FFF1F2]'

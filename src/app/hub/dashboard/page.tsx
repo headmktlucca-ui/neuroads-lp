@@ -354,11 +354,29 @@ export default function HubDashboardPage() {
                 {activeAgentsGroupedByCategory.map(({ category, agents: categoryAgents }) => (
                   <section
                     key={category}
-                    className="rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_14px_34px_rgba(15,23,42,0.05)]"
+                    className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-[0_14px_34px_rgba(15,23,42,0.05)]"
                   >
-                    <h2 className="text-2xl font-black text-text-main">{category}</h2>
-                    <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-3">
-                      {categoryAgents.map((agent) => renderActiveAgentCard(agent))}
+                    <header className="bg-[#0d1e3d] px-6 py-5 border-b border-[#1a365d]/40 flex flex-wrap items-center justify-between gap-4">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                          <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                            {category}
+                          </h2>
+                        </div>
+                        <p className="text-xs font-semibold text-slate-300">
+                          Agentes ativos da vertical de {category}.
+                        </p>
+                      </div>
+                      <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
+                        Ativos: {categoryAgents.length}
+                      </span>
+                    </header>
+
+                    <div className="p-6 md:p-8">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        {categoryAgents.map((agent) => renderActiveAgentCard(agent))}
+                      </div>
                     </div>
                   </section>
                 ))}
@@ -373,39 +391,68 @@ export default function HubDashboardPage() {
               ) : null
             )
           ) : (
-            <section className="mt-6 rounded-3xl border border-border bg-white p-6 md:p-8 shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
-              <h2 className="text-2xl md:text-3xl font-black tracking-tight text-text-main">Agentes ativos</h2>
-              {filteredActiveAgents.length > 0 ? (
-                <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-3">
-                  {filteredActiveAgents.map((agent) => renderActiveAgentCard(agent))}
-                </div>
-              ) : (
-                !searchQuery ? (
-                  <div className="mt-6 rounded-2xl border border-border bg-[#FCFCFD] p-5 text-sm text-text-muted">
-                    Nenhum agente ativo no momento.
+            <section className="relative overflow-hidden rounded-3xl border border-border bg-white shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
+              <header className="bg-[#0d1e3d] px-6 py-5 border-b border-[#1a365d]/40 flex flex-wrap items-center justify-between gap-4">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                    <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                      Agentes ativos
+                    </h2>
                   </div>
-                ) : null
-              )}
+                  <p className="text-xs font-semibold text-slate-300">
+                    Verticalização dos processos operacionais inteligentes em execução.
+                  </p>
+                </div>
+                <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
+                  Ativos na conta: {filteredActiveAgents.length}
+                </span>
+              </header>
+
+              <div className="p-6 md:p-8">
+                {filteredActiveAgents.length > 0 ? (
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                    {filteredActiveAgents.map((agent) => renderActiveAgentCard(agent))}
+                  </div>
+                ) : (
+                  !searchQuery ? (
+                    <div className="rounded-2xl border border-border bg-[#FCFCFD] p-5 text-sm text-text-muted">
+                      Nenhum agente ativo no momento.
+                    </div>
+                  ) : null
+                )}
+              </div>
             </section>
           )}
 
           <section
-            className={`mt-6 rounded-3xl p-6 md:p-8 ${
+            className={`relative overflow-hidden mt-6 rounded-3xl ${
               isAgentesAtivosPage
                 ? 'border border-[#183A6B] bg-[linear-gradient(130deg,#071632_0%,#0A1D3F_55%,#081832_100%)] shadow-[0_18px_44px_rgba(2,8,22,0.36)]'
                 : 'border border-border bg-white shadow-[0_16px_40px_rgba(15,23,42,0.06)]'
             }`}
           >
-            <h2
-              className={`text-2xl md:text-3xl font-black tracking-tight ${
-                isAgentesAtivosPage ? 'text-white' : 'text-text-main'
-              }`}
-            >
-              Agentes recomendados
-            </h2>
-            <p className={`mt-2 text-sm md:text-base ${isAgentesAtivosPage ? 'text-[#C6D3E9]' : 'text-text-muted'}`}>
-              Ao ativar estes agentes, sua operação tende a ganhar mais previsibilidade de demanda, redução de desperdício e maior velocidade de decisão com base em dados reais.
-            </p>
+            <header className="bg-[#0d1e3d] px-6 py-5 border-b border-[#1a365d]/40 flex flex-wrap items-center justify-between gap-4">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#FF6A00] animate-pulse" />
+                  <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">
+                    Agentes recomendados
+                  </h2>
+                </div>
+                <p className="text-xs font-semibold text-slate-300">
+                  Acelere decisões e reduza desperdício ativando novos agentes.
+                </p>
+              </div>
+              <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
+                Sugestões: {recommendedAgents.length}
+              </span>
+            </header>
+
+            <div className="p-6 md:p-8">
+              <p className={`text-sm md:text-base ${isAgentesAtivosPage ? 'text-[#C6D3E9]' : 'text-text-muted'} mb-6`}>
+                Ao ativar estes agentes, sua operação tende a ganhar mais previsibilidade de demanda, redução de desperdício e maior velocidade de decisão com base em dados reais.
+              </p>
 
             {recommendedAgents.length > 0 ? (
               <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-3">
@@ -447,7 +494,7 @@ export default function HubDashboardPage() {
               </div>
             ) : (
               <div
-                className={`mt-6 rounded-2xl border p-5 text-sm ${
+                className={`rounded-2xl border p-5 text-sm ${
                   isAgentesAtivosPage
                     ? 'border-[#264671] bg-[#0A1E3D] text-[#C6D3E9]'
                     : 'border-border bg-[#FCFCFD] text-text-muted'
@@ -456,7 +503,8 @@ export default function HubDashboardPage() {
                 Todos os agentes disponíveis já estão ativos na conta.
               </div>
             )}
-          </section>
+          </div>
+        </section>
 
           {isAgentesAtivosPage ? (
             <div className="relative z-10 mt-6 [&>footer]:!bg-transparent [&>footer]:!backdrop-blur-none">
