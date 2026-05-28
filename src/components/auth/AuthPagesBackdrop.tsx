@@ -7,7 +7,7 @@ export function AuthPagesBackdrop() {
     <div className="pointer-events-none fixed inset-0 z-0">
       <div
         className="absolute inset-0 bg-center bg-cover bg-no-repeat bg-white"
-        style={{ backgroundImage: "url('/images/orange_silk_wave.png')" }}
+        style={{ backgroundImage: "url('/images/background_hub_custom_wave.png')" }}
       />
 
       <div className="absolute left-4 top-4 sm:left-7 sm:top-6 pointer-events-auto z-10">
