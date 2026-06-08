@@ -68,6 +68,7 @@ export async function GET(
       provider: state.provider as ConnectorProvider,
       code,
       appBaseUrl,
+      runtime: state.runtime,
     });
 
     redirectUrl.searchParams.set('connector_auth_success', '1');

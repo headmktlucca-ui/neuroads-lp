@@ -3,172 +3,143 @@
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { doc, setDoc } from 'firebase/firestore';
-import Image from 'next/image';
-import { ArrowRight, Building2, Check, CheckCircle2, Globe, Lock, Mail, Phone } from 'lucide-react';
+import { ArrowRight, Building2, CheckCircle2, Globe, Phone } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
 import { getHubLoginRedirect, hasHubPlanAccess, normalizeHubNextPath } from '../../lib/hub-access';
-import { getHubProfileSummary } from '../../lib/hub-profile';
 import { formatWhatsappInput } from '../../lib/phone-mask';
-import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { verifyStripeCheckoutSession } from '../../lib/stripe-session-verifier';
+import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import stripeOffersCatalog from '../../data/stripe-offers.json';
 import { AuthPagesBackdrop } from '../../components/auth/AuthPagesBackdrop';
 
-type OnboardingStep = 1 | 2;
+type Step = 1 | 2 | 3 | 4;
+
+type BusinessForm = {
+  companyName: string;
+  segment: string;
+  revenueRange: string;
+  site: string;
+  whatsapp: string;
+};
 
 type PlanOffer = {
   slug: string;
   name: string;
   amount: number;
   priceId: string;
-  description: string;
-  limits?: {
-    agents?: number;
-    includedExecutions?: number;
-  };
 };
 
-type CompanyForm = {
-  companyName: string;
-  site: string;
-  whatsapp: string;
-  instagram: string;
-  linkedin: string;
-};
-
-const DEFAULT_COMPANY_FORM: CompanyForm = {
+const DEFAULT_FORM: BusinessForm = {
   companyName: '',
+  segment: '',
+  revenueRange: '',
   site: HTTPS_PREFIX,
   whatsapp: '',
-  instagram: '',
-  linkedin: '',
-};
-const ONBOARDING_DRAFT_STORAGE_PREFIX = 'neuroads_onboarding_checkout_draft_';
-
-type PlanVisual = {
-  image: string;
-  imageContainerClass: string;
-  imageClassName: string;
-  titleClassName: string;
-  suffixClassName: string;
-  bulletClassName: string;
-  cardClassName: string;
-  description: string;
-  badge?: string;
 };
 
-const PLAN_VISUAL_BY_SLUG: Record<string, PlanVisual> = {
-  'starter-5': {
-    image: '/images/pricing-plans/icon_start_001.png',
-    imageContainerClass: 'h-[54px] w-[54px]',
-    imageClassName: 'scale-[1.02]',
-    titleClassName: 'text-[#6f42ff]',
-    suffixClassName: 'text-[#6f42ff]',
-    bulletClassName: 'bg-[#2759de] text-white',
-    cardClassName: 'bg-[linear-gradient(165deg,rgba(255,255,255,0.92),rgba(245,250,255,0.78))]',
-    description: 'Tudo que você precisa para começar com IA agêntica.',
-  },
-  'growth-10': {
-    image: '/images/pricing-plans/icon_growth_001.png',
-    imageContainerClass: 'h-[54px] w-[74px]',
-    imageClassName: 'scale-[1.03]',
-    titleClassName: 'text-[#1f58ff]',
-    suffixClassName: 'text-[#1f58ff]',
-    bulletClassName: 'bg-[#2759de] text-white',
-    cardClassName: 'bg-[linear-gradient(165deg,rgba(255,255,255,0.92),rgba(245,250,255,0.78))]',
-    description: 'Mais insights, mais automação e mais formas de crescer.',
-  },
-  'scale-15': {
-    image: '/images/pricing-plans/icon_pro_scale_001.png',
-    imageContainerClass: 'h-[54px] w-[68px]',
-    imageClassName: 'scale-[1.02]',
-    titleClassName: 'text-[#ff5a00]',
-    suffixClassName: 'text-[#ff5a00]',
-    bulletClassName: 'bg-[#ff7a1b] text-white',
-    cardClassName: 'bg-[linear-gradient(165deg,rgba(255,255,255,0.95),rgba(255,245,236,0.92))]',
-    description: 'IA avançada e inteligência profunda para escalar sua operação.',
-    badge: 'Mais escolhido',
-  },
-  'performance-20': {
-    image: '/images/pricing-plans/icon_enterprise_001.png',
-    imageContainerClass: 'h-[54px] w-[70px]',
-    imageClassName: 'scale-[1.02]',
-    titleClassName: 'text-[#5f45ff]',
-    suffixClassName: 'text-[#5f45ff]',
-    bulletClassName: 'bg-[#2759de] text-white',
-    cardClassName: 'bg-[linear-gradient(165deg,rgba(255,255,255,0.92),rgba(245,250,255,0.78))]',
-    description: 'Soluções sob medida, escala ilimitada e operação de alta performance.',
-  },
-};
+const OBJECTIVES = [
+  'Saber de onde vem cada venda',
+  'Escalar sem depender de sorte ou indicação',
+  'Reduzir desperdício de verba em mídia',
+  'Ganhar previsibilidade de receita no mês',
+  'Automatizar tarefas operacionais com IA',
+];
 
-function formatCurrencyFromCents(value: number, currency = 'BRL'): string {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 0,
-  }).format(value / 100);
-}
+const DATA_SOURCES = [
+  { key: 'google_ads', label: 'Google Ads' },
+  { key: 'meta_ads', label: 'Meta Ads' },
+  { key: 'ga4', label: 'Google Analytics (GA4)' },
+];
 
 function readString(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-function buildFormFromProfile(profile: unknown): CompanyForm {
-  if (!profile || typeof profile !== 'object') return DEFAULT_COMPANY_FORM;
-  const record = profile as Record<string, unknown>;
-  const onboarding = record.onboarding && typeof record.onboarding === 'object'
-    ? (record.onboarding as Record<string, unknown>)
-    : null;
-  const profileDetails = record.profileDetails && typeof record.profileDetails === 'object'
-    ? (record.profileDetails as Record<string, unknown>)
-    : null;
+function readStringArray(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.filter((item): item is string => typeof item === 'string' && item.trim().length > 0);
+}
 
-  const companyName = readString(
-    record.companyName ?? record.company ?? onboarding?.companyName ?? onboarding?.company ?? profileDetails?.companyName
-  );
-  const siteRaw = readString(record.site ?? record.website ?? onboarding?.site ?? onboarding?.website ?? profileDetails?.site);
-  const whatsapp = readString(record.whatsapp ?? onboarding?.whatsapp ?? profileDetails?.whatsapp);
-  const instagram = readString(record.instagram ?? onboarding?.instagram ?? profileDetails?.instagram);
-  const linkedin = readString(record.linkedin ?? onboarding?.linkedin ?? profileDetails?.linkedin);
-
-  return {
-    companyName,
-    site: siteRaw ? normalizeHttpsMaskedUrlInput(siteRaw) : HTTPS_PREFIX,
-    whatsapp: formatWhatsappInput(whatsapp),
-    instagram,
-    linkedin,
-  };
+function formatCurrencyFromCents(value: number): string {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: String(stripeOffersCatalog.currency || 'BRL').toUpperCase(),
+    minimumFractionDigits: 0,
+  }).format(value / 100);
 }
 
 function OnboardingPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, userEmail, profile, loading, premiumSyncing, hasPasswordProvider, linkCurrentUserWithEmailPassword } = useAuth();
-  const [step, setStep] = useState<OnboardingStep>(1);
-  const [form, setForm] = useState<CompanyForm>(DEFAULT_COMPANY_FORM);
+  const { user, userEmail, profile, loading, premiumSyncing } = useAuth();
+
+  const [step, setStep] = useState<Step>(1);
+  const [form, setForm] = useState<BusinessForm>(DEFAULT_FORM);
+  const [selectedObjectives, setSelectedObjectives] = useState<string[]>([]);
+  const [selectedSources, setSelectedSources] = useState<string[]>([]);
   const [selectedPlanSlug, setSelectedPlanSlug] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [isProcessingReturn, setIsProcessingReturn] = useState(false);
-  const [isConfiguringAccess, setIsConfiguringAccess] = useState(false);
-  const [accessEmail, setAccessEmail] = useState('');
-  const [accessPassword, setAccessPassword] = useState('');
-  const [accessPasswordConfirm, setAccessPasswordConfirm] = useState('');
-  const [accessConfigured, setAccessConfigured] = useState(false);
-  const [accessErrorMessage, setAccessErrorMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const currencyCode = String(stripeOffersCatalog.currency || 'brl').toUpperCase();
-  const planOffers = useMemo(
+  const nextPath = useMemo(() => normalizeHubNextPath(searchParams.get('next'), '/hub'), [searchParams]);
+  const entryState = searchParams.get('state');
+  const requestedStep = searchParams.get('step');
+  const checkoutSuccess = searchParams.get('success') === 'true';
+  const checkoutSessionId = searchParams.get('session_id')?.trim() ?? '';
+
+  const plans = useMemo(
     () => ((stripeOffersCatalog.plans || []) as PlanOffer[]).filter((plan) => Boolean(plan.slug)),
     []
   );
-  const nextPath = useMemo(() => normalizeHubNextPath(searchParams.get('next'), '/hub'), [searchParams]);
 
   useEffect(() => {
-    if (planOffers.length === 0) return;
-    setSelectedPlanSlug((current) => current || planOffers[0].slug);
-  }, [planOffers]);
+    if (plans.length === 0) return;
+    setSelectedPlanSlug((current) => current || plans[0].slug);
+  }, [plans]);
+
+  useEffect(() => {
+    if (requestedStep === 'plan') {
+      setStep(4);
+    }
+  }, [requestedStep]);
+
+  useEffect(() => {
+    if (!user || !checkoutSuccess) return;
+
+    let active = true;
+
+    const syncAndRedirectToHub = async () => {
+      try {
+        setIsSaving(true);
+        setErrorMessage(null);
+
+        if (checkoutSessionId) {
+          const verification = await verifyStripeCheckoutSession(checkoutSessionId);
+          if (!verification.ok) {
+            throw new Error(verification.error || 'Falha ao validar checkout no Stripe.');
+          }
+        }
+
+        await fetch('/api/stripe/sync-premium', { method: 'POST' });
+
+        if (!active) return;
+        router.replace('/hub');
+      } catch (error) {
+        console.error('Falha ao finalizar contratação no onboarding:', error);
+        if (!active) return;
+        setErrorMessage('Pagamento identificado, mas não conseguimos liberar o Hub automaticamente. Tente novamente em alguns segundos.');
+      } finally {
+        if (active) setIsSaving(false);
+      }
+    };
+
+    void syncAndRedirectToHub();
+
+    return () => {
+      active = false;
+    };
+  }, [checkoutSessionId, checkoutSuccess, router, user]);
 
   useEffect(() => {
     if (loading) return;
@@ -183,289 +154,198 @@ function OnboardingPageContent() {
   }, [loading, nextPath, router, user]);
 
   useEffect(() => {
-    if (!user || !profile) return;
-    setForm((current) => {
-      const fromProfile = buildFormFromProfile(profile);
-      return {
-        companyName: current.companyName || fromProfile.companyName,
-        site: current.site !== HTTPS_PREFIX ? current.site : fromProfile.site,
-        whatsapp: current.whatsapp || fromProfile.whatsapp,
-        instagram: current.instagram || fromProfile.instagram,
-        linkedin: current.linkedin || fromProfile.linkedin,
-      };
-    });
-  }, [profile, user]);
+    if (!profile) return;
 
-  const selectedPlan = useMemo(
-    () => planOffers.find((plan) => plan.slug === selectedPlanSlug) ?? null,
-    [planOffers, selectedPlanSlug]
-  );
-  const hubProfile = useMemo(() => getHubProfileSummary(profile), [profile]);
-  const setupAuthParam = searchParams.get('setup_auth');
-  const mustConfigurePasswordAccess = setupAuthParam === '1';
-  const successParam = searchParams.get('success');
-  const canceledParam = searchParams.get('canceled');
-  const sessionIdParam = searchParams.get('session_id');
+    const record = profile as Record<string, unknown>;
+    const onboarding = record.onboarding && typeof record.onboarding === 'object'
+      ? (record.onboarding as Record<string, unknown>)
+      : null;
 
-  useEffect(() => {
+    setForm((current) => ({
+      companyName: current.companyName || readString(record.companyName ?? onboarding?.companyName),
+      segment: current.segment || readString(record.segment ?? onboarding?.segment),
+      revenueRange: current.revenueRange || readString(record.revenueRange ?? onboarding?.revenueRange),
+      site: current.site !== HTTPS_PREFIX
+        ? current.site
+        : normalizeHttpsMaskedUrlInput(readString(record.site ?? onboarding?.site) || HTTPS_PREFIX),
+      whatsapp: current.whatsapp || formatWhatsappInput(readString(record.whatsapp ?? onboarding?.whatsapp)),
+    }));
+
+    if (selectedObjectives.length === 0) {
+      setSelectedObjectives(readStringArray(onboarding?.objectives));
+    }
+
+    if (selectedSources.length === 0) {
+      setSelectedSources(readStringArray(onboarding?.dataSources));
+    }
+  }, [profile, selectedObjectives.length, selectedSources.length]);
+
+  const persistOnboardingProgress = useCallback(async (overrides?: Partial<BusinessForm>) => {
     if (!user) return;
-    const preferredEmail = userEmail?.trim() || user.email?.trim() || '';
-    if (!preferredEmail) return;
-    setAccessEmail((current) => current || preferredEmail);
-  }, [user, userEmail]);
 
-  useEffect(() => {
-    if (hasPasswordProvider) {
-      setAccessConfigured(true);
-      setAccessErrorMessage(null);
-    }
-  }, [hasPasswordProvider]);
-
-  const configurePasswordAccess = useCallback(async () => {
-    const normalizedEmail = accessEmail.trim() || userEmail?.trim() || user?.email?.trim() || '';
-    if (!normalizedEmail) {
-      setAccessErrorMessage('Não foi possível identificar o e-mail da conta para vincular o acesso.');
-      return false;
-    }
-
-    if (accessPassword.length < 8) {
-      setAccessErrorMessage('Defina uma senha com no mínimo 8 caracteres.');
-      return false;
-    }
-
-    if (accessPassword !== accessPasswordConfirm) {
-      setAccessErrorMessage('A confirmação da senha não confere.');
-      return false;
-    }
-
-    try {
-      setIsConfiguringAccess(true);
-      setAccessErrorMessage(null);
-      await linkCurrentUserWithEmailPassword(normalizedEmail, accessPassword);
-      setAccessConfigured(true);
-      setAccessPassword('');
-      setAccessPasswordConfirm('');
-      return true;
-    } catch (error) {
-      console.error('Falha ao vincular email/senha no onboarding:', error);
-      setAccessErrorMessage('Não foi possível vincular email e senha agora. Tente novamente.');
-      return false;
-    } finally {
-      setIsConfiguringAccess(false);
-    }
-  }, [
-    accessEmail,
-    accessPassword,
-    accessPasswordConfirm,
-    linkCurrentUserWithEmailPassword,
-    user,
-    userEmail,
-  ]);
-
-  const persistCompanyStepAndCache = useCallback(async (normalizedSite: string) => {
-    if (!user) return;
+    const payloadForm = {
+      ...form,
+      ...overrides,
+    };
 
     const now = Date.now();
-    const authenticatedEmail = userEmail?.trim() || user.email?.trim() || null;
+    const normalizedSite = normalizeHttpsMaskedUrlInput(payloadForm.site);
+    const authEmail = userEmail?.trim() || user.email?.trim() || null;
+
     const payload = {
-      companyName: form.companyName.trim(),
+      companyName: payloadForm.companyName.trim(),
+      segment: payloadForm.segment.trim(),
+      revenueRange: payloadForm.revenueRange.trim(),
       site: normalizedSite,
-      whatsapp: form.whatsapp.trim(),
-      instagram: form.instagram.trim(),
-      linkedin: form.linkedin.trim(),
+      whatsapp: payloadForm.whatsapp.trim(),
+      onboardingStep: step,
       updatedAt: now,
-      ...(authenticatedEmail ? { authEmail: authenticatedEmail, email: authenticatedEmail } : {}),
+      ...(authEmail ? { authEmail, email: authEmail } : {}),
       onboarding: {
-        companyName: form.companyName.trim(),
+        companyName: payloadForm.companyName.trim(),
+        segment: payloadForm.segment.trim(),
+        revenueRange: payloadForm.revenueRange.trim(),
         site: normalizedSite,
-        whatsapp: form.whatsapp.trim(),
-        instagram: form.instagram.trim(),
-        linkedin: form.linkedin.trim(),
+        whatsapp: payloadForm.whatsapp.trim(),
+        objectives: selectedObjectives,
+        dataSources: selectedSources,
         updatedAt: now,
       },
     };
 
-    const db = getFirebaseDb();
-    const userRef = doc(db, 'users', user.uid);
-    await setDoc(userRef, payload, { merge: true });
+    await setDoc(doc(getFirebaseDb(), 'users', user.uid), payload, { merge: true });
+  }, [form, selectedObjectives, selectedSources, step, user, userEmail]);
 
-    if (typeof window !== 'undefined') {
-      const companyKey = `neuroads_company_profile_${user.uid}`;
-      const contactKey = `neuroads_profile_contact_${user.uid}`;
-      window.localStorage.setItem(
-        companyKey,
-        JSON.stringify({
-          companyName: form.companyName.trim(),
-          site: normalizedSite,
-          instagram: form.instagram.trim(),
-          linkedin: form.linkedin.trim(),
-          tiktok: '',
-          blog: '',
-        })
-      );
-      window.localStorage.setItem(contactKey, JSON.stringify({ whatsapp: form.whatsapp.trim() }));
-    }
-  }, [
-    form.companyName,
-    form.instagram,
-    form.linkedin,
-    form.whatsapp,
-    userEmail,
-    user,
-  ]);
-
-  const handleContinueToPlans = async () => {
-    const hasCompany = form.companyName.trim().length > 0;
+  const handleNextFromBusiness = async () => {
     const normalizedSite = normalizeHttpsMaskedUrlInput(form.site);
-    const hasSite = !isHttpsPlaceholderOnly(normalizedSite);
-    const hasWhatsapp = form.whatsapp.trim().length > 0;
+    const hasRequired =
+      form.companyName.trim().length > 0 &&
+      form.segment.trim().length > 0 &&
+      form.revenueRange.trim().length > 0 &&
+      !isHttpsPlaceholderOnly(normalizedSite) &&
+      form.whatsapp.trim().length > 0;
 
-    if (!hasCompany || !hasSite || !hasWhatsapp) {
-      setErrorMessage('Preencha empresa, site e WhatsApp para continuar.');
+    if (!hasRequired) {
+      setErrorMessage('Preencha empresa, segmento, faixa de faturamento, site e WhatsApp para avançar.');
       return;
     }
-
-    if (mustConfigurePasswordAccess && !hasPasswordProvider && !accessConfigured) {
-      const configuredNow = await configurePasswordAccess();
-      if (!configuredNow) {
-        return;
-      }
-    }
-
-    setErrorMessage(null);
-    setForm((current) => ({ ...current, site: normalizedSite }));
 
     try {
-      await persistCompanyStepAndCache(normalizedSite);
+      setIsSaving(true);
+      setErrorMessage(null);
+      setForm((current) => ({ ...current, site: normalizedSite }));
+      await persistOnboardingProgress({ site: normalizedSite });
+      setStep(2);
     } catch (error) {
-      console.error('Falha ao salvar dados da etapa 1:', error);
-      setErrorMessage('Não foi possível salvar seus dados agora. Tente novamente.');
-      return;
+      console.error('Falha ao salvar etapa de negócio:', error);
+      setErrorMessage('Não foi possível salvar seus dados agora.');
+    } finally {
+      setIsSaving(false);
     }
-
-    if (hubProfile.isSubscriptionActive) {
-      router.replace(nextPath);
-      return;
-    }
-
-    setStep(2);
   };
 
-  const persistOnboardingAndGoHub = useCallback(async ({
-    plan,
-    formData,
-    normalizedSite,
-    customerId,
-    subscriptionId,
-    subscriptionStatus,
-    trialEndsAt,
-  }: {
-    plan: PlanOffer;
-    formData: CompanyForm;
-    normalizedSite: string;
-    customerId?: string | null;
-    subscriptionId?: string | null;
-    subscriptionStatus?: string | null;
-    trialEndsAt?: number | null;
-  }) => {
-    if (!user) return;
-
-    const now = Date.now();
-    const authenticatedEmail = userEmail?.trim() || user.email?.trim() || null;
-    const payload = {
-      companyName: formData.companyName.trim(),
-      site: normalizedSite,
-      whatsapp: formData.whatsapp.trim(),
-      instagram: formData.instagram.trim(),
-      linkedin: formData.linkedin.trim(),
-      selectedPlan: plan.name,
-      selectedPlanSlug: plan.slug,
-      planName: plan.name,
-      planSlug: plan.slug,
-      planAmountCents: plan.amount,
-      planCurrency: currencyCode,
-      isPremium: true,
-      stripeCustomerId: customerId ?? null,
-      stripeSubscriptionId: subscriptionId ?? null,
-      subscriptionStatus: subscriptionStatus ?? 'active',
-      ...(trialEndsAt && Number.isFinite(trialEndsAt) ? { trialEndsAt } : {}),
-      onboardingCompletedAt: now,
-      updatedAt: now,
-      ...(authenticatedEmail ? { authEmail: authenticatedEmail, email: authenticatedEmail } : {}),
-      onboarding: {
-        companyName: formData.companyName.trim(),
-        site: normalizedSite,
-        whatsapp: formData.whatsapp.trim(),
-        instagram: formData.instagram.trim(),
-        linkedin: formData.linkedin.trim(),
-        planName: plan.name,
-        planSlug: plan.slug,
-        planAmountCents: plan.amount,
-        planCurrency: currencyCode,
-        subscriptionStatus: subscriptionStatus ?? 'active',
-        ...(trialEndsAt && Number.isFinite(trialEndsAt) ? { trialEndsAt } : {}),
-        completedAt: now,
-      },
-    };
-
-    const db = getFirebaseDb();
-    const userRef = doc(db, 'users', user.uid);
-    await setDoc(userRef, payload, { merge: true });
-
-    if (typeof window !== 'undefined') {
-      const companyKey = `neuroads_company_profile_${user.uid}`;
-      const contactKey = `neuroads_profile_contact_${user.uid}`;
-      window.localStorage.setItem(
-        companyKey,
-        JSON.stringify({
-          companyName: formData.companyName.trim(),
-          site: normalizedSite,
-          instagram: formData.instagram.trim(),
-          linkedin: formData.linkedin.trim(),
-          tiktok: '',
-          blog: '',
-        })
-      );
-      window.localStorage.setItem(contactKey, JSON.stringify({ whatsapp: formData.whatsapp.trim() }));
-      window.localStorage.removeItem(`${ONBOARDING_DRAFT_STORAGE_PREFIX}${user.uid}`);
-    }
-
-    router.replace(nextPath);
-  }, [
-    currencyCode,
-    nextPath,
-    router,
-    userEmail,
-    user,
-  ]);
-
-  const handleStartCheckout = async () => {
-    if (!user || !selectedPlan || isSaving) return;
-    if (!selectedPlan.priceId) {
-      setErrorMessage('Plano sem configuração de cobrança no Stripe.');
+  const handleNextFromObjectives = async () => {
+    if (selectedObjectives.length === 0) {
+      setErrorMessage('Selecione pelo menos um objetivo para continuar.');
       return;
     }
 
-    const normalizedSite = normalizeHttpsMaskedUrlInput(form.site);
-    const draftPayload = {
-      companyName: form.companyName.trim(),
-      site: normalizedSite,
-      whatsapp: form.whatsapp.trim(),
-      instagram: form.instagram.trim(),
-      linkedin: form.linkedin.trim(),
-      selectedPlanSlug: selectedPlan.slug,
-    };
+    try {
+      setIsSaving(true);
+      setErrorMessage(null);
+      await persistOnboardingProgress();
+      setStep(3);
+    } catch (error) {
+      console.error('Falha ao salvar etapa de objetivos:', error);
+      setErrorMessage('Não foi possível salvar os objetivos agora.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleNextFromSources = async () => {
+    try {
+      setIsSaving(true);
+      setErrorMessage(null);
+      await persistOnboardingProgress();
+      setStep(4);
+    } catch (error) {
+      console.error('Falha ao salvar etapa de fontes:', error);
+      setErrorMessage('Não foi possível salvar as fontes agora.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleStartTrial = async () => {
+    if (!user) return;
+    const selectedPlan = plans.find((plan) => plan.slug === selectedPlanSlug) ?? plans[0];
+    if (!selectedPlan) {
+      setErrorMessage('Nenhum plano disponível para iniciar o trial.');
+      return;
+    }
+
+    try {
+      setIsSaving(true);
+      setErrorMessage(null);
+      const now = Date.now();
+      const trialEndsAt = now + 14 * 24 * 60 * 60 * 1000;
+      const authEmail = userEmail?.trim() || user.email?.trim() || null;
+
+      await setDoc(
+        doc(getFirebaseDb(), 'users', user.uid),
+        {
+          selectedPlanSlug: selectedPlan.slug,
+          selectedPlan: selectedPlan.name,
+          planSlug: selectedPlan.slug,
+          planName: selectedPlan.name,
+          planAmountCents: selectedPlan.amount,
+          subscriptionStatus: 'trialing',
+          trialEndsAt,
+          updatedAt: now,
+          ...(authEmail ? { authEmail, email: authEmail } : {}),
+          onboarding: {
+            companyName: form.companyName.trim(),
+            segment: form.segment.trim(),
+            revenueRange: form.revenueRange.trim(),
+            site: normalizeHttpsMaskedUrlInput(form.site),
+            whatsapp: form.whatsapp.trim(),
+            objectives: selectedObjectives,
+            dataSources: selectedSources,
+            planSlug: selectedPlan.slug,
+            planName: selectedPlan.name,
+            planAmountCents: selectedPlan.amount,
+            subscriptionStatus: 'trialing',
+            trialEndsAt,
+            completedAt: now,
+            updatedAt: now,
+          },
+        },
+        { merge: true }
+      );
+
+      router.replace(nextPath);
+    } catch (error) {
+      console.error('Falha ao iniciar trial:', error);
+      setErrorMessage('Não foi possível iniciar o trial agora.');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleGoToStripeCheckout = async () => {
+    if (!user) return;
+    const selectedPlan = plans.find((plan) => plan.slug === selectedPlanSlug) ?? null;
+    if (!selectedPlan?.priceId) {
+      setErrorMessage('Plano sem configuração de cobrança.');
+      return;
+    }
 
     try {
       setIsSaving(true);
       setErrorMessage(null);
 
-      if (typeof window !== 'undefined') {
-        window.localStorage.setItem(`${ONBOARDING_DRAFT_STORAGE_PREFIX}${user.uid}`, JSON.stringify(draftPayload));
-      }
-
-      const returnUrl =
-        typeof window !== 'undefined' ? `${window.location.origin}/onboarding` : '/onboarding';
+      const returnUrl = typeof window !== 'undefined' ? `${window.location.origin}/onboarding?step=plan` : '/onboarding?step=plan';
 
       const res = await fetch('/api/stripe/checkout', {
         method: 'POST',
@@ -483,123 +363,24 @@ function OnboardingPageContent() {
 
       const data = await res.json();
       if (!res.ok || !data.url) {
-        throw new Error(data.error || 'Falha ao abrir checkout do Stripe.');
+        throw new Error(data.error || 'Falha ao abrir checkout.');
       }
 
       window.location.href = data.url as string;
     } catch (error) {
-      console.error('Falha ao salvar onboarding:', error);
-      setErrorMessage('Não foi possível iniciar o checkout agora. Tente novamente.');
+      console.error('Falha ao abrir checkout:', error);
+      setErrorMessage('Não foi possível abrir o checkout agora.');
     } finally {
       setIsSaving(false);
     }
   };
 
-  useEffect(() => {
-    const handleCheckoutReturn = async () => {
-      if (!user || successParam !== 'true' || !sessionIdParam || isProcessingReturn) return;
-
-      try {
-        setIsProcessingReturn(true);
-        setErrorMessage(null);
-        const verifyResult = await verifyStripeCheckoutSession(sessionIdParam);
-        if (!verifyResult.ok || !verifyResult.data) {
-          throw new Error(verifyResult.error || 'Falha ao validar checkout no Stripe.');
-        }
-        const verifyData = verifyResult.data;
-
-        const isCompletedSubscription =
-          verifyData.mode === 'subscription' &&
-          verifyData.status === 'complete' &&
-          verifyData.kind === 'plano';
-        const isCurrentUserSession = verifyData.clientReferenceId === user.uid;
-
-        if (!isCompletedSubscription || !isCurrentUserSession) {
-          throw new Error('A sessão Stripe retornou inválida para este usuário.');
-        }
-
-        const draftRaw =
-          typeof window !== 'undefined'
-            ? window.localStorage.getItem(`${ONBOARDING_DRAFT_STORAGE_PREFIX}${user.uid}`)
-            : null;
-        const draft = draftRaw ? (JSON.parse(draftRaw) as Partial<CompanyForm> & { selectedPlanSlug?: string }) : null;
-
-        const mergedForm: CompanyForm = {
-          companyName: draft?.companyName?.trim() || form.companyName.trim(),
-          site: draft?.site?.trim() || form.site,
-          whatsapp: formatWhatsappInput(draft?.whatsapp?.trim() || form.whatsapp.trim()),
-          instagram: draft?.instagram?.trim() || form.instagram.trim(),
-          linkedin: draft?.linkedin?.trim() || form.linkedin.trim(),
-        };
-
-        const planFromDraft = planOffers.find((item) => item.slug === draft?.selectedPlanSlug);
-        const effectivePlan = planFromDraft ?? selectedPlan ?? planOffers[0];
-        if (!effectivePlan) {
-          throw new Error('Plano não encontrado para finalizar o onboarding.');
-        }
-
-        setForm(mergedForm);
-        await persistOnboardingAndGoHub({
-          plan: effectivePlan,
-          formData: mergedForm,
-          normalizedSite: normalizeHttpsMaskedUrlInput(mergedForm.site),
-          customerId: verifyData.customerId,
-          subscriptionId: verifyData.subscriptionId,
-          subscriptionStatus: typeof verifyData.subscriptionStatus === 'string' ? verifyData.subscriptionStatus : null,
-          trialEndsAt:
-            typeof verifyData.trialEndsAt === 'number' && Number.isFinite(verifyData.trialEndsAt)
-              ? verifyData.trialEndsAt
-              : null,
-        });
-      } catch (error) {
-        console.error('Falha ao processar retorno do checkout no onboarding:', error);
-        setStep(2);
-        setErrorMessage('Pagamento não confirmado. Revise o plano e tente novamente.');
-      } finally {
-        setIsProcessingReturn(false);
-      }
-    };
-
-    void handleCheckoutReturn();
-  }, [
-    form.companyName,
-    form.instagram,
-    form.linkedin,
-    form.site,
-    form.whatsapp,
-    isProcessingReturn,
-    planOffers,
-    selectedPlan,
-    sessionIdParam,
-    successParam,
-    user,
-    persistOnboardingAndGoHub,
-  ]);
-
-  useEffect(() => {
-    if (canceledParam !== 'true') return;
-    setStep(2);
-    setErrorMessage('Checkout cancelado. Se desejar, selecione o plano e tente novamente.');
-  }, [canceledParam]);
-
   if (loading || (user && premiumSyncing)) {
     return (
-      <main className="relative min-h-screen bg-bg-main flex items-center justify-center px-5">
+      <main className="relative min-h-screen bg-bg-main">
         <AuthPagesBackdrop />
-        <div className="relative z-10 w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-      </main>
-    );
-  }
-
-  if (isProcessingReturn) {
-    return (
-      <main className="relative min-h-screen bg-bg-main flex items-center justify-center px-5">
-        <AuthPagesBackdrop />
-        <div className="relative z-10 max-w-md rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-6 py-5 text-center">
-          <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#C2410C]">Validando pagamento</p>
-          <p className="mt-2 text-sm text-[#9A3412]">
-            Estamos confirmando sua contratação no Stripe para liberar seu Hub.
-          </p>
+        <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1160px] items-center justify-center px-5 py-14">
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         </div>
       </main>
     );
@@ -607,333 +388,159 @@ function OnboardingPageContent() {
 
   if (!user) {
     return (
-      <main className="relative min-h-screen bg-bg-main flex items-center justify-center px-5">
+      <main className="relative min-h-screen bg-bg-main">
         <AuthPagesBackdrop />
-        <div className="relative z-10 w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </main>
     );
   }
 
   return (
-    <main className={`relative min-h-screen bg-bg-main text-text-main ${step === 2 ? 'h-dvh overflow-hidden' : ''}`}>
+    <main className="relative min-h-screen bg-bg-main text-text-main">
       <AuthPagesBackdrop />
-      <div
-        className={`relative z-10 mx-auto w-full max-w-[1160px] px-5 ${
-          step === 2 ? 'flex h-full items-center py-3 sm:py-4' : 'py-10 sm:py-14'
-        }`}
-      >
-        <section
-          className={`mx-auto w-full rounded-[30px] border border-border bg-white shadow-[0_24px_54px_rgba(15,23,42,0.08)] ${
-            step === 2 ? 'max-w-[900px] p-4 sm:p-5' : 'max-w-[860px] p-6 sm:p-9'
-          }`}
-        >
+      <div className="relative z-10 mx-auto w-full max-w-[1160px] px-5 py-10 sm:py-14">
+        <section className="mx-auto w-full max-w-[920px] rounded-[30px] border border-border bg-white p-6 shadow-[0_24px_54px_rgba(15,23,42,0.08)] sm:p-9">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">Onboarding do Hub</p>
-              <h1 className={`mt-2 font-extrabold leading-tight text-text-main ${step === 2 ? 'text-[24px] sm:text-[28px]' : 'text-[30px]'}`}>
-                Configure seu acesso em 2 etapas
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">NeuroAds · Ativação</p>
+              <h1 className="mt-2 text-[30px] font-extrabold leading-tight text-text-main">
+                Onboarding estratégico em 3 passos + plano
               </h1>
-              <p className={`mt-2 text-text-muted ${step === 2 ? 'text-[13px]' : 'text-sm'}`}>
-                Complete os dados e selecione o plano ideal:
+              <p className="mt-2 text-sm text-text-muted">
+                Primeiro alinhamos contexto do negócio. Depois calibramos objetivos e fontes para ativar seu Hub com inteligência.
               </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-secondary px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-text-dim">
-              <CheckCircle2 size={14} className={step === 2 ? 'text-[#0A9D57]' : 'text-text-dim'} />
-              Etapa {step} de 2
+              <CheckCircle2 size={14} className="text-[#0A9D57]" /> Etapa {step} de 4
             </div>
           </div>
 
+          {entryState ? (
+            <div className="mt-5 rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-sm text-[#9A3412]">
+              {entryState === 'trial_expired' && 'Seu trial expirou, mas seus dados estão salvos. Reative o plano para voltar ao Hub.'}
+              {entryState === 'canceled' && 'Seu plano foi cancelado. Reative para retomar sua escala previsível.'}
+              {entryState === 'past_due' && 'Seu pagamento está pendente. Atualize seu cartão para manter operação ativa.'}
+              {entryState === 'suspended' && 'Conta suspensa no momento. Fale com o especialista para regularizar.'}
+            </div>
+          ) : null}
+
           {step === 1 ? (
-            <div className="mt-8 space-y-5">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="sm:col-span-2">
-                  <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Empresa *</label>
-                  <div className="relative">
-                    <Building2 size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-                    <input
-                      value={form.companyName}
-                      onChange={(event) => setForm((prev) => ({ ...prev, companyName: event.target.value }))}
-                      placeholder="Nome da empresa"
-                      required
-                      className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Site *</label>
-                  <div className="relative">
-                    <Globe size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-                    <input
-                      value={form.site}
-                      onChange={(event) =>
-                        setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(event.target.value) }))
-                      }
-                      onBlur={(event) =>
-                        setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(event.target.value) }))
-                      }
-                      placeholder="https://empresa.com.br"
-                      required
-                      className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">WhatsApp *</label>
-                  <div className="relative">
-                    <Phone size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-                    <input
-                      value={form.whatsapp}
-                      onChange={(event) =>
-                        setForm((prev) => ({ ...prev, whatsapp: formatWhatsappInput(event.target.value) }))
-                      }
-                      inputMode="numeric"
-                      autoComplete="tel"
-                      maxLength={15}
-                      placeholder="(00) 00000-0000"
-                      required
-                      className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Instagram</label>
-                  <input
-                    value={form.instagram}
-                    onChange={(event) => setForm((prev) => ({ ...prev, instagram: event.target.value }))}
-                    placeholder="@empresa"
-                    className="w-full rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
-                  />
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">LinkedIn</label>
-                  <input
-                    value={form.linkedin}
-                    onChange={(event) => setForm((prev) => ({ ...prev, linkedin: event.target.value }))}
-                    placeholder="linkedin.com/company/empresa"
-                    className="w-full rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
-                  />
+            <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="sm:col-span-2">
+                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Empresa *</label>
+                <div className="relative">
+                  <Building2 size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
+                  <input value={form.companyName} onChange={(event) => setForm((prev) => ({ ...prev, companyName: event.target.value }))} placeholder="Nome da empresa" className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary" />
                 </div>
               </div>
-
-              <div className="rounded-2xl border border-[#DCE8FF] bg-[#F5F9FF] p-4">
-                <p className="text-xs font-black uppercase tracking-[0.1em] text-[#1D4ED8]">
-                  Acesso ao Hub por Email e Senha
-                </p>
-                <p className="mt-1 text-sm text-[#334155]">
-                  Você continua com login Google e pode acessar também com email e senha.
-                </p>
-                {mustConfigurePasswordAccess ? (
-                  <p className="mt-2 text-xs font-bold uppercase tracking-[0.08em] text-[#C2410C]">
-                    Configure agora para concluir o onboarding.
-                  </p>
-                ) : null}
-
-                {hasPasswordProvider || accessConfigured ? (
-                  <p className="mt-3 rounded-xl border border-[#B7E4C9] bg-[#ECFDF3] px-3 py-2 text-sm font-semibold text-[#0A6A3E]">
-                    Email e senha já vinculados com sucesso.
-                  </p>
-                ) : (
-                  <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <div className="sm:col-span-2">
-                      <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Email de acesso</label>
-                      <div className="relative">
-                        <Mail size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-                        <input
-                          value={accessEmail}
-                          onChange={(event) => setAccessEmail(event.target.value)}
-                          autoComplete="email"
-                          placeholder="seu@email.com"
-                          className="w-full rounded-xl border border-border bg-white px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Senha</label>
-                      <div className="relative">
-                        <Lock size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-                        <input
-                          type="password"
-                          value={accessPassword}
-                          onChange={(event) => setAccessPassword(event.target.value)}
-                          autoComplete="new-password"
-                          placeholder="No mínimo 8 caracteres"
-                          className="w-full rounded-xl border border-border bg-white px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Confirmar senha</label>
-                      <div className="relative">
-                        <Lock size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-                        <input
-                          type="password"
-                          value={accessPasswordConfirm}
-                          onChange={(event) => setAccessPasswordConfirm(event.target.value)}
-                          autoComplete="new-password"
-                          placeholder="Repita a senha"
-                          className="w-full rounded-xl border border-border bg-white px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
-                        />
-                      </div>
-                    </div>
-                    <div className="sm:col-span-2">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          void configurePasswordAccess();
-                        }}
-                        disabled={isConfiguringAccess}
-                        className="inline-flex items-center gap-2 rounded-xl border border-[#1D4ED8] bg-white px-4 py-2 text-xs font-bold uppercase tracking-widest text-[#1D4ED8] disabled:opacity-60"
-                      >
-                        {isConfiguringAccess ? 'Vinculando...' : 'Vincular Email e Senha'}
-                        <ArrowRight size={14} />
-                      </button>
-                    </div>
-                  </div>
-                )}
+              <div>
+                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Segmento *</label>
+                <input value={form.segment} onChange={(event) => setForm((prev) => ({ ...prev, segment: event.target.value }))} placeholder="Ex: Serviços profissionais" className="w-full rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary" />
               </div>
-
-              {errorMessage ? (
-                <p className="rounded-xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-sm text-[#9A3412]">
-                  {errorMessage}
-                </p>
-              ) : null}
-
-              {accessErrorMessage ? (
-                <p className="rounded-xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-sm text-[#9A3412]">
-                  {accessErrorMessage}
-                </p>
-              ) : null}
-
-              <div className="flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    router.push('/');
-                  }}
-                  className="rounded-xl border border-border px-5 py-3 text-xs font-bold uppercase tracking-widest text-text-muted hover:bg-bg-secondary"
-                >
-                  Voltar
-                </button>
-                <button
-                  type="button"
-                  onClick={handleContinueToPlans}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(8,183,96,0.25)]"
-                >
-                  Continuar
-                  <ArrowRight size={14} />
-                </button>
+              <div>
+                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Faturamento mensal *</label>
+                <select value={form.revenueRange} onChange={(event) => setForm((prev) => ({ ...prev, revenueRange: event.target.value }))} className="w-full rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary">
+                  <option value="">Selecione a faixa</option>
+                  <option value="R$ 30k - R$ 60k">R$ 30k - R$ 60k</option>
+                  <option value="R$ 60k - R$ 120k">R$ 60k - R$ 120k</option>
+                  <option value="R$ 120k - R$ 200k">R$ 120k - R$ 200k</option>
+                  <option value="Acima de R$ 200k">Acima de R$ 200k</option>
+                </select>
+              </div>
+              <div>
+                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Site *</label>
+                <div className="relative">
+                  <Globe size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
+                  <input value={form.site} onChange={(event) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(event.target.value) }))} onBlur={(event) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(event.target.value) }))} placeholder="https://empresa.com.br" className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary" />
+                </div>
+              </div>
+              <div>
+                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">WhatsApp *</label>
+                <div className="relative">
+                  <Phone size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
+                  <input value={form.whatsapp} onChange={(event) => setForm((prev) => ({ ...prev, whatsapp: formatWhatsappInput(event.target.value) }))} maxLength={15} placeholder="(00) 00000-0000" className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary" />
+                </div>
               </div>
             </div>
-          ) : (
-            <div className="mt-4 space-y-3 sm:space-y-4">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {planOffers.map((plan) => {
-                  const isSelected = plan.slug === selectedPlanSlug;
-                  const visual = PLAN_VISUAL_BY_SLUG[plan.slug] ?? PLAN_VISUAL_BY_SLUG['growth-10'];
-                  const agentsLimit = Math.max(1, Number(plan.limits?.agents ?? 0));
-                  const planBenefits = [
-                    `Ative até ${agentsLimit} Agentes Especialistas`,
-                  ];
+          ) : null}
+
+          {step === 2 ? (
+            <div className="mt-7">
+              <p className="text-sm text-text-muted">Selecione as dores prioritárias para calibrar seus agentes e relatórios no formato certo.</p>
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {OBJECTIVES.map((objective) => {
+                  const selected = selectedObjectives.includes(objective);
                   return (
-                    <article
-                      key={plan.slug}
-                      role="button"
-                      tabIndex={0}
-                      onClick={() => setSelectedPlanSlug(plan.slug)}
-                      onKeyDown={(event) => {
-                        if (event.key === 'Enter' || event.key === ' ') {
-                          event.preventDefault();
-                          setSelectedPlanSlug(plan.slug);
-                        }
-                      }}
-                      className={`group relative flex w-full cursor-pointer flex-col overflow-visible rounded-[20px] border px-3.5 pb-[18px] pt-[18px] text-left shadow-[0_14px_34px_rgba(13,23,45,0.12)] transition-all ${
-                        isSelected
-                          ? 'border-[#ff7a1b] bg-[linear-gradient(165deg,rgba(255,255,255,0.97),rgba(255,244,236,0.95))] shadow-[0_18px_42px_rgba(255,122,27,0.28)]'
-                          : `border-white/60 ${visual.cardClassName} hover:border-white/75 hover:shadow-[0_22px_50px_rgba(15,33,70,0.22)]`
-                      }`}
-                    >
-                      <div className="pointer-events-none absolute inset-0 rounded-[20px] bg-[radial-gradient(circle_at_35%_0%,rgba(137,160,255,0.12),rgba(255,255,255,0)_60%)]" />
-                      <div className="flex items-start gap-4">
-                        <div className={`pointer-events-none relative shrink-0 ${visual.imageContainerClass}`}>
-                          <Image
-                            src={visual.image}
-                            alt={`Ícone do plano ${plan.name}`}
-                            fill
-                            sizes="80px"
-                            className={`object-contain drop-shadow-[0_10px_20px_rgba(10,20,40,0.16)] ${visual.imageClassName}`}
-                            priority={plan.slug === 'starter-5' || plan.slug === 'growth-10'}
-                          />
-                        </div>
-                        <div className="min-w-0">
-                          <p className={`text-[22px] font-black leading-[1.05] ${visual.titleClassName}`}>{plan.name}</p>
-                          <p className="mt-[5px] min-h-[44px] text-[12.5px] leading-[1.3] text-[#3f4a63]">{visual.description}</p>
-                        </div>
-                      </div>
-
-                      <div className="mt-2.5 border-b border-[#e7edf7] pb-2.5">
-                        <div className="flex items-end justify-between gap-2">
-                          <div className="flex items-end gap-1.5">
-                            <span className="text-[28px] font-black leading-none text-[#0a0f26]">
-                              {formatCurrencyFromCents(plan.amount, currencyCode)}
-                            </span>
-                            <span className={`mb-1 text-[18px] font-black leading-none ${visual.suffixClassName}`}>/mês</span>
-                          </div>
-                          {visual.badge ? (
-                            <span className="whitespace-nowrap rounded-full bg-[#ff5f0f] px-3 py-1 text-[10px] font-extrabold uppercase tracking-[0.04em] text-white">
-                              {visual.badge}
-                            </span>
-                          ) : null}
-                        </div>
-                        <p className="mt-[5px] text-[12px] font-semibold text-[#6f7b95]">Cobrança mensal</p>
-                      </div>
-
-                      <ul className="mt-2.5 flex-1 space-y-2">
-                        {planBenefits.map((feature) => (
-                          <li key={`${plan.slug}-${feature}`} className="flex items-start gap-2.5 text-[12px] leading-[1.24] text-[#25324d]">
-                            <span className={`mt-0.5 inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-full ${visual.bulletClassName}`}>
-                              <Check size={11} strokeWidth={3.1} />
-                            </span>
-                            <span>{feature}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </article>
+                    <button key={objective} type="button" onClick={() => setSelectedObjectives((current) => current.includes(objective) ? current.filter((item) => item !== objective) : [...current, objective])} className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${selected ? 'border-[#08B760] bg-[#ECFDF3] text-[#0A7A42]' : 'border-border bg-bg-secondary text-text-main hover:border-primary'}`}>
+                      {objective}
+                    </button>
                   );
                 })}
               </div>
+            </div>
+          ) : null}
 
-              {errorMessage ? (
-                <p className="rounded-xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-sm text-[#9A3412]">
-                  {errorMessage}
-                </p>
-              ) : null}
+          {step === 3 ? (
+            <div className="mt-7">
+              <p className="text-sm text-text-muted">Conecte as fontes que já usa. Se quiser, você pode pular esta etapa e configurar no Hub depois.</p>
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                {DATA_SOURCES.map((source) => {
+                  const selected = selectedSources.includes(source.key);
+                  return (
+                    <button key={source.key} type="button" onClick={() => setSelectedSources((current) => current.includes(source.key) ? current.filter((item) => item !== source.key) : [...current, source.key])} className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${selected ? 'border-[#08B760] bg-[#ECFDF3] text-[#0A7A42]' : 'border-border bg-bg-secondary text-text-main hover:border-primary'}`}>
+                      {source.label}
+                    </button>
+                  );
+                })}
+              </div>
+              <p className="mt-3 text-xs text-text-dim">Seus dados ficam preservados mesmo em reentrada (trial expirado, cancelado ou pendência).</p>
+            </div>
+          ) : null}
 
-              <div className="flex flex-col-reverse items-stretch justify-between gap-2 sm:flex-row sm:items-center">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setErrorMessage(null);
-                    setStep(1);
-                  }}
-                  className="rounded-xl border border-border px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest text-text-muted hover:bg-bg-secondary"
-                >
-                  Voltar
-                </button>
-                <button
-                  type="button"
-                  onClick={handleStartCheckout}
-                  disabled={isSaving || !selectedPlan}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-2.5 text-[11px] font-bold uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(8,183,96,0.25)] disabled:opacity-60"
-                >
-                  {isSaving ? 'Redirecionando...' : 'Começar Agora'}
-                </button>
+          {step === 4 ? (
+            <div className="mt-7">
+              <p className="text-sm text-text-muted">Escolha seu plano de ativação. Se preferir, comece agora com trial grátis de 14 dias sem cartão.</p>
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {plans.map((plan) => {
+                  const selected = selectedPlanSlug === plan.slug;
+                  return (
+                    <button key={plan.slug} type="button" onClick={() => setSelectedPlanSlug(plan.slug)} className={`rounded-xl border px-4 py-4 text-left transition ${selected ? 'border-[#08B760] bg-[#ECFDF3]' : 'border-border bg-bg-secondary hover:border-primary'}`}>
+                      <p className="text-lg font-black text-text-main">{plan.name}</p>
+                      <p className="mt-1 text-sm font-semibold text-text-muted">{formatCurrencyFromCents(plan.amount)}/mês</p>
+                    </button>
+                  );
+                })}
               </div>
             </div>
-          )}
+          ) : null}
+
+          {errorMessage ? <p className="mt-5 rounded-xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-sm text-[#9A3412]">{errorMessage}</p> : null}
+
+          <div className="mt-6 flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={() => {
+                if (step === 1) {
+                  router.push('/login');
+                  return;
+                }
+                setErrorMessage(null);
+                setStep((current) => (current === 4 ? 3 : current === 3 ? 2 : 1));
+              }}
+              className="rounded-xl border border-border px-5 py-3 text-xs font-bold uppercase tracking-widest text-text-muted hover:bg-bg-secondary"
+            >
+              Voltar
+            </button>
+
+            {step === 1 ? <button type="button" onClick={handleNextFromBusiness} disabled={isSaving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60">{isSaving ? 'Salvando...' : 'Continuar'}<ArrowRight size={14} /></button> : null}
+            {step === 2 ? <button type="button" onClick={handleNextFromObjectives} disabled={isSaving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60">{isSaving ? 'Salvando...' : 'Continuar'}<ArrowRight size={14} /></button> : null}
+            {step === 3 ? <button type="button" onClick={handleNextFromSources} disabled={isSaving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60">{isSaving ? 'Salvando...' : 'Ir para plano'}<ArrowRight size={14} /></button> : null}
+            {step === 4 ? (
+              <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+                <button type="button" onClick={handleStartTrial} disabled={isSaving} className="rounded-xl border border-[#0A9D57] bg-white px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#0A9D57] disabled:opacity-60">{isSaving ? 'Processando...' : 'Iniciar trial grátis (14 dias)'}</button>
+                <button type="button" onClick={handleGoToStripeCheckout} disabled={isSaving} className="rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60">{isSaving ? 'Abrindo checkout...' : 'Ativar agora com cartão'}</button>
+              </div>
+            ) : null}
+          </div>
         </section>
       </div>
     </main>

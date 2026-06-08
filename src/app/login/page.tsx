@@ -3,125 +3,163 @@
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { sendPasswordResetEmail } from 'firebase/auth';
 import { useAuth } from '../../context/AuthContext';
 import { GoogleLoginButton } from '../../components/auth/GoogleLoginButton';
 import { AuthPagesBackdrop } from '../../components/auth/AuthPagesBackdrop';
-import {
-  getHubOnboardingRedirect,
-  hasActiveHubSubscription,
-  hasHubRegistration,
-  normalizeHubNextPath,
-} from '../../lib/hub-access';
+import { getFirebaseAuth } from '../../lib/firebase';
+import { normalizeHubNextPath } from '../../lib/hub-access';
+
+type AuthMode = 'login' | 'register';
+
+function resolvePlanState(profile: Record<string, unknown> | null): string {
+  if (!profile) return 'none';
+
+  const onboarding = profile.onboarding && typeof profile.onboarding === 'object'
+    ? (profile.onboarding as Record<string, unknown>)
+    : null;
+
+  const read = (value: unknown) => (typeof value === 'string' ? value.trim().toLowerCase() : '');
+
+  return (
+    read(profile.subscriptionStatus) ||
+    read(profile.stripeSubscriptionStatus) ||
+    read(profile.status) ||
+    read(onboarding?.subscriptionStatus) ||
+    read(onboarding?.stripeSubscriptionStatus) ||
+    read(onboarding?.status) ||
+    'none'
+  );
+}
+
+function hasProfileCompleted(profile: Record<string, unknown> | null): boolean {
+  if (!profile) return false;
+  const onboarding = profile.onboarding && typeof profile.onboarding === 'object'
+    ? (profile.onboarding as Record<string, unknown>)
+    : null;
+
+  const company = String(profile.companyName ?? onboarding?.companyName ?? '').trim();
+  const segment = String(profile.segment ?? onboarding?.segment ?? '').trim();
+  const revenue = String(profile.revenueRange ?? onboarding?.revenueRange ?? '').trim();
+  const objectives = onboarding?.objectives;
+
+  return Boolean(company && segment && revenue && Array.isArray(objectives) && objectives.length > 0);
+}
 
 function LoginPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, profile, loading, premiumSyncing, loginWithGoogle, loginWithEmailPassword, registerWithEmailPassword } = useAuth();
+  const {
+    user,
+    profile,
+    loading,
+    premiumSyncing,
+    loginWithGoogle,
+    loginWithEmailPassword,
+    registerWithEmailPassword,
+  } = useAuth();
+
+  const [mode, setMode] = useState<AuthMode>('login');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isEmailSubmitting, setIsEmailSubmitting] = useState(false);
-  const [emailAuthMode, setEmailAuthMode] = useState<'login' | 'register'>('login');
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [nameInput, setNameInput] = useState('');
   const [emailInput, setEmailInput] = useState('');
+  const [whatsappInput, setWhatsappInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [passwordConfirmInput, setPasswordConfirmInput] = useState('');
+  const [lgpdAccepted, setLgpdAccepted] = useState(false);
   const [authErrorMessage, setAuthErrorMessage] = useState<string | null>(null);
-  const [isCheckingAccess, setIsCheckingAccess] = useState(false);
+  const [noticeMessage, setNoticeMessage] = useState<string | null>(null);
 
   const nextPath = useMemo(() => normalizeHubNextPath(searchParams.get('next'), '/hub'), [searchParams]);
 
   useEffect(() => {
-    if (loading || !user) return;
-    if (premiumSyncing && !profile) return;
-    if (!profile) return;
+    if (loading || !user || !profile) return;
 
-    const resolveAccess = async () => {
-      setIsCheckingAccess(true);
+    const profileRecord = profile as Record<string, unknown>;
+    const onboardingDone = hasProfileCompleted(profileRecord);
+    const emailVerified = Boolean(user.emailVerified);
+    const planState = resolvePlanState(profileRecord);
 
-      if (!hasHubRegistration(profile)) {
-        router.replace(getHubOnboardingRedirect(nextPath));
-        setIsCheckingAccess(false);
-        return;
-      }
-
-      let subscriptionActive = hasActiveHubSubscription(profile);
-      let syncInfraFailure = false;
-
-      if (!subscriptionActive) {
-        try {
-          const token = await user.getIdToken();
-          const syncRes = await fetch('/api/stripe/sync-premium', {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const syncData = (await syncRes.json()) as { hasAccess?: boolean };
-          subscriptionActive = Boolean(syncRes.ok && syncData.hasAccess);
-          if (!syncRes.ok && syncRes.status >= 500) {
-            syncInfraFailure = true;
-          }
-        } catch {
-          subscriptionActive = false;
-          syncInfraFailure = true;
-        }
-      }
-
-      if (!subscriptionActive) {
-        if (syncInfraFailure) {
-          setAuthErrorMessage(
-            'Não foi possível validar sua assinatura agora. Tente novamente em instantes.'
-          );
-        } else {
-          router.replace(getHubOnboardingRedirect(nextPath));
-        }
-        setIsCheckingAccess(false);
-        return;
-      }
-
-      if (hasHubRegistration(profile)) {
-        router.replace(nextPath);
-      } else {
-        router.replace(getHubOnboardingRedirect(nextPath));
-      }
-
-      setIsCheckingAccess(false);
-    };
-
-    void resolveAccess();
-  }, [loading, nextPath, premiumSyncing, profile, router, user]);
-
-  useEffect(() => {
-    if (hasActiveHubSubscription(profile)) {
-      setAuthErrorMessage(null);
+    if (!emailVerified) {
+      setNoticeMessage('Seu e-mail ainda não foi verificado. Confira sua caixa de entrada para concluir o acesso.');
+      return;
     }
-  }, [profile]);
+
+    if (!onboardingDone) {
+      router.replace(`/onboarding?next=${encodeURIComponent(nextPath)}`);
+      return;
+    }
+
+    if (planState === 'trialing' || planState === 'active') {
+      router.replace(nextPath);
+      return;
+    }
+
+    if (planState === 'trial_expired') {
+      router.replace('/onboarding?step=plan&state=trial_expired');
+      return;
+    }
+
+    if (planState === 'canceled' || planState === 'cancelled') {
+      router.replace('/onboarding?step=plan&state=canceled');
+      return;
+    }
+
+    if (planState === 'past_due') {
+      router.replace('/onboarding?step=plan&state=past_due');
+      return;
+    }
+
+    if (planState === 'suspended') {
+      router.replace('/onboarding?step=plan&state=suspended');
+      return;
+    }
+
+    router.replace('/onboarding?step=plan');
+  }, [loading, nextPath, profile, router, user]);
 
   const handleGoogleLogin = async () => {
-    if (isSubmitting || isCheckingAccess) return;
+    if (isSubmitting) return;
+
     try {
       setIsSubmitting(true);
       setAuthErrorMessage(null);
+      setNoticeMessage(null);
       await loginWithGoogle();
     } catch (error) {
-      console.error('Falha ao autenticar:', error);
-      setAuthErrorMessage('Não foi possível concluir seu login agora. Tente novamente.');
+      console.error('Falha ao autenticar com Google:', error);
+      setAuthErrorMessage('Não foi possível concluir o login com Google agora. Tente novamente.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleEmailAuth = async () => {
-    if (isEmailSubmitting || isCheckingAccess) return;
-    if (!emailInput.trim() || !passwordInput) {
-      setAuthErrorMessage('Informe email e senha para continuar.');
+    if (isSubmitting) return;
+
+    if (!emailInput.trim() || !passwordInput.trim()) {
+      setAuthErrorMessage('Preencha e-mail e senha para continuar.');
       return;
     }
 
-    if (emailAuthMode === 'register') {
-      if (passwordInput.length < 8) {
-        setAuthErrorMessage('Defina uma senha com no mínimo 8 caracteres.');
+    if (mode === 'register') {
+      if (!nameInput.trim()) {
+        setAuthErrorMessage('Informe seu nome para criar a conta.');
         return;
       }
-
+      if (!whatsappInput.trim()) {
+        setAuthErrorMessage('Informe seu WhatsApp para ativar o suporte do onboarding.');
+        return;
+      }
+      if (!lgpdAccepted) {
+        setAuthErrorMessage('Você precisa aceitar os termos de uso e LGPD para continuar.');
+        return;
+      }
+      if (passwordInput.length < 8) {
+        setAuthErrorMessage('Defina uma senha com pelo menos 8 caracteres.');
+        return;
+      }
       if (passwordInput !== passwordConfirmInput) {
         setAuthErrorMessage('A confirmação da senha não confere.');
         return;
@@ -129,38 +167,53 @@ function LoginPageContent() {
     }
 
     try {
-      setIsEmailSubmitting(true);
+      setIsSubmitting(true);
       setAuthErrorMessage(null);
-      if (emailAuthMode === 'register') {
+      setNoticeMessage(null);
+
+      if (mode === 'register') {
         await registerWithEmailPassword(emailInput.trim(), passwordInput);
       } else {
         await loginWithEmailPassword(emailInput.trim(), passwordInput);
       }
     } catch (error) {
-      console.error('Falha na autenticação por email/senha:', error);
+      console.error('Falha na autenticação com e-mail:', error);
       setAuthErrorMessage(
-        emailAuthMode === 'register'
-          ? 'Não foi possível criar sua conta agora. Se já tiver cadastro, entre com email e senha.'
-          : 'Email ou senha inválidos. Se preferir, entre com Google e configure sua senha no onboarding.'
+        mode === 'register'
+          ? 'Não foi possível criar sua conta agora. Tente novamente em instantes.'
+          : 'E-mail ou senha inválidos. Revise os dados e tente novamente.'
       );
     } finally {
-      setIsEmailSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
-  if (isCheckingAccess) {
+  const handleResetPassword = async () => {
+    if (isResettingPassword || !emailInput.trim()) {
+      setAuthErrorMessage('Informe seu e-mail para recuperar a senha.');
+      return;
+    }
+
+    try {
+      setIsResettingPassword(true);
+      setAuthErrorMessage(null);
+      setNoticeMessage(null);
+      await sendPasswordResetEmail(getFirebaseAuth(), emailInput.trim());
+      setNoticeMessage('Enviamos o link de redefinição para seu e-mail.');
+    } catch (error) {
+      console.error('Falha ao enviar recuperação de senha:', error);
+      setAuthErrorMessage('Não foi possível enviar o link de recuperação agora.');
+    } finally {
+      setIsResettingPassword(false);
+    }
+  };
+
+  if (loading || premiumSyncing) {
     return (
-      <main className="relative min-h-screen bg-bg-main text-text-main">
+      <main className="relative min-h-screen bg-bg-main">
         <AuthPagesBackdrop />
         <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1180px] items-center justify-center px-5 py-14">
-          <section className="w-full max-w-[560px] rounded-[28px] border border-border bg-white p-7 shadow-[0_24px_54px_rgba(15,23,42,0.08)] sm:p-10">
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">Hub Estratégico</p>
-            <h1 className="mt-2 text-[30px] font-extrabold leading-tight text-text-main">Validando sua assinatura</h1>
-            <p className="mt-3 text-[15px] leading-relaxed text-text-muted">
-              Estamos confirmando seu plano (ativo ou em período gratuito inicial) para liberar o login no Hub.
-            </p>
-            <div className="mt-6 w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          </section>
+          <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
         </div>
       </main>
     );
@@ -170,22 +223,16 @@ function LoginPageContent() {
     <main className="relative min-h-screen bg-bg-main text-text-main">
       <AuthPagesBackdrop />
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1180px] items-center justify-center px-5 py-14">
-        <section className="w-full max-w-[560px] rounded-[28px] border border-border bg-white p-7 shadow-[0_24px_54px_rgba(15,23,42,0.08)] sm:p-10">
-          <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">Hub Estratégico</p>
+        <section className="w-full max-w-[580px] rounded-[28px] border border-border bg-white p-7 shadow-[0_24px_54px_rgba(15,23,42,0.08)] sm:p-10">
+          <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">NeuroAds · Acesso</p>
           <h1 className="mt-2 text-[34px] font-extrabold leading-tight text-text-main">
-            Acesse sua operação com dados reais
+            {mode === 'login' ? 'Entrar no Hub Estratégico' : 'Criar conta no ecossistema NeuroAds'}
           </h1>
           <p className="mt-3 text-[15px] leading-relaxed text-text-muted">
-            Entre com sua conta Google para acessar o seu Hub Estratégico e acompanhar performance, agentes e decisões do seu ecossistema.
+            {mode === 'login'
+              ? 'Acompanhe sua operação com dados reais e clareza de impacto no caixa.'
+              : 'Comece sem fricção: crie sua conta e siga para ativação com trial de 14 dias.'}
           </p>
-          {premiumSyncing ? (
-            <div className="mt-5 rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3">
-              <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#C2410C]">Configurando seu acesso</p>
-              <p className="mt-1 text-[13px] text-[#9A3412]">
-                Estamos preparando seu ambiente no Hub Estratégico. Isso pode levar alguns segundos.
-              </p>
-            </div>
-          ) : null}
 
           {authErrorMessage ? (
             <div className="mt-5 rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3">
@@ -193,18 +240,66 @@ function LoginPageContent() {
             </div>
           ) : null}
 
+          {noticeMessage ? (
+            <div className="mt-5 rounded-2xl border border-[#BFEAD2] bg-[#ECFDF3] px-4 py-3">
+              <p className="text-[13px] font-semibold text-[#0A7A42]">{noticeMessage}</p>
+            </div>
+          ) : null}
+
           <GoogleLoginButton
             onClick={handleGoogleLogin}
-            disabled={isSubmitting || isEmailSubmitting}
-            label={isSubmitting ? 'Autenticando...' : 'Entrar com o Google'}
-            className="mt-7 w-full h-[46px]"
+            disabled={isSubmitting || isResettingPassword}
+            label={isSubmitting ? 'Processando...' : mode === 'login' ? 'Entrar com Google' : 'Criar conta com Google'}
+            className="mt-7 h-[46px] w-full"
           />
 
-          <div className="mt-5 rounded-2xl border border-border bg-bg-secondary p-4">
-            <p className="text-[11px] font-extrabold uppercase tracking-[0.1em] text-text-dim">
-              {emailAuthMode === 'register' ? 'Cadastro com Email Profissional' : 'Entrar com Email e Senha'}
-            </p>
+          <div className="my-5 flex items-center gap-3">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-[11px] font-bold uppercase tracking-[0.08em] text-text-dim">ou com e-mail</span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+
+          <div className="rounded-2xl border border-border bg-bg-secondary p-4">
+            <div className="grid grid-cols-2 gap-2 rounded-xl bg-white p-1">
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('login');
+                  setAuthErrorMessage(null);
+                  setNoticeMessage(null);
+                }}
+                className={`rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-widest transition ${
+                  mode === 'login' ? 'bg-bg-main text-text-main' : 'text-text-muted hover:text-text-main'
+                }`}
+              >
+                Entrar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('register');
+                  setAuthErrorMessage(null);
+                  setNoticeMessage(null);
+                }}
+                className={`rounded-lg px-3 py-2 text-xs font-bold uppercase tracking-widest transition ${
+                  mode === 'register' ? 'bg-bg-main text-text-main' : 'text-text-muted hover:text-text-main'
+                }`}
+              >
+                Criar Conta
+              </button>
+            </div>
+
             <div className="mt-3 space-y-3">
+              {mode === 'register' ? (
+                <input
+                  type="text"
+                  value={nameInput}
+                  onChange={(event) => setNameInput(event.target.value)}
+                  placeholder="Seu nome"
+                  className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
+                />
+              ) : null}
+
               <input
                 type="email"
                 value={emailInput}
@@ -213,50 +308,72 @@ function LoginPageContent() {
                 placeholder="seu@email.com"
                 className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
               />
+
+              {mode === 'register' ? (
+                <input
+                  type="tel"
+                  value={whatsappInput}
+                  onChange={(event) => setWhatsappInput(event.target.value)}
+                  autoComplete="tel"
+                  placeholder="WhatsApp (DDD + número)"
+                  className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
+                />
+              ) : null}
+
               <input
                 type="password"
                 value={passwordInput}
                 onChange={(event) => setPasswordInput(event.target.value)}
-                autoComplete={emailAuthMode === 'register' ? 'new-password' : 'current-password'}
-                placeholder={emailAuthMode === 'register' ? 'Crie uma senha (mín. 8 caracteres)' : 'Sua senha'}
+                autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
+                placeholder={mode === 'register' ? 'Crie uma senha (mín. 8)' : 'Sua senha'}
                 className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
               />
-              {emailAuthMode === 'register' ? (
-                <input
-                  type="password"
-                  value={passwordConfirmInput}
-                  onChange={(event) => setPasswordConfirmInput(event.target.value)}
-                  autoComplete="new-password"
-                  placeholder="Confirme sua senha"
-                  className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
-                />
+
+              {mode === 'register' ? (
+                <>
+                  <input
+                    type="password"
+                    value={passwordConfirmInput}
+                    onChange={(event) => setPasswordConfirmInput(event.target.value)}
+                    autoComplete="new-password"
+                    placeholder="Confirme sua senha"
+                    className="w-full rounded-xl border border-border bg-white px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary"
+                  />
+                  <label className="flex items-start gap-2 rounded-xl border border-border bg-white px-3 py-2 text-[12px] text-text-muted">
+                    <input
+                      type="checkbox"
+                      checked={lgpdAccepted}
+                      onChange={(event) => setLgpdAccepted(event.target.checked)}
+                      className="mt-[2px]"
+                    />
+                    Aceito os termos de uso, política de privacidade e tratamento de dados (LGPD).
+                  </label>
+                </>
               ) : null}
+
               <button
                 type="button"
                 onClick={handleEmailAuth}
-                disabled={isEmailSubmitting || isSubmitting}
-                className="w-full rounded-xl border border-[#0A9D57] bg-white px-4 py-3 text-xs font-bold uppercase tracking-widest text-[#0A9D57] disabled:opacity-60"
+                disabled={isSubmitting || isResettingPassword}
+                className="w-full rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-4 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60"
               >
-                {isEmailSubmitting
-                  ? emailAuthMode === 'register'
-                    ? 'Criando conta...'
-                    : 'Autenticando...'
-                  : emailAuthMode === 'register'
-                    ? 'Criar conta com Email'
-                    : 'Entrar com Email e Senha'}
+                {isSubmitting
+                  ? 'Processando...'
+                  : mode === 'login'
+                    ? 'Entrar com E-mail'
+                    : 'Criar conta e continuar'}
               </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setEmailAuthMode((current) => (current === 'login' ? 'register' : 'login'));
-                  setPasswordInput('');
-                  setPasswordConfirmInput('');
-                  setAuthErrorMessage(null);
-                }}
-                className="w-full rounded-xl border border-border bg-bg-main px-4 py-3 text-xs font-bold uppercase tracking-widest text-text-muted hover:text-text-main"
-              >
-                {emailAuthMode === 'register' ? 'Já tenho conta' : 'Não tenho conta (cadastrar)'}
-              </button>
+
+              {mode === 'login' ? (
+                <button
+                  type="button"
+                  onClick={handleResetPassword}
+                  disabled={isSubmitting || isResettingPassword}
+                  className="w-full rounded-xl border border-border bg-white px-4 py-3 text-xs font-bold uppercase tracking-widest text-text-muted hover:text-text-main disabled:opacity-60"
+                >
+                  {isResettingPassword ? 'Enviando link...' : 'Esqueci minha senha'}
+                </button>
+              ) : null}
             </div>
           </div>
 

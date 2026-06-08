@@ -117,7 +117,7 @@ export default function PrimaryTopMenu({
 
   return (
     <>
-      <header className="fixed left-1/2 top-4 z-[90] flex w-[min(calc(100%-1.5rem),1196px)] -translate-x-1/2 items-center justify-between gap-2 rounded-full border border-[#122034] bg-[#040a13]/90 backdrop-blur-md px-3 py-3 shadow-[0_12px_40px_rgba(2,8,22,0.35)] sm:w-[min(calc(100%-2.5rem),1196px)] sm:gap-3 sm:px-5 md:px-7">
+      <header className="fixed left-1/2 top-4 z-[240] flex w-[min(calc(100%-1.5rem),1196px)] -translate-x-1/2 items-center justify-between gap-2 rounded-full border border-[#122034] bg-[#040a13]/90 backdrop-blur-md px-3 py-3 shadow-[0_12px_40px_rgba(2,8,22,0.35)] sm:w-[min(calc(100%-2.5rem),1196px)] sm:gap-3 sm:px-5 md:px-7">
         <Link href={logoHref} className="flex items-center">
           <Image src="/images/logo2026.png" alt="NeuroAds" width={156} height={34} className="h-8 w-auto brightness-0 invert" priority />
         </Link>
@@ -212,7 +212,7 @@ export default function PrimaryTopMenu({
                 setIsMobileMenuOpen(false);
                 if (typeof window !== 'undefined') window.location.href = '/login';
               }}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#0A9D57] px-3 py-2.5 text-[11px] font-extrabold text-white sm:gap-2 sm:px-5 sm:text-[12px] shadow-[0_0_20px_rgba(10,157,87,0.25)] hover:shadow-[0_0_30px_rgba(10,157,87,0.35)] transition-all hover:bg-[#0B9D57] active:bg-[#087a45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A9D57] focus-visible:ring-offset-white"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#0A9D57] px-3 py-2.5 text-[11px] font-extrabold text-white sm:gap-2 sm:px-5 sm:text-[12px] shadow-[0_0_20px_rgba(10,157,87,0.25)] hover:shadow-[0_0_30px_rgba(10,157,87,0.35)] transition-all hover:bg-[#0B9D57] active:bg-[#087a45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A9D57] focus-visible:ring-offset-white"
             >
               <span className="sm:hidden">Acessar meu Hub</span>
               <span className="hidden sm:inline">Acessar meu Hub</span>
@@ -221,7 +221,7 @@ export default function PrimaryTopMenu({
           ) : (
             <Link
               href="/login"
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#0A9D57] px-3 py-2.5 text-[11px] font-extrabold text-white sm:gap-2 sm:px-5 sm:text-[12px] shadow-[0_0_20px_rgba(10,157,87,0.25)] hover:shadow-[0_0_30px_rgba(10,157,87,0.35)] transition-all hover:bg-[#0B9D57] active:bg-[#087a45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A9D57] focus-visible:ring-offset-white"
+              className="inline-flex cursor-pointer items-center gap-1.5 rounded-full bg-[#0A9D57] px-3 py-2.5 text-[11px] font-extrabold text-white sm:gap-2 sm:px-5 sm:text-[12px] shadow-[0_0_20px_rgba(10,157,87,0.25)] hover:shadow-[0_0_30px_rgba(10,157,87,0.35)] transition-all hover:bg-[#0B9D57] active:bg-[#087a45] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A9D57] focus-visible:ring-offset-white"
             >
               <span className="sm:hidden">Acessar meu Hub</span>
               <span className="hidden sm:inline">Acessar meu Hub</span>

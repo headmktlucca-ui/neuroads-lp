@@ -50,11 +50,38 @@ export async function GET(
   }
 
   const provider = searchParams.get('provider');
+  const runtimeHubSpot =
+    connector === 'crm'
+      ? {
+          appId: searchParams.get('hubspot_app_id')?.trim() || undefined,
+          clientId: searchParams.get('hubspot_client_id')?.trim() || undefined,
+          clientSecret: searchParams.get('hubspot_client_secret')?.trim() || undefined,
+          callbackUrl: searchParams.get('hubspot_redirect_uri')?.trim() || undefined,
+          optionalScope: searchParams.get('hubspot_optional_scope')?.trim() || undefined,
+        }
+      : undefined;
+
+  const runtimeStripe =
+    connector === 'payments'
+      ? {
+          clientId: searchParams.get('stripe_connect_client_id')?.trim() || undefined,
+        }
+      : undefined;
+
+  if (connector === 'crm') {
+    if (!runtimeHubSpot?.appId || !runtimeHubSpot.clientId || !runtimeHubSpot.clientSecret || !runtimeHubSpot.callbackUrl) {
+      return redirectWithError('missing_hubspot_runtime_credentials');
+    }
+  }
+
   const built = buildOAuthAuthorizationUrl(
     connector,
     provider as ConnectorProvider | null,
     next,
-    { appBaseUrl }
+    {
+      appBaseUrl,
+      runtime: runtimeHubSpot ?? runtimeStripe,
+    }
   );
   if ('error' in built) {
     const missing = built.missingEnv?.length ? ` (${built.missingEnv.join(', ')})` : '';

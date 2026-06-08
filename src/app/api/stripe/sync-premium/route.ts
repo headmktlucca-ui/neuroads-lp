@@ -10,7 +10,7 @@ function getStripeClient() {
     throw new Error('STRIPE_SECRET_KEY não configurada.');
   }
   return new Stripe(stripeSecretKey, {
-    apiVersion: '2022-11-15' as never,
+    apiVersion: '2026-02-25.clover' as never,
   });
 }
 
@@ -32,8 +32,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Token ausente.' }, { status: 401 });
     }
 
-    // Garante inicialização do app do Firebase Admin antes de verificar o token.
-    getAdminDb();
+    // Evita bloquear login quando o ambiente admin estiver indisponível.
+    try {
+      getAdminDb();
+    } catch (adminInitError) {
+      console.warn('Stripe Premium Sync skipped: Firebase Admin indisponível.', adminInitError);
+      return NextResponse.json({ hasAccess: false, reason: 'admin_unavailable' });
+    }
+
     const decoded = await getAuth().verifyIdToken(token);
     const userId = decoded.uid;
 
@@ -94,6 +100,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ hasAccess: false, reason: 'active_subscription_not_found' });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : 'Falha ao sincronizar assinatura.';
+    const code = error && typeof error === 'object' && 'code' in error ? String((error as { code?: string }).code ?? '') : '';
+    if (code.startsWith('auth/')) {
+      return NextResponse.json({ error: message }, { status: 401 });
+    }
     console.error('Stripe Premium Sync Error:', error);
     return NextResponse.json({ error: message }, { status: 500 });
   }

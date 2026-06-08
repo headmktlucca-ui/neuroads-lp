@@ -45,6 +45,13 @@ export type ConnectorAuthState = {
   next: string;
   nonce: string;
   issuedAt: number;
+  runtime?: {
+    appId?: string;
+    clientId?: string;
+    clientSecret?: string;
+    callbackUrl?: string;
+    optionalScope?: string;
+  };
 };
 
 export type ConnectorTokenExchangeResult = {
@@ -300,7 +307,7 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
       {
         provider: 'hubspot',
         authUrl: 'https://app.hubspot.com/oauth/authorize',
-        tokenUrl: 'https://api.hubapi.com/oauth/v1/token',
+        tokenUrl: 'https://api.hubapi.com/oauth/v3/token',
         scope: 'crm.objects.contacts.read crm.objects.deals.read oauth',
         clientIdEnvKeys: ['HUBSPOT_CLIENT_ID'],
         clientSecretEnvKeys: ['HUBSPOT_CLIENT_SECRET'],
@@ -456,11 +463,22 @@ export function resolveProviderConfig(
   return config.providers.find((item) => item.provider === config.defaultProvider) ?? null;
 }
 
-export function buildCallbackUrl(connector: ConnectorKey, appBaseUrl?: string): string {
+export function buildCallbackUrl(connector: ConnectorKey, appBaseUrl?: string, overrideCallbackUrl?: string): string {
+  if (overrideCallbackUrl?.trim()) return overrideCallbackUrl.trim();
   return `${resolveBaseUrl(appBaseUrl)}/api/auth/connectors/${connector}/callback`;
 }
 
-export function createAuthState(connector: ConnectorKey, provider: ConnectorProvider, next: string): string {
+export function createAuthState(
+  connector: ConnectorKey,
+  provider: ConnectorProvider,
+  next: string,
+  runtime?: {
+    appId?: string;
+    clientId?: string;
+    clientSecret?: string;
+    callbackUrl?: string;
+  }
+): string {
   const safeNext = next.startsWith('/') ? next : '/hub';
   const payload: ConnectorAuthState = {
     connector,
@@ -468,6 +486,7 @@ export function createAuthState(connector: ConnectorKey, provider: ConnectorProv
     next: safeNext,
     nonce: randomUUID(),
     issuedAt: Date.now(),
+    runtime,
   };
   return toBase64Url(JSON.stringify(payload));
 }
@@ -491,6 +510,13 @@ export function buildOAuthAuthorizationUrl(
   next: string,
   options?: {
     appBaseUrl?: string;
+    runtime?: {
+      appId?: string;
+      clientId?: string;
+      clientSecret?: string;
+      callbackUrl?: string;
+      optionalScope?: string;
+    };
   }
 ): { url: string; provider: ConnectorProvider } | { error: string; missingEnv?: string[] } {
   const providerConfig = resolveProviderConfig(connector, provider);
@@ -498,8 +524,11 @@ export function buildOAuthAuthorizationUrl(
     return { error: `Conector ${connector} não possui configuração OAuth ativa.` };
   }
 
-  const clientId = getEnvValue(providerConfig.clientIdEnvKeys);
-  const clientSecret = getEnvValue(providerConfig.clientSecretEnvKeys);
+  const allowRuntimeCredentials = connector === 'crm' || connector === 'payments';
+  const runtimeClientId = allowRuntimeCredentials ? options?.runtime?.clientId?.trim() : '';
+  const runtimeClientSecret = connector === 'crm' ? options?.runtime?.clientSecret?.trim() : '';
+  const clientId = runtimeClientId || getEnvValue(providerConfig.clientIdEnvKeys);
+  const clientSecret = runtimeClientSecret || getEnvValue(providerConfig.clientSecretEnvKeys);
   const resolvedAuthUrl = getResolvedProviderAuthUrl(providerConfig).trim();
   const resolvedScope = getResolvedProviderScope(providerConfig).trim();
   const missingEnv: string[] = [];
@@ -524,8 +553,8 @@ export function buildOAuthAuthorizationUrl(
     };
   }
 
-  const callbackUrl = buildCallbackUrl(connector, options?.appBaseUrl);
-  const state = createAuthState(connector, providerConfig.provider, next);
+  const callbackUrl = buildCallbackUrl(connector, options?.appBaseUrl, connector === 'crm' ? options?.runtime?.callbackUrl : undefined);
+  const state = createAuthState(connector, providerConfig.provider, next, allowRuntimeCredentials ? options?.runtime : undefined);
   const authClientIdParamName = providerConfig.authClientIdParamName || 'client_id';
   const params = new URLSearchParams({
     response_type: 'code',
@@ -535,6 +564,12 @@ export function buildOAuthAuthorizationUrl(
   });
   if (resolvedScope) {
     params.set('scope', resolvedScope);
+  }
+  if (connector === 'crm') {
+    const optionalScope = options?.runtime?.optionalScope?.trim();
+    if (optionalScope) {
+      params.set('optional_scope', optionalScope);
+    }
   }
 
   Object.entries(providerConfig.authExtraParams ?? {}).forEach(([key, value]) => {
@@ -552,14 +587,24 @@ export async function exchangeOAuthCodeForToken(args: {
   provider: ConnectorProvider;
   code: string;
   appBaseUrl?: string;
+  runtime?: {
+    appId?: string;
+    clientId?: string;
+    clientSecret?: string;
+    callbackUrl?: string;
+    optionalScope?: string;
+  };
 }): Promise<ConnectorTokenExchangeResult> {
   const providerConfig = resolveProviderConfig(args.connector, args.provider);
   if (!providerConfig) {
     throw new Error(`Provider ${args.provider} não configurado para ${args.connector}.`);
   }
 
-  const clientId = getEnvValue(providerConfig.clientIdEnvKeys);
-  const clientSecret = getEnvValue(providerConfig.clientSecretEnvKeys);
+  const allowRuntimeCredentials = args.connector === 'crm' || args.connector === 'payments';
+  const runtimeClientId = allowRuntimeCredentials ? args.runtime?.clientId?.trim() : '';
+  const runtimeClientSecret = args.connector === 'crm' ? args.runtime?.clientSecret?.trim() : '';
+  const clientId = runtimeClientId || getEnvValue(providerConfig.clientIdEnvKeys);
+  const clientSecret = runtimeClientSecret || getEnvValue(providerConfig.clientSecretEnvKeys);
   if (!clientId || !clientSecret) {
     throw new Error(`Credenciais OAuth ausentes para ${args.provider}.`);
   }
@@ -568,7 +613,11 @@ export async function exchangeOAuthCodeForToken(args: {
     throw new Error(`Token URL não configurada para ${args.provider}.`);
   }
 
-  const callbackUrl = buildCallbackUrl(args.connector, args.appBaseUrl);
+  const callbackUrl = buildCallbackUrl(
+    args.connector,
+    args.appBaseUrl,
+    args.connector === 'crm' ? args.runtime?.callbackUrl : undefined
+  );
   const tokenClientIdParamName = providerConfig.tokenClientIdParamName || 'client_id';
   const tokenClientSecretParamName = providerConfig.tokenClientSecretParamName || 'client_secret';
   const tokenCodeParamName = providerConfig.tokenCodeParamName || 'code';

@@ -42,10 +42,10 @@ import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
 import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } from '../../lib/hub-access';
 
-const SETTINGS_MODAL_VIEWPORT = 'fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-3 py-3 sm:px-4 sm:py-4';
+const SETTINGS_MODAL_VIEWPORT = 'fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-2 py-2 sm:px-4 sm:py-4';
 const SETTINGS_MODAL_BACKDROP = 'absolute inset-0 bg-[#0F172A]/40 backdrop-blur-md transition-opacity duration-300';
-const SETTINGS_MODAL_FRAME = 'relative w-full max-h-[92vh] rounded-[24px] bg-white border border-slate-100/80 shadow-[0_24px_60px_-15px_rgba(15,23,42,0.12)] overflow-hidden animate-in fade-in zoom-in-95 duration-250';
-const SETTINGS_MODAL_SURFACE = 'max-h-[calc(92vh-4px)] flex flex-col overflow-hidden h-full bg-white';
+const SETTINGS_MODAL_FRAME = 'relative w-full max-h-[96vh] rounded-[24px] bg-white border border-slate-100/80 shadow-[0_24px_60px_-15px_rgba(15,23,42,0.12)] overflow-hidden animate-in fade-in zoom-in-95 duration-250';
+const SETTINGS_MODAL_SURFACE = 'max-h-[calc(96vh-4px)] flex flex-col overflow-hidden h-full bg-white';
 const PREMIUM_MODAL_HEADER = 'relative border-b border-[#1a365d]/40 bg-[#0d1e3d] px-6 py-5 flex flex-col gap-1 overflow-hidden';
 const PREMIUM_MODAL_CLOSE_BUTTON = 'absolute right-5 top-5 rounded-full border border-white/10 bg-white/5 p-2 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm z-50';
 const SETTINGS_PANEL = 'rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.02)] transition-all duration-200 hover:border-slate-200/80 hover:shadow-[0_8px_30px_-6px_rgba(15,23,42,0.04)]';
@@ -104,6 +104,25 @@ type Ga4AccountOption = {
   id: string;
   name: string;
   accountId: string;
+};
+
+type HubSpotAccountOption = {
+  id: string;
+  name: string;
+  accountId: string;
+};
+
+type StripeAccountBootstrap = {
+  accountName?: string;
+  accountEmail?: string;
+  accountId?: string;
+};
+
+type ParsedHubSpotInstallUrl = {
+  clientId: string;
+  redirectUri: string;
+  scope: string;
+  optionalScope?: string;
 };
 
 type GoogleAdsAccountOption = {
@@ -168,6 +187,15 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     title: 'RD Station Conversas',
     description: 'Integre WhatsApp e canais de atendimento para dar escala ao time comercial sem perder contexto.',
     category: 'social',
+    lastSyncLabelWhenActive: 'Nunca sincronizado',
+    isLiveConnector: true,
+  },
+  {
+    id: 'payments',
+    connectorKey: 'payments',
+    title: 'Stripe',
+    description: 'Conecte pagamentos para liberar receita confirmada, LTV e conciliação comercial no Hub.',
+    category: 'crm',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: true,
   },
@@ -272,10 +300,12 @@ const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
   ga4: 'google',
   tiktok: 'tiktok',
   tiktokAds: 'tiktokAds',
+  payments: 'stripe',
   warehouse: 'bigquery',
 };
 
 const CONNECTOR_DOCS_URLS: Partial<Record<UiConnectorId, string>> = {
+  payments: 'https://stripe.com/docs/connect/oauth-reference',
   crm: 'https://developers.hubspot.com/docs/api/overview',
   rdStation: 'https://developers.rdstation.com/reference/overview',
   rdStationMarketing: 'https://developers.rdstation.com/reference/api-rd-station-doc',
@@ -352,18 +382,95 @@ function formatLastSyncLabel(timestamp: number | null): string {
   }).format(date);
 }
 
+async function resolveHubSpotAccountIdentity(accessToken: string): Promise<{ accountName: string | null; accountId: string | null }> {
+  const token = accessToken.trim();
+  if (!token) return { accountName: null, accountId: null };
+
+  try {
+    const response = await fetch('https://api.hubapi.com/integrations/v1/me', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) return { accountName: null, accountId: null };
+
+    const payload = (await response.json()) as Record<string, unknown>;
+    const accountName =
+      readString(payload.hub_domain as unknown) ||
+      readString(payload.account_name as unknown) ||
+      readString(payload.hub_name as unknown) ||
+      readString(payload.name as unknown) ||
+      null;
+
+    const accountId =
+      readString(payload.hub_id as unknown) ||
+      readString(payload.portal_id as unknown) ||
+      readString(payload.portalId as unknown) ||
+      null;
+
+    return { accountName, accountId };
+  } catch {
+    return { accountName: null, accountId: null };
+  }
+}
+
+function parseHubSpotInstallUrl(raw: string): ParsedHubSpotInstallUrl | null {
+  const input = raw.trim();
+  if (!input) return null;
+  try {
+    const parsed = new URL(input);
+    const isHubSpotHost = parsed.hostname.endsWith('hubspot.com');
+    const hasOauthPath = parsed.pathname.includes('/oauth/authorize');
+    if (!isHubSpotHost || !hasOauthPath) return null;
+
+    const clientId = parsed.searchParams.get('client_id')?.trim() ?? '';
+    const redirectUri = parsed.searchParams.get('redirect_uri')?.trim() ?? '';
+    const scope = parsed.searchParams.get('scope')?.trim() ?? '';
+    if (!clientId || !redirectUri || !scope) return null;
+    const optionalScope = parsed.searchParams.get('optional_scope')?.trim() ?? '';
+
+    return { clientId, redirectUri, scope, optionalScope: optionalScope || undefined };
+  } catch {
+    return null;
+  }
+}
+
 
 
 function HealthGauge({ value }: { value: number }) {
   const boundedValue = Math.max(0, Math.min(value, 100));
   const cx = 120;
   const cy = 120;
-  const radius = 80;
+  const radius = 82;
   const strokeWidth = 14;
+
+  const scoreTone =
+    boundedValue >= 70
+      ? {
+          valueColor: '#0F172A',
+          needleStart: '#FFD37A',
+          needleEnd: '#FF6A00',
+          centerGlow: '#FDBA74',
+        }
+      : boundedValue >= 50
+        ? {
+            valueColor: '#0F172A',
+            needleStart: '#FBBF24',
+            needleEnd: '#F97316',
+            centerGlow: '#FDBA74',
+          }
+        : {
+            valueColor: '#0F172A',
+            needleStart: '#FB7185',
+            needleEnd: '#EF4444',
+            centerGlow: '#FCA5A5',
+          };
 
   const totalSegments = 8;
   const segmentAngle = Math.PI / totalSegments;
-  const gapRad = 0.05;
+  const gapRad = 0.065;
 
   const segments = Array.from({ length: totalSegments }).map((_, idx) => {
     const startAngle = Math.PI - idx * segmentAngle - gapRad / 2;
@@ -374,7 +481,7 @@ function HealthGauge({ value }: { value: number }) {
     const endX = cx + radius * Math.cos(endAngle);
     const endY = cy - radius * Math.sin(endAngle);
 
-    let color = '#10B981';
+    let color = '#22C55E';
     if (idx >= 4 && idx <= 5) {
       color = '#F59E0B';
     } else if (idx >= 6) {
@@ -382,7 +489,7 @@ function HealthGauge({ value }: { value: number }) {
     }
 
     const segmentPercentageEnd = ((idx + 1) / totalSegments) * 100;
-    const isActive = boundedValue >= segmentPercentageEnd - 5;
+    const isActive = boundedValue >= segmentPercentageEnd - 7;
 
     return {
       path: `M ${startX} ${startY} A ${radius} ${radius} 0 0 1 ${endX} ${endY}`,
@@ -391,22 +498,47 @@ function HealthGauge({ value }: { value: number }) {
     };
   });
 
+  const trackPath = `M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`;
   const angleRad = Math.PI - (Math.PI * boundedValue) / 100;
-  const needleLenStart = radius - 30;
-  const needleLenEnd = radius + 15;
+  const needleLenStart = radius - 34;
+  const needleLenEnd = radius + 10;
   const needleX1 = cx + needleLenStart * Math.cos(angleRad);
   const needleY1 = cy - needleLenStart * Math.sin(angleRad);
   const needleX2 = cx + needleLenEnd * Math.cos(angleRad);
   const needleY2 = cy - needleLenEnd * Math.sin(angleRad);
 
   return (
-    <div className="relative mt-6 flex flex-col items-center">
+    <div className="relative mt-2 flex flex-col items-center justify-center">
+      <div className="hub-health-orbit-bg pointer-events-none absolute inset-x-7 top-7 h-[130px]" aria-hidden />
       <svg
-        viewBox="0 0 240 140"
-        className="h-[140px] w-[240px]"
+        viewBox="0 0 240 150"
+        className="relative z-10 h-[152px] w-[250px] drop-shadow-[0_10px_20px_rgba(15,23,42,0.08)]"
         aria-label={`Saúde ${boundedValue} de 100`}
         role="img"
       >
+        <defs>
+          <linearGradient id="hubGaugeNeedleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={scoreTone.needleStart} />
+            <stop offset="100%" stopColor={scoreTone.needleEnd} />
+          </linearGradient>
+          <filter id="hubGaugeGlow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="2.4" result="coloredBlur" />
+            <feMerge>
+              <feMergeNode in="coloredBlur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <path
+          d={trackPath}
+          fill="none"
+          stroke="#E9EDF4"
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          opacity={0.85}
+        />
+
         {segments.map((seg, i) => (
           <path
             key={i}
@@ -417,7 +549,8 @@ function HealthGauge({ value }: { value: number }) {
             strokeLinecap="round"
             className="transition-all duration-500"
             style={{
-              opacity: seg.isActive ? 1 : 0.12,
+              opacity: seg.isActive ? 1 : 0.14,
+              filter: seg.isActive ? 'url(#hubGaugeGlow)' : 'none',
             }}
           />
         ))}
@@ -427,13 +560,18 @@ function HealthGauge({ value }: { value: number }) {
           y1={needleY1}
           x2={needleX2}
           y2={needleY2}
-          stroke="#F59E0B"
-          strokeWidth="3.5"
+          stroke="url(#hubGaugeNeedleGradient)"
+          strokeWidth="4"
           strokeLinecap="round"
         />
+        <circle cx={cx} cy={cy} r="8.5" fill="#0F172A" />
+        <circle cx={cx} cy={cy} r="5" fill={scoreTone.centerGlow} />
       </svg>
 
-      <p className="absolute top-[58px] text-[58px] font-black leading-none text-slate-900 tracking-tight">
+      <p
+        className="absolute top-[60px] text-[56px] font-black leading-none tracking-tight"
+        style={{ color: scoreTone.valueColor }}
+      >
         {boundedValue}%
       </p>
     </div>
@@ -441,6 +579,14 @@ function HealthGauge({ value }: { value: number }) {
 }
 
 function BrandTile({ id }: { id: UiConnectorId }) {
+  if (id === 'payments') {
+    return (
+      <div className="flex h-full w-full items-center justify-center rounded-xl border border-[#E7ECF5] bg-white">
+        <CreditCard className="h-8 w-8 text-[#635BFF]" />
+      </div>
+    );
+  }
+
   if (id === 'rdStation') {
     return (
       <Image
@@ -789,6 +935,10 @@ export default function ConnectorsHubPage() {
   const [googleTrendsAccounts, setGoogleTrendsAccounts] = useState<Ga4AccountOption[]>([]);
   const [selectedGoogleTrendsAccountId, setSelectedGoogleTrendsAccountId] = useState('');
   const [googleTrendsSelectionSaving, setGoogleTrendsSelectionSaving] = useState(false);
+  const [pendingHubSpotConnection, setPendingHubSpotConnection] = useState<PendingOAuthConnection | null>(null);
+  const [hubspotAccounts, setHubspotAccounts] = useState<HubSpotAccountOption[]>([]);
+  const [selectedHubspotAccountId, setSelectedHubspotAccountId] = useState('');
+  const [hubspotSelectionSaving, setHubspotSelectionSaving] = useState(false);
   const [isRdCrmConfigModalOpen, setIsRdCrmConfigModalOpen] = useState(false);
   const [rdCrmAccessTokenInput, setRdCrmAccessTokenInput] = useState('');
   const [rdCrmRefreshTokenInput, setRdCrmRefreshTokenInput] = useState('');
@@ -800,11 +950,17 @@ export default function ConnectorsHubPage() {
   const [rdTokenSaving, setRdTokenSaving] = useState(false);
   const [isRdConversasWebhookModalOpen, setIsRdConversasWebhookModalOpen] = useState(false);
   const [isHubSpotConfigModalOpen, setIsHubSpotConfigModalOpen] = useState(false);
+  const [hubspotAppIdInput, setHubspotAppIdInput] = useState('');
   const [hubspotClientIdInput, setHubspotClientIdInput] = useState('');
   const [hubspotClientSecretInput, setHubspotClientSecretInput] = useState('');
-  const [hubspotPrivateAppTokenInput, setHubspotPrivateAppTokenInput] = useState('');
-  const [hubspotRedirectUriInput, setHubspotRedirectUriInput] = useState('http://localhost:3000/api/auth/connectors/crm/callback');
+  const [hubspotInstallUrlInput, setHubspotInstallUrlInput] = useState('');
   const [hubspotSaving, setHubspotSaving] = useState(false);
+  const [isStripeConfigModalOpen, setIsStripeConfigModalOpen] = useState(false);
+  const [stripeConnectClientIdInput, setStripeConnectClientIdInput] = useState('');
+  const [stripeAccountNameInput, setStripeAccountNameInput] = useState('');
+  const [stripeAccountEmailInput, setStripeAccountEmailInput] = useState('');
+  const [stripeAccountIdInput, setStripeAccountIdInput] = useState('');
+  const [stripeSaving, setStripeSaving] = useState(false);
   const [openConnectorMenuId, setOpenConnectorMenuId] = useState<UiConnectorId | null>(null);
   const [activeFilter, setActiveFilter] = useState<UiCategory | 'todos'>('todos');
   const sortMode = 'az';
@@ -873,6 +1029,13 @@ export default function ConnectorsHubPage() {
     setGoogleTrendsSelectionSaving(false);
   }, []);
 
+  const clearPendingHubSpotSelection = useCallback(() => {
+    setPendingHubSpotConnection(null);
+    setHubspotAccounts([]);
+    setSelectedHubspotAccountId('');
+    setHubspotSelectionSaving(false);
+  }, []);
+
   const clearRdCrmConfigModal = useCallback(() => {
     setIsRdCrmConfigModalOpen(false);
     setRdCrmAccessTokenInput('');
@@ -883,50 +1046,44 @@ export default function ConnectorsHubPage() {
 
   const clearHubSpotConfigModal = useCallback(() => {
     setIsHubSpotConfigModalOpen(false);
+    setHubspotAppIdInput('');
     setHubspotClientIdInput('');
     setHubspotClientSecretInput('');
-    setHubspotPrivateAppTokenInput('');
-    setHubspotRedirectUriInput('http://localhost:3000/api/auth/connectors/crm/callback');
+    setHubspotInstallUrlInput('');
     setHubspotSaving(false);
   }, []);
 
-  const persistHubSpotConnection = useCallback(
-    async (clientId: string, clientSecret: string, privateAppToken: string, redirectUri: string) => {
-      if (!user) return false;
+  const clearStripeConfigModal = useCallback(() => {
+    setIsStripeConfigModalOpen(false);
+    setStripeConnectClientIdInput('');
+    setStripeAccountNameInput('');
+    setStripeAccountEmailInput('');
+    setStripeAccountIdInput('');
+    setStripeSaving(false);
+  }, []);
 
+  const persistHubSpotCredentials = useCallback(
+    async (appId: string, clientId: string, clientSecret: string, installUrl: string, parsedInstall: ParsedHubSpotInstallUrl) => {
+      if (!user) return false;
       const now = Date.now();
-      const connectionKey = CONNECTOR_CONNECTION_KEYS.crm;
+      const trimmedAppId = appId.trim();
       const trimmedClientId = clientId.trim();
       const trimmedClientSecret = clientSecret.trim();
-      const trimmedPrivateAppToken = privateAppToken.trim();
-      const trimmedRedirectUri = redirectUri.trim();
-
-      setConnectorStatus((prev) => {
-        const nextStatus = { ...prev, crm: true };
-        const connectorsKey = `neuroads_dashboard_connectors_${user.uid}`;
-        window.localStorage.setItem(connectorsKey, JSON.stringify(nextStatus));
-        return nextStatus;
-      });
+      const trimmedInstallUrl = installUrl.trim();
 
       try {
-        const db = getFirebaseDb();
-        const userRef = doc(db, 'users', user.uid);
         await setDoc(
-          userRef,
+          doc(getFirebaseDb(), 'users', user.uid),
           {
-            connections: {
-              [connectionKey]: {
-                isActive: true,
-                provider: 'hubspot-custom-oauth2',
-                accessToken: trimmedPrivateAppToken || null,
-                metadata: {
-                  authMode: 'custom-credentials',
-                  clientId: trimmedClientId || null,
-                  clientSecret: trimmedClientSecret || null,
-                  privateAppToken: trimmedPrivateAppToken || null,
-                  redirectUri: trimmedRedirectUri || null,
-                },
-                connectedAt: now,
+            integrations: {
+              hubspotOAuth: {
+                appId: trimmedAppId || null,
+                clientId: trimmedClientId || parsedInstall.clientId,
+                clientSecret: trimmedClientSecret || null,
+                redirectUri: parsedInstall.redirectUri,
+                scope: parsedInstall.scope,
+                optionalScope: parsedInstall.optionalScope || null,
+                installUrl: trimmedInstallUrl || null,
                 updatedAt: now,
               },
             },
@@ -934,13 +1091,41 @@ export default function ConnectorsHubPage() {
           },
           { merge: true }
         );
-        setConnectorError(null);
-        setConnectorFeedback('HubSpot configurado e credenciais salvas com sucesso.');
         return true;
       } catch (saveError) {
         console.warn('Falha ao persistir credenciais do HubSpot:', saveError);
-        setConnectorFeedback(null);
-        setConnectorError('Não foi possível salvar a configuração do HubSpot no banco.');
+        return false;
+      }
+    },
+    [user]
+  );
+
+  const persistStripeBootstrap = useCallback(
+    async (clientId: string, account: StripeAccountBootstrap) => {
+      if (!user) return false;
+      const now = Date.now();
+      const trimmedClientId = clientId.trim();
+
+      try {
+        await setDoc(
+          doc(getFirebaseDb(), 'users', user.uid),
+          {
+            integrations: {
+              stripeOAuth: {
+                clientId: trimmedClientId,
+                accountName: account.accountName?.trim() || null,
+                accountEmail: account.accountEmail?.trim() || null,
+                accountId: account.accountId?.trim() || null,
+                updatedAt: now,
+              },
+            },
+            updatedAt: now,
+          },
+          { merge: true }
+        );
+        return true;
+      } catch (saveError) {
+        console.warn('Falha ao persistir dados de bootstrap Stripe:', saveError);
         return false;
       }
     },
@@ -960,6 +1145,16 @@ export default function ConnectorsHubPage() {
 
       const now = Date.now();
       const connectionKey = CONNECTOR_CONNECTION_KEYS[payload.connector];
+      const hubspotIdentity =
+        payload.connector === 'crm'
+          ? await resolveHubSpotAccountIdentity(payload.accessToken)
+          : { accountName: null, accountId: null };
+      const metadata = {
+        ...(payload.metadata ?? {}),
+        ...(hubspotIdentity.accountName ? { accountName: hubspotIdentity.accountName } : {}),
+        ...(hubspotIdentity.accountId ? { accountId: hubspotIdentity.accountId } : {}),
+      };
+      const normalizedMetadata = Object.keys(metadata).length > 0 ? metadata : null;
 
       setConnectorStatus((prev) => {
         const nextStatus = { ...prev, [payload.connector]: true };
@@ -978,13 +1173,13 @@ export default function ConnectorsHubPage() {
               [connectionKey]: {
                 isActive: true,
                 provider: payload.provider ?? null,
-                accountId: payload.accountId ?? null,
+                accountId: payload.accountId ?? hubspotIdentity.accountId ?? null,
                 loginCustomerId: payload.loginCustomerId ?? null,
                 accessToken: payload.accessToken,
                 refreshToken: payload.refreshToken ?? null,
                 expiresIn: Number.isFinite(payload.expiresIn || NaN) ? payload.expiresIn : null,
                 expiresAt: Number.isFinite(payload.expiresIn || NaN) ? now + Number(payload.expiresIn) * 1000 : null,
-                metadata: payload.metadata ?? null,
+                metadata: normalizedMetadata,
                 connectedAt: now,
                 updatedAt: now,
               },
@@ -1210,6 +1405,8 @@ export default function ConnectorsHubPage() {
       clearPendingInstagramSelection();
       clearPendingGa4Selection();
       clearPendingGoogleTrendsSelection();
+      clearPendingHubSpotSelection();
+      clearStripeConfigModal();
       clearConnectorQueryParams();
       return;
     }
@@ -1222,8 +1419,29 @@ export default function ConnectorsHubPage() {
       clearPendingInstagramSelection();
       clearPendingGa4Selection();
       clearPendingGoogleTrendsSelection();
+      clearPendingHubSpotSelection();
+      clearStripeConfigModal();
       clearConnectorQueryParams();
       return;
+    }
+
+    let stripeBootstrapMetadata: Record<string, unknown> | null = null;
+    if (normalizedConnectorParam === 'payments' && typeof window !== 'undefined') {
+      const bootstrapKey = `neuroads_stripe_pending_bootstrap_${user.uid}`;
+      const raw = window.localStorage.getItem(bootstrapKey);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw) as StripeAccountBootstrap;
+          stripeBootstrapMetadata = {
+            ...(parsed.accountName ? { accountName: parsed.accountName } : {}),
+            ...(parsed.accountEmail ? { accountEmail: parsed.accountEmail } : {}),
+            ...(parsed.accountId ? { preferredAccountId: parsed.accountId } : {}),
+          };
+        } catch {
+          stripeBootstrapMetadata = null;
+        }
+        window.localStorage.removeItem(bootstrapKey);
+      }
     }
 
     const pendingPayload: PendingOAuthConnection = {
@@ -1233,7 +1451,7 @@ export default function ConnectorsHubPage() {
       refreshToken: normalizedRefreshToken ?? null,
       expiresIn: Number.isFinite(expiresIn || NaN) ? Number(expiresIn) : null,
       accountId: accountId ?? null,
-      metadata: null,
+      metadata: stripeBootstrapMetadata,
     };
 
     if (normalizedConnectorParam === 'googleAds' && !pendingPayload.accountId) {
@@ -1597,6 +1815,46 @@ export default function ConnectorsHubPage() {
       return;
     }
 
+    if (normalizedConnectorParam === 'crm') {
+      const hydrateHubSpotAccount = async () => {
+        try {
+          setConnectorBusyKey('crm');
+          const identity = await resolveHubSpotAccountIdentity(normalizedAccessToken);
+          if (!identity.accountName && !identity.accountId) {
+            throw new Error('Não foi possível identificar a conta HubSpot autenticada.');
+          }
+
+          const resolvedAccountId = identity.accountId || `hub-${Date.now()}`;
+          const resolvedAccountName = identity.accountName || `HubSpot ${resolvedAccountId}`;
+          const options: HubSpotAccountOption[] = [
+            {
+              id: resolvedAccountId,
+              name: resolvedAccountName,
+              accountId: resolvedAccountId,
+            },
+          ];
+
+          setPendingHubSpotConnection(pendingPayload);
+          setHubspotAccounts(options);
+          setSelectedHubspotAccountId(options[0].id);
+          setConnectorError(null);
+          setConnectorFeedback('Autenticação concluída. Confirme a conta HubSpot para finalizar a vinculação.');
+        } catch (hubspotError) {
+          const message =
+            hubspotError instanceof Error ? hubspotError.message : 'Falha ao carregar os dados da conta HubSpot.';
+          clearPendingHubSpotSelection();
+          setConnectorFeedback(null);
+          setConnectorError(message);
+        } finally {
+          setConnectorBusyKey(null);
+          clearConnectorQueryParams();
+        }
+      };
+
+      void hydrateHubSpotAccount();
+      return;
+    }
+
     const upsertConnection = async () => {
       await persistOAuthConnection(pendingPayload, 'Conector autenticado e salvo com sucesso.');
       clearPendingMetaAdsSelection();
@@ -1604,6 +1862,8 @@ export default function ConnectorsHubPage() {
       clearPendingInstagramSelection();
       clearPendingGa4Selection();
       clearPendingGoogleTrendsSelection();
+      clearPendingHubSpotSelection();
+      clearStripeConfigModal();
       clearConnectorQueryParams();
     };
 
@@ -1611,9 +1871,11 @@ export default function ConnectorsHubPage() {
   }, [
     clearPendingGa4Selection,
     clearPendingGoogleAdsSelection,
+    clearPendingHubSpotSelection,
     clearPendingGoogleTrendsSelection,
     clearPendingInstagramSelection,
     clearPendingMetaAdsSelection,
+    clearStripeConfigModal,
     pathname,
     persistOAuthConnection,
     router,
@@ -1748,6 +2010,9 @@ export default function ConnectorsHubPage() {
       const metadata = readRecord(connection.metadata);
       const accountName =
         readString(metadata?.accountName) ||
+        readString(metadata?.hub_domain) ||
+        readString(metadata?.account_name) ||
+        readString(metadata?.hub_name) ||
         readString(metadata?.name) ||
         readString(metadata?.username) ||
         readString(metadata?.pageName);
@@ -1815,6 +2080,15 @@ export default function ConnectorsHubPage() {
       pendingGoogleTrendsConnection &&
       googleTrendsAccounts.length > 0
   );
+  const showHubSpotSelectionModal = Boolean(
+    !showGoogleAdsSelectionModal &&
+      !showMetaAdsSelectionModal &&
+      !showInstagramSelectionModal &&
+      !showGa4SelectionModal &&
+      !showGoogleTrendsSelectionModal &&
+      pendingHubSpotConnection &&
+      hubspotAccounts.length > 0
+  );
   const rdTokenModalTitle = rdTokenModalConnector === 'rdStationMarketing' ? 'RD Station Marketing' : '';
   const rdCrmWebhookUrl =
     `${(process.env.NEXT_PUBLIC_APP_URL || 'https://neuroads.com.br').replace(/\/+$/g, '')}/api/webhooks/rd-station/crm`;
@@ -1837,6 +2111,9 @@ export default function ConnectorsHubPage() {
     }
     if (connectorKey === 'googleTrends') {
       clearPendingGoogleTrendsSelection();
+    }
+    if (connectorKey === 'crm') {
+      clearPendingHubSpotSelection();
     }
     if (connectorKey === 'rdStation') {
       clearRdCrmConfigModal();
@@ -2084,6 +2361,129 @@ export default function ConnectorsHubPage() {
     setConnectorBusyKey(null);
   };
 
+  const handleHubSpotAccountSelection = async () => {
+    if (!pendingHubSpotConnection || !selectedHubspotAccountId) {
+      setConnectorError('Selecione a conta HubSpot para continuar.');
+      setConnectorFeedback(null);
+      return;
+    }
+
+    const selectedAccount = hubspotAccounts.find((account) => account.id === selectedHubspotAccountId);
+
+    setHubspotSelectionSaving(true);
+    setConnectorBusyKey('crm');
+
+    const persisted = await persistOAuthConnection(
+      {
+        ...pendingHubSpotConnection,
+        accountId: selectedAccount?.accountId ?? selectedHubspotAccountId,
+        metadata: selectedAccount
+          ? {
+              accountName: selectedAccount.name,
+              accountId: selectedAccount.accountId,
+            }
+          : pendingHubSpotConnection.metadata ?? null,
+      },
+      'Conta HubSpot vinculada com sucesso.'
+    );
+
+    if (persisted) {
+      clearPendingHubSpotSelection();
+    }
+
+    setHubspotSelectionSaving(false);
+    setConnectorBusyKey(null);
+  };
+
+  const handleStartHubSpotOAuth = async () => {
+    const parsedInstall = parseHubSpotInstallUrl(hubspotInstallUrlInput);
+    if (!hubspotAppIdInput.trim() || !hubspotClientIdInput.trim() || !hubspotClientSecretInput.trim() || !parsedInstall) {
+      setConnectorFeedback(null);
+      setConnectorError('Preencha ID do Aplicativo, ID do Cliente, Segredo do Cliente e uma URL de instalação OAuth válida do HubSpot.');
+      return;
+    }
+
+    if (hubspotClientIdInput.trim() !== parsedInstall.clientId) {
+      setConnectorFeedback(null);
+      setConnectorError('O ID do Cliente informado não corresponde ao client_id presente na URL de instalação OAuth.');
+      return;
+    }
+
+    setHubspotSaving(true);
+    const saved = await persistHubSpotCredentials(
+      hubspotAppIdInput,
+      hubspotClientIdInput,
+      hubspotClientSecretInput,
+      hubspotInstallUrlInput,
+      parsedInstall
+    );
+    setHubspotSaving(false);
+
+    if (!saved) {
+      setConnectorFeedback(null);
+      setConnectorError('Não foi possível salvar os dados OAuth do HubSpot.');
+      return;
+    }
+
+    setConnectorError(null);
+    setConnectorFeedback('Credenciais salvas. Redirecionando para autenticação OAuth do HubSpot...');
+    clearHubSpotConfigModal();
+    const params = new URLSearchParams({
+      next: '/hub/conectores',
+      provider: OAUTH_CONNECTOR_PROVIDERS.crm || 'hubspot',
+      hubspot_app_id: hubspotAppIdInput.trim(),
+      hubspot_client_id: hubspotClientIdInput.trim(),
+      hubspot_client_secret: hubspotClientSecretInput.trim(),
+      hubspot_redirect_uri: parsedInstall.redirectUri,
+    });
+    if (parsedInstall.optionalScope) {
+      params.set('hubspot_optional_scope', parsedInstall.optionalScope);
+    }
+    window.location.href = `/api/auth/connectors/crm/start?${params.toString()}`;
+  };
+
+  const handleStartStripeOAuth = async () => {
+    const clientId = stripeConnectClientIdInput.trim();
+    if (!clientId) {
+      setConnectorFeedback(null);
+      setConnectorError('Preencha o Connect Client ID do Stripe para iniciar a autenticação.');
+      return;
+    }
+
+    const accountBootstrap: StripeAccountBootstrap = {
+      accountName: stripeAccountNameInput.trim() || undefined,
+      accountEmail: stripeAccountEmailInput.trim() || undefined,
+      accountId: stripeAccountIdInput.trim() || undefined,
+    };
+
+    setStripeSaving(true);
+    const saved = await persistStripeBootstrap(clientId, accountBootstrap);
+    setStripeSaving(false);
+
+    if (!saved) {
+      setConnectorFeedback(null);
+      setConnectorError('Não foi possível salvar os dados de configuração do Stripe.');
+      return;
+    }
+
+    if (typeof window !== 'undefined' && user) {
+      window.localStorage.setItem(
+        `neuroads_stripe_pending_bootstrap_${user.uid}`,
+        JSON.stringify(accountBootstrap)
+      );
+    }
+
+    setConnectorError(null);
+    setConnectorFeedback('Dados de Stripe salvos. Redirecionando para autenticação OAuth...');
+    clearStripeConfigModal();
+    const params = new URLSearchParams({
+      next: '/hub/conectores',
+      provider: OAUTH_CONNECTOR_PROVIDERS.payments || 'stripe',
+      stripe_connect_client_id: clientId,
+    });
+    window.location.href = `/api/auth/connectors/payments/start?${params.toString()}`;
+  };
+
   const handleSaveRdCrmConfig = async () => {
     if (!rdCrmAccessTokenInput.trim()) {
       setConnectorFeedback(null);
@@ -2149,6 +2549,12 @@ export default function ConnectorsHubPage() {
     if (connectorKey === 'rdStationConversas') {
       setConnectorBusyKey(null);
       setIsRdConversasWebhookModalOpen(true);
+      return;
+    }
+
+    if (connectorKey === 'payments') {
+      setConnectorBusyKey(null);
+      setIsStripeConfigModalOpen(true);
       return;
     }
 
@@ -2548,11 +2954,11 @@ export default function ConnectorsHubPage() {
 
               <aside className="space-y-4">
                 {/* CARD 1: Saúde das Integrações */}
-                <section className="relative overflow-hidden rounded-[24px] border border-slate-200/80 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
+                <section className="relative overflow-hidden rounded-[24px] border border-white/70 bg-white/55 backdrop-blur-xl backdrop-saturate-150 shadow-[0_14px_36px_rgba(15,23,42,0.12)]">
                   {/* Top border ambient subtle accent */}
                   <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
                   
-                  <header className="bg-[#0d1e3d] px-5 py-4 border-b border-[#1a365d]/40 flex items-center justify-between">
+                  <header className="border-b border-[#1a365d]/40 bg-[#0d1e3d] px-5 py-4 flex items-center justify-between">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <span className={`h-2 w-2 rounded-full animate-pulse ${healthScore > 50 ? 'bg-[#10b981]' : 'bg-[#EF4444]'}`} />
@@ -2561,7 +2967,7 @@ export default function ConnectorsHubPage() {
                         </h3>
                       </div>
                       <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest leading-none">
-                        800x480px
+                        Monitoramento em tempo real
                       </p>
                     </div>
                     <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
@@ -2570,33 +2976,38 @@ export default function ConnectorsHubPage() {
                   </header>
 
                   <div className="p-5">
-                    <div className="px-1 pb-2">
+                    <div className="relative overflow-hidden rounded-[20px] border border-[#E8EEF7] bg-white/80 px-2 pb-3 pt-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+                      <div className="hub-health-interactive-bg pointer-events-none absolute inset-0" aria-hidden />
+                      <div className="relative z-10 px-1 pb-2">
                       <HealthGauge value={healthScore} />
 
-                      <div className="mt-4 flex flex-col items-center">
+                      <div className="mt-3 flex flex-col items-center">
                         <span className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-[13px] font-bold ${healthStatus.bg}`}>
                           <span className="h-2 w-2 rounded-full bg-current animate-pulse" />
                           {healthStatus.label}
                         </span>
-                        <p className="mt-4 text-[14px] font-bold uppercase tracking-wider text-slate-800">Saúde Global</p>
-                        <p className="mt-1 text-[12px] text-slate-400 font-semibold">{formatLastSyncLabel(latestSyncTimestamp) || 'Sem sincronização'}</p>
+                        <p className="mt-3 text-[14px] font-bold uppercase tracking-wider text-slate-800">Saúde Global</p>
+                        <p className="mt-1 text-[12px] text-slate-400 font-semibold">
+                          {formatLastSyncLabel(latestSyncTimestamp) || 'Sem sincronização'}
+                        </p>
                       </div>
+                      </div>
+                    </div>
 
-                      <div className="mt-6 grid grid-cols-3 gap-2 border-t border-slate-100 pt-4 text-center">
-                        <div className="border-r border-slate-100">
-                          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Integrações Ativas</p>
-                          <p className="mt-1 text-[16px] font-black text-slate-800">
-                            {activeTrackedConnectorCount}/{trackedConnectorCount}
-                          </p>
-                        </div>
-                        <div className="border-r border-slate-100">
-                          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Latência Média</p>
-                          <p className="mt-1 text-[16px] font-black text-slate-800">112ms</p>
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Falhas (24h)</p>
-                          <p className="mt-1 text-[16px] font-black text-slate-800">3</p>
-                        </div>
+                    <div className="mt-5 grid grid-cols-3 gap-2 border-t border-slate-100 pt-4 text-center">
+                      <div className="border-r border-slate-100 px-1">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Integrações Ativas</p>
+                        <p className="mt-1 text-[16px] font-black text-slate-800">
+                          {activeTrackedConnectorCount}/{trackedConnectorCount}
+                        </p>
+                      </div>
+                      <div className="border-r border-slate-100 px-1">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Latência Média</p>
+                        <p className="mt-1 text-[16px] font-black text-slate-800">112ms</p>
+                      </div>
+                      <div className="px-1">
+                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Falhas (24h)</p>
+                        <p className="mt-1 text-[16px] font-black text-slate-800">3</p>
                       </div>
                     </div>
                   </div>
@@ -2715,6 +3126,151 @@ export default function ConnectorsHubPage() {
       <Footer />
       <LuccaHubSupportWidget />
 
+      {isStripeConfigModalOpen && (
+        <div className={SETTINGS_MODAL_VIEWPORT}>
+          <div onClick={clearStripeConfigModal} className={SETTINGS_MODAL_BACKDROP} />
+
+          <div className={`${SETTINGS_MODAL_FRAME} max-w-3xl`}>
+            <div className={SETTINGS_MODAL_SURFACE}>
+              <div className={PREMIUM_MODAL_HEADER}>
+                <div className="flex items-center justify-between w-full pr-12">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
+                      <h3 className="text-xl font-black text-white tracking-tight">Stripe</h3>
+                    </div>
+                    <p className="text-xs font-semibold text-slate-300">Configurar autenticação Stripe Connect</p>
+                  </div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#635BFF]/15 border border-[#635BFF]/35 text-[#A29BFE] shrink-0 shadow-sm">
+                    <CreditCard size={20} />
+                  </div>
+                </div>
+                <button onClick={clearStripeConfigModal} className={PREMIUM_MODAL_CLOSE_BUTTON}>
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="p-5 flex-1 overflow-y-auto custom-scrollbar space-y-4">
+                <p className="text-sm text-slate-500 font-medium leading-relaxed">
+                  Informe os dados da conta Stripe e siga para autenticação OAuth. Na próxima etapa, o Stripe permitirá escolher a conta desejada para conexão.
+                </p>
+
+                <div className="rounded-2xl border border-[#E8EDFF] bg-[#F6F8FF] p-4 text-[12px] text-[#344054]">
+                  <p className="font-bold text-[#1D4ED8]">Onde encontrar os dados no Stripe</p>
+                  <ul className="mt-2 list-disc space-y-1 pl-5">
+                    <li>
+                      <strong>Connect Client ID:</strong> Stripe Dashboard → <em>Developers</em> → <em>Connect settings</em> → campo
+                      <strong> Client ID</strong> (formato <code className="rounded bg-white px-1">ca_...</code>).
+                    </li>
+                    <li>
+                      <strong>Account ID:</strong> Stripe Dashboard → <em>Settings</em> → <em>Business settings</em> → <em>Account details</em> (formato <code className="rounded bg-white px-1">acct_...</code>).
+                    </li>
+                    <li>
+                      <strong>E-mail da conta:</strong> o e-mail principal de login/financeiro da conta Stripe conectada.
+                    </li>
+                  </ul>
+                  <a
+                    href="https://dashboard.stripe.com/settings/connect"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-3 inline-flex items-center gap-1 font-semibold text-[#1D4ED8] hover:underline"
+                  >
+                    Abrir Connect settings no Stripe
+                    <ExternalLink size={12} />
+                  </a>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <Fingerprint size={13} />
+                      <span className={SETTINGS_LABEL}>Stripe Connect Client ID *</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={stripeConnectClientIdInput}
+                      onChange={(event) => setStripeConnectClientIdInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="Ex.: ca_XXXXXXXXXXXXXXXX"
+                    />
+                    <p className="mt-1 text-[11px] font-semibold text-slate-500">
+                      Local: Developers → Connect settings → Client ID.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <Building2 size={13} />
+                      <span className={SETTINGS_LABEL}>Nome da Conta Stripe</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={stripeAccountNameInput}
+                      onChange={(event) => setStripeAccountNameInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="Ex.: NeuroAds Pagamentos"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <Mail size={13} />
+                      <span className={SETTINGS_LABEL}>E-mail da Conta</span>
+                    </label>
+                    <input
+                      type="email"
+                      value={stripeAccountEmailInput}
+                      onChange={(event) => setStripeAccountEmailInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="financeiro@empresa.com"
+                    />
+                    <p className="mt-1 text-[11px] font-semibold text-slate-500">
+                      Use o e-mail principal da conta Stripe que será autenticada.
+                    </p>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <CreditCard size={13} />
+                      <span className={SETTINGS_LABEL}>Account ID (opcional)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={stripeAccountIdInput}
+                      onChange={(event) => setStripeAccountIdInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="Ex.: acct_1234abcd"
+                    />
+                    <p className="mt-1 text-[11px] font-semibold text-slate-500">
+                      Local: Settings → Business settings → Account details.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-5 pb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 pt-4 bg-[#FAFBFC]">
+                <p className="text-xs font-semibold text-slate-400">
+                  O Stripe abrirá a tela oficial para autenticação e escolha da conta.
+                </p>
+                <div className="flex gap-3">
+                  <button type="button" onClick={clearStripeConfigModal} className={SETTINGS_SECONDARY_BUTTON}>
+                    Cancelar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void handleStartStripeOAuth()}
+                    disabled={stripeSaving}
+                    className={SETTINGS_PRIMARY_BUTTON}
+                  >
+                    {stripeSaving ? 'Processando...' : 'Continuar com OAuth'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {isHubSpotConfigModalOpen && (
         <div className={SETTINGS_MODAL_VIEWPORT}>
           <div
@@ -2722,7 +3278,7 @@ export default function ConnectorsHubPage() {
             className={SETTINGS_MODAL_BACKDROP}
           />
 
-          <div className={`${SETTINGS_MODAL_FRAME} max-w-4xl`}>
+          <div className={`${SETTINGS_MODAL_FRAME} max-w-5xl`}>
             <div className={SETTINGS_MODAL_SURFACE}>
               <div className={PREMIUM_MODAL_HEADER}>
                 <div className="flex items-center justify-between w-full pr-12">
@@ -2731,7 +3287,7 @@ export default function ConnectorsHubPage() {
                       <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
                       <h3 className="text-xl font-black text-white tracking-tight">HubSpot CRM</h3>
                     </div>
-                    <p className="text-xs font-semibold text-slate-300">Configurar HubSpot CRM (Credenciais Personalizadas)</p>
+                    <p className="text-xs font-semibold text-slate-300">Configurar HubSpot CRM (OAuth)</p>
                   </div>
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
                     <Building2 size={20} />
@@ -2750,29 +3306,51 @@ export default function ConnectorsHubPage() {
                   <p className="font-bold flex items-center gap-1.5 text-[#FF6B00]"><Info size={16} className="shrink-0" /> Como obter suas credenciais no HubSpot:</p>
                   <ol className="list-decimal pl-5 space-y-2 text-[#7C2D12] font-semibold text-sm">
                     <li>
-                      Acesse sua conta HubSpot e clique no ícone de <strong className="text-[#FF6B00]">Configurações (engrenagem)</strong> no menu superior.
+                      Para integração entre múltiplas contas, use <strong className="text-[#FF6B00]">OAuth</strong>. No HubSpot Developer, abra seu app, vá em <strong className="text-[#FF6B00]">Auth</strong> e copie <strong className="text-[#FF6B00]">Client ID</strong> e <strong className="text-[#FF6B00]">Client Secret</strong>.
                     </li>
                     <li>
-                      No menu lateral esquerdo, navegue até <strong className="text-[#FF6B00]">Integrações &gt; Aplicativos Privados</strong> (Private Apps).
+                      Copie no HubSpot a <strong className="text-[#FF6B00]">URL de instalação OAuth</strong> (com parâmetros), pois ela contém o <code className="bg-[#FFF1E6] px-1 rounded">client_id</code>, <code className="bg-[#FFF1E6] px-1 rounded">redirect_uri</code> e os <code className="bg-[#FFF1E6] px-1 rounded">scopes</code>.
                     </li>
                     <li>
-                      Clique em <strong className="text-[#FF6B00]">Criar aplicativo privado</strong>. Dê um nome (ex.: "NeuroAds Conector") e conceda os escopos necessários (como <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.contacts</code> e <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.companies</code>).
+                      Essa URL precisa usar o callback do conector CRM. Exemplo de redirect esperado:
+                      <div className="mt-2 space-y-1 rounded-xl border border-orange-200/70 bg-white/80 px-3 py-2 font-mono text-[12px] text-[#7C2D12]">
+                        <p>https://neuroads.com.br/api/auth/connectors/crm/callback</p>
+                        <p>http://localhost:3000/api/auth/connectors/crm/callback</p>
+                      </div>
                     </li>
                     <li>
-                      Após criar, acesse a aba <strong className="text-[#FF6B00]">Access Token</strong> e clique em "Mostrar token" para copiar o <strong className="text-[#FF6B00]">Token de Acesso do Aplicativo Privado</strong>.
+                      No app OAuth, habilite escopos mínimos de CRM para sincronização de funil:
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        <code className="bg-[#FFF1E6] px-1 rounded">oauth</code>
+                        <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.contacts.read</code>
+                        <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.contacts.write</code>
+                        <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.companies.read</code>
+                        <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.companies.write</code>
+                        <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.deals.read</code>
+                        <code className="bg-[#FFF1E6] px-1 rounded">crm.objects.deals.write</code>
+                      </div>
                     </li>
                     <li>
-                      Para obter o <strong className="text-[#FF6B00]">Client ID</strong> e <strong className="text-[#FF6B00]">Client Secret</strong> de OAuth 2.1: acesse o <a href="https://developers.hubspot.com/" target="_blank" rel="noopener noreferrer" className="underline font-bold hover:text-[#FF6B00]">HubSpot Developer Portal</a>, crie um Aplicativo Público, configure a URL de redirecionamento abaixo e copie os dados de autenticação da aba "Auth".
+                      Referência oficial: <a href="https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/overview" target="_blank" rel="noopener noreferrer" className="underline font-bold hover:text-[#FF6B00]">Authentication Overview</a>, <a href="https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/oauth/working-with-oauth" target="_blank" rel="noopener noreferrer" className="underline font-bold hover:text-[#FF6B00]">Working with OAuth</a> e <a href="https://developers.hubspot.com/docs/apps/developer-platform/build-apps/authentication/scopes" target="_blank" rel="noopener noreferrer" className="underline font-bold hover:text-[#FF6B00]">Scopes</a>.
                     </li>
                   </ol>
                 </div>
 
-                <div className={SETTINGS_PANEL}>
-                  <p className={SETTINGS_LABEL}>URL de Redirecionamento (Redirect URI) para o HubSpot</p>
-                  <p className="break-all text-sm font-bold text-slate-800">{hubspotRedirectUriInput}</p>
-                </div>
-
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="sm:col-span-2">
+                    <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                      <Building2 size={13} />
+                      <span className={SETTINGS_LABEL}>ID do Aplicativo (App ID)</span>
+                    </label>
+                    <input
+                      type="text"
+                      value={hubspotAppIdInput}
+                      onChange={(event) => setHubspotAppIdInput(event.target.value)}
+                      className={SETTINGS_INPUT}
+                      placeholder="ID do aplicativo no HubSpot Developer"
+                    />
+                  </div>
+
                   <div className="sm:col-span-2">
                     <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
                       <User size={13} />
@@ -2783,7 +3361,7 @@ export default function ConnectorsHubPage() {
                       value={hubspotClientIdInput}
                       onChange={(event) => setHubspotClientIdInput(event.target.value)}
                       className={SETTINGS_INPUT}
-                      placeholder="ID do cliente obtido no HubSpot Developer Portal"
+                      placeholder="Client ID obtido no HubSpot Developer"
                     />
                   </div>
 
@@ -2803,23 +3381,26 @@ export default function ConnectorsHubPage() {
 
                   <div className="sm:col-span-2">
                     <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
-                      <PlugZap size={13} />
-                      <span className={SETTINGS_LABEL}>Token de Aplicativo Privado (Private App Access Token) *</span>
+                      <Link2 size={13} />
+                      <span className={SETTINGS_LABEL}>URL de Instalação OAuth</span>
                     </label>
                     <input
-                      type="password"
-                      value={hubspotPrivateAppTokenInput}
-                      onChange={(event) => setHubspotPrivateAppTokenInput(event.target.value)}
+                      type="text"
+                      value={hubspotInstallUrlInput}
+                      onChange={(event) => setHubspotInstallUrlInput(event.target.value)}
                       className={SETTINGS_INPUT}
-                      placeholder="Cole o Access Token de Aplicativo Privado (começa com pat-...)"
+                      placeholder="Ex.: https://app.hubspot.com/oauth/authorize?client_id=...&redirect_uri=...&scope=..."
                     />
+                    <p className="mt-2 text-[11px] font-semibold text-slate-500">
+                      Informe a URL completa de instalação OAuth gerada no HubSpot Developer.
+                    </p>
                   </div>
                 </div>
               </div>
 
               <div className="px-5 pb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 pt-4 bg-[#FAFBFC]">
                 <p className="text-xs font-semibold text-slate-400">
-                  Preencha os dados de autenticação.
+                  Preencha ID do Aplicativo, ID do Cliente, Segredo do Cliente e URL de instalação OAuth.
                 </p>
                 <div className="flex gap-3">
                   <button
@@ -2831,30 +3412,11 @@ export default function ConnectorsHubPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={async () => {
-                      if (!hubspotPrivateAppTokenInput.trim()) {
-                        setConnectorFeedback(null);
-                        setConnectorError('Preencha o Token de Aplicativo Privado (Private App Access Token) para concluir.');
-                        return;
-                      }
-                      setHubspotSaving(true);
-                      setConnectorBusyKey('crm');
-                      const saved = await persistHubSpotConnection(
-                        hubspotClientIdInput,
-                        hubspotClientSecretInput,
-                        hubspotPrivateAppTokenInput,
-                        hubspotRedirectUriInput
-                      );
-                      setConnectorBusyKey(null);
-                      setHubspotSaving(false);
-                      if (saved) {
-                        clearHubSpotConfigModal();
-                      }
-                    }}
+                    onClick={handleStartHubSpotOAuth}
                     disabled={hubspotSaving}
                     className={SETTINGS_PRIMARY_BUTTON}
                   >
-                    {hubspotSaving ? 'Salvando...' : 'Salvar credenciais'}
+                    {hubspotSaving ? 'Processando...' : 'Continuar com OAuth'}
                   </button>
                 </div>
               </div>
@@ -3396,6 +3958,44 @@ export default function ConnectorsHubPage() {
                 className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
               >
                 {googleTrendsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {showHubSpotSelectionModal && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+          <section className={ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME} style={ACCOUNT_SELECTION_MODAL_PANEL_STYLE}>
+            <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a conta HubSpot para concluir</p>
+            <p className={ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME}>
+              A autenticação OAuth foi concluída. Confirme qual conta HubSpot será vinculada ao canal CRM.
+            </p>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <label className={ACCOUNT_SELECTION_MODAL_LABEL_CLASSNAME}>
+                Conta HubSpot
+                <select
+                  value={selectedHubspotAccountId}
+                  onChange={(event) => setSelectedHubspotAccountId(event.target.value)}
+                  className={ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME}
+                >
+                  {hubspotAccounts.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name} ({account.accountId})
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <button
+                type="button"
+                onClick={() => void handleHubSpotAccountSelection()}
+                disabled={!selectedHubspotAccountId || hubspotSelectionSaving}
+                className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
+              >
+                {hubspotSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
               </button>
             </div>
           </section>

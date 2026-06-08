@@ -12,7 +12,7 @@ export function AuthPagesBackdrop() {
         />
       </div>
 
-      <div className="pointer-events-auto fixed left-1/2 top-4 -translate-x-1/2 z-20 sm:top-6 flex justify-center">
+      <div className="pointer-events-auto fixed left-4 top-4 z-20 sm:left-6 sm:top-6 lg:left-10">
         <a href="https://neuroads.com.br" rel="noopener noreferrer" className="block group">
           <Image
             src="/images/logo2026.png"

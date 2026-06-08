@@ -480,8 +480,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     provider.addScope('profile');
     provider.setCustomParameters({ prompt: 'select_account' });
 
-    // Usa signInWithRedirect para evitar bloqueios de políticas de Cross-Origin (COOP)
-    await signInWithRedirect(auth, provider);
+    try {
+      // Prioriza popup para manter o estado da página e evitar loops de redirect em alguns navegadores.
+      await signInWithPopup(auth, provider);
+    } catch (error: unknown) {
+      const code = error && typeof error === 'object' && 'code' in error
+        ? String((error as { code?: string }).code ?? '')
+        : '';
+
+      const shouldFallbackToRedirect =
+        code === 'auth/popup-blocked' ||
+        code === 'auth/popup-closed-by-user' ||
+        code === 'auth/cancelled-popup-request' ||
+        code === 'auth/operation-not-supported-in-this-environment';
+
+      if (!shouldFallbackToRedirect) {
+        throw error;
+      }
+
+      await signInWithRedirect(auth, provider);
+    }
   };
 
   const loginWithEmailPassword = async (email: string, password: string) => {

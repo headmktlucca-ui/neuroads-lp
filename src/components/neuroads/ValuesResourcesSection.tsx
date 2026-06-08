@@ -239,6 +239,7 @@ export default function ValuesResourcesSection() {
 
       if (!user) {
         await loginWithGoogle();
+        return;
       }
       const auth = getFirebaseAuth();
       const authUser = auth.currentUser;
