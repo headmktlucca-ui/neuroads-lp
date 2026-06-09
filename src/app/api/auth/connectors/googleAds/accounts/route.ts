@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 // Keep in sync with Google Ads API release schedule:
 // https://developers.google.com/google-ads/api/docs/sunset-dates
-const GOOGLE_ADS_API_VERSION = 'v19';
+const GOOGLE_ADS_API_VERSION = 'v24';
 
 type GoogleAdsAccountOption = {
   id: string;
