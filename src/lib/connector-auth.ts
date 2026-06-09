@@ -88,7 +88,7 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
         clientSecretEnvKeys: ['GOOGLE_ADS_CLIENT_SECRET', 'GOOGLE_OAUTH_CLIENT_SECRET'],
         authExtraParams: {
           access_type: 'offline',
-          prompt: 'consent',
+          prompt: 'consent select_account',
           include_granted_scopes: 'true',
         },
         tokenExchangeStyle: 'form-post',
@@ -292,7 +292,7 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
         clientSecretEnvKeys: ['GOOGLE_ADS_CLIENT_SECRET', 'GOOGLE_OAUTH_CLIENT_SECRET'],
         authExtraParams: {
           access_type: 'offline',
-          prompt: 'consent',
+          prompt: 'consent select_account',
           include_granted_scopes: 'true',
         },
         tokenExchangeStyle: 'form-post',

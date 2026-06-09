@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
 
+// Keep in sync with Google Ads API release schedule:
+// https://developers.google.com/google-ads/api/docs/sunset-dates
+const GOOGLE_ADS_API_VERSION = 'v19';
+
 type GoogleAdsAccountOption = {
   id: string;
   name: string;
@@ -56,30 +60,36 @@ async function fetchSeedCustomer(
   `;
 
   // Try first without login-customer-id (for simple client accounts)
-  let response = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
-    method: 'POST',
-    cache: 'no-store',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'developer-token': developerToken,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ query }),
-  });
-
-  // If it fails (common for MCC/Manager accounts), retry with login-customer-id header
-  if (!response.ok) {
-    response = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
+  let response = await fetch(
+    `https://googleads.googleapis.com/${GOOGLE_ADS_API_VERSION}/customers/${customerId}/googleAds:search`,
+    {
       method: 'POST',
       cache: 'no-store',
       headers: {
         Authorization: `Bearer ${accessToken}`,
         'developer-token': developerToken,
-        'login-customer-id': customerId,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query }),
-    });
+    }
+  );
+
+  // If it fails (common for MCC/Manager accounts), retry with login-customer-id header
+  if (!response.ok) {
+    response = await fetch(
+      `https://googleads.googleapis.com/${GOOGLE_ADS_API_VERSION}/customers/${customerId}/googleAds:search`,
+      {
+        method: 'POST',
+        cache: 'no-store',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'developer-token': developerToken,
+          'login-customer-id': customerId,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ query }),
+      }
+    );
   }
 
   if (!response.ok) return null;
@@ -110,22 +120,28 @@ async function fetchManagerClients(
       customer_client.manager,
       customer_client.status
     FROM customer_client
-    WHERE customer_client.status = 'ENABLED'
   `;
 
-  const response = await fetch(`https://googleads.googleapis.com/v17/customers/${managerId}/googleAds:search`, {
-    method: 'POST',
-    cache: 'no-store',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'developer-token': developerToken,
-      'login-customer-id': managerId,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ query }),
-  });
+  const response = await fetch(
+    `https://googleads.googleapis.com/${GOOGLE_ADS_API_VERSION}/customers/${managerId}/googleAds:search`,
+    {
+      method: 'POST',
+      cache: 'no-store',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'developer-token': developerToken,
+        'login-customer-id': managerId,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query }),
+    }
+  );
 
-  if (!response.ok) return [];
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => '');
+    console.error(`Falha ao buscar sub-contas da MCC ${managerId}:`, response.status, errorText);
+    return [];
+  }
   const payload = (await response.json()) as GoogleAdsSearchResponse;
   const rows = Array.isArray(payload.results) ? payload.results : [];
 
@@ -161,37 +177,88 @@ export async function POST(request: Request) {
 
     const developerToken = toStringValue(process.env.GOOGLE_ADS_DEVELOPER_TOKEN);
     if (!developerToken) {
+      console.error('[GoogleAds:accounts] GOOGLE_ADS_DEVELOPER_TOKEN não configurado nas variáveis de ambiente.');
       return NextResponse.json(
-        { error: 'GOOGLE_ADS_DEVELOPER_TOKEN não configurado.' },
+        {
+          error:
+            'Developer Token do Google Ads não configurado. Configure GOOGLE_ADS_DEVELOPER_TOKEN nas variáveis de ambiente do servidor.',
+        },
         { status: 500 }
       );
     }
 
-    const seedsResponse = await fetch('https://googleads.googleapis.com/v17/customers:listAccessibleCustomers', {
-      method: 'GET',
-      cache: 'no-store',
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        'developer-token': developerToken,
-      },
-    });
+    console.log('[GoogleAds:accounts] Developer token present, access token length:', accessToken.length);
 
-    const seedsPayload = (await seedsResponse.json()) as {
+    const seedsResponse = await fetch(
+      `https://googleads.googleapis.com/${GOOGLE_ADS_API_VERSION}/customers:listAccessibleCustomers`,
+      {
+        method: 'GET',
+        cache: 'no-store',
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'developer-token': developerToken,
+        },
+      }
+    );
+
+    const seedsText = await seedsResponse.text();
+    let seedsPayload: {
       resourceNames?: string[];
-      error?: { message?: string };
-    };
+      error?: { message?: string; status?: string; code?: number };
+    } = {};
+
+    try {
+      seedsPayload = JSON.parse(seedsText);
+    } catch (e) {
+      console.error('[GoogleAds:listAccessibleCustomers] Response was not JSON. HTTP', seedsResponse.status, 'Body:', seedsText.substring(0, 500));
+      return NextResponse.json(
+        { error: 'A API do Google Ads retornou uma resposta inválida (HTML). Verifique os logs do servidor para mais detalhes.' },
+        { status: 502 }
+      );
+    }
 
     if (!seedsResponse.ok) {
-      const message = toStringValue(seedsPayload?.error?.message) || 'Falha ao listar contas do Google Ads.';
-      return NextResponse.json({ error: message }, { status: 400 });
+      const message =
+        toStringValue(seedsPayload?.error?.message) || 'Falha ao listar contas do Google Ads.';
+      const apiStatus = seedsPayload?.error?.status ?? '';
+      console.error('[GoogleAds:listAccessibleCustomers] Error:', {
+        httpStatus: seedsResponse.status,
+        apiStatus,
+        message,
+      });
+
+      // Specific error for unapproved developer token
+      if (
+        apiStatus === 'PERMISSION_DENIED' ||
+        message.includes('DEVELOPER_TOKEN_NOT_APPROVED') ||
+        message.includes('developer token')
+      ) {
+        return NextResponse.json(
+          {
+            error:
+              'O Developer Token do Google Ads não está aprovado para acesso a contas reais. Solicite aprovação de acesso padrão em ads.google.com → Ferramentas → Central de API.',
+          },
+          { status: 403 }
+        );
+      }
+
+      return NextResponse.json(
+        { error: `${message} (HTTP ${seedsResponse.status})` },
+        { status: 400 }
+      );
     }
 
     const seeds = (Array.isArray(seedsPayload.resourceNames) ? seedsPayload.resourceNames : [])
       .map((name) => normalizeCustomerId(name))
       .filter(Boolean);
 
+    console.log('[GoogleAds:accounts] Accessible customer seeds:', seeds.length);
+
     if (seeds.length === 0) {
-      return NextResponse.json({ accounts: [] });
+      return NextResponse.json({
+        accounts: [],
+        hint: 'Nenhuma conta Google Ads acessível encontrada para este usuário Google. Verifique se o e-mail autenticado possui acesso a contas em ads.google.com.',
+      });
     }
 
     const accounts: GoogleAdsAccountOption[] = [];
@@ -207,6 +274,7 @@ export async function POST(request: Request) {
       try {
         const seed = await fetchSeedCustomer(accessToken, developerToken, seedId);
         if (!seed) {
+          // Could not fetch details — add as fallback so users can at least see it
           pushUnique({
             id: seedId,
             name: `Conta ${seedId}`,
@@ -218,18 +286,33 @@ export async function POST(request: Request) {
           continue;
         }
 
-        pushUnique({
-          id: seed.id,
-          name: seed.name,
-          accountId: seed.id,
-          isManager: seed.isManager,
-          loginCustomerId: null,
-          managerName: null,
-        });
-
         if (seed.isManager) {
+          // For manager accounts (MCC): fetch client accounts first.
+          // Only add the manager itself if it has no client accounts, since
+          // advertising data lives in client accounts, not in the manager.
           const clients = await fetchManagerClients(accessToken, developerToken, seed.id, seed.name);
-          clients.forEach(pushUnique);
+          if (clients.length > 0) {
+            clients.forEach(pushUnique);
+          } else {
+            // Manager with no clients — add it as-is so the user can still link it
+            pushUnique({
+              id: seed.id,
+              name: seed.name,
+              accountId: seed.id,
+              isManager: true,
+              loginCustomerId: null,
+              managerName: null,
+            });
+          }
+        } else {
+          pushUnique({
+            id: seed.id,
+            name: seed.name,
+            accountId: seed.id,
+            isManager: false,
+            loginCustomerId: null,
+            managerName: null,
+          });
         }
       } catch {
         pushUnique({
@@ -243,9 +326,11 @@ export async function POST(request: Request) {
       }
     }
 
+    console.log('[GoogleAds:accounts] Returning accounts:', accounts.length);
     return NextResponse.json({ accounts });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'google_ads_accounts_failed';
+    console.error('[GoogleAds:accounts] Unexpected error:', message);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

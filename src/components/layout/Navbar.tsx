@@ -818,7 +818,7 @@ export default function Navbar() {
       return;
     }
 
-    if ((connectorParam === 'metaAds' || connectorParam === 'instagram') && !accountId) {
+    if ((connectorParam === 'metaAds' || connectorParam === 'instagram' || connectorParam === 'ga4' || connectorParam === 'googleAds' || connectorParam === 'googleTrends') && !accountId) {
       const params = new URLSearchParams({
         connector_auth_success: '1',
         connector: connectorParam,

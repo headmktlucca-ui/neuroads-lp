@@ -58,9 +58,11 @@ export async function POST(request: Request) {
       });
 
       const payload = (await response.json()) as Ga4AccountsApiResponse;
+      console.log('[GA4 Accounts API] Response payload:', JSON.stringify(payload, null, 2));
 
       if (!response.ok) {
         const message = toStringValue(payload?.error?.message) || 'Falha ao listar contas do GA4.';
+        console.error('[GA4 Accounts API] Error:', message);
         return NextResponse.json({ error: message }, { status: 400 });
       }
 

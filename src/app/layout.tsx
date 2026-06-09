@@ -25,12 +25,14 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-ui",
   display: "swap",
+  preload: false,
 });
 
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-head",
   display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -62,7 +64,24 @@ export default function RootLayout({
       lang="pt-BR"
       suppressHydrationWarning
       className="h-full antialiased scroll-smooth"
+      data-scroll-behavior="smooth"
     >
+      <head>
+        {/* Google tag (gtag.js) */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-80X93TW8EK"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-80X93TW8EK');
+          `}
+        </Script>
+      </head>
       <body className={`${inter.variable} ${manrope.variable} min-h-full flex flex-col font-sans bg-[var(--background)] text-[var(--foreground)]`}>
         {/* HubSpot tracking script - loads after the page is interactive */}
         <Script

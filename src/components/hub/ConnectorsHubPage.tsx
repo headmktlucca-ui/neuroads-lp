@@ -1463,7 +1463,7 @@ export default function ConnectorsHubPage() {
             '/api/auth/connectors/googleAds/accounts',
           ];
 
-          let payload: { accounts?: GoogleAdsAccountOption[]; error?: string } | null = null;
+          let payload: { accounts?: GoogleAdsAccountOption[]; error?: string; hint?: string } | null = null;
           let responseOk = false;
           let lastErrorMessage = '';
 
@@ -1477,7 +1477,7 @@ export default function ConnectorsHubPage() {
                 body: JSON.stringify({ accessToken: normalizedAccessToken }),
               });
 
-              const parsed = await parseJsonOrThrow<{ accounts?: GoogleAdsAccountOption[]; error?: string }>(
+              const parsed = await parseJsonOrThrow<{ accounts?: GoogleAdsAccountOption[]; error?: string; hint?: string }>(
                 response,
                 'Falha ao processar a resposta de contas do Google Ads.'
               );
@@ -1509,30 +1509,14 @@ export default function ConnectorsHubPage() {
           if (accounts.length === 0) {
             clearPendingGoogleAdsSelection();
             setConnectorFeedback(null);
-            setConnectorError('Autenticação concluída, mas nenhuma conta Google Ads disponível foi encontrada.');
+            const hint = payload.hint
+              ? `\n\n${payload.hint}`
+              : '\n\nVerifique se o e-mail autenticado possui acesso a contas em ads.google.com.';
+            setConnectorError(`Autenticação concluída, mas nenhuma conta Google Ads disponível foi encontrada.${hint}`);
             return;
           }
 
-          if (accounts.length === 1) {
-            const selectedAccount = accounts[0];
-            const persisted = await persistOAuthConnection(
-              {
-                ...pendingPayload,
-                accountId: selectedAccount.accountId,
-                loginCustomerId: selectedAccount.loginCustomerId,
-                metadata: {
-                  accountName: selectedAccount.name,
-                  isManager: selectedAccount.isManager,
-                  managerName: selectedAccount.managerName,
-                },
-              },
-              'Conector Google Ads autenticado e conta vinculada com sucesso.'
-            );
-            if (persisted) {
-              clearPendingGoogleAdsSelection();
-            }
-            return;
-          }
+          // (O bloco de accounts.length === 1 foi removido para forçar a exibição do modal sempre)
 
           setPendingGoogleAdsConnection(pendingPayload);
           setGoogleAdsAccounts(accounts);
@@ -1687,8 +1671,10 @@ export default function ConnectorsHubPage() {
     }
 
     if (normalizedConnectorParam === 'ga4' && !pendingPayload.accountId) {
+      console.log('[DEBUG ConnectorsHubPage] ga4 matched! triggering hydrateGa4Accounts', pendingPayload);
       const hydrateGa4Accounts = async () => {
         try {
+          console.log('[DEBUG ConnectorsHubPage] hydrateGa4Accounts START');
           setConnectorBusyKey('ga4');
           const response = await fetch('/api/auth/connectors/ga4/accounts', {
             method: 'POST',
@@ -1697,6 +1683,7 @@ export default function ConnectorsHubPage() {
             },
             body: JSON.stringify({ accessToken: normalizedAccessToken }),
           });
+          console.log('[DEBUG ConnectorsHubPage] hydrateGa4Accounts fetch response status:', response.status);
           const payload = (await response.json()) as { accounts?: Ga4AccountOption[]; error?: string };
 
           if (!response.ok) {
@@ -1711,23 +1698,7 @@ export default function ConnectorsHubPage() {
             return;
           }
 
-          if (accounts.length === 1) {
-            const selectedAccount = accounts[0];
-            const persisted = await persistOAuthConnection(
-              {
-                ...pendingPayload,
-                accountId: selectedAccount.accountId,
-                metadata: {
-                  accountName: selectedAccount.name,
-                },
-              },
-              'Conector GA4 autenticado e conta vinculada com sucesso.'
-            );
-            if (persisted) {
-              clearPendingGa4Selection();
-            }
-            return;
-          }
+          // Removed auto-selection to force the selection modal to always appear.
 
           setPendingGa4Connection(pendingPayload);
           setGa4Accounts(accounts);
@@ -1774,23 +1745,7 @@ export default function ConnectorsHubPage() {
             return;
           }
 
-          if (accounts.length === 1) {
-            const selectedAccount = accounts[0];
-            const persisted = await persistOAuthConnection(
-              {
-                ...pendingPayload,
-                accountId: selectedAccount.accountId,
-                metadata: {
-                  accountName: selectedAccount.name,
-                },
-              },
-              'Conector Google Trends autenticado e conta vinculada com sucesso.'
-            );
-            if (persisted) {
-              clearPendingGoogleTrendsSelection();
-            }
-            return;
-          }
+          // Removed auto-selection to force the selection modal to always appear.
 
           setPendingGoogleTrendsConnection(pendingPayload);
           setGoogleTrendsAccounts(accounts);

@@ -3,7 +3,15 @@
     "allow": [
       "Bash(npm run *)",
       "Bash(\"/c/Program Files/nodejs/npm\" run dev)",
-      "Bash(export PATH=\"/c/Program Files/nodejs:$PATH\")"
+      "Bash(export PATH=\"/c/Program Files/nodejs:$PATH\")",
+      "PowerShell(Get-Process node -ErrorAction SilentlyContinue)",
+      "PowerShell(Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, ProcessName, StartTime, @{Name='Memory\\(MB\\)'; Expression={[math]::Round\\($_.WorkingSet/1MB,2\\)}} | Format-Table -AutoSize)",
+      "PowerShell(Test-NetConnection -ComputerName localhost -Port 3000 -InformationLevel Quiet)",
+      "PowerShell(& \"c:\\\\Users\\\\claud\\\\OneDrive\\\\Documentos\\\\NeuroAds\\\\LP\\\\CRIAR-ZIP-HOSTINGER.bat\")",
+      "Bash(xargs grep *)",
+      "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)",
+      "PowerShell(Test-NetConnection -ComputerName localhost -Port 3000 -WarningAction SilentlyContinue -InformationLevel Quiet)",
+      "PowerShell(Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, @{Name='Memory\\(MB\\)';Expression={[math]::Round\\($_.WorkingSet/1MB,1\\)}}, StartTime | Format-Table -AutoSize)"
     ]
   }
 }

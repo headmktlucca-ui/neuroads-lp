@@ -20,15 +20,17 @@ function getFirebaseConfig(): FirebaseConfig {
   };
 
   // Use static env access so Next/Turbopack can inline NEXT_PUBLIC vars in client bundles.
-  const apiKey = requireEnv('NEXT_PUBLIC_FIREBASE_API_KEY', process.env.NEXT_PUBLIC_FIREBASE_API_KEY);
-  const authDomain = requireEnv('NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN', process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
-  const projectId = requireEnv('NEXT_PUBLIC_FIREBASE_PROJECT_ID', process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID);
-  const storageBucket = requireEnv('NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET', process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET);
-  const messagingSenderId = requireEnv(
+  const cleanEnv = (val: string) => val.trim().replace(/(^"|"$)/g, '');
+
+  const apiKey = cleanEnv(requireEnv('NEXT_PUBLIC_FIREBASE_API_KEY', process.env.NEXT_PUBLIC_FIREBASE_API_KEY));
+  const authDomain = cleanEnv(requireEnv('NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN', process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN));
+  const projectId = cleanEnv(requireEnv('NEXT_PUBLIC_FIREBASE_PROJECT_ID', process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID));
+  const storageBucket = cleanEnv(requireEnv('NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET', process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET));
+  const messagingSenderId = cleanEnv(requireEnv(
     'NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID',
     process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  );
-  const appId = requireEnv('NEXT_PUBLIC_FIREBASE_APP_ID', process.env.NEXT_PUBLIC_FIREBASE_APP_ID);
+  ));
+  const appId = cleanEnv(requireEnv('NEXT_PUBLIC_FIREBASE_APP_ID', process.env.NEXT_PUBLIC_FIREBASE_APP_ID));
 
   return {
     apiKey,
