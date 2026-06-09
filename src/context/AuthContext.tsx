@@ -286,10 +286,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => unsubscribe();
   }, [user, isSuperAdmin]);
 
+  const authInitialized = useRef(false);
+
   // Auth state listener
   useEffect(() => {
     const auth = getFirebaseAuth();
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      authInitialized.current = true;
       setUser(firebaseUser);
       const primaryEmail = await resolvePrimaryAuthEmail(firebaseUser);
       setUserEmail(primaryEmail);
@@ -312,7 +315,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!user) {
       setProfile(null);
-      setLoading(false);
+      if (authInitialized.current) {
+        setLoading(false);
+      }
       return;
     }
 
