@@ -67,7 +67,7 @@ type UiConnectorId =
   | 'rdStation'
   | 'rdStationMarketing'
   | 'rdStationConversas'
-  | 'googleTrends'
+  | 'searchConsole'
   | 'linkedinPage'
   | 'instagram'
   | 'tiktok'
@@ -227,10 +227,10 @@ const CONNECTOR_ITEMS: UiConnector[] = [
     isLiveConnector: true,
   },
   {
-    id: 'googleTrends',
-    connectorKey: 'googleTrends',
-    title: 'Google Trends',
-    description: 'Capte tendências de busca para ajustar pauta, criativos e oferta com antecedência.',
+    id: 'searchConsole',
+    connectorKey: 'searchConsole',
+    title: 'Google Search Console',
+    description: 'Acompanhe métricas de SEO orgânico, palavras-chave e cliques no Google Busca.',
     category: 'marketing',
     lastSyncLabelWhenActive: 'Nunca sincronizado',
     isLiveConnector: true,
@@ -292,7 +292,7 @@ const CATEGORY_LABELS: Record<UiCategory | 'todos', string> = {
 
 const OAUTH_CONNECTOR_PROVIDERS: Partial<Record<ConnectorKey, string>> = {
   googleAds: 'google',
-  googleTrends: 'google',
+  searchConsole: 'google',
   metaAds: 'meta',
   instagram: 'meta',
   linkedinAds: 'linkedin',
@@ -313,7 +313,7 @@ const CONNECTOR_DOCS_URLS: Partial<Record<UiConnectorId, string>> = {
   googleAds: 'https://developers.google.com/google-ads/api/docs/start',
   metaAds: 'https://developers.facebook.com/docs/marketing-apis',
   ga4: 'https://developers.google.com/analytics/devguides/reporting/data/v1',
-  googleTrends: 'https://trends.google.com/trends/',
+  searchConsole: 'https://trends.google.com/trends/',
   linkedinPage: 'https://learn.microsoft.com/en-us/linkedin/marketing/community-management/shares',
   linkedinAds: 'https://learn.microsoft.com/en-us/linkedin/marketing/integrations/ads/advertising-api',
   instagram: 'https://developers.facebook.com/docs/instagram-platform',
@@ -671,11 +671,11 @@ function BrandTile({ id }: { id: UiConnectorId }) {
     );
   }
 
-  if (id === 'googleTrends') {
+  if (id === 'searchConsole') {
     return (
       <Image
         src="/images/connectors/google-trends-photorealistic-icon-hd-v1.png"
-        alt="Ícone Google Trends foto realista em fundo branco"
+        alt="Ícone Google Search Console foto realista em fundo branco"
         width={88}
         height={88}
         className="h-full w-full rounded-xl object-cover"
@@ -931,10 +931,10 @@ export default function ConnectorsHubPage() {
   const [ga4Accounts, setGa4Accounts] = useState<Ga4AccountOption[]>([]);
   const [selectedGa4AccountId, setSelectedGa4AccountId] = useState('');
   const [ga4SelectionSaving, setGa4SelectionSaving] = useState(false);
-  const [pendingGoogleTrendsConnection, setPendingGoogleTrendsConnection] = useState<PendingOAuthConnection | null>(null);
-  const [googleTrendsAccounts, setGoogleTrendsAccounts] = useState<Ga4AccountOption[]>([]);
-  const [selectedGoogleTrendsAccountId, setSelectedGoogleTrendsAccountId] = useState('');
-  const [googleTrendsSelectionSaving, setGoogleTrendsSelectionSaving] = useState(false);
+  const [pendingSearchConsoleConnection, setPendingSearchConsoleConnection] = useState<PendingOAuthConnection | null>(null);
+  const [searchConsoleAccounts, setSearchConsoleAccounts] = useState<Ga4AccountOption[]>([]);
+  const [selectedSearchConsoleAccountId, setSelectedSearchConsoleAccountId] = useState('');
+  const [searchConsoleSelectionSaving, setSearchConsoleSelectionSaving] = useState(false);
   const [pendingHubSpotConnection, setPendingHubSpotConnection] = useState<PendingOAuthConnection | null>(null);
   const [hubspotAccounts, setHubspotAccounts] = useState<HubSpotAccountOption[]>([]);
   const [selectedHubspotAccountId, setSelectedHubspotAccountId] = useState('');
@@ -1022,11 +1022,11 @@ export default function ConnectorsHubPage() {
     setGa4SelectionSaving(false);
   }, []);
 
-  const clearPendingGoogleTrendsSelection = useCallback(() => {
-    setPendingGoogleTrendsConnection(null);
-    setGoogleTrendsAccounts([]);
-    setSelectedGoogleTrendsAccountId('');
-    setGoogleTrendsSelectionSaving(false);
+  const clearPendingSearchConsoleSelection = useCallback(() => {
+    setPendingSearchConsoleConnection(null);
+    setSearchConsoleAccounts([]);
+    setSelectedSearchConsoleAccountId('');
+    setSearchConsoleSelectionSaving(false);
   }, []);
 
   const clearPendingHubSpotSelection = useCallback(() => {
@@ -1404,7 +1404,7 @@ export default function ConnectorsHubPage() {
       clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
       clearPendingGa4Selection();
-      clearPendingGoogleTrendsSelection();
+      clearPendingSearchConsoleSelection();
       clearPendingHubSpotSelection();
       clearStripeConfigModal();
       clearConnectorQueryParams();
@@ -1418,7 +1418,7 @@ export default function ConnectorsHubPage() {
       clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
       clearPendingGa4Selection();
-      clearPendingGoogleTrendsSelection();
+      clearPendingSearchConsoleSelection();
       clearPendingHubSpotSelection();
       clearStripeConfigModal();
       clearConnectorQueryParams();
@@ -1720,11 +1720,11 @@ export default function ConnectorsHubPage() {
       return;
     }
 
-    if (normalizedConnectorParam === 'googleTrends' && !pendingPayload.accountId) {
-      const hydrateGoogleTrendsAccounts = async () => {
+    if (normalizedConnectorParam === 'searchConsole' && !pendingPayload.accountId) {
+      const hydrateSearchConsoleAccounts = async () => {
         try {
-          setConnectorBusyKey('googleTrends');
-          const response = await fetch('/api/auth/connectors/googleTrends/accounts', {
+          setConnectorBusyKey('searchConsole');
+          const response = await fetch('/api/auth/connectors/searchConsole/accounts', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -1734,12 +1734,12 @@ export default function ConnectorsHubPage() {
           const payload = (await response.json()) as { accounts?: Ga4AccountOption[]; error?: string };
 
           if (!response.ok) {
-            throw new Error(payload.error || 'Não foi possível listar as contas do Google Trends.');
+            throw new Error(payload.error || 'Não foi possível listar as contas do Google Search Console.');
           }
 
           const accounts = Array.isArray(payload.accounts) ? payload.accounts : [];
           if (accounts.length === 0) {
-            clearPendingGoogleTrendsSelection();
+            clearPendingSearchConsoleSelection();
             setConnectorFeedback(null);
             setConnectorError('Autenticação concluída, mas nenhuma conta Google disponível foi encontrada para o canal.');
             return;
@@ -1747,17 +1747,17 @@ export default function ConnectorsHubPage() {
 
           // Removed auto-selection to force the selection modal to always appear.
 
-          setPendingGoogleTrendsConnection(pendingPayload);
-          setGoogleTrendsAccounts(accounts);
-          setSelectedGoogleTrendsAccountId(accounts[0].accountId);
+          setPendingSearchConsoleConnection(pendingPayload);
+          setSearchConsoleAccounts(accounts);
+          setSelectedSearchConsoleAccountId(accounts[0].accountId);
           setConnectorError(null);
-          setConnectorFeedback('Autenticação concluída. Selecione a conta Google para finalizar o Google Trends.');
-        } catch (googleTrendsError) {
+          setConnectorFeedback('Autenticação concluída. Selecione a conta Google para finalizar o Google Search Console.');
+        } catch (searchConsoleError) {
           const message =
-            googleTrendsError instanceof Error
-              ? googleTrendsError.message
-              : 'Falha ao carregar contas do Google Trends.';
-          clearPendingGoogleTrendsSelection();
+            searchConsoleError instanceof Error
+              ? searchConsoleError.message
+              : 'Falha ao carregar contas do Google Search Console.';
+          clearPendingSearchConsoleSelection();
           setConnectorFeedback(null);
           setConnectorError(message);
         } finally {
@@ -1766,7 +1766,7 @@ export default function ConnectorsHubPage() {
         }
       };
 
-      void hydrateGoogleTrendsAccounts();
+      void hydrateSearchConsoleAccounts();
       return;
     }
 
@@ -1816,7 +1816,7 @@ export default function ConnectorsHubPage() {
       clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
       clearPendingGa4Selection();
-      clearPendingGoogleTrendsSelection();
+      clearPendingSearchConsoleSelection();
       clearPendingHubSpotSelection();
       clearStripeConfigModal();
       clearConnectorQueryParams();
@@ -1827,7 +1827,7 @@ export default function ConnectorsHubPage() {
     clearPendingGa4Selection,
     clearPendingGoogleAdsSelection,
     clearPendingHubSpotSelection,
-    clearPendingGoogleTrendsSelection,
+    clearPendingSearchConsoleSelection,
     clearPendingInstagramSelection,
     clearPendingMetaAdsSelection,
     clearStripeConfigModal,
@@ -2027,20 +2027,20 @@ export default function ConnectorsHubPage() {
       pendingGa4Connection &&
       ga4Accounts.length > 0
   );
-  const showGoogleTrendsSelectionModal = Boolean(
+  const showSearchConsoleSelectionModal = Boolean(
     !showGoogleAdsSelectionModal &&
       !showMetaAdsSelectionModal &&
       !showInstagramSelectionModal &&
       !showGa4SelectionModal &&
-      pendingGoogleTrendsConnection &&
-      googleTrendsAccounts.length > 0
+      pendingSearchConsoleConnection &&
+      searchConsoleAccounts.length > 0
   );
   const showHubSpotSelectionModal = Boolean(
     !showGoogleAdsSelectionModal &&
       !showMetaAdsSelectionModal &&
       !showInstagramSelectionModal &&
       !showGa4SelectionModal &&
-      !showGoogleTrendsSelectionModal &&
+      !showSearchConsoleSelectionModal &&
       pendingHubSpotConnection &&
       hubspotAccounts.length > 0
   );
@@ -2064,8 +2064,8 @@ export default function ConnectorsHubPage() {
     if (connectorKey === 'ga4') {
       clearPendingGa4Selection();
     }
-    if (connectorKey === 'googleTrends') {
-      clearPendingGoogleTrendsSelection();
+    if (connectorKey === 'searchConsole') {
+      clearPendingSearchConsoleSelection();
     }
     if (connectorKey === 'crm') {
       clearPendingHubSpotSelection();
@@ -2283,36 +2283,36 @@ export default function ConnectorsHubPage() {
     setConnectorBusyKey(null);
   };
 
-  const handleGoogleTrendsAccountSelection = async () => {
-    if (!pendingGoogleTrendsConnection || !selectedGoogleTrendsAccountId) {
+  const handleSearchConsoleAccountSelection = async () => {
+    if (!pendingSearchConsoleConnection || !selectedSearchConsoleAccountId) {
       setConnectorError('Selecione uma conta Google para continuar.');
       setConnectorFeedback(null);
       return;
     }
 
-    const selectedAccount = googleTrendsAccounts.find((account) => account.accountId === selectedGoogleTrendsAccountId);
+    const selectedAccount = searchConsoleAccounts.find((account) => account.accountId === selectedSearchConsoleAccountId);
 
-    setGoogleTrendsSelectionSaving(true);
-    setConnectorBusyKey('googleTrends');
+    setSearchConsoleSelectionSaving(true);
+    setConnectorBusyKey('searchConsole');
 
     const persisted = await persistOAuthConnection(
       {
-        ...pendingGoogleTrendsConnection,
-        accountId: selectedGoogleTrendsAccountId,
+        ...pendingSearchConsoleConnection,
+        accountId: selectedSearchConsoleAccountId,
         metadata: selectedAccount
           ? {
               accountName: selectedAccount.name,
             }
-          : pendingGoogleTrendsConnection.metadata ?? null,
+          : pendingSearchConsoleConnection.metadata ?? null,
       },
-      'Conta Google Trends vinculada com sucesso.'
+      'Conta Google Search Console vinculada com sucesso.'
     );
 
     if (persisted) {
-      clearPendingGoogleTrendsSelection();
+      clearPendingSearchConsoleSelection();
     }
 
-    setGoogleTrendsSelectionSaving(false);
+    setSearchConsoleSelectionSaving(false);
     setConnectorBusyKey(null);
   };
 
@@ -3881,24 +3881,24 @@ export default function ConnectorsHubPage() {
         </div>
       )}
 
-      {showGoogleTrendsSelectionModal && (
+      {showSearchConsoleSelectionModal && (
         <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
           <section className={ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME} style={ACCOUNT_SELECTION_MODAL_PANEL_STYLE}>
-            <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a conta Google para concluir o Google Trends</p>
+            <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a conta Google para concluir o Google Search Console</p>
             <p className={ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME}>
-              A autenticação foi concluída. Agora escolha qual conta Google deve ser usada no canal Google Trends.
+              A autenticação foi concluída. Agora escolha qual conta Google deve ser usada no canal Google Search Console.
             </p>
 
             <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
               <label className="flex flex-col gap-2 text-[20px] font-semibold text-[#FFD6B6]">
                 Conta Google
                 <select
-                  value={selectedGoogleTrendsAccountId}
-                  onChange={(event) => setSelectedGoogleTrendsAccountId(event.target.value)}
+                  value={selectedSearchConsoleAccountId}
+                  onChange={(event) => setSelectedSearchConsoleAccountId(event.target.value)}
                   className={ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME}
                 >
-                  {googleTrendsAccounts.map((account) => (
+                  {searchConsoleAccounts.map((account) => (
                     <option key={account.id} value={account.accountId}>
                       {account.name} ({account.accountId})
                     </option>
@@ -3908,11 +3908,11 @@ export default function ConnectorsHubPage() {
 
               <button
                 type="button"
-                onClick={() => void handleGoogleTrendsAccountSelection()}
-                disabled={!selectedGoogleTrendsAccountId || googleTrendsSelectionSaving}
+                onClick={() => void handleSearchConsoleAccountSelection()}
+                disabled={!selectedSearchConsoleAccountId || searchConsoleSelectionSaving}
                 className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
               >
-                {googleTrendsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+                {searchConsoleSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
               </button>
             </div>
           </section>

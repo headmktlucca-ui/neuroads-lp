@@ -95,15 +95,15 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
       },
     ],
   },
-  googleTrends: {
-    connector: 'googleTrends',
+  searchConsole: {
+    connector: 'searchConsole',
     defaultProvider: 'google',
     providers: [
       {
         provider: 'google',
         authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
         tokenUrl: 'https://oauth2.googleapis.com/token',
-        scope: 'https://www.googleapis.com/auth/analytics.readonly openid email profile',
+        scope: 'https://www.googleapis.com/auth/webmasters.readonly openid email profile',
         clientIdEnvKeys: ['GOOGLE_ADS_CLIENT_ID', 'GOOGLE_OAUTH_CLIENT_ID'],
         clientSecretEnvKeys: ['GOOGLE_ADS_CLIENT_SECRET', 'GOOGLE_OAUTH_CLIENT_SECRET'],
         authExtraParams: {
