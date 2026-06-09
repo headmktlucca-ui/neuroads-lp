@@ -8,7 +8,7 @@ import {
 
 const SUPPORTED_CONNECTORS: ConnectorKey[] = [
   'googleAds',
-  'googleTrends',
+  'searchConsole',
   'metaAds',
   'instagram',
   'linkedinAds',

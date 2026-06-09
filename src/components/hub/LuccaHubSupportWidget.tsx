@@ -80,7 +80,7 @@ export default function LuccaHubSupportWidget() {
 
     const connectorDefaults = {
       googleAds: false,
-      googleTrends: false,
+      searchConsole: false,
       metaAds: false,
       linkedinAds: false,
       ga4: false,
