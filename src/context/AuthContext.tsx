@@ -6,6 +6,7 @@ import {
   onAuthStateChanged, 
   signInWithPopup, 
   signInWithRedirect,
+  getRedirectResult,
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -291,6 +292,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Auth state listener
   useEffect(() => {
     const auth = getFirebaseAuth();
+    
+    // Captura erros ou resultados de redirecionamentos (importante para o fallback do COOP)
+    getRedirectResult(auth).then((result) => {
+      if (result) {
+        console.log("Login por redirecionamento concluído com sucesso!");
+      }
+    }).catch((error) => {
+      console.error("Erro após retorno do signInWithRedirect:", error);
+    });
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       authInitialized.current = true;
       setUser(firebaseUser);
