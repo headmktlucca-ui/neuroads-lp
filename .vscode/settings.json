@@ -5,5 +5,8 @@
         ".codex/worktrees",
         "**/.claude/worktrees/**",
         "**/.codex/worktrees/**"
-    ]
+    ],
+    "github-actions.remote-name": "neuroads-lp",
+    "github-actions.use-enterprise": true,
+    "github-actions.workflows.pinned.refresh.enabled": true
 }

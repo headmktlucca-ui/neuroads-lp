@@ -30,6 +30,8 @@ import { AGENT_STATUS_UPDATED_EVENT, readAgentStatusOverrides } from '../../lib/
 import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
 import { formatAutomationDateTime, getHubAutomationsFromProfile, type HubAutomationEntry } from '../../lib/hub-automations';
 import { getHubProfileSummary } from '../../lib/hub-profile';
+import { getConnectorStatusFromConnections } from '../../lib/connectors';
+import SalesFunnelWidget from '../hub/SalesFunnelWidget';
 
 type ActionItem = {
   id: string;
@@ -161,6 +163,8 @@ export default function StrategicHubOverview() {
   const isGa4Connected = Boolean(ga4Connection?.isActive);
   const ga4AccountId = ga4Connection?.accountId;
   const ga4AccessToken = ga4Connection?.accessToken;
+
+  const connectorStatus = useMemo(() => getConnectorStatusFromConnections(profile?.connections), [profile?.connections]);
 
   const [ga4Metrics, setGa4Metrics] = useState<{
     activeUsers: string;
@@ -442,53 +446,7 @@ export default function StrategicHubOverview() {
             </article>
           </section>
 
-          <section className="rounded-[24px] border border-[#153462] bg-[linear-gradient(110deg,#071633_0%,#081c3f_45%,#061734_100%)] p-4 shadow-[0_12px_24px_rgba(2,8,22,0.3)]">
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.08fr_repeat(4,1fr)]">
-              <article className="rounded-[16px] border border-[#173c6e] bg-[#081a38] px-6 py-5">
-                <h3 className="text-[17px] font-black leading-tight tracking-tight text-white">
-                  Painel Executivo Analítico
-                </h3>
-                <p className="mt-1 text-[14px] text-[#B7C4DF]">
-                  {isGa4Connected ? 'Resultados relacionados aos últimos 30 dias' : 'Dados indisponíveis. Conecte o GA4 para visualizar os KPIs reais.'}
-                </p>
-              </article>
-
-              {[
-                { label: 'Usuários Ativos', key: 'activeUsers' },
-                { label: 'Tempo Médio de Engajamento', key: 'averageSessionDuration' },
-                { label: 'Eventos Principais', key: 'conversions' },
-                { label: 'Taxa de Engajamento', key: 'engagementRate' }
-              ].map((kpi) => {
-                const value = isGa4Connected && ga4Metrics ? ga4Metrics[kpi.key as keyof typeof ga4Metrics] : null;
-                const displayValue = ga4Loading 
-                  ? 'Carregando...' 
-                  : ga4Error 
-                    ? 'Erro na sincronização' 
-                    : (value ?? 'Dados indisponíveis');
-                
-                return (
-                  <article key={kpi.label} className="rounded-[16px] border border-[#173c6e] bg-[#081a38] px-5 py-4">
-                    <div className="mb-3 flex items-center gap-3">
-                      <span className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl border ${isGa4Connected && value ? 'border-[#0A9D57]/60 bg-[#063b22] text-[#0A9D57]' : 'border-[#FF6A00]/60 bg-[#0B1D3F] text-[#FF6A00]'}`}>
-                        <Database className="h-6 w-6" />
-                      </span>
-                      <div>
-                        <p className="text-[15px] font-semibold text-white">{kpi.label}</p>
-                        <p className={`text-[20px] leading-none font-black ${isGa4Connected && value ? 'text-white' : 'text-[#FF6A00]'}`}>
-                          {displayValue}
-                        </p>
-                      </div>
-                    </div>
-                    <p className="text-[13px] text-[#C6D3E9]">
-                      {isGa4Connected 
-                        ? (ga4Error ? `Falha: ${ga4Error}` : 'Sincronizado via GA4 Data API')
-                        : 'Aguardando integrações obrigatórias e sincronização inicial.'}
-                    </p>
-                  </article>
-                );
-              })}
-            </div>
-          </section>
+          <SalesFunnelWidget connectorStatus={connectorStatus} />
 
           <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.05fr_1fr]">
             <article className="overflow-hidden rounded-[24px] border border-[#E8ECF1] glassmorphism-light shadow-[0_12px_24px_rgba(15,23,42,0.05)]">
