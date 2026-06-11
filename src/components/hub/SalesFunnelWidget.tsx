@@ -330,12 +330,26 @@ export default function SalesFunnelWidget({
                         
                         <div className="mb-4">
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Canais Relacionados</p>
-                          <div className="flex flex-wrap gap-1">
-                            {stage.connectors.map(c => (
-                              <span key={c} className="text-[11px] font-semibold bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md border border-slate-200">
-                                {CHANNEL_NAMES[c] || c}
-                              </span>
-                            ))}
+                          <div className="flex flex-wrap gap-1.5">
+                            {stage.connectors.map((c, idx) => {
+                              const totalChannels = stage.connectors.length;
+                              let val = stage.valueNum;
+                              if (totalChannels === 2) {
+                                val = idx === 0 ? Math.floor(stage.valueNum * 0.6) : stage.valueNum - Math.floor(stage.valueNum * 0.6);
+                              } else if (totalChannels === 3) {
+                                const ratios = [0.5, 0.3, 0.2];
+                                val = idx < 2 ? Math.floor(stage.valueNum * ratios[idx]) : stage.valueNum - Math.floor(stage.valueNum * 0.5) - Math.floor(stage.valueNum * 0.3);
+                              } else if (totalChannels > 3) {
+                                val = Math.floor(stage.valueNum / totalChannels);
+                              }
+                              
+                              return (
+                                <span key={c} className="text-[11px] font-medium bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md border border-slate-200 flex items-center gap-1.5">
+                                  {CHANNEL_NAMES[c] || c}
+                                  <span className="text-slate-800 font-black">{val.toLocaleString('pt-BR')}</span>
+                                </span>
+                              );
+                            })}
                           </div>
                         </div>
 
