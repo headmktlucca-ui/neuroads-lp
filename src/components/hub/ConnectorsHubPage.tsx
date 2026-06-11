@@ -461,28 +461,31 @@ function HealthGauge({ value }: { value: number }) {
   const scoreTone =
     boundedValue >= 70
       ? {
-          valueColor: '#0F172A',
-          needleStart: '#FFD37A',
-          needleEnd: '#FF6A00',
-          centerGlow: '#FDBA74',
+          gradientFrom: '#08B760',
+          gradientTo: '#0A9D57',
+          needleStart: '#6EE7A9',
+          needleEnd: '#0A9D57',
+          centerGlow: '#BDE8CF',
         }
       : boundedValue >= 50
         ? {
-            valueColor: '#0F172A',
-            needleStart: '#FBBF24',
-            needleEnd: '#F97316',
-            centerGlow: '#FDBA74',
+            gradientFrom: '#F59E0B',
+            gradientTo: '#D97706',
+            needleStart: '#FCD34D',
+            needleEnd: '#D97706',
+            centerGlow: '#FDE68A',
           }
         : {
-            valueColor: '#0F172A',
-            needleStart: '#FB7185',
-            needleEnd: '#EF4444',
-            centerGlow: '#FCA5A5',
+            gradientFrom: '#EF4444',
+            gradientTo: '#B91C1C',
+            needleStart: '#FCA5A5',
+            needleEnd: '#B91C1C',
+            centerGlow: '#FECACA',
           };
 
-  const totalSegments = 8;
+  const totalSegments = 12;
   const segmentAngle = Math.PI / totalSegments;
-  const gapRad = 0.065;
+  const gapRad = 0.04;
 
   const segments = Array.from({ length: totalSegments }).map((_, idx) => {
     const startAngle = Math.PI - idx * segmentAngle - gapRad / 2;
@@ -493,15 +496,12 @@ function HealthGauge({ value }: { value: number }) {
     const endX = cx + radius * Math.cos(endAngle);
     const endY = cy - radius * Math.sin(endAngle);
 
-    let color = '#22C55E';
-    if (idx >= 4 && idx <= 5) {
-      color = '#F59E0B';
-    } else if (idx >= 6) {
-      color = '#EF4444';
-    }
-
     const segmentPercentageEnd = ((idx + 1) / totalSegments) * 100;
-    const isActive = boundedValue >= segmentPercentageEnd - 7;
+    const isActive = boundedValue >= segmentPercentageEnd - 5;
+    
+    let color = '#22C55E';
+    if (idx >= 6 && idx <= 8) color = '#F59E0B';
+    if (idx > 8) color = '#EF4444';
 
     return {
       path: `M ${startX} ${startY} A ${radius} ${radius} 0 0 1 ${endX} ${endY}`,
@@ -512,19 +512,21 @@ function HealthGauge({ value }: { value: number }) {
 
   const trackPath = `M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`;
   const angleRad = Math.PI - (Math.PI * boundedValue) / 100;
-  const needleLenStart = radius - 34;
-  const needleLenEnd = radius + 10;
+  const needleLenStart = radius - 38;
+  const needleLenEnd = radius + 12;
   const needleX1 = cx + needleLenStart * Math.cos(angleRad);
   const needleY1 = cy - needleLenStart * Math.sin(angleRad);
   const needleX2 = cx + needleLenEnd * Math.cos(angleRad);
   const needleY2 = cy - needleLenEnd * Math.sin(angleRad);
 
   return (
-    <div className="relative mt-2 flex flex-col items-center justify-center">
-      <div className="hub-health-orbit-bg pointer-events-none absolute inset-x-7 top-7 h-[130px]" aria-hidden />
+    <div className="relative mt-2 flex flex-col items-center justify-center group cursor-pointer transition-transform duration-500 hover:scale-[1.02]">
+      <div className="absolute inset-0 bg-gradient-to-b from-white/0 to-slate-50/50 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+      <div className="hub-health-orbit-bg pointer-events-none absolute inset-x-7 top-7 h-[130px] opacity-60 group-hover:opacity-100 transition-opacity duration-500" aria-hidden />
+      
       <svg
         viewBox="0 0 240 150"
-        className="relative z-10 h-[152px] w-[250px] drop-shadow-[0_10px_20px_rgba(15,23,42,0.08)]"
+        className="relative z-10 h-[152px] w-[250px] drop-shadow-[0_8px_16px_rgba(15,23,42,0.06)] group-hover:drop-shadow-[0_16px_24px_rgba(15,23,42,0.12)] transition-all duration-500"
         aria-label={`Saúde ${boundedValue} de 100`}
         role="img"
       >
@@ -534,7 +536,7 @@ function HealthGauge({ value }: { value: number }) {
             <stop offset="100%" stopColor={scoreTone.needleEnd} />
           </linearGradient>
           <filter id="hubGaugeGlow" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="2.4" result="coloredBlur" />
+            <feGaussianBlur stdDeviation="3" result="coloredBlur" />
             <feMerge>
               <feMergeNode in="coloredBlur" />
               <feMergeNode in="SourceGraphic" />
@@ -548,7 +550,7 @@ function HealthGauge({ value }: { value: number }) {
           stroke="#E9EDF4"
           strokeWidth={strokeWidth}
           strokeLinecap="round"
-          opacity={0.85}
+          opacity={0.6}
         />
 
         {segments.map((seg, i) => (
@@ -556,36 +558,121 @@ function HealthGauge({ value }: { value: number }) {
             key={i}
             d={seg.path}
             fill="none"
-            stroke={seg.color}
+            stroke={seg.isActive ? scoreTone.gradientTo : seg.color}
             strokeWidth={strokeWidth}
             strokeLinecap="round"
-            className="transition-all duration-500"
+            className="transition-all duration-700 origin-center"
             style={{
-              opacity: seg.isActive ? 1 : 0.14,
+              opacity: seg.isActive ? 1 : 0.15,
               filter: seg.isActive ? 'url(#hubGaugeGlow)' : 'none',
+              transform: `scale(${seg.isActive ? 1.02 : 1})`,
+              transformOrigin: '120px 120px'
             }}
           />
         ))}
 
-        <line
-          x1={needleX1}
-          y1={needleY1}
-          x2={needleX2}
-          y2={needleY2}
-          stroke="url(#hubGaugeNeedleGradient)"
-          strokeWidth="4"
-          strokeLinecap="round"
-        />
-        <circle cx={cx} cy={cy} r="8.5" fill="#0F172A" />
-        <circle cx={cx} cy={cy} r="5" fill={scoreTone.centerGlow} />
+        <g className="transition-transform duration-1000 ease-out" style={{ transformOrigin: '120px 120px' }}>
+          <line
+            x1={needleX1}
+            y1={needleY1}
+            x2={needleX2}
+            y2={needleY2}
+            stroke="url(#hubGaugeNeedleGradient)"
+            strokeWidth="5"
+            strokeLinecap="round"
+            className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
+          />
+          <circle cx={cx} cy={cy} r="9" fill="#0F172A" className="drop-shadow-md" />
+          <circle cx={cx} cy={cy} r="4" fill={scoreTone.centerGlow} className="animate-pulse" />
+        </g>
       </svg>
 
-      <p
-        className="absolute top-[60px] text-[56px] font-black leading-none tracking-tight"
-        style={{ color: scoreTone.valueColor }}
-      >
-        {boundedValue}%
-      </p>
+      <div className="absolute top-[65px] flex flex-col items-center">
+        <span 
+          className="text-[52px] font-black leading-none tracking-tight transition-all duration-500 group-hover:scale-110"
+          style={{ 
+            background: `linear-gradient(135deg, ${scoreTone.gradientFrom}, ${scoreTone.gradientTo})`,
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))'
+          }}
+        >
+          {boundedValue}%
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function InteractiveHealthMetrics({ active, total }: { active: number, total: number }) {
+  const [hoveredMetric, setHoveredMetric] = useState<string | null>(null);
+
+  const metrics = [
+    {
+      id: 'active',
+      label: 'Ativas',
+      value: `${active}/${total}`,
+      percentage: total > 0 ? (active / total) * 100 : 0,
+      bg: 'bg-gradient-to-r from-[#08B760] to-[#0A9D57]',
+      icon: <PlugZap className="w-3.5 h-3.5" />,
+      detail: 'Conexões estáveis e operando sem erros nas últimas 24h.',
+      statusColor: 'text-[#0A9D57]'
+    },
+    {
+      id: 'latency',
+      label: 'Latência',
+      value: '112ms',
+      percentage: 85,
+      bg: 'bg-gradient-to-r from-[#FF9E40] to-[#FF7A00]',
+      icon: <Activity className="w-3.5 h-3.5" />,
+      detail: 'Tempo de resposta médio dentro do P95 esperado (200ms).',
+      statusColor: 'text-[#FF7A00]'
+    },
+    {
+      id: 'errors',
+      label: 'Falhas',
+      value: '3',
+      percentage: 95,
+      bg: 'bg-gradient-to-r from-[#F87171] to-[#EF4444]',
+      icon: <TriangleAlert className="w-3.5 h-3.5" />,
+      detail: 'Três requisições bloqueadas por rate limit da API.',
+      statusColor: 'text-[#EF4444]'
+    }
+  ];
+
+  return (
+    <div className="mt-5 pt-4 border-t border-slate-100 flex flex-col gap-2.5">
+      {metrics.map((m) => (
+        <div 
+          key={m.id} 
+          className="relative group cursor-pointer rounded-xl border border-slate-100 bg-white p-3 transition-all duration-300 hover:shadow-[0_8px_20px_-6px_rgba(15,23,42,0.08)] hover:border-slate-200 hover:-translate-y-0.5"
+          onMouseEnter={() => setHoveredMetric(m.id)}
+          onMouseLeave={() => setHoveredMetric(null)}
+        >
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2.5">
+              <div className={`p-1.5 rounded-lg text-white ${m.bg} shadow-sm transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3`}>
+                {m.icon}
+              </div>
+              <span className="text-[11px] font-black text-slate-500 uppercase tracking-widest">{m.label}</span>
+            </div>
+            <span className={`text-[15px] font-black ${m.statusColor}`}>{m.value}</span>
+          </div>
+          
+          <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+            <div 
+              className={`h-full ${m.bg} rounded-full transition-all duration-1000 ease-out`} 
+              style={{ width: hoveredMetric === m.id || hoveredMetric === null ? `${m.percentage}%` : '0%' }}
+            />
+          </div>
+
+          <div className={`overflow-hidden transition-all duration-300 ease-in-out ${hoveredMetric === m.id ? 'max-h-20 opacity-100 mt-2.5' : 'max-h-0 opacity-0'}`}>
+            <p className="text-[11px] text-slate-500 font-medium leading-relaxed bg-slate-50 p-2 rounded-lg border border-slate-100">
+              {m.detail}
+            </p>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -3159,22 +3246,7 @@ export default function ConnectorsHubPage() {
                       </div>
                     </div>
 
-                    <div className="mt-5 grid grid-cols-3 gap-2 border-t border-slate-100 pt-4 text-center">
-                      <div className="border-r border-slate-100 px-1">
-                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Integrações Ativas</p>
-                        <p className="mt-1 text-[16px] font-black text-slate-800">
-                          {activeTrackedConnectorCount}/{trackedConnectorCount}
-                        </p>
-                      </div>
-                      <div className="border-r border-slate-100 px-1">
-                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Latência Média</p>
-                        <p className="mt-1 text-[16px] font-black text-slate-800">112ms</p>
-                      </div>
-                      <div className="px-1">
-                        <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Falhas (24h)</p>
-                        <p className="mt-1 text-[16px] font-black text-slate-800">3</p>
-                      </div>
-                    </div>
+                    <InteractiveHealthMetrics active={activeTrackedConnectorCount} total={trackedConnectorCount} />
                   </div>
                 </section>
 

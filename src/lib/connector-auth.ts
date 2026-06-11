@@ -288,8 +288,8 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
         authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
         tokenUrl: 'https://oauth2.googleapis.com/token',
         scope: 'https://www.googleapis.com/auth/analytics.readonly openid email profile',
-        clientIdEnvKeys: ['GOOGLE_ADS_CLIENT_ID', 'GOOGLE_OAUTH_CLIENT_ID'],
-        clientSecretEnvKeys: ['GOOGLE_ADS_CLIENT_SECRET', 'GOOGLE_OAUTH_CLIENT_SECRET'],
+        clientIdEnvKeys: ['GOOGLE_ANALYTICS_CLIENT_ID', 'GOOGLE_ADS_CLIENT_ID', 'GOOGLE_OAUTH_CLIENT_ID'],
+        clientSecretEnvKeys: ['GOOGLE_ANALYTICS_CLIENT_SECRET', 'GOOGLE_ADS_CLIENT_SECRET', 'GOOGLE_OAUTH_CLIENT_SECRET'],
         authExtraParams: {
           access_type: 'offline',
           prompt: 'consent select_account',
