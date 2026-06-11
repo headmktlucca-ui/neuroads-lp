@@ -454,70 +454,45 @@ function parseHubSpotInstallUrl(raw: string): ParsedHubSpotInstallUrl | null {
 function HealthGauge({ value }: { value: number }) {
   const boundedValue = Math.max(0, Math.min(value, 100));
   const cx = 120;
-  const cy = 120;
-  const radius = 82;
-  const strokeWidth = 14;
+  const cy = 110;
+  const radius = 80;
+  const strokeWidth = 20;
 
-  const scoreTone =
-    boundedValue >= 70
-      ? {
-          gradientFrom: '#08B760',
-          gradientTo: '#0A9D57',
-          needleStart: '#6EE7A9',
-          needleEnd: '#0A9D57',
-          centerGlow: '#BDE8CF',
-        }
-      : boundedValue >= 50
-        ? {
-            gradientFrom: '#F59E0B',
-            gradientTo: '#D97706',
-            needleStart: '#FCD34D',
-            needleEnd: '#D97706',
-            centerGlow: '#FDE68A',
-          }
-        : {
-            gradientFrom: '#EF4444',
-            gradientTo: '#B91C1C',
-            needleStart: '#FCA5A5',
-            needleEnd: '#B91C1C',
-            centerGlow: '#FECACA',
-          };
+  // Gradiente semelhante ao do Anexo 02
+  const gradientFrom = '#FF7A00';
+  const gradientTo = '#EF4444';
 
-  const totalSegments = 12;
-  const segmentAngle = Math.PI / totalSegments;
-  const gapRad = 0.04;
+  const startX = cx - radius;
+  const startY = cy;
+  const endX = cx + radius;
+  const endY = cy;
+  
+  const trackPath = `M ${startX} ${startY} A ${radius} ${radius} 0 0 1 ${endX} ${endY}`;
+  
+  const fillAngleRad = Math.PI - (Math.PI * boundedValue) / 100;
+  const fillX = cx + radius * Math.cos(fillAngleRad);
+  const fillY = cy - radius * Math.sin(fillAngleRad);
 
-  const segments = Array.from({ length: totalSegments }).map((_, idx) => {
-    const startAngle = Math.PI - idx * segmentAngle - gapRad / 2;
-    const endAngle = Math.PI - (idx + 1) * segmentAngle + gapRad / 2;
+  const isZero = boundedValue === 0;
+  
+  const fillPath = isZero 
+    ? '' 
+    : `M ${startX} ${startY} A ${radius} ${radius} 0 0 1 ${fillX} ${fillY}`;
 
-    const startX = cx + radius * Math.cos(startAngle);
-    const startY = cy - radius * Math.sin(startAngle);
-    const endX = cx + radius * Math.cos(endAngle);
-    const endY = cy - radius * Math.sin(endAngle);
-
-    const segmentPercentageEnd = ((idx + 1) / totalSegments) * 100;
-    const isActive = boundedValue >= segmentPercentageEnd - 5;
-    
-    let color = '#22C55E';
-    if (idx >= 6 && idx <= 8) color = '#F59E0B';
-    if (idx > 8) color = '#EF4444';
-
-    return {
-      path: `M ${startX} ${startY} A ${radius} ${radius} 0 0 1 ${endX} ${endY}`,
-      color,
-      isActive,
-    };
-  });
-
-  const trackPath = `M ${cx - radius} ${cy} A ${radius} ${radius} 0 0 1 ${cx + radius} ${cy}`;
-  const angleRad = Math.PI - (Math.PI * boundedValue) / 100;
-  const needleLenStart = radius - 38;
-  const needleLenEnd = radius + 12;
-  const needleX1 = cx + needleLenStart * Math.cos(angleRad);
-  const needleY1 = cy - needleLenStart * Math.sin(angleRad);
-  const needleX2 = cx + needleLenEnd * Math.cos(angleRad);
-  const needleY2 = cy - needleLenEnd * Math.sin(angleRad);
+  // Linha fina interna (inner track)
+  const innerRadius = radius - strokeWidth / 2 - 8;
+  const innerStartX = cx - innerRadius;
+  const innerEndX = cx + innerRadius;
+  const innerTrackPath = `M ${innerStartX} ${startY} A ${innerRadius} ${innerRadius} 0 0 1 ${innerEndX} ${endY}`;
+  
+  // Marcador (tick) apontando para dentro
+  const tickLength = 12;
+  const tickOuterRadius = innerRadius;
+  const tickInnerRadius = innerRadius - tickLength;
+  const tickX1 = cx + tickOuterRadius * Math.cos(fillAngleRad);
+  const tickY1 = cy - tickOuterRadius * Math.sin(fillAngleRad);
+  const tickX2 = cx + tickInnerRadius * Math.cos(fillAngleRad);
+  const tickY2 = cy - tickInnerRadius * Math.sin(fillAngleRad);
 
   return (
     <div className="relative mt-2 flex flex-col items-center justify-center group cursor-pointer transition-transform duration-500 hover:scale-[1.02]">
@@ -525,86 +500,103 @@ function HealthGauge({ value }: { value: number }) {
       <div className="hub-health-orbit-bg pointer-events-none absolute inset-x-7 top-7 h-[130px] opacity-60 group-hover:opacity-100 transition-opacity duration-500" aria-hidden />
       
       <svg
-        viewBox="0 0 240 150"
-        className="relative z-10 h-[152px] w-[250px] drop-shadow-[0_8px_16px_rgba(15,23,42,0.06)] group-hover:drop-shadow-[0_16px_24px_rgba(15,23,42,0.12)] transition-all duration-500"
+        viewBox="0 0 240 140"
+        className="relative z-10 h-[140px] w-[240px] drop-shadow-[0_4px_8px_rgba(15,23,42,0.04)] group-hover:drop-shadow-[0_8px_16px_rgba(15,23,42,0.08)] transition-all duration-500"
         aria-label={`Saúde ${boundedValue} de 100`}
         role="img"
       >
         <defs>
-          <linearGradient id="hubGaugeNeedleGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor={scoreTone.needleStart} />
-            <stop offset="100%" stopColor={scoreTone.needleEnd} />
+          <linearGradient id="hubGaugeFillGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor={gradientFrom} />
+            <stop offset="100%" stopColor={gradientTo} />
           </linearGradient>
-          <filter id="hubGaugeGlow" x="-40%" y="-40%" width="180%" height="180%">
-            <feGaussianBlur stdDeviation="3" result="coloredBlur" />
-            <feMerge>
-              <feMergeNode in="coloredBlur" />
-              <feMergeNode in="SourceGraphic" />
-            </feMerge>
-          </filter>
+          <linearGradient id="hubGaugeTrackGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#E2E8F0" />
+            <stop offset="100%" stopColor="#CBD5E1" />
+          </linearGradient>
         </defs>
 
+        {/* Inner track */}
+        <path
+          d={innerTrackPath}
+          fill="none"
+          stroke="#E2E8F0"
+          strokeWidth="1"
+        />
+
+        {/* Tick Mark */}
+        {!isZero && (
+          <line
+            x1={tickX1}
+            y1={tickY1}
+            x2={tickX2}
+            y2={tickY2}
+            stroke="#94A3B8"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        )}
+
+        {/* Main Background Track */}
         <path
           d={trackPath}
           fill="none"
-          stroke="#E9EDF4"
+          stroke="url(#hubGaugeTrackGradient)"
           strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          opacity={0.6}
+          strokeLinecap="butt"
         />
 
-        {segments.map((seg, i) => (
+        {/* Filled Track */}
+        {!isZero && (
           <path
-            key={i}
-            d={seg.path}
+            d={fillPath}
             fill="none"
-            stroke={seg.isActive ? scoreTone.gradientTo : seg.color}
+            stroke="url(#hubGaugeFillGradient)"
             strokeWidth={strokeWidth}
-            strokeLinecap="round"
-            className="transition-all duration-700 origin-center"
-            style={{
-              opacity: seg.isActive ? 1 : 0.15,
-              filter: seg.isActive ? 'url(#hubGaugeGlow)' : 'none',
-              transform: `scale(${seg.isActive ? 1.02 : 1})`,
-              transformOrigin: '120px 120px'
-            }}
+            strokeLinecap="butt"
+            className="transition-all duration-1000 ease-out"
           />
-        ))}
+        )}
 
-        <g className="transition-transform duration-1000 ease-out" style={{ transformOrigin: '120px 120px' }}>
-          <line
-            x1={needleX1}
-            y1={needleY1}
-            x2={needleX2}
-            y2={needleY2}
-            stroke="url(#hubGaugeNeedleGradient)"
-            strokeWidth="5"
-            strokeLinecap="round"
-            className="drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]"
-          />
-          <circle cx={cx} cy={cy} r="9" fill="#0F172A" className="drop-shadow-md" />
-          <circle cx={cx} cy={cy} r="4" fill={scoreTone.centerGlow} className="animate-pulse" />
-        </g>
-      </svg>
-
-      <div className="absolute top-[65px] flex flex-col items-center">
-        <span 
-          className="text-[52px] font-black leading-none tracking-tight transition-all duration-500 group-hover:scale-110"
-          style={{ 
-            background: `linear-gradient(135deg, ${scoreTone.gradientFrom}, ${scoreTone.gradientTo})`,
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            filter: 'drop-shadow(0px 2px 4px rgba(0,0,0,0.1))'
-          }}
+        {/* Center Text */}
+        <text
+          x={cx}
+          y={cy - 15}
+          textAnchor="middle"
+          fill="#0F172A"
+          className="text-4xl font-black tracking-tight"
+          style={{ dominantBaseline: 'middle' }}
         >
           {boundedValue}%
-        </span>
-      </div>
+        </text>
+
+        {/* 0% Label */}
+        <text
+          x={startX}
+          y={cy + 24}
+          textAnchor="middle"
+          fill="#64748B"
+          className="text-[11px] font-bold tracking-wider"
+        >
+          0%
+        </text>
+
+        {/* 100% Label */}
+        <text
+          x={endX}
+          y={cy + 24}
+          textAnchor="middle"
+          fill="#64748B"
+          className="text-[11px] font-bold tracking-wider"
+        >
+          100%
+        </text>
+      </svg>
     </div>
   );
 }
 
-function InteractiveHealthMetrics({ active, total }: { active: number, total: number }) {
+function InteractiveHealthMetrics({ active, total, errorsCount = 0 }: { active: number, total: number, errorsCount?: number }) {
   const [hoveredMetric, setHoveredMetric] = useState<string | null>(null);
 
   const metrics = [
@@ -615,28 +607,28 @@ function InteractiveHealthMetrics({ active, total }: { active: number, total: nu
       percentage: total > 0 ? (active / total) * 100 : 0,
       bg: 'bg-gradient-to-r from-[#08B760] to-[#0A9D57]',
       icon: <PlugZap className="w-3.5 h-3.5" />,
-      detail: 'Conexões estáveis e operando sem erros nas últimas 24h.',
+      detail: 'Conexões monitoradas em tempo real.',
       statusColor: 'text-[#0A9D57]'
     },
     {
       id: 'latency',
       label: 'Latência',
-      value: '112ms',
-      percentage: 85,
-      bg: 'bg-gradient-to-r from-[#FF9E40] to-[#FF7A00]',
+      value: active === 0 ? '-' : 'Estável',
+      percentage: active === 0 ? 0 : 100,
+      bg: active === 0 ? 'bg-slate-200' : 'bg-gradient-to-r from-[#08B760] to-[#0A9D57]',
       icon: <Activity className="w-3.5 h-3.5" />,
-      detail: 'Tempo de resposta médio dentro do P95 esperado (200ms).',
-      statusColor: 'text-[#FF7A00]'
+      detail: active === 0 ? 'Conecte integrações para medir a latência.' : 'Tempo de resposta médio das APIs.',
+      statusColor: active === 0 ? 'text-slate-400' : 'text-[#0A9D57]'
     },
     {
       id: 'errors',
       label: 'Falhas',
-      value: '3',
-      percentage: 95,
-      bg: 'bg-gradient-to-r from-[#F87171] to-[#EF4444]',
+      value: String(errorsCount),
+      percentage: errorsCount > 0 ? Math.min(100, errorsCount * 25) : 100,
+      bg: errorsCount > 0 ? 'bg-gradient-to-r from-[#F87171] to-[#EF4444]' : 'bg-gradient-to-r from-[#08B760] to-[#0A9D57]',
       icon: <TriangleAlert className="w-3.5 h-3.5" />,
-      detail: 'Três requisições bloqueadas por rate limit da API.',
-      statusColor: 'text-[#EF4444]'
+      detail: errorsCount > 0 ? `${errorsCount} problema(s) detectado(s) nas conexões.` : 'Nenhuma falha de requisição detectada.',
+      statusColor: errorsCount > 0 ? 'text-[#EF4444]' : 'text-[#0A9D57]'
     }
   ];
 
@@ -885,122 +877,7 @@ export type AlertItem = {
   completedAt?: number;
 };
 
-const DEFAULT_ALERTS: AlertItem[] = [
-  {
-    id: 'alert-1',
-    priority: 'critico',
-    badgeText: 'Crítico',
-    time: '11:04',
-    title: 'Falha de Conexão API Pagamentos',
-    description: '(Timeout: 15s)',
-    detailText: 'A conexão com a API do gateway de pagamentos falhou repetidamente por timeout de 15 segundos durante a tentativa de sincronizar as últimas transações operacionais.',
-    status: 'active',
-    insights: [
-      'O tempo de resposta do gateway excedeu o limite máximo configurado de 15 segundos.',
-      'Verifique se há alguma instabilidade geral declarada no painel oficial de status do provedor.',
-      'Uma nova tentativa de sincronização automática será executada em 10 minutos, ou você pode reconfigurar as credenciais caso o problema persista.'
-    ],
-    actionLink: { label: 'Verificar Status do Provedor', url: 'https://status.stripe.com' },
-  },
-  {
-    id: 'alert-2',
-    priority: 'critico',
-    badgeText: 'Crítico',
-    hasGlowOrange: true,
-    time: '10:58',
-    title: 'Alta Latência DB Clientes',
-    description: '(Nível 4: 840ms)',
-    detailText: 'O tempo médio de resposta do banco de dados de clientes ultrapassou o limite operacional seguro de 200ms, registrando latências elevadas de 840ms (Alerta Crítico Nível 4).',
-    status: 'active',
-    insights: [
-      'A latência elevada afeta diretamente a sincronização de leads e o carregamento do funil comercial.',
-      'Identificamos consultas concorrentes pesadas nas tabelas de histórico que podem ser otimizadas.',
-      'Recomenda-se realizar a criação de um índice composto nas colunas mais acessadas do banco.'
-    ],
-    actionLink: { label: 'Otimizar Banco de Dados', url: '/hub/conectores' }
-  },
-  {
-    id: 'alert-3',
-    priority: 'medio',
-    badgeText: 'Médio',
-    time: '10:45',
-    title: 'Sincronização ERP SAP parcial',
-    description: '(Lote ID #881)',
-    detailText: 'A sincronização diária com o ERP SAP falhou em alguns registros específicos processados no lote operacional #881.',
-    status: 'active',
-    insights: [
-      'Os registros ignorados apresentam formatação inconsistente nos campos de SKU.',
-      'O processamento dos demais 438 registros foi concluído com sucesso e está atualizado.',
-      'Você pode consultar o log de sincronização para corrigir manualmente os dados afetados.'
-    ],
-    actionLink: { label: 'Ver Detalhes do Lote #881', url: '/hub/conectores' }
-  },
-  {
-    id: 'alert-4',
-    priority: 'alto',
-    badgeText: 'Alto',
-    time: '10:32',
-    title: 'Erro de Autenticação OAuth2',
-    description: '(HubSpot API)',
-    detailText: 'A autenticação OAuth2 com o HubSpot foi interrompida porque o token de acesso expirou ou foi revogado nas configurações externas.',
-    status: 'active',
-    insights: [
-      'A conexão está inativa, impedindo a sincronização em tempo real de novos contatos e empresas.',
-      'Isso acontece frequentemente quando a senha da conta HubSpot é alterada ou o aplicativo integrado é desconectado.',
-      'A reautenticação resolverá o problema imediatamente e restaurará a fila de sincronização.'
-    ],
-    actionLink: { label: 'Reconfigurar HubSpot CRM', url: '/hub/conectores' }
-  },
-  {
-    id: 'alert-5',
-    priority: 'info',
-    badgeText: 'Info',
-    time: '09:55',
-    title: 'Nova Versão API Stripe disponível',
-    description: 'v3.4.1',
-    detailText: 'O Stripe disponibilizou uma nova versão (v3.4.1) da sua API de pagamentos recomendando a migração.',
-    status: 'active',
-    insights: [
-      'A versão atual v3.2.0 continuará funcionando normalmente sem impactos operacionais imediatos.',
-      'A nova versão traz melhorias no processamento de assinaturas e suporte a novos métodos de pagamento.',
-      'Recomendamos planejar a migração da biblioteca técnica junto ao seu time de engenharia.'
-    ],
-    actionLink: { label: 'Documentação da API Stripe', url: 'https://stripe.com/docs/api' }
-  },
-  {
-    id: 'alert-solved-1',
-    priority: 'alto',
-    badgeText: 'Alto',
-    time: 'Ontem, 16:40',
-    title: 'Flutuação Anômala de Tráfego API',
-    description: '(Resolvido automaticamente)',
-    detailText: 'Foi detectado um pico de tráfego 400% acima do padrão na API do Google Analytics 4, sugerindo um teste automatizado ou varredura anormal.',
-    status: 'completed',
-    completedBy: 'Agente NeuroAds',
-    insights: [
-      'A taxa de requisições foi normalizada após 15 minutos.',
-      'O Agente de Infraestrutura da NeuroAds aplicou regras de rate-limiting temporárias.',
-      'Nenhuma ação do usuário é necessária.'
-    ],
-    completedAt: Date.now() - 24 * 60 * 60 * 1000,
-  },
-  {
-    id: 'alert-solved-2',
-    priority: 'medio',
-    badgeText: 'Médio',
-    time: 'Ontem, 14:15',
-    title: 'Sincronização de Tags de Remarketing',
-    description: '(Lido pelo usuário)',
-    detailText: 'Algumas tags de remarketing do Google Ads não estavam disparando nos pixels de checkout devido a uma atualização no container do GTM.',
-    status: 'read',
-    completedBy: 'Você',
-    insights: [
-      'O container do GTM foi republicado contendo as tags corrigidas.',
-      'Os pixels voltaram a registrar eventos de compra normalmente.'
-    ],
-    readAt: Date.now() - 26 * 60 * 60 * 1000,
-  }
-];
+const DEFAULT_ALERTS: AlertItem[] = [];
 
 export default function ConnectorsHubPage() {
   const { user, profile, loading, premiumSyncing } = useAuth();
@@ -3246,7 +3123,7 @@ export default function ConnectorsHubPage() {
                       </div>
                     </div>
 
-                    <InteractiveHealthMetrics active={activeTrackedConnectorCount} total={trackedConnectorCount} />
+                    <InteractiveHealthMetrics active={activeTrackedConnectorCount} total={trackedConnectorCount} errorsCount={activeAlerts.length} />
                   </div>
                 </section>
 
