@@ -5,18 +5,25 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function isSuperAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'headmktlucca@gmail.com' ||
+        request.auth.token.email == 'contato.neuroads@gmail.com'
+      );
+    }
+
     function isWorkspaceOwner(workspaceUserId) {
       return isSignedIn() && request.auth.uid == workspaceUserId;
     }
 
     match /users/{userId} {
       allow read, write: if isSignedIn() && request.auth.uid == userId;
-      allow read: if isSignedIn() && request.auth.token.email == 'headmktlucca@gmail.com';
+      allow read: if isSuperAdmin();
     }
 
     match /users/{userId}/{document=**} {
       allow read, write: if isSignedIn() && request.auth.uid == userId;
-      allow read: if isSignedIn() && request.auth.token.email == 'headmktlucca@gmail.com';
+      allow read: if isSuperAdmin();
     }
 
     match /admin_workspaces/{workspaceUserId} {

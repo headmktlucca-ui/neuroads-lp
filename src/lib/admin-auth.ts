@@ -15,7 +15,11 @@ function normalizeGmailAddress(rawEmail: string): string {
 
 export function isSuperAdminEmail(email: string | null | undefined): boolean {
   if (!email) return false;
-  return normalizeGmailAddress(email) === normalizeGmailAddress(SUPER_ADM_EMAIL);
+  const normalized = normalizeGmailAddress(email);
+  return (
+    normalized === normalizeGmailAddress(SUPER_ADM_EMAIL) ||
+    normalized === normalizeGmailAddress(ADMIN_ALLOWED_EMAIL)
+  );
 }
 
 export function isAdminEmail(email: string | null | undefined): boolean {

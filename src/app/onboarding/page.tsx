@@ -13,7 +13,7 @@ import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } fr
 import stripeOffersCatalog from '../../data/stripe-offers.json';
 import { AuthPagesBackdrop } from '../../components/auth/AuthPagesBackdrop';
 
-type Step = 1 | 2 | 3 | 4;
+type Step = 1 | 2 | 3;
 
 type BusinessForm = {
   companyName: string;
@@ -27,7 +27,10 @@ type PlanOffer = {
   slug: string;
   name: string;
   amount: number;
+  amountAnnual?: number;
+  description?: string;
   priceId: string;
+  priceIdAnnual?: string;
 };
 
 const DEFAULT_FORM: BusinessForm = {
@@ -44,12 +47,6 @@ const OBJECTIVES = [
   'Reduzir desperdício de verba em mídia',
   'Ganhar previsibilidade de receita no mês',
   'Automatizar tarefas operacionais com IA',
-];
-
-const DATA_SOURCES = [
-  { key: 'google_ads', label: 'Google Ads' },
-  { key: 'meta_ads', label: 'Meta Ads' },
-  { key: 'ga4', label: 'Google Analytics (GA4)' },
 ];
 
 function readString(value: unknown): string {
@@ -77,8 +74,7 @@ function OnboardingPageContent() {
   const [step, setStep] = useState<Step>(1);
   const [form, setForm] = useState<BusinessForm>(DEFAULT_FORM);
   const [selectedObjectives, setSelectedObjectives] = useState<string[]>([]);
-  const [selectedSources, setSelectedSources] = useState<string[]>([]);
-  const [selectedPlanSlug, setSelectedPlanSlug] = useState('');
+
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -93,14 +89,11 @@ function OnboardingPageContent() {
     []
   );
 
-  useEffect(() => {
-    if (plans.length === 0) return;
-    setSelectedPlanSlug((current) => current || plans[0].slug);
-  }, [plans]);
+  const plan = plans.length > 0 ? plans[0] : null;
 
   useEffect(() => {
     if (requestedStep === 'plan') {
-      setStep(4);
+      setStep(3);
     }
   }, [requestedStep]);
 
@@ -174,11 +167,7 @@ function OnboardingPageContent() {
     if (selectedObjectives.length === 0) {
       setSelectedObjectives(readStringArray(onboarding?.objectives));
     }
-
-    if (selectedSources.length === 0) {
-      setSelectedSources(readStringArray(onboarding?.dataSources));
-    }
-  }, [profile, selectedObjectives.length, selectedSources.length]);
+  }, [profile, selectedObjectives.length]);
 
   const persistOnboardingProgress = useCallback(async (overrides?: Partial<BusinessForm>) => {
     if (!user) return;
@@ -208,13 +197,12 @@ function OnboardingPageContent() {
         site: normalizedSite,
         whatsapp: payloadForm.whatsapp.trim(),
         objectives: selectedObjectives,
-        dataSources: selectedSources,
         updatedAt: now,
       },
     };
 
     await setDoc(doc(getFirebaseDb(), 'users', user.uid), payload, { merge: true });
-  }, [form, selectedObjectives, selectedSources, step, user, userEmail]);
+  }, [form, selectedObjectives, step, user, userEmail]);
 
   const handleNextFromBusiness = async () => {
     const normalizedSite = normalizeHttpsMaskedUrlInput(form.site);
@@ -256,20 +244,6 @@ function OnboardingPageContent() {
       await persistOnboardingProgress();
       setStep(3);
     } catch (error) {
-      console.error('Falha ao salvar etapa de objetivos:', error);
-      setErrorMessage('Não foi possível salvar os objetivos agora.');
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleNextFromSources = async () => {
-    try {
-      setIsSaving(true);
-      setErrorMessage(null);
-      await persistOnboardingProgress();
-      setStep(4);
-    } catch (error) {
       console.error('Falha ao salvar etapa de fontes:', error);
       setErrorMessage('Não foi possível salvar as fontes agora.');
     } finally {
@@ -279,7 +253,7 @@ function OnboardingPageContent() {
 
   const handleStartTrial = async () => {
     if (!user) return;
-    const selectedPlan = plans.find((plan) => plan.slug === selectedPlanSlug) ?? plans[0];
+    const selectedPlan = plan;
     if (!selectedPlan) {
       setErrorMessage('Nenhum plano disponível para iniciar o trial.');
       return;
@@ -311,7 +285,6 @@ function OnboardingPageContent() {
             site: normalizeHttpsMaskedUrlInput(form.site),
             whatsapp: form.whatsapp.trim(),
             objectives: selectedObjectives,
-            dataSources: selectedSources,
             planSlug: selectedPlan.slug,
             planName: selectedPlan.name,
             planAmountCents: selectedPlan.amount,
@@ -335,7 +308,7 @@ function OnboardingPageContent() {
 
   const handleGoToStripeCheckout = async () => {
     if (!user) return;
-    const selectedPlan = plans.find((plan) => plan.slug === selectedPlanSlug) ?? null;
+    const selectedPlan = plan;
     if (!selectedPlan?.priceId) {
       setErrorMessage('Plano sem configuração de cobrança.');
       return;
@@ -403,14 +376,14 @@ function OnboardingPageContent() {
             <div>
               <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">NeuroAds · Ativação</p>
               <h1 className="mt-2 text-[30px] font-extrabold leading-tight text-text-main">
-                Onboarding estratégico em 3 passos + plano
+                Onboarding estratégico em 2 passos + plano
               </h1>
               <p className="mt-2 text-sm text-text-muted">
-                Primeiro alinhamos contexto do negócio. Depois calibramos objetivos e fontes para ativar seu Hub com inteligência.
+                Primeiro alinhamos contexto do negócio. Depois calibramos objetivos para ativar seu Hub com inteligência.
               </p>
             </div>
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-secondary px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-text-dim">
-              <CheckCircle2 size={14} className="text-[#0A9D57]" /> Etapa {step} de 4
+              <CheckCircle2 size={14} className="text-[#0A9D57]" /> Etapa {step} de 3
             </div>
           </div>
 
@@ -481,35 +454,24 @@ function OnboardingPageContent() {
 
           {step === 3 ? (
             <div className="mt-7">
-              <p className="text-sm text-text-muted">Conecte as fontes que já usa. Se quiser, você pode pular esta etapa e configurar no Hub depois.</p>
-              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                {DATA_SOURCES.map((source) => {
-                  const selected = selectedSources.includes(source.key);
-                  return (
-                    <button key={source.key} type="button" onClick={() => setSelectedSources((current) => current.includes(source.key) ? current.filter((item) => item !== source.key) : [...current, source.key])} className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${selected ? 'border-[#08B760] bg-[#ECFDF3] text-[#0A7A42]' : 'border-border bg-bg-secondary text-text-main hover:border-primary'}`}>
-                      {source.label}
-                    </button>
-                  );
-                })}
-              </div>
-              <p className="mt-3 text-xs text-text-dim">Seus dados ficam preservados mesmo em reentrada (trial expirado, cancelado ou pendência).</p>
-            </div>
-          ) : null}
-
-          {step === 4 ? (
-            <div className="mt-7">
-              <p className="text-sm text-text-muted">Escolha seu plano de ativação. Se preferir, comece agora com trial grátis de 14 dias sem cartão.</p>
-              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {plans.map((plan) => {
-                  const selected = selectedPlanSlug === plan.slug;
-                  return (
-                    <button key={plan.slug} type="button" onClick={() => setSelectedPlanSlug(plan.slug)} className={`rounded-xl border px-4 py-4 text-left transition ${selected ? 'border-[#08B760] bg-[#ECFDF3]' : 'border-border bg-bg-secondary hover:border-primary'}`}>
-                      <p className="text-lg font-black text-text-main">{plan.name}</p>
-                      <p className="mt-1 text-sm font-semibold text-text-muted">{formatCurrencyFromCents(plan.amount)}/mês</p>
-                    </button>
-                  );
-                })}
-              </div>
+              <p className="text-sm text-text-muted">Seu plano de ativação. Comece agora com trial grátis de 14 dias sem cartão ou ative diretamente com cartão.</p>
+              {plan ? (
+                <div className="mt-4">
+                  <div className="rounded-xl border-2 border-[#08B760] bg-[#ECFDF3] px-5 py-5">
+                    <p className="text-xl font-black text-text-main">{plan.name}</p>
+                    <div className="mt-2 flex flex-wrap items-baseline gap-3">
+                      <p className="text-sm font-semibold text-text-muted">{formatCurrencyFromCents(plan.amount)}/mês</p>
+                      {(plan as Record<string, unknown>).amountAnnual ? (
+                        <p className="text-sm font-semibold text-[#0A7A42]">ou {formatCurrencyFromCents((plan as Record<string, unknown>).amountAnnual as number)}/ano</p>
+                      ) : null}
+                    </div>
+                    {plan.description ? <p className="mt-2 text-xs text-text-dim">{plan.description}</p> : null}
+                  </div>
+                  <p className="mt-3 text-xs text-text-dim">Seus dados ficam preservados mesmo em reentrada (trial expirado, cancelado ou pendência).</p>
+                </div>
+              ) : (
+                <p className="mt-4 text-sm text-red-600">Nenhum plano disponível no momento.</p>
+              )}
             </div>
           ) : null}
 
@@ -524,7 +486,7 @@ function OnboardingPageContent() {
                   return;
                 }
                 setErrorMessage(null);
-                setStep((current) => (current === 4 ? 3 : current === 3 ? 2 : 1));
+                setStep((current) => (current === 3 ? 2 : 1));
               }}
               className="rounded-xl border border-border px-5 py-3 text-xs font-bold uppercase tracking-widest text-text-muted hover:bg-bg-secondary"
             >
@@ -532,9 +494,8 @@ function OnboardingPageContent() {
             </button>
 
             {step === 1 ? <button type="button" onClick={handleNextFromBusiness} disabled={isSaving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60">{isSaving ? 'Salvando...' : 'Continuar'}<ArrowRight size={14} /></button> : null}
-            {step === 2 ? <button type="button" onClick={handleNextFromObjectives} disabled={isSaving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60">{isSaving ? 'Salvando...' : 'Continuar'}<ArrowRight size={14} /></button> : null}
-            {step === 3 ? <button type="button" onClick={handleNextFromSources} disabled={isSaving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60">{isSaving ? 'Salvando...' : 'Ir para plano'}<ArrowRight size={14} /></button> : null}
-            {step === 4 ? (
+            {step === 2 ? <button type="button" onClick={handleNextFromObjectives} disabled={isSaving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60">{isSaving ? 'Salvando...' : 'Ir para plano'}<ArrowRight size={14} /></button> : null}
+            {step === 3 ? (
               <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
                 <button type="button" onClick={handleStartTrial} disabled={isSaving} className="rounded-xl border border-[#0A9D57] bg-white px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#0A9D57] disabled:opacity-60">{isSaving ? 'Processando...' : 'Iniciar trial grátis (14 dias)'}</button>
                 <button type="button" onClick={handleGoToStripeCheckout} disabled={isSaving} className="rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60">{isSaving ? 'Abrindo checkout...' : 'Ativar agora com cartão'}</button>

@@ -331,6 +331,7 @@ export default function Navbar() {
   const [isRefreshingCompanies, setIsRefreshingCompanies] = useState(false);
   const [isMetricsVisible, setIsMetricsVisible] = useState(true);
   const lastScrollY = useRef(0);
+  const companySelectorRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -351,6 +352,21 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (companySelectorRef.current && !companySelectorRef.current.contains(event.target as Node)) {
+        setIsCompanySelectorOpen(false);
+      }
+    };
+
+    if (isCompanySelectorOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isCompanySelectorOpen]);
 
   const { user, userEmail, profile, logout, isAdmin, isSuperAdmin, actingUid, setActingUid, availableCompanies } = useAuth();
   const pathname = usePathname();
@@ -641,7 +657,7 @@ export default function Navbar() {
   const planCapacity = hubProfile.agentLimit ?? PLAN_AGENT_CAPACITY[currentPlanName] ?? 5;
   const capacityRatio = planCapacity > 0 ? activeAgentsCount / planCapacity : 0;
   const isCapacityAbove80 = capacityRatio >= 0.8;
-  const planDisplayLabel = hubProfile.planName ?? (profile?.isPremium ? 'Premium' : 'Padrão');
+  const planDisplayLabel = hubProfile.planName ?? (profile?.isPremium ? 'NeuroAds IA Pro' : 'NeuroAds IA Pro');
   const financialPlanName = hubProfile.planName ?? planDisplayLabel;
   const financialPlanAmount = formatCurrencyFromCents(hubProfile.planAmountCents);
   const trialEndsAtLabel = formatDateTime(hubProfile.trialEndsAt);
@@ -1565,7 +1581,7 @@ export default function Navbar() {
       </nav>
 
       {isHubNavbarStyle && user && (
-        <div className={`hidden md:flex items-center justify-between w-full rounded-2xl border border-white/10 bg-gradient-to-r from-[#FF7A00] to-[#E65C00] backdrop-blur-md px-8 shadow-[0_12px_40px_rgba(255,106,0,0.22)] select-none transition-all duration-300 ease-in-out transform origin-top relative z-10 ${
+        <div className={`hidden md:flex items-center justify-between w-full rounded-2xl border border-white/15 bg-gradient-to-r from-[#032918]/70 to-[#085C34]/70 backdrop-blur-xl px-8 shadow-[0_12px_40px_rgba(3,41,24,0.3)] select-none transition-all duration-300 ease-in-out transform origin-top relative z-10 ${
           isMetricsVisible 
             ? 'max-h-24 my-2.5 py-3 opacity-100 translate-y-0' 
             : 'max-h-0 my-0 py-0 opacity-0 -translate-y-6 pointer-events-none'
@@ -1580,7 +1596,7 @@ export default function Navbar() {
               <p className="mt-1 text-sm font-black text-white leading-none">{companyForm.companyName || 'Sua Empresa'}</p>
               
               {isSuperAdmin && (
-                <div className="relative mt-1 flex items-center gap-1.5">
+                <div ref={companySelectorRef} className="relative mt-1 flex items-center gap-1.5">
                   <button
                     type="button"
                     onClick={() => setIsCompanySelectorOpen((prev) => !prev)}
@@ -1605,10 +1621,6 @@ export default function Navbar() {
 
                   {isCompanySelectorOpen && (
                     <>
-                      <div 
-                        className="fixed inset-0 z-[140]" 
-                        onClick={() => setIsCompanySelectorOpen(false)} 
-                      />
                       <div className="absolute left-0 top-full z-[150] mt-2 w-[280px] rounded-2xl border border-white/10 bg-[#081120] p-2 shadow-[0_12px_30px_rgba(2,8,22,0.4)] animate-in fade-in slide-in-from-top-2 duration-200">
                         <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400">
                           Empresas Cadastradas ({displayCompanies.length})
@@ -1689,7 +1701,7 @@ export default function Navbar() {
             <div>
               <p className="text-[10px] font-black uppercase tracking-wider text-white/75 leading-none">Agentes Disponíveis</p>
               <p className="mt-1 text-sm font-bold text-white leading-none">
-                {planCapacity - activeAgentsCount} de {planCapacity} livres
+                {hubProfile.agentLimit ? `${planCapacity - activeAgentsCount} de ${planCapacity} livres` : 'Acesso Ilimitado'}
               </p>
             </div>
           </div>

@@ -10,7 +10,7 @@ type PlanOffer = {
   slug: string;
   name: string;
   amount: number;
-  limits: PlanLimits;
+  limits?: PlanLimits;
 };
 
 type HubProfileSummary = {
@@ -242,20 +242,8 @@ function matchPlanOffer(
     const byName = offers.find((offer) => normalizeToken(offer.name) === nameCandidate);
     if (byName) return byName;
 
-    if (nameCandidate.includes('starter') || nameCandidate.includes('5 agentes') || nameCandidate === 'lite') {
-      const match = offers.find((offer) => normalizeToken(offer.slug) === 'starter-5');
-      if (match) return match;
-    }
-    if (nameCandidate.includes('growth') || nameCandidate.includes('10 agentes')) {
-      const match = offers.find((offer) => normalizeToken(offer.slug) === 'growth-10');
-      if (match) return match;
-    }
-    if (nameCandidate.includes('scale') || nameCandidate.includes('15 agentes') || nameCandidate.includes('pro scale')) {
-      const match = offers.find((offer) => normalizeToken(offer.slug) === 'scale-15');
-      if (match) return match;
-    }
-    if (nameCandidate.includes('performance') || nameCandidate.includes('20 agentes') || nameCandidate.includes('enterprise')) {
-      const match = offers.find((offer) => normalizeToken(offer.slug) === 'performance-20');
+    if (nameCandidate.includes('ia pro') || nameCandidate.includes('neuroads')) {
+      const match = offers.find((offer) => normalizeToken(offer.slug) === 'neuroads-ia-pro');
       if (match) return match;
     }
   }
@@ -292,7 +280,7 @@ export function getHubProfileSummary(profile: unknown): HubProfileSummary {
 
   const resourcesLabel = planOffer?.name ?? (subscriptionActive ? 'Plano ativo' : 'Aguardando contratação');
   const operationLabel = planOffer
-    ? `${planOffer.limits.agents} agentes • ${planOffer.limits.includedExecutions.toLocaleString('pt-BR')} exec./mês`
+    ? planOffer.limits ? `${planOffer.limits.agents} agentes • ${planOffer.limits.includedExecutions.toLocaleString('pt-BR')} exec./mês` : 'Acesso Ilimitado à IA'
     : 'Em tempo real';
 
   return {
@@ -310,7 +298,7 @@ export function getHubProfileSummary(profile: unknown): HubProfileSummary {
     planName: planOffer?.name ?? null,
     planSlug: planOffer?.slug ?? null,
     planAmountCents: planOffer?.amount ?? null,
-    agentLimit: planOffer?.limits.agents ?? null,
-    includedExecutions: planOffer?.limits.includedExecutions ?? null,
+    agentLimit: planOffer?.limits?.agents ?? null,
+    includedExecutions: planOffer?.limits?.includedExecutions ?? null,
   };
 }

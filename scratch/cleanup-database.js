@@ -83,33 +83,36 @@ async function run() {
   const usersSnapshot = await db.collection('users').get();
   console.log(`Encontrados ${usersSnapshot.size} documentos de usuários no Firestore.`);
   
-  let targetUid = null;
+  const superAdmins = ['headmktlucca@gmail.com', 'contato.neuroads@gmail.com'];
+  const targetUids = [];
   const uidsToDelete = [];
   
   for (const doc of usersSnapshot.docs) {
     const data = doc.data();
     const email = (data.email || data.authEmail || '').toLowerCase();
     
-    if (email === 'headmktlucca@gmail.com') {
-      targetUid = doc.id;
-      console.log(`Mantendo usuário headmktlucca@gmail.com com UID: ${targetUid}`);
+    if (superAdmins.includes(email)) {
+      targetUids.push(doc.id);
+      console.log(`Mantendo usuário ${email} com UID: ${doc.id}`);
     } else {
       uidsToDelete.push(doc.id);
     }
   }
 
-  // 2. Se o usuário alvo não foi encontrado no Firestore, tentamos buscar no Auth
-  if (!targetUid) {
+  // 2. Se os usuários alvo não foram encontrados no Firestore, tentamos buscar no Auth
+  for (const email of superAdmins) {
     try {
-      const userRecord = await auth.getUserByEmail('headmktlucca@gmail.com');
-      targetUid = userRecord.uid;
-      console.log(`headmktlucca@gmail.com não tinha doc no Firestore, mas UID encontrado no Auth: ${targetUid}`);
+      const userRecord = await auth.getUserByEmail(email);
+      if (!targetUids.includes(userRecord.uid)) {
+        targetUids.push(userRecord.uid);
+        console.log(`${email} não tinha doc no Firestore, mas UID encontrado no Auth: ${userRecord.uid}`);
+      }
     } catch (e) {
-      console.log("Aviso: headmktlucca@gmail.com não foi encontrado nem no Firestore nem no Auth.");
+      console.log(`Aviso: ${email} não foi encontrado nem no Firestore nem no Auth.`);
     }
   }
 
-  // 3. Excluir documentos do Firestore (exceto do headmktlucca@gmail.com)
+  // 3. Excluir documentos do Firestore (exceto dos super admins)
   for (const uid of uidsToDelete) {
     const docRef = db.collection('users').doc(uid);
     console.log(`Excluindo subcoleções de /users/${uid}...`);
@@ -121,14 +124,14 @@ async function run() {
   // 4. Limpar workspaces do Firestore (/admin_workspaces/{uid})
   const workspacesSnapshot = await db.collection('admin_workspaces').get();
   for (const doc of workspacesSnapshot.docs) {
-    if (doc.id !== targetUid) {
+    if (!targetUids.includes(doc.id)) {
       console.log(`Excluindo subcoleções e doc de /admin_workspaces/${doc.id}...`);
       await deleteSubcollections(doc.ref);
       await doc.ref.delete();
     }
   }
 
-  // 5. Excluir contas do Firebase Authentication (exceto headmktlucca@gmail.com)
+  // 5. Excluir contas do Firebase Authentication (exceto super admins)
   console.log("Buscando usuários no Firebase Auth...");
   let nextPageToken;
   let authUsersDeleted = 0;
@@ -137,7 +140,7 @@ async function run() {
     const listUsersResult = await auth.listUsers(1000, nextPageToken);
     for (const userRecord of listUsersResult.users) {
       const email = (userRecord.email || '').toLowerCase();
-      if (email !== 'headmktlucca@gmail.com' && userRecord.uid !== targetUid) {
+      if (!superAdmins.includes(email) && !targetUids.includes(userRecord.uid)) {
         console.log(`Excluindo do Firebase Auth: ${email || 'Sem email'} (${userRecord.uid})`);
         await auth.deleteUser(userRecord.uid);
         authUsersDeleted++;
@@ -149,7 +152,7 @@ async function run() {
   console.log(`\nLimpeza concluída com sucesso!`);
   console.log(`- Usuários excluídos do Firestore: ${uidsToDelete.length}`);
   console.log(`- Usuários excluídos do Firebase Auth: ${authUsersDeleted}`);
-  console.log(`- Usuário headmktlucca@gmail.com preservado com sucesso (UID: ${targetUid || 'Não encontrado'}).`);
+  console.log(`- Usuários administradores preservados: ${superAdmins.join(', ')}.`);
   process.exit(0);
 }
 

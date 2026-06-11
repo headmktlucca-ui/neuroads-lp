@@ -1,70 +1,17 @@
 {
-  "generatedAt": "2026-05-05T21:38:31.749Z",
+  "generatedAt": "2026-06-10T23:25:00.000Z",
   "currency": "brl",
   "stripeApiVersion": "2022-11-15",
-  "deactivation": {
-    "deactivatedProducts": 1,
-    "deactivatedPrices": 0,
-    "skippedPrices": 0
-  },
   "plans": [
     {
-      "slug": "starter-5",
-      "name": "Starter 5 Agentes",
-      "amount": 29900,
-      "description": "Plano mensal com 5 agentes e limite operacional de 1.000 execuções/mês.",
-      "limits": {
-        "agents": 5,
-        "includedExecutions": 1000,
-        "extraCreditUnitPrice": 0.45
-      },
-      "productId": "prod_USmEgemQ27B1KL",
-      "priceId": "price_1TTqffFeN6QA274k4Qm7LThW",
-      "mode": "subscription",
-      "trialDays": 14
-    },
-    {
-      "slug": "growth-10",
-      "name": "Growth 10 Agentes",
-      "amount": 39900,
-      "description": "Plano mensal com 10 agentes e limite operacional de 2.500 execuções/mês.",
-      "limits": {
-        "agents": 10,
-        "includedExecutions": 2500,
-        "extraCreditUnitPrice": 0.39
-      },
-      "productId": "prod_USmE6FjYEle7B1",
-      "priceId": "price_1TTqfgFeN6QA274kVJ3UhZYr",
-      "mode": "subscription",
-      "trialDays": 14
-    },
-    {
-      "slug": "scale-15",
-      "name": "Scale 15 Agentes",
-      "amount": 49900,
-      "description": "Plano mensal com 15 agentes e limite operacional de 4.500 execuções/mês.",
-      "limits": {
-        "agents": 15,
-        "includedExecutions": 4500,
-        "extraCreditUnitPrice": 0.34
-      },
-      "productId": "prod_USmEgX65PQ9qKa",
-      "priceId": "price_1TTqfgFeN6QA274krKyHCg3n",
-      "mode": "subscription",
-      "trialDays": 14
-    },
-    {
-      "slug": "performance-20",
-      "name": "Performance 20 Agentes",
-      "amount": 59900,
-      "description": "Plano mensal com 20 agentes e limite operacional de 7.000 execuções/mês.",
-      "limits": {
-        "agents": 20,
-        "includedExecutions": 7000,
-        "extraCreditUnitPrice": 0.3
-      },
-      "productId": "prod_USmE7eAxjT4ckj",
-      "priceId": "price_1TTqfhFeN6QA274kaVCzpVLo",
+      "slug": "neuroads-ia-pro",
+      "name": "NeuroAds IA Pro",
+      "amount": 7990,
+      "amountAnnual": 79900,
+      "description": "Plano completo com acesso total à plataforma NeuroAds com IA.",
+      "productId": "prod_UgHeXZp7Kdo68a",
+      "priceId": "price_1Tgv5PFeN6QA274kqL2CoLOZ",
+      "priceIdAnnual": "price_1Tgv5PFeN6QA274kQT6vIhGO",
       "mode": "subscription",
       "trialDays": 14
     }
@@ -111,4 +58,3 @@
     }
   ]
 }
-
