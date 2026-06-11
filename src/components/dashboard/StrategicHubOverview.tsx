@@ -157,6 +157,46 @@ export default function StrategicHubOverview() {
   const [nowMs, setNowMs] = useState(() => Date.now());
   const [statusCacheVersion, setStatusCacheVersion] = useState(0);
 
+  const ga4Connection = profile?.connections?.ga4;
+  const isGa4Connected = Boolean(ga4Connection?.isActive);
+  const ga4AccountId = ga4Connection?.accountId;
+  const ga4AccessToken = ga4Connection?.accessToken;
+
+  const [ga4Metrics, setGa4Metrics] = useState<{
+    activeUsers: string;
+    averageSessionDuration: string;
+    conversions: string;
+    engagementRate: string;
+  } | null>(null);
+  const [ga4Error, setGa4Error] = useState<string | null>(null);
+  const [ga4Loading, setGa4Loading] = useState(false);
+
+  useEffect(() => {
+    if (isGa4Connected && ga4AccessToken && ga4AccountId) {
+      setGa4Loading(true);
+      fetch('/api/hub/metrics/ga4', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessToken: ga4AccessToken, accountId: ga4AccountId })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (!data.error) {
+            setGa4Metrics(data);
+            setGa4Error(null);
+          } else {
+            console.error('GA4 API Error:', data.error);
+            setGa4Error(data.error);
+          }
+        })
+        .catch(err => {
+          console.error('Failed to fetch GA4 metrics', err);
+          setGa4Error('ga4_metrics_failed');
+        })
+        .finally(() => setGa4Loading(false));
+    }
+  }, [isGa4Connected, ga4AccessToken, ga4AccountId]);
+
   const greeting = useMemo(() => getGreeting(), []);
   const firstName = getFirstName(user?.displayName || user?.email);
   const hubProfile = useMemo(() => getHubProfileSummary(profile), [profile]);
@@ -388,27 +428,47 @@ export default function StrategicHubOverview() {
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1.08fr_repeat(4,1fr)]">
               <article className="rounded-[16px] border border-[#173c6e] bg-[#081a38] px-6 py-5">
                 <h3 className="text-[17px] font-black leading-tight tracking-tight text-white">
-                  Painel Executivo do Caixa
+                  Painel Executivo Analítico
                 </h3>
                 <p className="mt-1 text-[14px] text-[#B7C4DF]">
-                  Dados indisponíveis. Conecte os sistemas para visualizar os KPIs reais.
+                  {isGa4Connected ? 'Resultados relacionados aos últimos 30 dias' : 'Dados indisponíveis. Conecte o GA4 para visualizar os KPIs reais.'}
                 </p>
               </article>
 
-              {['CPL Médio', 'CAC', 'Receita Atribuída', 'ROAS'].map((label) => (
-                <article key={label} className="rounded-[16px] border border-[#173c6e] bg-[#081a38] px-5 py-4">
-                  <div className="mb-3 flex items-center gap-3">
-                    <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[#FF6A00]/60 bg-[#0B1D3F] text-[#FF6A00]">
-                      <Database className="h-6 w-6" />
-                    </span>
-                    <div>
-                      <p className="text-[15px] font-semibold text-white">{label}</p>
-                      <p className="text-[20px] leading-none font-black text-[#FF6A00]">Dados indisponíveis</p>
+              {[
+                { label: 'Usuários Ativos', key: 'activeUsers' },
+                { label: 'Tempo Médio de Engajamento', key: 'averageSessionDuration' },
+                { label: 'Eventos Principais', key: 'conversions' },
+                { label: 'Taxa de Engajamento', key: 'engagementRate' }
+              ].map((kpi) => {
+                const value = isGa4Connected && ga4Metrics ? ga4Metrics[kpi.key as keyof typeof ga4Metrics] : null;
+                const displayValue = ga4Loading 
+                  ? 'Carregando...' 
+                  : ga4Error 
+                    ? 'Erro na sincronização' 
+                    : (value ?? 'Dados indisponíveis');
+                
+                return (
+                  <article key={kpi.label} className="rounded-[16px] border border-[#173c6e] bg-[#081a38] px-5 py-4">
+                    <div className="mb-3 flex items-center gap-3">
+                      <span className={`inline-flex h-11 w-11 items-center justify-center rounded-2xl border ${isGa4Connected && value ? 'border-[#0A9D57]/60 bg-[#063b22] text-[#0A9D57]' : 'border-[#FF6A00]/60 bg-[#0B1D3F] text-[#FF6A00]'}`}>
+                        <Database className="h-6 w-6" />
+                      </span>
+                      <div>
+                        <p className="text-[15px] font-semibold text-white">{kpi.label}</p>
+                        <p className={`text-[20px] leading-none font-black ${isGa4Connected && value ? 'text-white' : 'text-[#FF6A00]'}`}>
+                          {displayValue}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                  <p className="text-[13px] text-[#C6D3E9]">Aguardando integrações obrigatórias e sincronização inicial.</p>
-                </article>
-              ))}
+                    <p className="text-[13px] text-[#C6D3E9]">
+                      {isGa4Connected 
+                        ? (ga4Error ? `Falha: ${ga4Error}` : 'Sincronizado via GA4 Data API')
+                        : 'Aguardando integrações obrigatórias e sincronização inicial.'}
+                    </p>
+                  </article>
+                );
+              })}
             </div>
           </section>
 

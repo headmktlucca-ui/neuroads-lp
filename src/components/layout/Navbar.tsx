@@ -11,6 +11,7 @@ import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } fr
 import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
 import { getHubProfileSummary } from '../../lib/hub-profile';
 import { getHubAutomationsFromProfile } from '../../lib/hub-automations';
+import { agents } from '../../data/agents';
 import {
   AGENT_STATUS_UPDATED_EVENT,
   readAgentStatusOverrides,
@@ -654,9 +655,11 @@ export default function Navbar() {
     () => Array.from(effectiveContracts.values()).find((agent) => agent.isActive)?.planName ?? 'Lite',
     [effectiveContracts]
   );
+  
+  const hasUnlimitedAgents = !hubProfile.agentLimit;
   const planCapacity = hubProfile.agentLimit ?? PLAN_AGENT_CAPACITY[currentPlanName] ?? 5;
   const capacityRatio = planCapacity > 0 ? activeAgentsCount / planCapacity : 0;
-  const isCapacityAbove80 = capacityRatio >= 0.8;
+  const isCapacityAbove80 = hasUnlimitedAgents ? false : capacityRatio >= 0.8;
   const planDisplayLabel = hubProfile.planName ?? (profile?.isPremium ? 'NeuroAds IA Pro' : 'NeuroAds IA Pro');
   const financialPlanName = hubProfile.planName ?? planDisplayLabel;
   const financialPlanAmount = formatCurrencyFromCents(hubProfile.planAmountCents);
@@ -1553,7 +1556,7 @@ export default function Navbar() {
                       : 'text-[#0A9D57] shadow-[0_0_0_1px_rgba(10,157,87,0.25),0_0_14px_rgba(10,157,87,0.30)] animate-pulse'
                 }`}
               >
-                Agentes Ativos: {String(activeAgentsCount).padStart(2, '0')} de {String(planCapacity).padStart(2, '0')}
+                Agentes Ativos: {String(activeAgentsCount).padStart(2, '0')} {hasUnlimitedAgents ? `de ${String(agents.length).padStart(2, '0')}` : `de ${String(planCapacity).padStart(2, '0')}`}
               </span>
             )}
           </div>
@@ -1701,7 +1704,7 @@ export default function Navbar() {
             <div>
               <p className="text-[10px] font-black uppercase tracking-wider text-white/75 leading-none">Agentes Disponíveis</p>
               <p className="mt-1 text-sm font-bold text-white leading-none">
-                {hubProfile.agentLimit ? `${planCapacity - activeAgentsCount} de ${planCapacity} livres` : 'Acesso Ilimitado'}
+                {hubProfile.agentLimit ? `${planCapacity - activeAgentsCount} de ${planCapacity} livres` : `${String(agents.length).padStart(2, '0')} Agentes`}
               </p>
             </div>
           </div>

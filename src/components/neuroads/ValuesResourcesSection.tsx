@@ -106,11 +106,6 @@ export default function ValuesResourcesSection() {
             {/* Inner border overlay */}
             <div className="pointer-events-none absolute inset-0 rounded-[24px] bg-[radial-gradient(circle_at_35%_0%,rgba(255,162,82,0.22),rgba(255,255,255,0)_58%)]" />
 
-            {/* Badge */}
-            <span className="absolute left-1/2 top-0 z-30 -translate-x-1/2 -translate-y-[58%] whitespace-nowrap rounded-full bg-[#ff5f0f] px-6 py-1 text-[13px] font-extrabold uppercase tracking-[0.03em] text-white">
-              ★ Plano Único
-            </span>
-
             {/* Floating Image */}
             <motion.div
               animate={!prefersReducedMotion && isHovered ? { y: [0, -11, 0] } : { y: 0 }}

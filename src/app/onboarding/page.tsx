@@ -2,8 +2,9 @@
 
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { doc, setDoc } from 'firebase/firestore';
-import { ArrowRight, Building2, CheckCircle2, Globe, Phone } from 'lucide-react';
+import { ArrowRight, Building2, Check, CheckCircle2, Globe, Phone } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
 import { getHubLoginRedirect, hasHubPlanAccess, normalizeHubNextPath } from '../../lib/hub-access';
@@ -59,11 +60,13 @@ function readStringArray(value: unknown): string[] {
 }
 
 function formatCurrencyFromCents(value: number): string {
-  return new Intl.NumberFormat('pt-BR', {
+  const formatted = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: String(stripeOffersCatalog.currency || 'BRL').toUpperCase(),
-    minimumFractionDigits: 0,
+    minimumFractionDigits: 2,
   }).format(value / 100);
+  
+  return formatted.replace(/,00$/, '');
 }
 
 function OnboardingPageContent() {
@@ -456,18 +459,64 @@ function OnboardingPageContent() {
             <div className="mt-7">
               <p className="text-sm text-text-muted">Seu plano de ativação. Comece agora com trial grátis de 14 dias sem cartão ou ative diretamente com cartão.</p>
               {plan ? (
-                <div className="mt-4">
-                  <div className="rounded-xl border-2 border-[#08B760] bg-[#ECFDF3] px-5 py-5">
-                    <p className="text-xl font-black text-text-main">{plan.name}</p>
-                    <div className="mt-2 flex flex-wrap items-baseline gap-3">
-                      <p className="text-sm font-semibold text-text-muted">{formatCurrencyFromCents(plan.amount)}/mês</p>
-                      {(plan as Record<string, unknown>).amountAnnual ? (
-                        <p className="text-sm font-semibold text-[#0A7A42]">ou {formatCurrencyFromCents((plan as Record<string, unknown>).amountAnnual as number)}/ano</p>
-                      ) : null}
+                <div className="mt-6">
+                  <div className="relative overflow-visible rounded-[24px] border-0 bg-[linear-gradient(165deg,rgba(255,255,255,0.78),rgba(255,245,237,0.58))] px-6 py-6 md:px-8 md:py-8 shadow-[0_18px_48px_rgba(13,23,45,0.14)]">
+                    {/* Inner border overlay */}
+                    <div className="pointer-events-none absolute inset-0 rounded-[24px] border-2 border-[#ff8a40]/30 bg-[radial-gradient(circle_at_35%_0%,rgba(255,162,82,0.22),rgba(255,255,255,0)_58%)]" />
+
+                    <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 md:gap-10">
+                      {/* Floating Image */}
+                      <div className="relative shrink-0 h-[126px] w-[142px]">
+                        <Image
+                          src="/images/pricing-plans/icon_pro_scale_001.png"
+                          alt="Imagem do plano NeuroAds IA Pro"
+                          fill
+                          sizes="220px"
+                          className="object-contain drop-shadow-[0_16px_28px_rgba(10,20,40,0.18)] scale-[1.2]"
+                          priority
+                        />
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 flex flex-col">
+                        <h3 className="text-[28px] font-black leading-none text-[#ff5a00]">{plan.name}</h3>
+                        <p className="mt-2 text-[15px] leading-[1.35] text-[#3f4a63]">
+                          IA avançada e inteligência profunda para escalar sua operação.
+                        </p>
+
+                        <div className="mt-4 flex flex-wrap items-end gap-3 border-b border-[#e7edf7] pb-4">
+                          <div className="flex items-end gap-1.5">
+                            <span className="text-[36px] font-black leading-none text-[#0b132d]">
+                              R$ {formatCurrencyFromCents(plan.amount).replace('R$', '').trim()}
+                            </span>
+                            <span className="mb-1 text-[20px] font-black text-[#ff5a00]">/mês</span>
+                          </div>
+                          {(plan as Record<string, unknown>).amountAnnual ? (
+                            <span className="mb-1.5 rounded-full bg-[#ff8a40]/10 px-2.5 py-0.5 text-[12px] font-extrabold text-[#ff5a00] border border-[#ff8a40]/20">
+                              OU R$ {formatCurrencyFromCents((plan as Record<string, unknown>).amountAnnual as number).replace('R$', '').trim()}/ANO
+                            </span>
+                          ) : null}
+                        </div>
+
+                        <ul className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-4">
+                          {[
+                            'Insights de IA (acesso total)',
+                            'Fontes de dados ilimitadas',
+                            'Analytics avançado',
+                            'Modelagem preditiva'
+                          ].map((feature) => (
+                            <li key={feature} className="flex items-start gap-2.5 text-[13px] leading-[1.28] text-[#25324d]">
+                              <span className="mt-0.5 inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-full bg-[#ff7a1b] text-white">
+                                <Check size={10} strokeWidth={3.1} />
+                              </span>
+                              <span>{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     </div>
-                    {plan.description ? <p className="mt-2 text-xs text-text-dim">{plan.description}</p> : null}
                   </div>
-                  <p className="mt-3 text-xs text-text-dim">Seus dados ficam preservados mesmo em reentrada (trial expirado, cancelado ou pendência).</p>
+                  <p className="mt-4 text-center text-xs text-text-dim">Seus dados ficam preservados mesmo em reentrada (trial expirado, cancelado ou pendência).</p>
                 </div>
               ) : (
                 <p className="mt-4 text-sm text-red-600">Nenhum plano disponível no momento.</p>
