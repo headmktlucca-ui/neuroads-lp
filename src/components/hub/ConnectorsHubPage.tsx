@@ -92,6 +92,18 @@ type MetaAdsAccountOption = {
   status: string;
 };
 
+type LinkedinAdsAccountOption = {
+  id: string;
+  name: string;
+  currency: string;
+  status: string;
+};
+
+type LinkedinPageOption = {
+  id: string;
+  name: string;
+};
+
 type InstagramAccountOption = {
   id: string;
   name: string;
@@ -927,6 +939,16 @@ export default function ConnectorsHubPage() {
   const [instagramAccounts, setInstagramAccounts] = useState<InstagramAccountOption[]>([]);
   const [selectedInstagramAccountId, setSelectedInstagramAccountId] = useState('');
   const [instagramSelectionSaving, setInstagramSelectionSaving] = useState(false);
+
+  const [pendingLinkedinAdsConnection, setPendingLinkedinAdsConnection] = useState<PendingOAuthConnection | null>(null);
+  const [linkedinAdsAccounts, setLinkedinAdsAccounts] = useState<LinkedinAdsAccountOption[]>([]);
+  const [selectedLinkedinAdsAccountId, setSelectedLinkedinAdsAccountId] = useState('');
+  const [linkedinAdsSelectionSaving, setLinkedinAdsSelectionSaving] = useState(false);
+
+  const [pendingLinkedinPageConnection, setPendingLinkedinPageConnection] = useState<PendingOAuthConnection | null>(null);
+  const [linkedinPageAccounts, setLinkedinPageAccounts] = useState<LinkedinPageOption[]>([]);
+  const [selectedLinkedinPageAccountId, setSelectedLinkedinPageAccountId] = useState('');
+  const [linkedinPageSelectionSaving, setLinkedinPageSelectionSaving] = useState(false);
   const [pendingGa4Connection, setPendingGa4Connection] = useState<PendingOAuthConnection | null>(null);
   const [ga4Accounts, setGa4Accounts] = useState<Ga4AccountOption[]>([]);
   const [selectedGa4AccountId, setSelectedGa4AccountId] = useState('');
@@ -1013,6 +1035,20 @@ export default function ConnectorsHubPage() {
     setInstagramAccounts([]);
     setSelectedInstagramAccountId('');
     setInstagramSelectionSaving(false);
+  }, []);
+
+  const clearPendingLinkedinAdsSelection = useCallback(() => {
+    setPendingLinkedinAdsConnection(null);
+    setLinkedinAdsAccounts([]);
+    setSelectedLinkedinAdsAccountId('');
+    setLinkedinAdsSelectionSaving(false);
+  }, []);
+
+  const clearPendingLinkedinPageSelection = useCallback(() => {
+    setPendingLinkedinPageConnection(null);
+    setLinkedinPageAccounts([]);
+    setSelectedLinkedinPageAccountId('');
+    setLinkedinPageSelectionSaving(false);
   }, []);
 
   const clearPendingGa4Selection = useCallback(() => {
@@ -1403,6 +1439,8 @@ export default function ConnectorsHubPage() {
       clearPendingMetaAdsSelection();
       clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
+      clearPendingLinkedinAdsSelection();
+      clearPendingLinkedinPageSelection();
       clearPendingGa4Selection();
       clearPendingSearchConsoleSelection();
       clearPendingHubSpotSelection();
@@ -1417,6 +1455,8 @@ export default function ConnectorsHubPage() {
       clearPendingMetaAdsSelection();
       clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
+      clearPendingLinkedinAdsSelection();
+      clearPendingLinkedinPageSelection();
       clearPendingGa4Selection();
       clearPendingSearchConsoleSelection();
       clearPendingHubSpotSelection();
@@ -1670,6 +1710,92 @@ export default function ConnectorsHubPage() {
       return;
     }
 
+    if (normalizedConnectorParam === 'linkedinAds' && !pendingPayload.accountId) {
+      const hydrateLinkedinAdsAccounts = async () => {
+        try {
+          setConnectorBusyKey('linkedinAds');
+          const response = await fetch('/api/auth/connectors/linkedinAds/accounts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ accessToken: normalizedAccessToken }),
+          });
+          const payload = (await response.json()) as { accounts?: LinkedinAdsAccountOption[]; error?: string };
+
+          if (!response.ok) {
+            throw new Error(payload.error || 'Não foi possível listar as contas do LinkedIn Ads.');
+          }
+
+          const accounts = Array.isArray(payload.accounts) ? payload.accounts : [];
+          if (accounts.length === 0) {
+            clearPendingLinkedinAdsSelection();
+            setConnectorFeedback(null);
+            setConnectorError('Autenticação concluída, mas nenhuma conta disponível foi encontrada no LinkedIn Ads.');
+            return;
+          }
+
+          setPendingLinkedinAdsConnection(pendingPayload);
+          setLinkedinAdsAccounts(accounts);
+          setSelectedLinkedinAdsAccountId(accounts[0]?.id || '');
+          setConnectorError(null);
+          setConnectorFeedback('Autenticação concluída. Selecione a conta do LinkedIn Ads para finalizar a vinculação.');
+        } catch (error) {
+          clearPendingLinkedinAdsSelection();
+          setConnectorFeedback(null);
+          setConnectorError(error instanceof Error ? error.message : 'Erro ao carregar contas do LinkedIn Ads.');
+        } finally {
+          setConnectorBusyKey(null);
+          clearConnectorQueryParams();
+        }
+      };
+      void hydrateLinkedinAdsAccounts();
+      return;
+    }
+
+    if (normalizedConnectorParam === 'linkedinPage' && !pendingPayload.accountId) {
+      const hydrateLinkedinPageAccounts = async () => {
+        try {
+          setConnectorBusyKey('linkedinPage');
+          const response = await fetch('/api/auth/connectors/linkedinPage/accounts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ accessToken: normalizedAccessToken }),
+          });
+          const payload = (await response.json()) as { accounts?: LinkedinPageOption[]; error?: string };
+
+          if (!response.ok) {
+            throw new Error(payload.error || 'Não foi possível listar as páginas do LinkedIn.');
+          }
+
+          const accounts = Array.isArray(payload.accounts) ? payload.accounts : [];
+          if (accounts.length === 0) {
+            clearPendingLinkedinPageSelection();
+            setConnectorFeedback(null);
+            setConnectorError('Autenticação concluída, mas nenhuma página disponível foi encontrada no LinkedIn.');
+            return;
+          }
+
+          setPendingLinkedinPageConnection(pendingPayload);
+          setLinkedinPageAccounts(accounts);
+          setSelectedLinkedinPageAccountId(accounts[0]?.id || '');
+          setConnectorError(null);
+          setConnectorFeedback('Autenticação concluída. Selecione a página do LinkedIn para finalizar a vinculação.');
+        } catch (error) {
+          clearPendingLinkedinPageSelection();
+          setConnectorFeedback(null);
+          setConnectorError(error instanceof Error ? error.message : 'Erro ao carregar páginas do LinkedIn.');
+        } finally {
+          setConnectorBusyKey(null);
+          clearConnectorQueryParams();
+        }
+      };
+      void hydrateLinkedinPageAccounts();
+      return;
+    }
+
     if (normalizedConnectorParam === 'ga4' && !pendingPayload.accountId) {
       console.log('[DEBUG ConnectorsHubPage] ga4 matched! triggering hydrateGa4Accounts', pendingPayload);
       const hydrateGa4Accounts = async () => {
@@ -1815,6 +1941,8 @@ export default function ConnectorsHubPage() {
       clearPendingMetaAdsSelection();
       clearPendingGoogleAdsSelection();
       clearPendingInstagramSelection();
+      clearPendingLinkedinAdsSelection();
+      clearPendingLinkedinPageSelection();
       clearPendingGa4Selection();
       clearPendingSearchConsoleSelection();
       clearPendingHubSpotSelection();
@@ -1829,6 +1957,8 @@ export default function ConnectorsHubPage() {
     clearPendingHubSpotSelection,
     clearPendingSearchConsoleSelection,
     clearPendingInstagramSelection,
+    clearPendingLinkedinAdsSelection,
+    clearPendingLinkedinPageSelection,
     clearPendingMetaAdsSelection,
     clearStripeConfigModal,
     pathname,
@@ -2020,10 +2150,18 @@ export default function ConnectorsHubPage() {
   const showInstagramSelectionModal = Boolean(
     !showGoogleAdsSelectionModal && !showMetaAdsSelectionModal && pendingInstagramConnection && instagramAccounts.length > 0
   );
+  const showLinkedinAdsSelectionModal = Boolean(
+    !showGoogleAdsSelectionModal && !showMetaAdsSelectionModal && !showInstagramSelectionModal && pendingLinkedinAdsConnection && linkedinAdsAccounts.length > 0
+  );
+  const showLinkedinPageSelectionModal = Boolean(
+    !showGoogleAdsSelectionModal && !showMetaAdsSelectionModal && !showInstagramSelectionModal && !showLinkedinAdsSelectionModal && pendingLinkedinPageConnection && linkedinPageAccounts.length > 0
+  );
   const showGa4SelectionModal = Boolean(
     !showGoogleAdsSelectionModal &&
       !showMetaAdsSelectionModal &&
       !showInstagramSelectionModal &&
+      !showLinkedinAdsSelectionModal &&
+      !showLinkedinPageSelectionModal &&
       pendingGa4Connection &&
       ga4Accounts.length > 0
   );
@@ -2031,6 +2169,8 @@ export default function ConnectorsHubPage() {
     !showGoogleAdsSelectionModal &&
       !showMetaAdsSelectionModal &&
       !showInstagramSelectionModal &&
+      !showLinkedinAdsSelectionModal &&
+      !showLinkedinPageSelectionModal &&
       !showGa4SelectionModal &&
       pendingSearchConsoleConnection &&
       searchConsoleAccounts.length > 0
@@ -2039,6 +2179,8 @@ export default function ConnectorsHubPage() {
     !showGoogleAdsSelectionModal &&
       !showMetaAdsSelectionModal &&
       !showInstagramSelectionModal &&
+      !showLinkedinAdsSelectionModal &&
+      !showLinkedinPageSelectionModal &&
       !showGa4SelectionModal &&
       !showSearchConsoleSelectionModal &&
       pendingHubSpotConnection &&
@@ -2247,6 +2389,74 @@ export default function ConnectorsHubPage() {
     }
 
     setInstagramSelectionSaving(false);
+    setConnectorBusyKey(null);
+  };
+
+  const handleLinkedinAdsAccountSelection = async () => {
+    if (!pendingLinkedinAdsConnection || !selectedLinkedinAdsAccountId) {
+      setConnectorError('Selecione uma conta do LinkedIn Ads para continuar.');
+      setConnectorFeedback(null);
+      return;
+    }
+
+    const selectedAccount = linkedinAdsAccounts.find((account) => account.id === selectedLinkedinAdsAccountId);
+
+    setLinkedinAdsSelectionSaving(true);
+    setConnectorBusyKey('linkedinAds');
+
+    const persisted = await persistOAuthConnection(
+      {
+        ...pendingLinkedinAdsConnection,
+        accountId: selectedLinkedinAdsAccountId,
+        metadata: selectedAccount
+          ? {
+              accountName: selectedAccount.name,
+              currency: selectedAccount.currency,
+              status: selectedAccount.status,
+            }
+          : pendingLinkedinAdsConnection.metadata ?? null,
+      },
+      'Conta do LinkedIn Ads vinculada com sucesso.'
+    );
+
+    if (persisted) {
+      clearPendingLinkedinAdsSelection();
+    }
+
+    setLinkedinAdsSelectionSaving(false);
+    setConnectorBusyKey(null);
+  };
+
+  const handleLinkedinPageAccountSelection = async () => {
+    if (!pendingLinkedinPageConnection || !selectedLinkedinPageAccountId) {
+      setConnectorError('Selecione uma página do LinkedIn para continuar.');
+      setConnectorFeedback(null);
+      return;
+    }
+
+    const selectedAccount = linkedinPageAccounts.find((account) => account.id === selectedLinkedinPageAccountId);
+
+    setLinkedinPageSelectionSaving(true);
+    setConnectorBusyKey('linkedinPage');
+
+    const persisted = await persistOAuthConnection(
+      {
+        ...pendingLinkedinPageConnection,
+        accountId: selectedLinkedinPageAccountId,
+        metadata: selectedAccount
+          ? {
+              accountName: selectedAccount.name,
+            }
+          : pendingLinkedinPageConnection.metadata ?? null,
+      },
+      'Página do LinkedIn vinculada com sucesso.'
+    );
+
+    if (persisted) {
+      clearPendingLinkedinPageSelection();
+    }
+
+    setLinkedinPageSelectionSaving(false);
     setConnectorBusyKey(null);
   };
 
@@ -3837,6 +4047,82 @@ export default function ConnectorsHubPage() {
                 className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
               >
                 {instagramSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {showLinkedinAdsSelectionModal && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+          <section className={ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME} style={ACCOUNT_SELECTION_MODAL_PANEL_STYLE}>
+            <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a conta LinkedIn Ads para concluir</p>
+            <p className={ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME}>
+              A autenticação foi concluída. Agora escolha qual conta de anúncio deve ser vinculada ao Hub.
+            </p>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <label className={ACCOUNT_SELECTION_MODAL_LABEL_CLASSNAME}>
+                Conta LinkedIn Ads
+                <select
+                  value={selectedLinkedinAdsAccountId}
+                  onChange={(event) => setSelectedLinkedinAdsAccountId(event.target.value)}
+                  className={ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME}
+                >
+                  {linkedinAdsAccounts.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name} (Moeda: {account.currency || 'N/A'})
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <button
+                type="button"
+                onClick={() => void handleLinkedinAdsAccountSelection()}
+                disabled={!selectedLinkedinAdsAccountId || linkedinAdsSelectionSaving}
+                className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
+              >
+                {linkedinAdsSelectionSaving ? 'Vinculando...' : 'Vincular conta'}
+              </button>
+            </div>
+          </section>
+        </div>
+      )}
+
+      {showLinkedinPageSelectionModal && (
+        <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-[#0F172A]/55 backdrop-blur-sm" />
+          <section className={ACCOUNT_SELECTION_MODAL_PANEL_CLASSNAME} style={ACCOUNT_SELECTION_MODAL_PANEL_STYLE}>
+            <p className={ACCOUNT_SELECTION_MODAL_TITLE_CLASSNAME}>Selecione a página do LinkedIn para concluir</p>
+            <p className={ACCOUNT_SELECTION_MODAL_DESCRIPTION_CLASSNAME}>
+              A autenticação foi concluída. Agora escolha qual página (Company) deve ser vinculada ao Hub.
+            </p>
+
+            <div className="mt-4 grid gap-3 md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+              <label className={ACCOUNT_SELECTION_MODAL_LABEL_CLASSNAME}>
+                Página LinkedIn
+                <select
+                  value={selectedLinkedinPageAccountId}
+                  onChange={(event) => setSelectedLinkedinPageAccountId(event.target.value)}
+                  className={ACCOUNT_SELECTION_MODAL_SELECT_CLASSNAME}
+                >
+                  {linkedinPageAccounts.map((account) => (
+                    <option key={account.id} value={account.id}>
+                      {account.name} ({account.id})
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <button
+                type="button"
+                onClick={() => void handleLinkedinPageAccountSelection()}
+                disabled={!selectedLinkedinPageAccountId || linkedinPageSelectionSaving}
+                className={ACCOUNT_SELECTION_MODAL_BUTTON_CLASSNAME}
+              >
+                {linkedinPageSelectionSaving ? 'Vinculando...' : 'Vincular página'}
               </button>
             </div>
           </section>
