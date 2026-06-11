@@ -486,23 +486,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     provider.setCustomParameters({ prompt: 'select_account' });
 
     try {
-      // Prioriza popup para manter o estado da página e evitar loops de redirect em alguns navegadores.
+      // Tenta abrir via popup primeiro
       await signInWithPopup(auth, provider);
     } catch (error: unknown) {
-      const code = error && typeof error === 'object' && 'code' in error
-        ? String((error as { code?: string }).code ?? '')
-        : '';
-
-      const shouldFallbackToRedirect =
-        code === 'auth/popup-blocked' ||
-        code === 'auth/popup-closed-by-user' ||
-        code === 'auth/cancelled-popup-request' ||
-        code === 'auth/operation-not-supported-in-this-environment';
-
-      if (!shouldFallbackToRedirect) {
-        throw error;
-      }
-
+      console.warn('Falha no signInWithPopup (possível bloqueio de COOP/Popups). Usando fallback de redirecionamento...', error);
+      // Fallback garantido para redirecionamento em qualquer erro de popup
       await signInWithRedirect(auth, provider);
     }
   };

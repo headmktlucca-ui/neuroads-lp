@@ -913,6 +913,8 @@ export default function Navbar() {
       site: normalizedSite,
       instagram: companyForm.instagram.trim(),
       linkedin: companyForm.linkedin.trim(),
+      tiktok: companyForm.tiktok.trim(),
+      blog: companyForm.blog.trim(),
       updatedAt: Date.now(),
       ...(authenticatedEmail ? { authEmail: authenticatedEmail, email: authenticatedEmail } : {}),
       onboarding: {
@@ -920,6 +922,8 @@ export default function Navbar() {
         site: normalizedSite,
         instagram: companyForm.instagram.trim(),
         linkedin: companyForm.linkedin.trim(),
+        tiktok: companyForm.tiktok.trim(),
+        blog: companyForm.blog.trim(),
       },
     };
 

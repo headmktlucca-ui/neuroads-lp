@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: [
           // Required for auth popup flows (Google/Firebase) to close correctly.
-          { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
+          { key: "Cross-Origin-Opener-Policy", value: "unsafe-none" },
         ],
       },
     ];
