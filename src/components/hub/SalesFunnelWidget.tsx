@@ -205,30 +205,37 @@ export default function SalesFunnelWidget({
         }
       `}} />
 
-      {/* Container Principal: Novo Fundo Tecnológico */}
-      <div 
-        className="relative w-full rounded-3xl p-6 flex flex-col xl:flex-row items-stretch justify-between gap-6 overflow-visible shadow-2xl min-h-[260px] bg-cover bg-center bg-no-repeat"
-        style={{ 
-          backgroundImage: "url('/images/img_Funnel_bg.png')",
-          backgroundColor: '#F8FAFC' // Fundo de fallback claro
-        }}
-      >
+      {/* Container Principal */}
+      <div className="relative w-full rounded-3xl p-6 flex flex-col xl:flex-row items-stretch justify-between gap-6 overflow-visible shadow-2xl min-h-[260px]">
+        
+        {/* Camada de Background com Efeito Glass */}
+        <div className="absolute inset-0 rounded-3xl overflow-hidden pointer-events-none z-0 bg-[#0B0E17]">
+          {/* Imagem de fundo exata fornecida em anexo */}
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{ backgroundImage: "url('/images/bg_dark_stars_v2.png')" }}
+          />
+          {/* Overlay Glassmorphism Aumentado */}
+          <div className="absolute inset-0 bg-white/[0.03] backdrop-blur-md shadow-[inset_0_0_20px_rgba(255,255,255,0.05)]" />
+          {/* Borda interna sutil para acabamento premium */}
+          <div className="absolute inset-0 rounded-3xl border border-white/10" />
+        </div>
 
         {/* LADO ESQUERDO: Título e Imagem do Funil (25%) */}
-        <div className="relative z-10 w-full xl:w-[25%] flex flex-col items-start justify-start pr-4 border-b xl:border-b-0 xl:border-r border-slate-300 pb-6 xl:pb-0">
-          <h2 className="text-2xl xl:text-3xl font-black text-slate-800 flex items-center gap-2 mb-2 tracking-tight">
+        <div className="relative z-10 w-full xl:w-[25%] flex flex-col items-start justify-start pr-4 border-b xl:border-b-0 xl:border-r border-slate-700/50 pb-6 xl:pb-0">
+          <h2 className="text-2xl xl:text-3xl font-black text-white flex items-center gap-2 mb-2 tracking-tight">
             Funil de Vendas
           </h2>
-          <p className="text-slate-600 text-sm leading-snug mb-6 max-w-[220px]">
+          <p className="text-slate-300 text-sm leading-snug mb-6 max-w-[220px]">
             Acompanhe cada etapa e impulsione seus resultados.
           </p>
           
-          <div className="relative w-[180px] h-[100px] mt-auto opacity-90">
+          <div className="relative w-full h-[160px] xl:h-[200px] mt-4 flex items-center justify-center opacity-95">
             <Image 
               src="/images/img_Funnel.png" 
               alt="Ilustração do Funil" 
               fill 
-              className="object-contain object-left"
+              className="object-contain object-center drop-shadow-2xl"
               priority
             />
           </div>
@@ -395,20 +402,20 @@ export default function SalesFunnelWidget({
         </div>
 
         {/* PAINEL DIREITO: KPI Radial (Donut) */}
-        <div className="relative z-10 w-full xl:w-[180px] bg-white/60 backdrop-blur-md rounded-2xl border border-slate-200 p-4 flex flex-col items-center justify-center xl:ml-6 shadow-sm">
-          <h3 className="text-slate-800 text-xs font-bold mb-4 text-center tracking-wide uppercase">Taxa de Conversão</h3>
+        <div className="relative z-10 w-full xl:w-[180px] bg-[#0B0E17]/60 backdrop-blur-md rounded-2xl border border-white/10 p-4 flex flex-col items-center justify-center xl:ml-6 shadow-xl">
+          <h3 className="text-white text-xs font-bold mb-4 text-center tracking-wide uppercase">Taxa de Conversão</h3>
           
           <div className="relative w-24 h-24">
             <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
               <path
-                className="text-slate-200"
+                className="text-white/10"
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="3"
               />
               <path
-                className={`${isFullyConnected ? 'text-[#A855F7]' : 'text-slate-400'} transition-all duration-[2000ms] ease-out`}
+                className={`${isFullyConnected ? 'text-[#A855F7]' : 'text-slate-500'} transition-all duration-[2000ms] ease-out`}
                 strokeDasharray={`${isFullyConnected && isLoaded ? '2.5' : '0'}, 100`}
                 d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                 fill="none"
@@ -418,13 +425,13 @@ export default function SalesFunnelWidget({
               />
             </svg>
             <div className="absolute inset-0 flex items-center justify-center flex-col">
-              <span className={`text-lg font-black tracking-tighter ${isFullyConnected ? 'text-slate-800' : 'text-slate-400'}`}>
+              <span className={`text-lg font-black tracking-tighter ${isFullyConnected ? 'text-white' : 'text-slate-500'}`}>
                 {isFullyConnected && isLoaded ? <AnimatedValue value={2.5} isFloat suffix="%" /> : 'N/A'}
               </span>
             </div>
           </div>
           
-          <div className={`mt-4 flex items-center gap-1 text-[10px] bg-emerald-50 px-2 py-1 rounded-full border border-emerald-200 ${isFullyConnected ? 'text-emerald-600' : 'text-slate-400 grayscale'}`}>
+          <div className={`mt-4 flex items-center gap-1 text-[10px] bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20 ${isFullyConnected ? 'text-emerald-400' : 'text-slate-500 grayscale'}`}>
             <ArrowUp className="w-3 h-3" />
             <span className="font-bold">{isFullyConnected ? '18% vs anterior' : 'Sem dados'}</span>
           </div>
