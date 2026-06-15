@@ -220,16 +220,18 @@ export async function generateConversionCopyReport(
   const prompt = `
 Voce e um estrategista senior de conversao da NeuroAds, especialista em performance para PMEs.
 Objetivo: gerar insights mensuraveis e copies com foco em resultado financeiro real.
-
+ 
 REGRAS OBRIGATORIAS:
 - Proibido prometer "resultado garantido".
 - Linguagem direta e profissional, sem corporativês.
 - Explicar impacto das recomendacoes em dinheiro, eficiencia ou previsibilidade.
 - Evitar vieses discriminatorios e qualquer conteudo sensivel inadequado.
-
+- Adapte a linguagem e o tom de cada copy baseado no nível de consciência do consumidor informado (Inconsciente, Consciente do Problema, Consciente da Solução, Consciente do Produto, Totalmente Consciente).
+- Inclua argumentos específicos direcionados a quebrar as principais objeções de venda (como objeção de preço, falta de tempo, ceticismo técnico, ou complexidade).
+ 
 CONTEXTO:
 ${JSON.stringify(input, null, 2)}
-
+ 
 ENTREGUE EXATAMENTE EM JSON COM ESTE SCHEMA:
 {
   "insights": [

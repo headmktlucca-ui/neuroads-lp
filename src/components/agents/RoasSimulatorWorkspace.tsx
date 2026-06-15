@@ -290,6 +290,27 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
     const requiredCpl = requiredLeads > 0 ? requiredBudget / requiredLeads : 0;
     const leadGap = requiredLeads - totals.conversions;
 
+    // Advanced indicators
+    const currentCac = closeRateFactor > 0 ? currentCpl / closeRateFactor : 0;
+    const requiredCac = closeRateFactor > 0 ? requiredCpl / closeRateFactor : 0;
+    
+    const marginPerSale = averageTicket * netMarginFactor;
+    const paybackRatio = marginPerSale > 0 ? currentCac / marginPerSale : 0;
+    const paybackText = paybackRatio <= 0
+      ? 'N/A'
+      : paybackRatio <= 1 
+        ? 'Imediato (1ª venda)' 
+        : `${Math.round(paybackRatio * 30)} dias (${paybackRatio.toFixed(1)} vendas)`;
+
+    const blendedRevenue = currentRevenue * 1.25; // 25% organic lift
+    const blendedRoas = totals.spend > 0 ? blendedRevenue / totals.spend : 0;
+
+    const scaleFactor = totals.spend > 0 ? requiredBudget / totals.spend : 1;
+    let saturationDecay = 0;
+    if (scaleFactor > 1) {
+      saturationDecay = Math.min(48, Math.round((scaleFactor - 1) * 12));
+    }
+
     const channelBreakdown = (extraction.channels ?? []).map((channel) => {
       const cpl = channel.conversions > 0 ? channel.spend / channel.conversions : 0;
       const cvRate = channel.clicks > 0 ? (channel.conversions / channel.clicks) * 100 : 0;
@@ -331,6 +352,9 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
     if (bestChannel) {
       opportunities.push(`${bestChannel.platform} apresenta melhor custo por conversão no período. Considere aumentar share de verba neste canal.`);
     }
+    if (saturationDecay > 15) {
+      opportunities.push(`Curva de saturação: escalar verba em ${scaleFactor.toFixed(1)}x pode degradar ROAS em até ${saturationDecay}% devido a retornos decrescentes.`);
+    }
     if (!opportunities.length) {
       opportunities.push('Base operacional saudável para escala previsível. Próximo passo: expandir orçamento com monitoramento diário de CPL e taxa de fechamento.');
     }
@@ -367,6 +391,10 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
       opportunities,
       recommendedAllocation,
       scenarios,
+      currentCac,
+      paybackText,
+      blendedRoas,
+      saturationDecay,
       input: {
         revenueTarget,
         averageTicket,
@@ -386,7 +414,7 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
       const summary = [
         `Meta de faturamento: ${formatCurrency(simulation.input.revenueTarget)} | ROAS-alvo: ${formatNumber(simulation.input.targetRoas)}x`,
         `Necessário para meta: investimento ${formatCurrency(simulation.requiredBudget)} e ${formatNumber(simulation.requiredLeads, 0)} leads qualificados.`,
-        `Situação atual: investimento ${formatCurrency(simulation.totals.spend)}, CPL ${formatCurrency(simulation.currentCpl)}, ROAS projetado ${formatNumber(simulation.currentRoas)}x.`,
+        `Situação atual: investimento ${formatCurrency(simulation.totals.spend)}, CPL ${formatCurrency(simulation.currentCpl)}, CAC ${formatCurrency(simulation.currentCac)}, Payback ${simulation.paybackText}.`,
       ].join('\n');
 
       const opportunitiesText = simulation.opportunities.map((item, index) => `${index + 1}. ${item}`).join('\n');
@@ -413,6 +441,10 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
           currentSpend: Number(simulation.totals.spend.toFixed(2)),
           currentRoas: Number(simulation.currentRoas.toFixed(2)),
           channels: activeChannels.join(', '),
+          currentCac: Number(simulation.currentCac.toFixed(2)),
+          paybackText: simulation.paybackText,
+          blendedRoas: Number(simulation.blendedRoas.toFixed(2)),
+          saturationDecay: simulation.saturationDecay,
         },
       });
       const entries = await getLatestAgentReportsFromDb(userId, agentSlug, 10);
@@ -466,7 +498,7 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
             </div>
 
             {/* Mode Selector Switch */}
-            <div className="flex rounded-xl bg-[#F8FAFC] p-1 border border-[#E2E8F0] mb-4">
+            <div className="flex rounded-xl bg-[#F8FAFC] p-1 border border-[#E2E8F0] my-4">
               <button
                 type="button"
                 onClick={() => setOperationalMode('real')}
@@ -584,11 +616,20 @@ export default function RoasSimulatorWorkspace({ userId, agentSlug, agentTitle, 
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* Core metrics row 1 */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <Metric label="Investimento atual" value={formatCurrency(simulation.totals.spend)} />
                 <Metric label="CPL atual" value={formatCurrency(simulation.currentCpl)} />
                 <Metric label="ROAS projetado" value={`${formatNumber(simulation.currentRoas)}x`} />
                 <Metric label="Meta de investimento" value={formatCurrency(simulation.requiredBudget)} />
+              </div>
+
+              {/* Advanced metrics row 2 */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 pt-1">
+                <Metric label="CAC Estimado" value={formatCurrency(simulation.currentCac)} />
+                <Metric label="Payback de CAC" value={simulation.paybackText} />
+                <Metric label="Blended ROAS (+Orgânico)" value={`${formatNumber(simulation.blendedRoas)}x`} />
+                <Metric label="Degradação de Saturação" value={simulation.saturationDecay > 0 ? `-${simulation.saturationDecay}%` : '0% (Estável)'} />
               </div>
 
               <div className="rounded-xl border border-[#E8EDF4] bg-[#FCFDFF] p-4">

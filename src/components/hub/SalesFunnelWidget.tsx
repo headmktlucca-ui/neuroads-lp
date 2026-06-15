@@ -3,7 +3,7 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { ConnectorStatus } from '../../lib/connectors';
-import { Users, UserCheck, Star, Handshake, Trophy, AlertTriangle, ArrowUp, ArrowRight, X } from 'lucide-react';
+import { Users, UserCheck, Star, Handshake, Trophy, AlertTriangle, ArrowUp, ArrowRight, X, type LucideIcon } from 'lucide-react';
 
 // Nomes de exibição amigáveis para os canais
 const CHANNEL_NAMES: Record<string, string> = {
@@ -87,7 +87,7 @@ const AnimatedProgressBar = ({ percent, colorFrom, colorTo, delay = 0 }: { perce
 type FunnelStage = {
   id: string;
   title: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   colorFrom: string;
   colorTo: string;
   valueNum: number;

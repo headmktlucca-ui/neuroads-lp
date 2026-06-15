@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { CheckCircle2, Network, Sparkles } from 'lucide-react';
 import { getLatestAgentReportsFromDb, saveAgentReportToDb } from '../../lib/agent-report-history';
 import { useAuth } from '../../context/AuthContext';
+import { generateTrafficAiAnalysis } from '../../app/actions/traffic-analysis-ai';
 
 type Props = {
   userId?: string | null;
@@ -109,6 +110,7 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [extraction, setExtraction] = useState<ExtractResponse | null>(null);
+  const [aiAnalysis, setAiAnalysis] = useState<any | null>(null);
   const [historyCount, setHistoryCount] = useState(0);
 
   const profileConnections = useMemo(() => {
@@ -173,6 +175,7 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
     setLoading(true);
     setError(null);
     setExtraction(null);
+    setAiAnalysis(null);
     try {
       const channels = activeChannels.map((key) => {
         const connection = profileConnections[getConnectionKey(key)];
@@ -202,11 +205,19 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
 
       setExtraction(payload);
       const totals = payload.totals ?? { spend: 0, impressions: 0, clicks: 0, conversions: 0 };
-      const insights = calculateInsights(totals);
+      
+      const aiResponse = await generateTrafficAiAnalysis({
+        dateFrom,
+        dateTo,
+        channels: payload.channels ?? [],
+        totals,
+      });
+      setAiAnalysis(aiResponse);
+
       const generatedAt = new Date().toISOString();
-      const diagnosisMarkdown = `${insights.executive}\n\nPrioridades:\n${insights.priorities
+      const diagnosisMarkdown = `${aiResponse.executiveSummary}\n\nPrioridades:\n${aiResponse.priorities
         .map((p, i) => `${i + 1}. ${p}`)
-        .join('\n')}`;
+        .join('\n')}\n\nFadiga de Criativos: ${aiResponse.metrics.creativeFatigueIndex}%\nDesvio de ROAS: ${aiResponse.metrics.roasGapPct}%\nCPM: ${aiResponse.metrics.cpmOscillation}`;
 
       if (userId) {
         await saveAgentReportToDb({
@@ -223,10 +234,13 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
             periodLabel: `${dateFrom} a ${dateTo}`,
             investment: Number(totals.spend.toFixed(2)),
             leads: totals.conversions,
-            ctr: Number(insights.ctr.toFixed(2)),
-            cpc: Number(insights.cpc.toFixed(2)),
-            conversionRate: Number(insights.convRate.toFixed(2)),
+            ctr: Number((totals.impressions > 0 ? (totals.clicks / totals.impressions) * 100 : 0).toFixed(2)),
+            cpc: Number((totals.clicks > 0 ? totals.spend / totals.clicks : 0).toFixed(2)),
+            conversionRate: Number((totals.clicks > 0 ? (totals.conversions / totals.clicks) * 100 : 0).toFixed(2)),
             channels: activeChannels.join(', '),
+            creativeFatigueIndex: aiResponse.metrics.creativeFatigueIndex,
+            roasGapPct: aiResponse.metrics.roasGapPct,
+            cpmOscillation: aiResponse.metrics.cpmOscillation,
           },
         });
 
@@ -244,6 +258,7 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
     setLoading(true);
     setError(null);
     setExtraction(null);
+    setAiAnalysis(null);
 
     window.setTimeout(async () => {
       try {
@@ -263,9 +278,17 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
 
         setExtraction(mockPayload);
         const totals = mockPayload.totals!;
-        const insights = calculateInsights(totals);
+        
+        const aiResponse = await generateTrafficAiAnalysis({
+          dateFrom,
+          dateTo,
+          channels: mockPayload.channels ?? [],
+          totals,
+        });
+        setAiAnalysis(aiResponse);
+
         const generatedAt = new Date().toISOString();
-        const diagnosisMarkdown = `${insights.executive}\n\n[MODO SIMULAÇÃO]\n\nPrioridades:\n${insights.priorities
+        const diagnosisMarkdown = `${aiResponse.executiveSummary}\n\n[MODO SIMULAÇÃO]\n\nPrioridades:\n${aiResponse.priorities
           .map((p, i) => `${i + 1}. ${p}`)
           .join('\n')}`;
 
@@ -284,11 +307,14 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
               periodLabel: `${dateFrom} a ${dateTo}`,
               investment: Number(totals.spend.toFixed(2)),
               leads: totals.conversions,
-              ctr: Number(insights.ctr.toFixed(2)),
-              cpc: Number(insights.cpc.toFixed(2)),
-              conversionRate: Number(insights.convRate.toFixed(2)),
+              ctr: Number((totals.impressions > 0 ? (totals.clicks / totals.impressions) * 100 : 0).toFixed(2)),
+              cpc: Number((totals.clicks > 0 ? totals.spend / totals.clicks : 0).toFixed(2)),
+              conversionRate: Number((totals.clicks > 0 ? (totals.conversions / totals.clicks) * 100 : 0).toFixed(2)),
               channels: 'googleAds, metaAds',
-              isDemo: true
+              isDemo: true,
+              creativeFatigueIndex: aiResponse.metrics.creativeFatigueIndex,
+              roasGapPct: aiResponse.metrics.roasGapPct,
+              cpmOscillation: aiResponse.metrics.cpmOscillation,
             },
           });
 
@@ -350,7 +376,7 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
             </div>
 
             {/* Mode Selector Switch */}
-            <div className="flex rounded-xl bg-[#F8FAFC] p-1 border border-[#E2E8F0] mb-4">
+            <div className="flex rounded-xl bg-[#F8FAFC] p-1 border border-[#E2E8F0] my-4">
               <button
                 type="button"
                 onClick={() => setOperationalMode('real')}
@@ -427,7 +453,7 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
                 type="button"
                 onClick={operationalMode === 'real' ? runExtraction : runMockExtraction}
                 disabled={loading}
-                className="inline-flex items-center gap-2 rounded-full bg-[#FF6B00] px-6 py-3 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] disabled:opacity-60"
+                className="inline-flex h-11 items-center gap-2 rounded-full bg-[#FF6B00] px-6 text-sm font-black uppercase tracking-[0.08em] text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] disabled:opacity-60"
               >
                 {operationalMode === 'real' ? <Network className="h-4 w-4" /> : <Sparkles className="h-4 w-4" />}
                 {loading ? 'Processando...' : operationalMode === 'real' ? 'Extrair Indicadores Reais' : 'Simular Dados Exemplo'}
@@ -438,28 +464,56 @@ export default function TrafficAnalystWorkspace({ userId, agentSlug, agentTitle,
           {error ? <p className="text-sm font-semibold text-[#B42318]">{error}</p> : null}
 
           {extraction?.success && extraction.totals && insights ? (
-            <section className="rounded-2xl border border-[#E4EAF2] bg-white p-5">
-              <h3 className="text-sm uppercase tracking-[0.08em] text-primary font-black">Insights personalizados</h3>
-              <p className="mt-2 text-sm text-text-muted">{insights.executive}</p>
+            <section className="rounded-2xl border border-[#E4EAF2] bg-white p-5 space-y-6">
+              <div>
+                <h3 className="text-sm uppercase tracking-[0.08em] text-primary font-black">Resultados da Extração</h3>
+                <p className="mt-2 text-sm text-text-muted">{aiAnalysis ? aiAnalysis.executiveSummary : insights.executive}</p>
+              </div>
 
-              <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+              {/* Core Quantitative Metrics */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 <Metric label="Investimento" value={`R$ ${extraction.totals.spend.toFixed(2)}`} />
                 <Metric label="Impressões" value={Intl.NumberFormat('pt-BR').format(extraction.totals.impressions)} />
                 <Metric label="Cliques" value={Intl.NumberFormat('pt-BR').format(extraction.totals.clicks)} />
                 <Metric label="Conversões" value={Intl.NumberFormat('pt-BR').format(extraction.totals.conversions)} />
               </div>
 
-              <div className="mt-4 rounded-xl border border-[#E8EDF4] bg-[#FCFDFF] p-4">
-                <p className="text-xs font-black uppercase tracking-wide text-text-dim">Prioridades recomendadas</p>
+              {/* Advanced AI indicators */}
+              {aiAnalysis && (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                  <div className="rounded-xl border border-[#FFE1CF] bg-[#FFF8F3] p-4 text-center">
+                    <p className="text-xs font-bold text-[#C2410C] uppercase tracking-wider">Índice de Fadiga</p>
+                    <p className="mt-1.5 text-2xl font-black text-[#9A3412]">{aiAnalysis.metrics.creativeFatigueIndex}%</p>
+                    <p className="text-[11px] text-[#C2410C]/80 mt-1">Saturação visual de anúncios</p>
+                  </div>
+                  <div className="rounded-xl border border-[#E0F2FE] bg-[#F0F9FF] p-4 text-center">
+                    <p className="text-xs font-bold text-[#0369A1] uppercase tracking-wider">Desvio de ROAS</p>
+                    <p className={`mt-1.5 text-2xl font-black ${aiAnalysis.metrics.roasGapPct >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {aiAnalysis.metrics.roasGapPct >= 0 ? '+' : ''}{aiAnalysis.metrics.roasGapPct}%
+                    </p>
+                    <p className="text-[11px] text-[#0369A1]/80 mt-1">Diferença vs Meta Alvo</p>
+                  </div>
+                  <div className="rounded-xl border border-[#F1F5F9] bg-[#F8FAFC] p-4 text-center">
+                    <p className="text-xs font-bold text-text-dim uppercase tracking-wider">Oscilação de CPM</p>
+                    <p className="mt-1.5 text-base font-black text-text-main leading-tight truncate">{aiAnalysis.metrics.cpmOscillation}</p>
+                    <p className="text-[11px] text-text-dim mt-1">Flutuação de custos de mídia</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Action Priorities */}
+              <div className="rounded-xl border border-[#E8EDF4] bg-[#FCFDFF] p-4">
+                <p className="text-xs font-black uppercase tracking-wide text-text-dim">Prioridades recomendadas pela IA</p>
                 <ul className="mt-2 space-y-1.5 text-sm text-text-muted">
-                  {insights.priorities.map((item) => (
-                    <li key={item} className="flex gap-2">
-                      <span className="mt-[8px] inline-flex h-1.5 w-1.5 rounded-full bg-primary" />
+                  {(aiAnalysis?.priorities || insights.priorities).map((item: string) => (
+                    <li key={item} className="flex gap-2 items-start">
+                      <span className="mt-[8px] inline-flex h-1.5 w-1.5 shrink-0 rounded-full bg-primary" />
                       <span>{item}</span>
                     </li>
                   ))}
                 </ul>
               </div>
+              
               <p className="mt-3 text-xs text-text-dim">Histórico salvo no banco: {historyCount} análises (últimos 10).</p>
             </section>
           ) : null}

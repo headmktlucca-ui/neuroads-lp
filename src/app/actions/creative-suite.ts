@@ -43,11 +43,11 @@ export async function generateCreativeSuiteResult(
         {
           role: "system",
           content: `Você é o Diretor Criativo e Copywriter Master da NeuroAds. 
-          Sua missão é criar anúncios de alta performance baseados em neuro-marketing e resposta direta.
+          Sua missão é criar anúncios de alta performance baseados em neuro-marketing (gatilhos como Aversão à Perda, Status Social, Ganho Prático e Simplicidade Cognitiva) e resposta direta.
           Sempre responda em formato JSON estruturado com os seguintes campos:
           - headlines: Array com 3 headlines magnéticas (máximo 40 caracteres cada).
-          - videoHook: Um gancho explosivo para os primeiros 3 segundos de um vídeo.
-          - adCopy: Uma copy completa seguindo o framework PAS (Problema, Agitação, Solução).
+          - videoHook: Um gancho explosivo para os primeiros 3 segundos de um vídeo (usando quebra de padrão visual e auditivo).
+          - adCopy: Uma copy completa seguindo o framework PAS (Problema, Agitação, Solução) adaptada para capturar atenção e gerar ação rápida.
           - strategy: Uma breve explicação da estratégia neuro-cognitiva utilizada.`
         },
         {
@@ -180,6 +180,7 @@ export async function generateHybridCreative(input: HybridCreativeInput) {
     Formato: ${format}
     Tipo de Conteúdo/Funil: ${contentType}
     Estilo de Design: ${styleName}
+    Cores da Marca: Primária ${input.primaryColor || '#FF6B00'}, Secundária ${input.secondaryColor || '#111827'}
   `;
 
   try {
@@ -198,7 +199,7 @@ export async function generateHybridCreative(input: HybridCreativeInput) {
           - cta: Chamada para ação objetiva (máximo 25 caracteres).
           - headline: Uma headline magnética extremamente curta de impacto para ser estampada no meio do banner/arte (máximo 40 caracteres, letras maiúsculas e minúsculas).
           - subheading: Um subtítulo curto ou frase de apoio para ser estampada logo abaixo da headline (máximo 60 caracteres).
-          - backgroundImagePrompt: Um prompt detalhado, em inglês, para gerar a imagem de fundo ideal usando o DALL-E 3. O prompt NÃO deve conter nenhum texto sobreposto ou logos. Deve focar apenas no fundo estético, ex: "Premium 3D abstract studio background, minimalist, warm lighting, deep textures, no text". Evite rostos realistas ou elementos complexos para garantir que o texto sobreposto fique perfeitamente legível.`
+          - backgroundImagePrompt: Um prompt detalhado, em inglês, para gerar a imagem de fundo ideal usando o DALL-E 3. O prompt NÃO deve conter nenhum texto sobreposto, logos ou marcas. Deve focar apenas no fundo estético, incorporando de forma harmônica e elegante as cores da marca fornecidas (primária ${input.primaryColor || '#FF6B00'} e secundária ${input.secondaryColor || '#111827'}). Exemplo: "Premium 3D abstract studio background with smooth curves, incorporating subtle highlights of the primary color and deep gradients of the secondary color, minimalist, professional studio lighting, deep textures, no text". Evite rostos realistas ou elementos complexos para garantir que o texto sobreposto fique perfeitamente legível.`
         },
         {
           role: "user",

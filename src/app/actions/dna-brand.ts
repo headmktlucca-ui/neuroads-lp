@@ -50,6 +50,9 @@ export type DnaIdealCustomerProfile = {
   needScore: number;
   mainPainPoints: string[];
   buyingTriggers: string[];
+  fears?: string[];
+  values?: string[];
+  digitalHabits?: string[];
 };
 
 export type DnaAudienceContentItem = {
@@ -92,6 +95,9 @@ export type DnaBrandPresentation = {
   actionPlan30d: string[];
   sourceInsights: string[];
   slides: DnaBrandSlide[];
+  brandArchetype?: string;
+  brandVoiceDos?: string[];
+  brandVoiceDonts?: string[];
 };
 
 export type DnaBrandResult = {
@@ -180,6 +186,9 @@ function normalizePresentation(raw: unknown): DnaBrandPresentation {
       needScore: toNumber(idealRaw.needScore),
       mainPainPoints: toStringArray(idealRaw.mainPainPoints),
       buyingTriggers: toStringArray(idealRaw.buyingTriggers),
+      fears: toStringArray(idealRaw.fears),
+      values: toStringArray(idealRaw.values),
+      digitalHabits: toStringArray(idealRaw.digitalHabits),
     },
     audienceContentProfile: {
       summary: typeof audienceRaw.summary === 'string' ? audienceRaw.summary : '',
@@ -203,6 +212,9 @@ function normalizePresentation(raw: unknown): DnaBrandPresentation {
     actionPlan30d: toStringArray(data.actionPlan30d),
     sourceInsights: toStringArray(data.sourceInsights),
     slides,
+    brandArchetype: typeof data.brandArchetype === 'string' ? data.brandArchetype : 'Criador',
+    brandVoiceDos: toStringArray(data.brandVoiceDos),
+    brandVoiceDonts: toStringArray(data.brandVoiceDonts),
   };
 }
 
@@ -348,82 +360,97 @@ function buildMarkdown(presentation: DnaBrandPresentation, sources: DnaBrandSour
   const colorsList = presentation.colorPalette.colors
     .map(c => `- **${c.name}** (\`${c.hex}\` - ${c.type}): ${c.usage}`)
     .join('\n');
-
+ 
   const paletteBlock = `### Cores da Marca\n${colorsList}\n\n### Psicologia e Estilo Visual\n- **Impacto Psicológico:** ${presentation.colorPalette.psychologicalImpact}\n- **Contraste e Acessibilidade:** ${presentation.colorPalette.contrastAccessibility}\n- **Diretrizes de Estilo Visual:** ${presentation.colorPalette.visualStyleDescription}`;
 
+  const voiceDosBlock = (presentation.brandVoiceDos ?? []).map((item) => `  - **Como usar:** ${item}`).join('\n');
+  const voiceDontsBlock = (presentation.brandVoiceDonts ?? []).map((item) => `  - **O que evitar:** ${item}`).join('\n');
+
   return `# ${presentation.presentationTitle}
-
-## Resumo Executivo
-${presentation.executiveSummary}
-
-## Posicionamento Central
-${presentation.positioningStatement}
-
-## Identidade Visual e Paleta de Cores
-${paletteBlock}
-
-## Perfil Ideal De Cliente (Maior Probabilidade E Necessidade)
-- Headline: ${presentation.idealCustomerProfile.headline}
-- Segmento: ${presentation.idealCustomerProfile.segment}
-- Porte: ${presentation.idealCustomerProfile.companySize}
-- Faixa de receita anual: ${presentation.idealCustomerProfile.annualRevenueRange}
-- Contexto de urgência: ${presentation.idealCustomerProfile.urgencyContext}
-- Score de probabilidade: ${presentation.idealCustomerProfile.probabilityScore}/100
-- Score de necessidade: ${presentation.idealCustomerProfile.needScore}/100
-- Principais dores:
-${presentation.idealCustomerProfile.mainPainPoints.map((item) => `  - ${item}`).join('\n')}
-- Gatilhos de decisão:
-${presentation.idealCustomerProfile.buyingTriggers.map((item) => `  - ${item}`).join('\n')}
-
-## Conteúdo Com Maior Interesse E Interação Do Público Ideal
-- Resumo: ${presentation.audienceContentProfile.summary}
-- Formatos preferidos:
-${presentation.audienceContentProfile.preferredFormats.map((item) => `  - ${item}`).join('\n')}
-- Temas de alta intenção:
-${presentation.audienceContentProfile.highIntentTopics.map((item) => `  - ${item}`).join('\n')}
-- Drivers de interação:
-${presentation.audienceContentProfile.interactionDrivers.map((item) => `  - ${item}`).join('\n')}
-- Mix recomendado:
-${presentation.audienceContentProfile.recommendedContentMix
-  .map(
-    (item) =>
-      `  - ${item.topic} | ${item.format} | ${item.channel} | potencial ${item.engagementPotential}/100 | ${item.whyItWorks}`
-  )
-  .join('\n')}
-
-## Oportunidades Práticas Para Fortalecer Posicionamento
-- Oportunidades de posicionamento:
-${(opportunities?.positioningOpportunities ?? []).map((item) => `  - ${item}`).join('\n')}
-- Ideias de conteúdo:
-${(opportunities?.contentIdeas ?? []).map((item) => `  - ${item}`).join('\n')}
-- Sugestões de materiais:
-${(opportunities?.materialSuggestions ?? []).map((item) => `  - ${item}`).join('\n')}
-- Funil de relacionamento:
-${(opportunities?.relationshipFunnel ?? []).map((item) => `  - ${item}`).join('\n')}
-- Oportunidades em campanhas patrocinadas:
-${(opportunities?.paidCampaignOpportunities ?? []).map((item) => `  - ${item}`).join('\n')}
-- Oportunidades em email marketing:
-${(opportunities?.emailMarketingOpportunities ?? []).map((item) => `  - ${item}`).join('\n')}
-- Outras oportunidades práticas:
-${(opportunities?.otherPracticalOpportunities ?? []).map((item) => `  - ${item}`).join('\n')}
-
-## Regras de Voz da Marca
-${presentation.brandVoiceRules.map((item) => `- ${item}`).join('\n')}
-
-## Pilares de Conteúdo
-${presentation.contentPillars.map((item) => `- ${item}`).join('\n')}
-
-## Mensagens por Funil
-${presentation.funnelMessaging.map((item) => `- ${item}`).join('\n')}
-
-## Plano 30 Dias
-${presentation.actionPlan30d.map((item) => `- ${item}`).join('\n')}
-
-## Apresentação Estratégica
-${slideBlocks}
-
-## Fontes Analisadas
-${sourcesBlock}`;
+ 
+ ## Resumo Executivo
+ ${presentation.executiveSummary}
+ 
+ ## Posicionamento Central e Arquétipo
+ - **Arquétipo de Marca:** ${presentation.brandArchetype || 'Criador'}
+ - **Posicionamento:** ${presentation.positioningStatement}
+ 
+ ## Identidade Visual e Paleta de Cores
+ ${paletteBlock}
+ 
+ ## Perfil Ideal De Cliente (Maior Probabilidade E Necessidade)
+ - Headline: ${presentation.idealCustomerProfile.headline}
+ - Segmento: ${presentation.idealCustomerProfile.segment}
+ - Porte: ${presentation.idealCustomerProfile.companySize}
+ - Faixa de receita anual: ${presentation.idealCustomerProfile.annualRevenueRange}
+ - Contexto de urgência: ${presentation.idealCustomerProfile.urgencyContext}
+ - Score de probabilidade: ${presentation.idealCustomerProfile.probabilityScore}/100
+ - Score de necessidade: ${presentation.idealCustomerProfile.needScore}/100
+ - Principais dores:
+ ${presentation.idealCustomerProfile.mainPainPoints.map((item) => `  - ${item}`).join('\n')}
+ - Gatilhos de decisão:
+ ${presentation.idealCustomerProfile.buyingTriggers.map((item) => `  - ${item}`).join('\n')}
+ - Medos Subconscientes do ICP:
+ ${(presentation.idealCustomerProfile.fears ?? []).map((item) => `  - ${item}`).join('\n')}
+ - Valores do ICP:
+ ${(presentation.idealCustomerProfile.values ?? []).map((item) => `  - ${item}`).join('\n')}
+ - Hábitos Digitais do ICP:
+ ${(presentation.idealCustomerProfile.digitalHabits ?? []).map((item) => `  - ${item}`).join('\n')}
+ 
+ ## Conteúdo Com Maior Interesse E Interação Do Público Ideal
+ - Resumo: ${presentation.audienceContentProfile.summary}
+ - Formatos preferidos:
+ ${presentation.audienceContentProfile.preferredFormats.map((item) => `  - ${item}`).join('\n')}
+ - Temas de alta intenção:
+ ${presentation.audienceContentProfile.highIntentTopics.map((item) => `  - ${item}`).join('\n')}
+ - Drivers de interação:
+ ${presentation.audienceContentProfile.interactionDrivers.map((item) => `  - ${item}`).join('\n')}
+ - Mix recomendado:
+ ${presentation.audienceContentProfile.recommendedContentMix
+   .map(
+     (item) =>
+       `  - ${item.topic} | ${item.format} | ${item.channel} | potencial ${item.engagementPotential}/100 | ${item.whyItWorks}`
+   )
+   .join('\n')}
+ 
+ ## Oportunidades Práticas Para Fortalecer Posicionamento
+ - Oportunidades de posicionamento:
+ ${(opportunities?.positioningOpportunities ?? []).map((item) => `  - ${item}`).join('\n')}
+ - Ideias de conteúdo:
+ ${(opportunities?.contentIdeas ?? []).map((item) => `  - ${item}`).join('\n')}
+ - Sugestões de materiais:
+ ${(opportunities?.materialSuggestions ?? []).map((item) => `  - ${item}`).join('\n')}
+ - Funil de relacionamento:
+ ${(opportunities?.relationshipFunnel ?? []).map((item) => `  - ${item}`).join('\n')}
+ - Oportunidades em campanhas patrocinadas:
+ ${(opportunities?.paidCampaignOpportunities ?? []).map((item) => `  - ${item}`).join('\n')}
+ - Oportunidades em email marketing:
+ ${(opportunities?.emailMarketingOpportunities ?? []).map((item) => `  - ${item}`).join('\n')}
+ - Outras oportunidades práticas:
+ ${(opportunities?.otherPracticalOpportunities ?? []).map((item) => `  - ${item}`).join('\n')}
+ 
+ ## Regras de Voz da Marca e Diretrizes de Comunicação
+ - **Regras de Voz:**
+ ${presentation.brandVoiceRules.map((item) => `  - ${item}`).join('\n')}
+ - **O que fazer (Do's):**
+ ${voiceDosBlock || '  - Não informado'}
+ - **O que NÃO fazer (Dont's):**
+ ${voiceDontsBlock || '  - Não informado'}
+ 
+ ## Pilares de Conteúdo
+ ${presentation.contentPillars.map((item) => `- ${item}`).join('\n')}
+ 
+ ## Mensagens por Funil
+ ${presentation.funnelMessaging.map((item) => `- ${item}`).join('\n')}
+ 
+ ## Plano 30 Dias
+ ${presentation.actionPlan30d.map((item) => `- ${item}`).join('\n')}
+ 
+ ## Apresentação Estratégica
+ ${slideBlocks}
+ 
+ ## Fontes Analisadas
+ ${sourcesBlock}`;
 }
 
 export async function generateDnaBrandReport(input: DnaBrandInput): Promise<DnaBrandResult> {
@@ -478,6 +505,7 @@ Retorne JSON com esta estrutura EXATA:
   "presentationTitle": "string",
   "executiveSummary": "string",
   "positioningStatement": "string",
+  "brandArchetype": "Um dos 12 arquétipos de Carl Jung que melhor define a marca (ex: O Criador, O Mago, O Herói, O Governante)",
   "colorPalette": {
     "colors": [
       {
@@ -500,7 +528,10 @@ Retorne JSON com esta estrutura EXATA:
     "probabilityScore": 0,
     "needScore": 0,
     "mainPainPoints": ["string", "..."],
-    "buyingTriggers": ["string", "..."]
+    "buyingTriggers": ["string", "..."],
+    "fears": ["Pelo menos 3 medos ou barreiras subconscientes do ICP com relação ao produto/nicho"],
+    "values": ["Pelo menos 3 valores fundamentais ou crenças do ICP"],
+    "digitalHabits": ["Hábitos digitais, canais e fontes de informação preferidos do ICP"]
   },
   "audienceContentProfile": {
     "summary": "string",
@@ -526,7 +557,9 @@ Retorne JSON com esta estrutura EXATA:
     "emailMarketingOpportunities": ["string", "..."],
     "otherPracticalOpportunities": ["string", "..."]
   },
-  "brandVoiceRules": ["string", "..."],
+  "brandVoiceRules": ["Regras e diretrizes verbais da voz da marca"],
+  "brandVoiceDos": ["Pelo menos 3 diretrizes do que fazer (Como falar)"],
+  "brandVoiceDonts": ["Pelo menos 3 diretrizes do que evitar (O que não falar)"],
   "contentPillars": ["string", "..."],
   "funnelMessaging": ["string", "..."],
   "actionPlan30d": ["string", "..."],

@@ -27,6 +27,8 @@ export type CreativeTrendItem = {
   recommendedChannel: string;
   ctaSuggestion: string;
   riskNote: string;
+  replicabilityScore?: number;
+  timelineScripting?: string[];
 };
 
 export type CreativeTrendAnalysisResult = {
@@ -52,6 +54,7 @@ function clampItems(items: CreativeTrendItem[]): CreativeTrendItem[] {
     ...item,
     rank: index + 1,
     variations: (Array.isArray(item.variations) ? item.variations : []).map((variation) => variation.trim()).filter(Boolean).slice(0, 4),
+    timelineScripting: (Array.isArray(item.timelineScripting) ? item.timelineScripting : []).map((t) => t.trim()).filter(Boolean).slice(0, 5),
   }));
 }
 
@@ -91,6 +94,10 @@ function mapItem(raw: unknown, fallbackRank: number): CreativeTrendItem | null {
   const title = typeof row.title === 'string' ? row.title.trim() : '';
   if (!title) return null;
 
+  const timelineScripting = Array.isArray(row.timelineScripting)
+    ? row.timelineScripting.filter((item): item is string => typeof item === 'string' && item.trim().length > 0)
+    : [];
+
   return {
     rank: typeof row.rank === 'number' && Number.isFinite(row.rank) ? row.rank : fallbackRank,
     title,
@@ -106,6 +113,8 @@ function mapItem(raw: unknown, fallbackRank: number): CreativeTrendItem | null {
     recommendedChannel: typeof row.recommendedChannel === 'string' ? row.recommendedChannel.trim() : '',
     ctaSuggestion: typeof row.ctaSuggestion === 'string' ? row.ctaSuggestion.trim() : '',
     riskNote: typeof row.riskNote === 'string' ? row.riskNote.trim() : '',
+    replicabilityScore: typeof row.replicabilityScore === 'number' ? row.replicabilityScore : 50,
+    timelineScripting,
   };
 }
 
@@ -141,8 +150,8 @@ export async function generateCreativeTrendAnalysis(
     `Canais prioritários: ${preferredChannels.join(' | ') || 'Google Ads | Meta Ads | LinkedIn | YouTube'}`,
     `Tom de voz desejado: ${toneOfVoice}`,
     additionalGuidance ? `Orientações adicionais: ${additionalGuidance}` : null,
-    'Tarefa: faça pesquisa web e monte um estudo robusto com EXATAMENTE 10 exemplos de conteúdos em destaque nas últimas 24 horas, alinhados aos temas de interesse da marca.',
-    'Obrigatório: priorize conteúdos com sinais reais de tração recente e explique por que cada exemplo é relevante para os objetivos da empresa.',
+    'Tarefa: faça pesquisa web com foco em redes sociais (TikTok Creative Center, Meta Ad Library, LinkedIn e YouTube Trends) e monte um estudo robusto com EXATAMENTE 10 exemplos de conteúdos com alto potencial de engajamento e compartilhamento nas últimas 24 horas, alinhados aos temas de interesse da marca.',
+    'Obrigatório: priorize conteúdos com sinais reais de tração recente e explique por que cada exemplo é relevante para os objetivos da empresa. Para cada exemplo viral, defina um cronograma detalhado de script do vídeo/formato e um score de replicabilidade.',
     'Não invente links nem sinais. Se não houver confirmação de recência nas últimas 24h para um item, descarte esse item e busque outro.',
     'Segurança e qualidade: não inclua recomendações enganosas, discurso de ódio, manipulação abusiva, promessas irreais, conteúdo ilegal ou sensível sem contexto.',
     'Retorne SOMENTE JSON válido, sem markdown, no formato:',
@@ -164,7 +173,14 @@ export async function generateCreativeTrendAnalysis(
       "expectedImpact": "string",
       "recommendedChannel": "string",
       "ctaSuggestion": "string",
-      "riskNote": "string"
+      "riskNote": "string",
+      "replicabilityScore": 0-100,
+      "timelineScripting": [
+        "0-3s Hook: Descrição da quebra de padrão visual/gancho verbal",
+        "3-10s Problema: Agitação da dor do cliente ideal",
+        "10-25s Solução: Apresentação sutil do produto/diferencial",
+        "25-30s CTA: Chamada para ação objetiva conectada à oferta"
+      ]
     }
   ]
 }`,

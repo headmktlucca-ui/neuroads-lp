@@ -309,9 +309,21 @@ export default function BudgetOptimizerWorkspace({ userId, agentSlug, agentTitle
       }
     }
 
+    const finalAllocations = cappedAllocations.map((item) => {
+      const pctChange = item.currentBudget > 0
+        ? (Math.abs(item.suggestedBudget - item.currentBudget) / item.currentBudget) * 100
+        : 100;
+      const triggersLearningReset = pctChange > 20 && item.currentBudget > 0;
+      return {
+        ...item,
+        pctChange,
+        triggersLearningReset,
+      };
+    });
+
     const opportunities: string[] = [];
-    const topGain = [...cappedAllocations].sort((a, b) => (b.suggestedBudget - b.currentBudget) - (a.suggestedBudget - a.currentBudget))[0];
-    const topCut = [...cappedAllocations].sort((a, b) => (b.currentBudget - b.suggestedBudget) - (a.currentBudget - a.suggestedBudget))[0];
+    const topGain = [...finalAllocations].sort((a, b) => (b.suggestedBudget - b.currentBudget) - (a.suggestedBudget - a.currentBudget))[0];
+    const topCut = [...finalAllocations].sort((a, b) => (b.currentBudget - b.suggestedBudget) - (a.currentBudget - a.suggestedBudget))[0];
 
     if (topGain && topGain.suggestedBudget > topGain.currentBudget) {
       opportunities.push(`${topGain.platform} suporta aumento de verba de ${formatCurrency(topGain.suggestedBudget - topGain.currentBudget)} pelo melhor equilíbrio entre CPL e conversão.`);
@@ -323,18 +335,23 @@ export default function BudgetOptimizerWorkspace({ userId, agentSlug, agentTitle
     if (targetCpl > 0 && avgCurrentCpl > targetCpl) {
       opportunities.push(`CPL médio atual (${formatCurrency(avgCurrentCpl)}) acima da meta (${formatCurrency(targetCpl)}). A realocação prioriza canais com menor custo por lead.`);
     }
+    finalAllocations.forEach((item) => {
+      if (item.triggersLearningReset) {
+        opportunities.push(`⚠️ ATENÇÃO: A alteração sugerida para ${item.platform} (${formatNumber(item.pctChange, 1)}%) ultrapassa o limite de 20%, o que reiniciará a fase de aprendizado (Learning Phase) nos anúncios.`);
+      }
+    });
     if (!opportunities.length) {
       opportunities.push('Distribuição atual está equilibrada. Próximo passo: manter cadência semanal de rebalanceamento para preservar previsibilidade.');
     }
 
-    const forecastLeads = cappedAllocations.reduce((acc, item) => {
+    const forecastLeads = finalAllocations.reduce((acc, item) => {
       const safeCpl = item.cpl > 0 ? item.cpl : targetCpl || 1;
       return acc + item.suggestedBudget / safeCpl;
     }, 0);
 
     return {
       totalBudget,
-      allocations: cappedAllocations,
+      allocations: finalAllocations,
       opportunities,
       forecastLeads,
       currentLeads: extraction.totals.conversions,
@@ -576,14 +593,19 @@ export default function BudgetOptimizerWorkspace({ userId, agentSlug, agentTitle
                 <p className="text-xs font-black uppercase tracking-wide text-text-dim">Distribuição recomendada</p>
                 <div className="mt-2 space-y-2">
                   {optimization.allocations.map((item) => (
-                    <div key={item.platform} className="rounded-lg border border-[#E4EAF2] bg-white px-3 py-2">
+                    <div key={item.platform} className={`rounded-lg border px-3 py-2 bg-white ${item.triggersLearningReset ? 'border-amber-300 bg-amber-50/10' : 'border-[#E4EAF2]'}`}>
                       <div className="flex items-center justify-between text-sm">
                         <span className="font-semibold text-text-main">{item.platform}</span>
                         <span className="font-black text-primary">{formatCurrency(item.suggestedBudget)}</span>
                       </div>
                       <p className="mt-1 text-xs text-text-dim">
-                        Atual: {formatCurrency(item.currentBudget)} | CPL: {formatCurrency(item.cpl)} | Conversão: {formatNumber(item.cvRate)}%
+                        Atual: {formatCurrency(item.currentBudget)} | CPL: {formatCurrency(item.cpl)} | Conversão: {formatNumber(item.cvRate)}% | Alteração: {formatNumber(item.pctChange, 1)}%
                       </p>
+                      {item.triggersLearningReset && (
+                        <div className="mt-2 rounded border border-amber-200 bg-amber-50 px-2.5 py-1.5 text-[11px] text-[#B45309]">
+                          ⚠️ Esta alteração de orçamento ({formatNumber(item.pctChange, 1)}%) excedeu 20% e irá reiniciar a <strong>Fase de Aprendizado (Learning Phase)</strong> do algoritmo.
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

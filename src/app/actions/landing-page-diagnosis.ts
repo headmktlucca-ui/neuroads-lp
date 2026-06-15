@@ -15,7 +15,10 @@ type ScoreKey =
   | 'copy'
   | 'mobile'
   | 'scannability'
-  | 'authority';
+  | 'authority'
+  | 'messageMatch'
+  | 'formFriction'
+  | 'socialProof';
 
 export type LandingPageScore = {
   score: number;
@@ -37,6 +40,10 @@ export type LandingPageDiagnosisData = {
     h1: string[];
     h2: string[];
     textSample: string;
+    formCount?: number;
+    inputCount?: number;
+    hasVideo?: boolean;
+    hasTestimonials?: boolean;
   };
   scores: Record<ScoreKey, LandingPageScore>;
   executiveSummary: {
@@ -219,6 +226,9 @@ function fallbackDiagnosis(input: LandingPageDiagnosisInput, analyzedUrl: string
       mobile: { score: 6.4, justification: 'Garantir hierarquia clara e CTA visível na primeira dobra mobile.' },
       scannability: { score: 5.3, justification: 'Blocos longos tendem a reduzir retenção; simplificar estrutura visual.' },
       authority: { score: 4.9, justification: 'Falta reforço de prova social e evidências de confiança.' },
+      messageMatch: { score: 5.5, justification: 'A promessa do anúncio precisa ter maior consonância com a headline.' },
+      formFriction: { score: 6.0, justification: 'Avaliar se a quantidade de campos e etapas do formulário afetam a taxa de conversão.' },
+      socialProof: { score: 5.0, justification: 'Testemunhos textuais simples necessitam de fotos, logos ou vídeo para autenticidade.' }
     },
     executiveSummary: {
       overallScore: 5.7,
@@ -334,12 +344,22 @@ async function captureLandingPageSnapshot(landingPageUrl: string): Promise<Landi
 
   const html = await response.text();
   const text = stripHtml(html);
+
+  const formCount = (html.match(/<form/gi) || []).length;
+  const inputCount = (html.match(/<input|<select|<textarea/gi) || []).length;
+  const hasVideo = /<video|youtube\.com|vimeo\.com|player\./i.test(html);
+  const hasTestimonials = /depoimento|cliente|avaliaç/i.test(text);
+
   return {
     title: extractTitle(html),
     metaDescription: extractMetaContent(html, 'description') || extractMetaContent(html, 'og:description'),
     h1: extractTagList(html, 'h1', 6),
     h2: extractTagList(html, 'h2', 10),
     textSample: text.slice(0, 9000),
+    formCount,
+    inputCount,
+    hasVideo,
+    hasTestimonials,
   };
 }
 
@@ -368,6 +388,9 @@ function parseDiagnosisPayload(raw: string, input: LandingPageDiagnosisInput, an
     mobile: scoreFromPayload(scoresRaw.mobile, 'Experiência mobile requer CTA visível e blocos mais enxutos.'),
     scannability: scoreFromPayload(scoresRaw.scannability, 'Escaneabilidade pode ser otimizada com estrutura mais clara.'),
     authority: scoreFromPayload(scoresRaw.authority, 'Autoridade deve ser reforçada com evidências concretas.'),
+    messageMatch: scoreFromPayload(scoresRaw.messageMatch, 'Consistência de promessa entre o anúncio e o topo da página.'),
+    formFriction: scoreFromPayload(scoresRaw.formFriction, 'Atrito cognitivo de formulários e etapas necessárias para conversão.'),
+    socialProof: scoreFromPayload(scoresRaw.socialProof, 'Concretude e nível de autenticidade dos depoimentos exibidos.'),
   };
 
   const scoreValues = Object.values(scores).map((item) => item.score);
@@ -488,6 +511,11 @@ export async function generateLandingPageDiagnosis(
     `H1s: ${snapshot.h1.join(' | ') || 'N/D'}`,
     `H2s: ${snapshot.h2.join(' | ') || 'N/D'}`,
     `Trecho textual: ${snapshot.textSample || 'N/D'}`,
+    `Indicadores extraídos do código-fonte HTML da página:`,
+    `- Quantidade de formulários (<form>): ${snapshot.formCount ?? 0}`,
+    `- Quantidade de campos de input/select/textarea: ${snapshot.inputCount ?? 0}`,
+    `- Contém elementos de vídeo ou embeds (YouTube/Vimeo): ${snapshot.hasVideo ? 'Sim' : 'Não'}`,
+    `- Foram identificadas palavras-chave de depoimentos/avaliações no texto: ${snapshot.hasTestimonials ? 'Sim' : 'Não'}`,
     '',
     'Retorne SOMENTE JSON válido com o schema abaixo:',
     JSON.stringify(
@@ -500,6 +528,9 @@ export async function generateLandingPageDiagnosis(
           mobile: { score: 0, justification: 'string' },
           scannability: { score: 0, justification: 'string' },
           authority: { score: 0, justification: 'string' },
+          messageMatch: { score: 0, justification: 'string' },
+          formFriction: { score: 0, justification: 'string' },
+          socialProof: { score: 0, justification: 'string' }
         },
         executiveSummary: {
           keyTakeaway: 'string',

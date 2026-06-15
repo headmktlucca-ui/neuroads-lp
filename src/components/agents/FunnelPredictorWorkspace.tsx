@@ -246,6 +246,7 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
 
   const [connectors, setConnectors] = useState<ConnectorState>(DEFAULT_CONNECTORS);
   const [operationalMode, setOperationalMode] = useState<'real' | 'demo'>('real');
+  const [attributionModel, setAttributionModel] = useState<'lastClick' | 'firstClick'>('lastClick');
   const [dateFrom, setDateFrom] = useState(() => new Date(Date.now() - 1000 * 60 * 60 * 24 * 30).toISOString().slice(0, 10));
   const [dateTo, setDateTo] = useState(() => new Date().toISOString().slice(0, 10));
   const [loading, setLoading] = useState(false);
@@ -477,13 +478,60 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
 
     const bottlenecks = stageRates.slice(0, 2).map((item) => `${item.label} em ${formatPercent(item.rate)}.`) as string[];
 
-    const channelScores = (extraction.channels ?? []).map((channel) => {
+    const currentChannels = (extraction?.channels ?? []).map((channel) => {
+      if (attributionModel === 'lastClick') return channel;
+      
+      let convShift = 0;
+      if (channel.platform === 'googleAds') {
+        convShift = -Math.round(channel.conversions * 0.2);
+      } else if (channel.platform === 'linkedinAds') {
+        convShift = -Math.round(channel.conversions * 0.15);
+      } else if (channel.platform === 'metaAds') {
+        const googleConv = extraction?.channels?.find((c) => c.platform === 'googleAds')?.conversions ?? 0;
+        const linkedinConv = extraction?.channels?.find((c) => c.platform === 'linkedinAds')?.conversions ?? 0;
+        convShift = Math.round(googleConv * 0.2) + Math.round(linkedinConv * 0.15);
+      }
+      return {
+        ...channel,
+        conversions: Math.max(1, channel.conversions + convShift),
+      };
+    });
+
+    const channelScores = currentChannels.map((channel) => {
       const channelCpl = channel.conversions > 0 ? channel.spend / channel.conversions : 99999;
       const channelCtr = channel.impressions > 0 ? (channel.clicks / channel.impressions) * 100 : 0;
       const score = (channel.conversions * 2 + channelCtr) / Math.max(1, channelCpl);
       return { ...channel, channelCpl, channelCtr, score };
     });
     const bestChannel = [...channelScores].sort((a, b) => b.score - a.score)[0];
+
+    // Benchmarks & Funnel Leakage Score
+    const BENCHMARKS = {
+      ctr: 2.0, // 2%
+      clickToLead: 8.0, // 8%
+      leadToMeeting: 28.0, // 28%
+      meetingToProposal: 50.0, // 50%
+      proposalToSale: 30.0, // 30%
+    };
+
+    const leakageCtr = ctr < BENCHMARKS.ctr ? ((BENCHMARKS.ctr - ctr) / BENCHMARKS.ctr) * 100 : 0;
+    const leakageClickToLead = effectiveClickToLead < BENCHMARKS.clickToLead ? ((BENCHMARKS.clickToLead - effectiveClickToLead) / BENCHMARKS.clickToLead) * 100 : 0;
+    const leakageLeadToMeeting = leadToMeetingRate < BENCHMARKS.leadToMeeting ? ((BENCHMARKS.leadToMeeting - leadToMeetingRate) / BENCHMARKS.leadToMeeting) * 100 : 0;
+    const leakageMeetingToProposal = meetingToProposalRate < BENCHMARKS.meetingToProposal ? ((BENCHMARKS.meetingToProposal - meetingToProposalRate) / BENCHMARKS.meetingToProposal) * 100 : 0;
+    const leakageProposalToSale = proposalToSaleRate < BENCHMARKS.proposalToSale ? ((BENCHMARKS.proposalToSale - proposalToSaleRate) / BENCHMARKS.proposalToSale) * 100 : 0;
+
+    const leakages = [
+      { step: 'Impressões → Cliques', leakage: leakageCtr, val: ctr, bench: BENCHMARKS.ctr },
+      { step: 'Cliques → Leads', leakage: leakageClickToLead, val: effectiveClickToLead, bench: BENCHMARKS.clickToLead },
+      { step: 'Leads → Reuniões', leakage: leakageLeadToMeeting, val: leadToMeetingRate, bench: BENCHMARKS.leadToMeeting },
+      { step: 'Reuniões → Propostas', leakage: leakageMeetingToProposal, val: meetingToProposalRate, bench: BENCHMARKS.meetingToProposal },
+      { step: 'Propostas → Vendas', leakage: leakageProposalToSale, val: proposalToSaleRate, bench: BENCHMARKS.proposalToSale },
+    ];
+
+    const sortedLeakages = [...leakages].sort((a, b) => b.leakage - a.leakage);
+    const primaryLeakage = sortedLeakages[0];
+    const funnelLeakageScore = Math.round(primaryLeakage.leakage);
+    const worstLeakageStep = primaryLeakage.leakage > 0 ? primaryLeakage.step : 'Nenhum vazamento identificado';
 
     const probCtrDrop = clamp(5, 22 + (ctr < 1.2 ? 34 : ctr < 2 ? 20 : 8) + (activeChannels.length <= 1 ? 10 : 0), 95);
     const probPerfDrop = clamp(5, 18 + (targetHit < 80 ? 30 : targetHit < 100 ? 15 : 5), 95);
@@ -667,6 +715,9 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
       alerts,
       executivePanel,
       targetHit,
+      leakages,
+      funnelLeakageScore,
+      worstLeakageStep,
       input: {
         businessModel: inputs.businessModel,
         targetRevenue,
@@ -676,7 +727,7 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
         churnRate,
       },
     };
-  }, [activeChannels.length, dateFrom, dateTo, extraction, inputs]);
+  }, [activeChannels.length, dateFrom, dateTo, extraction, inputs, attributionModel]);
 
   const runPrediction = async () => {
     if (!projection || !userId) return;
@@ -692,6 +743,8 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
         `Melhor canal atual: ${projection.executivePanel.bestChannel}`,
         `Campanha vencedora: ${projection.executivePanel.winningCampaign}`,
         `Oportunidade imediata: ${projection.executivePanel.immediateOpportunity}`,
+        `Modelo de Atribuição Preditiva: ${attributionModel === 'lastClick' ? 'Last Click' : 'First Click'}`,
+        `Funnel Leakage Score: ${projection.funnelLeakageScore}% (Etapa Crítica: ${projection.worstLeakageStep})`,
       ];
 
       const diagnostics = [
@@ -760,6 +813,9 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
           criticalBottleneck: projection.bottlenecks[0] ?? '',
           bestChannel: projection.executivePanel.bestChannel,
           targetHit: Number(projection.targetHit.toFixed(2)),
+          funnelLeakageScore: projection.funnelLeakageScore,
+          worstLeakageStep: projection.worstLeakageStep,
+          attributionModel,
         },
       });
 
@@ -912,6 +968,38 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
                 {loading ? 'Processando...' : operationalMode === 'real' ? 'Extrair Indicadores Reais' : 'Simular Dados Exemplo'}
               </button>
             </div>
+
+            {/* Attribution Model Selector */}
+            <div className="mt-4 flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 rounded-xl border border-[#E4EAF2] bg-[#F8FAFC]">
+              <div>
+                <p className="text-xs font-black text-text-main uppercase tracking-wide">Modelo de Atribuição Preditiva</p>
+                <p className="text-[11px] text-text-muted mt-0.5">Selecione o modelo para distribuição de conversões nos canais integrados.</p>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setAttributionModel('lastClick')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold border transition ${
+                    attributionModel === 'lastClick'
+                      ? 'bg-[#FF6B00] text-white border-[#FF6B00] shadow-sm font-black'
+                      : 'bg-white text-text-main border-[#D6DEE8] hover:bg-gray-50'
+                  }`}
+                >
+                  Last Click (Padrão)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAttributionModel('firstClick')}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold border transition ${
+                    attributionModel === 'firstClick'
+                      ? 'bg-[#FF6B00] text-white border-[#FF6B00] shadow-sm font-black'
+                      : 'bg-white text-text-main border-[#D6DEE8] hover:bg-gray-50'
+                  }`}
+                >
+                  First Click (Descoberta)
+                </button>
+              </div>
+            </div>
           </section>
 
           <section className="rounded-2xl border border-[#E4EAF2] bg-[#FBFCFF] p-5">
@@ -1010,7 +1098,7 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
                   </span>
                 </div>
 
-                <div className="mt-4 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div className="mt-4 grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-3">
                   <article className="rounded-xl border border-[#E4EAF2] bg-[#FBFCFF] p-3">
                     <p className="text-[10px] font-bold uppercase tracking-wide text-text-dim">Receita prevista</p>
                     <p className="mt-1 text-sm font-black text-text-main">{formatCurrency(projection.executivePanel.predictedRevenue)}</p>
@@ -1034,6 +1122,11 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
                   <article className="rounded-xl border border-[#E4EAF2] bg-[#FBFCFF] p-3">
                     <p className="text-[10px] font-bold uppercase tracking-wide text-text-dim">Oportunidade imediata</p>
                     <p className="mt-1 text-xs font-semibold text-text-main">{projection.executivePanel.immediateOpportunity}</p>
+                  </article>
+                  <article className="rounded-xl border border-[#E4EAF2] bg-[#FBFCFF] p-3 border-red-100 bg-red-50/20">
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-red-700 font-black">Funnel Leakage Score</p>
+                    <p className="mt-1 text-sm font-black text-[#B42318]">{projection.funnelLeakageScore}%</p>
+                    <p className="text-[9px] text-[#7F1D1D] mt-0.5 truncate" title={projection.worstLeakageStep}>{projection.worstLeakageStep}</p>
                   </article>
                 </div>
               </section>
@@ -1071,6 +1164,27 @@ export default function FunnelPredictorWorkspace({ userId, agentSlug, agentTitle
                         <p className="mt-1">{formatPercent(item.rate)}</p>
                       </div>
                     ))}
+                  </div>
+                </div>
+
+                <div className="mt-4 rounded-xl border border-[#E4EAF2] bg-[#FBFCFF] p-4 space-y-3">
+                  <p className="text-[11px] font-black uppercase tracking-wide text-text-dim">Vazamento do Funil (Leakage vs Benchmarks do Mercado)</p>
+                  <div className="grid grid-cols-1 md:grid-cols-5 gap-2 text-xs">
+                    {projection.leakages.map((item) => {
+                      const hasLeak = item.leakage > 0;
+                      return (
+                        <div key={item.step} className={`rounded-lg border p-3 bg-white ${hasLeak ? 'border-red-200 bg-red-50/10' : 'border-[#BDE8CF] bg-[#F2FFF7]/30'}`}>
+                          <p className="font-black text-text-main truncate">{item.step}</p>
+                          <div className="mt-1 flex items-center justify-between text-text-muted">
+                            <span>Real: {formatPercent(item.val)}</span>
+                            <span>Bench: {formatPercent(item.bench)}</span>
+                          </div>
+                          <p className={`mt-1 font-bold ${hasLeak ? 'text-[#B42318]' : 'text-[#0A9D57]'}`}>
+                            {hasLeak ? `Perda: ${Math.round(item.leakage)}%` : 'Eficiente ✓'}
+                          </p>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </section>

@@ -18,7 +18,7 @@ const SYSTEM_PROMPT = `Você é um especialista sênior em SEO (Search Engine Op
  REGRAS DE ENTREGA:
  - Seja específico e acionável — nada de recomendações genéricas
  - Forneça exemplos reais aplicados ao site analisado
- - Inclua código quando relevante (HTML, JSON-LD, etc.)
+ - Inclua código de Schema Markup completo, enriquecido com dados semânticos (ex: sameAs apontando para entidades oficiais na Wikidata ou Wikipedia)
  - Priorize por impacto: 🔴 CRÍTICO / 🟡 IMPORTANTE / 🟢 MELHORIA
  - Use linguagem profissional e direta
  - Formate em Markdown limpo com hierarquia clara de cabeçalhos
@@ -28,51 +28,50 @@ const REPORT_FORMAT_PROMPT = `Realize uma auditoria SEO e GEO completa e entregu
 
 ## 📊 RELATÓRIO EXECUTIVO
 - Score SEO estimado (0–100) e justificativa
-- Score GEO estimado (0–100) e justificativa
-- Top 3 problemas críticos
-- Top 3 oportunidades imediatas
+- Score GEO / RAG Readiness Index (0–100) e justificativa técnica de indexabilidade para IAs
+- Top 3 problemas críticos de visibilidade
+- Top 3 oportunidades imediatas (Quick Wins)
 
 ## 🔧 1. AUDITORIA TÉCNICA SEO
 Analise e recomende ações sobre:
 - Rastreabilidade: robots.txt, sitemap.xml, indexação
-- Erros HTTP, redirecionamentos desnecessários
-- Core Web Vitals estimados (LCP, CLS, INP) e velocidade
-- Mobile-first e responsividade
-- HTTPS e segurança
-- Arquitetura de URLs, canonicais, estrutura de links internos
-- Renderização e JavaScript SEO
+- Erros HTTP, redirecionamentos desnecessários e canonicalização
+- Core Web Vitals estimados (LCP, CLS, INP) e impacto na performance
+- Mobile-first e responsividade estrutural
+- HTTPS, segurança e tags de cabeçalho de segurança
+- Arquitetura de URLs, taxonomia de diretórios e links internos
+- Renderização e JavaScript SEO (SSR vs Client-side)
 
 ## ✍️ 2. ON-PAGE & CONTEÚDO
 Analise:
 - Title tags e meta descriptions das páginas principais
 - Hierarquia de headings (H1–H6)
 - Qualidade de conteúdo e E-E-A-T (Experiência, Especialização, Autoridade, Confiança)
-- Otimização de imagens: alt text, formatos, compressão
+- Otimização de imagens: alt text descritivo, formatos modernos, compressão
 - Oportunidades de Featured Snippets e People Also Ask
-- Thin content ou conteúdo duplicado
+- Thin content, conteúdo duplicado e canibalização de palavras-chave
 
-## 🤖 3. GEO — OTIMIZAÇÃO PARA IAs GENERATIVAS
-(ChatGPT, Gemini, Claude, Manus, Perplexity)
+## 🤖 3. GEO — OTIMIZAÇÃO PARA IAs GENERATIVAS & MOTORES RAG
+(ChatGPT, Gemini, Claude, Perplexity)
 Avalie e recomende:
-- Autoridade citável: o site é reconhecido e mencionado por fontes externas?
-- Estrutura de conteúdo para IAs: FAQs, respostas diretas, listas, definições
-- Schema Markup relevante para GEO (FAQPage, HowTo, Article, Organization)
-- Dados de identidade e E-E-A-T para confiança dos LLMs
-- Estratégia de menções em fontes primárias (imprensa, fóruns, publicações)
+- Autoridade citável: menções estruturadas da marca em fontes externas autoritativas
+- Estrutura de conteúdo adaptada para IA: criação de respostas diretas, definições conceituais claras, listas ordenadas e tabelas fáceis de ler por rastreadores de LLMs
+- Estratégia de Menções e Co-ocorrência em publicações e fóruns confiáveis (Wikipedia, PR digital, Reddit)
+- Alinhamento de dados com a base de conhecimento de LLMs (redução de alucinações sobre a marca)
 - Plano de ação GEO em 3 fases: Quick Wins / 30 dias / 90 dias
 
-## 🏷️ 4. SCHEMA MARKUP
+## 🏷️ 4. SCHEMA MARKUP SEMÂNTICO (JSON-LD)
 Gere o JSON-LD completo e pronto para implementar:
-- Organization ou LocalBusiness (conforme o caso)
+- Organization ou LocalBusiness com propriedades avançadas e links "sameAs" apontando para perfis oficiais da marca e para entidades da Wikidata ou Wikipedia correspondentes ao nicho
 - WebSite com SearchAction
-- FAQPage com as 5 perguntas mais relevantes para o setor
+- FAQPage com as 5 perguntas mais relevantes e respostas otimizadas para citação direta por IAs
 
 ## 🎯 5. EXPERIÊNCIA DO USUÁRIO (UX/CRO)
 Avalie:
 - Clareza do propósito e proposta de valor (above the fold)
-- Calls-to-action: posicionamento, linguagem, contraste
+- Calls-to-action: posicionamento, linguagem, contraste e Fitts' Law
 - Jornada do usuário e funil de conversão estimado
-- Pontos de atrito e oportunidades de melhoria
+- Pontos de atrito cognitivo e oportunidades de melhoria
 
 ## 🔗 6. AUTORIDADE & LINK BUILDING
 - Perfil de backlinks estimado e Domain Authority
