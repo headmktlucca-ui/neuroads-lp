@@ -69,17 +69,30 @@ def start_server(port=3000):
     env = os.environ.copy()
     env["PORT"] = str(port)
     
+    # Convert list command to string when shell=True
+    if isinstance(cmd, list):
+        cmd = " ".join(cmd)
+        
+    # Redirect stdout and stderr inside the shell command itself
+    # so we don't hold open python file handles that get closed on script exit.
+    cmd_str = f"{cmd} > {LOG_FILE} 2>&1"
+        
     print(f"🚀 Starting preview on port {port}...")
     
-    with open(LOG_FILE, "w") as log:
-        process = subprocess.Popen(
-            cmd,
-            cwd=str(root),
-            stdout=log,
-            stderr=log,
-            env=env,
-            shell=True # Required for npm on windows often, or consistent path handling
-        )
+    creationflags = 0
+    if sys.platform == 'win32':
+        # CREATE_NO_WINDOW = 0x08000000, CREATE_NEW_PROCESS_GROUP = 0x00000200
+        creationflags = 0x08000000 | 0x00000200
+        
+    process = subprocess.Popen(
+        cmd_str,
+        cwd=str(root),
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        env=env,
+        shell=True,
+        creationflags=creationflags
+    )
     
     PID_FILE.write_text(str(process.pid))
     print(f"✅ Preview started! (PID: {process.pid})")

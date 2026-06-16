@@ -908,8 +908,18 @@ export function DnaBrandPresentationPanel({
           </article>
 
           <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-            <h4 className="text-base font-black text-text-main mb-2">🎯 Posicionamento Central</h4>
-            <p className="text-sm leading-relaxed text-text-muted">{presentation.positioningStatement}</p>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+              <div className="flex-1 min-w-[200px]">
+                <h4 className="text-base font-black text-text-main mb-2">🎯 Posicionamento Central</h4>
+                <p className="text-sm leading-relaxed text-text-muted">{presentation.positioningStatement}</p>
+              </div>
+              {presentation.brandArchetype && (
+                <div className="rounded-2xl border border-orange-200 bg-orange-50/50 px-5 py-3 text-right shrink-0">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-orange-700">Arquétipo de Marca</p>
+                  <p className="text-base font-black text-orange-950 mt-1">{presentation.brandArchetype}</p>
+                </div>
+              )}
+            </div>
           </article>
 
           <BrandColorPaletteSection palette={presentation.colorPalette} />
@@ -967,6 +977,33 @@ export function DnaBrandPresentationPanel({
                 <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">💡 Gatilhos de decisão</p>
                 <IconList items={presentation.idealCustomerProfile.buyingTriggers} icon="trigger" />
               </div>
+            </div>
+
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-[#EEF2F7] pt-4">
+              {presentation.idealCustomerProfile.fears && presentation.idealCustomerProfile.fears.length > 0 && (
+                <div>
+                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">⚠️ Medos Subconscientes</p>
+                  <ul className="list-disc pl-4 space-y-1 text-xs text-text-muted">
+                    {presentation.idealCustomerProfile.fears.map((f, i) => <li key={i}>{f}</li>)}
+                  </ul>
+                </div>
+              )}
+              {presentation.idealCustomerProfile.values && presentation.idealCustomerProfile.values.length > 0 && (
+                <div>
+                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">💎 Valores & Crenças</p>
+                  <ul className="list-disc pl-4 space-y-1 text-xs text-text-muted">
+                    {presentation.idealCustomerProfile.values.map((v, i) => <li key={i}>{v}</li>)}
+                  </ul>
+                </div>
+              )}
+              {presentation.idealCustomerProfile.digitalHabits && presentation.idealCustomerProfile.digitalHabits.length > 0 && (
+                <div>
+                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">📱 Hábitos Digitais</p>
+                  <ul className="list-disc pl-4 space-y-1 text-xs text-text-muted">
+                    {presentation.idealCustomerProfile.digitalHabits.map((h, i) => <li key={i}>{h}</li>)}
+                  </ul>
+                </div>
+              )}
             </div>
           </article>
 
@@ -1082,6 +1119,29 @@ export function DnaBrandPresentationPanel({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <SectionCard title="Regras de Voz da Marca" items={presentation.brandVoiceRules} />
+            {((presentation.brandVoiceDos && presentation.brandVoiceDos.length > 0) || (presentation.brandVoiceDonts && presentation.brandVoiceDonts.length > 0)) && (
+              <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] space-y-4">
+                <h4 className="text-base font-black text-text-main">{"🗣️ Diretrizes Verbais (Do's & Don'ts)"}</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  {presentation.brandVoiceDos && presentation.brandVoiceDos.length > 0 && (
+                    <div className="rounded-lg border border-[#BDE8CF] bg-[#F2FFF7]/30 p-3">
+                      <p className="font-bold text-[#0A9D57] uppercase tracking-wide mb-1">{"Como nos comunicamos (Do's)"}</p>
+                      <ul className="list-disc pl-4 space-y-1 text-text-muted">
+                        {presentation.brandVoiceDos.map((d, i) => <li key={i}>{d}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                  {presentation.brandVoiceDonts && presentation.brandVoiceDonts.length > 0 && (
+                    <div className="rounded-lg border border-red-200 bg-red-50/10 p-3">
+                      <p className="font-bold text-[#B42318] uppercase tracking-wide mb-1">{"O que evitar (Don'ts)"}</p>
+                      <ul className="list-disc pl-4 space-y-1 text-text-muted">
+                        {presentation.brandVoiceDonts.map((d, i) => <li key={i}>{d}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </article>
+            )}
             <SectionCard title="Pilares de Conteúdo" items={presentation.contentPillars} />
             <SectionCard title="Mensagens por Funil" items={presentation.funnelMessaging} />
             <SectionCard title="Plano de Ação 30 Dias" items={presentation.actionPlan30d} />
