@@ -834,8 +834,8 @@ export default function Suggestion5LandingPage() {
       </section>
 
       {/* PRIMARY FOOTER */}
-      <footer className="relative z-10 border-t border-[#ff6a00]/20 py-12 bg-zinc-950/45 backdrop-blur-md w-full px-5 md:px-8">
-        <div className="mx-auto max-w-[1260px]">
+      <footer className="relative z-10 w-full overflow-hidden border-t border-white/5 bg-[#040811]/95 backdrop-blur-xl">
+        <div className="relative z-10 mx-auto max-w-[1260px] px-5 py-12 md:px-8">
           <div className="grid gap-8 border-b border-[#ff6a00]/15 pb-8 md:grid-cols-5 text-xs">
             <div>
               <h4 className="font-extrabold uppercase text-[#ff8f3a] mb-4">Soluções</h4>

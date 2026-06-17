@@ -196,8 +196,9 @@ export default function TemplateLandingPage() {
         </div>
       </section>
 
-      <footer id="login" className="mx-auto max-w-[1280px] px-6 pb-10 pt-4 sm:px-10">
-        <div className="grid gap-8 border-b border-[#e6e6e6] pb-8 md:grid-cols-5">
+      <footer id="login" className="relative z-10 w-full overflow-hidden text-white border-t border-white/5 bg-[#0b1019]/95 backdrop-blur-xl">
+        <div className="relative z-10 mx-auto max-w-[1260px] px-5 py-12 md:px-8">
+          <div className="grid gap-8 border-b border-[#e6e6e6]/20 pb-8 md:grid-cols-5">
           <div>
             <h4 className="text-sm font-black uppercase">Soluções</h4>
             <p className="mt-3 text-sm text-[#676767]">Agentes</p>

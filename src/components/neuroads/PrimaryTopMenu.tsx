@@ -200,11 +200,17 @@ export default function PrimaryTopMenu({
         <div className="flex items-center gap-2">
           <Link
             href="/#pricing"
-            className="hidden items-center gap-2 rounded-full border border-[#FF6A00]/20 bg-[#FF6A00]/10 hover:bg-[#FF6A00]/20 px-5 py-2.5 text-[12px] font-extrabold text-white transition-all duration-200 lg:inline-flex shadow-[0_0_14px_rgba(255,106,0,0.1)]"
+            className="group relative hidden items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[12px] font-extrabold text-white overflow-hidden transition-all duration-500 ease-out hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 lg:inline-flex shadow-[0_4px_15px_rgba(255,106,0,0.4)]"
+            style={{
+              background: 'linear-gradient(145deg, #ff8f3a 0%, #e65c00 100%)',
+              boxShadow: '0 8px 25px -5px rgba(255,106,0,0.6), inset 0 2px 2px rgba(255,255,255,0.3), inset 0 -2px 5px rgba(0,0,0,0.2)'
+            }}
           >
-            Teste por 14 dias
-          </Link>
- 
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_100%)]" />
+            <span className="relative z-10 flex items-center gap-2">
+              Teste por 14 dias
+            </span>
+          </Link> 
           {onSpecialistClick ? (
             <button
               type="button"
@@ -326,9 +332,16 @@ export default function PrimaryTopMenu({
           <Link
             href="/#pricing"
             onClick={() => setIsMobileMenuOpen(false)}
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 px-4 py-2.5 text-[12px] font-extrabold text-slate-300 hover:bg-[#ff6a00]/20 hover:text-[#ff6a00]"
+            className="group relative inline-flex items-center justify-center gap-2 rounded-full px-4 py-2.5 text-[12px] font-extrabold text-white overflow-hidden transition-all duration-500 ease-out hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95"
+            style={{
+              background: 'linear-gradient(145deg, #ff8f3a 0%, #e65c00 100%)',
+              boxShadow: '0 8px 25px -5px rgba(255,106,0,0.6), inset 0 2px 2px rgba(255,255,255,0.3), inset 0 -2px 5px rgba(0,0,0,0.2)'
+            }}
           >
-            Teste por 14 dias
+            <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_100%)]" />
+            <span className="relative z-10 flex items-center gap-2">
+              Teste por 14 dias
+            </span>
           </Link>
  
           {onRequestDemoClick ? (

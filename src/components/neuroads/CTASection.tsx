@@ -150,8 +150,19 @@ export default function CTASection() {
                         <ChevronDown size={18} className="absolute right-5 top-1/2 -translate-y-1/2 text-text-dim pointer-events-none" />
                       </div>
                     </div>
-                    <button disabled={isSubmitting} type="submit" className="w-full btn btn-primary py-5 text-base mt-6">
-                      {isSubmitting ? <Loader2 className="animate-spin" /> : 'Solicitar Diagnóstico Agora'}
+                    <button
+                      disabled={isSubmitting}
+                      type="submit"
+                      className="group relative w-full justify-center inline-flex items-center gap-2 rounded-full px-5 py-4 mt-6 text-[15px] font-extrabold text-white overflow-hidden transition-all duration-500 ease-out hover:scale-[1.02] hover:-translate-y-0.5 active:scale-95 disabled:cursor-not-allowed disabled:opacity-70"
+                      style={{
+                        background: 'linear-gradient(145deg, #ff8f3a 0%, #e65c00 100%)',
+                        boxShadow: '0 10px 30px -5px rgba(255,106,0,0.6), inset 0 2px 2px rgba(255,255,255,0.3), inset 0 -2px 5px rgba(0,0,0,0.2)'
+                      }}
+                    >
+                      <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.2)_0%,transparent_100%)]" />
+                      <span className="relative z-10 flex items-center gap-2">
+                        {isSubmitting ? <Loader2 className="animate-spin" /> : 'Solicitar Diagnóstico Agora'}
+                      </span>
                     </button>
                   </form>
                 )}
