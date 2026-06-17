@@ -1,12 +1,12 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { ArrowRight, Send, X } from 'lucide-react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { ArrowRight, Send, X, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { chatWithSupport } from '../../app/actions/chat-support';
 import { submitLuccaLeadAction } from '../../app/actions/lucca-leads';
+import { sendPersonalizedPresentationAction } from '../../app/actions/send-presentation';
 
-type LuccaFlow = 'idle' | 'analise';
 type MessageRole = 'assistant' | 'user';
 
 type ChatMessage = {
@@ -45,10 +45,11 @@ export default function LuccaSpecialistChatModal({
   const introMessage: ChatMessage = {
     id: 'intro',
     role: 'assistant',
-    text: `${getGreetingByHour()}! Eu sou o Lucca, Secretário Executivo da NeuroAds. Para começarmos, qual é o seu nome?`,
+    text: `${getGreetingByHour()}! Eu sou o Lucca, Secretário Executivo da NeuroAds.`,
   };
+
   const [messages, setMessages] = useState<ChatMessage[]>(() => {
-    if (!hasAutoDemoRequest) return [introMessage];
+    if (!hasAutoDemoRequest) return [introMessage, { id: 'intro-q', role: 'assistant', text: 'Para começarmos, qual é o seu nome?' }];
     return [
       introMessage,
       {
@@ -56,21 +57,14 @@ export default function LuccaSpecialistChatModal({
         role: 'user',
         text: autoUserMessage?.trim() || '',
       },
-      {
-        id: 'auto-assistant',
-        role: 'assistant',
-        text: 'Perfeito. Para solicitar sua demonstração, me envie os dados cadastrais iniciais: Nome, Email, WhatsApp e Site da Empresa.',
-      },
     ];
   });
+
   const [clientName, setClientName] = useState('');
   const [isNameConfirmed, setIsNameConfirmed] = useState(hasAutoDemoRequest);
-  const [flow, setFlow] = useState<LuccaFlow>(hasAutoDemoRequest ? 'analise' : 'idle');
   const [freeText, setFreeText] = useState('');
   const [loading, setLoading] = useState(false);
-  const [hideOptionCards] = useState(hasAutoDemoRequest);
-
-  const [analysisForm, setAnalysisForm] = useState({ name: '', site: '', email: '', whatsapp: '' });
+  const hasFetchedInitialRef = useRef(false);
 
   const optionCards = useMemo(
     () => [
@@ -80,19 +74,92 @@ export default function LuccaSpecialistChatModal({
     [],
   );
 
-  if (!isOpen) return null;
-
   const appendMessage = (role: MessageRole, text: string, links?: Array<{ label: string; href: string }>) => {
     setMessages((prev) => [...prev, { id: `${Date.now()}-${Math.random()}`, role, text, links }]);
   };
+
+  const processChatInteraction = async (userText: string, isAutoMessage = false) => {
+    if (!isAutoMessage) {
+      appendMessage('user', userText);
+    }
+    
+    setLoading(true);
+
+    const currentHistory = isAutoMessage 
+      ? [{ id: 'tmp', role: 'user' as const, text: userText }]
+      : [...messages, { id: 'tmp', role: 'user' as const, text: userText }];
+
+    const aiResult = await chatWithSupport(asHistory(currentHistory));
+
+    if (!aiResult.success) {
+      setLoading(false);
+      appendMessage('assistant', aiResult.error || 'Não consegui responder agora. Tente novamente em instantes.');
+      return;
+    }
+
+    if (aiResult.clientName && !clientName) {
+      setClientName(aiResult.clientName);
+    }
+
+    appendMessage('assistant', aiResult.content || 'Posso te ajudar com mais alguma etapa?');
+
+    if (Array.isArray(aiResult.buttons) && aiResult.buttons.length > 0) {
+      const safeLinks = aiResult.buttons
+        .map((button: any) => ({
+          label: String(button?.label || ''),
+          href: String(button?.url || ''),
+        }))
+        .filter((item: any) => item.label && item.href);
+
+      if (safeLinks.length > 0) {
+        appendMessage('assistant', 'Acesse o link abaixo:', safeLinks);
+      }
+    }
+
+    if (!isAutoMessage) {
+      await submitLuccaLeadAction({
+        flow: 'mensagem_livre',
+        clientName: aiResult.clientName || clientName || 'Lead sem nome',
+        message: userText,
+      });
+    }
+
+    // Process Lead Data (Email and URL)
+    if (aiResult.leadData && aiResult.leadData.email && aiResult.leadData.url) {
+       appendMessage('assistant', 'Preparando e enviando sua apresentação...');
+       
+       const sendResult = await sendPersonalizedPresentationAction({
+         email: aiResult.leadData.email,
+         url: aiResult.leadData.url,
+         clientName: aiResult.clientName || clientName,
+         historyContext: asHistory(currentHistory).map(m => m.content).join(' | '),
+       });
+
+       if (sendResult.success) {
+         appendMessage('assistant', '✅ Apresentação personalizada enviada com sucesso para o seu e-mail! Em breve nossos especialistas farão contato.');
+       } else {
+         appendMessage('assistant', '⚠️ Tivemos um pequeno problema ao enviar o e-mail, mas seus dados já estão com nosso time.');
+       }
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (isOpen && hasAutoDemoRequest && !hasFetchedInitialRef.current) {
+      hasFetchedInitialRef.current = true;
+      processChatInteraction(autoUserMessage!, true);
+    }
+  }, [isOpen, hasAutoDemoRequest, autoUserMessage]);
+
+
+  if (!isOpen) return null;
 
   const handleSelectOption = async (optionId: string) => {
     if (!isNameConfirmed) return;
 
     if (optionId === 'analise') {
-      setFlow('analise');
-      setAnalysisForm((prev) => ({ ...prev, name: clientName }));
-      appendMessage('assistant', 'Perfeito. Para a análise inicial, me envie: Nome, Site da empresa, principal e-mail e WhatsApp.');
+      processChatInteraction('Gostaria de solicitar uma análise para minha empresa.');
       return;
     }
 
@@ -109,77 +176,11 @@ export default function LuccaSpecialistChatModal({
     });
   };
 
-  const handleSubmitAnalysis = async () => {
-    const normalizedName = analysisForm.name.trim() || clientName.trim();
-    if (!normalizedName || !analysisForm.site.trim() || !analysisForm.email.trim() || !analysisForm.whatsapp.trim()) return;
-
-    setLoading(true);
-    const result = await submitLuccaLeadAction({
-      flow: 'analise',
-      clientName: normalizedName,
-      site: analysisForm.site.trim(),
-      email: analysisForm.email.trim(),
-      whatsapp: analysisForm.whatsapp.trim(),
-      message: hideOptionCards
-        ? 'Solicitação de demonstração via Lucca Chat.'
-        : 'Solicitação de análise via Lucca Chat.',
-    });
-    setLoading(false);
-
-    if (!result.success) {
-      appendMessage('assistant', `Não consegui concluir o registro agora: ${result.error}`);
-      return;
-    }
-
-    setClientName(normalizedName);
-    appendMessage(
-      'assistant',
-      'Dados recebidos e registrados no CRM da NeuroAds. Será enviado por email as instruções de acesso e detalhes para implantação.',
-    );
-    setFlow('idle');
-    setAnalysisForm({ name: '', site: '', email: '', whatsapp: '' });
-  };
-
-  const handleSendFreeText = async () => {
+  const handleSendFreeText = () => {
     if (!freeText.trim()) return;
-    const userText = freeText.trim();
-    appendMessage('user', userText);
+    const text = freeText;
     setFreeText('');
-    setLoading(true);
-
-    const aiResult = await chatWithSupport(asHistory([...messages, { id: 'tmp', role: 'user', text: userText }]));
-
-    if (!aiResult.success) {
-      setLoading(false);
-      appendMessage('assistant', aiResult.error || 'Não consegui responder agora. Tente novamente em instantes.');
-      return;
-    }
-
-    if (aiResult.clientName && !clientName) {
-      setClientName(aiResult.clientName);
-    }
-
-    appendMessage('assistant', aiResult.content || 'Posso te ajudar com mais alguma etapa?');
-    if (Array.isArray(aiResult.buttons) && aiResult.buttons.length > 0) {
-      const safeLinks = aiResult.buttons
-        .map((button) => ({
-          label: String(button?.label || ''),
-          href: String(button?.url || ''),
-        }))
-        .filter((item) => item.label && item.href);
-
-      if (safeLinks.length > 0) {
-        appendMessage('assistant', 'Atalhos recomendados:', safeLinks);
-      }
-    }
-
-    await submitLuccaLeadAction({
-      flow: 'mensagem_livre',
-      clientName: clientName || 'Lead sem nome',
-      message: userText,
-    });
-
-    setLoading(false);
+    processChatInteraction(text);
   };
 
   return (
@@ -243,7 +244,16 @@ export default function LuccaSpecialistChatModal({
             </div>
           ))}
 
-          {!isNameConfirmed && (
+          {loading && (
+             <div className="flex justify-start">
+               <div className="rounded-2xl border border-[#e1e6f0] bg-white text-[#202a3a] px-4 py-3 flex items-center gap-2">
+                  <Loader2 size={16} className="animate-spin text-[#ff6a00]" />
+                  <span className="text-xs font-semibold text-slate-500">Lucca está digitando...</span>
+               </div>
+             </div>
+          )}
+
+          {!isNameConfirmed && !hasAutoDemoRequest && !loading && (
             <div className="rounded-2xl border border-[#e2e7f0] bg-white p-5">
               <label className="text-[13px] font-bold text-[#586173]">Qual é o seu nome?</label>
               <div className="mt-2 flex gap-2">
@@ -252,16 +262,24 @@ export default function LuccaSpecialistChatModal({
                   onChange={(event) => setClientName(event.target.value)}
                   placeholder="Digite seu nome"
                   className="flex-1 rounded-xl border border-[#d8deea] bg-white px-3 py-2.5 text-[15px] font-semibold text-[#1f2737] outline-none focus:border-[#ff8b41]"
+                  onKeyDown={(e) => {
+                     if(e.key === 'Enter') {
+                        const normalizedName = clientName.trim();
+                        if (!normalizedName) return;
+                        setIsNameConfirmed(true);
+                        appendMessage('user', clientName);
+                        processChatInteraction(`Meu nome é ${normalizedName}. O que você pode fazer por mim?`);
+                     }
+                  }}
                 />
                 <button
                   type="button"
                   onClick={() => {
                     const normalizedName = clientName.trim();
                     if (!normalizedName) return;
-                    setClientName(normalizedName);
                     setIsNameConfirmed(true);
-                    appendMessage('assistant', `Prazer, ${normalizedName}.`);
-                    appendMessage('assistant', 'Escolha uma opção para eu te ajudar agora:');
+                    appendMessage('user', clientName);
+                    processChatInteraction(`Meu nome é ${normalizedName}. O que você pode fazer por mim?`);
                   }}
                   className="rounded-xl bg-[#ff6a00] px-4 py-2 text-[12px] font-black text-white"
                 >
@@ -271,7 +289,7 @@ export default function LuccaSpecialistChatModal({
             </div>
           )}
 
-          {isNameConfirmed && !hideOptionCards && (
+          {isNameConfirmed && !hasAutoDemoRequest && !loading && messages.length <= 4 && (
             <div className="grid gap-2.5 md:grid-cols-3">
               {optionCards.map((option) => (
                 <button
@@ -285,44 +303,6 @@ export default function LuccaSpecialistChatModal({
               ))}
             </div>
           )}
-
-          {flow === 'analise' && (
-            <div className="rounded-2xl border border-[#e3e7f1] bg-white p-5 space-y-2.5">
-              <input
-                value={analysisForm.name}
-                onChange={(event) => setAnalysisForm((prev) => ({ ...prev, name: event.target.value }))}
-                placeholder="Nome"
-                className="w-full rounded-xl border border-[#d8deea] px-3 py-2.5 text-[15px] font-semibold text-[#1f2737] outline-none focus:border-[#ff8b41]"
-              />
-              <input
-                value={analysisForm.site}
-                onChange={(event) => setAnalysisForm((prev) => ({ ...prev, site: event.target.value }))}
-                placeholder="Site da empresa"
-                className="w-full rounded-xl border border-[#d8deea] px-3 py-2.5 text-[15px] font-semibold text-[#1f2737] outline-none focus:border-[#ff8b41]"
-              />
-              <input
-                value={analysisForm.email}
-                onChange={(event) => setAnalysisForm((prev) => ({ ...prev, email: event.target.value }))}
-                placeholder="Principal e-mail"
-                className="w-full rounded-xl border border-[#d8deea] px-3 py-2.5 text-[15px] font-semibold text-[#1f2737] outline-none focus:border-[#ff8b41]"
-              />
-              <input
-                value={analysisForm.whatsapp}
-                onChange={(event) => setAnalysisForm((prev) => ({ ...prev, whatsapp: event.target.value }))}
-                placeholder="WhatsApp"
-                className="w-full rounded-xl border border-[#d8deea] px-3 py-2.5 text-[15px] font-semibold text-[#1f2737] outline-none focus:border-[#ff8b41]"
-              />
-              <button
-                type="button"
-                disabled={loading}
-                onClick={handleSubmitAnalysis}
-                className="rounded-xl bg-[#ff6a00] px-4 py-2 text-[12px] font-black text-white disabled:opacity-60"
-              >
-                {loading ? 'Enviando...' : 'Enviar dados para análise'}
-              </button>
-            </div>
-          )}
-
         </div>
 
         <div className="rounded-b-[22px] border-t border-[#e7ebf2] bg-white px-4 py-3 sm:rounded-b-[26px] sm:px-7 sm:py-4">
@@ -330,8 +310,9 @@ export default function LuccaSpecialistChatModal({
             <input
               value={freeText}
               onChange={(event) => setFreeText(event.target.value)}
+              disabled={loading || (!isNameConfirmed && !hasAutoDemoRequest)}
               placeholder="Envie sua mensagem personalizada para o Lucca..."
-              className="flex-1 bg-transparent text-[15px] font-medium text-[#253148] outline-none placeholder:text-[#8a94a6]"
+              className="flex-1 bg-transparent text-[15px] font-medium text-[#253148] outline-none placeholder:text-[#8a94a6] disabled:opacity-50"
               onKeyDown={(event) => {
                 if (event.key === 'Enter') {
                   event.preventDefault();
@@ -341,9 +322,9 @@ export default function LuccaSpecialistChatModal({
             />
             <button
               type="button"
-              disabled={loading}
+              disabled={loading || (!isNameConfirmed && !hasAutoDemoRequest)}
               onClick={handleSendFreeText}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#3f66ff] text-white disabled:opacity-60"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[#3f66ff] text-white disabled:opacity-60 transition-opacity"
             >
               <Send size={14} />
             </button>

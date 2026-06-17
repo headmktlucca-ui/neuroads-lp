@@ -12,7 +12,7 @@ import {
 import { getFirebaseDb } from '../../lib/firebase';
 import { logEvent, timed } from '../../lib/observability';
 
-type LuccaLeadFlow = 'analise' | 'claudio' | 'mensagem_livre';
+type LuccaLeadFlow = 'analise' | 'claudio' | 'mensagem_livre' | 'presentation_request';
 
 type SubmitLuccaLeadInput = {
   flow: LuccaLeadFlow;
