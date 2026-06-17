@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { agents as catalogAgents, type Agent as CatalogAgent } from '../../data/agents';
 import LuccaSpecialistChatModal from './LuccaSpecialistChatModal';
+import LuccaEmbeddedChat from './LuccaEmbeddedChat';
 import PrimaryTopMenu from './PrimaryTopMenu';
 import ValuesResourcesSection from './ValuesResourcesSection';
 import VideoParallaxBackground from './VideoParallaxBackground';
@@ -107,11 +108,38 @@ const segmentLandingCards = [
   },
 ] as const;
 
+const ALL_LOGS = [
+  { id: 1, icon: Target, title: 'Analista de Tráfego', subtitle: 'Realocou R$ 500 para campanha de Remarketing', value: '+12% ROAS', color: 'text-[#ff8f3a]' },
+  { id: 2, icon: Funnel, title: 'Rastreador Cirúrgico', subtitle: 'Detectou falha de atribuição no iOS 17', value: 'Resolvido', color: 'text-emerald-400' },
+  { id: 3, icon: TrendingUp, title: 'Preditor de Funil', subtitle: 'Projeta aumento de 15% na taxa de conversão', value: 'Meta Ativa', color: 'text-[#ff8f3a]' },
+  { id: 4, icon: Cpu, title: 'Gerador de Criativos', subtitle: 'Testando 3 novas variações de copy', value: 'A/B Test', color: 'text-[#ff8f3a]' },
+  { id: 5, icon: AlertCircle, title: 'Auditor de Desperdício', subtitle: 'Pausou conjunto de anúncios ineficiente', value: '- R$ 120/dia', color: 'text-emerald-400' },
+  { id: 6, icon: Target, title: 'Analista de Tráfego', subtitle: 'Aumentou lance para público Lookalike 1%', value: '+ Escala', color: 'text-[#ff8f3a]' },
+  { id: 7, icon: TrendingUp, title: 'Simulador de ROAS', subtitle: 'Cenário otimista validado para Black Friday', value: 'Sinal Verde', color: 'text-emerald-400' },
+  { id: 8, icon: Zap, title: 'Gerador de Criativos', subtitle: 'Nova variação de vídeo atinge 8% de CTR', value: 'Vencedor', color: 'text-emerald-400' }
+];
+
 export default function Suggestion5LandingPage() {
   const [activeTab, setActiveTab] = useState<'aquisicao' | 'conversao' | 'escala'>('aquisicao');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [isLuccaChatOpen, setIsLuccaChatOpen] = useState(false);
   const [luccaAutoMessage, setLuccaAutoMessage] = useState<string | null>(null);
+  const [visibleLogs, setVisibleLogs] = useState(() => 
+    ALL_LOGS.slice(0, 5).map((log, i) => ({ ...log, uniqueId: `initial-${i}` }))
+  );
+
+  useEffect(() => {
+    let index = 5;
+    const interval = setInterval(() => {
+      setVisibleLogs((prev) => {
+        const nextLog = ALL_LOGS[index % ALL_LOGS.length];
+        index++;
+        // Add to bottom, remove the oldest (top) one, assigning a guaranteed unique ID
+        return [...prev.slice(1, 5), { ...nextLog, uniqueId: `log-${Date.now()}-${index}` }];
+      });
+    }, 3500);
+    return () => clearInterval(interval);
+  }, []);
   
   // Slots states
   const [slots, setSlots] = useState<{
@@ -251,29 +279,33 @@ export default function Suggestion5LandingPage() {
       </div>
 
       {/* HERO SECTION WITH STORYTELLING NARRATIVE */}
-      <section className="relative w-full min-h-[90vh] flex items-center justify-center z-10 pt-[115px] pb-10 md:pb-20 overflow-hidden border-b border-white/5 bg-transparent">
+      <section className="relative w-full min-h-[90vh] flex items-center justify-center z-10 pt-[115px] pb-10 md:pb-20 overflow-hidden bg-transparent">
         <VideoParallaxBackground src={["/videos/vdhm.mp4", "/videos/vdhm1.mp4"]} overlayOpacity="bg-black/60" />
         
-        <div className="relative z-10 mx-auto max-w-[1260px] px-5 md:px-8 grid gap-10 lg:grid-cols-[1.1fr_0.9fr] items-center">
-          
-          <div className="relative z-10">
-            <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 text-[#ff8f3a] text-xs font-bold tracking-wider uppercase mb-5">
-              <Sparkles size={12} className="animate-pulse" />
-              IA Agêntica de Alta Performance
-            </span>
-            <h1 className="text-[34px] font-black leading-[1.25] tracking-tight text-white">
-              Desbloqueie o Potencial Oculto:
+        {/* Cinematic Fade into next section */}
+        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#03060c] to-transparent z-0 pointer-events-none" />
+        
+        <div className="relative z-10 mx-auto max-w-[1260px] px-5 md:px-8">
+          <div className="rounded-[32px] border border-white/5 bg-zinc-950/50 backdrop-blur-md p-8 sm:p-12 shadow-[0_18px_48px_rgba(0,0,0,0.5)] transition-[box-shadow,border-color] duration-300">
+            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] items-center">
+              
+              <div className="relative z-10">
+
+            <h1 className="text-[34px] font-black leading-[1.2] tracking-tight text-white">
+              Transforme dados em Receita:
               <br />
-              <span className="bg-gradient-to-r from-[#ff6a00] via-[#ffa15a] to-white bg-clip-text text-transparent">
-                Marketing & Vendas de
+              <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(255,106,0,0.4)]">
+                Automações Inteligentes
               </span>
+              {' '}para
               <br />
-              <span className="bg-gradient-to-r from-[#ff6a00] via-[#ffa15a] to-white bg-clip-text text-transparent">
-                Alta Performance com 
+              <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(255,106,0,0.4)]">
+                Marketing & Vendas
               </span>
+              {' '}de
               <br />
-              <span className="bg-gradient-to-r from-[#ff6a00] via-[#ffa15a] to-white bg-clip-text text-transparent">
-                IA Agêntica.
+              <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(255,106,0,0.4)]">
+                ALTA PERFORMANCE.
               </span>
             </h1>
             <p className="mt-6 text-lg text-slate-300 leading-relaxed max-w-[540px]">
@@ -334,84 +366,55 @@ export default function Suggestion5LandingPage() {
           <div className="relative z-10 flex justify-center items-center h-[360px] sm:h-[450px]">
             <div className="absolute inset-0 bg-[#ff6a00]/5 rounded-[30px] filter blur-[40px] pointer-events-none" />
             
-            <div className="relative w-full max-w-[420px] aspect-square rounded-[24px] border border-[#ff6a00]/20 bg-zinc-950/85 backdrop-blur-xl p-6 overflow-hidden shadow-[0_18px_48px_rgba(0,0,0,0.5)] transition-[box-shadow,border-color] duration-300 hover:border-[#ff6a00]/40 hover:shadow-[0_20px_50px_rgba(255,106,0,0.15)]">
+            <div className="relative w-full max-w-[420px] p-6 overflow-hidden">
               {/* Graphic Title */}
               <div className="flex items-center justify-between border-b border-[#ff6a00]/15 pb-4 mb-6">
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#ff6a00] animate-ping" />
-                  <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Pipeline de Otimização</span>
+                  <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Hub Operacional - Automações</span>
                 </div>
                 <div className="text-[10px] text-slate-500 font-mono">STATUS: ATIVO</div>
               </div>
  
-              {/* Floating nodes with Framer Motion */}
-              <div className="space-y-4 relative z-10">
-                <motion.div 
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="flex items-center gap-4 p-3.5 rounded-[16px] bg-zinc-900/40 border border-[#ff6a00]/15 hover:bg-zinc-900/60 hover:border-[#ff6a00]/30 transition-all"
-                >
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#ff6a00]/20 to-amber-500/10 flex items-center justify-center border border-[#ff6a00]/30 text-[#ff8f3a]">
-                    <Target size={20} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs font-bold text-white">Etapa 1: Captação de Sinais</p>
-                    <p className="text-[10px] text-slate-400">Analista de Tráfego otimizou lances em Meta Ads</p>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs font-bold text-[#ff8f3a]">+24% ROAS</span>
-                  </div>
-                </motion.div>
- 
-                <motion.div 
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="flex items-center gap-4 p-3.5 rounded-[16px] bg-zinc-900/40 border border-[#ff6a00]/15 hover:bg-zinc-900/60 hover:border-[#ff6a00]/30 transition-all"
-                >
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#ff6a00]/20 to-amber-500/10 flex items-center justify-center border border-[#ff6a00]/30 text-[#ff8f3a]">
-                    <Funnel size={20} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs font-bold text-white">Etapa 2: Funil & Atribuição</p>
-                    <p className="text-[10px] text-slate-400">Rastreador Cirúrgico alinhou 1.200 leads Server-Side</p>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs font-bold text-emerald-400">100% Signal</span>
-                  </div>
-                </motion.div>
- 
-                <motion.div 
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="flex items-center gap-4 p-3.5 rounded-[16px] bg-zinc-900/40 border border-[#ff6a00]/15 hover:bg-zinc-900/60 hover:border-[#ff6a00]/30 transition-all"
-                >
-                  <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-[#ff6a00]/20 to-amber-500/10 flex items-center justify-center border border-[#ff6a00]/30 text-[#ff8f3a]">
-                    <TrendingUp size={20} />
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs font-bold text-white">Etapa 3: Predição de Escala</p>
-                    <p className="text-[10px] text-slate-400">Preditor projeta lucro operacional em +R$ 15k</p>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs font-bold text-[#ff8f3a]">Meta Batida</span>
-                  </div>
-                </motion.div>
+              {/* Floating nodes with Framer Motion Layout */}
+              <div className="space-y-3 relative z-10 flex flex-col overflow-hidden h-[380px] pr-2 mask-image-bottom-fade">
+                <AnimatePresence initial={false}>
+                  {visibleLogs.map((log) => (
+                    <motion.div 
+                      layout
+                      key={log.uniqueId}
+                      initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: -20, scale: 0.95, transition: { duration: 0.2 } }}
+                      transition={{ duration: 0.4 }}
+                      className="flex items-center gap-4 p-3.5 rounded-[16px] bg-zinc-900/40 border border-white/5 w-full shrink-0"
+                    >
+                      <div className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-br from-[#ff6a00]/20 to-amber-500/10 flex items-center justify-center border border-[#ff6a00]/30 text-[#ff8f3a]">
+                        <log.icon size={20} />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-bold text-white truncate">{log.title}</p>
+                        <p className="text-[10px] text-slate-400 line-clamp-1">{log.subtitle}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <span className={`text-xs font-bold ${log.color}`}>{log.value}</span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </div>
  
               {/* Animated visual flow line on back */}
               <div className="absolute left-[36px] top-[70px] bottom-[50px] w-[2px] bg-gradient-to-b from-[#ff6a00] via-amber-500/50 to-emerald-500 opacity-30 pointer-events-none" />
             </div>
           </div>
+            </div>
+          </div>
         </div>
       </section>
 
         {/* NARRATIVE SECTION: COMO FUNCIONA? */}
-        <section className="relative z-10 py-20 px-5 md:px-8 border-b border-white/5 bg-zinc-950/45 backdrop-blur-md w-full overflow-hidden">
-          {/* Smooth Fade Transition from previous section */}
-          <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#040811] to-transparent z-0 pointer-events-none" />
+        <section className="relative z-10 py-24 px-5 md:px-8 bg-[#03060c] w-full overflow-hidden">
           
           <div className="relative z-10 mx-auto max-w-[1260px]">
           <div className="text-center max-w-[760px] mx-auto mb-16">
@@ -427,136 +430,7 @@ export default function Suggestion5LandingPage() {
             </p>
           </div>
 
-          <div className="relative mt-20 max-w-[1000px] mx-auto">
-            {/* The Animated Neural Line */}
-            <div className="absolute left-[38px] top-10 bottom-10 w-0.5 bg-white/5 hidden md:block" />
-            <motion.div 
-              className="absolute left-[38px] top-10 w-0.5 bg-gradient-to-b from-[#ff6a00] via-amber-500 to-rose-500 hidden md:block origin-top"
-              animate={{ scaleY: [0, 1, 0], opacity: [0, 1, 0], top: ['10%', '0%', '80%'] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-            />
 
-            <div className="flex flex-col gap-16 relative z-10">
-              {/* Step 1: Dor */}
-              <motion.div 
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6 }}
-                className="relative flex flex-col md:flex-row gap-8 md:gap-12 group"
-              >
-                <div className="relative z-10 flex-shrink-0 flex items-center justify-center w-20 h-20 rounded-2xl bg-zinc-950 border border-rose-500/20 shadow-[0_0_30px_rgba(244,63,94,0.1)] group-hover:border-rose-500/50 group-hover:shadow-[0_0_40px_rgba(244,63,94,0.3)] transition-all duration-500">
-                  <motion.div 
-                    animate={{ y: [-3, 3, -3] }} 
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                    className="text-rose-500"
-                  >
-                    <AlertCircle size={32} />
-                  </motion.div>
-                </div>
-                <div className="flex-1 bg-zinc-950/60 backdrop-blur-md rounded-3xl p-8 border border-white/5 hover:border-rose-500/20 transition-colors">
-                  <h3 className="text-2xl font-bold text-rose-500 mb-6">01. Sua dor hoje</h3>
-                  <ul className="space-y-4">
-                    {[
-                      'Resultados inconsistentes',
-                      'Dependência de achismos',
-                      'Tempo perdido com relatórios',
-                      'Equipe sobrecarregada',
-                      'Crescimento difícil de prever'
-                    ].map((item, idx) => (
-                      <motion.li 
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.4, delay: 0.1 * idx }}
-                        key={idx} className="flex items-center gap-4 text-slate-300"
-                      >
-                        <span className="w-2 h-2 rounded-full bg-rose-500" />
-                        <span>{item}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-
-              {/* Step 2: Impacto */}
-              <motion.div 
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6 }}
-                className="relative flex flex-col md:flex-row gap-8 md:gap-12 group"
-              >
-                <div className="relative z-10 flex-shrink-0 flex items-center justify-center w-20 h-20 rounded-2xl bg-zinc-950 border border-amber-500/20 shadow-[0_0_30px_rgba(245,158,11,0.1)] group-hover:border-amber-500/50 group-hover:shadow-[0_0_40px_rgba(245,158,11,0.3)] transition-all duration-500">
-                  <motion.div 
-                    animate={{ y: [-3, 3, -3] }} 
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                    className="text-amber-500"
-                  >
-                    <TrendingDown size={32} />
-                  </motion.div>
-                </div>
-                <div className="flex-1 bg-zinc-950/60 backdrop-blur-md rounded-3xl p-8 border border-white/5 hover:border-amber-500/20 transition-colors">
-                  <h3 className="text-2xl font-bold text-amber-500 mb-6">02. O impacto no caixa</h3>
-                  <ul className="space-y-4">
-                    {[
-                      'ROAS baixo e instável',
-                      'CPL alto e fora de controle',
-                      'Recursos mal alocados',
-                      'Oportunidades desperdiçadas',
-                      'Previsibilidade zero'
-                    ].map((item, idx) => (
-                      <motion.li 
-                        initial={{ opacity: 0, x: -20 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.4, delay: 0.1 * idx }}
-                        key={idx} className="flex items-center gap-4 text-slate-300"
-                      >
-                        <span className="w-2 h-2 rounded-full bg-amber-500" />
-                        <span>{item}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-
-              {/* Step 3: Solução */}
-              <motion.div 
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.6 }}
-                className="relative flex flex-col md:flex-row gap-8 md:gap-12 group"
-              >
-                <div className="relative z-10 flex-shrink-0 flex items-center justify-center w-20 h-20 rounded-2xl bg-zinc-950 border border-[#ff6a00]/30 shadow-[0_0_30px_rgba(255,106,0,0.15)] group-hover:border-[#ff6a00]/70 group-hover:shadow-[0_0_50px_rgba(255,106,0,0.4)] transition-all duration-500">
-                  <motion.div 
-                    animate={{ y: [-3, 3, -3] }} 
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-                    className="text-[#ff6a00]"
-                  >
-                    <Cpu size={32} />
-                  </motion.div>
-                </div>
-                <div className="flex-1 bg-zinc-950/80 backdrop-blur-xl rounded-3xl p-8 border border-[#ff6a00]/20 shadow-[0_10px_40px_rgba(0,0,0,0.5)] group-hover:border-[#ff6a00]/40 transition-colors relative overflow-hidden">
-                  <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(255,106,0,0.1),transparent_50%)]" />
-                  <h3 className="text-3xl font-bold text-[#ff8f3a] mb-6">03. Nossa solução</h3>
-                  <p className="text-slate-300 text-lg leading-relaxed max-w-[500px]">
-                    Agentes de IA trabalhando 24/7 para atrair, converter e escalar com eficiência e previsibilidade.
-                  </p>
-                  <div className="mt-8">
-                    <a
-                      href="#control-room"
-                      className="relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full px-8 py-4 text-sm font-extrabold text-white transition duration-300 hover:bg-[#ff7b1a] bg-[#ff6a00] shadow-[0_4px_20px_rgba(255,106,0,0.3)] hover:shadow-[0_4px_25px_rgba(255,106,0,0.45)]"
-                    >
-                      Conheça os agentes
-                      <ArrowRight size={16} />
-                    </a>
-                  </div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -566,17 +440,17 @@ export default function Suggestion5LandingPage() {
         <div
           className="absolute inset-0 z-0"
           style={{
-            backgroundImage: "url('/images/bg-hub-anexo01.png')",
+            backgroundImage: "url('/images/backgrounds/bg-hub-novo.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundAttachment: 'fixed',
           }}
         />
-        <div className="absolute inset-0 z-0 bg-black/80" />
+        <div className="absolute inset-0 z-0 bg-black/60" />
         
         {/* Smooth Fade Transitions */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-zinc-950/45 to-transparent z-0 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#040811] to-transparent z-0 pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#03060c] to-transparent z-0 pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#03060c] to-transparent z-0 pointer-events-none" />
         
         <div className="relative z-10 mx-auto max-w-[1260px]">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
@@ -604,25 +478,7 @@ export default function Suggestion5LandingPage() {
             {/* Left: The Slots & Selector Grid */}
             <div className="space-y-8 relative">
 
-              {/* Balão Interativo Orientador */}
-              {!(slots.aquisicao || slots.conversao || slots.escala) && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 0.5 }}
-                  className="absolute -top-12 left-8 z-50 pointer-events-none hidden md:block"
-                >
-                  <motion.div 
-                    animate={{ y: [0, -6, 0] }}
-                    transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                    className="relative bg-[#ff6a00] text-white text-xs font-bold px-4 py-2 rounded-xl shadow-[0_0_20px_rgba(255,106,0,0.5)]"
-                  >
-                    Selecione os agentes abaixo para preencher os slots!
-                    {/* Tooltip triangle */}
-                    <div className="absolute top-full left-6 -mt-1 border-[6px] border-transparent border-t-[#ff6a00]" />
-                  </motion.div>
-                </motion.div>
-              )}
+
 
               {/* Active Slots Display */}
               <div className="grid gap-4 sm:grid-cols-3">
@@ -779,111 +635,8 @@ export default function Suggestion5LandingPage() {
 
             {/* Right: Lucca Insight Chat */}
             <div className="space-y-6">
-              {/* Lucca Chat Card */}
-              <div className="rounded-[24px] border border-[#ff6a00]/20 bg-zinc-950/85 backdrop-blur-xl p-6 shadow-[0_18px_48px_rgba(0,0,0,0.5)] relative overflow-hidden flex flex-col min-h-[500px]">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff6a00]/5 filter blur-[50px] rounded-full pointer-events-none" />
-                {/* Chat Header */}
-                <div className="flex items-center gap-3 border-b border-[#ff6a00]/15 pb-4 mb-5">
-                  <div className="relative">
-                    <Image
-                      src="/images/Avatar_Lucca_Novo.jpeg"
-                      alt="Lucca IA"
-                      width={44}
-                      height={44}
-                      className="h-11 w-11 rounded-full object-cover border-2 border-[#ff6a00]/50"
-                    />
-                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-400 rounded-full border-2 border-zinc-950 animate-pulse" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-extrabold text-white">Lucca</p>
-                    <p className="text-[10px] text-[#ff8f3a] font-mono uppercase tracking-wide">Agente Estratégico NeuroAds</p>
-                  </div>
-                  <div className="ml-auto flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                    <span className="text-[10px] font-bold text-emerald-400">ONLINE</span>
-                  </div>
-                </div>
-
-                {/* Chat Messages */}
-                <div className="flex-1 space-y-4 overflow-y-auto scrollbar-none pr-1">
-                  {/* Lucca initial message */}
-                  <div className="flex items-start gap-3">
-                    <Image
-                      src="/images/Avatar_Lucca_Novo.jpeg"
-                      alt="Lucca"
-                      width={32}
-                      height={32}
-                      className="h-8 w-8 rounded-full object-cover border border-[#ff6a00]/30 shrink-0 mt-0.5"
-                    />
-                    <div className="bg-zinc-900/60 border border-[#ff6a00]/10 rounded-[16px] rounded-tl-[4px] px-4 py-3 max-w-[85%]">
-                      <p className="text-xs text-slate-300 leading-relaxed">
-                        {!slots.aquisicao && !slots.conversao && !slots.escala
-                          ? 'Olá! Sou o Lucca, seu Agente Estratégico. Selecione os agentes nos slots ao lado para eu gerar um insight de alto impacto personalizado para sua operação.'
-                          : slots.aquisicao && slots.conversao && slots.escala
-                          ? `🔥 Time completo ativado! Com [${slots.aquisicao.title}], [${slots.conversao.title}] e [${slots.escala.title}] integrados, sua operação está pronta para escala automática. O diagnóstico proj eta redução de 38% no CPL e aumento de 3.1x no ROAS nas próximas 4 semanas. Sua vantagem competitiva está ativada.`
-                          : slots.aquisicao
-                          ? `⚡ [${slots.aquisicao.title}] alocado no slot de Aquisição. Este agente vai escanear gastos órfãos e otimizar lances em tempo real. Para maximizar os resultados, complete os slots de Conversão e Escala.`
-                          : slots.conversao
-                          ? `📁 [${slots.conversao.title}] ativo no slot de Conversão. Rastreamento de dados e atribuição cirúrgica ativados. Adicione um agente de Aquisição para fechar o ciclo de performance.`
-                          : `📈 [${slots.escala?.title}] pronto para operar. Este agente vai simular cenários de escala e identificar o ponto de saturação de investimento. Adicione os outros slots para ativar o time completo.`
-                        }
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Animated typing indicator when team is partial */}
-                  {(slots.aquisicao || slots.conversao || slots.escala) && !(slots.aquisicao && slots.conversao && slots.escala) && (
-                    <div className="flex items-start gap-3">
-                      <Image
-                        src="/images/Avatar_Lucca_Novo.jpeg"
-                        alt="Lucca"
-                        width={32}
-                        height={32}
-                        className="h-8 w-8 rounded-full object-cover border border-[#ff6a00]/30 shrink-0 mt-0.5"
-                      />
-                      <div className="bg-zinc-900/60 border border-[#ff6a00]/10 rounded-[16px] rounded-tl-[4px] px-4 py-3">
-                        <p className="text-xs text-[#ff8f3a] font-semibold">
-                          💡 Dica: Complete os 3 slots para ativar o insight estratégico completo.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Full team activated metrics */}
-                  {slots.aquisicao && slots.conversao && slots.escala && (
-                    <div className="mt-2 grid grid-cols-2 gap-2">
-                      <div className="rounded-[12px] bg-[#ff6a00]/10 border border-[#ff6a00]/20 p-3">
-                        <p className="text-[10px] text-slate-400 uppercase font-bold">ROAS Projetado</p>
-                        <p className="text-xl font-black text-[#ff6a00] mt-1">{metrics.roas}</p>
-                      </div>
-                      <div className="rounded-[12px] bg-[#ff6a00]/10 border border-[#ff6a00]/20 p-3">
-                        <p className="text-[10px] text-slate-400 uppercase font-bold">Redução CPL</p>
-                        <p className="text-xl font-black text-[#ff8f3a] mt-1">{metrics.cpl}</p>
-                      </div>
-                      <div className="rounded-[12px] bg-emerald-500/10 border border-emerald-500/20 p-3">
-                        <p className="text-[10px] text-slate-400 uppercase font-bold">Conversão</p>
-                        <p className="text-xl font-black text-emerald-400 mt-1">{metrics.conversion}</p>
-                      </div>
-                      <div className="rounded-[12px] bg-zinc-900/40 border border-[#ff6a00]/15 p-3">
-                        <p className="text-[10px] text-slate-400 uppercase font-bold">Verba Protegida</p>
-                        <p className="text-lg font-black text-slate-200 mt-1">{metrics.savings}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Chat Input Area */}
-                <div className="mt-4 border-t border-[#ff6a00]/15 pt-4">
-                  <button
-                    type="button"
-                    onClick={handleRequestDemo}
-                    className="w-full cursor-pointer inline-flex items-center justify-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition duration-300 px-6 py-3.5 text-sm font-extrabold text-white shadow-[0_4px_20px_rgba(255,106,0,0.3)] hover:shadow-[0_4px_25px_rgba(255,106,0,0.45)]"
-                  >
-                    Falar com Lucca sobre meu time
-                    <ArrowRight size={14} />
-                  </button>
-                </div>
-              </div>
+              {/* Lucca Embedded Interactive Chat */}
+              <LuccaEmbeddedChat slots={slots} />
             </div>
           </div>
         </div>
@@ -953,7 +706,7 @@ export default function Suggestion5LandingPage() {
       </section>
 
       {/* DEPOIMENTOS */}
-      <section id="depoimentos" className="relative z-10 py-16 border-b border-white/5 bg-[#040811] w-full px-5 md:px-8">
+      <section id="depoimentos" className="relative z-10 py-16 bg-[#040811] w-full px-5 md:px-8">
         <div className="mx-auto max-w-[1260px]">
           <div className="text-center max-w-[720px] mx-auto mb-16">
             <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">Depoimentos</span>
@@ -1081,7 +834,7 @@ export default function Suggestion5LandingPage() {
       </section>
 
       {/* PRIMARY FOOTER */}
-      <footer className="relative z-10 mt-16 border-t border-[#ff6a00]/20 py-12 bg-zinc-950/45 backdrop-blur-md w-full px-5 md:px-8">
+      <footer className="relative z-10 border-t border-[#ff6a00]/20 py-12 bg-zinc-950/45 backdrop-blur-md w-full px-5 md:px-8">
         <div className="mx-auto max-w-[1260px]">
           <div className="grid gap-8 border-b border-[#ff6a00]/15 pb-8 md:grid-cols-5 text-xs">
             <div>

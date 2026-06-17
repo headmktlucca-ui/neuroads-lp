@@ -1371,7 +1371,7 @@ export default function Navbar() {
         <div
           className={
             isHubNavbarStyle
-              ? 'flex items-center justify-between rounded-full border border-[#122034] bg-[#040a13]/90 backdrop-blur-md px-4 py-3 shadow-[0_12px_40px_rgba(2,8,22,0.35)] transition-all duration-500 sm:px-5 md:px-7'
+              ? 'flex items-center justify-between rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/15 backdrop-blur-xl px-4 py-3 shadow-[0_12px_40px_rgba(255,106,0,0.15)] transition-all duration-500 sm:px-5 md:px-7'
               : 'flex items-center justify-between rounded-[32px] border border-[#E7EAF0] bg-white px-6 py-3 shadow-[0_10px_28px_rgba(15,23,42,0.06)] transition-all duration-500 lg:px-10'
           }
         >

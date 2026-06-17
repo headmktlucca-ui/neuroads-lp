@@ -593,3 +593,8 @@ body::before { content: none; }
 .agent-page-button-corners [role='button'] {
   border-radius: 16px !important;
 }
+
+.mask-image-bottom-fade {
+  mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
+}

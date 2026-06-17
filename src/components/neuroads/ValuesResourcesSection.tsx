@@ -67,14 +67,14 @@ export default function ValuesResourcesSection() {
           backgroundAttachment: 'fixed',
         }}
       />
-      <div className="absolute inset-0 z-0 bg-black/75" />
+      <div className="absolute inset-0 z-0 bg-black/40" />
       
       {/* Smooth Fade Transitions */}
       <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#040811] to-transparent z-0 pointer-events-none" />
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#040811] to-transparent z-0 pointer-events-none" />
       
       <div className="relative z-10 mx-auto max-w-[1520px]">
-        <div className="relative overflow-hidden rounded-[40px] border border-[#ff6a00]/15 bg-black/65 backdrop-blur-xl px-6 py-16 md:px-12 my-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
+        <div className="relative overflow-hidden rounded-[40px] border border-[#ff6a00]/15 bg-black/30 backdrop-blur-xl px-6 py-16 md:px-12 my-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">
         <div className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] items-center">
           {/* Left Column: Headline, Subtitle, Toggle & Info */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
