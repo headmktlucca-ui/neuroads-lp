@@ -308,15 +308,15 @@ export default function Suggestion5LandingPage() {
                 ALTA PERFORMANCE.
               </span>
             </h1>
-            <p className="mt-6 text-lg text-slate-300 leading-relaxed max-w-[540px]">
+            <p className="mt-6 text-[15px] sm:text-lg text-slate-300 leading-relaxed max-w-[540px]">
               Agentes de IA que orquestram dados, mídia e criatividade para gerar resultados consistentes e escaláveis.
             </p>
 
-            <div className="mt-8 flex flex-wrap gap-4">
+            <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-4">
               <button
                 type="button"
                 onClick={handleOpenSpecialistChat}
-                className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_20px_rgba(255,106,0,0.4)] cursor-pointer"
+                className="w-full sm:w-auto justify-center inline-flex items-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_20px_rgba(255,106,0,0.4)] cursor-pointer"
               >
                 Fale com um especialista
                 <ArrowRight size={16} />
@@ -324,7 +324,7 @@ export default function Suggestion5LandingPage() {
               <button 
                 type="button" 
                 onClick={handleRequestDemo} 
-                className="inline-flex items-center gap-2 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all px-6 py-4 text-[14px] font-bold cursor-pointer"
+                className="w-full sm:w-auto justify-center inline-flex items-center gap-2 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all px-6 py-4 text-[14px] font-bold cursor-pointer"
               >
                 Solicite Demonstração
                 <ArrowRight size={16} />
