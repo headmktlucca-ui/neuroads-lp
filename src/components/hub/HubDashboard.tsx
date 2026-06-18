@@ -25,6 +25,7 @@ import {
   Target,
   Percent,
   PieChart,
+  X,
 } from 'lucide-react';
 
 type ChannelResult = {
@@ -71,6 +72,16 @@ export default function HubDashboard() {
   const [loading, setLoading] = useState(false);
   const [ga4Data, setGa4Data] = useState<Ga4MetricsResponse | null>(null);
   const [trafficData, setTrafficData] = useState<TrafficExtractResponse | null>(null);
+  const [activeBalloon, setActiveBalloon] = useState<{
+    type: 'notification' | 'activity';
+    key: string | number;
+    title: string;
+    badge: string;
+    color: string;
+    content: string;
+    recommendation?: string;
+    extra?: string;
+  } | null>(null);
 
   // Fetching parameters (last 30 days)
   const dateFrom = '2026-05-18';
@@ -395,16 +406,146 @@ export default function HubDashboard() {
   // 5. Live Activities list
   const liveActivities = useMemo(() => {
     return [
-      { logo: 'G', platform: 'Google Ads', time: 'há 5s', detail: 'Nova conversão', value: 'Receita: R$ 128,50', color: '#10b981' },
-      { logo: 'T', platform: 'TikTok Ads', time: 'há 8s', detail: 'Campanha otimizada', value: 'ROAS melhorou 12%', color: '#f59e0b' },
-      { logo: 'F', platform: 'Facebook Ads', time: 'há 12s', detail: 'Novo lead capturado', value: 'Valor: R$ 34,00', color: '#10b981' },
-      { logo: 'I', platform: 'Instagram Ads', time: 'há 18s', detail: 'Conjunto pausado', value: 'CPA elevado detectado', color: '#ef4444' },
-      { logo: 'E', platform: 'E-mail Marketing', time: 'há 22s', detail: 'Novo inscrito', value: 'Adicionado ao funil de nutrição', color: '#6b7280' },
-      { logo: 'Y', platform: 'YouTube Ads', time: 'há 27s', detail: 'Vídeo concluído', value: 'Taxa de conclusão: 75%', color: '#10b981' },
-      { logo: 'G', platform: 'Google Ads', time: 'há 31s', detail: 'Ajuste de lance', value: 'Aumento de 15%', color: '#10b981' },
-      { logo: 'T', platform: 'TikTok Ads', time: 'há 36s', detail: 'Nova conversão', value: 'Receita: R$ 89,90', color: '#10b981' },
+      {
+        logo: 'G',
+        platform: 'Google Ads',
+        time: 'há 5s',
+        detail: 'Nova conversão',
+        value: 'Receita: R$ 128,50',
+        color: '#10b981',
+        description: 'Uma nova transação foi atribuída com sucesso ao canal de busca do Google Ads. Detalhe da receita gerada: R$ 128,50.',
+        recommendation: 'Monitore o desempenho desta campanha de conversão para escalabilidade.'
+      },
+      {
+        logo: 'T',
+        platform: 'TikTok Ads',
+        time: 'há 8s',
+        detail: 'Campanha otimizada',
+        value: 'ROAS melhorou 12%',
+        color: '#f59e0b',
+        description: 'Nosso algoritmo otimizou os lances da campanha no TikTok Ads. A taxa de retorno (ROAS) teve um ganho de 12% nas últimas horas.',
+        recommendation: 'Ajuste o orçamento diário para aproveitar o momento positivo da veiculação.'
+      },
+      {
+        logo: 'F',
+        platform: 'Facebook Ads',
+        time: 'há 12s',
+        detail: 'Novo lead capturado',
+        value: 'Valor: R$ 34,00',
+        color: '#10b981',
+        description: 'Lead comercial capturado em formulário nativo do Facebook Ads. Custo por lead estimado: R$ 34,00.',
+        recommendation: 'O lead já foi enviado ao CRM. Certifique-se de que a equipe comercial faça o contato em menos de 10 minutos.'
+      },
+      {
+        logo: 'I',
+        platform: 'Instagram Ads',
+        time: 'há 18s',
+        detail: 'Conjunto pausado',
+        value: 'CPA elevado detectado',
+        color: '#ef4444',
+        description: 'O conjunto de anúncios foi desativado automaticamente devido a um CPA (Custo por Aquisição) elevado que ultrapassou o limite operacional.',
+        recommendation: 'Revise o criativo ou a segmentação desse conjunto de anúncios antes de reativá-lo.'
+      },
+      {
+        logo: 'E',
+        platform: 'E-mail Marketing',
+        time: 'há 22s',
+        detail: 'Novo inscrito',
+        value: 'Adicionado ao funil de nutrição',
+        color: '#6b7280',
+        description: 'Um novo contato foi adicionado à lista após download de material rico. Ativando sequência automatizada de nutrição no CRM.',
+        recommendation: 'Verifique se as automações de boas-vindas e acompanhamento de e-mail estão ativas.'
+      },
+      {
+        logo: 'Y',
+        platform: 'YouTube Ads',
+        time: 'há 27s',
+        detail: 'Vídeo concluído',
+        value: 'Taxa de conclusão: 75%',
+        color: '#10b981',
+        description: 'Uma reprodução de anúncio em vídeo alcançou a taxa de 75% de visualização concluída (Retention rate alta).',
+        recommendation: 'Esse criativo em vídeo tem boa retenção. Considere criar variações dele com novos ganchos (hooks) iniciais.'
+      },
+      {
+        logo: 'G',
+        platform: 'Google Ads',
+        time: 'há 31s',
+        detail: 'Ajuste de lance',
+        value: 'Aumento de 15%',
+        color: '#10b981',
+        description: 'Ajuste automático de lance em palavra-chave principal. Aumento de 15% para manter a primeira posição nas buscas.',
+        recommendation: 'Acompanhe se o aumento de lance resultou em maior volume de conversões qualificadas.'
+      },
+      {
+        logo: 'T',
+        platform: 'TikTok Ads',
+        time: 'há 36s',
+        detail: 'Nova conversão',
+        value: 'Receita: R$ 89,90',
+        color: '#10b981',
+        description: 'Transação registrada via TikTok Pixel. Valor da compra: R$ 89,90. Atribuição de clique direto.',
+        recommendation: 'Essa conversão valida o interesse de compra vindo de usuários engajados da plataforma.'
+      },
     ];
   }, []);
+
+  const renderBalloon = (balloon: typeof activeBalloon) => {
+    if (!balloon) return null;
+    return (
+      <div
+        className="absolute right-[calc(100%+16px)] top-0 z-50 rounded-2xl p-4 text-[11px] backdrop-blur-xl w-64 border transition-all duration-150 animate-in fade-in slide-in-from-right-2"
+        style={{
+          background: 'rgba(4,12,24,0.96)',
+          borderColor: `${balloon.color}40`,
+          boxShadow: `0 16px 48px rgba(4,12,24,0.7), 0 0 16px ${balloon.color}15`,
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Arrow pointing right back to column */}
+        <div
+          className="absolute -right-[7px] top-5 w-3 h-3 rotate-45 border-t border-r"
+          style={{
+            background: 'rgba(4,12,24,0.96)',
+            borderColor: `${balloon.color}40`,
+          }}
+        />
+        <div className="flex items-center justify-between mb-2.5">
+          <span className="font-black uppercase tracking-wider text-[10px]" style={{ color: balloon.color }}>
+            {balloon.title}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="text-[8px] font-bold px-1.5 py-0.5 rounded-full"
+              style={{ background: `${balloon.color}18`, color: '#fff' }}
+            >
+              {balloon.badge}
+            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setActiveBalloon(null);
+              }}
+              className="text-white/40 hover:text-white transition-colors"
+            >
+              <X className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        </div>
+        <div className="space-y-2 text-white/80 leading-relaxed font-sans">
+          <p className="text-[12px] font-semibold text-white leading-snug">{balloon.content}</p>
+          {balloon.recommendation && (
+            <div className="mt-2.5 pt-2 border-t border-white/5">
+              <span className="font-black text-[9px] uppercase tracking-wider text-amber-400 block mb-0.5">Recomendação</span>
+              <p className="text-[10px] text-white/60 font-medium leading-relaxed">{balloon.recommendation}</p>
+            </div>
+          )}
+          {balloon.extra && (
+            <p className="text-[9px] font-mono text-white/40 mt-1">{balloon.extra}</p>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen w-full pl-28 pr-6 md:pr-10 py-6 text-white font-sans overflow-y-auto" style={{ fontFamily: "'Inter', 'DM Sans', sans-serif" }}>
@@ -742,57 +883,178 @@ export default function HubDashboard() {
         {/* Right Column: Notificações + Feed + Performance + Alocação (Span 3) */}
         <div className="xl:col-span-3 flex flex-col gap-6">
 
-          {/* Notificações */}
+          {/* Notificações — exibe até 4 alertas em formato de lista sem scroll */}
           <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
-            <h2 className="text-[13px] font-black text-emerald-400 uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/[0.08] pb-2.5">
+            <h2 className="text-[13px] font-black text-[#a3b8cc] uppercase tracking-wider mb-4 flex items-center gap-2 border-b border-white/[0.08] pb-2.5">
               <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
               Notificações
             </h2>
 
-            <div className="space-y-2.5">
+            <div className="space-y-3.5">
               {/* GA4 warning */}
               {!isGa4Connected && (
-                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-200/90 leading-relaxed">
-                  <strong>GA4 desativado:</strong> Métricas de faturamento e audiência indisponíveis.{' '}
-                  <Link href="/hub/conectores" className="underline font-bold text-white hover:text-emerald-400">Conectar</Link>
-                </div>
+                <article
+                  onClick={() => setActiveBalloon({
+                    type: 'notification',
+                    key: 'ga4',
+                    title: 'Google Analytics 4',
+                    badge: 'Atenção',
+                    color: '#f59e0b',
+                    content: 'O Google Analytics 4 não está conectado. Isso impede o carregamento de métricas essenciais como faturamento (receita total), conversões de e-commerce e segmentações de audiência no painel principal.',
+                    recommendation: 'Vá para a página de Conectores para configurar a conta do GA4.'
+                  })}
+                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[11px] font-black uppercase tracking-wide text-amber-400">
+                      GA4
+                    </span>
+                    <span className="text-[10px] text-amber-400/80 font-bold group-hover:underline">Atenção</span>
+                  </div>
+                  <p className="text-[13px] font-bold text-white leading-snug">GA4 desativado</p>
+                  <p className="text-[11px] text-white/50 mt-0.5">
+                    Métricas de faturamento e audiência indisponíveis.{' '}
+                    <span className="underline font-bold text-[#FF6A00]">Conectar</span>
+                  </p>
+                  {activeBalloon?.type === 'notification' && activeBalloon.key === 'ga4' && renderBalloon(activeBalloon)}
+                </article>
               )}
 
               {/* Google Ads warning */}
               {!isGoogleAdsConnected && (
-                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-200/90 leading-relaxed">
-                  <strong>Google Ads desativado:</strong> Custo de mídia e cliques não consolidados.{' '}
-                  <Link href="/hub/conectores" className="underline font-bold text-white hover:text-emerald-400">Ativar</Link>
-                </div>
+                <article
+                  onClick={() => setActiveBalloon({
+                    type: 'notification',
+                    key: 'gads',
+                    title: 'Google Ads',
+                    badge: 'Atenção',
+                    color: '#f59e0b',
+                    content: 'A conta do Google Ads está desconectada. Dados de investimento de mídia paga (Custo), cliques em anúncios e campanhas ativas do Google não serão consolidados nos KPIs.',
+                    recommendation: 'Ative a integração de Google Ads na tela de conexões.'
+                  })}
+                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[11px] font-black uppercase tracking-wide text-amber-400">
+                      Google Ads
+                    </span>
+                    <span className="text-[10px] text-amber-400/80 font-bold group-hover:underline">Atenção</span>
+                  </div>
+                  <p className="text-[13px] font-bold text-white leading-snug">Google Ads desativado</p>
+                  <p className="text-[11px] text-white/50 mt-0.5">
+                    Custo de mídia e cliques não consolidados.{' '}
+                    <span className="underline font-bold text-[#FF6A00]">Ativar</span>
+                  </p>
+                  {activeBalloon?.type === 'notification' && activeBalloon.key === 'gads' && renderBalloon(activeBalloon)}
+                </article>
               )}
 
               {/* Meta Ads warning */}
               {!isMetaAdsConnected && (
-                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-200/90 leading-relaxed">
-                  <strong>Meta Ads desativado:</strong> Investimento e conversões do ecossistema Meta ausentes.{' '}
-                  <Link href="/hub/conectores" className="underline font-bold text-white hover:text-emerald-400">Ativar</Link>
-                </div>
+                <article
+                  onClick={() => setActiveBalloon({
+                    type: 'notification',
+                    key: 'meta',
+                    title: 'Meta Ads',
+                    badge: 'Atenção',
+                    color: '#f59e0b',
+                    content: 'A conexão com o Meta Ads (Facebook/Instagram) está inativa. O faturamento, investimento de mídia real, impressões e taxas de conversões do ecossistema Meta não constam nos dados.',
+                    recommendation: 'Ative a integração do Meta Ads para consolidar esses dados.'
+                  })}
+                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[11px] font-black uppercase tracking-wide text-amber-400">
+                      Meta Ads
+                    </span>
+                    <span className="text-[10px] text-amber-400/80 font-bold group-hover:underline">Atenção</span>
+                  </div>
+                  <p className="text-[13px] font-bold text-white leading-snug">Meta Ads desativado</p>
+                  <p className="text-[11px] text-white/50 mt-0.5">
+                    Investimento e conversões do ecossistema Meta ausentes.{' '}
+                    <span className="underline font-bold text-[#FF6A00]">Ativar</span>
+                  </p>
+                  {activeBalloon?.type === 'notification' && activeBalloon.key === 'meta' && renderBalloon(activeBalloon)}
+                </article>
               )}
 
               {/* TikTok Ads warning */}
               {!isTiktokAdsConnected && (
-                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-200/90 leading-relaxed">
-                  <strong>TikTok Ads desativado:</strong> Métricas de investimento não ativas.{' '}
-                  <Link href="/hub/conectores" className="underline font-bold text-white hover:text-emerald-400">Vincular</Link>
-                </div>
+                <article
+                  onClick={() => setActiveBalloon({
+                    type: 'notification',
+                    key: 'tiktok',
+                    title: 'TikTok Ads',
+                    badge: 'Atenção',
+                    color: '#f59e0b',
+                    content: 'A conta de anúncios do TikTok Ads não está vinculada. Métricas de investimento e conversão de vídeos patrocinados não serão exibidas em tempo real.',
+                    recommendation: 'Vincule o TikTok Ads na página de conectores.'
+                  })}
+                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[11px] font-black uppercase tracking-wide text-amber-400">
+                      TikTok Ads
+                    </span>
+                    <span className="text-[10px] text-amber-400/80 font-bold group-hover:underline">Atenção</span>
+                  </div>
+                  <p className="text-[13px] font-bold text-white leading-snug">TikTok Ads desativado</p>
+                  <p className="text-[11px] text-white/50 mt-0.5">
+                    Métricas de investimento não ativas.{' '}
+                    <span className="underline font-bold text-[#FF6A00]">Vincular</span>
+                  </p>
+                  {activeBalloon?.type === 'notification' && activeBalloon.key === 'tiktok' && renderBalloon(activeBalloon)}
+                </article>
               )}
 
               {/* Twitter / Snapchat info */}
-              <div className="rounded-xl border border-white/5 bg-slate-900/40 p-3 text-xs text-[#8fa0b5]/90 leading-relaxed">
-                <strong>Twitter / Snapchat:</strong> Sem suporte de sync automático — indicadores exibem N/A permanentemente.
-              </div>
+              <article
+                onClick={() => setActiveBalloon({
+                  type: 'notification',
+                  key: 'twitsnap',
+                  title: 'Twitter / Snapchat',
+                  badge: 'Info',
+                  color: '#8fa0b5',
+                  content: 'Essas plataformas não possuem sincronização automática por meio da API de tempo real configurada. Seus indicadores exibirão permanentemente "N/A" até a liberação de novos conectores.',
+                  recommendation: 'Nenhuma ação é necessária no momento.'
+                })}
+                className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+              >
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-[11px] font-black uppercase tracking-wide text-[#8fa0b5]">
+                    Twitter / Snapchat
+                  </span>
+                  <span className="text-[10px] text-[#8fa0b5]/50 font-bold group-hover:underline">Info</span>
+                </div>
+                <p className="text-[13px] font-bold text-white leading-snug">Sem suporte de sync automático</p>
+                <p className="text-[11px] text-[#8fa0b5]/70 mt-0.5">indicadores exibem N/A permanentemente.</p>
+                {activeBalloon?.type === 'notification' && activeBalloon.key === 'twitsnap' && renderBalloon(activeBalloon)}
+              </article>
 
               {/* Success */}
               {isGa4Connected && isGoogleAdsConnected && isMetaAdsConnected && (
-                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-emerald-200/90 flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
-                  Operação central integrada! GA4, Google Ads e Meta Ads carregando em tempo real.
-                </div>
+                <article
+                  onClick={() => setActiveBalloon({
+                    type: 'notification',
+                    key: 'success',
+                    title: 'Integração Central',
+                    badge: 'Ativo',
+                    color: '#10b981',
+                    content: 'Operação central totalmente integrada! GA4, Google Ads e Meta Ads estão conectados e sincronizando dados reais sem problemas no ecossistema.',
+                    recommendation: 'Tudo funcionando perfeitamente. Continue acompanhando o funil em tempo real.'
+                  })}
+                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                >
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-[11px] font-black uppercase tracking-wide text-emerald-400">
+                      Integração
+                    </span>
+                    <span className="text-[10px] text-emerald-400/80 font-bold group-hover:underline">Ativo</span>
+                  </div>
+                  <p className="text-[13px] font-bold text-white leading-snug">Operação central integrada!</p>
+                  <p className="text-[11px] text-white/50 mt-0.5">GA4, Google Ads e Meta Ads carregando em tempo real.</p>
+                  {activeBalloon?.type === 'notification' && activeBalloon.key === 'success' && renderBalloon(activeBalloon)}
+                </article>
               )}
             </div>
           </section>
@@ -806,15 +1068,29 @@ export default function HubDashboard() {
 
             <div className="space-y-3.5">
               {liveActivities.slice(0, 7).map((act, idx) => (
-                <article key={idx} className="border-b border-white/[0.06] pb-3 last:border-0">
+                <article
+                  key={idx}
+                  onClick={() => setActiveBalloon({
+                    type: 'activity',
+                    key: idx,
+                    title: act.platform,
+                    badge: act.detail,
+                    color: act.color,
+                    content: act.description,
+                    recommendation: act.recommendation,
+                    extra: `Ocorrência: ${act.time} | Valor: ${act.value}`
+                  })}
+                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                >
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-[11px] font-black uppercase tracking-wide" style={{ color: act.color }}>
                       {act.platform}
                     </span>
-                    <span className="text-[10px] text-white/30 font-medium">{act.time}</span>
+                    <span className="text-[10px] text-white/30 font-medium group-hover:underline">{act.time}</span>
                   </div>
                   <p className="text-[13px] font-bold text-white leading-snug">{act.detail}</p>
                   <p className="text-[11px] text-white/50 mt-0.5 font-mono">{act.value}</p>
+                  {activeBalloon?.type === 'activity' && activeBalloon.key === idx && renderBalloon(activeBalloon)}
                 </article>
               ))}
             </div>
