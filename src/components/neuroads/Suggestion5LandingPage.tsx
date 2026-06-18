@@ -280,7 +280,7 @@ export default function Suggestion5LandingPage() {
 
       {/* HERO SECTION WITH STORYTELLING NARRATIVE */}
       <section className="relative w-full min-h-[90vh] flex items-center justify-center z-10 pt-[115px] pb-10 md:pb-20 overflow-hidden bg-transparent">
-        <VideoParallaxBackground src={["/videos/vdhm.mp4", "/videos/vdhm1.mp4"]} overlayOpacity="bg-black/60" />
+        <VideoParallaxBackground src="/videos/abertura_full.mp4" overlayOpacity="bg-black/60" />
         
         {/* Cinematic Fade into next section */}
         <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#03060c] to-transparent z-0 pointer-events-none" />
