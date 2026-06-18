@@ -124,7 +124,7 @@ function LoginPageContent() {
 
   if (loading || premiumSyncing) {
     return (
-      <main className="relative min-h-screen bg-bg-main">
+      <main className="relative min-h-screen bg-transparent">
         <AuthPagesBackdrop />
         <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1180px] items-center justify-center px-5 py-14">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -134,27 +134,27 @@ function LoginPageContent() {
   }
 
   return (
-    <main className="relative min-h-screen bg-bg-main text-text-main">
+    <main className="relative min-h-screen bg-transparent text-white">
       <AuthPagesBackdrop />
       <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1180px] items-center justify-center px-5 py-14">
-        <section className="w-full max-w-[580px] rounded-[28px] border border-border bg-white p-7 shadow-[0_24px_54px_rgba(15,23,42,0.08)] sm:p-10">
+        <section className="w-full max-w-[580px] rounded-[28px] border border-slate-800/80 bg-slate-950/60 backdrop-blur-xl p-7 shadow-[0_24px_54px_rgba(0,0,0,0.5)] sm:p-10">
           <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">NeuroAds · Acesso</p>
-          <h1 className="mt-2 text-[34px] font-extrabold leading-tight text-text-main">
+          <h1 className="mt-2 text-[34px] font-extrabold leading-tight text-white">
             Entrar no Hub Estratégico
           </h1>
-          <p className="mt-3 text-[15px] leading-relaxed text-text-muted">
+          <p className="mt-3 text-[15px] leading-relaxed text-slate-400">
             Acompanhe sua operação com dados reais e clareza de impacto no caixa.
           </p>
 
           {authErrorMessage ? (
-            <div className="mt-5 rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3">
-              <p className="text-[13px] font-semibold text-[#9A3412]">{authErrorMessage}</p>
+            <div className="mt-5 rounded-2xl border border-red-900/30 bg-red-950/20 px-4 py-3">
+              <p className="text-[13px] font-semibold text-red-400">{authErrorMessage}</p>
             </div>
           ) : null}
 
           {noticeMessage ? (
-            <div className="mt-5 rounded-2xl border border-[#BFEAD2] bg-[#ECFDF3] px-4 py-3">
-              <p className="text-[13px] font-semibold text-[#0A7A42]">{noticeMessage}</p>
+            <div className="mt-5 rounded-2xl border border-emerald-900/30 bg-emerald-950/20 px-4 py-3">
+              <p className="text-[13px] font-semibold text-emerald-400">{noticeMessage}</p>
             </div>
           ) : null}
 
@@ -165,8 +165,8 @@ function LoginPageContent() {
             className="mt-7 h-[46px] w-full"
           />
 
-          <div className="mt-5 text-center text-[13px] text-text-muted">
-            <Link href="/" className="font-bold text-text-main hover:text-primary">
+          <div className="mt-5 text-center text-[13px] text-slate-400">
+            <Link href="/" className="font-bold text-white hover:text-primary transition-colors">
               Voltar para a página inicial
             </Link>
           </div>
@@ -180,7 +180,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <main className="relative min-h-screen bg-bg-main">
+        <main className="relative min-h-screen bg-transparent">
           <AuthPagesBackdrop />
         </main>
       }

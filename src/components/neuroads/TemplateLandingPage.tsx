@@ -224,6 +224,7 @@ export default function TemplateLandingPage() {
             <p className="mt-3 text-sm text-[#676767]">Facebook · Instagram · LinkedIn</p>
           </div>
         </div>
+        </div>
         <p className="pt-5 text-center text-xs text-[#7a7a7a]">Minimal pattern · Copyright NeuroAds</p>
       </footer>
     </main>

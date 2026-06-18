@@ -7,8 +7,8 @@ export function AuthPagesBackdrop() {
     <>
       <div className="pointer-events-none fixed inset-0 z-0">
         <div
-          className="absolute inset-0 bg-center bg-cover bg-no-repeat bg-white"
-          style={{ backgroundImage: "url('/images/background_hub_custom_wave.png')" }}
+          className="absolute inset-0 bg-center bg-cover bg-no-repeat bg-[#0A0A0A]"
+          style={{ backgroundImage: "url('/images/backgrd_dark.png')" }}
         />
       </div>
 
@@ -20,7 +20,7 @@ export function AuthPagesBackdrop() {
             width={240}
             height={52}
             priority
-            className="h-auto w-[150px] sm:w-[190px] lg:w-[230px] cursor-pointer group-hover:scale-[1.02] transition-all duration-300"
+            className="h-auto w-[150px] sm:w-[190px] lg:w-[230px] cursor-pointer group-hover:scale-[1.02] transition-all duration-300 brightness-0 invert"
           />
         </a>
       </div>

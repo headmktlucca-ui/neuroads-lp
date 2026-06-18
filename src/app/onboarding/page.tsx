@@ -353,7 +353,7 @@ function OnboardingPageContent() {
 
   if (loading || (user && premiumSyncing)) {
     return (
-      <main className="relative min-h-screen bg-bg-main">
+      <main className="relative min-h-screen bg-transparent">
         <AuthPagesBackdrop />
         <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-[1160px] items-center justify-center px-5 py-14">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
@@ -364,34 +364,34 @@ function OnboardingPageContent() {
 
   if (!user) {
     return (
-      <main className="relative min-h-screen bg-bg-main">
+      <main className="relative min-h-screen bg-transparent">
         <AuthPagesBackdrop />
       </main>
     );
   }
 
   return (
-    <main className="relative min-h-screen bg-bg-main text-text-main">
+    <main className="relative min-h-screen bg-transparent text-white">
       <AuthPagesBackdrop />
       <div className="relative z-10 mx-auto w-full max-w-[1160px] px-5 py-10 sm:py-14">
-        <section className="mx-auto w-full max-w-[920px] rounded-[30px] border border-border bg-white p-6 shadow-[0_24px_54px_rgba(15,23,42,0.08)] sm:p-9">
+        <section className="mx-auto w-full max-w-[920px] rounded-[30px] border border-slate-800/80 bg-slate-950/60 backdrop-blur-xl p-6 shadow-[0_24px_54px_rgba(0,0,0,0.5)] sm:p-9">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-[11px] font-extrabold uppercase tracking-[0.12em] text-primary">NeuroAds · Ativação</p>
-              <h1 className="mt-2 text-[30px] font-extrabold leading-tight text-text-main">
+              <h1 className="mt-2 text-[30px] font-extrabold leading-tight text-white">
                 Onboarding estratégico em 2 passos + plano
               </h1>
-              <p className="mt-2 text-sm text-text-muted">
+              <p className="mt-2 text-sm text-slate-400">
                 Primeiro alinhamos contexto do negócio. Depois calibramos objetivos para ativar seu Hub com inteligência.
               </p>
             </div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-bg-secondary px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-text-dim">
+            <div className="inline-flex items-center gap-2 rounded-full border border-slate-800 bg-slate-900/60 px-4 py-2 text-xs font-black uppercase tracking-[0.1em] text-slate-400">
               <CheckCircle2 size={14} className="text-[#0A9D57]" /> Etapa {step} de 3
             </div>
           </div>
 
           {entryState ? (
-            <div className="mt-5 rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-sm text-[#9A3412]">
+            <div className="mt-5 rounded-2xl border border-red-900/30 bg-red-950/20 px-4 py-3 text-sm text-red-400">
               {entryState === 'trial_expired' && 'Seu trial expirou, mas seus dados estão salvos. Reative o plano para voltar ao Hub.'}
               {entryState === 'canceled' && 'Seu plano foi cancelado. Reative para retomar sua escala previsível.'}
               {entryState === 'past_due' && 'Seu pagamento está pendente. Atualize seu cartão para manter operação ativa.'}
@@ -402,19 +402,19 @@ function OnboardingPageContent() {
           {step === 1 ? (
             <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="sm:col-span-2">
-                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Empresa *</label>
+                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">Empresa *</label>
                 <div className="relative">
-                  <Building2 size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-                  <input value={form.companyName} onChange={(event) => setForm((prev) => ({ ...prev, companyName: event.target.value }))} placeholder="Nome da empresa" className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary" />
+                  <Building2 size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <input value={form.companyName} onChange={(event) => setForm((prev) => ({ ...prev, companyName: event.target.value }))} placeholder="Nome da empresa" className="w-full rounded-xl border border-slate-800 bg-slate-900/50 px-10 py-3 text-sm font-semibold text-white outline-none transition-colors focus:border-primary focus:bg-slate-900/80" />
                 </div>
               </div>
               <div>
-                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Segmento *</label>
-                <input value={form.segment} onChange={(event) => setForm((prev) => ({ ...prev, segment: event.target.value }))} placeholder="Ex: Serviços profissionais" className="w-full rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary" />
+                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">Segmento *</label>
+                <input value={form.segment} onChange={(event) => setForm((prev) => ({ ...prev, segment: event.target.value }))} placeholder="Ex: Serviços profissionais" className="w-full rounded-xl border border-slate-800 bg-slate-900/50 px-4 py-3 text-sm font-semibold text-white outline-none transition-colors focus:border-primary focus:bg-slate-900/80" />
               </div>
               <div>
-                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Faturamento mensal *</label>
-                <select value={form.revenueRange} onChange={(event) => setForm((prev) => ({ ...prev, revenueRange: event.target.value }))} className="w-full rounded-xl border border-border bg-bg-secondary px-4 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary">
+                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">Faturamento mensal *</label>
+                <select value={form.revenueRange} onChange={(event) => setForm((prev) => ({ ...prev, revenueRange: event.target.value }))} className="w-full rounded-xl border border-slate-800 bg-slate-900/50 px-4 py-3 text-sm font-semibold text-white outline-none transition-colors focus:border-primary focus:bg-slate-900/80 [&>option]:bg-slate-950 [&>option]:text-white">
                   <option value="">Selecione a faixa</option>
                   <option value="R$ 30k - R$ 60k">R$ 30k - R$ 60k</option>
                   <option value="R$ 60k - R$ 120k">R$ 60k - R$ 120k</option>
@@ -423,17 +423,17 @@ function OnboardingPageContent() {
                 </select>
               </div>
               <div>
-                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">Site *</label>
+                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">Site *</label>
                 <div className="relative">
-                  <Globe size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-                  <input value={form.site} onChange={(event) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(event.target.value) }))} onBlur={(event) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(event.target.value) }))} placeholder="https://empresa.com.br" className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary" />
+                  <Globe size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <input value={form.site} onChange={(event) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(event.target.value) }))} onBlur={(event) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(event.target.value) }))} placeholder="https://empresa.com.br" className="w-full rounded-xl border border-slate-800 bg-slate-900/50 px-10 py-3 text-sm font-semibold text-white outline-none transition-colors focus:border-primary focus:bg-slate-900/80" />
                 </div>
               </div>
               <div>
-                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-text-dim">WhatsApp *</label>
+                <label className="mb-2 block text-xs font-bold uppercase tracking-widest text-slate-400">WhatsApp *</label>
                 <div className="relative">
-                  <Phone size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-dim" />
-                  <input value={form.whatsapp} onChange={(event) => setForm((prev) => ({ ...prev, whatsapp: formatWhatsappInput(event.target.value) }))} maxLength={15} placeholder="(00) 00000-0000" className="w-full rounded-xl border border-border bg-bg-secondary px-10 py-3 text-sm font-semibold text-text-main outline-none transition-colors focus:border-primary" />
+                  <Phone size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                  <input value={form.whatsapp} onChange={(event) => setForm((prev) => ({ ...prev, whatsapp: formatWhatsappInput(event.target.value) }))} maxLength={15} placeholder="(00) 00000-0000" className="w-full rounded-xl border border-slate-800 bg-slate-900/50 px-10 py-3 text-sm font-semibold text-white outline-none transition-colors focus:border-primary focus:bg-slate-900/80" />
                 </div>
               </div>
             </div>
@@ -441,12 +441,12 @@ function OnboardingPageContent() {
 
           {step === 2 ? (
             <div className="mt-7">
-              <p className="text-sm text-text-muted">Selecione as dores prioritárias para calibrar seus agentes e relatórios no formato certo.</p>
+              <p className="text-sm text-slate-400">Selecione as dores prioritárias para calibrar seus agentes e relatórios no formato certo.</p>
               <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 {OBJECTIVES.map((objective) => {
                   const selected = selectedObjectives.includes(objective);
                   return (
-                    <button key={objective} type="button" onClick={() => setSelectedObjectives((current) => current.includes(objective) ? current.filter((item) => item !== objective) : [...current, objective])} className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition ${selected ? 'border-[#08B760] bg-[#ECFDF3] text-[#0A7A42]' : 'border-border bg-bg-secondary text-text-main hover:border-primary'}`}>
+                    <button key={objective} type="button" onClick={() => setSelectedObjectives((current) => current.includes(objective) ? current.filter((item) => item !== objective) : [...current, objective])} className={`rounded-xl border px-4 py-3 text-left text-sm font-semibold transition-all duration-200 ${selected ? 'border-[#08B760] bg-[#08B760]/10 text-[#08B760]' : 'border-slate-800 bg-slate-900/50 text-slate-300 hover:border-primary hover:text-white'}`}>
                       {objective}
                     </button>
                   );
@@ -457,36 +457,36 @@ function OnboardingPageContent() {
 
           {step === 3 ? (
             <div className="mt-7">
-              <p className="text-sm text-text-muted">Seu plano de ativação. Comece agora com trial grátis de 14 dias sem cartão ou ative diretamente com cartão.</p>
+              <p className="text-sm text-slate-400">Seu plano de ativação. Comece agora com trial grátis de 14 dias sem cartão ou ative diretamente com cartão.</p>
               {plan ? (
                 <div className="mt-6">
-                  <div className="relative overflow-visible rounded-[24px] border-0 bg-[linear-gradient(165deg,rgba(255,255,255,0.78),rgba(255,245,237,0.58))] px-6 py-6 md:px-8 md:py-8 shadow-[0_18px_48px_rgba(13,23,45,0.14)]">
+                  <div className="relative overflow-visible rounded-[24px] border border-slate-800/80 bg-[linear-gradient(165deg,rgba(15,23,42,0.6),rgba(30,41,59,0.4))] px-6 py-6 md:px-8 md:py-8 shadow-[0_18px_48px_rgba(0,0,0,0.4)]">
                     {/* Inner border overlay */}
-                    <div className="pointer-events-none absolute inset-0 rounded-[24px] border-2 border-[#ff8a40]/30 bg-[radial-gradient(circle_at_35%_0%,rgba(255,162,82,0.22),rgba(255,255,255,0)_58%)]" />
+                    <div className="pointer-events-none absolute inset-0 rounded-[24px] border-2 border-[#ff8a40]/30 bg-[radial-gradient(circle_at_35%_0%,rgba(255,162,82,0.15),rgba(0,0,0,0)_58%)]" />
 
                     <div className="relative z-10 flex flex-col md:flex-row items-center gap-6 md:gap-10">
                       {/* Floating Image */}
                       <div className="relative shrink-0 h-[126px] w-[142px]">
                         <Image
-                          src="/images/pricing-plans/icon_pro_scale_001.png"
-                          alt="Imagem do plano NeuroAds IA Pro"
-                          fill
-                          sizes="220px"
-                          className="object-contain drop-shadow-[0_16px_28px_rgba(10,20,40,0.18)] scale-[1.2]"
-                          priority
+                           src="/images/pricing-plans/icon_pro_scale_001.png"
+                           alt="Imagem do plano NeuroAds IA Pro"
+                           fill
+                           sizes="220px"
+                           className="object-contain drop-shadow-[0_16px_28px_rgba(10,20,40,0.18)] scale-[1.2]"
+                           priority
                         />
                       </div>
 
                       {/* Content */}
                       <div className="flex-1 flex flex-col">
                         <h3 className="text-[28px] font-black leading-none text-[#ff5a00]">{plan.name}</h3>
-                        <p className="mt-2 text-[15px] leading-[1.35] text-[#3f4a63]">
+                        <p className="mt-2 text-[15px] leading-[1.35] text-slate-400">
                           IA avançada e inteligência profunda para escalar sua operação.
                         </p>
 
-                        <div className="mt-4 flex flex-wrap items-end gap-3 border-b border-[#e7edf7] pb-4">
+                        <div className="mt-4 flex flex-wrap items-end gap-3 border-b border-slate-800 pb-4">
                           <div className="flex items-end gap-1.5">
-                            <span className="text-[36px] font-black leading-none text-[#0b132d]">
+                            <span className="text-[36px] font-black leading-none text-white">
                               R$ {formatCurrencyFromCents(plan.amount).replace('R$', '').trim()}
                             </span>
                             <span className="mb-1 text-[20px] font-black text-[#ff5a00]">/mês</span>
@@ -505,7 +505,7 @@ function OnboardingPageContent() {
                             'Analytics avançado',
                             'Modelagem preditiva'
                           ].map((feature) => (
-                            <li key={feature} className="flex items-start gap-2.5 text-[13px] leading-[1.28] text-[#25324d]">
+                            <li key={feature} className="flex items-start gap-2.5 text-[13px] leading-[1.28] text-slate-300">
                               <span className="mt-0.5 inline-flex h-[16px] w-[16px] shrink-0 items-center justify-center rounded-full bg-[#ff7a1b] text-white">
                                 <Check size={10} strokeWidth={3.1} />
                               </span>
@@ -516,7 +516,7 @@ function OnboardingPageContent() {
                       </div>
                     </div>
                   </div>
-                  <p className="mt-4 text-center text-xs text-text-dim">Seus dados ficam preservados mesmo em reentrada (trial expirado, cancelado ou pendência).</p>
+                  <p className="mt-4 text-center text-xs text-slate-400">Seus dados ficam preservados mesmo em reentrada (trial expirado, cancelado ou pendência).</p>
                 </div>
               ) : (
                 <p className="mt-4 text-sm text-red-600">Nenhum plano disponível no momento.</p>
@@ -524,7 +524,7 @@ function OnboardingPageContent() {
             </div>
           ) : null}
 
-          {errorMessage ? <p className="mt-5 rounded-xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-sm text-[#9A3412]">{errorMessage}</p> : null}
+          {errorMessage ? <p className="mt-5 rounded-xl border border-red-900/30 bg-red-950/20 px-4 py-3 text-sm text-red-400">{errorMessage}</p> : null}
 
           <div className="mt-6 flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
             <button
@@ -537,7 +537,7 @@ function OnboardingPageContent() {
                 setErrorMessage(null);
                 setStep((current) => (current === 3 ? 2 : 1));
               }}
-              className="rounded-xl border border-border px-5 py-3 text-xs font-bold uppercase tracking-widest text-text-muted hover:bg-bg-secondary"
+              className="rounded-xl border border-slate-800 px-5 py-3 text-xs font-bold uppercase tracking-widest text-slate-400 hover:bg-slate-900/50 transition-colors"
             >
               Voltar
             </button>
@@ -546,7 +546,7 @@ function OnboardingPageContent() {
             {step === 2 ? <button type="button" onClick={handleNextFromObjectives} disabled={isSaving} className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60">{isSaving ? 'Salvando...' : 'Ir para plano'}<ArrowRight size={14} /></button> : null}
             {step === 3 ? (
               <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-                <button type="button" onClick={handleStartTrial} disabled={isSaving} className="rounded-xl border border-[#0A9D57] bg-white px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#0A9D57] disabled:opacity-60">{isSaving ? 'Processando...' : 'Iniciar trial grátis (14 dias)'}</button>
+                <button type="button" onClick={handleStartTrial} disabled={isSaving} className="rounded-xl border border-[#08B760] bg-transparent hover:bg-[#08B760]/10 transition-colors px-5 py-3 text-xs font-bold uppercase tracking-widest text-[#08B760] disabled:opacity-60">{isSaving ? 'Processando...' : 'Iniciar trial grátis (14 dias)'}</button>
                 <button type="button" onClick={handleGoToStripeCheckout} disabled={isSaving} className="rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-bold uppercase tracking-widest text-white disabled:opacity-60">{isSaving ? 'Abrindo checkout...' : 'Ativar agora com cartão'}</button>
               </div>
             ) : null}
@@ -561,7 +561,7 @@ export default function OnboardingPage() {
   return (
     <Suspense
       fallback={
-        <main className="relative min-h-screen bg-bg-main">
+        <main className="relative min-h-screen bg-transparent">
           <AuthPagesBackdrop />
         </main>
       }

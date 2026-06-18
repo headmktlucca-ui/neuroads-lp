@@ -55,7 +55,7 @@ export default function LuccaEmbeddedChat({ slots }: { slots: SlotsState }) {
   const [isNameConfirmed, setIsNameConfirmed] = useState(false);
   const [freeText, setFreeText] = useState('');
   const [loading, setLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const optionCards = useMemo(
     () => [
@@ -66,7 +66,12 @@ export default function LuccaEmbeddedChat({ slots }: { slots: SlotsState }) {
   );
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTo({
+        top: scrollContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
   };
 
   useEffect(() => {
@@ -214,7 +219,10 @@ export default function LuccaEmbeddedChat({ slots }: { slots: SlotsState }) {
       </div>
 
       {/* Chat Messages */}
-      <div className="flex-1 space-y-4 overflow-y-auto scrollbar-none pr-1 pb-4">
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 space-y-4 overflow-y-auto scrollbar-none pr-1 pb-4"
+      >
         {messages.filter(m => m.role !== 'system').map((message) => (
           <div key={message.id} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
             {message.role === 'assistant' && (
@@ -295,7 +303,6 @@ export default function LuccaEmbeddedChat({ slots }: { slots: SlotsState }) {
             ))}
           </div>
         )}
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Chat Input Area */}
