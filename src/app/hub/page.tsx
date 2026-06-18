@@ -53,10 +53,6 @@ export default function HubPage() {
         backgroundImage: "url('/images/backgrounds/fundo_hub.jpeg')",
       }}
     >
-      {/* Dark overlay for readability and cyber aesthetic */}
-      <div className="absolute inset-0 bg-slate-950/50 mix-blend-multiply pointer-events-none z-0" />
-      <div className="absolute inset-0 bg-gradient-to-tr from-slate-950/80 via-transparent to-slate-950/25 pointer-events-none z-0" />
-
       {/* Sidebar Navigation */}
       <div className="relative z-20">
         <HubSidebar />

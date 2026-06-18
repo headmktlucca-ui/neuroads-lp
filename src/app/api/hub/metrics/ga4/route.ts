@@ -48,7 +48,8 @@ export async function POST(request: Request) {
           { name: 'activeUsers' },
           { name: 'averageSessionDuration' },
           { name: 'conversions' },
-          { name: 'engagementRate' }
+          { name: 'engagementRate' },
+          { name: 'purchaseRevenue' }
         ]
       })
     });
@@ -64,6 +65,7 @@ export async function POST(request: Request) {
     let averageSessionDuration = '0';
     let conversions = '0';
     let engagementRate = '0';
+    let purchaseRevenue = '0';
 
     if (reportData.rows && reportData.rows.length > 0) {
       const metricValues = reportData.rows[0].metricValues;
@@ -78,13 +80,16 @@ export async function POST(request: Request) {
       
       const rate = parseFloat(metricValues[3]?.value || '0');
       engagementRate = `${(rate * 100).toFixed(2)}%`;
+
+      purchaseRevenue = metricValues[4]?.value || '0';
     }
 
     return NextResponse.json({
       activeUsers,
       averageSessionDuration,
       conversions,
-      engagementRate
+      engagementRate,
+      purchaseRevenue
     });
 
   } catch (error) {
