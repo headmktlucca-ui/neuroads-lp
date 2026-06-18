@@ -27,6 +27,14 @@ const nextConfig: NextConfig = {
       allowedOrigins: ["neuroads.com.br", "*.neuroads.com.br"],
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'lh3.googleusercontent.com',
+      },
+    ],
+  },
   async redirects() {
     return [
       {

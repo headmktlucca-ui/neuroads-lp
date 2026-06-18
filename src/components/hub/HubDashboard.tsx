@@ -332,16 +332,16 @@ export default function HubDashboard() {
   // 2. Real-time Performance rows
   const realTimePerformanceData = useMemo(() => {
     const list = [
-      { label: 'Spend', value: formatCurrency(stats.spend, '$'), spark: [4200, 4500, 4300, 4600, 4500, 4732] },
-      { label: 'Revenue', value: formatCurrency(stats.revenue, '$'), spark: [31000, 34000, 32500, 35000, 34500, 35832] },
-      { label: 'Conversions', value: formatNumber(stats.conversions), spark: [320, 350, 340, 370, 365, 382] },
+      { label: 'Investimento', value: formatCurrency(stats.spend, '$'), spark: [4200, 4500, 4300, 4600, 4500, 4732] },
+      { label: 'Receita', value: formatCurrency(stats.revenue, '$'), spark: [31000, 34000, 32500, 35000, 34500, 35832] },
+      { label: 'Conversões', value: formatNumber(stats.conversions), spark: [320, 350, 340, 370, 365, 382] },
       { label: 'ROAS', value: formatROAS(stats.roas), spark: [7.2, 7.4, 7.3, 7.6, 7.5, 7.57] },
       {
-        label: 'Active Campaigns',
+        label: 'Campanhas Ativas',
         value: isGoogleAdsConnected || isMetaAdsConnected ? '24' : 'N/A',
         spark: [22, 24, 23, 24, 24, 24],
       },
-      { label: 'Clicks', value: formatNumber(stats.clicks), spark: [1750, 1850, 1800, 1910, 1880, 1932] },
+      { label: 'Cliques', value: formatNumber(stats.clicks), spark: [1750, 1850, 1800, 1910, 1880, 1932] },
     ];
     return list;
   }, [stats, isGoogleAdsConnected, isMetaAdsConnected]);
@@ -349,11 +349,11 @@ export default function HubDashboard() {
   // 3. Top Campaigns rows
   const topCampaignsData = useMemo(() => {
     const list = [
-      { name: 'Summer Sale 2025', roas: '8.92x', spend: '$12,432', trend: '↑ 23.1%', status: 'active', color: '#10b981' },
-      { name: 'Brand Awareness', roas: '6.45x', spend: '$8,231', trend: '↑ 15.3%', status: 'active', color: '#10b981' },
-      { name: 'Product Launch', roas: '9.78x', spend: '$15,231', trend: '↑ 28.7%', status: 'active', color: '#10b981' },
-      { name: 'Retargeting Q2', roas: '7.12x', spend: '$6,231', trend: '↑ 19.8%', status: 'active', color: '#10b981' },
-      { name: 'Lead Gen Campaign', roas: '5.32x', spend: '$4,231', trend: '↑ 11.2%', status: 'active', color: '#10b981' },
+      { name: 'Promoção Verão 2025', roas: '8.92x', spend: '$12.432', trend: '↑ 23,1%', status: 'ativo', color: '#10b981' },
+      { name: 'Reconhecimento de Marca', roas: '6.45x', spend: '$8.231', trend: '↑ 15,3%', status: 'ativo', color: '#10b981' },
+      { name: 'Lançamento de Produto', roas: '9.78x', spend: '$15.231', trend: '↑ 28,7%', status: 'ativo', color: '#10b981' },
+      { name: 'Retargeting T2', roas: '7.12x', spend: '$6.231', trend: '↑ 19,8%', status: 'ativo', color: '#10b981' },
+      { name: 'Captação de Leads', roas: '5.32x', spend: '$4.231', trend: '↑ 11,2%', status: 'ativo', color: '#10b981' },
     ];
     return list;
   }, []);
@@ -395,19 +395,19 @@ export default function HubDashboard() {
   // 5. Live Activities list
   const liveActivities = useMemo(() => {
     return [
-      { logo: 'G', platform: 'Google Ads', time: '5s ago', detail: 'New conversion', value: '$128.50 revenue', color: '#10b981' },
-      { logo: 'T', platform: 'TikTok Ads', time: '8s ago', detail: 'Campaign optimized', value: 'ROAS improved by 12%', color: '#f59e0b' },
-      { logo: 'F', platform: 'Facebook Ads', time: '12s ago', detail: 'New lead captured', value: 'Value: $34.00', color: '#10b981' },
-      { logo: 'I', platform: 'Instagram Ads', time: '18s ago', detail: 'Ad set paused', value: 'High CPA detected', color: '#ef4444' },
-      { logo: 'E', platform: 'Email Marketing', time: '22s ago', detail: 'New subscriber', value: 'Added to nurture flow', color: '#6b7280' },
-      { logo: 'Y', platform: 'YouTube Ads', time: '27s ago', detail: 'Video completed', value: '75% completion rate', color: '#10b981' },
-      { logo: 'G', platform: 'Google Ads', time: '31s ago', detail: 'Bid adjustment', value: 'Increase by 15%', color: '#10b981' },
-      { logo: 'T', platform: 'TikTok Ads', time: '36s ago', detail: 'New conversion', value: '$89.90 revenue', color: '#10b981' },
+      { logo: 'G', platform: 'Google Ads', time: 'há 5s', detail: 'Nova conversão', value: 'Receita: R$ 128,50', color: '#10b981' },
+      { logo: 'T', platform: 'TikTok Ads', time: 'há 8s', detail: 'Campanha otimizada', value: 'ROAS melhorou 12%', color: '#f59e0b' },
+      { logo: 'F', platform: 'Facebook Ads', time: 'há 12s', detail: 'Novo lead capturado', value: 'Valor: R$ 34,00', color: '#10b981' },
+      { logo: 'I', platform: 'Instagram Ads', time: 'há 18s', detail: 'Conjunto pausado', value: 'CPA elevado detectado', color: '#ef4444' },
+      { logo: 'E', platform: 'E-mail Marketing', time: 'há 22s', detail: 'Novo inscrito', value: 'Adicionado ao funil de nutrição', color: '#6b7280' },
+      { logo: 'Y', platform: 'YouTube Ads', time: 'há 27s', detail: 'Vídeo concluído', value: 'Taxa de conclusão: 75%', color: '#10b981' },
+      { logo: 'G', platform: 'Google Ads', time: 'há 31s', detail: 'Ajuste de lance', value: 'Aumento de 15%', color: '#10b981' },
+      { logo: 'T', platform: 'TikTok Ads', time: 'há 36s', detail: 'Nova conversão', value: 'Receita: R$ 89,90', color: '#10b981' },
     ];
   }, []);
 
   return (
-    <div className="min-h-screen w-full pl-20 pr-4 md:pr-8 py-6 text-white font-sans overflow-y-auto" style={{ fontFamily: "'Inter', 'DM Sans', sans-serif" }}>
+    <div className="min-h-screen w-full pl-28 pr-6 md:pr-10 py-6 text-white font-sans overflow-y-auto" style={{ fontFamily: "'Inter', 'DM Sans', sans-serif" }}>
       
       {/* Header Panel */}
       <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-6">
@@ -417,10 +417,10 @@ export default function HubDashboard() {
           </div>
           <div>
             <h1 className="text-xl font-black tracking-tight text-white leading-none">
-              NeuroAds Campaign Center
+              NeuroAds Central de Campanhas
             </h1>
             <p className="text-[12px] font-semibold text-[#7eb8d4]/80 mt-1 uppercase tracking-widest">
-              Live Attribution Dashboard
+              Painel de Atribuição em Tempo Real
             </p>
           </div>
         </div>
@@ -450,12 +450,12 @@ export default function HubDashboard() {
       {/* KPI Cards Row */}
       <section className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
         {([
-          { label: 'Total Spend', value: formatCurrencyCompact(stats.spend), trend: '↑ 12.45%', spark: [20,24,22,28,26,30,29], sparkColor: '#f59e0b', tip: 'Custo acumulado de mídia paga ativa', hasVal: stats.spend !== 'N/A' },
-          { label: 'Total Revenue', value: formatCurrencyCompact(stats.revenue), trend: '↑ 18.72%', spark: [150,160,155,170,185,178,192], sparkColor: '#22c55e', tip: 'Faturamento total rastreado pelo GA4', hasVal: stats.revenue !== 'N/A' },
-          { label: 'ROAS', value: formatROAS(stats.roas), trend: '↑ 5.35%', spark: [6.8,7.1,7.0,7.4,7.2,7.5,7.4], sparkColor: '#22c55e', tip: 'Retorno sobre investimento em anúncios', hasVal: stats.roas !== 'N/A', green: true },
-          { label: 'Conversões', value: formatNumber(stats.conversions), trend: '↑ 14.98%', spark: [1200,1300,1280,1400,1450,1390,1480], sparkColor: '#22c55e', tip: 'Volume total de transações integradas', hasVal: stats.conversions !== 'N/A' },
-          { label: 'CPA', value: formatCurrencyCompact(stats.cpa), trend: '↓ 8.21%', spark: [15,14.5,14.8,13.9,13.8,13.6,13.4], sparkColor: '#22c55e', tip: 'Custo Médio por Aquisição', hasVal: stats.cpa !== 'N/A' },
-          { label: 'AOV', value: formatCurrencyCompact(stats.aov), trend: '↑ 3.12%', spark: [96,97,98,99,99.5,100,100.18], sparkColor: '#22c55e', tip: 'Ticket Médio de Venda', hasVal: stats.aov !== 'N/A' },
+          { label: 'Investimento Total', value: formatCurrencyCompact(stats.spend), trend: '↑ 12,45%', spark: [20,24,22,28,26,30,29], sparkColor: '#f59e0b', tip: 'Custo acumulado de mídia paga ativa', hasVal: stats.spend !== 'N/A' },
+          { label: 'Receita Total', value: formatCurrencyCompact(stats.revenue), trend: '↑ 18,72%', spark: [150,160,155,170,185,178,192], sparkColor: '#22c55e', tip: 'Faturamento total rastreado pelo GA4', hasVal: stats.revenue !== 'N/A' },
+          { label: 'ROAS', value: formatROAS(stats.roas), trend: '↑ 5,35%', spark: [6.8,7.1,7.0,7.4,7.2,7.5,7.4], sparkColor: '#22c55e', tip: 'Retorno sobre investimento em anúncios', hasVal: stats.roas !== 'N/A', green: true },
+          { label: 'Conversões', value: formatNumber(stats.conversions), trend: '↑ 14,98%', spark: [1200,1300,1280,1400,1450,1390,1480], sparkColor: '#22c55e', tip: 'Volume total de transações integradas', hasVal: stats.conversions !== 'N/A' },
+          { label: 'CPA', value: formatCurrencyCompact(stats.cpa), trend: '↓ 8,21%', spark: [15,14.5,14.8,13.9,13.8,13.6,13.4], sparkColor: '#22c55e', tip: 'Custo Médio por Aquisição', hasVal: stats.cpa !== 'N/A' },
+          { label: 'Ticket Médio', value: formatCurrencyCompact(stats.aov), trend: '↑ 3,12%', spark: [96,97,98,99,99.5,100,100.18], sparkColor: '#22c55e', tip: 'Ticket Médio de Venda', hasVal: stats.aov !== 'N/A' },
         ] as const).map((card) => (
           <article key={card.label} className="rounded-2xl border border-white/[0.10] bg-[#071a2e]/82 p-4 backdrop-blur-xl relative group hover:border-white/[0.18] hover:bg-[#071a2e]/90 transition-all duration-200 shadow-[0_8px_32px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-start mb-2">
@@ -486,7 +486,7 @@ export default function HubDashboard() {
           <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
               <h2 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
-                Channel Performance
+                Desempenho por Canal
               </h2>
               <select className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-0.5 text-[11px] text-white/80 cursor-pointer">
                 <option>ROAS</option>
@@ -526,7 +526,7 @@ export default function HubDashboard() {
           {/* Audience Insights */}
           <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <h2 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5">
-              Audience Insights
+              Insights de Audiência
             </h2>
 
             {isGa4Connected ? (
@@ -618,7 +618,7 @@ export default function HubDashboard() {
             <div className="flex justify-between items-center mb-5">
               <div>
                 <h2 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
-                  Performance Trend
+                  Tendência de Performance
                 </h2>
                 <p className="text-[11px] text-white/40 mt-0.5">Histórico de rendimento de ROI</p>
               </div>
@@ -691,90 +691,13 @@ export default function HubDashboard() {
             </div>
           </section>
 
-          {/* Row: Real-time Performance & Budget Allocation (Side-by-Side) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            {/* Real-time Performance */}
-            <article className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
-              <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
-                <h3 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
-                  Performance em Tempo Real
-                </h3>
-                <select className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
-                  <option>Últimos 30 min</option>
-                </select>
-              </div>
-              
-              <div className="space-y-3">
-                {realTimePerformanceData.map((row) => (
-                  <div key={row.label} className="flex justify-between items-center">
-                    <span className="text-[12px] font-semibold text-white/65">{row.label}</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-[13px] font-black text-white">{row.value}</span>
-                      <div className="w-[50px] flex justify-end">
-                        {stats.spend !== 'N/A' ? (
-                          renderSparkline(row.spark, '#22c55e', 50, 16)
-                        ) : (
-                          <div className="w-10 h-px bg-white/10" />
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </article>
 
-            {/* Budget Allocation */}
-            <article className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
-              <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
-                <h3 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
-                  Budget Allocation
-                </h3>
-                <span title="Distribuição do investimento real por canal de mídia ativo">
-                  <Info className="h-3.5 w-3.5 text-white/30 hover:text-white/70 cursor-pointer transition-colors" />
-                </span>
-              </div>
-              
-              <div className="flex items-center gap-6">
-                {/* Visual donut slice */}
-                <div className="relative h-20 w-20 flex items-center justify-center rounded-full border-4 border-emerald-500/10">
-                  <div className="absolute inset-0 rounded-full border-4 border-emerald-400 border-t-transparent border-r-transparent rotate-[120deg]" />
-                  <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent border-l-transparent rotate-[300deg]" />
-                  <div className="flex flex-col items-center">
-                    <span className="text-[8px] font-bold text-[#8fa0b5] uppercase">Total</span>
-                    <span className="text-[10px] font-black text-emerald-400">
-                      {formatCurrencyCompact(stats.spend, '$')}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-2 flex-grow">
-                  {budgetAllocationData.map((item) => (
-                    <div key={item.label} className="flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color, boxShadow: `0 0 5px ${item.color}80` }} />
-                        <span className="text-[12px] text-white/70 font-medium">{item.label}</span>
-                      </div>
-                      <span className="text-[13px] font-black text-white">
-                        {stats.spend !== 'N/A' ? `${item.pct.toFixed(1)}%` : 'N/A'}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <Link href="/hub/conectores" className="mt-4 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors">
-                Ver relatório de budget →
-              </Link>
-            </article>
-
-          </div>
 
           {/* Top Campaigns */}
           <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
               <h3 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
-                Top Campaigns
+                Melhores Campanhas
               </h3>
               <select className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
                 <option>ROAS</option>
@@ -816,16 +739,73 @@ export default function HubDashboard() {
 
         </div>
 
-        {/* Right Column: Live Data Feed (Span 3) */}
-        <div className="xl:col-span-3">
-          <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)] h-[90vh] flex flex-col">
+        {/* Right Column: Notificações + Feed + Performance + Alocação (Span 3) */}
+        <div className="xl:col-span-3 flex flex-col gap-6">
+
+          {/* Notificações */}
+          <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+            <h2 className="text-[13px] font-black text-emerald-400 uppercase tracking-widest mb-4 flex items-center gap-2 border-b border-white/[0.08] pb-2.5">
+              <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
+              Notificações
+            </h2>
+
+            <div className="space-y-2.5">
+              {/* GA4 warning */}
+              {!isGa4Connected && (
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-200/90 leading-relaxed">
+                  <strong>GA4 desativado:</strong> Métricas de faturamento e audiência indisponíveis.{' '}
+                  <Link href="/hub/conectores" className="underline font-bold text-white hover:text-emerald-400">Conectar</Link>
+                </div>
+              )}
+
+              {/* Google Ads warning */}
+              {!isGoogleAdsConnected && (
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-200/90 leading-relaxed">
+                  <strong>Google Ads desativado:</strong> Custo de mídia e cliques não consolidados.{' '}
+                  <Link href="/hub/conectores" className="underline font-bold text-white hover:text-emerald-400">Ativar</Link>
+                </div>
+              )}
+
+              {/* Meta Ads warning */}
+              {!isMetaAdsConnected && (
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-200/90 leading-relaxed">
+                  <strong>Meta Ads desativado:</strong> Investimento e conversões do ecossistema Meta ausentes.{' '}
+                  <Link href="/hub/conectores" className="underline font-bold text-white hover:text-emerald-400">Ativar</Link>
+                </div>
+              )}
+
+              {/* TikTok Ads warning */}
+              {!isTiktokAdsConnected && (
+                <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-3 text-xs text-amber-200/90 leading-relaxed">
+                  <strong>TikTok Ads desativado:</strong> Métricas de investimento não ativas.{' '}
+                  <Link href="/hub/conectores" className="underline font-bold text-white hover:text-emerald-400">Vincular</Link>
+                </div>
+              )}
+
+              {/* Twitter / Snapchat info */}
+              <div className="rounded-xl border border-white/5 bg-slate-900/40 p-3 text-xs text-[#8fa0b5]/90 leading-relaxed">
+                <strong>Twitter / Snapchat:</strong> Sem suporte de sync automático — indicadores exibem N/A permanentemente.
+              </div>
+
+              {/* Success */}
+              {isGa4Connected && isGoogleAdsConnected && isMetaAdsConnected && (
+                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-3 text-xs text-emerald-200/90 flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+                  Operação central integrada! GA4, Google Ads e Meta Ads carregando em tempo real.
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* Feed de Atividade ao Vivo — exibe exatamente 7 itens sem scroll */}
+          <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <h2 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5 flex items-center justify-between">
-              Live Data Feed
+              Feed de Atividade ao Vivo
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
             </h2>
 
-            <div className="flex-grow space-y-3.5 overflow-y-auto pr-1">
-              {liveActivities.map((act, idx) => (
+            <div className="space-y-3.5">
+              {liveActivities.slice(0, 7).map((act, idx) => (
                 <article key={idx} className="border-b border-white/[0.06] pb-3 last:border-0">
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-[11px] font-black uppercase tracking-wide" style={{ color: act.color }}>
@@ -843,60 +823,84 @@ export default function HubDashboard() {
               Ver toda a atividade →
             </Link>
           </section>
+
+          {/* Performance em Tempo Real */}
+          <article className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+            <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
+              <h3 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
+                Performance em Tempo Real
+              </h3>
+              <select className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
+                <option>Últimos 30 min</option>
+              </select>
+            </div>
+
+            <div className="space-y-3">
+              {realTimePerformanceData.map((row) => (
+                <div key={row.label} className="flex justify-between items-center">
+                  <span className="text-[12px] font-semibold text-white/75">{row.label}</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-[13px] font-black text-white">{row.value}</span>
+                    <div className="w-[50px] flex justify-end">
+                      {stats.spend !== 'N/A' ? (
+                        renderSparkline(row.spark, '#22c55e', 50, 16)
+                      ) : (
+                        <div className="w-10 h-px bg-white/10" />
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          {/* Alocação de Orçamento */}
+          <article className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+            <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
+              <h3 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
+                Alocação de Orçamento
+              </h3>
+              <span title="Distribuição do investimento real por canal de mídia ativo">
+                <Info className="h-3.5 w-3.5 text-white/30 hover:text-white/70 cursor-pointer transition-colors" />
+              </span>
+            </div>
+
+            <div className="flex items-center gap-6">
+              {/* Visual donut slice */}
+              <div className="relative h-20 w-20 flex items-center justify-center rounded-full border-4 border-emerald-500/20">
+                <div className="absolute inset-0 rounded-full border-4 border-emerald-400 border-t-transparent border-r-transparent rotate-[120deg]" />
+                <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent border-l-transparent rotate-[300deg]" />
+                <div className="flex flex-col items-center">
+                  <span className="text-[8px] font-bold text-white/60 uppercase">Total</span>
+                  <span className="text-[10px] font-black text-emerald-400">
+                    {formatCurrencyCompact(stats.spend, '$')}
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-2 flex-grow">
+                {budgetAllocationData.map((item) => (
+                  <div key={item.label} className="flex justify-between items-center">
+                    <div className="flex items-center gap-2">
+                      <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color, boxShadow: `0 0 5px ${item.color}80` }} />
+                      <span className="text-[12px] text-white/80 font-medium">{item.label}</span>
+                    </div>
+                    <span className="text-[13px] font-black text-white">
+                      {stats.spend !== 'N/A' ? `${item.pct.toFixed(1)}%` : 'N/A'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Link href="/hub/conectores" className="mt-4 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors">
+              Ver relatório de budget →
+            </Link>
+          </article>
+
         </div>
 
       </div>
-
-      {/* Observations and Actionable Insights Panel */}
-      <section className="mt-8 rounded-[24px] border border-white/[0.10] bg-[#071a2e]/85 p-6 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
-        <h3 className="text-sm font-black text-emerald-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-          <AlertTriangle className="h-4 w-4 text-amber-500" />
-          Observações & Diagnóstico de Conexões
-        </h3>
-        
-        <div className="space-y-3">
-          {/* GA4 warning */}
-          {!isGa4Connected && (
-            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs text-amber-200/90 leading-relaxed">
-              <strong>Google Analytics 4 desativado:</strong> As métricas estruturais de faturamento real (<em>Total Revenue</em>, <em>ROAS</em>, <em>Conversões</em> e <em>AOV</em>) e de audiência não puderam ser carregadas. Acesse a aba <Link href="/hub/conectores" className="underline font-bold text-white hover:text-emerald-400">Conectores</Link> para autenticar a API do GA4 e corrigir o problema.
-            </div>
-          )}
-
-          {/* Google Ads warning */}
-          {!isGoogleAdsConnected && (
-            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs text-amber-200/90 leading-relaxed">
-              <strong>Google Ads API desativado:</strong> O custo de mídia real (<em>Total Spend</em>) e cliques das campanhas Google Ads não estão consolidados neste painel. Vá até o painel de conectores para autorizar a integração.
-            </div>
-          )}
-
-          {/* Meta Ads warning */}
-          {!isMetaAdsConnected && (
-            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs text-amber-200/90 leading-relaxed">
-              <strong>Meta Ads (Facebook/Instagram) desativado:</strong> O investimento real e conversões orgânicas/pagas do ecossistema Meta estão ausentes. Ative o conector correspondente para incluir estas informações.
-            </div>
-          )}
-
-          {/* TikTok Ads warning */}
-          {!isTiktokAdsConnected && (
-            <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs text-amber-200/90 leading-relaxed">
-              <strong>TikTok Ads desativado:</strong> As métricas de investimento no TikTok Ads não estão ativas na conta. Vincule a conta TikTok Ads para preencher o painel.
-            </div>
-          )}
-
-          {/* Unsupported connectors note */}
-          <div className="rounded-xl border border-white/5 bg-slate-900/40 p-4 text-xs text-[#8fa0b5]/90 leading-relaxed">
-            <strong>Canais Não Integráveis (Twitter / Snapchat):</strong> Twitter Ads (X Ads) e Snapchat Ads não possuem suporte de sincronização automática de relatórios na versão atual. Por esse motivo, seus indicadores nos widgets exibem **N/A** permanentemente.
-          </div>
-
-          {/* Success note if all core are active */}
-          {isGa4Connected && isGoogleAdsConnected && isMetaAdsConnected && (
-            <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4 text-xs text-emerald-200/90 flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-              Sua operação central está perfeitamente integrada! Todos os custos de mídia de Google Ads, Meta Ads e relatórios de receita do GA4 estão sendo carregados dinamicamente em tempo real.
-            </div>
-          )}
-        </div>
-      </section>
     </div>
   );
 }
