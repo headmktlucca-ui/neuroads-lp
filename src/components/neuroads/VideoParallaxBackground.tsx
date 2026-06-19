@@ -80,8 +80,7 @@ export default function VideoParallaxBackground({
           className="absolute inset-0 w-full h-full object-cover pointer-events-none will-change-transform"
         />
       </div>
-      {/* Darkening black overlay to ensure high text contrast */}
-      <div className={`absolute inset-0 ${overlayOpacity} pointer-events-none z-20`} />
+      {/* Overlay removed — full video visibility */}
     </div>
   );
 }

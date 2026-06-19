@@ -279,160 +279,179 @@ export default function Suggestion5LandingPage() {
       </div>
 
       {/* HERO SECTION WITH STORYTELLING NARRATIVE */}
-      <section className="relative w-full min-h-[90vh] flex items-center justify-center z-10 pt-[115px] pb-10 md:pb-20 overflow-hidden bg-transparent">
-        <VideoParallaxBackground src="/videos/abertura_full.mp4" overlayOpacity="bg-black/60" />
-        
+      <section className="relative w-full min-h-[90vh] flex items-end z-10 pt-[115px] pb-16 md:pb-24 overflow-hidden bg-transparent">
+        <VideoParallaxBackground src="/videos/VD_Full.mp4" overlayOpacity="bg-black/60" />
+
+        {/* Subtle left-side readability gradient — doesn't block video, just anchors text */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent z-[1] pointer-events-none" />
+
         {/* Cinematic Fade into next section */}
-        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-[#03060c] to-transparent z-0 pointer-events-none" />
-        
-        <div className="relative z-10 mx-auto max-w-[1260px] px-5 md:px-8">
-          <div className="rounded-[32px] border border-white/5 bg-zinc-950/50 backdrop-blur-md p-8 sm:p-12 shadow-[0_18px_48px_rgba(0,0,0,0.5)] transition-[box-shadow,border-color] duration-300">
-            <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] items-center">
-              
-              <div className="relative z-10">
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#03060c] to-transparent z-[1] pointer-events-none" />
 
-            <h1 className="text-[34px] font-black leading-[1.2] tracking-tight text-white">
-              Transforme dados em Receita:
-              <br />
-              <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(255,106,0,0.4)]">
-                Automações Inteligentes
-              </span>
-              {' '}para
-              <br />
-              <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(255,106,0,0.4)]">
-                Marketing & Vendas
-              </span>
-              {' '}de
-              <br />
-              <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent drop-shadow-[0_0_25px_rgba(255,106,0,0.4)]">
-                ALTA PERFORMANCE.
-              </span>
-            </h1>
-            <p className="mt-6 text-[15px] sm:text-lg text-slate-300 leading-relaxed max-w-[540px]">
-              Agentes de IA que orquestram dados, mídia e criatividade para gerar resultados consistentes e escaláveis.
-            </p>
+        <div className="relative z-10 mx-auto max-w-[1260px] w-full px-5 md:px-8">
+          <div className="flex items-end gap-0">
 
-            <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-4">
-              <button
-                type="button"
-                onClick={handleOpenSpecialistChat}
-                className="w-full sm:w-auto justify-center inline-flex items-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_20px_rgba(255,106,0,0.4)] cursor-pointer"
-              >
-                Fale com um especialista
-                <ArrowRight size={16} />
-              </button>
-              <button 
-                type="button" 
-                onClick={handleRequestDemo} 
-                className="w-full sm:w-auto justify-center inline-flex items-center gap-2 rounded-full border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/10 transition-all px-6 py-4 text-[14px] font-bold cursor-pointer"
-              >
-                Solicite Demonstração
-                <ArrowRight size={16} />
-              </button>
-            </div>
-            
-            <div className="mt-10 flex flex-col sm:flex-row flex-wrap gap-6 border-t border-white/10 pt-8">
-              <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#ff6a00]/10 text-[#ff8f3a] border border-[#ff6a00]/20">
-                  <Cpu size={18} />
-                </span>
+            {/* LEFT 60% — headline + subtitle */}
+            <div className="flex-[6] pr-8 lg:pr-12">
+              {/* Orange vertical accent bar */}
+              <div className="flex items-start gap-5">
+                <div className="w-[3px] self-stretch bg-[#ff6a00] rounded-full shrink-0 mt-1" />
                 <div>
-                  <p className="text-sm font-bold text-white leading-none">IA Agêntica</p>
-                  <p className="text-xs text-slate-400 mt-1.5">Autônoma e orientada a metas</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#ff6a00]/10 text-[#ff8f3a] border border-[#ff6a00]/20">
-                  <TrendingUp size={18} />
-                </span>
-                <div>
-                  <p className="text-sm font-bold text-white leading-none">Dados em tempo real</p>
-                  <p className="text-xs text-slate-400 mt-1.5">Decisões baseadas em sinal</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#ff6a00]/10 text-[#ff8f3a] border border-[#ff6a00]/20">
-                  <Target size={18} />
-                </span>
-                <div>
-                  <p className="text-sm font-bold text-white leading-none">Resultados mensuráveis</p>
-                  <p className="text-xs text-slate-400 mt-1.5">Foco no que importa</p>
+                  <h1 className="text-[40px] sm:text-[52px] lg:text-[60px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
+                    Transforme dados em Receita:
+                    <br />
+                    <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
+                      Automações Inteligentes
+                    </span>
+                    {' '}para
+                    <br />
+                    <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
+                      Marketing &amp; Vendas
+                    </span>
+                    {' '}de
+                    <br />
+                    <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
+                      ALTA PERFORMANCE.
+                    </span>
+                  </h1>
+                  <p className="mt-5 text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-[520px] drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
+                    Agentes de IA que orquestram dados, mídia e criatividade para gerar resultados consistentes e escaláveis.
+                  </p>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Interactive Hero Graphic */}
-          <div className="relative z-10 flex justify-center items-center h-[360px] sm:h-[450px]">
-            <div className="absolute inset-0 bg-[#ff6a00]/5 rounded-[30px] filter blur-[40px] pointer-events-none" />
-            
-            <div className="relative w-full max-w-[420px] p-6 overflow-hidden">
-              {/* Graphic Title */}
-              <div className="flex items-center justify-between border-b border-[#ff6a00]/15 pb-4 mb-6">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ff6a00] animate-ping" />
-                  <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Hub Operacional - Automações</span>
+            {/* 1px Orange Divider */}
+            <div className="hidden lg:block w-px self-stretch bg-[#ff6a00]/50 shrink-0 mx-4" />
+
+            {/* RIGHT 40% — CTAs + feature badges */}
+            <div className="flex-[4] pl-4 lg:pl-10 flex flex-col gap-6 items-start">
+              {/* CTAs stacked vertically */}
+              <div className="flex flex-col gap-3 w-full max-w-[280px]">
+                <button
+                  type="button"
+                  onClick={handleOpenSpecialistChat}
+                  className="w-full justify-center inline-flex items-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_24px_rgba(255,106,0,0.45)] cursor-pointer"
+                >
+                  Fale com um especialista
+                  <ArrowRight size={16} />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleRequestDemo}
+                  className="w-full justify-center inline-flex items-center gap-2 rounded-full border border-white/30 hover:border-white/50 bg-white/10 hover:bg-white/15 transition-all px-6 py-4 text-[14px] font-bold cursor-pointer backdrop-blur-sm"
+                >
+                  Solicite Demonstração
+                  <ArrowRight size={16} />
+                </button>
+              </div>
+
+              {/* Feature badges — vertical list */}
+              <div className="flex flex-col gap-4 border-t border-white/15 pt-5 w-full">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
+                    <Cpu size={16} />
+                  </span>
+                  <div>
+                    <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">IA Agêntica</p>
+                    <p className="text-[10px] text-white/60 mt-1">Autônoma e orientada a metas</p>
+                  </div>
                 </div>
-                <div className="text-[10px] text-slate-500 font-mono">STATUS: ATIVO</div>
+                <div className="flex items-center gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
+                    <TrendingUp size={16} />
+                  </span>
+                  <div>
+                    <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Dados em tempo real</p>
+                    <p className="text-[10px] text-white/60 mt-1">Decisões baseadas em sinal</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
+                    <Target size={16} />
+                  </span>
+                  <div>
+                    <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Resultados mensuráveis</p>
+                    <p className="text-[10px] text-white/60 mt-1">Foco no que importa</p>
+                  </div>
+                </div>
               </div>
- 
-              {/* Floating nodes with Framer Motion Layout */}
-              <div className="space-y-3 relative z-10 flex flex-col overflow-hidden h-[380px] pr-2 mask-image-bottom-fade">
-                <AnimatePresence initial={false}>
-                  {visibleLogs.map((log) => (
-                    <motion.div 
-                      layout
-                      key={log.uniqueId}
-                      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: -20, scale: 0.95, transition: { duration: 0.2 } }}
-                      transition={{ duration: 0.4 }}
-                      className="flex items-center gap-4 p-3.5 rounded-[16px] bg-zinc-900/40 border border-white/5 w-full shrink-0"
-                    >
-                      <div className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-br from-[#ff6a00]/20 to-amber-500/10 flex items-center justify-center border border-[#ff6a00]/30 text-[#ff8f3a]">
-                        <log.icon size={20} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-bold text-white truncate">{log.title}</p>
-                        <p className="text-[10px] text-slate-400 line-clamp-1">{log.subtitle}</p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <span className={`text-xs font-bold ${log.color}`}>{log.value}</span>
-                      </div>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
- 
-              {/* Animated visual flow line on back */}
-              <div className="absolute left-[36px] top-[70px] bottom-[50px] w-[2px] bg-gradient-to-b from-[#ff6a00] via-amber-500/50 to-emerald-500 opacity-30 pointer-events-none" />
             </div>
-          </div>
-            </div>
+
           </div>
         </div>
       </section>
+
 
         {/* NARRATIVE SECTION: COMO FUNCIONA? */}
         <section className="relative z-10 py-24 px-5 md:px-8 bg-[#03060c] w-full overflow-hidden">
           
           <div className="relative z-10 mx-auto max-w-[1260px]">
-          <div className="text-center max-w-[760px] mx-auto mb-16">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">COMO FUNCIONA?</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">
-              Os Agentes da NeuroAds transformam dados em decisões estratégicas.
-            </h2>
-            <p className="text-slate-300 mt-6 text-sm leading-relaxed">
-              Os Agentes da NeuroAds analisam o comportamento dos seus clientes atuais, identificam os fatores que impulsionam vendas e criam um insights detalhados das oportunidades de posicionamento e receita.
-            </p>
-            <p className="text-slate-300 mt-4 text-sm leading-relaxed">
-              Ao comparar o perfil dos seus melhores clientes com o perfil ideal de mercado, os agentes encontram padrões valiosos que orientam ações de marketing, comunicação e posicionamento. Dessa forma, sua empresa deixa de trabalhar com suposições e passa a construir autoridade com base em inteligência de dados.
-            </p>
+            <div className="grid gap-12 lg:grid-cols-2 items-center">
+
+              {/* Left column: text content */}
+              <div>
+                <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">COMO FUNCIONA?</span>
+                <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">
+                  Os Agentes da NeuroAds transformam dados em decisões estratégicas.
+                </h2>
+                <p className="text-slate-300 mt-6 text-sm leading-relaxed">
+                  Os Agentes da NeuroAds analisam o comportamento dos seus clientes atuais, identificam os fatores que impulsionam vendas e criam um insights detalhados das oportunidades de posicionamento e receita.
+                </p>
+                <p className="text-slate-300 mt-4 text-sm leading-relaxed">
+                  Ao comparar o perfil dos seus melhores clientes com o perfil ideal de mercado, os agentes encontram padrões valiosos que orientam ações de marketing, comunicação e posicionamento. Dessa forma, sua empresa deixa de trabalhar com suposições e passa a construir autoridade com base em inteligência de dados.
+                </p>
+              </div>
+
+              {/* Right column: interactive Hub Operacional feed */}
+              <div className="relative flex justify-center items-start">
+                <div className="absolute inset-0 bg-[#ff6a00]/5 rounded-[30px] filter blur-[40px] pointer-events-none" />
+                <div className="relative w-full max-w-[420px] p-6 overflow-hidden rounded-[24px] border border-white/5 bg-zinc-950/60 backdrop-blur-md">
+                  {/* Widget Title */}
+                  <div className="flex items-center justify-between border-b border-[#ff6a00]/15 pb-4 mb-6">
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#ff6a00] animate-ping" />
+                      <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Hub Operacional - Automações</span>
+                    </div>
+                    <div className="text-[10px] text-slate-500 font-mono">STATUS: ATIVO</div>
+                  </div>
+
+                  {/* Animated log feed */}
+                  <div className="space-y-3 relative z-10 flex flex-col overflow-hidden h-[380px] pr-2 mask-image-bottom-fade">
+                    <AnimatePresence initial={false}>
+                      {visibleLogs.map((log) => (
+                        <motion.div 
+                          layout
+                          key={log.uniqueId}
+                          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                          animate={{ opacity: 1, y: 0, scale: 1 }}
+                          exit={{ opacity: 0, y: -20, scale: 0.95, transition: { duration: 0.2 } }}
+                          transition={{ duration: 0.4 }}
+                          className="flex items-center gap-4 p-3.5 rounded-[16px] bg-zinc-900/40 border border-white/5 w-full shrink-0"
+                        >
+                          <div className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-br from-[#ff6a00]/20 to-amber-500/10 flex items-center justify-center border border-[#ff6a00]/30 text-[#ff8f3a]">
+                            <log.icon size={20} />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-bold text-white truncate">{log.title}</p>
+                            <p className="text-[10px] text-slate-400 line-clamp-1">{log.subtitle}</p>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <span className={`text-xs font-bold ${log.color}`}>{log.value}</span>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Animated vertical flow line */}
+                  <div className="absolute left-[36px] top-[70px] bottom-[50px] w-[2px] bg-gradient-to-b from-[#ff6a00] via-amber-500/50 to-emerald-500 opacity-30 pointer-events-none" />
+                </div>
+              </div>
+
+            </div>
           </div>
-
-
-        </div>
-      </section>
+        </section>
 
       {/* HUB ESTRATÉGICO (ex-INTERACTIVE AGENT ASSEMBLY CONTROL ROOM) */}
       <section id="control-room" className="relative z-10 overflow-hidden py-16 w-full px-5 md:px-8">
