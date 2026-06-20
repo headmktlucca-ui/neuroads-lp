@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,16 +14,32 @@ import {
   Check,
   AlertCircle,
   Cpu,
-  Sparkles,
   Zap,
-  ChevronRight,
-  TrendingDown
+  ChevronRight
 } from 'lucide-react';
 import { agents as catalogAgents, type Agent as CatalogAgent } from '../../data/agents';
 import LuccaSpecialistChatModal from './LuccaSpecialistChatModal';
 import LuccaEmbeddedChat from './LuccaEmbeddedChat';
 import PrimaryTopMenu from './PrimaryTopMenu';
 import ValuesResourcesSection from './ValuesResourcesSection';
+import Lenis from 'lenis';
+
+const revealVariants = {
+  hidden: {
+    opacity: 0,
+    y: 40,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      stiffness: 50,
+      damping: 15,
+      duration: 0.6,
+    }
+  }
+};
 
 const testimonials = [
   {
@@ -123,22 +139,29 @@ export default function Suggestion5LandingPage() {
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [isLuccaChatOpen, setIsLuccaChatOpen] = useState(false);
   const [luccaAutoMessage, setLuccaAutoMessage] = useState<string | null>(null);
-  const [visibleLogs, setVisibleLogs] = useState(() => 
-    ALL_LOGS.slice(0, 5).map((log, i) => ({ ...log, uniqueId: `initial-${i}` }))
-  );
-
+  // Mobile responsive hook removed as 3D transforms are disabled
   useEffect(() => {
-    let index = 5;
-    const interval = setInterval(() => {
-      setVisibleLogs((prev) => {
-        const nextLog = ALL_LOGS[index % ALL_LOGS.length];
-        index++;
-        // Add to bottom, remove the oldest (top) one, assigning a guaranteed unique ID
-        return [...prev.slice(1, 5), { ...nextLog, uniqueId: `log-${Date.now()}-${index}` }];
-      });
-    }, 3500);
-    return () => clearInterval(interval);
+    const lenis = new Lenis({
+      duration: 0.8,
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.1,
+    });
+
+    let frameId: number;
+    function raf(time: number) {
+      lenis.raf(time);
+      frameId = requestAnimationFrame(raf);
+    }
+    frameId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      lenis.destroy();
+    };
   }, []);
+  // No parallax or spring bindings
   
   // Slots states
   const [slots, setSlots] = useState<{
@@ -196,6 +219,7 @@ export default function Suggestion5LandingPage() {
   }, []);
 
   // Calculate dynamic simulator metrics based on slots
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const metrics = useMemo(() => {
     let roas = 1.2;
     let cpl = 45.0;
@@ -281,11 +305,11 @@ export default function Suggestion5LandingPage() {
       <section className="relative w-full min-h-[90vh] flex items-end z-10 pt-[115px] pb-16 md:pb-24 overflow-hidden bg-transparent">
         <div className="absolute inset-0 z-0 w-full h-full overflow-hidden bg-[#040811] pointer-events-none">
           <Image
-            src="/images/backgrounds/fundo_hub.jpeg"
+            src="/images/backgrounds/wall01.png"
             alt="Fundo Hub"
             fill
             priority
-            className="object-cover object-center opacity-40"
+            className="object-cover object-center"
           />
         </div>
 
@@ -394,7 +418,13 @@ export default function Suggestion5LandingPage() {
         {/* NARRATIVE SECTION: COMO FUNCIONA? */}
         <section className="relative z-10 py-24 px-5 md:px-8 bg-[#03060c] w-full overflow-hidden">
           
-          <div className="relative z-10 mx-auto max-w-[1260px]">
+          <motion.div
+            variants={revealVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-120px" }}
+            className="relative z-10 mx-auto max-w-[1260px]"
+          >
             <div className="grid gap-12 lg:grid-cols-2 items-center">
 
               {/* Left column: text content */}
@@ -418,38 +448,31 @@ export default function Suggestion5LandingPage() {
                   {/* Widget Title */}
                   <div className="flex items-center justify-between border-b border-[#ff6a00]/15 pb-4 mb-6">
                     <div className="flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-[#ff6a00] animate-ping" />
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#ff6a00]" />
                       <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Hub Operacional - Automações</span>
                     </div>
                     <div className="text-[10px] text-slate-500 font-mono">STATUS: ATIVO</div>
                   </div>
 
-                  {/* Animated log feed */}
+                  {/* Static log feed */}
                   <div className="space-y-3 relative z-10 flex flex-col overflow-hidden h-[380px] pr-2 mask-image-bottom-fade">
-                    <AnimatePresence initial={false}>
-                      {visibleLogs.map((log) => (
-                        <motion.div 
-                          layout
-                          key={log.uniqueId}
-                          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                          animate={{ opacity: 1, y: 0, scale: 1 }}
-                          exit={{ opacity: 0, y: -20, scale: 0.95, transition: { duration: 0.2 } }}
-                          transition={{ duration: 0.4 }}
-                          className="flex items-center gap-4 p-3.5 rounded-[16px] bg-zinc-900/40 border border-white/5 w-full shrink-0"
-                        >
-                          <div className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-br from-[#ff6a00]/20 to-amber-500/10 flex items-center justify-center border border-[#ff6a00]/30 text-[#ff8f3a]">
-                            <log.icon size={20} />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs font-bold text-white truncate">{log.title}</p>
-                            <p className="text-[10px] text-slate-400 line-clamp-1">{log.subtitle}</p>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <span className={`text-xs font-bold ${log.color}`}>{log.value}</span>
-                          </div>
-                        </motion.div>
-                      ))}
-                    </AnimatePresence>
+                    {ALL_LOGS.slice(0, 5).map((log) => (
+                      <div 
+                        key={log.id}
+                        className="flex items-center gap-4 p-3.5 rounded-[16px] bg-zinc-900/40 border border-white/5 w-full shrink-0"
+                      >
+                        <div className="h-10 w-10 shrink-0 rounded-xl bg-gradient-to-br from-[#ff6a00]/20 to-amber-500/10 flex items-center justify-center border border-[#ff6a00]/30 text-[#ff8f3a]">
+                          <log.icon size={20} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-bold text-white truncate">{log.title}</p>
+                          <p className="text-[10px] text-slate-400 line-clamp-1">{log.subtitle}</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <span className={`text-xs font-bold ${log.color}`}>{log.value}</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
 
                   {/* Animated vertical flow line */}
@@ -458,7 +481,7 @@ export default function Suggestion5LandingPage() {
               </div>
 
             </div>
-          </div>
+          </motion.div>
         </section>
 
       {/* HUB ESTRATÉGICO (ex-INTERACTIVE AGENT ASSEMBLY CONTROL ROOM) */}
@@ -470,7 +493,6 @@ export default function Suggestion5LandingPage() {
             backgroundImage: "url('/images/backgrounds/bg-hub-novo.png')",
             backgroundSize: 'cover',
             backgroundPosition: 'center',
-            backgroundAttachment: 'fixed',
           }}
         />
         <div className="absolute inset-0 z-0 bg-black/60" />
@@ -479,7 +501,13 @@ export default function Suggestion5LandingPage() {
         <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#03060c] to-transparent z-0 pointer-events-none" />
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#03060c] to-transparent z-0 pointer-events-none" />
         
-        <div className="relative z-10 mx-auto max-w-[1260px]">
+        <motion.div
+          variants={revealVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-120px" }}
+          className="relative z-10 mx-auto max-w-[1260px]"
+        >
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
             <div className="max-w-[620px]">
               <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">Hub Estratégico (Interactive Assembly)</span>
@@ -541,7 +569,7 @@ export default function Suggestion5LandingPage() {
                 </div>
 
                 {/* Slot 2: Conversão */}
-                <div className={`relative rounded-[20px] border p-5 flex flex-col justify-between min-h-[170px] transition-all ${slots.conversao ? 'border-[#ff6a00] bg-[#ff6a00]/10 shadow-[0_10px_30px_rgba(255,106,0,0.1)]' : 'border-dashed border-[#ff6a00]/25 bg-zinc-950/45 backdrop-blur-md'}`}>
+                <div className={`relative rounded-[20px] border p-5 flex flex-col justify-between min-h-[170px] transition-all ${slots.conversao ? 'border-[#ff6a00] bg-[#ff6a00]/10 shadow-[0_10px_30px_rgba(255,106,0,0.15)]' : 'border-dashed border-[#ff6a00]/25 bg-zinc-950/45 backdrop-blur-md'}`} style={{ transitionProperty: 'all' }}>
                   <div>
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">2. Conversão</span>
@@ -572,7 +600,7 @@ export default function Suggestion5LandingPage() {
                 </div>
 
                 {/* Slot 3: Escala */}
-                <div className={`relative rounded-[20px] border p-5 flex flex-col justify-between min-h-[170px] transition-all ${slots.escala ? 'border-[#ff6a00] bg-[#ff6a00]/10 shadow-[0_10px_30px_rgba(255,106,0,0.1)]' : 'border-dashed border-[#ff6a00]/25 bg-zinc-950/45 backdrop-blur-md'}`}>
+                <div className={`relative rounded-[20px] border p-5 flex flex-col justify-between min-h-[170px] transition-all ${slots.escala ? 'border-[#ff6a00] bg-[#ff6a00]/10 shadow-[0_10px_30px_rgba(255,106,0,0.15)]' : 'border-dashed border-[#ff6a00]/25 bg-zinc-950/45 backdrop-blur-md'}`} style={{ transitionProperty: 'all' }}>
                   <div>
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">3. Escala</span>
@@ -636,22 +664,24 @@ export default function Suggestion5LandingPage() {
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
-                        className={`group relative rounded-[16px] border p-4 cursor-pointer transition-all flex flex-col justify-between min-h-[140px] ${isSelected ? 'border-[#ff6a00] bg-[#ff6a00]/10 shadow-[0_10px_30px_rgba(255,106,0,0.15)]' : 'border-[#ff6a00]/15 bg-zinc-950/65 hover:border-[#ff6a00]/30 hover:bg-zinc-950/85'}`}
                         onClick={() => handleAssignAgent(activeTab, agent)}
+                        className="group cursor-pointer"
                       >
-                        <div>
-                          <div className="flex items-start justify-between gap-3 mb-2">
-                            <h4 className="text-sm font-bold text-white">{agent.title}</h4>
-                            <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] ${isSelected ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400' : 'border-[#ff6a00]/25 text-slate-400 group-hover:border-[#ff6a00] group-hover:text-[#ff8f3a] transition-all'}`}>
-                              {isSelected ? <Check size={10} /> : <Plus size={10} />}
-                            </span>
+                        <div className={`relative rounded-[16px] border p-4 transition-all min-h-[140px] ${isSelected ? 'border-[#ff6a00] bg-[#ff6a00]/10 shadow-[0_10px_30px_rgba(255,106,0,0.15)]' : 'border-[#ff6a00]/15 bg-zinc-950/65 hover:border-[#ff6a00]/30 hover:bg-zinc-950/85'}`}>
+                          <div>
+                            <div className="flex items-start justify-between gap-3 mb-2">
+                              <h4 className="text-sm font-bold text-white">{agent.title}</h4>
+                              <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] ${isSelected ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400' : 'border-[#ff6a00]/25 text-slate-400 group-hover:border-[#ff6a00] group-hover:text-[#ff8f3a] transition-all'}`}>
+                                {isSelected ? <Check size={10} /> : <Plus size={10} />}
+                              </span>
+                            </div>
+                            <p className="text-[11px] leading-relaxed text-slate-400 line-clamp-3">
+                              {agent.description}
+                            </p>
                           </div>
-                          <p className="text-[11px] leading-relaxed text-slate-400 line-clamp-3">
-                            {agent.description}
-                          </p>
-                        </div>
-                        <div className="mt-3 text-[10px] font-mono text-[#ff8f3a] uppercase font-bold tracking-wider">
-                          {agent.category}
+                          <div className="mt-3 text-[10px] font-mono text-[#ff8f3a] uppercase font-bold tracking-wider">
+                            {agent.category}
+                          </div>
                         </div>
                       </motion.div>
                     );
@@ -666,7 +696,7 @@ export default function Suggestion5LandingPage() {
               <LuccaEmbeddedChat slots={slots} />
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* SEGMENTOS IMPACTADOS */}
@@ -686,7 +716,14 @@ export default function Suggestion5LandingPage() {
         {/* Smooth Fade Transitions */}
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#040811] to-transparent z-0 pointer-events-none" />
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#040811] to-transparent z-0 pointer-events-none" />
-        <div className="relative z-10 mx-auto max-w-[1260px]">
+        
+        <motion.div
+          variants={revealVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-120px" }}
+          className="relative z-10 mx-auto max-w-[1260px]"
+        >
           <div className="text-center max-w-[720px] mx-auto mb-16">
             <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">Segmentos Impactados</span>
             <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">
@@ -702,34 +739,36 @@ export default function Suggestion5LandingPage() {
               <Link
                 key={segment.href}
                 href={segment.href}
-                className="group relative overflow-hidden rounded-[24px] border border-[#ff6a00]/20 bg-zinc-950/85 backdrop-blur-xl min-h-[380px] flex flex-col justify-end p-6 hover:border-[#ff6a00]/40 transition-all hover:-translate-y-1 shadow-[0_18px_48px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(255,106,0,0.15)]"
+                className="group block"
               >
-                {segment.backgroundImage && (
-                  <>
-                    <Image 
-                      src={segment.backgroundImage} 
-                      alt={segment.title} 
-                      fill 
-                      className="object-cover object-center opacity-40 group-hover:scale-105 transition-transform duration-500 pointer-events-none" 
-                      sizes="(max-width: 768px) 100vw, 30vw"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#040811] via-[#040811]/40 to-transparent z-0" />
-                  </>
-                )}
-                
-                <div className="relative z-10">
-                  <h3 className="text-xl font-black text-white group-hover:text-[#ff8f3a] transition-colors">{segment.title}</h3>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-300">{segment.pain}</p>
-                  <p className="mt-3 text-xs font-semibold leading-relaxed text-emerald-400">{segment.impact}</p>
-                  <span className="mt-5 inline-flex items-center gap-1.5 text-xs font-extrabold text-[#ff8f3a] group-hover:gap-2 transition-all">
-                    Conhecer Soluções
-                    <ArrowRight size={12} />
-                  </span>
+                <div className="relative overflow-hidden rounded-[24px] border border-[#ff6a00]/20 bg-zinc-950/85 backdrop-blur-xl min-h-[380px] p-6 hover:border-[#ff6a00]/40 transition-colors shadow-[0_18px_48px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(255,106,0,0.15)] flex flex-col justify-end">
+                  {segment.backgroundImage && (
+                    <>
+                      <Image 
+                        src={segment.backgroundImage} 
+                        alt={segment.title} 
+                        fill 
+                        className="object-cover object-center opacity-40 group-hover:scale-105 transition-transform duration-500 pointer-events-none" 
+                        sizes="(max-width: 768px) 100vw, 30vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#040811] via-[#040811]/40 to-transparent z-0" />
+                    </>
+                  )}
+                  
+                  <div className="relative z-10">
+                    <h3 className="text-xl font-black text-white group-hover:text-[#ff8f3a] transition-colors">{segment.title}</h3>
+                    <p className="mt-2 text-xs leading-relaxed text-slate-300">{segment.pain}</p>
+                    <p className="mt-3 text-xs font-semibold leading-relaxed text-emerald-400">{segment.impact}</p>
+                    <span className="mt-5 inline-flex items-center gap-1.5 text-xs font-extrabold text-[#ff8f3a] group-hover:gap-2 transition-all">
+                      Conhecer Soluções
+                      <ArrowRight size={12} />
+                    </span>
+                  </div>
                 </div>
               </Link>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* DEPOIMENTOS */}
