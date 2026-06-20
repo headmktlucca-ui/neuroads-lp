@@ -11,7 +11,13 @@
       "Bash(xargs grep *)",
       "PowerShell(Stop-Process -Force -ErrorAction SilentlyContinue)",
       "PowerShell(Test-NetConnection -ComputerName localhost -Port 3000 -WarningAction SilentlyContinue -InformationLevel Quiet)",
-      "PowerShell(Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, @{Name='Memory\\(MB\\)';Expression={[math]::Round\\($_.WorkingSet/1MB,1\\)}}, StartTime | Format-Table -AutoSize)"
+      "PowerShell(Get-Process node -ErrorAction SilentlyContinue | Select-Object Id, @{Name='Memory\\(MB\\)';Expression={[math]::Round\\($_.WorkingSet/1MB,1\\)}}, StartTime | Format-Table -AutoSize)",
+      "Read(//c/Users/claud/.claude/skills/**)",
+      "Read(//c/Users/claud/.claude/plugins/**)",
+      "Bash(npm -v)",
+      "Bash(npm i *)",
+      "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('remotion:', p.dependencies.remotion\\); console.log\\('@remotion/cli:', p.dependencies['@remotion/cli']\\)\")",
+      "Bash(npx remotion *)"
     ]
   }
 }

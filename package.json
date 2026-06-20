@@ -14,12 +14,15 @@
     "ops:check-domain-parity": "node scripts/ops/check-domain-parity.mjs",
     "ops:zip-hostinger": "powershell -ExecutionPolicy Bypass -File scripts/ops/create-hostinger-zip.ps1",
     "stripe:sync-agents": "node scripts/stripe/sync-agent-catalog.mjs",
-    "stripe:seed-offers": "node scripts/stripe/reset-and-seed-offers.mjs"
+    "stripe:seed-offers": "node scripts/stripe/reset-and-seed-offers.mjs",
+    "video:studio": "remotion studio src/remotion/index.ts",
+    "video:render": "remotion render src/remotion/index.ts HelloWorld out/video.mp4"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
+    "@remotion/cli": "^4.0.481",
     "clsx": "^2.1.1",
     "firebase": "^12.13.0",
     "firebase-admin": "^13.10.0",
@@ -36,6 +39,7 @@
     "openai": "^6.33.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "remotion": "^4.0.481",
     "stripe": "^22.0.1",
     "tailwind-merge": "^3.5.0",
     "three": "^0.184.0"
