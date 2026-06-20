@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import {
   ArrowRight,
   Funnel,
@@ -24,7 +24,7 @@ import PrimaryTopMenu from './PrimaryTopMenu';
 import ValuesResourcesSection from './ValuesResourcesSection';
 import Lenis from 'lenis';
 
-const revealVariants = {
+const revealVariants: Variants = {
   hidden: {
     opacity: 0,
     y: 40,

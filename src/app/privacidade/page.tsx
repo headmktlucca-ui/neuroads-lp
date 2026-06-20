@@ -96,6 +96,27 @@ export default function PrivacyPage() {
             </p>
           </div>
 
+          {/* 7. Compartilhamento de Dados do Google */}
+          <div className="space-y-4 bg-white border border-border rounded-2xl p-6 shadow-sm">
+            <h2 className="text-[1.15rem] font-bold text-text-main flex items-center gap-3">
+              <span className="text-primary">7.</span> Compartilhamento de Dados do Google
+            </h2>
+            <p className="text-text-muted text-[0.92rem] leading-relaxed">
+              A NeuroAds utiliza APIs do Google (incluindo Google Ads, Google Analytics, Google Search Console e Google BigQuery) exclusivamente para fins internos de operação e prestação de serviços aos nossos clientes.
+            </p>
+            <p className="text-text-muted text-[0.92rem] leading-relaxed">
+              Não compartilhamos, transferimos nem divulgamos dados de usuários obtidos por meio das APIs do Google a terceiros, exceto nas seguintes situações:
+            </p>
+            <ul className="list-disc list-inside text-text-muted text-[0.9rem] space-y-2 ml-4">
+              <li>Quando exigido por lei ou ordem judicial;</li>
+              <li>Para prestadores de serviços essenciais à operação da plataforma, mediante acordo de confidencialidade e apenas na medida necessária para a prestação do serviço;</li>
+              <li>Com o consentimento explícito do usuário.</li>
+            </ul>
+            <p className="text-text-muted text-[0.92rem] leading-relaxed">
+              O uso de dados obtidos por meio das APIs do Google está em conformidade com a Política de Dados do Usuário dos Serviços de API do Google, incluindo os requisitos de Uso Limitado (Limited Use).
+            </p>
+          </div>
+
           {/* 7. Contato */}
           <div className="mt-4 p-8 bg-bg-secondary border border-border rounded-2xl">
             <h3 className="text-text-main font-bold mb-4 italic">Dúvidas sobre sua privacidade?</h3>
@@ -108,7 +129,7 @@ export default function PrivacyPage() {
           </div>
 
           <p className="text-text-dim text-[0.72rem] pt-6 text-center uppercase tracking-widest">
-            Última atualização: Abril de 2026 · NeuroAds Laboratory
+            Última atualização: Junho de 2026 · NeuroAds Laboratory
           </p>
         </section>
       </motion.div>
