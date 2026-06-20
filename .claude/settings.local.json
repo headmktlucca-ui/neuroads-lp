@@ -17,7 +17,31 @@
       "Bash(npm -v)",
       "Bash(npm i *)",
       "Bash(node -e \"const p=require\\('./package.json'\\); console.log\\('remotion:', p.dependencies.remotion\\); console.log\\('@remotion/cli:', p.dependencies['@remotion/cli']\\)\")",
-      "Bash(npx remotion *)"
+      "Bash(npx remotion *)",
+      "WebFetch(domain:github.com)",
+      "Bash(npx --yes impeccable@latest --help)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(gh api *)",
+      "Bash(python -c \"import json,sys; [print\\(x['name'], x['type']\\) for x in json.load\\(sys.stdin\\)]\")",
+      "WebFetch(domain:api.github.com)",
+      "Bash(npx --yes impeccable@latest install --yes --providers=.claude --project)",
+      "Bash(echo \"[[EXIT:$?]]\")"
     ]
-  }
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write|MultiEdit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PROJECT_DIR}/.claude/skills/impeccable/scripts/hook.mjs\"",
+            "timeout": 5,
+            "statusMessage": "Checking UI changes"
+          }
+        ]
+      }
+    ]
+  },
+  "description": "Impeccable design detector: runs after Edit/Write/MultiEdit on UI files and surfaces findings as system reminders."
 }
