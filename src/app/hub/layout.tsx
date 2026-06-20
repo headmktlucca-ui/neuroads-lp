@@ -49,7 +49,7 @@ export default function HubLayout({ children }: { children: React.ReactNode }) {
     <main
       className="flex min-h-screen w-full relative bg-cover bg-fixed bg-center bg-no-repeat overflow-x-hidden"
       style={{
-        backgroundImage: "url('/images/backgrounds/fundo_hub.jpeg')",
+        backgroundImage: "url('/images/backgrounds/wall01.webp')",
       }}
     >
       {/* Sidebar Navigation */}
