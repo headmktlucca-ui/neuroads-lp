@@ -1,0 +1,9 @@
+# Depth map generation for the hero parallax effect.
+# CPU-only torch keeps the install small (single-frame inference, no GPU needed).
+# Install with:
+#   python -m pip install --index-url https://download.pytorch.org/whl/cpu torch
+#   python -m pip install -r scripts/depth/requirements.txt
+transformers>=4.44
+pillow>=10.0
+numpy>=1.26
+opencv-python>=4.9

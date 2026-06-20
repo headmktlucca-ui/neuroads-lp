@@ -29,7 +29,11 @@
       "Bash(node .claude/skills/impeccable/scripts/context.mjs)",
       "Skill(impeccable)",
       "Skill(impeccable:*)",
-      "Bash(node .claude/skills/impeccable/scripts/detect-csp.mjs)"
+      "Bash(node .claude/skills/impeccable/scripts/detect-csp.mjs)",
+      "PowerShell(Write-Output \"=== Python ===\"; \\(Get-Command python -ErrorAction SilentlyContinue\\).Source; python --version 2>&1; Write-Output \"=== pip ===\"; python -m pip --version 2>&1; Write-Output \"=== ffmpeg ===\"; \\(Get-Command ffmpeg -ErrorAction SilentlyContinue\\).Source; Write-Output \"=== GPU \\(nvidia\\) ===\"; \\(Get-Command nvidia-smi -ErrorAction SilentlyContinue\\) ? \\(nvidia-smi --query-gpu=name --format=csv,noheader 2>&1\\) : \"no nvidia-smi\")",
+      "PowerShell(py -0p 2>&1)",
+      "PowerShell(python -m pip index versions torch 2>&1)",
+      "PowerShell(python -m pip index versions onnxruntime 2>&1)"
     ]
   },
   "hooks": {

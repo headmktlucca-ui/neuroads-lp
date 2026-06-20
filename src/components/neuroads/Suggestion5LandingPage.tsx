@@ -320,19 +320,19 @@ export default function Suggestion5LandingPage() {
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#03060c] to-transparent z-[1] pointer-events-none" />
 
         {/* Full-width container — no max-w, no centering, content reaches window edges */}
-        <div className="relative z-10 w-full flex items-end justify-between gap-0">
+        <div className="relative z-10 w-full flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-8 lg:gap-0">
 
           {/* LEFT — headline + subtitle: hugs the left window edge */}
-          <div className="pl-4 lg:pl-8 pr-6 lg:pr-10 flex-[6]">
+          <div className="pl-4 lg:pl-8 pr-4 lg:pr-10 w-full lg:flex-[6]">
             {/* Orange vertical accent bar */}
             <div className="flex items-start gap-5">
               <div className="w-[3px] self-stretch bg-[#ff6a00] rounded-full shrink-0 mt-1" />
               <div>
                 <h1 className="text-[40px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
-                  Existe uma versão da sua empresa 
-                  <br />
-                  onde cada real investido tem destino 
-                  <br />
+                  Existe uma versão da sua empresa{" "}
+                  <br className="hidden lg:inline" />
+                  onde cada real investido tem destino{" "}
+                  <br className="hidden lg:inline" />
                   <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
                     certo e retorno mensurável.
                   </span>
@@ -348,7 +348,7 @@ export default function Suggestion5LandingPage() {
           <div className="hidden lg:block w-px self-stretch bg-[#ff6a00]/50 shrink-0" />
 
           {/* RIGHT — CTAs + badges: hugs the right window edge */}
-          <div className="flex-[4] pl-6 lg:pl-10 pr-4 lg:pr-8 flex flex-col gap-6 items-end">
+          <div className="w-full lg:flex-[4] pl-4 lg:pl-10 pr-4 lg:pr-8 flex flex-col gap-6 items-end">
             {/* CTAs stacked vertically */}
             <div className="flex flex-col gap-3 w-full max-w-[280px]">
               <button

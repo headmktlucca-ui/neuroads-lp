@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { HelpCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { HelpCircle, X } from 'lucide-react';
 
 type SalesFunnelWidgetProps = {
   isGa4Connected: boolean;
@@ -37,6 +37,14 @@ export default function SalesFunnelWidget({
   conversions,
 }: SalesFunnelWidgetProps) {
   const [hoveredStage, setHoveredStage] = useState<number | null>(null);
+
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // ── helpers ─────────────────────────────────────────────────────────
   const fmt = (val: number | 'N/A'): string => {
@@ -279,29 +287,49 @@ export default function SalesFunnelWidget({
           if (!t) return null;
           return (
             <div
-              className="absolute left-full ml-4 z-50 rounded-2xl p-4 text-[11px] backdrop-blur-xl w-56 pointer-events-none"
+              className={`${
+                isMobile
+                  ? 'absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 w-[90%] max-w-[280px] z-50 pointer-events-auto'
+                  : 'absolute left-full ml-4 z-50 w-56 pointer-events-none'
+              } rounded-2xl p-4 text-[11px] backdrop-blur-xl transition-all duration-150`}
               style={{
-                top: tooltipTop[hoveredStage - 1],
-                background: 'rgba(4,12,24,0.92)',
+                top: isMobile ? '50%' : tooltipTop[hoveredStage - 1],
+                background: 'rgba(4,12,24,0.95)',
                 border: `1px solid ${t.color}40`,
                 boxShadow: `0 16px 48px ${t.shadow}`,
               }}
             >
               {/* Arrow pointing left back to funnel */}
-              <div
-                className="absolute -left-[7px] top-5 w-3 h-3 rotate-45"
-                style={{ background: 'rgba(4,12,24,0.92)', border: `1px solid ${t.color}40`, borderRight: 'none', borderTop: 'none' }}
-              />
+              {!isMobile && (
+                <div
+                  className="absolute -left-[7px] top-5 w-3 h-3 rotate-45"
+                  style={{ background: 'rgba(4,12,24,0.92)', border: `1px solid ${t.color}40`, borderRight: 'none', borderTop: 'none' }}
+                />
+              )}
               <div className="flex items-center justify-between mb-2.5">
                 <span className="font-black uppercase tracking-wider text-[10px]" style={{ color: t.color }}>
                   {t.title}
                 </span>
-                <span
-                  className="text-[8px] font-bold px-1.5 py-0.5 rounded-full"
-                  style={{ background: `${t.color}18`, color: '#fff' }}
-                >
-                  {t.badge}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className="text-[8px] font-bold px-1.5 py-0.5 rounded-full"
+                    style={{ background: `${t.color}18`, color: '#fff' }}
+                  >
+                    {t.badge}
+                  </span>
+                  {isMobile && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setHoveredStage(null);
+                      }}
+                      className="text-white/40 hover:text-white transition-colors cursor-pointer p-0.5"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
               </div>
               <div className="space-y-2">
                 {t.rows.map((row) => (

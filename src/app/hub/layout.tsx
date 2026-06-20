@@ -58,7 +58,7 @@ export default function HubLayout({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Main Panel Content */}
-      <div className="relative z-10 flex-grow w-full min-h-screen flex flex-col pl-28 pr-6 md:pr-10 py-6 text-white font-sans">
+      <div className="relative z-10 flex-grow w-full min-h-screen flex flex-col pl-16 md:pl-28 pr-6 md:pr-10 pt-20 md:pt-6 pb-6 text-white font-sans">
         {children}
       </div>
 

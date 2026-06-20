@@ -83,6 +83,14 @@ export default function HubDashboard() {
     extra?: string;
   } | null>(null);
 
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // Fetching parameters (last 30 days)
   const dateFrom = '2026-05-18';
   const dateTo = '2026-06-17';
@@ -493,7 +501,11 @@ export default function HubDashboard() {
     if (!balloon) return null;
     return (
       <div
-        className="absolute right-[calc(100%+16px)] top-0 z-50 rounded-2xl p-4 text-[11px] backdrop-blur-xl w-64 border transition-all duration-150 animate-in fade-in slide-in-from-right-2"
+        className={`${
+          isMobile
+            ? 'fixed inset-x-4 top-24 mx-auto max-w-[320px] w-auto'
+            : 'absolute right-[calc(100%+16px)] top-0 w-64'
+        } z-50 rounded-2xl p-4 text-[11px] backdrop-blur-xl border transition-all duration-150 animate-in fade-in slide-in-from-bottom-2 md:slide-in-from-right-2`}
         style={{
           background: 'rgba(4,12,24,0.96)',
           borderColor: `${balloon.color}40`,
@@ -502,13 +514,15 @@ export default function HubDashboard() {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Arrow pointing right back to column */}
-        <div
-          className="absolute -right-[7px] top-5 w-3 h-3 rotate-45 border-t border-r"
-          style={{
-            background: 'rgba(4,12,24,0.96)',
-            borderColor: `${balloon.color}40`,
-          }}
-        />
+        {!isMobile && (
+          <div
+            className="absolute -right-[7px] top-5 w-3 h-3 rotate-45 border-t border-r"
+            style={{
+              background: 'rgba(4,12,24,0.96)',
+              borderColor: `${balloon.color}40`,
+            }}
+          />
+        )}
         <div className="flex items-center justify-between mb-2.5">
           <span className="font-black uppercase tracking-wider text-[10px]" style={{ color: balloon.color }}>
             {balloon.title}
@@ -525,7 +539,7 @@ export default function HubDashboard() {
                 e.stopPropagation();
                 setActiveBalloon(null);
               }}
-              className="text-white/40 hover:text-white transition-colors"
+              className="text-white/40 hover:text-white transition-colors cursor-pointer"
             >
               <X className="h-3.5 w-3.5" />
             </button>

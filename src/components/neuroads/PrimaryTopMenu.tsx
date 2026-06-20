@@ -343,29 +343,6 @@ export default function PrimaryTopMenu({
               Teste por 14 dias
             </span>
           </Link>
- 
-          {onRequestDemoClick ? (
-            <button
-              type="button"
-              onClick={() => {
-                setIsMobileMenuOpen(false);
-                onRequestDemoClick();
-              }}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 px-4 py-2.5 text-[12px] font-extrabold text-slate-300 hover:bg-[#ff6a00]/20 hover:text-[#ff6a00] transition duration-200"
-            >
-              Solicite Demonstração
-              <ArrowRight size={13} />
-            </button>
-          ) : (
-            <Link
-              href="/a-neuroads/contato"
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 px-4 py-2.5 text-[12px] font-extrabold text-slate-300 hover:bg-[#ff6a00]/20 hover:text-[#ff6a00] transition duration-200"
-            >
-              Solicite Demonstração
-              <ArrowRight size={13} />
-            </Link>
-          )}
         </div>
       </div>
     </>
