@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion, useMotionValue, useScroll, useSpring, useTransform } from 'framer-motion';
+import { useLenisScroll } from '@/hooks/interativo/useLenisScroll';
+import { usePrefersReducedMotion } from '@/hooks/interativo/usePrefersReducedMotion';
 import {
   ArrowRight,
   Bot,
@@ -250,6 +253,36 @@ export default function Suggestion3LandingPage() {
   const [openMobileGroup, setOpenMobileGroup] = useState<string | null>(null);
   const closeMenuTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // ─── Parallax & smooth scroll ────────────────────────────────────────────
+  const reducedMotion = usePrefersReducedMotion();
+  useLenisScroll({ enabled: !reducedMotion });
+
+  // Mouse-driven parallax motion values for hero
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const springX = useSpring(mouseX, { stiffness: 60, damping: 20 });
+  const springY = useSpring(mouseY, { stiffness: 60, damping: 20 });
+  const orbFarX  = useTransform(springX, (v) => v * 45);
+  const orbFarY  = useTransform(springY, (v) => v * 45);
+  const orbMidX  = useTransform(springX, (v) => v * -35);
+  const orbMidY  = useTransform(springY, (v) => v * -28);
+  const heroImgX = useTransform(springX, (v) => v * 14);
+  const heroImgY = useTransform(springY, (v) => v * 10);
+  const badgeX   = useTransform(springX, (v) => v * -22);
+  const badgeY   = useTransform(springY, (v) => v * -16);
+
+  // Scroll-driven parallax refs for dark background sections
+  const compareRef = useRef<HTMLElement>(null);
+  const metricsRef = useRef<HTMLElement>(null);
+  const ctaRef     = useRef<HTMLElement>(null);
+  const { scrollYProgress: compareScroll } = useScroll({ target: compareRef, offset: ['start end', 'end start'] });
+  const { scrollYProgress: metricsScroll } = useScroll({ target: metricsRef, offset: ['start end', 'end start'] });
+  const { scrollYProgress: ctaScroll }     = useScroll({ target: ctaRef,     offset: ['start end', 'end start'] });
+  const compareBgY = useTransform(compareScroll, [0, 1], ['-10%', '10%']);
+  const metricsBgY = useTransform(metricsScroll, [0, 1], ['-10%', '10%']);
+  const ctaBgY     = useTransform(ctaScroll,     [0, 1], ['-10%', '10%']);
+  // ─────────────────────────────────────────────────────────────────────────
+
   const layoutAgents = useMemo(() => {
     const agentIndex = new Map(catalogAgents.map((agent) => [agent.title, agent]));
     return agentLayoutTitles
@@ -306,6 +339,23 @@ export default function Suggestion3LandingPage() {
     };
   }, []);
 
+  const handleCardTilt = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    if (reducedMotion) return;
+    const el = e.currentTarget;
+    const rect = el.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width;
+    const py = (e.clientY - rect.top) / rect.height;
+    el.style.transform = `perspective(1000px) rotateX(${(0.5 - py) * 8}deg) rotateY(${(px - 0.5) * 10}deg) translateZ(4px)`;
+    el.style.transition = 'transform 0.06s linear';
+  }, [reducedMotion]);
+
+  const handleCardTiltLeave = useCallback((e: React.MouseEvent<HTMLElement>) => {
+    if (reducedMotion) return;
+    const el = e.currentTarget;
+    el.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
+    el.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+  }, [reducedMotion]);
+
   return (
     <main className="bg-white text-[#1a1d23]">
       <style jsx global>{`
@@ -343,6 +393,28 @@ export default function Suggestion3LandingPage() {
         }
       `}</style>
       <section className="relative overflow-hidden pt-5">
+        {/* Depth orbs — move with mouse for 3D parallax effect */}
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute -left-32 -top-20 h-[500px] w-[500px] rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(255,106,0,0.12) 0%, rgba(255,106,0,0) 70%)',
+            filter: 'blur(70px)',
+            x: reducedMotion ? 0 : orbFarX,
+            y: reducedMotion ? 0 : orbFarY,
+          }}
+        />
+        <motion.div
+          aria-hidden="true"
+          className="pointer-events-none absolute right-[6%] top-[20%] h-[360px] w-[360px] rounded-full"
+          style={{
+            background: 'radial-gradient(circle, rgba(255,140,60,0.09) 0%, rgba(255,140,60,0) 70%)',
+            filter: 'blur(55px)',
+            x: reducedMotion ? 0 : orbMidX,
+            y: reducedMotion ? 0 : orbMidY,
+          }}
+        />
+
         <div className="mx-auto max-w-[1260px] px-5 md:px-8">
           <header className="fixed left-1/2 top-4 z-[90] flex w-[min(calc(100%-2.5rem),1196px)] -translate-x-1/2 items-center justify-between gap-3 rounded-full border border-black/[0.06] bg-white px-4 py-3 shadow-[0_8px_26px_rgba(10,18,30,0.04)] sm:px-5 md:px-7">
             <a href="#" className="flex items-center">
@@ -499,7 +571,19 @@ export default function Suggestion3LandingPage() {
 
           <div className="h-[84px]" aria-hidden="true" />
 
-          <div className="relative grid items-center gap-8 pb-10 pt-12 lg:grid-cols-[1.02fr_0.98fr]">
+          <div
+            className="relative grid items-center gap-8 pb-10 pt-12 lg:grid-cols-[1.02fr_0.98fr]"
+            onMouseMove={(e) => {
+              if (reducedMotion) return;
+              const rect = e.currentTarget.getBoundingClientRect();
+              mouseX.set((e.clientX - rect.left) / rect.width - 0.5);
+              mouseY.set((e.clientY - rect.top) / rect.height - 0.5);
+            }}
+            onMouseLeave={() => {
+              mouseX.set(0);
+              mouseY.set(0);
+            }}
+          >
             <div className="relative z-10 max-w-[560px] lg:pr-14">
               <h1 className="mt-4 text-[30px] font-extrabold leading-[1.08] tracking-[-0.02em] text-[#111317] sm:text-[34px] lg:text-[34px]">
                 Desbloqueie o Potencial Oculto:
@@ -542,7 +626,10 @@ export default function Suggestion3LandingPage() {
               </div>
             </div>
 
-            <div className="relative z-30 h-[360px] w-full overflow-hidden bg-white sm:h-[470px] lg:-ml-[140px] lg:h-[560px] lg:w-[calc(100%+140px)] lg:pointer-events-none">
+            <motion.div
+              className="relative z-30 h-[360px] w-full overflow-hidden bg-white sm:h-[470px] lg:-ml-[140px] lg:h-[560px] lg:w-[calc(100%+140px)] lg:pointer-events-none"
+              style={reducedMotion ? undefined : { x: heroImgX, y: heroImgY }}
+            >
               <Image
                 src="/images/template-match/hero-orbit-white-v1.png"
                 alt="Anel de energia da NeuroAds"
@@ -551,24 +638,33 @@ export default function Suggestion3LandingPage() {
                 priority
               />
 
-              <div className="absolute right-[10px] top-[10px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:right-[14px] sm:top-[14px] sm:px-4 sm:py-3">
+              <motion.div
+                className="absolute right-[10px] top-[10px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:right-[14px] sm:top-[14px] sm:px-4 sm:py-3"
+                style={reducedMotion ? undefined : { x: badgeX, y: badgeY }}
+              >
                 <p className="text-[10px] font-semibold text-[#7b8291]">ROAS</p>
                 <p className="mt-1 text-[30px] font-extrabold leading-none text-[#ff6b00] sm:text-[37px]">+320%</p>
                 <p className="mt-1 text-[10px] text-[#9197a4]">vs. período anterior</p>
-              </div>
+              </motion.div>
 
-              <div className="absolute left-[12px] top-[132px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:left-[18px] sm:top-[182px] sm:px-4 sm:py-3">
+              <motion.div
+                className="absolute left-[12px] top-[132px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:left-[18px] sm:top-[182px] sm:px-4 sm:py-3"
+                style={reducedMotion ? undefined : { x: badgeX, y: badgeY }}
+              >
                 <p className="text-[10px] font-semibold text-[#7b8291]">Conversão</p>
                 <p className="mt-1 text-[30px] font-extrabold leading-none text-[#ff6b00] sm:text-[37px]">+68%</p>
                 <p className="mt-1 text-[10px] text-[#9197a4]">vs. período anterior</p>
-              </div>
+              </motion.div>
 
-              <div className="absolute bottom-[14px] right-[6px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:bottom-[24px] sm:right-[8px] sm:px-4 sm:py-3">
+              <motion.div
+                className="absolute bottom-[14px] right-[6px] z-10 rounded-2xl border border-[#ebeef2] bg-white px-3 py-2.5 shadow-[0_8px_20px_rgba(0,0,0,0.08)] sm:bottom-[24px] sm:right-[8px] sm:px-4 sm:py-3"
+                style={reducedMotion ? undefined : { x: badgeX, y: badgeY }}
+              >
                 <p className="text-[10px] font-semibold text-[#7b8291]">CPL</p>
                 <p className="mt-1 text-[30px] font-extrabold leading-none text-[#ff6b00] sm:text-[37px]">-45%</p>
                 <p className="mt-1 text-[10px] text-[#9197a4]">vs. período anterior</p>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
 
           <div className="mb-12">
@@ -598,6 +694,8 @@ export default function Suggestion3LandingPage() {
                   <article
                     key={col.title}
                     className="rounded-[30px] border border-[#edf0f4] bg-transparent px-7 pb-8 pt-5 shadow-none"
+                    onMouseMove={handleCardTilt}
+                    onMouseLeave={handleCardTiltLeave}
                   >
                     <span className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#ffd8c2] bg-white text-[16px] font-extrabold leading-none text-[#ff6a00] shadow-[0_4px_10px_rgba(255,122,33,0.14)]">
                       {col.step}
@@ -635,9 +733,23 @@ export default function Suggestion3LandingPage() {
         </div>
       </section>
 
-      <section id="compare" className="mx-auto max-w-[1260px] px-5 md:px-8">
+      <section id="compare" ref={compareRef} className="mx-auto max-w-[1260px] px-5 md:px-8">
         <div className="relative overflow-hidden rounded-[30px] border border-[#122035] bg-[#030914] px-5 py-10 sm:px-12 sm:py-12">
-          <Image src="/images/template-match/compare-bg-v1.png" alt="" fill className="pointer-events-none object-cover opacity-80" />
+          {reducedMotion ? (
+            <Image src="/images/template-match/compare-bg-v1.png" alt="" fill className="pointer-events-none object-cover opacity-80" />
+          ) : (
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-[15%]"
+              style={{
+                backgroundImage: 'url(/images/template-match/compare-bg-v1.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                opacity: 0.8,
+                y: compareBgY,
+              }}
+            />
+          )}
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(2,8,18,0.70)_0%,rgba(2,8,18,0.82)_100%)]" />
 
           <div className="relative">
@@ -728,7 +840,11 @@ export default function Suggestion3LandingPage() {
                   </div>
 
                   <div className="grid gap-4 xl:grid-cols-[210px_repeat(3,minmax(0,1fr))]">
-                    <article className="rounded-[18px] border border-[#0c1930] bg-[radial-gradient(circle_at_30%_20%,#142745_0%,#070f1f_58%,#040913_100%)] p-5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_10px_24px_rgba(8,12,22,0.4)]">
+                    <article
+                      className="rounded-[18px] border border-[#0c1930] bg-[radial-gradient(circle_at_30%_20%,#142745_0%,#070f1f_58%,#040913_100%)] p-5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.08),0_10px_24px_rgba(8,12,22,0.4)]"
+                      onMouseMove={handleCardTilt}
+                      onMouseLeave={handleCardTiltLeave}
+                    >
                       <span className="inline-flex h-14 w-14 items-center justify-center rounded-[14px] border border-[#ff8b39]/45 bg-[#091427] text-[#ff7a21]">
                         <StageIcon size={28} strokeWidth={2.1} />
                       </span>
@@ -743,7 +859,9 @@ export default function Suggestion3LandingPage() {
                       return (
                         <article
                           key={agent.title}
-                          className="group relative flex min-h-[228px] flex-col overflow-hidden rounded-[18px] border border-[#e6ebf2] bg-white px-4 pb-4 pt-4 shadow-[0_8px_18px_rgba(17,26,39,0.05)] transition hover:-translate-y-0.5 hover:shadow-[0_14px_24px_rgba(17,26,39,0.1)]"
+                          className="group relative flex min-h-[228px] flex-col overflow-hidden rounded-[18px] border border-[#e6ebf2] bg-white px-4 pb-4 pt-4 shadow-[0_8px_18px_rgba(17,26,39,0.05)] transition hover:shadow-[0_14px_24px_rgba(17,26,39,0.1)]"
+                          onMouseMove={handleCardTilt}
+                          onMouseLeave={handleCardTiltLeave}
                         >
                           <div className="relative z-10 flex h-full flex-col">
                             <div className="min-w-0 pr-1">
@@ -849,16 +967,35 @@ export default function Suggestion3LandingPage() {
         </div>
       )}
 
-      <section className="mx-auto max-w-[1260px] px-5 pb-2 pt-10 md:px-8">
+      <section ref={metricsRef} className="mx-auto max-w-[1260px] px-5 pb-2 pt-10 md:px-8">
         <div className="relative overflow-hidden rounded-[32px] border border-[#122034] bg-[#040a13] px-4 pb-32 pt-7 sm:px-8 sm:pb-40 sm:pt-7">
-          <Image src="/images/template-match/metrics-wave-v1.png" alt="" fill className="pointer-events-none object-cover object-bottom opacity-[1]" />
+          {reducedMotion ? (
+            <Image src="/images/template-match/metrics-wave-v1.png" alt="" fill className="pointer-events-none object-cover object-bottom opacity-[1]" />
+          ) : (
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-[15%]"
+              style={{
+                backgroundImage: 'url(/images/template-match/metrics-wave-v1.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center bottom',
+                opacity: 1,
+                y: metricsBgY,
+              }}
+            />
+          )}
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,15,0.9)_0%,rgba(3,8,15,0.92)_40%,rgba(3,8,15,0.14)_100%)]" />
 
           <div className="relative">
             <h2 className="text-center text-[28px] font-extrabold leading-tight text-white sm:text-[34px] lg:text-[42px]">Métricas que importam. Impacto que fica.</h2>
             <div className="mx-auto mt-5 grid max-w-[1150px] gap-4 md:grid-cols-2 xl:grid-cols-4">
               {metrics.map((metric) => (
-                <article key={metric.label} className="min-h-[190px] rounded-[20px] border border-[#20324b] bg-[#091423]/76 px-6 pb-3 pt-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+                <article
+                  key={metric.label}
+                  className="min-h-[190px] rounded-[20px] border border-[#20324b] bg-[#091423]/76 px-6 pb-3 pt-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]"
+                  onMouseMove={handleCardTilt}
+                  onMouseLeave={handleCardTiltLeave}
+                >
                   <p className="text-[38px] font-extrabold leading-none text-[#ff6a00] sm:text-[44px] lg:text-[48px]">{metric.value}</p>
                   <p className="mt-2 text-[15px] leading-snug text-white/88">{metric.label}</p>
                   <div className="mt-4">
@@ -876,7 +1013,12 @@ export default function Suggestion3LandingPage() {
 
         <div className="mt-8 grid gap-4 lg:grid-cols-3">
           {testimonials.map((item) => (
-            <article key={item.name} className="min-h-[230px] rounded-[18px] border border-[#f3e6dc] border-l-[2.5px] border-l-[#ffb182] bg-white p-6 shadow-[0_4px_12px_rgba(10,20,30,0.03)]">
+            <article
+              key={item.name}
+              className="min-h-[230px] rounded-[18px] border border-[#f3e6dc] border-l-[2.5px] border-l-[#ffb182] bg-white p-6 shadow-[0_4px_12px_rgba(10,20,30,0.03)]"
+              onMouseMove={handleCardTilt}
+              onMouseLeave={handleCardTiltLeave}
+            >
               <span className="text-[30px] font-extrabold leading-none text-[#ff7a21]">“</span>
               <p className="mt-1 text-[13px] leading-[1.75] text-[#4e5665]">{item.quote}</p>
               <div className="mt-5 flex items-center gap-3">
@@ -961,9 +1103,23 @@ export default function Suggestion3LandingPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1260px] px-5 pb-8 md:px-8">
+      <section ref={ctaRef} className="mx-auto max-w-[1260px] px-5 pb-8 md:px-8">
         <div className="relative overflow-hidden rounded-[28px] border border-[#111a2b] bg-[#050b14] px-5 py-7 sm:px-7 sm:py-8">
-          <Image src="/images/template-match/cta-orbit-dark-v1.png" alt="" fill className="pointer-events-none object-cover object-right opacity-[0.96]" />
+          {reducedMotion ? (
+            <Image src="/images/template-match/cta-orbit-dark-v1.png" alt="" fill className="pointer-events-none object-cover object-right opacity-[0.96]" />
+          ) : (
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-[15%]"
+              style={{
+                backgroundImage: 'url(/images/template-match/cta-orbit-dark-v1.png)',
+                backgroundSize: 'cover',
+                backgroundPosition: 'right center',
+                opacity: 0.96,
+                y: ctaBgY,
+              }}
+            />
+          )}
           <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(4,9,16,0.94)_0%,rgba(4,9,16,0.9)_42%,rgba(4,9,16,0.42)_100%)]" />
 
           <div className="relative max-w-[700px]">
