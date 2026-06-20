@@ -35,23 +35,21 @@ import {
   Trash2,
   ShieldAlert,
 } from 'lucide-react';
-import Navbar from '../layout/Navbar';
-import Footer from '../layout/Footer';
-import LuccaHubSupportWidget from './LuccaHubSupportWidget';
+// Navbar, Footer and LuccaHubSupportWidget removed as they are handled by HubLayout
 
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
 import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } from '../../lib/hub-access';
 
 const SETTINGS_MODAL_VIEWPORT = 'fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-2 py-2 sm:px-4 sm:py-4';
-const SETTINGS_MODAL_BACKDROP = 'absolute inset-0 bg-[#0F172A]/40 backdrop-blur-md transition-opacity duration-300';
-const SETTINGS_MODAL_FRAME = 'relative w-full max-h-[96vh] rounded-[24px] bg-white border border-slate-100/80 shadow-[0_24px_60px_-15px_rgba(15,23,42,0.12)] overflow-hidden animate-in fade-in zoom-in-95 duration-250';
-const SETTINGS_MODAL_SURFACE = 'max-h-[calc(96vh-4px)] flex flex-col overflow-hidden h-full bg-white';
-const PREMIUM_MODAL_HEADER = 'relative border-b border-[#1a365d]/40 bg-[#0d1e3d] px-6 py-5 flex flex-col gap-1 overflow-hidden';
+const SETTINGS_MODAL_BACKDROP = 'absolute inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300';
+const SETTINGS_MODAL_FRAME = 'relative w-full max-h-[96vh] rounded-[24px] bg-[#071a2e]/95 border border-white/[0.12] shadow-[0_24px_60px_rgba(2,8,22,0.6)] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-white';
+const SETTINGS_MODAL_SURFACE = 'max-h-[calc(96vh-4px)] flex flex-col overflow-hidden h-full bg-transparent text-white';
+const PREMIUM_MODAL_HEADER = 'relative border-b border-white/[0.08] bg-[#091624] px-6 py-5 flex flex-col gap-1 overflow-hidden';
 const PREMIUM_MODAL_CLOSE_BUTTON = 'absolute right-5 top-5 rounded-full border border-white/10 bg-white/5 p-2 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm z-50';
-const SETTINGS_PANEL = 'rounded-2xl border border-slate-100 bg-white p-5 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.02)] transition-all duration-200 hover:border-slate-200/80 hover:shadow-[0_8px_30px_-6px_rgba(15,23,42,0.04)]';
+const SETTINGS_PANEL = 'rounded-2xl border border-white/[0.10] bg-[#071a2e]/82 p-5 shadow-[0_8px_32px_rgba(2,8,22,0.4)] transition-all duration-200 hover:border-white/[0.16] hover:shadow-[0_8px_30px_rgba(2,8,22,0.6)] text-white';
 const SETTINGS_LABEL = 'mb-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400';
-const SETTINGS_INPUT = 'w-full rounded-xl border border-slate-200 bg-[#F8FAFC] px-4 py-3 text-sm font-semibold text-slate-800 outline-none transition-all duration-200 focus:border-[#FF7A00] focus:bg-white focus:ring-2 focus:ring-[#FF7A00]/10';
+const SETTINGS_INPUT = 'w-full rounded-xl border border-white/[0.12] bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none transition-all duration-200 focus:border-[#FF7A00] focus:bg-[#071a2e] focus:ring-2 focus:ring-[#FF7A00]/20';
 const SETTINGS_SECONDARY_BUTTON = 'rounded-xl border border-slate-200 px-5 py-3 text-xs font-black uppercase tracking-widest text-[#667085] transition-all hover:bg-[#F8FAFC] hover:text-slate-700 hover:border-slate-300 active:scale-98';
 const SETTINGS_PRIMARY_BUTTON = 'rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(10,157,87,0.15)] transition-all hover:brightness-105 active:scale-98';
 import {
@@ -2556,7 +2554,7 @@ export default function ConnectorsHubPage() {
     }
 
     setConnectorError(null);
-    setConnectorFeedback('Credenciais salvas. Redirecionando para autenticação OAuth do HubSpot...');
+    setConnectorFeedback('Credenciais salvas. Redirecionando para autenticação OAuth do HubSpot…');
     clearHubSpotConfigModal();
     const params = new URLSearchParams({
       next: '/hub/conectores',
@@ -2604,7 +2602,7 @@ export default function ConnectorsHubPage() {
     }
 
     setConnectorError(null);
-    setConnectorFeedback('Dados de Stripe salvos. Redirecionando para autenticação OAuth...');
+    setConnectorFeedback('Dados de Stripe salvos. Redirecionando para autenticação OAuth…');
     clearStripeConfigModal();
     const params = new URLSearchParams({
       next: '/hub/conectores',
@@ -2814,68 +2812,34 @@ export default function ConnectorsHubPage() {
     }
   };
 
-  if (accessState !== 'allowed') {
-    return (
-      <div className="min-h-screen bg-bg-main flex flex-col items-center justify-center gap-4 px-4">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-        {isSyncingAccess ? (
-          <div className="max-w-md rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-center">
-            <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#C2410C]">Configurando seu acesso</p>
-            <p className="mt-1 text-[13px] text-[#9A3412]">Estamos preparando seu ambiente no Hub Estratégico.</p>
-          </div>
-        ) : null}
-      </div>
-    );
-  }
-
   return (
-    <main className="flex min-h-screen flex-col bg-bg-main">
-      <Navbar />
-
-      <div className="relative flex-grow overflow-hidden pt-24 md:pt-40">
-        <div
-          className="pointer-events-none absolute inset-0 bg-top bg-repeat-y bg-[length:100%_auto]"
-          style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
-        />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-gradient-to-b from-transparent via-[#f7f8fa]/75 to-bg-main" />
-
-        <section className="relative z-10 mx-auto w-full max-w-[1536px] px-4 pb-10 font-sans md:px-6 md:pb-14">
-          <div className="rounded-[24px] bg-transparent p-4 md:p-6">
-            <header className="relative overflow-hidden rounded-3xl border border-[#122034] bg-[#040a13] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
-              <Image
-                src="/images/template-match/metrics-wave-v1.png"
-                alt=""
-                fill
-                className="pointer-events-none object-cover object-bottom opacity-[1]"
-                priority
-              />
-              <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,15,0.9)_0%,rgba(3,8,15,0.92)_40%,rgba(3,8,15,0.14)_100%)]" />
-
-              <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+    <div className="relative w-full">
+      <section className="relative z-10 w-full pb-10 font-sans md:pb-14">
+        <div className="w-full">
+            <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-6">
+              <div className="flex items-center gap-3">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#ff6a00]/15 border border-[#ff6a00]/20 text-[#ff6a00]">
+                  <PlugZap className="h-6 w-6" />
+                </div>
                 <div>
-                  <h1 className="text-[30px] leading-[1.1] font-black tracking-tight text-white sm:text-[34px] md:text-[36px]">
-                    <span
-                      className="bg-[length:200%_200%] bg-clip-text text-transparent"
-                      style={{ backgroundImage: 'linear-gradient(135deg, #ff9a35 0%, #ff6a00 55%, #c84a00 100%)' }}
-                    >
-                      Conectores
-                    </span>
+                  <h1 className="text-xl font-black tracking-tight text-white leading-none">
+                    Conectores
                   </h1>
-                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-lg">
+                  <p className="text-[12px] font-semibold text-[#7eb8d4]/80 mt-1 max-w-3xl">
                     Seu ecossistema conectado com dados reais para decisões mais rápidas e escala previsível.
                   </p>
-                  <p className="mt-2 text-sm font-semibold text-[#FF6A00]">
+                  <p className="text-[11px] font-bold text-[#FF6A00] mt-1">
                     Menos ruptura entre canais, mais performance orientada por dados reais.
                   </p>
+                </div>
               </div>
-            </div>
-          </header>
+            </header>
 
             <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px]">
               <div>
 
-                <div className="relative overflow-hidden rounded-3xl border border-[#DDE3F2] glassmorphism-light shadow-[0_16px_40px_rgba(15,23,42,0.06)]">
-                  <header className="bg-[#0d1e3d] px-6 py-5 border-b border-[#1a365d]/40 flex flex-wrap items-center justify-between gap-4">
+                <div className="relative overflow-hidden rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+                  <header className="bg-[#091624] px-6 py-5 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-4">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
@@ -2883,11 +2847,11 @@ export default function ConnectorsHubPage() {
                           Conectores Disponíveis
                         </h2>
                       </div>
-                      <p className="text-xs font-semibold text-slate-300">
+                      <p className="text-xs font-semibold text-[#7eb8d4]/80">
                         Ative e sincronize suas plataformas de anúncios, marketing e vendas.
                       </p>
                     </div>
-                    <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
+                    <span className="border border-[#FF6A00]/40 bg-[#FF6A00]/10 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
                       Canais: {filterCount.todos}
                     </span>
                   </header>
@@ -2904,8 +2868,8 @@ export default function ConnectorsHubPage() {
                               onClick={() => setActiveFilter(filter)}
                               className={`inline-flex items-center gap-2 rounded-[12px] border px-4 py-2 text-[14px] font-semibold transition ${
                                 isActive
-                                  ? 'border-[#FFB980] bg-[#FFF3E8] text-[#FF7A00]'
-                                  : 'border-[#DDE3F2] bg-white text-[#334155] hover:text-[#0F172A]'
+                                  ? 'border-[#FF6A00]/50 bg-[#FF6A00]/15 text-white shadow-[0_0_12px_rgba(255,106,0,0.15)]'
+                                  : 'border-white/[0.08] bg-white/[0.04] text-[#8fa0b5] hover:text-white hover:bg-white/[0.08]'
                               }`}
                             >
                               {CATEGORY_LABELS[filter]}
@@ -2925,16 +2889,16 @@ export default function ConnectorsHubPage() {
                         return (
                           <article
                             key={item.id}
-                            className="grid grid-cols-1 gap-4 rounded-2xl border border-[#DDE3F2] bg-white p-4 shadow-[0_6px_14px_rgba(15,23,42,0.06)] transition-colors duration-200 hover:bg-[#F1F3F5] md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center"
+                            className="grid grid-cols-1 gap-4 rounded-2xl border border-white/[0.10] bg-[#071a2e]/82 p-4 shadow-[0_8px_32px_rgba(2,8,22,0.4)] backdrop-blur-xl transition-all duration-200 hover:bg-[#071a2e]/95 hover:border-white/[0.18] md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center"
                           >
-                            <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl border border-[#E7ECF5] bg-[#FAFCFF]">
+                            <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl border border-white/[0.10] bg-white/[0.04]">
                               <BrandTile id={item.id} />
                             </div>
 
                             <div>
-                              <h2 className="text-[26px] font-semibold leading-[1.1] tracking-tight text-[#0F172A]">{item.title}</h2>
-                              <p className="mt-1 text-[15px] leading-[1.45] text-[#334155]">{item.description}</p>
-                              <p className="mt-2 text-[12px] font-semibold text-[#64748B]">
+                              <h2 className="text-[26px] font-semibold leading-[1.1] tracking-tight text-white">{item.title}</h2>
+                              <p className="mt-1 text-[15px] leading-[1.45] text-white/60">{item.description}</p>
+                              <p className="mt-2 text-[12px] font-semibold text-white/40">
                                 Categoria: {CATEGORY_LABELS[item.category]}
                               </p>
                             </div>
@@ -2949,13 +2913,13 @@ export default function ConnectorsHubPage() {
                                 {isActive ? 'Conectado' : 'Pendente'}
                               </span>
 
-                              <div className="mt-2 border-t border-[#E2E8F0] pt-2 text-[13px] text-[#64748B]">
+                              <div className="mt-2 border-t border-white/[0.06] pt-2 text-[13px] text-white/60">
                                 <p>
-                                  Última sincronização <span className="ml-2 font-semibold text-[#0F172A]">{getConnectorLastSyncLabel(item, isActive)}</span>
+                                  Última sincronização <span className="ml-2 font-semibold text-white">{getConnectorLastSyncLabel(item, isActive)}</span>
                                 </p>
-                                <p className="mt-1 flex items-center gap-2 text-[#64748B]">
+                                <p className="mt-1 flex items-center gap-2 text-white/60">
                                   Conta sincronizada
-                                  <span className="font-semibold text-[#0F172A]">{accountLabel}</span>
+                                  <span className="font-semibold text-white">{accountLabel}</span>
                                 </p>
                               </div>
                             </div>
@@ -3085,11 +3049,11 @@ export default function ConnectorsHubPage() {
 
               <aside className="space-y-4">
                 {/* CARD 1: Saúde das Integrações */}
-                <section className="relative overflow-hidden rounded-[24px] border border-white/70 bg-white/55 backdrop-blur-xl backdrop-saturate-150 shadow-[0_14px_36px_rgba(15,23,42,0.12)]">
+                <section className="relative overflow-hidden rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
                   {/* Top border ambient subtle accent */}
                   <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
                   
-                  <header className="border-b border-[#1a365d]/40 bg-[#0d1e3d] px-5 py-4 flex items-center justify-between">
+                  <header className="border-b border-white/[0.08] bg-[#091624] px-5 py-4 flex items-center justify-between">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <span className={`h-2 w-2 rounded-full animate-pulse ${healthScore > 50 ? 'bg-[#10b981]' : 'bg-[#EF4444]'}`} />
@@ -3097,17 +3061,17 @@ export default function ConnectorsHubPage() {
                           Saúde das Integrações
                         </h3>
                       </div>
-                      <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest leading-none">
+                      <p className="text-[10px] text-[#7eb8d4]/80 font-semibold uppercase tracking-widest leading-none">
                         Monitoramento em tempo real
                       </p>
                     </div>
-                    <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
+                    <span className="border border-[#FF6A00]/40 bg-[#FF6A00]/10 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
                       {healthStatus.label}
                     </span>
                   </header>
 
                   <div className="p-5">
-                    <div className="relative overflow-hidden rounded-[20px] border border-[#E8EEF7] bg-white/80 px-2 pb-3 pt-1 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
+                    <div className="relative overflow-hidden rounded-[20px] border border-white/[0.08] bg-white/[0.03] px-2 pb-3 pt-1">
                       <div className="hub-health-interactive-bg pointer-events-none absolute inset-0" aria-hidden />
                       <div className="relative z-10 px-1 pb-2">
                       <HealthGauge value={healthScore} />
@@ -3117,7 +3081,7 @@ export default function ConnectorsHubPage() {
                           <span className="h-2 w-2 rounded-full bg-current animate-pulse" />
                           {healthStatus.label}
                         </span>
-                        <p className="mt-3 text-[14px] font-bold uppercase tracking-wider text-slate-800">Saúde Global</p>
+                        <p className="mt-3 text-[14px] font-bold uppercase tracking-wider text-white">Saúde Global</p>
                         <p className="mt-1 text-[12px] text-slate-400 font-semibold">
                           {formatLastSyncLabel(latestSyncTimestamp) || 'Sem sincronização'}
                         </p>
@@ -3130,11 +3094,11 @@ export default function ConnectorsHubPage() {
                 </section>
 
                 {/* CARD 2: Alertas Importantes */}
-                <section className="relative overflow-hidden rounded-[24px] border border-slate-200/80 bg-white shadow-[0_8px_30px_rgb(0,0,0,0.03)]">
+                <section className="relative overflow-hidden rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
                   {/* Top border ambient subtle accent */}
                   <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
 
-                  <header className="bg-[#0d1e3d] px-5 py-4 border-b border-[#1a365d]/40 flex items-center justify-between">
+                  <header className="bg-[#091624] px-5 py-4 border-b border-white/[0.08] flex items-center justify-between">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <span className="h-2 w-2 rounded-full bg-[#EF4444] animate-pulse" />
@@ -3142,11 +3106,11 @@ export default function ConnectorsHubPage() {
                           Alertas Importantes
                         </h3>
                       </div>
-                      <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-widest leading-none">
+                      <p className="text-[10px] text-[#7eb8d4]/80 font-semibold uppercase tracking-widest leading-none">
                         Atualizado há 2 min
                       </p>
                     </div>
-                    <span className="border border-[#FF6A00] bg-[#FF6A00]/5 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
+                    <span className="border border-[#FF6A00]/40 bg-[#FF6A00]/10 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
                       {activeAlerts.length} Ativos
                     </span>
                   </header>
@@ -3183,7 +3147,7 @@ export default function ConnectorsHubPage() {
                             <article
                               key={alert.id}
                               onClick={() => setSelectedAlert(alert)}
-                              className="group relative overflow-hidden rounded-[12px] border border-slate-100/80 bg-slate-50/60 pl-4 pr-3 py-3 shadow-sm transition hover:bg-slate-100/80 cursor-pointer flex items-center justify-between"
+                              className="group relative overflow-hidden rounded-[12px] border border-white/[0.08] bg-[#051120]/60 pl-4 pr-3 py-3 transition hover:bg-[#051120]/90 hover:border-white/[0.16] cursor-pointer flex items-center justify-between"
                             >
                               <div className={`absolute top-0 bottom-0 left-0 w-[3.5px] ${borderLeftColor}`} />
                               <div className="flex items-start gap-3">
@@ -3194,16 +3158,16 @@ export default function ConnectorsHubPage() {
                                       {alert.badgeText}
                                     </span>
                                     {alert.hasGlowOrange && (
-                                      <span className="inline-flex items-center rounded-full border border-amber-500/20 bg-amber-500/8 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-600">
+                                      <span className="inline-flex items-center rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-amber-400">
                                         Glow Orange
                                       </span>
                                     )}
-                                    <span className="text-[11px] text-slate-400 font-semibold">{alert.time}</span>
+                                    <span className="text-[11px] text-white/30 font-semibold">{alert.time}</span>
                                   </div>
-                                  <h4 className="text-[13px] font-bold text-slate-800 mt-1">
+                                  <h4 className="text-[13px] font-bold text-white mt-1">
                                     {alert.title}
                                   </h4>
-                                  <p className="text-[12px] text-slate-500 mt-0.5">
+                                  <p className="text-[12px] text-white/60 mt-0.5">
                                     {alert.description}{' '}
                                     {alert.priority === 'critico' && !alert.hasGlowOrange && (
                                       <span className="text-[#FF7A00] font-semibold hover:underline">
@@ -3237,10 +3201,7 @@ export default function ConnectorsHubPage() {
             </div>
           </div>
         </section>
-      </div>
-
-      <Footer />
-      <LuccaHubSupportWidget />
+      {/* Footer and LuccaHubSupportWidget are rendered by layout.tsx */}
 
       {isStripeConfigModalOpen && (
         <div className={SETTINGS_MODAL_VIEWPORT}>
@@ -3378,7 +3339,7 @@ export default function ConnectorsHubPage() {
                     disabled={stripeSaving}
                     className={SETTINGS_PRIMARY_BUTTON}
                   >
-                    {stripeSaving ? 'Processando...' : 'Continuar com OAuth'}
+                    {stripeSaving ? 'Processando…' : 'Continuar com OAuth'}
                   </button>
                 </div>
               </div>
@@ -3532,7 +3493,7 @@ export default function ConnectorsHubPage() {
                     disabled={hubspotSaving}
                     className={SETTINGS_PRIMARY_BUTTON}
                   >
-                    {hubspotSaving ? 'Processando...' : 'Continuar com OAuth'}
+                    {hubspotSaving ? 'Processando…' : 'Continuar com OAuth'}
                   </button>
                 </div>
               </div>
@@ -4511,6 +4472,6 @@ export default function ConnectorsHubPage() {
           </section>
         </div>
       )}
-    </main>
+    </div>
   );
 }

@@ -35,7 +35,6 @@ const MENU_ITEMS: SidebarItem[] = [
   { type: 'divider' },
   { type: 'item', icon: TrendingUp, label: 'Performance', sublabel: 'Mídia e Resultados', href: '/hub/performance' },
   { type: 'item', icon: FileText, label: 'Criativos', sublabel: 'Análise de Anúncios', href: '/hub/criativos' },
-  { type: 'item', icon: Settings, label: 'Configurações', sublabel: 'Preferências e Infra', href: '/hub/configuracoes' },
   { type: 'item', icon: Brain, label: 'Inteligência', sublabel: 'Modelos e EEG', href: '/hub/inteligencia' },
   { type: 'divider' },
   { type: 'item', icon: ShieldCheck, label: 'Agentes Ativos', sublabel: 'Monitorar Operação', href: '/hub/agentes-ativos' },

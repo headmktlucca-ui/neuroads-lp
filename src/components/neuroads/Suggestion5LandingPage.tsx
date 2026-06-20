@@ -288,99 +288,100 @@ export default function Suggestion5LandingPage() {
         {/* Cinematic Fade into next section */}
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#03060c] to-transparent z-[1] pointer-events-none" />
 
-        <div className="relative z-10 mx-auto max-w-[1260px] w-full px-5 md:px-8">
-          <div className="flex items-end gap-0">
+        {/* Full-width container — no max-w, no centering, content reaches window edges */}
+        <div className="relative z-10 w-full flex items-end justify-between gap-0">
 
-            {/* LEFT 60% — headline + subtitle */}
-            <div className="flex-[6] pr-8 lg:pr-12">
-              {/* Orange vertical accent bar */}
-              <div className="flex items-start gap-5">
-                <div className="w-[3px] self-stretch bg-[#ff6a00] rounded-full shrink-0 mt-1" />
-                <div>
-                  <h1 className="text-[40px] sm:text-[52px] lg:text-[60px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
-                    Transforme dados em Receita:
-                    <br />
-                    <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
-                      Automações Inteligentes
-                    </span>
-                    {' '}para
-                    <br />
-                    <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
-                      Marketing &amp; Vendas
-                    </span>
-                    {' '}de
-                    <br />
-                    <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
-                      ALTA PERFORMANCE.
-                    </span>
-                  </h1>
-                  <p className="mt-5 text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-[520px] drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
-                    Agentes de IA que orquestram dados, mídia e criatividade para gerar resultados consistentes e escaláveis.
-                  </p>
-                </div>
+          {/* LEFT — headline + subtitle: hugs the left window edge */}
+          <div className="pl-4 lg:pl-8 pr-6 lg:pr-10 flex-[6]">
+            {/* Orange vertical accent bar */}
+            <div className="flex items-start gap-5">
+              <div className="w-[3px] self-stretch bg-[#ff6a00] rounded-full shrink-0 mt-1" />
+              <div>
+                <h1 className="text-[40px] sm:text-[52px] lg:text-[60px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
+                  Transforme dados em Receita:
+                  <br />
+                  <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
+                    Automações Inteligentes
+                  </span>
+                  {' '}para
+                  <br />
+                  <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
+                    Marketing &amp; Vendas
+                  </span>
+                  {' '}de
+                  <br />
+                  <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
+                    ALTA PERFORMANCE.
+                  </span>
+                </h1>
+                <p className="mt-5 text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-[520px] drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
+                  Agentes de IA que orquestram dados, mídia e criatividade para gerar resultados consistentes e escaláveis.
+                </p>
               </div>
             </div>
-
-            {/* 1px Orange Divider */}
-            <div className="hidden lg:block w-px self-stretch bg-[#ff6a00]/50 shrink-0 mx-4" />
-
-            {/* RIGHT 40% — CTAs + feature badges */}
-            <div className="flex-[4] pl-4 lg:pl-10 flex flex-col gap-6 items-start">
-              {/* CTAs stacked vertically */}
-              <div className="flex flex-col gap-3 w-full max-w-[280px]">
-                <button
-                  type="button"
-                  onClick={handleOpenSpecialistChat}
-                  className="w-full justify-center inline-flex items-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_24px_rgba(255,106,0,0.45)] cursor-pointer"
-                >
-                  Fale com um especialista
-                  <ArrowRight size={16} />
-                </button>
-                <button
-                  type="button"
-                  onClick={handleRequestDemo}
-                  className="w-full justify-center inline-flex items-center gap-2 rounded-full border border-white/30 hover:border-white/50 bg-white/10 hover:bg-white/15 transition-all px-6 py-4 text-[14px] font-bold cursor-pointer backdrop-blur-sm"
-                >
-                  Solicite Demonstração
-                  <ArrowRight size={16} />
-                </button>
-              </div>
-
-              {/* Feature badges — vertical list */}
-              <div className="flex flex-col gap-4 border-t border-white/15 pt-5 w-full">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
-                    <Cpu size={16} />
-                  </span>
-                  <div>
-                    <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">IA Agêntica</p>
-                    <p className="text-[10px] text-white/60 mt-1">Autônoma e orientada a metas</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
-                    <TrendingUp size={16} />
-                  </span>
-                  <div>
-                    <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Dados em tempo real</p>
-                    <p className="text-[10px] text-white/60 mt-1">Decisões baseadas em sinal</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
-                    <Target size={16} />
-                  </span>
-                  <div>
-                    <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Resultados mensuráveis</p>
-                    <p className="text-[10px] text-white/60 mt-1">Foco no que importa</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
           </div>
+
+          {/* 1px Orange Divider */}
+          <div className="hidden lg:block w-px self-stretch bg-[#ff6a00]/50 shrink-0" />
+
+          {/* RIGHT — CTAs + badges: hugs the right window edge */}
+          <div className="flex-[4] pl-6 lg:pl-10 pr-4 lg:pr-8 flex flex-col gap-6 items-start">
+            {/* CTAs stacked vertically */}
+            <div className="flex flex-col gap-3 w-full max-w-[280px]">
+              <button
+                type="button"
+                onClick={handleOpenSpecialistChat}
+                className="w-full justify-center inline-flex items-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_24px_rgba(255,106,0,0.45)] cursor-pointer"
+              >
+                Fale com um especialista
+                <ArrowRight size={16} />
+              </button>
+              <button
+                type="button"
+                onClick={handleRequestDemo}
+                className="w-full justify-center inline-flex items-center gap-2 rounded-full border border-white/30 hover:border-white/50 bg-white/10 hover:bg-white/15 transition-all px-6 py-4 text-[14px] font-bold cursor-pointer backdrop-blur-sm"
+              >
+                Solicite Demonstração
+                <ArrowRight size={16} />
+              </button>
+            </div>
+
+            {/* Feature badges — vertical list */}
+            <div className="flex flex-col gap-4 border-t border-white/15 pt-5 w-full">
+              <div className="flex items-center gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
+                  <Cpu size={16} />
+                </span>
+                <div>
+                  <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">IA Agêntica</p>
+                  <p className="text-[10px] text-white/60 mt-1">Autônoma e orientada a metas</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
+                  <TrendingUp size={16} />
+                </span>
+                <div>
+                  <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Dados em tempo real</p>
+                  <p className="text-[10px] text-white/60 mt-1">Decisões baseadas em sinal</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
+                  <Target size={16} />
+                </span>
+                <div>
+                  <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Resultados mensuráveis</p>
+                  <p className="text-[10px] text-white/60 mt-1">Foco no que importa</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </section>
+
+
 
 
         {/* NARRATIVE SECTION: COMO FUNCIONA? */}

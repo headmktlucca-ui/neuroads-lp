@@ -1,6 +1,6 @@
 'use client';
 
-import CategoryHubPageShell from '../../../components/dashboard/CategoryHubPageShell';
+import CategoryHubPageShell from '../../../components/hub/CategoryHubPageShell';
 
 export default function HubInteligenciaPage() {
   return <CategoryHubPageShell categorySlug="inteligencia" />;

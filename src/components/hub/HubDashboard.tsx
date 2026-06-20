@@ -548,7 +548,7 @@ export default function HubDashboard() {
   };
 
   return (
-    <div className="min-h-screen w-full pl-28 pr-6 md:pr-10 py-6 text-white font-sans overflow-y-auto" style={{ fontFamily: "'Inter', 'DM Sans', sans-serif" }}>
+    <div className="w-full space-y-6" style={{ fontFamily: "'Inter', 'DM Sans', sans-serif" }}>
       
       {/* Header Panel */}
       <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-6">
@@ -571,7 +571,7 @@ export default function HubDashboard() {
           {loading && (
             <div className="rounded-full bg-emerald-500/15 border border-emerald-500/30 px-3 py-1.5 text-[12px] font-bold text-emerald-300 flex items-center gap-1.5 animate-pulse">
               <RotateCw className="h-3.5 w-3.5 animate-spin" />
-              Sincronizando dados reais...
+              Sincronizando dados reais…
             </div>
           )}
           <div className="rounded-full bg-[#071a2e]/80 border border-white/[0.12] px-4 py-2 text-[12px] font-bold text-[#a3b8cc] flex items-center gap-2 backdrop-blur-xl">
@@ -591,12 +591,12 @@ export default function HubDashboard() {
       {/* KPI Cards Row */}
       <section className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 mb-6">
         {([
-          { label: 'Investimento Total', value: formatCurrencyCompact(stats.spend), trend: '↑ 12,45%', spark: [20,24,22,28,26,30,29], sparkColor: '#f59e0b', tip: 'Custo acumulado de mídia paga ativa', hasVal: stats.spend !== 'N/A' },
-          { label: 'Receita Total', value: formatCurrencyCompact(stats.revenue), trend: '↑ 18,72%', spark: [150,160,155,170,185,178,192], sparkColor: '#22c55e', tip: 'Faturamento total rastreado pelo GA4', hasVal: stats.revenue !== 'N/A' },
+          { label: 'Investimento Total', value: formatCurrencyCompact(stats.spend), trend: '↑ 12,45%', spark: [20,24,22,28,26,30,29], sparkColor: '#f59e0b', tip: 'Custo acumulado de mídia paga ativa', hasVal: stats.spend !== 'N/A', green: false },
+          { label: 'Receita Total', value: formatCurrencyCompact(stats.revenue), trend: '↑ 18,72%', spark: [150,160,155,170,185,178,192], sparkColor: '#22c55e', tip: 'Faturamento total rastreado pelo GA4', hasVal: stats.revenue !== 'N/A', green: false },
           { label: 'ROAS', value: formatROAS(stats.roas), trend: '↑ 5,35%', spark: [6.8,7.1,7.0,7.4,7.2,7.5,7.4], sparkColor: '#22c55e', tip: 'Retorno sobre investimento em anúncios', hasVal: stats.roas !== 'N/A', green: true },
-          { label: 'Conversões', value: formatNumber(stats.conversions), trend: '↑ 14,98%', spark: [1200,1300,1280,1400,1450,1390,1480], sparkColor: '#22c55e', tip: 'Volume total de transações integradas', hasVal: stats.conversions !== 'N/A' },
-          { label: 'CPA', value: formatCurrencyCompact(stats.cpa), trend: '↓ 8,21%', spark: [15,14.5,14.8,13.9,13.8,13.6,13.4], sparkColor: '#22c55e', tip: 'Custo Médio por Aquisição', hasVal: stats.cpa !== 'N/A' },
-          { label: 'Ticket Médio', value: formatCurrencyCompact(stats.aov), trend: '↑ 3,12%', spark: [96,97,98,99,99.5,100,100.18], sparkColor: '#22c55e', tip: 'Ticket Médio de Venda', hasVal: stats.aov !== 'N/A' },
+          { label: 'Conversões', value: formatNumber(stats.conversions), trend: '↑ 14,98%', spark: [1200,1300,1280,1400,1450,1390,1480], sparkColor: '#22c55e', tip: 'Volume total de transações integradas', hasVal: stats.conversions !== 'N/A', green: false },
+          { label: 'CPA', value: formatCurrencyCompact(stats.cpa), trend: '↓ 8,21%', spark: [15,14.5,14.8,13.9,13.8,13.6,13.4], sparkColor: '#22c55e', tip: 'Custo Médio por Aquisição', hasVal: stats.cpa !== 'N/A', green: false },
+          { label: 'Ticket Médio', value: formatCurrencyCompact(stats.aov), trend: '↑ 3,12%', spark: [96,97,98,99,99.5,100,100.18], sparkColor: '#22c55e', tip: 'Ticket Médio de Venda', hasVal: stats.aov !== 'N/A', green: false },
         ] as const).map((card) => (
           <article key={card.label} className="rounded-2xl border border-white/[0.10] bg-[#071a2e]/82 p-4 backdrop-blur-xl relative group hover:border-white/[0.18] hover:bg-[#071a2e]/90 transition-all duration-200 shadow-[0_8px_32px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-start mb-2">
@@ -629,7 +629,7 @@ export default function HubDashboard() {
               <h2 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Desempenho por Canal
               </h2>
-              <select className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-0.5 text-[11px] text-white/80 cursor-pointer">
+              <select aria-label="Selecionar métrica de desempenho por canal" className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-0.5 text-[11px] text-white/80 cursor-pointer">
                 <option>ROAS</option>
               </select>
             </div>
@@ -766,13 +766,13 @@ export default function HubDashboard() {
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-1.5">
                   <span className="text-[11px] text-white/40">Métrica</span>
-                  <select className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
+                  <select aria-label="Métrica de tendência" className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
                     <option>ROAS</option>
                   </select>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-[11px] text-white/40">Intervalo</span>
-                  <select className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
+                  <select aria-label="Intervalo de tendência" className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
                     <option>Diário</option>
                   </select>
                 </div>

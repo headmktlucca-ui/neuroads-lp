@@ -345,7 +345,7 @@ export default function LuccaHubSupportWidget() {
                       handleSend();
                     }
                   }}
-                  placeholder="Pergunte ao Lucca sobre sua operação..."
+                  placeholder="Pergunte ao Lucca sobre sua operação…"
                   className="flex-1 bg-transparent text-sm text-[#1F2937] outline-none placeholder:text-[#9CA3AF]"
                 />
                 <button

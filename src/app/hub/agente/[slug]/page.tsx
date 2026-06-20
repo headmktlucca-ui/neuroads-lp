@@ -1,13 +1,10 @@
 'use client';
 
 import { useMemo, useEffect, useState } from 'react';
-import { useParams, usePathname, useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { CheckCircle2, Download, Eye, History, MoreVertical, Sparkles, Trash2, X } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import Navbar from '../../../../components/layout/Navbar';
-import Footer from '../../../../components/layout/Footer';
-import LuccaHubSupportWidget from '../../../../components/hub/LuccaHubSupportWidget';
 import SeoGeoWorkspace from '../../../../components/agents/SeoGeoWorkspace';
 import TrafficAnalystWorkspace from '../../../../components/agents/TrafficAnalystWorkspace';
 import RoasSimulatorWorkspace from '../../../../components/agents/RoasSimulatorWorkspace';
@@ -28,7 +25,6 @@ import {
   getContractedAgentsFromProfile,
   slugifyAgentTitle,
 } from '../../../../lib/hub-agents';
-import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } from '../../../../lib/hub-access';
 import { getFirebaseDb } from '../../../../lib/firebase';
 import {
   deleteAgentReportFromDb,
@@ -240,7 +236,6 @@ function getAgentHeroDescription(title: string) {
   return null;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function getRequiredConnectorKeysForAgent(title: string, category: string): ConnectorKey[] {
   if (title === 'SEO & GEO') return ['ga4', 'crm', 'warehouse'];
   if (title === 'DNA da Marca') return ['crm', 'ga4'];
@@ -334,9 +329,8 @@ function buildAutomationSuggestions(entry: { title: string; category: string; pl
 }
 
 export default function AgentEntryPage() {
-  const { user, profile, loading, premiumSyncing } = useAuth();
+  const { user, profile } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
   const params = useParams<{ slug: string }>();
   const slug = params?.slug;
   const [isAutomationModalOpen, setIsAutomationModalOpen] = useState(false);
@@ -354,21 +348,6 @@ export default function AgentEntryPage() {
   const [isSavingAutomation, setIsSavingAutomation] = useState(false);
   const [isLoadingAutomation, setIsLoadingAutomation] = useState(false);
   const [automationNotice, setAutomationNotice] = useState<string | null>(null);
-  const accessState = useMemo(
-    () => resolveHubAccessState({ loading, user, profile }),
-    [loading, profile, user]
-  );
-  const isSyncingAccess = accessState === 'forbidden' && premiumSyncing;
-
-  useEffect(() => {
-    if (accessState === 'unauthenticated') {
-      router.replace(getHubLoginRedirect(pathname));
-      return;
-    }
-    if (accessState === 'forbidden' && !premiumSyncing) {
-      router.replace(getHubOnboardingRedirect(pathname));
-    }
-  }, [accessState, pathname, premiumSyncing, router]);
 
   const contracts = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
   const agent = useMemo(() => (slug ? getAgentBySlug(slug) : undefined), [slug]);
@@ -552,59 +531,39 @@ export default function AgentEntryPage() {
 
     loadPersistedAutomation();
   }, [agentAutomationKey, entry, user]);
-  if (accessState !== 'allowed') {
-    return (
-      <div className="min-h-screen bg-bg-main flex flex-col items-center justify-center gap-4 px-4">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-        {isSyncingAccess ? (
-          <div className="max-w-md rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-center">
-            <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#C2410C]">Configurando seu acesso</p>
-            <p className="mt-1 text-[13px] text-[#9A3412]">
-              Estamos preparando seu ambiente no Hub.
-            </p>
-          </div>
-        ) : null}
-      </div>
-    );
-  }
 
   return (
-    <main
-      className="agent-page-button-corners flex flex-col min-h-screen bg-bg-main bg-top bg-repeat-y bg-[length:100%_auto]"
-      style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
-    >
-      <Navbar />
-
-      <div className="flex-grow pt-24 md:pt-40 relative">
-        <div className="relative z-10 wrap py-8 md:py-12">
+    <div className="w-full space-y-6 text-white">
+      <div className="relative">
+        <div className="relative z-10 py-6">
           {!agent || !entry ? (
-            <div className="max-w-3xl mx-auto rounded-3xl border border-border bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)] p-8 md:p-10">
-              <p className="text-xs uppercase tracking-widest text-text-dim font-bold mb-3">Agente</p>
-              <h1 className="text-3xl md:text-4xl font-black text-text-main mb-4">Agente não encontrado</h1>
-              <p className="text-base text-text-muted mb-8">
+            <div className="max-w-3xl mx-auto rounded-3xl border border-white/[0.10] bg-[#0c213a]/60 backdrop-blur-xl p-8 md:p-10 shadow-[0_8px_32px_rgba(2,8,22,0.4)] text-center text-white">
+              <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-3">Agente</p>
+              <h1 className="text-3xl md:text-4xl font-black text-white mb-4">Agente não encontrado</h1>
+              <p className="text-base text-slate-300 mb-8">
                 O endereço informado não corresponde a um agente válido do Hub.
               </p>
               <button
                 onClick={() => router.push('/hub')}
-                className="btn btn-primary px-7 py-3 rounded-full text-sm font-bold tracking-widest uppercase"
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/10 bg-white/5 px-6 text-sm font-black text-white/80 hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 transition-all shadow-sm"
               >
                 Voltar ao Hub
               </button>
             </div>
           ) : !entry.isActive ? (
-            <div className="max-w-3xl mx-auto rounded-3xl border border-[#FFE4D1] bg-white shadow-[0_16px_40px_rgba(15,23,42,0.08)] p-8 md:p-10">
-              <p className="text-xs uppercase tracking-widest text-primary font-bold mb-3">{entry.category}</p>
-              <h1 className="text-3xl md:text-4xl font-black text-text-main mb-4">{entry.title}</h1>
-              <p className="text-base text-text-muted mb-8">
+            <div className="max-w-3xl mx-auto rounded-3xl border border-white/[0.10] bg-[#0c213a]/60 backdrop-blur-xl p-8 md:p-10 shadow-[0_8px_32px_rgba(2,8,22,0.4)] text-white">
+              <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold mb-3">{entry.category}</p>
+              <h1 className="text-3xl md:text-4xl font-black text-white mb-4">{entry.title}</h1>
+              <p className="text-base text-slate-300 mb-8">
                 Este agente ainda não está ativo na sua conta. Faça a contratação no Hub para liberar a janela funcional individual.
               </p>
-              <div className="mb-8 rounded-2xl border border-[#FFE4D1] bg-[#FFF8F3] p-4">
+              <div className="mb-8 rounded-2xl border border-white/[0.08] bg-[#051120]/60 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-sm font-black text-text-main">Canais necessários para operação</p>
+                  <p className="text-sm font-black text-white">Canais necessários para operação</p>
                   <button
                     type="button"
                     onClick={() => router.push('/hub/conectores')}
-                    className="rounded-full border border-[#D9E2F4] bg-[#EEF4FF] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#1D4ED8] hover:bg-[#E2ECFF]"
+                    className="rounded-full border border-blue-500/20 bg-blue-950/30 px-4 py-2 text-xs font-bold uppercase tracking-wide text-blue-400 hover:bg-blue-950/50 hover:text-white transition-all"
                   >
                     Abrir Conectores
                   </button>
@@ -615,17 +574,17 @@ export default function AgentEntryPage() {
                       key={connector.key}
                       className={`rounded-full border px-5 py-2.5 ${
                         connector.isActive
-                           ? 'border-[#BDE8CF] bg-[#F2FFF7]'
-                           : 'border-[#FECACA] bg-[#FFF1F2]'
+                           ? 'border-emerald-500/30 bg-emerald-950/20 text-emerald-400'
+                           : 'border-red-500/30 bg-red-950/20 text-red-400'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-xs font-black text-text-main">{connector.name}</p>
+                        <p className="text-xs font-black text-white">{connector.name}</p>
                         <span
                           className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-black ${
                             connector.isActive
-                              ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]'
-                              : 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]'
+                              ? 'border-emerald-500/20 bg-emerald-950/30 text-emerald-400'
+                              : 'border-red-500/30 bg-red-950/30 text-red-400'
                           }`}
                         >
                           {connector.isActive ? 'ATIVA' : 'INATIVA'}
@@ -637,125 +596,126 @@ export default function AgentEntryPage() {
               </div>
               <button
                 onClick={() => router.push('/hub')}
-                className="btn btn-primary px-7 py-3 rounded-full text-sm font-bold tracking-widest uppercase"
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/10 bg-white/5 px-6 text-sm font-black text-white/80 hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 transition-all shadow-sm"
               >
                 Voltar ao Hub
               </button>
             </div>
           ) : (
             <div className="max-w-6xl mx-auto space-y-6">
-              <div className="rounded-[34px] p-[2px] bg-gradient-to-br from-[#3A465C] via-[#1A2536] to-[#FF6B00] shadow-[0_26px_58px_-28px_rgba(8,15,30,0.72)]">
-                <div className="rounded-[32px] bg-[#0F1A2B]/95 p-[1px]">
-                  <div className="rounded-[30px] border border-[#26344A] bg-[#0B1422] p-6 md:p-8 min-h-[220px] md:min-h-[300px]">
-                    <div className="flex flex-col md:flex-row md:items-stretch md:justify-between gap-6">
-                      <div className="flex-1">
-                        <div>
-                          <p className="text-xs uppercase tracking-widest text-[#FF9A4D] font-bold mb-2">{entry.category}</p>
-                          <h1 className="text-3xl md:text-4xl font-black text-white">{entry.title}</h1>
-                          {heroDescription ? <p className="mt-4 max-w-[760px] text-[13px] leading-relaxed text-[#C8D3E6] [&_strong]:text-white">{heroDescription}</p> : null}
-                          <div className="mt-6 flex flex-wrap items-center gap-3">
-                            <button
-                              type="button"
-                              onClick={() => {
-                                setAutomationNotice(null);
-                                setIsAutomationModalOpen(true);
-                              }}
-                              className={`px-6 py-3 rounded-full border text-white font-bold tracking-widest text-sm uppercase transition-all ${
-                                automationActivated
-                                  ? 'border-[#08B760] bg-[#08B760] shadow-[0_10px_22px_rgba(8,183,96,0.3)] hover:brightness-105'
-                                  : 'border-[#FF6B00] bg-[#FF6B00] shadow-[0_10px_22px_rgba(255,107,0,0.3)] hover:brightness-105'
-                              }`}
-                            >
-                              {entry.title === 'Gerador de Copies de Conversão'
-                                ? 'Ativar Agente'
-                                : automationActivated
-                                  ? entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil' || entry.title === 'Diagnóstico de Landing Page'
-                                    ? 'Agente Ativo'
-                                    : 'Automação Ativa'
-                                  : entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil' || entry.title === 'Diagnóstico de Landing Page'
-                                    ? 'Ativar Agente'
-                                    : 'Ativar Automação'}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                void openHistoryModal();
-                              }}
-                              className="px-6 py-3 rounded-full border border-[#30405A] text-[#DCE7FF] bg-[#172438] font-bold tracking-widest text-sm uppercase hover:bg-[#22344F] transition-colors"
-                            >
-                              <History size={14} className="inline mr-2 -mt-[2px]" />
-                              Histórico
-                            </button>
-                            <button
-                              onClick={() => router.push('/hub')}
-                              className="px-6 py-3 rounded-full border border-[#30405A] text-[#F1F5FF] bg-transparent font-bold tracking-widest text-sm uppercase hover:bg-[#1B2940] transition-colors"
-                            >
-                              Voltar ao Hub
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-col items-end justify-start self-start gap-3 md:min-w-[280px]">
-                        <div className="w-[168px] h-[168px] rounded-[24px] p-[3px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_0_0_1px_rgba(255,107,0,0.7),0_14px_28px_rgba(255,107,0,0.26)]">
-                          <div className="relative w-full h-full rounded-[20px] overflow-hidden bg-[#101A2B]">
-                            <Image src={agent.icon} alt={entry.title} fill className="object-cover" />
-                          </div>
-                        </div>
-                      </div>
+              <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-6">
+                <div className="flex items-start lg:items-center gap-4">
+                  <div className="shrink-0 w-16 h-16 rounded-[16px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_4px_12px_rgba(255,107,0,0.26)]">
+                    <div className="relative w-full h-full rounded-[14px] overflow-hidden bg-[#101A2B]">
+                      <Image src={agent.icon} alt={entry.title} fill className="object-cover" />
                     </div>
                   </div>
+                  <div>
+                    <h1 className="text-2xl font-black tracking-tight text-white leading-none">
+                      {entry.title}
+                    </h1>
+                    <p className="text-[12px] font-semibold text-[#FF9A4D] mt-1 uppercase tracking-widest">
+                      {entry.category}
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <section className="rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/70 to-[#FF6B00] shadow-[0_18px_44px_-28px_rgba(255,107,0,0.38)]">
-                <div className="rounded-[28px] bg-white/90 p-[1px]">
-                  <div className="rounded-[26px] border border-[#FFF1E8] bg-white px-6 py-5">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div>
-                        <p className="text-xs uppercase tracking-widest text-primary font-bold">Canais Necessários</p>
-                        <h2 className="mt-1 text-lg font-black text-text-main">Status operacional deste agente</h2>
-                        <p className="mt-1 text-sm text-text-muted">
-                          As conexões são gerenciadas exclusivamente na janela <strong>Conectores</strong>.
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => router.push('/hub/conectores')}
-                        className="rounded-full border border-[#D9E2F4] bg-[#EEF4FF] px-4 py-2 text-xs font-bold uppercase tracking-wide text-[#1D4ED8] hover:bg-[#E2ECFF]"
+                <div className="flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAutomationNotice(null);
+                      setIsAutomationModalOpen(true);
+                    }}
+                    className={`h-11 px-5 rounded-xl border text-[13px] font-black uppercase tracking-wider transition shadow-sm ${
+                      automationActivated
+                        ? 'border-[#08B760] bg-[#08B760]/10 text-[#08B760] hover:bg-[#08B760]/20'
+                        : 'border-[#FF6B00] bg-[#FF6B00] text-white hover:brightness-105'
+                    }`}
+                  >
+                    {entry.title === 'Gerador de Copies de Conversão'
+                      ? 'Ativar Agente'
+                      : automationActivated
+                        ? entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil' || entry.title === 'Diagnóstico de Landing Page'
+                          ? 'Agente Ativo'
+                          : 'Automação Ativa'
+                        : entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil' || entry.title === 'Diagnóstico de Landing Page'
+                          ? 'Ativar Agente'
+                          : 'Ativar Automação'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void openHistoryModal();
+                    }}
+                    className="h-11 px-5 rounded-xl border border-white/10 bg-white/5 text-[13px] font-black uppercase tracking-wider text-white hover:bg-white/10 transition shadow-sm"
+                  >
+                    <History size={14} className="inline mr-2 -mt-[2px]" />
+                    Histórico
+                  </button>
+                  <button
+                    onClick={() => router.push('/hub')}
+                    className="h-11 px-5 rounded-xl border border-white/10 bg-transparent text-[13px] font-black uppercase tracking-wider text-white/80 hover:bg-white/5 transition shadow-sm"
+                  >
+                    Voltar ao Hub
+                  </button>
+                </div>
+              </header>
+
+              {heroDescription ? (
+                <div className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-6 backdrop-blur-xl shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
+                  <p className="max-w-[800px] text-[14px] leading-relaxed text-[#C8D3E6] [&_strong]:text-white">
+                    {heroDescription}
+                  </p>
+                </div>
+              ) : null}
+
+              <section className="relative overflow-hidden rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 shadow-[0_8px_32px_rgba(2,8,22,0.4)] text-white">
+                <div className="px-6 py-5 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-4 bg-[#091624]">
+                  <div className="flex flex-col gap-1">
+                    <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold">Canais Necessários</p>
+                    <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">Status operacional deste agente</h2>
+                    <p className="text-xs font-semibold text-slate-300">
+                      As conexões são gerenciadas exclusivamente na janela <strong>Conectores</strong>.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => router.push('/hub/conectores')}
+                    className="rounded-full border border-blue-500/20 bg-blue-950/30 px-4 py-2 text-xs font-bold uppercase tracking-wide text-blue-400 hover:bg-blue-950/50 hover:text-white transition-all"
+                  >
+                    Abrir Conectores
+                  </button>
+                </div>
+
+                <div className="p-6 md:p-8">
+                  <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
+                    {requiredConnectors.map((connector) => (
+                      <div
+                        key={connector.key}
+                        className={`rounded-[24px] border p-4 transition-all duration-200 ${
+                          connector.isActive
+                            ? 'border-emerald-500/30 bg-emerald-950/20 text-emerald-400'
+                            : 'border-red-500/30 bg-red-950/20 text-red-400'
+                        }`}
                       >
-                        Abrir Conectores
-                      </button>
-                    </div>
-
-                    <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
-                      {requiredConnectors.map((connector) => (
-                        <div
-                          key={connector.key}
-                          className={`rounded-full border px-6 py-3.5 ${
-                            connector.isActive
-                              ? 'border-[#BDE8CF] bg-[#F2FFF7]'
-                              : 'border-[#FECACA] bg-[#FFF1F2]'
-                          }`}
-                        >
-                          <div className="flex items-center justify-between gap-3">
-                            <div>
-                              <p className="text-sm font-black text-text-main">{connector.name}</p>
-                              <p className="text-xs text-text-muted">{connector.source}</p>
-                            </div>
-                            <span
-                              className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-black ${
-                                connector.isActive
-                                  ? 'border-[#BDE8CF] bg-[#F2FFF7] text-[#0A9D57]'
-                                  : 'border-[#FECACA] bg-[#FFF1F2] text-[#B42318]'
-                              }`}
-                            >
-                              {connector.isActive ? 'ATIVA' : 'INATIVA'}
-                            </span>
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-black text-white">{connector.name}</p>
+                            <p className="text-xs text-slate-400">{connector.source}</p>
                           </div>
+                          <span
+                            className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-black ${
+                              connector.isActive
+                                ? 'border-emerald-500/20 bg-emerald-950/30 text-emerald-400'
+                                : 'border-red-500/20 bg-red-950/30 text-red-400'
+                            }`}
+                          >
+                            {connector.isActive ? 'ATIVA' : 'INATIVA'}
+                          </span>
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </section>
@@ -875,216 +835,212 @@ export default function AgentEntryPage() {
 
       {entry && isAutomationModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-4 py-4">
-          <div className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm" onClick={() => setIsAutomationModalOpen(false)} />
+          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setIsAutomationModalOpen(false)} />
 
-          <div className="relative w-full max-w-[1120px] rounded-[26px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_22px_56px_rgba(15,23,42,0.3)] sm:rounded-[32px]">
-            <div className="rounded-[30px] bg-white/90 p-[1px]">
-              <div className="rounded-[28px] border border-[#FFF1E8] bg-white p-5 md:p-6">
-                <div className="mb-4 flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-primary font-bold mb-1">Automação Inteligente</p>
-                    <h3 className="text-2xl md:text-[2rem] font-black text-text-main">Ativar Rotina do Agente</h3>
-                    <p className="text-sm text-text-muted mt-2">
-                      Selecione uma cadência para <strong>{entry.title}</strong>, respeitando o plano atual e o limite contratado.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsAutomationModalOpen(false)}
-                    className="p-2 rounded-full border border-border text-text-muted hover:text-text-main hover:bg-bg-secondary transition-colors"
-                    aria-label="Fechar modal de automação"
-                  >
-                    <X size={18} />
-                  </button>
+          <div className="relative w-full max-w-[1120px] max-h-[96vh] rounded-[24px] bg-[#071a2e]/98 border border-white/[0.12] shadow-[0_24px_60px_rgba(2,8,22,0.6)] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-white flex flex-col">
+            <div className="relative border-b border-white/[0.08] bg-[#091624] px-6 py-5 flex flex-col gap-1 shrink-0">
+              <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold">Automação Inteligente</p>
+              <h3 className="text-2xl font-black text-white">Ativar Rotina do Agente</h3>
+              <p className="text-xs font-semibold text-slate-300 mt-1">
+                Selecione uma cadência para <strong>{entry.title}</strong>, respeitando o plano atual e o limite contratado.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsAutomationModalOpen(false)}
+                className="absolute right-5 top-5 rounded-full border border-white/10 bg-white/5 p-2 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm z-50"
+                aria-label="Fechar modal de automação"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            <div className="p-6 overflow-y-auto space-y-4 flex-1">
+              <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-3 text-sm text-slate-300">
+                Plano: <strong className="text-white">{entry.planSummary?.planName ?? 'A confirmar'}</strong> • Limite mensal:{' '}
+                <strong className="text-white">{entry.planSummary?.monthlyLimit ?? 0} execuções</strong>
+              </div>
+              {isLoadingAutomation && (
+                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-3 text-sm text-slate-300">
+                  Carregando configuração de automação salva…
                 </div>
-
-                <div className="mb-3 rounded-xl border border-[#E3E8EF] bg-[#F8FAFC] px-4 py-2.5 text-sm text-text-muted">
-                  Plano: <strong className="text-text-main">{entry.planSummary?.planName ?? 'A confirmar'}</strong> • Limite mensal:{' '}
-                  <strong className="text-text-main">{entry.planSummary?.monthlyLimit ?? 0} execuções</strong>
+              )}
+              {inactiveRequiredConnectors.length > 0 && (
+                <div className="rounded-xl border border-orange-500/30 bg-orange-950/20 px-4 py-3 text-sm text-orange-400">
+                  Para ativar esta automação, conecte primeiro: {inactiveRequiredConnectors.map((connector) => connector.name).join(', ')}.
                 </div>
-                {isLoadingAutomation && (
-                  <div className="mb-3 rounded-xl border border-[#E3E8EF] bg-white px-4 py-2.5 text-sm text-text-muted">
-                    Carregando configuração de automação salva...
-                  </div>
-                )}
-                {inactiveRequiredConnectors.length > 0 && (
-                  <div className="mb-3 rounded-xl border border-[#FFE1CF] bg-[#FFF8F3] px-4 py-2.5 text-sm text-[#B45309]">
-                    Para ativar esta automação, conecte primeiro: {inactiveRequiredConnectors.map((connector) => connector.name).join(', ')}.
-                  </div>
-                )}
+              )}
 
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                  {automationSuggestions.map((option) => {
-                    const isSelected = selectedAutomationId === option.id;
-                    return (
-                      <div
-                        key={option.id}
-                        onClick={() => setSelectedAutomationId(option.id)}
-                        onKeyDown={(event) => {
-                          if (event.key === 'Enter' || event.key === ' ') {
-                            event.preventDefault();
-                            setSelectedAutomationId(option.id);
-                          }
-                        }}
-                        role="button"
-                        tabIndex={0}
-                        className={`w-full cursor-pointer text-left rounded-2xl border p-3 transition-all ${
-                          isSelected
-                            ? 'border-[#FFBE94] bg-[#FFF7F1] shadow-[0_10px_24px_rgba(255,107,0,0.14)]'
-                            : 'border-[#E3E8EF] bg-[#FBFCFE] hover:border-[#FFD1B3] hover:bg-white'
-                        }`}
-                      >
-                        <div className="flex flex-wrap items-center justify-between gap-2">
-                          <p className="text-[1rem] font-bold text-text-main">{option.title}</p>
-                          <span className="inline-flex items-center rounded-full border border-[#CDE7D9] bg-[#F2FFF7] px-3 py-1 text-xs font-bold text-[#0A9D57]">
-                            {option.monthlyExecutions} execuções/mês
-                          </span>
-                        </div>
-                        <p className={`mt-2 text-sm text-text-muted ${isSelected ? '' : 'truncate'}`}>{option.objective}</p>
-                        <p className="mt-2 text-xs text-text-dim">
-                          Cadência: <strong className="text-text-main">{option.cadence}</strong>
-                        </p>
-                        {isSelected ? <p className="mt-1 text-xs text-text-dim">{option.distribution}</p> : null}
-                        {isSelected ? (
-                          <div className="mt-3 rounded-xl border border-[#FFE1CF] bg-white p-3">
-                            <p className="text-[11px] font-black uppercase tracking-widest text-[#B45309]">
-                              Sugestões de dias e horários
-                            </p>
-                            <div className="mt-2 grid grid-cols-1 gap-2 md:grid-cols-2">
-                              {option.scheduleOptions.map((schedule) => {
-                                const isScheduleSelected = selectedScheduleOptionId === schedule.id;
-                                return (
-                                  <button
-                                    key={schedule.id}
-                                    type="button"
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      setSelectedScheduleOptionId(schedule.id);
-                                    }}
-                                    className={`cursor-pointer rounded-lg border px-3 py-2 text-left transition-all ${
-                                      isScheduleSelected
-                                        ? 'border-[#FF9A63] bg-[#FFF4EC] shadow-[0_8px_16px_rgba(255,107,0,0.12)]'
-                                        : 'border-[#E4EAF2] bg-white hover:border-[#FFC7A2]'
-                                    }`}
-                                  >
-                                    <p className="text-xs font-black text-text-main">{schedule.label}</p>
-                                    <p className="mt-1 text-[11px] leading-snug text-text-dim">{schedule.detail}</p>
-                                  </button>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        ) : null}
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                {automationSuggestions.map((option) => {
+                  const isSelected = selectedAutomationId === option.id;
+                  return (
+                    <div
+                      key={option.id}
+                      onClick={() => setSelectedAutomationId(option.id)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          setSelectedAutomationId(option.id);
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      className={`w-full cursor-pointer text-left rounded-2xl border p-4 transition-all duration-200 ${
+                        isSelected
+                          ? 'border-[#FF7A00]/50 bg-[#FF7A00]/10 shadow-[0_8px_24px_rgba(255,122,0,0.15)] text-white'
+                          : 'border-white/[0.08] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04] text-slate-300'
+                      }`}
+                    >
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <p className="text-base font-black text-white">{option.title}</p>
+                        <span className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-950/30 px-3 py-1 text-xs font-bold text-emerald-400">
+                          {option.monthlyExecutions} execuções/mês
+                        </span>
                       </div>
-                    );
-                  })}
-                </div>
+                      <p className={`mt-2 text-xs leading-relaxed ${isSelected ? 'text-slate-200' : 'text-slate-400 line-clamp-2'}`}>{option.objective}</p>
+                      <p className="mt-3 text-xs text-slate-400">
+                        Cadência: <strong className="text-white">{option.cadence}</strong>
+                      </p>
+                      {isSelected ? <p className="mt-1.5 text-xs text-slate-400">{option.distribution}</p> : null}
+                      {isSelected ? (
+                        <div className="mt-4 rounded-xl border border-white/[0.08] bg-[#051120]/60 p-3.5 space-y-2">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">
+                            Sugestões de dias e horários
+                          </p>
+                          <div className="mt-2 grid grid-cols-1 gap-2">
+                            {option.scheduleOptions.map((schedule) => {
+                              const isScheduleSelected = selectedScheduleOptionId === schedule.id;
+                              return (
+                                <button
+                                  key={schedule.id}
+                                  type="button"
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    setSelectedScheduleOptionId(schedule.id);
+                                  }}
+                                  className={`cursor-pointer rounded-xl border p-3 text-left transition-all duration-200 w-full ${
+                                    isScheduleSelected
+                                      ? 'border-[#FF7A00]/50 bg-[#FF7A00]/10 shadow-[0_4px_12px_rgba(255,122,0,0.1)]'
+                                      : 'border-white/[0.08] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
+                                  }`}
+                                >
+                                  <p className="text-xs font-black text-white">{schedule.label}</p>
+                                  <p className="mt-1 text-[11px] leading-snug text-slate-400">{schedule.detail}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
 
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setIsAutomationModalOpen(false)}
-                    className="px-5 py-2.5 rounded-full border border-border text-text-muted font-bold tracking-wide text-sm hover:bg-bg-secondary transition-colors"
-                  >
-                    Fechar
-                  </button>
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/[0.08] shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsAutomationModalOpen(false)}
+                  className="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-300 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
+                >
+                  Fechar
+                </button>
 
-                  <button
-                    type="button"
-                    disabled={!selectedSuggestion || !selectedScheduleOption || inactiveRequiredConnectors.length > 0}
-                    onClick={async () => {
-                      if (!selectedSuggestion || !selectedScheduleOption || !user || !entry || !agentAutomationKey) return;
-                      if (inactiveRequiredConnectors.length > 0) {
-                        setAutomationNotice(
-                          `Conecte os canais obrigatórios antes de confirmar: ${inactiveRequiredConnectors
-                            .map((connector) => connector.name)
-                            .join(', ')}.`
-                        );
-                        return;
-                      }
-
-                      const shouldConfirm = window.confirm(
-                        `Confirmar programação para ${entry.title}?\n\nCadência: ${selectedSuggestion.title}\nAgenda sugerida: ${selectedScheduleOption.label}`
+                <button
+                  type="button"
+                  disabled={!selectedSuggestion || !selectedScheduleOption || inactiveRequiredConnectors.length > 0}
+                  onClick={async () => {
+                    if (!selectedSuggestion || !selectedScheduleOption || !user || !entry || !agentAutomationKey) return;
+                    if (inactiveRequiredConnectors.length > 0) {
+                      setAutomationNotice(
+                        `Conecte os canais obrigatórios antes de confirmar: ${inactiveRequiredConnectors
+                          .map((connector) => connector.name)
+                          .join(', ')}.`
                       );
-                      if (!shouldConfirm) return;
+                      return;
+                    }
 
-                      setIsSavingAutomation(true);
-                      setAutomationNotice(null);
-                      try {
-                        const timestamps = buildAutomationTimestamps({
+                    const shouldConfirm = window.confirm(
+                      `Confirmar programação para ${entry.title}?\n\nCadência: ${selectedSuggestion.title}\nAgenda sugerida: ${selectedScheduleOption.label}`
+                    );
+                    if (!shouldConfirm) return;
+
+                    setIsSavingAutomation(true);
+                    setAutomationNotice(null);
+                    try {
+                      const timestamps = buildAutomationTimestamps({
+                        cadence: selectedSuggestion.cadence,
+                        monthlyExecutions: selectedSuggestion.monthlyExecutions,
+                        scheduleOptionLabel: selectedScheduleOption.label,
+                      });
+                      const db = getFirebaseDb();
+                      const userRef = doc(db, 'users', user.uid);
+                      const payload = {
+                        [`automations.${agentAutomationKey}`]: {
+                          status: 'active',
+                          agentTitle: entry.title,
+                          agentCategory: entry.category,
+                          cadenceId: selectedSuggestion.id,
+                          cadenceTitle: selectedSuggestion.title,
                           cadence: selectedSuggestion.cadence,
                           monthlyExecutions: selectedSuggestion.monthlyExecutions,
+                          distribution: selectedSuggestion.distribution,
+                          objective: selectedSuggestion.objective,
+                          scheduleOptionId: selectedScheduleOption.id,
                           scheduleOptionLabel: selectedScheduleOption.label,
-                        });
-                        const db = getFirebaseDb();
-                        const userRef = doc(db, 'users', user.uid);
-                        const payload = {
-                          [`automations.${agentAutomationKey}`]: {
-                            status: 'active',
-                            agentTitle: entry.title,
-                            agentCategory: entry.category,
-                            cadenceId: selectedSuggestion.id,
-                            cadenceTitle: selectedSuggestion.title,
-                            cadence: selectedSuggestion.cadence,
-                            monthlyExecutions: selectedSuggestion.monthlyExecutions,
-                            distribution: selectedSuggestion.distribution,
-                            objective: selectedSuggestion.objective,
-                            scheduleOptionId: selectedScheduleOption.id,
-                            scheduleOptionLabel: selectedScheduleOption.label,
-                            scheduleOptionDetail: selectedScheduleOption.detail,
-                            planName: entry.planSummary?.planName ?? null,
-                            monthlyLimit: entry.planSummary?.monthlyLimit ?? null,
-                            activatedAt: Date.now(),
-                            updatedAt: Date.now(),
-                            lastUpdateAt: timestamps.lastUpdateAt,
-                            nextUpdateAt: timestamps.nextUpdateAt,
-                          },
-                        };
+                          scheduleOptionDetail: selectedScheduleOption.detail,
+                          planName: entry.planSummary?.planName ?? null,
+                          monthlyLimit: entry.planSummary?.monthlyLimit ?? null,
+                          activatedAt: Date.now(),
+                          updatedAt: Date.now(),
+                          lastUpdateAt: timestamps.lastUpdateAt,
+                          nextUpdateAt: timestamps.nextUpdateAt,
+                        },
+                      };
 
-                        await setDoc(userRef, payload, { merge: true });
-                        setAutomationActivated(true);
-                        setAutomationNotice('Programação salva com sucesso no seu perfil.');
-                        setIsAutomationModalOpen(false);
-                      } catch (error) {
-                        console.error('Erro ao salvar automação:', error);
-                        setAutomationActivated(false);
-                        setAutomationNotice('Falha ao salvar automação. Tente novamente.');
-                      } finally {
-                        setIsSavingAutomation(false);
-                      }
-                    }}
-                    className={`inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold tracking-wide transition-all ${
-                      selectedSuggestion && !isSavingAutomation && inactiveRequiredConnectors.length === 0
-                        ? 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] text-white shadow-[0_10px_22px_rgba(8,183,96,0.3)] hover:brightness-105'
-                        : 'bg-[#E2E8F0] text-[#64748B] cursor-not-allowed'
-                    }`}
-                  >
-                    <Sparkles size={15} />
-                    {isSavingAutomation ? 'Salvando...' : 'Confirmar Automação'}
-                  </button>
-                </div>
-
-                {automationActivated && selectedSuggestion && (
-                  <div className="mt-4 rounded-xl border border-[#B9EBD1] bg-[#F2FFF7] px-4 py-3 text-sm text-[#0A9D57] flex items-start gap-2">
-                    <CheckCircle2 size={16} className="mt-0.5 shrink-0" />
-                    <span>
-                      Automação ativada com a configuração <strong>{selectedSuggestion.title}</strong> para o agente{' '}
-                      <strong>{entry.title}</strong>.
-                      {selectedScheduleOption ? (
-                        <>
-                          {' '}
-                          Agenda selecionada: <strong>{selectedScheduleOption.label}</strong>.
-                        </>
-                      ) : null}
-                    </span>
-                  </div>
-                )}
-                {automationNotice && !automationActivated && (
-                  <div className="mt-4 rounded-xl border border-[#FFD2B5] bg-[#FFF7F1] px-4 py-3 text-sm text-[#B45309]">
-                    {automationNotice}
-                  </div>
-                )}
+                      await setDoc(userRef, payload, { merge: true });
+                      setAutomationActivated(true);
+                      setAutomationNotice('Programação salva com sucesso no seu perfil.');
+                      setIsAutomationModalOpen(false);
+                    } catch (error) {
+                      console.error('Erro ao salvar automação:', error);
+                      setAutomationActivated(false);
+                      setAutomationNotice('Falha ao salvar automação. Tente novamente.');
+                    } finally {
+                      setIsSavingAutomation(false);
+                    }
+                  }}
+                  className={`inline-flex items-center gap-2 rounded-xl px-6 py-3 text-xs font-black uppercase tracking-widest transition-all ${
+                    selectedSuggestion && !isSavingAutomation && inactiveRequiredConnectors.length === 0
+                      ? 'bg-gradient-to-r from-[#08B760] to-[#0A9D57] text-white shadow-[0_8px_18px_rgba(10,157,87,0.15)] hover:brightness-105 active:scale-98'
+                      : 'bg-white/[0.04] text-slate-500 border border-white/[0.08] cursor-not-allowed'
+                  }`}
+                >
+                  <Sparkles size={14} className="shrink-0" />
+                  {isSavingAutomation ? 'Salvando…' : 'Confirmar Automação'}
+                </button>
               </div>
+
+              {automationActivated && selectedSuggestion && (
+                <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-sm text-emerald-400 flex items-start gap-2">
+                  <CheckCircle2 size={16} className="mt-0.5 shrink-0" />
+                  <span>
+                    Automação ativada com a configuração <strong>{selectedSuggestion.title}</strong> para o agente{' '}
+                    <strong>{entry.title}</strong>.
+                    {selectedScheduleOption ? (
+                      <>
+                        {' '}
+                        Agenda selecionada: <strong>{selectedScheduleOption.label}</strong>.
+                      </>
+                    ) : null}
+                  </span>
+                </div>
+              )}
+              {automationNotice && !automationActivated && (
+                <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-sm text-emerald-400">
+                  {automationNotice}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1092,209 +1048,204 @@ export default function AgentEntryPage() {
 
       {entry && isHistoryModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center">
-          <div className="absolute inset-0 bg-charcoal/60 backdrop-blur-sm" onClick={() => setIsHistoryModalOpen(false)} />
+          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setIsHistoryModalOpen(false)} />
 
-          <div className="relative w-full max-w-6xl max-h-[92vh] overflow-hidden rounded-[26px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_22px_56px_rgba(15,23,42,0.3)] sm:rounded-[32px]">
-            <div className="rounded-[30px] bg-white/90 p-[1px] h-full">
-              <div className="rounded-[28px] border border-[#FFF1E8] bg-white h-full flex flex-col">
-                <div className="flex items-start justify-between gap-3 px-6 pt-6 pb-5 border-b border-[#F1F5F9]">
-                  <div>
-                    <p className="text-xs uppercase tracking-widest text-primary font-bold mb-1">{entry.category}</p>
-                    <h3 className="text-2xl md:text-3xl font-black text-text-main">Histórico de Relatórios</h3>
-                    <p className="text-sm text-text-muted mt-2">
-                      Últimos 10 relatórios do agente <strong>{entry.title}</strong>, prontos para visualização e download.
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setIsHistoryModalOpen(false)}
-                    className="p-2 rounded-full border border-border text-text-muted hover:text-text-main hover:bg-bg-secondary transition-colors"
-                    aria-label="Fechar histórico"
-                  >
-                    <X size={18} />
-                  </button>
+          <div className="relative w-full max-w-6xl max-h-[92vh] overflow-hidden rounded-[24px] border border-white/[0.12] bg-[#071a2e]/98 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white flex flex-col">
+            <div className="relative border-b border-white/[0.08] bg-[#091624] px-6 py-5 flex flex-col gap-1 shrink-0">
+              <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold">{entry.category}</p>
+              <h3 className="text-2xl font-black text-white">Histórico de Relatórios</h3>
+              <p className="text-xs font-semibold text-slate-300 mt-1">
+                Últimos 10 relatórios do agente <strong>{entry.title}</strong>, prontos para visualização e download.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsHistoryModalOpen(false)}
+                className="absolute right-5 top-5 rounded-full border border-white/10 bg-white/5 p-2 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm z-50"
+                aria-label="Fechar histórico"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {isLoadingHistory ? (
+              <div className="p-6">
+                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-5 py-6 text-sm text-slate-400">
+                  Carregando histórico…
                 </div>
-
-                {isLoadingHistory ? (
-                  <div className="px-6 py-10">
-                    <div className="rounded-2xl border border-[#E3E8EF] bg-[#F8FAFC] px-5 py-6 text-sm text-text-muted">
-                      Carregando histórico...
+              </div>
+            ) : historyError ? (
+              <div className="p-6">
+                <div className="rounded-xl border border-orange-500/30 bg-orange-950/20 px-5 py-6 text-sm text-orange-400">
+                  {historyError}
+                </div>
+              </div>
+            ) : historyEntries.length === 0 ? (
+              <div className="p-6">
+                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-5 py-6 text-sm text-slate-400">
+                  Ainda não existem relatórios salvos neste agente. Gere um relatório para iniciar o histórico.
+                </div>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-0 min-h-0 flex-1 overflow-hidden">
+                <aside className="border-r border-white/[0.08] p-4 overflow-y-auto bg-[#071a2e]/40">
+                  {historyActionError ? (
+                    <div className="mb-3 rounded-xl border border-orange-500/30 bg-orange-950/20 px-3 py-2 text-xs font-semibold text-orange-400">
+                      {historyActionError}
                     </div>
-                  </div>
-                ) : historyError ? (
-                  <div className="px-6 py-10">
-                    <div className="rounded-2xl border border-[#FFE1CF] bg-[#FFF8F3] px-5 py-6 text-sm text-[#B45309]">
-                      {historyError}
-                    </div>
-                  </div>
-                ) : historyEntries.length === 0 ? (
-                  <div className="px-6 py-10">
-                    <div className="rounded-2xl border border-[#E3E8EF] bg-[#F8FAFC] px-5 py-6 text-sm text-text-muted">
-                      Ainda não existem relatórios salvos neste agente. Gere um relatório para iniciar o histórico.
-                    </div>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-0 min-h-0 flex-1">
-                    <aside className="border-r border-[#EEF2F7] p-4 overflow-y-auto">
-                      {historyActionError ? (
-                        <div className="mb-3 rounded-xl border border-[#FFE1CF] bg-[#FFF8F3] px-3 py-2 text-xs font-semibold text-[#B45309]">
-                          {historyActionError}
-                        </div>
-                      ) : null}
-                      <div className="space-y-3">
-                        {historyEntries.map((item, index) => {
-                          const isSelected = selectedHistoryEntry?.id === item.id;
-                          const websiteUrl =
-                            typeof item.metadata?.websiteUrl === 'string' ? item.metadata.websiteUrl : '';
-                          const cleanedUrl = websiteUrl ? websiteUrl.replace(/^https?:\/\//i, '') : '';
-                          const isDeletingCurrent = deletingReportId === item.id;
-                          return (
-                            <div
-                              key={item.id}
-                              data-history-menu-root="true"
-                              className={`w-full rounded-2xl border p-4 text-left transition-all ${
-                                isSelected
-                                  ? 'border-[#FFBE94] bg-[#FFF7F1] shadow-[0_10px_24px_rgba(255,107,0,0.14)]'
-                                  : 'border-[#E3E8EF] bg-[#FBFCFE] hover:border-[#FFD1B3] hover:bg-white'
-                              }`}
-                            >
-                              <div className="flex items-start justify-between gap-2">
-                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Relatório {historyEntries.length - index}</p>
-                                <div className="relative">
-                                  <button
-                                    type="button"
-                                    onClick={() =>
-                                      setHistoryMenuReportId((current) => (current === item.id ? null : item.id))
-                                    }
-                                    className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-[#DCE4EE] bg-white text-[#667085] hover:bg-[#F8FAFC]"
-                                    aria-label="Abrir menu de ações do relatório"
-                                  >
-                                    <MoreVertical size={14} />
-                                  </button>
-
-                                  {historyMenuReportId === item.id ? (
-                                    <div className="absolute right-0 top-9 z-20 min-w-[148px] overflow-hidden rounded-xl border border-[#E3E8EF] bg-white shadow-[0_16px_28px_rgba(15,23,42,0.14)]">
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          setSelectedHistoryId(item.id);
-                                          setHistoryMenuReportId(null);
-                                        }}
-                                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-[#1D4ED8] hover:bg-[#EEF4FF]"
-                                      >
-                                        <Eye size={13} />
-                                        Visualizar
-                                      </button>
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          void downloadAgentReport(item);
-                                          setHistoryMenuReportId(null);
-                                        }}
-                                        className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-[#0A9D57] hover:bg-[#EEFDF5]"
-                                      >
-                                        <Download size={13} />
-                                        Download
-                                      </button>
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          void handleDeleteHistoryEntry(item.id);
-                                        }}
-                                        disabled={isDeletingCurrent}
-                                        className={`flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold ${
-                                          isDeletingCurrent
-                                            ? 'cursor-not-allowed text-[#B42318] bg-[#FFF4F6]'
-                                            : 'text-[#B42318] hover:bg-[#FFF1F3]'
-                                        }`}
-                                      >
-                                        <Trash2 size={13} />
-                                        {isDeletingCurrent ? 'Excluindo...' : 'Excluir'}
-                                      </button>
-                                    </div>
-                                  ) : null}
-                                </div>
-                              </div>
-                              <p className="mt-2 text-sm font-bold text-text-main break-all">{item.reportTitle || cleanedUrl}</p>
-                              <p className="mt-1 text-xs text-text-muted">{formatHistoryDate(item.generatedAt)}</p>
-                              {item.metadata?.websiteUrl ? (
-                                <p className="mt-2 text-xs text-text-dim line-clamp-2">{String(item.metadata.websiteUrl)}</p>
-                              ) : null}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </aside>
-
-                    <section className="p-5 md:p-6 overflow-y-auto">
-                      {selectedHistoryEntry ? (
-                        <div className="space-y-4">
-                          <div className="rounded-2xl border border-[#E3E8EF] bg-[#FBFCFE] p-4">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                              <div>
-                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Agente</p>
-                                <p className="mt-1 font-semibold text-text-main break-all">{selectedHistoryEntry.agentTitle}</p>
-                              </div>
-                              <div>
-                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Gerado em</p>
-                                <p className="mt-1 font-semibold text-text-main">{formatHistoryDate(selectedHistoryEntry.generatedAt)}</p>
-                              </div>
-                            </div>
-                            {selectedHistoryEntry.metadata?.websiteUrl ? (
-                              <div className="mt-4">
-                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Referência</p>
-                                <p className="mt-1 text-sm text-text-main break-all">{String(selectedHistoryEntry.metadata.websiteUrl)}</p>
-                              </div>
-                            ) : null}
-                            {selectedHistoryEntry.metadata?.businessContext ? (
-                              <div className="mt-4">
-                                <p className="text-[11px] font-bold uppercase tracking-widest text-text-dim">Contexto informado</p>
-                                <p className="mt-1 text-sm text-text-main">{String(selectedHistoryEntry.metadata.businessContext)}</p>
-                              </div>
-                            ) : null}
-                          </div>
-
-                          <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-                            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                              <h4 className="text-base font-black text-text-main">Resultado Completo</h4>
+                  ) : null}
+                  <div className="space-y-3">
+                    {historyEntries.map((item, index) => {
+                      const isSelected = selectedHistoryEntry?.id === item.id;
+                      const websiteUrl =
+                        typeof item.metadata?.websiteUrl === 'string' ? item.metadata.websiteUrl : '';
+                      const cleanedUrl = websiteUrl ? websiteUrl.replace(/^https?:\/\//i, '') : '';
+                      const isDeletingCurrent = deletingReportId === item.id;
+                      return (
+                        <div
+                          key={item.id}
+                          data-history-menu-root="true"
+                          className={`w-full rounded-2xl border p-4 text-left transition-all duration-200 cursor-pointer ${
+                            isSelected
+                              ? 'border-[#FF7A00]/50 bg-[#FF7A00]/10 shadow-[0_8px_24px_rgba(255,122,0,0.15)] text-white'
+                              : 'border-white/[0.08] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04] text-slate-300'
+                          }`}
+                          onClick={() => setSelectedHistoryId(item.id)}
+                        >
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">Relatório {historyEntries.length - index}</p>
+                            <div className="relative">
                               <button
                                 type="button"
-                                onClick={() => {
-                                  void downloadAgentReport(selectedHistoryEntry);
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setHistoryMenuReportId((current) => (current === item.id ? null : item.id));
                                 }}
-                                className="inline-flex items-center gap-2 rounded-full border border-[#B5E8CB] bg-gradient-to-br from-[#08B760] to-[#0A9D57] px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-[0_10px_24px_rgba(8,183,96,0.3)] transition-all hover:brightness-105"
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
+                                aria-label="Abrir menu de ações do relatório"
                               >
-                                <Download size={14} />
-                                Download
+                                <MoreVertical size={14} />
                               </button>
+
+                              {historyMenuReportId === item.id ? (
+                                <div className="absolute right-0 top-9 z-20 min-w-[148px] overflow-hidden rounded-xl border border-white/[0.12] bg-[#071a2e] shadow-[0_16px_28px_rgba(15,23,42,0.4)]">
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedHistoryId(item.id);
+                                      setHistoryMenuReportId(null);
+                                    }}
+                                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-white hover:bg-white/[0.04]"
+                                  >
+                                    <Eye size={13} className="text-slate-400" />
+                                    Visualizar
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      void downloadAgentReport(item);
+                                      setHistoryMenuReportId(null);
+                                    }}
+                                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-emerald-400 hover:bg-emerald-950/20"
+                                  >
+                                    <Download size={13} />
+                                    Download
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      void handleDeleteHistoryEntry(item.id);
+                                    }}
+                                    disabled={isDeletingCurrent}
+                                    className={`flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold ${
+                                      isDeletingCurrent
+                                        ? 'cursor-not-allowed text-red-400 bg-red-950/20'
+                                        : 'text-red-400 hover:bg-red-950/30'
+                                    }`}
+                                  >
+                                    <Trash2 size={13} />
+                                    {isDeletingCurrent ? 'Excluindo…' : 'Excluir'}
+                                  </button>
+                                </div>
+                              ) : null}
                             </div>
-                            {dnaHistoryPayload ? (
-                              <DnaBrandPresentationPanel
-                                presentation={dnaHistoryPayload.presentation}
-                                sources={dnaHistoryPayload.sources}
-                                generatedAt={selectedHistoryEntry.generatedAt}
-                              />
-                            ) : (
-                              <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-text-main font-sans">
-                                {selectedHistoryEntry.reportContent}
-                              </pre>
-                            )}
-                          </article>
+                          </div>
+                          <p className="mt-2 text-sm font-bold text-white break-all">{item.reportTitle || cleanedUrl}</p>
+                          <p className="mt-1 text-xs text-slate-400">{formatHistoryDate(item.generatedAt)}</p>
+                          {item.metadata?.websiteUrl ? (
+                            <p className="mt-2 text-xs text-slate-400 line-clamp-2">{String(item.metadata.websiteUrl)}</p>
+                          ) : null}
                         </div>
-                      ) : null}
-                    </section>
+                      );
+                    })}
                   </div>
-                )}
+                </aside>
+
+                <section className="p-5 md:p-6 overflow-y-auto flex-1 bg-transparent">
+                  {selectedHistoryEntry ? (
+                    <div className="space-y-4">
+                      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 text-slate-300">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">Agente</p>
+                            <p className="mt-1 font-bold text-white break-all">{selectedHistoryEntry.agentTitle}</p>
+                          </div>
+                          <div>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">Gerado em</p>
+                            <p className="mt-1 font-bold text-white">{formatHistoryDate(selectedHistoryEntry.generatedAt)}</p>
+                          </div>
+                        </div>
+                        {selectedHistoryEntry.metadata?.websiteUrl ? (
+                          <div className="mt-4">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">Referência</p>
+                            <p className="mt-1 text-sm font-semibold text-white break-all">{String(selectedHistoryEntry.metadata.websiteUrl)}</p>
+                          </div>
+                        ) : null}
+                        {selectedHistoryEntry.metadata?.businessContext ? (
+                          <div className="mt-4">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">Contexto informado</p>
+                            <p className="mt-1 text-sm text-slate-300">{String(selectedHistoryEntry.metadata.businessContext)}</p>
+                          </div>
+                        ) : null}
+                      </div>
+
+                      <article className="rounded-2xl border border-white/[0.08] bg-[#071a2e]/82 p-5 shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
+                        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/[0.08]">
+                          <h4 className="text-base font-black text-white">Resultado Completo</h4>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              void downloadAgentReport(selectedHistoryEntry);
+                            }}
+                            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-4 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(10,157,87,0.15)] transition-all hover:brightness-105"
+                          >
+                            <Download size={14} />
+                            Download
+                          </button>
+                        </div>
+                        {dnaHistoryPayload ? (
+                          <DnaBrandPresentationPanel
+                            presentation={dnaHistoryPayload.presentation}
+                            sources={dnaHistoryPayload.sources}
+                            generatedAt={selectedHistoryEntry.generatedAt}
+                          />
+                        ) : (
+                          <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-slate-300 font-sans">
+                            {selectedHistoryEntry.reportContent}
+                          </pre>
+                        )}
+                      </article>
+                    </div>
+                  ) : null}
+                </section>
               </div>
-            </div>
+            )}
           </div>
         </div>
       )}
 
-      <div className="[&>footer]:!bg-transparent [&>footer]:!backdrop-blur-none">
-        <Footer />
       </div>
-      <LuccaHubSupportWidget />
-    </main>
   );
 }

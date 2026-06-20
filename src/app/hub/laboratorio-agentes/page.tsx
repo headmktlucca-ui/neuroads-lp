@@ -3,17 +3,13 @@
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { CheckCircle2, ExternalLink, Info, Power, Search, Wrench, X } from 'lucide-react';
 import { doc, setDoc } from 'firebase/firestore';
-import Navbar from '../../../components/layout/Navbar';
-import Footer from '../../../components/layout/Footer';
-import LuccaHubSupportWidget from '../../../components/hub/LuccaHubSupportWidget';
 import { useAuth } from '../../../context/AuthContext';
 import { agents } from '../../../data/agents';
 import { getAgentEntryDefinition, getContractedAgentsFromProfile, slugifyAgentTitle } from '../../../lib/hub-agents';
 import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../../lib/agent-status-cache';
-import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } from '../../../lib/hub-access';
 import { getFirebaseDb } from '../../../lib/firebase';
 
 const categories = [
@@ -24,7 +20,7 @@ const categories = [
 ];
 
 const HUB_CONNECTOR_BUTTON_CLASS =
-  'inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#FF6B00] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFBE94]';
+  'inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#FF6B00] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFBE94]';
 
 const PLAN_AGENT_CAPACITY: Record<string, number> = {
   Lite: 5,
@@ -163,9 +159,8 @@ const AGENT_DETAILS_MAP: Record<string, AgentDetailsContent> = {
 };
 
 function LaboratorioAgentesContent() {
-  const { user, profile, loading, premiumSyncing } = useAuth();
+  const { user, profile } = useAuth();
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const categoryFilter = searchParams.get('categoria');
   const contractedAgents = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
@@ -196,25 +191,11 @@ function LaboratorioAgentesContent() {
     }
     return merged;
   }, [contractedAgents, statusOverrides]);
+  
   const [activatingSlug, setActivatingSlug] = useState<string | null>(null);
   const [selectedDetailsSlug, setSelectedDetailsSlug] = useState<string | null>(null);
   const [pendingActivationSlug, setPendingActivationSlug] = useState<string | null>(null);
   const [pendingDeactivateSlug, setPendingDeactivateSlug] = useState<string | null>(null);
-  const accessState = useMemo(
-    () => resolveHubAccessState({ loading, user, profile }),
-    [loading, profile, user]
-  );
-  const isSyncingAccess = accessState === 'forbidden' && premiumSyncing;
-
-  useEffect(() => {
-    if (accessState === 'unauthenticated') {
-      router.replace(getHubLoginRedirect(pathname));
-      return;
-    }
-    if (accessState === 'forbidden' && !premiumSyncing) {
-      router.replace(getHubOnboardingRedirect(pathname));
-    }
-  }, [accessState, pathname, premiumSyncing, router]);
 
   useEffect(() => {
     if (!user) {
@@ -228,22 +209,6 @@ function LaboratorioAgentesContent() {
     if (!categoryFilter) return categories;
     return categories.filter((category) => category.slug === categoryFilter);
   }, [categoryFilter]);
-
-  if (accessState !== 'allowed') {
-    return (
-      <div className="min-h-screen bg-bg-main flex flex-col items-center justify-center gap-4 px-4">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-        {isSyncingAccess ? (
-          <div className="max-w-md rounded-2xl border border-[#FFD7BD] bg-[#FFF6EF] px-4 py-3 text-center">
-            <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-[#C2410C]">Configurando seu acesso</p>
-            <p className="mt-1 text-[13px] text-[#9A3412]">
-              Estamos preparando seu ambiente no Hub.
-            </p>
-          </div>
-        ) : null}
-      </div>
-    );
-  }
 
   const activeAgentsCount = Array.from(effectiveContracts.values()).filter((entry) => entry.isActive).length;
   const activePlanName = Array.from(effectiveContracts.values()).find((entry) => entry.isActive)?.planName ?? 'Growth';
@@ -348,231 +313,214 @@ function LaboratorioAgentesContent() {
   };
 
   return (
-    <main className="flex flex-col min-h-screen bg-bg-main">
-      <Navbar />
-
-      <div className="flex-grow pt-24 md:pt-40 relative overflow-hidden">
-        <div
-          className="absolute inset-0 pointer-events-none bg-top bg-repeat-y bg-[length:100%_auto]"
-          style={{ backgroundImage: "url('/images/background_hub_repeat_flow.png')" }}
-        />
-        <div className="absolute inset-x-0 bottom-0 h-44 pointer-events-none bg-gradient-to-b from-transparent via-[#f7f8fa]/75 to-bg-main" />
-
-        <section className="relative z-10 wrap py-8 md:py-12 space-y-6">
-          <header className="relative overflow-hidden rounded-3xl border border-[#122034] bg-[#040a13] p-6 md:p-8 shadow-[0_16px_40px_rgba(2,8,22,0.35)]">
-            <Image
-              src="/images/template-match/metrics-wave-v1.png"
-              alt=""
-              fill
-              className="pointer-events-none object-cover object-bottom opacity-[1]"
-              priority
-            />
-            <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(3,8,15,0.9)_0%,rgba(3,8,15,0.92)_40%,rgba(3,8,15,0.14)_100%)]" />
-
-            <div className="relative z-10">
-              <h1 className="mt-2 text-3xl font-black tracking-tight text-white md:text-4xl">
-                <span
-                  className="bg-[length:200%_200%] bg-clip-text text-transparent"
-                  style={{ backgroundImage: 'linear-gradient(135deg, #ff9a35 0%, #ff6a00 55%, #c84a00 100%)' }}
-                >
-                  Laboratório de Agentes
-                </span>
-              </h1>
-              <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[#C6D3E9] md:text-base">
-                Esta área centraliza a ativação dos agentes da sua operação, com foco em coerência estratégica, previsibilidade e impacto financeiro real.
-              </p>
-            </div>
-          </header>
-
-          {/* Search Bar Container with Glassmorphism Translúcido styling */}
-          <div className="rounded-3xl glassmorphism-light p-5 md:p-6">
-            <div className="relative w-full max-w-lg">
-              <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-text-muted">
-                <Search size={18} />
-              </span>
-              <input
-                type="text"
-                placeholder="Pesquisar agentes por nome ou descrição..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full h-12 pl-11 pr-10 rounded-[12px] border border-[#D3DAE6] bg-[#F8FAFC] text-[15px] font-medium text-text-main placeholder-[#94A3B8] transition-all duration-300 focus:outline-none focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FFBE94]/50 focus:bg-white"
-              />
-              {searchQuery ? (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute inset-y-0 right-3 flex items-center px-1 text-text-muted hover:text-text-main transition"
-                  aria-label="Limpar pesquisa"
-                >
-                  <X size={16} />
-                </button>
-              ) : null}
-            </div>
+    <div className="w-full space-y-6">
+      <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#ff6a00]/15 border border-[#ff6a00]/20 text-[#ff6a00]">
+            <Wrench className="h-6 w-6" />
           </div>
+          <div>
+            <h1 className="text-xl font-black tracking-tight text-white leading-none">
+              Laboratório de Agentes
+            </h1>
+            <p className="text-[12px] font-semibold text-[#7eb8d4]/80 mt-1 max-w-3xl">
+              Esta área centraliza a ativação dos agentes da sua operação, com foco em coerência estratégica, previsibilidade e impacto financeiro real.
+            </p>
+          </div>
+        </div>
+      </header>
 
-          {totalVisibleAgents === 0 ? (
-            <div className="rounded-3xl border border-border glassmorphism-light p-12 text-center shadow-[0_14px_34px_rgba(15,23,42,0.05)]">
-              <p className="text-lg font-black text-text-main">Nenhum agente encontrado</p>
-              <p className="mt-1 text-sm text-text-muted">
-                Não encontramos nenhum agente que corresponda à sua busca &quot;{searchQuery}&quot;.
-              </p>
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="mt-4 inline-flex h-10 items-center justify-center rounded-[12px] bg-[#FF6B00] px-5 text-sm font-black text-white shadow-[0_10px_20px_rgba(255,107,0,0.20)] hover:brightness-105 transition"
-              >
-                Limpar busca
-              </button>
-            </div>
+      {/* Search Bar Container with Dark Glassmorphism styling */}
+      <div className="rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 p-5 md:p-6 shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
+        <div className="relative w-full max-w-lg">
+          <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400">
+            <Search size={18} />
+          </span>
+          <input
+            type="text"
+            aria-label="Pesquisar agentes"
+            placeholder="Pesquisar agentes por nome ou descrição…"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full h-12 pl-11 pr-10 rounded-[12px] border border-white/[0.12] bg-white/[0.06] text-[15px] font-medium text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FFBE94]/20 focus:bg-[#071a2e]"
+          />
+          {searchQuery ? (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute inset-y-0 right-3 flex items-center px-1 text-slate-400 hover:text-white transition"
+              aria-label="Limpar pesquisa"
+            >
+              <X size={16} />
+            </button>
           ) : null}
+        </div>
+      </div>
 
-          {visibleCategories.map((category) => {
-            const categoryAgents = filteredAgents.filter((agent) => agent.category === category.label);
-            if (categoryAgents.length === 0) return null;
+      {totalVisibleAgents === 0 ? (
+        <div className="rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 p-12 text-center shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
+          <p className="text-lg font-black text-white">Nenhum agente encontrado</p>
+          <p className="mt-1 text-sm text-slate-400">
+            Não encontramos nenhum agente que corresponda à sua busca &quot;{searchQuery}&quot;.
+          </p>
+          <button
+            type="button"
+            onClick={() => setSearchQuery('')}
+            className="mt-4 inline-flex h-10 items-center justify-center rounded-[12px] bg-[#FF6B00] px-5 text-sm font-black text-white shadow-[0_10px_20px_rgba(255,107,0,0.20)] hover:brightness-105 hover:scale-105 transition active:scale-95"
+          >
+            Limpar busca
+          </button>
+        </div>
+      ) : null}
 
-            const categoryTotalCount = categoryAgents.length;
-            const categoryActiveCount = categoryAgents.filter((agent) => {
-              const entry = getAgentEntryDefinition(agent, effectiveContracts);
-              return entry.isActive;
-            }).length;
+      {visibleCategories.map((category) => {
+        const categoryAgents = filteredAgents.filter((agent) => agent.category === category.label);
+        if (categoryAgents.length === 0) return null;
 
-            return (
-              <section
-                key={category.slug}
-                className="overflow-hidden rounded-3xl border border-border glassmorphism-light shadow-[0_14px_34px_rgba(15,23,42,0.05)]"
-              >
-                <header className="flex items-center justify-between gap-4 bg-[#0d1e3d] px-6 py-4.5 border-b border-[#1a365d]/40">
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse"></span>
-                      <h2 className="text-[16px] md:text-[18px] font-black tracking-tight text-white">{category.label}</h2>
-                    </div>
-                    <p className="text-[12px] font-medium text-[#c5d3e9] leading-tight">
-                      {category.desc}
-                    </p>
-                  </div>
-                  <div className="rounded-full border border-[#FF6A00] bg-[#FF6A00]/5 px-3 py-1 text-[11px] font-bold text-[#FF6A00] tracking-tight whitespace-nowrap">
-                    Ativos: {categoryActiveCount} de {categoryTotalCount}
-                  </div>
-                </header>
+        const categoryTotalCount = categoryAgents.length;
+        const categoryActiveCount = categoryAgents.filter((agent) => {
+          const entry = getAgentEntryDefinition(agent, effectiveContracts);
+          return entry.isActive;
+        }).length;
 
-                <div className="p-6 md:p-8">
-                  <div className="mt-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
-                  {categoryAgents.map((agent) => {
-                    const entry = getAgentEntryDefinition(agent, effectiveContracts);
-                    const isActive = entry.isActive;
-                    const agentSlug = slugifyAgentTitle(agent.title);
-                    const isActivatable = ACTIVATABLE_AGENT_TITLES.has(agent.title);
+        return (
+          <section
+            key={category.slug}
+            className="overflow-hidden rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 shadow-[0_8px_32px_rgba(2,8,22,0.4)] text-white"
+          >
+            <header className="flex items-center justify-between gap-4 bg-[#091624] px-6 py-4.5 border-b border-white/[0.08]">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse"></span>
+                  <h2 className="text-[16px] md:text-[18px] font-black tracking-tight text-white">{category.label}</h2>
+                </div>
+                <p className="text-[12px] font-medium text-slate-300 leading-tight">
+                  {category.desc}
+                </p>
+              </div>
+              <div className="rounded-full border border-[#FF6A00] bg-[#FF6A00]/5 px-3 py-1 text-[11px] font-bold text-[#FF6A00] tracking-tight whitespace-nowrap">
+                Ativos: {categoryActiveCount} de {categoryTotalCount}
+              </div>
+            </header>
 
-                    return (
-                      <article key={agent.title} className="rounded-xl border border-border bg-bg-secondary p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <p className="text-sm font-black text-text-main">{agent.title}</p>
-                          {isActive ? (
+            <div className="p-6 md:p-8">
+              <div className="mt-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
+                {categoryAgents.map((agent) => {
+                  const entry = getAgentEntryDefinition(agent, effectiveContracts);
+                  const isActive = entry.isActive;
+                  const agentSlug = slugifyAgentTitle(agent.title);
+                  const isActivatable = ACTIVATABLE_AGENT_TITLES.has(agent.title);
+
+                  return (
+                    <article
+                      key={agent.title}
+                      className="rounded-xl border border-white/[0.08] bg-[#051120]/60 p-4 transition-all duration-200 hover:border-white/[0.16] hover:bg-[#051120]/80"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <p className="text-sm font-black text-white">{agent.title}</p>
+                        {isActive ? (
+                          <button
+                            type="button"
+                            onClick={() => setPendingDeactivateSlug(agentSlug)}
+                            disabled={activatingSlug === agentSlug}
+                            className="inline-flex items-center gap-1 text-[12px] font-black text-[#FF4D4D] hover:text-[#FF3333] transition-colors disabled:opacity-60"
+                          >
+                            <Power className="h-3.5 w-3.5" />
+                            {activatingSlug === agentSlug ? 'Desativando…' : 'Desativar Agente'}
+                          </button>
+                        ) : null}
+                      </div>
+                      <p className="mt-1 text-xs text-slate-400">{agent.description}</p>
+
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {isActive ? (
+                          <>
                             <button
                               type="button"
-                              onClick={() => setPendingDeactivateSlug(agentSlug)}
-                              disabled={activatingSlug === agentSlug}
-                              className="inline-flex items-center gap-1 text-[12px] font-black text-[#B42318] hover:text-[#912018] disabled:opacity-60"
+                              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#0A9D57] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(10,157,87,0.30)] hover:brightness-105 active:scale-95 transition-all"
                             >
-                              <Power className="h-3.5 w-3.5" />
-                              {activatingSlug === agentSlug ? 'Desativando...' : 'Desativar Agente'}
+                              <CheckCircle2 className="h-4 w-4" />
+                              Ativo
                             </button>
-                          ) : null}
-                        </div>
-                        <p className="mt-1 text-xs text-text-muted">{agent.description}</p>
-
-                        <div className="mt-3 flex flex-wrap gap-2">
-                          {isActive ? (
-                            <>
+                            <Link
+                              href={`/hub/agente/${agentSlug}`}
+                              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#0f62fe] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(15,98,254,0.15)] transition-all hover:bg-[#0353e9] hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                              Acessar Agente
+                            </Link>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedDetailsSlug(agentSlug)}
+                              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-white/10 bg-white/5 px-6 text-[14px] leading-none font-black text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
+                            >
+                              <Info className="h-4 w-4" />
+                              Mais detalhes
+                            </button>
+                          </>
+                        ) : (
+                          <>
+                            {isActivatable ? (
                               <button
                                 type="button"
-                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#0A9D57] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(10,157,87,0.30)]"
+                                onClick={() => setPendingActivationSlug(agentSlug)}
+                                disabled={activatingSlug === agentSlug}
+                                className={`${HUB_CONNECTOR_BUTTON_CLASS} disabled:opacity-60`}
                               >
-                                <CheckCircle2 className="h-4 w-4" />
-                                Ativo
+                                <Wrench className="h-4 w-4" />
+                                {activatingSlug === agentSlug ? 'Ativando…' : 'Ativar Agente'}
                               </button>
-                              <Link
-                                href={`/hub/agente/${agentSlug}`}
-                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#2563EB] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(37,99,235,0.30)] transition hover:brightness-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
-                              >
-                                <ExternalLink className="h-4 w-4" />
-                                Acessar Agente
-                              </Link>
+                            ) : (
                               <button
                                 type="button"
-                                onClick={() => setSelectedDetailsSlug(agentSlug)}
-                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#D3DAE6] bg-white px-6 text-[14px] leading-none font-black text-[#344054] shadow-[0_8px_16px_rgba(15,23,42,0.08)] transition hover:bg-[#F8FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D3DAE6]"
+                                disabled
+                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-white/[0.04] border border-white/[0.08] px-6 text-[14px] leading-none font-bold text-slate-500 cursor-not-allowed opacity-60"
                               >
-                                <Info className="h-4 w-4" />
-                                Mais detalhes
+                                <Wrench className="h-4 w-4" />
+                                em desenvolvimento
                               </button>
-                            </>
-                          ) : (
-                            <>
-                              {isActivatable ? (
-                                <button
-                                  type="button"
-                                  onClick={() => setPendingActivationSlug(agentSlug)}
-                                  disabled={activatingSlug === agentSlug}
-                                  className={`${HUB_CONNECTOR_BUTTON_CLASS} disabled:opacity-60`}
-                                >
-                                  <Wrench className="h-4 w-4" />
-                                  {activatingSlug === agentSlug ? 'Ativando...' : 'Ativar Agente'}
-                                </button>
-                              ) : (
-                                <button
-                                  type="button"
-                                  disabled
-                                  className={`${HUB_CONNECTOR_BUTTON_CLASS} cursor-not-allowed opacity-60`}
-                                >
-                                  <Wrench className="h-4 w-4" />
-                                  em desenvolvimento
-                                </button>
-                              )}
-                              <button
-                                type="button"
-                                onClick={() => setSelectedDetailsSlug(agentSlug)}
-                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#D3DAE6] bg-white px-6 text-[14px] leading-none font-black text-[#344054] shadow-[0_8px_16px_rgba(15,23,42,0.08)] transition hover:bg-[#F8FAFC] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D3DAE6]"
-                              >
-                                <Info className="h-4 w-4" />
-                                Mais detalhes
-                              </button>
-                            </>
-                          )}
-                        </div>
-                      </article>
-                    );
-                  })}
-                </div>
-                </div>
-              </section>
-            );
-          })}
-        </section>
-      </div>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setSelectedDetailsSlug(agentSlug)}
+                              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-white/10 bg-white/5 px-6 text-[14px] leading-none font-black text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
+                            >
+                              <Info className="h-4 w-4" />
+                              Mais detalhes
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        );
+      })}
 
       {pendingDeactivateAgent ? (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
           <button
             type="button"
             onClick={() => setPendingDeactivateSlug(null)}
-            className="absolute inset-0 bg-[#101828]/45 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-[#020816]/70 backdrop-blur-md transition-opacity duration-300"
             aria-label="Fechar confirmação"
           />
-          <section className="relative w-full max-w-2xl rounded-[24px] border border-border bg-white p-6 md:p-8 shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
+          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/[0.12] bg-[#071a2e]/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
             <button
               type="button"
               onClick={() => setPendingDeactivateSlug(null)}
-              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-[#667085] hover:text-text-main"
+              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
               aria-label="Fechar"
             >
               <X className="h-5 w-5" />
             </button>
 
-            <p className="text-xs font-black uppercase tracking-[0.12em] text-[#B42318]">Confirmar desativação</p>
-            <h3 className="mt-1 text-3xl font-black tracking-tight text-text-main">{pendingDeactivateAgent.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-text-muted">
+            <p className="text-xs font-black uppercase tracking-[0.12em] text-[#FF4D4D]">Confirmar desativação</p>
+            <h3 className="mt-1 text-3xl font-black tracking-tight text-white">{pendingDeactivateAgent.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
               Ao confirmar, o agente será desativado e deixará de aparecer como ativo até uma nova ativação.
             </p>
 
@@ -580,7 +528,7 @@ function LaboratorioAgentesContent() {
               <button
                 type="button"
                 onClick={() => setPendingDeactivateSlug(null)}
-                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-border bg-white px-5 text-sm font-black text-[#344054]"
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/10 bg-white/5 px-5 text-sm font-black text-white/80 hover:bg-white/10 hover:text-white transition-all active:scale-95"
               >
                 Cancelar
               </button>
@@ -590,11 +538,11 @@ function LaboratorioAgentesContent() {
                   deactivateAgent(pendingDeactivateAgent.title, slugifyAgentTitle(pendingDeactivateAgent.title))
                 }
                 disabled={activatingSlug === slugifyAgentTitle(pendingDeactivateAgent.title)}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#B42318] bg-[#B42318] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(180,35,24,0.30)] disabled:opacity-60"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#FF4D4D] bg-[#FF4D4D] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(255,77,77,0.30)] hover:brightness-105 active:scale-95 disabled:opacity-60 transition-all"
               >
                 <Power className="h-4 w-4" />
                 {activatingSlug === slugifyAgentTitle(pendingDeactivateAgent.title)
-                  ? 'Desativando...'
+                  ? 'Desativando…'
                   : 'Confirmar desativação'}
               </button>
             </div>
@@ -607,14 +555,14 @@ function LaboratorioAgentesContent() {
           <button
             type="button"
             onClick={() => setSelectedDetailsSlug(null)}
-            className="absolute inset-0 bg-[#0B1324]/55 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-[#020816]/70 backdrop-blur-md transition-opacity duration-300"
             aria-label="Fechar detalhes do agente"
           />
-          <section className="relative w-full max-w-[780px] rounded-[24px] border border-[#D9DEE8] bg-[#F8FAFD] p-6 md:p-7 shadow-[0_30px_70px_rgba(2,12,27,0.32)]">
+          <section className="relative w-full max-w-[780px] rounded-[24px] border border-white/[0.12] bg-[#071a2e]/95 backdrop-blur-md p-6 md:p-7 shadow-[0_30px_70px_rgba(2,12,27,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
             <button
               type="button"
               onClick={() => setSelectedDetailsSlug(null)}
-              className="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-[#CBD5E1] bg-[#F8FAFD] text-[#667085] hover:text-text-main"
+              className="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
               aria-label="Fechar"
             >
               <X className="h-5 w-5" />
@@ -625,18 +573,18 @@ function LaboratorioAgentesContent() {
                 <Image src={detailsAgent.icon} alt={detailsAgent.title} fill className="object-cover" sizes="76px" />
               </div>
               <div>
-                <p className="pt-1 text-[11px] font-black uppercase tracking-[0.12em] text-primary">Agente de IA</p>
-                <h3 className="mt-1 text-[30px] leading-[1.05] font-black tracking-tight text-[#1C2538] sm:text-[38px] md:text-[44px]">{detailsAgent.title}</h3>
-                <p className="mt-3 max-w-3xl text-[15px] leading-[1.45] text-[#4B5568] sm:text-[16px]">{detailsAgent.description}</p>
+                <p className="pt-1 text-[11px] font-black uppercase tracking-[0.12em] text-[#FF6B00]">Agente de IA</p>
+                <h3 className="mt-1 text-[30px] leading-[1.05] font-black tracking-tight text-white sm:text-[38px] md:text-[44px]">{detailsAgent.title}</h3>
+                <p className="mt-3 max-w-3xl text-[15px] leading-[1.45] text-slate-300 sm:text-[16px]">{detailsAgent.description}</p>
               </div>
             </div>
 
-            <article className="mt-7 rounded-[18px] border border-[#D8DEEA] bg-[#EEF2F8] p-5 md:p-6">
-              <h4 className="text-[13px] font-black uppercase tracking-[0.08em] text-primary">Atividades relacionadas</h4>
-              <ul className="mt-4 space-y-4 text-[15px] leading-[1.5] text-[#445064] sm:text-[16px]">
+            <article className="mt-7 rounded-[18px] border border-white/[0.08] bg-[#051120]/60 p-5 md:p-6">
+              <h4 className="text-[13px] font-black uppercase tracking-[0.08em] text-[#FF6B00]">Atividades relacionadas</h4>
+              <ul className="mt-4 space-y-4 text-[15px] leading-[1.5] text-slate-300 sm:text-[16px]">
                 {detailsContent.activities.map((item) => (
                   <li key={item} className="flex items-start gap-2">
-                    <span className="mt-[0.62em] inline-flex h-[7px] w-[7px] shrink-0 rounded-full bg-primary" />
+                    <span className="mt-[0.62em] inline-flex h-[7px] w-[7px] shrink-0 rounded-full bg-[#FF6B00]" />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -651,28 +599,28 @@ function LaboratorioAgentesContent() {
           <button
             type="button"
             onClick={() => setPendingActivationSlug(null)}
-            className="absolute inset-0 bg-[#101828]/45 backdrop-blur-[2px]"
+            className="absolute inset-0 bg-[#020816]/70 backdrop-blur-md transition-opacity duration-300"
             aria-label="Fechar confirmação"
           />
-          <section className="relative w-full max-w-2xl rounded-[24px] border border-border bg-white p-6 md:p-8 shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
+          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/[0.12] bg-[#071a2e]/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
             <button
               type="button"
               onClick={() => setPendingActivationSlug(null)}
-              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white text-[#667085] hover:text-text-main"
+              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
               aria-label="Fechar"
             >
               <X className="h-5 w-5" />
             </button>
 
-            <p className="text-xs font-black uppercase tracking-[0.12em] text-primary">Confirmar ativação</p>
-            <h3 className="mt-1 text-3xl font-black tracking-tight text-text-main">{pendingAgent.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-text-muted">
+            <p className="text-xs font-black uppercase tracking-[0.12em] text-[#FF6B00]">Confirmar ativação</p>
+            <h3 className="mt-1 text-3xl font-black tracking-tight text-white">{pendingAgent.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-300">
               Você está prestes a ativar este agente. Confira como ficará a capacidade do plano ativo.
             </p>
 
-            <div className="mt-5 rounded-2xl border border-border bg-[#F8FAFC] p-4 text-sm text-text-main space-y-1">
+            <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-white space-y-1">
               <p>
-                <strong>Plano ativo:</strong> {activePlanName}
+                <strong>Plano ativo:</strong> <span className="text-[#FF6B00]">{activePlanName}</span>
               </p>
               <p>
                 <strong>Capacidade do plano:</strong> {planCapacity} agentes
@@ -689,7 +637,7 @@ function LaboratorioAgentesContent() {
               <button
                 type="button"
                 onClick={() => setPendingActivationSlug(null)}
-                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-border bg-white px-5 text-sm font-black text-[#344054]"
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/10 bg-white/5 px-5 text-sm font-black text-white/80 hover:bg-white/10 hover:text-white transition-all active:scale-95"
               >
                 Cancelar
               </button>
@@ -700,16 +648,13 @@ function LaboratorioAgentesContent() {
                 className={`${HUB_CONNECTOR_BUTTON_CLASS} disabled:opacity-60`}
               >
                 <Wrench className="h-4 w-4" />
-                {activatingSlug === slugifyAgentTitle(pendingAgent.title) ? 'Ativando...' : 'Confirmar ativação'}
+                {activatingSlug === slugifyAgentTitle(pendingAgent.title) ? 'Ativando…' : 'Confirmar ativação'}
               </button>
             </div>
           </section>
         </div>
       ) : null}
-
-      <Footer />
-      <LuccaHubSupportWidget />
-    </main>
+    </div>
   );
 }
 
@@ -717,8 +662,8 @@ export default function LaboratorioAgentesPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-bg-main flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center">
+          <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

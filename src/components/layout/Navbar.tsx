@@ -1502,14 +1502,14 @@ export default function Navbar() {
                   <div className={`invisible absolute left-1/2 top-full z-[120] mt-3 w-[300px] -translate-x-1/2 rounded-2xl border p-2 opacity-0 shadow-[0_14px_30px_rgba(15,23,42,0.12)] transition-all duration-150 group-hover:visible group-hover:opacity-100 ${
                     isHubNavbarStyle ? 'bg-[#081120] border-[#122034] shadow-[0_14px_30px_rgba(2,8,22,0.4)]' : 'bg-white border-[#E7EAF0]'
                   }`}>
-                      <button
-                        onClick={openProfileModal}
-                        className={`w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
+                      <Link
+                        href="/hub/configuracoes?tab=perfil"
+                        className={`block w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
                           isHubNavbarStyle ? 'text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]' : 'text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
                         }`}
                       >
                         Meu perfil
-                      </button>
+                      </Link>
                       <Link
                         href="/hub/conectores"
                         className={`block w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
@@ -1518,22 +1518,22 @@ export default function Navbar() {
                       >
                         Conectores
                       </Link>
-                      <button
-                        onClick={openCompanyModal}
-                        className={`w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
+                      <Link
+                        href="/hub/configuracoes?tab=empresa"
+                        className={`block w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
                           isHubNavbarStyle ? 'text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]' : 'text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
                         }`}
                       >
                         Sua Empresa
-                      </button>
-                      <button
-                        onClick={openFinanceModal}
-                        className={`w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
+                      </Link>
+                      <Link
+                        href="/hub/configuracoes?tab=financeiro"
+                        className={`block w-full rounded-xl px-3 py-2 text-left text-[14px] font-semibold transition-colors ${
                           isHubNavbarStyle ? 'text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]' : 'text-[#344054] hover:bg-[#F8FAFC] hover:text-[#FF6A00]'
                         }`}
                       >
                         Financeiro
-                      </button>
+                      </Link>
                       <div className={`my-2 h-px w-full ${isHubNavbarStyle ? 'bg-[#122034]' : 'bg-[#E5E7EB]'}`} />
                       <button
                         onClick={handleLogout}
@@ -1893,16 +1893,17 @@ export default function Navbar() {
               </p>
               
               <div className="grid gap-2">
-                <button
-                  onClick={openProfileModal}
-                  className={`w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
+                <Link
+                  href="/hub/configuracoes?tab=perfil"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
                     isHubNavbarStyle
                       ? 'border-[#122034] bg-[#081120] text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]'
                       : 'border-slate-100 bg-[#F8FAFC]/60 text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
                   }`}
                 >
                   Meu perfil
-                </button>
+                </Link>
                 <Link
                   href="/hub/conectores"
                   onClick={() => setIsMenuOpen(false)}
@@ -1914,26 +1915,28 @@ export default function Navbar() {
                 >
                   Conectores
                 </Link>
-                <button
-                  onClick={openCompanyModal}
-                  className={`w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
+                <Link
+                  href="/hub/configuracoes?tab=empresa"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
                     isHubNavbarStyle
                       ? 'border-[#122034] bg-[#081120] text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]'
                       : 'border-slate-100 bg-[#F8FAFC]/60 text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
                   }`}
                 >
                   Sua empresa
-                </button>
-                <button
-                  onClick={openFinanceModal}
-                  className={`w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
+                </Link>
+                <Link
+                  href="/hub/configuracoes?tab=financeiro"
+                  onClick={() => setIsMenuOpen(false)}
+                  className={`block w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
                     isHubNavbarStyle
                       ? 'border-[#122034] bg-[#081120] text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]'
                       : 'border-slate-100 bg-[#F8FAFC]/60 text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
                   }`}
                 >
                   Financeiro
-                </button>
+                </Link>
                 <button
                   onClick={handleLogout}
                   className={`w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
@@ -1951,634 +1954,7 @@ export default function Navbar() {
       </div>
     </header>
 
-    {/* Profile Modal */}
-    {isProfileOpen && user && (
-      <div className={SETTINGS_MODAL_VIEWPORT}>
-        <div
-          onClick={() => setIsProfileOpen(false)}
-          className={SETTINGS_MODAL_BACKDROP}
-        />
 
-        <div className={`${SETTINGS_MODAL_FRAME} max-w-xl`}>
-          <div className={SETTINGS_MODAL_SURFACE}>
-            <div className={PREMIUM_MODAL_HEADER}>
-              <div className="flex items-center justify-between w-full pr-12">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
-                    <h3 className="text-xl font-black text-white tracking-tight">Meu perfil</h3>
-                  </div>
-                  <p className="text-xs font-semibold text-slate-300">Informações da conta do usuário</p>
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
-                  <User size={20} />
-                </div>
-              </div>
-              <button
-                onClick={() => setIsProfileOpen(false)}
-                className={PREMIUM_MODAL_CLOSE_BUTTON}
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 p-5 sm:grid-cols-2 overflow-y-auto custom-scrollbar">
-              <div className={SETTINGS_PANEL}>
-                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                  <User size={13} />
-                  <span className={SETTINGS_LABEL}>Nome</span>
-                </div>
-                <p className="text-sm font-bold text-slate-800">{user.displayName || 'Não informado'}</p>
-              </div>
-
-              <div className={SETTINGS_PANEL}>
-                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                  <Mail size={13} />
-                  <span className={SETTINGS_LABEL}>E-mail</span>
-                </div>
-                <p className="text-sm font-bold text-slate-800 truncate" title={user.email || ''}>{user.email || 'Não informado'}</p>
-              </div>
-
-              <div className={`${SETTINGS_PANEL} sm:col-span-2`}>
-                <div className="flex items-center gap-1.5 text-slate-400 mb-1.5">
-                  <Phone size={13} />
-                  <span className={SETTINGS_LABEL}>WhatsApp</span>
-                </div>
-                <div className="flex flex-col gap-2 sm:flex-row relative">
-                  <input
-                    value={whatsApp}
-                    onChange={(e) => setWhatsApp(e.target.value)}
-                    placeholder="(51) 98175-8382"
-                    className={SETTINGS_INPUT}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleSaveWhatsApp}
-                    className={`${SETTINGS_PRIMARY_BUTTON} sm:px-6 h-[46px] flex items-center justify-center`}
-                  >
-                    Salvar
-                  </button>
-                </div>
-              </div>
-
-              <div className={SETTINGS_PANEL}>
-                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                  <Crown size={13} />
-                  <span className={SETTINGS_LABEL}>Plano</span>
-                </div>
-                <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-black uppercase tracking-wider ${
-                  hubProfile.isSubscriptionActive 
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
-                    : 'bg-orange-50 text-[#FF6B00] border border-orange-100'
-                }`}>
-                  {planDisplayLabel}
-                </span>
-              </div>
-
-              <div className={SETTINGS_PANEL}>
-                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                  <Activity size={13} />
-                  <span className={SETTINGS_LABEL}>Plataformas conectadas</span>
-                </div>
-                <p className="text-sm font-bold text-slate-800">{connectedPlatforms}</p>
-              </div>
-
-              <div className={SETTINGS_PANEL}>
-                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                  <Workflow size={13} />
-                  <span className={SETTINGS_LABEL}>Aplicações em uso</span>
-                </div>
-                <p className="text-sm font-bold text-slate-800">{usageCount}</p>
-              </div>
-
-              <div className={SETTINGS_PANEL}>
-                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                  <Fingerprint size={13} />
-                  <span className={SETTINGS_LABEL}>ID do usuário</span>
-                </div>
-                <p className="text-xs font-semibold text-slate-600 break-all select-all font-mono bg-slate-50 px-2 py-1 rounded border border-slate-100">{user.uid}</p>
-              </div>
-
-              <div className="rounded-2xl border border-rose-100 bg-rose-50/20 p-5 space-y-3 sm:col-span-2">
-                <div className="flex items-center gap-1.5 text-rose-600">
-                  <ShieldAlert size={16} />
-                  <span className="text-xs uppercase tracking-wider font-black">Zona de risco</span>
-                </div>
-                <p className="text-xs text-rose-700/80 font-medium leading-relaxed">
-                  Ao excluir a conta, seu plano será cancelado imediatamente e o cadastro será removido do banco de dados de forma definitiva.
-                </p>
-                <button
-                  type="button"
-                  onClick={handleDeleteAccount}
-                  disabled={isDeletingAccount}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 h-[42px] rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black tracking-wider uppercase transition-colors shadow-sm disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-                >
-                  <Trash2 size={13} />
-                  {isDeletingAccount ? 'Excluindo...' : 'Excluir conta'}
-                </button>
-                {deleteAccountError ? (
-                  <p className="text-xs font-semibold text-rose-600 mt-1">{deleteAccountError}</p>
-                ) : null}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
-
-
-    {/* Finance Modal */}
-    {isFinanceModalOpen && user && (
-      <div className={SETTINGS_MODAL_VIEWPORT}>
-        <div
-          onClick={closeFinanceModal}
-          className={SETTINGS_MODAL_BACKDROP}
-        />
-
-        <div className={`${SETTINGS_MODAL_FRAME} max-w-2xl`}>
-          <div className={SETTINGS_MODAL_SURFACE}>
-            <div className={PREMIUM_MODAL_HEADER}>
-              <div className="flex items-center justify-between w-full pr-12">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
-                    <h3 className="text-xl font-black text-white tracking-tight">Financeiro</h3>
-                  </div>
-                  <p className="text-xs font-semibold text-slate-300">Detalhes do plano, assinatura e período de acesso</p>
-                </div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
-                  <CreditCard size={20} />
-                </div>
-              </div>
-              <button
-                onClick={closeFinanceModal}
-                className={PREMIUM_MODAL_CLOSE_BUTTON}
-              >
-                <X size={16} />
-              </button>
-            </div>
-
-            <div className="p-5 space-y-3 overflow-y-auto custom-scrollbar">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div className={SETTINGS_PANEL}>
-                  <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                    <Crown size={13} />
-                    <span className={SETTINGS_LABEL}>Plano atual</span>
-                  </div>
-                  <p className="text-sm font-black text-slate-800">{financialPlanName}</p>
-                </div>
-                <div className={SETTINGS_PANEL}>
-                  <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                    <DollarSign size={13} />
-                    <span className={SETTINGS_LABEL}>Valor mensal</span>
-                  </div>
-                  <p className="text-sm font-black text-slate-800">{financialPlanAmount}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <div className={SETTINGS_PANEL}>
-                  <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                    <Activity size={13} />
-                    <span className={SETTINGS_LABEL}>Status da assinatura</span>
-                  </div>
-                  <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-black uppercase tracking-wider ${
-                    hubProfile.isSubscriptionActive 
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' 
-                      : 'bg-orange-50 text-[#FF6B00] border border-orange-100'
-                  }`}>
-                    {hubProfile.statusLabel}
-                  </span>
-                </div>
-                <div className={SETTINGS_PANEL}>
-                  <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                    <ShieldCheck size={13} />
-                    <span className={SETTINGS_LABEL}>Acesso operacional</span>
-                  </div>
-                  <p className="text-sm font-bold text-slate-800">{hubProfile.accessLabel}</p>
-                </div>
-              </div>
-
-              <div className={SETTINGS_PANEL}>
-                <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                  <Workflow size={13} />
-                  <span className={SETTINGS_LABEL}>Recursos incluídos</span>
-                </div>
-                <p className="text-sm font-bold text-slate-800">
-                  {hubProfile.operationLabel}
-                </p>
-                {hubProfile.includedExecutions != null ? (
-                  <div className="mt-3 flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-lg p-2.5">
-                    <Gauge size={14} className="text-slate-400" />
-                    <p className="text-xs font-semibold text-slate-600">
-                      Execuções inclusas por mês: <span className="font-bold text-slate-800">{hubProfile.includedExecutions.toLocaleString('pt-BR')}</span>
-                    </p>
-                  </div>
-                ) : null}
-              </div>
-
-              {hubProfile.isTrialing && (hubProfile.trialRemainingMs ?? 0) > 0 ? (
-                <div className="rounded-2xl border border-orange-100 bg-orange-50/20 p-5 space-y-2.5">
-                  <div className="flex items-center gap-1.5 text-[#FF6B00]">
-                    <Calendar size={16} />
-                    <span className="text-xs uppercase tracking-wider font-black">Período gratuito ativo</span>
-                  </div>
-                  <p className="text-base font-black text-slate-800">{trialRemainingLabel}</p>
-                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                    Sua primeira cobrança no valor de <span className="font-bold text-slate-800">{financialPlanAmount}</span> está prevista para: <span className="font-bold text-slate-700 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">{trialEndsAtLabel}</span>.
-                  </p>
-                </div>
-              ) : null}
-
-              {!hubProfile.isTrialing ? (
-                <div className={SETTINGS_PANEL}>
-                  <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                    <Calendar size={13} />
-                    <span className={SETTINGS_LABEL}>Período gratuito</span>
-                  </div>
-                  <p className="text-xs font-semibold text-slate-600">
-                    {hubProfile.trialEndsAt ? `Encerrado em ${trialEndsAtLabel}` : 'Não aplicável ao status atual'}
-                  </p>
-                </div>
-              ) : null}
-
-              <div className="pt-2">
-                <button
-                  type="button"
-                  onClick={handleManagePlan}
-                  disabled={isManagingPlan}
-                  className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#FF8A2B] to-[#FF6B00] px-6 h-[46px] text-xs font-black uppercase tracking-widest text-white shadow-[0_6px_20px_rgba(255,107,0,0.2)] hover:brightness-105 active:scale-98 transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  <CreditCard size={14} />
-                  {isManagingPlan ? 'Abrindo...' : 'Gerenciar Plano'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
-
-      {/* Company Modal */}
-      {isCompanyModalOpen && user && (
-        <div className={SETTINGS_MODAL_VIEWPORT}>
-          <div
-            onClick={closeCompanyModal}
-            className={SETTINGS_MODAL_BACKDROP}
-          />
-
-          <div className={`${SETTINGS_MODAL_FRAME} max-w-2xl`}>
-            <div className={SETTINGS_MODAL_SURFACE}>
-              <div className={PREMIUM_MODAL_HEADER}>
-                <div className="flex items-center justify-between w-full pr-12">
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
-                      <h3 className="text-xl font-black text-white tracking-tight">Sobre sua Marca</h3>
-                    </div>
-                    <p className="text-xs font-semibold text-slate-300">Cadastro das informações institucionais</p>
-                  </div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
-                    <Building2 size={20} />
-                  </div>
-                </div>
-                <button
-                  onClick={closeCompanyModal}
-                  className={PREMIUM_MODAL_CLOSE_BUTTON}
-                >
-                  <X size={16} />
-                </button>
-              </div>
-
-              <div className="p-5 grid grid-cols-1 gap-4 sm:grid-cols-2 overflow-y-auto custom-scrollbar">
-                <div className="sm:col-span-2">
-                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
-                    <Building2 size={13} />
-                    <span className={SETTINGS_LABEL}>Nome da Empresa</span>
-                  </label>
-                  <div className="relative flex items-center">
-                    <span className="absolute left-4 text-slate-400 pointer-events-none">
-                      <Building2 size={16} />
-                    </span>
-                    <input
-                      value={companyForm.companyName}
-                      onChange={(e) => setCompanyForm((prev) => ({ ...prev, companyName: e.target.value }))}
-                      className={`${SETTINGS_INPUT} pl-11`}
-                      placeholder="Nome da empresa"
-                    />
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
-                    <Globe size={13} />
-                    <span className={SETTINGS_LABEL}>Site</span>
-                  </label>
-                  <div className="relative flex items-center">
-                    <span className="absolute left-4 text-slate-400 pointer-events-none">
-                      <Globe size={16} />
-                    </span>
-                    <input
-                      value={companyForm.site}
-                      onChange={(e) =>
-                        setCompanyForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))
-                      }
-                      onBlur={(e) =>
-                        setCompanyForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))
-                      }
-                      className={`${SETTINGS_INPUT} pl-11`}
-                      placeholder="https://..."
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
-                    <Globe size={13} />
-                    <span className={SETTINGS_LABEL}>Instagram</span>
-                  </label>
-                  <div className="relative flex items-center">
-                    <span className="absolute left-4 text-slate-400 pointer-events-none">
-                      <Globe size={16} />
-                    </span>
-                    <input
-                      value={companyForm.instagram}
-                      onChange={(e) => setCompanyForm((prev) => ({ ...prev, instagram: e.target.value }))}
-                      className={`${SETTINGS_INPUT} pl-11`}
-                      placeholder="@perfil"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
-                    <Globe size={13} />
-                    <span className={SETTINGS_LABEL}>LinkedIn</span>
-                  </label>
-                  <div className="relative flex items-center">
-                    <span className="absolute left-4 text-slate-400 pointer-events-none">
-                      <Globe size={16} />
-                    </span>
-                    <input
-                      value={companyForm.linkedin}
-                      onChange={(e) => setCompanyForm((prev) => ({ ...prev, linkedin: e.target.value }))}
-                      className={`${SETTINGS_INPUT} pl-11`}
-                      placeholder="linkedin.com/company/..."
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
-                    <Globe size={13} />
-                    <span className={SETTINGS_LABEL}>TikTok</span>
-                  </label>
-                  <div className="relative flex items-center">
-                    <span className="absolute left-4 text-slate-400 pointer-events-none">
-                      <Globe size={16} />
-                    </span>
-                    <input
-                      value={companyForm.tiktok}
-                      onChange={(e) => setCompanyForm((prev) => ({ ...prev, tiktok: e.target.value }))}
-                      className={`${SETTINGS_INPUT} pl-11`}
-                      placeholder="tiktok.com/@perfil"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
-                    <BookOpen size={13} />
-                    <span className={SETTINGS_LABEL}>Blog</span>
-                  </label>
-                  <div className="relative flex items-center">
-                    <span className="absolute left-4 text-slate-400 pointer-events-none">
-                      <BookOpen size={16} />
-                    </span>
-                    <input
-                      value={companyForm.blog}
-                      onChange={(e) => setCompanyForm((prev) => ({ ...prev, blog: e.target.value }))}
-                      className={`${SETTINGS_INPUT} pl-11`}
-                      placeholder="blog.seudominio.com"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="px-5 pb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 pt-4 bg-[#FAFBFC]">
-                <p className={`text-xs font-semibold ${companySaved ? 'text-emerald-600' : 'text-slate-400'}`}>
-                  {companySaved ? '✓ Dados salvos com sucesso.' : 'Preencha os dados da empresa.'}
-                </p>
-                <div className="flex gap-3">
-                  <button
-                    type="button"
-                    onClick={closeCompanyModal}
-                    className={SETTINGS_SECONDARY_BUTTON}
-                  >
-                    Fechar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSaveCompany}
-                    className={SETTINGS_PRIMARY_BUTTON}
-                  >
-                    Salvar
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Connectors Modal */}
-      {isConnectorsModalOpen && user && (
-        <div className={SETTINGS_MODAL_VIEWPORT}>
-          <div
-            onClick={closeConnectorsModal}
-            className={SETTINGS_MODAL_BACKDROP}
-          />
-
-          <div className={`${SETTINGS_MODAL_FRAME} w-[min(98vw,1440px)] max-h-[94vh] max-w-none`}>
-            <div className={`${SETTINGS_MODAL_SURFACE} max-h-[calc(94vh-4px)] flex h-full flex-col overflow-hidden`}>
-              <div className={PREMIUM_MODAL_HEADER}>
-                <div className="flex items-center justify-between w-full pr-12">
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
-                      <h3 className="text-xl md:text-2xl font-black text-white tracking-tight">Conectores</h3>
-                    </div>
-                    <p className="text-xs font-semibold text-slate-300">
-                      Configure as integrações e parâmetros essenciais para exibir dados reais e corretos no Dashboard.
-                    </p>
-                  </div>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FF6B00]/10 border border-[#FF6B00]/30 text-[#FF6B00] shrink-0 shadow-sm">
-                    <PlugZap size={20} />
-                  </div>
-                </div>
-                <button
-                  onClick={closeConnectorsModal}
-                  className={PREMIUM_MODAL_CLOSE_BUTTON}
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto bg-[#F7F9FC] px-4 py-4">
-                <div className="grid grid-cols-1 gap-3">
-                  <div className="xl:col-span-2 grid grid-cols-1 gap-3 md:grid-cols-3">
-                    <div className="rounded-2xl border border-[#E4EAF2] bg-white p-3">
-                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#98A2B3]">Prontidão</p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <Gauge size={14} className="text-[#FF6A00]" />
-                        <p className="text-lg font-black text-text-main">{dashboardReadiness}%</p>
-                      </div>
-                      <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-[#F2F4F7]">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-r from-[#FFB36A] via-[#FF8A2B] to-[#D55A00] transition-all duration-500"
-                          style={{ width: `${dashboardReadiness}%` }}
-                        />
-                      </div>
-                    </div>
-                    <div className="rounded-2xl border border-[#E4EAF2] bg-white p-3">
-                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#98A2B3]">Obrigatórios ativos</p>
-                      <p className="mt-2 text-lg font-black text-text-main">
-                        {connectedRequired}/{requiredConnectors.length}
-                      </p>
-                      <p className="mt-1 text-xs text-text-muted">Conectores com dados prontos para o dashboard.</p>
-                    </div>
-                    <div className="rounded-2xl border border-[#E4EAF2] bg-white p-3">
-                      <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#98A2B3]">Status da operação</p>
-                      <p className="mt-2 text-sm font-black text-[#344054]">
-                        {dashboardReadiness >= 100 ? 'Dados liberados para análise' : 'Sincronização parcial em andamento'}
-                      </p>
-                      <p className="mt-1 text-xs text-text-muted">Ative as integrações pendentes para liberar visão completa.</p>
-                    </div>
-                  </div>
-
-                  <div className={`${SETTINGS_PANEL} p-4`}>
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <div>
-                        <p className={SETTINGS_LABEL}>Matriz de conectores</p>
-                        <p className="text-xs text-text-muted">Visão única de todas as integrações essenciais.</p>
-                      </div>
-                      <span className="rounded-full border border-[#E4EAF2] bg-[#F8FAFC] px-2.5 py-1 text-[10px] font-black text-[#475467]">
-                        {CONNECTOR_DEFINITIONS.length} canais
-                      </span>
-                    </div>
-                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                      {CONNECTOR_DEFINITIONS.map((connector) => (
-                        <div
-                          key={connector.key}
-                          className={`rounded-xl border p-2.5 ${
-                            connectorStatus[connector.key]
-                              ? 'border-[#BFE7D3] bg-[#F4FFF8]'
-                              : 'border-[#E4EAF2] bg-white'
-                          }`}
-                        >
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <p className="truncate text-[12px] font-black text-text-main">{connector.name}</p>
-                                <span className="group relative inline-flex shrink-0 items-center justify-center">
-                                  <span
-                                    aria-hidden
-                                    className="inline-flex h-4 w-4 items-center justify-center rounded-full border border-[#D0D5DD] bg-white text-[10px] font-black text-[#667085]"
-                                  >
-                                    ?
-                                  </span>
-                                  <span
-                                    role="tooltip"
-                                    className="pointer-events-none absolute left-0 top-[calc(100%+8px)] z-10 w-[310px] rounded-lg border border-[#DCE8FF] bg-white px-3 py-2 text-[11px] font-medium normal-case tracking-normal text-[#344054] opacity-0 shadow-[0_14px_30px_-18px_rgba(15,23,42,0.5)] transition-opacity group-hover:opacity-100"
-                                  >
-                                    <strong className="text-[#1D4ED8]">{CONNECTOR_HELP_BY_KEY[connector.key].title}</strong>
-                                    <span className="mt-1 block space-y-1">
-                                      {CONNECTOR_HELP_BY_KEY[connector.key].steps.map((step, index) => (
-                                        <span key={`${connector.key}-tip-${index}`} className="block">
-                                          {index + 1}. {step}
-                                        </span>
-                                      ))}
-                                    </span>
-                                  </span>
-                                </span>
-                              </div>
-                              <p className="mt-1 truncate text-[10px] leading-tight text-text-muted">{connector.source} • {connector.usedBy}</p>
-                            </div>
-                            <span
-                              className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[9px] font-black uppercase tracking-wider ${
-                                connectorStatus[connector.key]
-                                  ? 'border-[#BDE8CF] bg-white text-[#0A9D57]'
-                                  : 'border-[#FECACA] bg-[#FFF7F7] text-[#B42318]'
-                              }`}
-                            >
-                              {connectorStatus[connector.key] ? 'Ativa' : 'Inativa'}
-                            </span>
-                          </div>
-                          <button
-                            type="button"
-                            disabled={connectorBusyKey === connector.key}
-                            onClick={() =>
-                              connectorStatus[connector.key]
-                                ? void handleConnectorDisconnect(connector.key)
-                                : void handleConnectorConnect(connector.key)
-                            }
-                            className={`mt-2 inline-flex h-8 w-full items-center justify-center gap-1.5 rounded-lg border px-2.5 text-[10px] font-black uppercase tracking-wide transition-all disabled:cursor-not-allowed disabled:opacity-60 ${
-                              connectorStatus[connector.key]
-                                ? 'border-[#BDE8CF] bg-white text-[#0A9D57] hover:bg-[#F2FFF7]'
-                                : 'border-[#FFD4B5] bg-[#FFF5EE] text-[#B54708] hover:border-[#FFB77F]'
-                            }`}
-                          >
-                            {connectorStatus[connector.key] ? (
-                              <>
-                                <CheckCircle2 size={11} /> Conectado
-                              </>
-                            ) : (
-                              <>
-                                <PlugZap size={11} /> Conectar
-                              </>
-                            )}
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
-              <div className="sticky bottom-0 z-20 flex flex-col gap-3 border-t border-border bg-white/95 px-5 py-4 backdrop-blur sm:flex-row sm:items-center sm:justify-between shadow-[0_-12px_28px_-24px_rgba(15,23,42,0.45)]">
-                <p className={`flex-1 text-sm ${
-                  connectorError ? 'text-[#B42318]' : connectorsSaved || connectorFeedback ? 'text-[#0A9D57]' : 'text-text-muted'
-                }`}>
-                  {connectorError
-                    ? connectorError
-                    : connectorFeedback
-                      ? connectorFeedback
-                      : connectorsSaved
-                        ? 'Configurações de conectores salvas com sucesso.'
-                        : 'Conecte os conectores obrigatórios para liberar dados reais no Dashboard.'}
-                </p>
-                <div className="flex w-full gap-3 sm:w-auto">
-                  <button
-                    type="button"
-                    onClick={closeConnectorsModal}
-                    className={`${SETTINGS_SECONDARY_BUTTON} flex-1 bg-[#F8FAFC] sm:flex-none`}
-                  >
-                    Fechar
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSaveConnectors}
-                    className={`${SETTINGS_PRIMARY_BUTTON} flex-1 sm:flex-none`}
-                  >
-                    Salvar configuração
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {settingsToast ? (
         <div
