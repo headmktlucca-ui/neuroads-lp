@@ -280,7 +280,7 @@ export default function Suggestion5LandingPage() {
 
       {/* HERO SECTION WITH STORYTELLING NARRATIVE */}
       <section className="relative w-full min-h-[90vh] flex items-end z-10 pt-[115px] pb-16 md:pb-24 overflow-hidden bg-transparent">
-        <VideoParallaxBackground src="/videos/VD_Full.mp4" overlayOpacity="bg-black/60" />
+        <VideoParallaxBackground src="/videos/VD_Full_1.mp4" overlayOpacity="bg-black/60" />
 
         {/* Subtle left-side readability gradient — doesn't block video, just anchors text */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent z-[1] pointer-events-none" />
