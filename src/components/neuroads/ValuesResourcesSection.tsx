@@ -57,21 +57,7 @@ export default function ValuesResourcesSection() {
 
   return (
     <section id="pricing" className="relative z-10 w-full px-4 pb-14 pt-12 md:px-8 overflow-hidden">
-      {/* Background image (Anexo 04) */}
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: "url('/images/bg-pricing-anexo04.png')",
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-        }}
-      />
-      <div className="absolute inset-0 z-0 bg-black/40" />
-      
-      {/* Smooth Fade Transitions */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#040811] to-transparent z-0 pointer-events-none" />
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#040811] to-transparent z-0 pointer-events-none" />
+
       
       <div className="relative z-10 mx-auto max-w-[1520px]">
         <div className="relative overflow-hidden rounded-[40px] border border-[#ff6a00]/15 bg-black/30 backdrop-blur-xl px-6 py-16 md:px-12 my-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">

@@ -328,21 +328,13 @@ export default function Suggestion5LandingPage() {
             <div className="flex items-start gap-5">
               <div className="w-[3px] self-stretch bg-[#ff6a00] rounded-full shrink-0 mt-1" />
               <div>
-                <h1 className="text-[40px] sm:text-[52px] lg:text-[60px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
-                  Transforme dados em Receita:
+                <h1 className="text-[40px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
+                  Existe uma versão da sua empresa 
+                  <br />
+                  onde cada real investido tem destino 
                   <br />
                   <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
-                    Automações Inteligentes
-                  </span>
-                  {' '}para
-                  <br />
-                  <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
-                    Marketing &amp; Vendas
-                  </span>
-                  {' '}de
-                  <br />
-                  <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
-                    ALTA PERFORMANCE.
+                    certo e retorno mensurável.
                   </span>
                 </h1>
                 <p className="mt-5 text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-[520px] drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
@@ -356,7 +348,7 @@ export default function Suggestion5LandingPage() {
           <div className="hidden lg:block w-px self-stretch bg-[#ff6a00]/50 shrink-0" />
 
           {/* RIGHT — CTAs + badges: hugs the right window edge */}
-          <div className="flex-[4] pl-6 lg:pl-10 pr-4 lg:pr-8 flex flex-col gap-6 items-start">
+          <div className="flex-[4] pl-6 lg:pl-10 pr-4 lg:pr-8 flex flex-col gap-6 items-end">
             {/* CTAs stacked vertically */}
             <div className="flex flex-col gap-3 w-full max-w-[280px]">
               <button
@@ -367,44 +359,36 @@ export default function Suggestion5LandingPage() {
                 Fale com um especialista
                 <ArrowRight size={16} />
               </button>
-              <button
-                type="button"
-                onClick={handleRequestDemo}
-                className="w-full justify-center inline-flex items-center gap-2 rounded-full border border-white/30 hover:border-white/50 bg-white/10 hover:bg-white/15 transition-all px-6 py-4 text-[14px] font-bold cursor-pointer backdrop-blur-sm"
-              >
-                Solicite Demonstração
-                <ArrowRight size={16} />
-              </button>
             </div>
 
             {/* Feature badges — vertical list */}
-            <div className="flex flex-col gap-4 border-t border-white/15 pt-5 w-full">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-4 border-t border-white/15 pt-5 w-full max-w-[280px]">
+              <div className="flex items-center justify-end gap-3 text-right w-full">
+                <div>
+                  <p className="text-sm font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">IA Agêntica</p>
+                  <p className="text-xs text-white/60 mt-1">Autônoma e orientada a metas</p>
+                </div>
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
                   <Cpu size={16} />
                 </span>
-                <div>
-                  <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">IA Agêntica</p>
-                  <p className="text-[10px] text-white/60 mt-1">Autônoma e orientada a metas</p>
-                </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-end gap-3 text-right w-full">
+                <div>
+                  <p className="text-sm font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Dados em tempo real</p>
+                  <p className="text-xs text-white/60 mt-1">Decisões baseadas em sinal</p>
+                </div>
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
                   <TrendingUp size={16} />
                 </span>
-                <div>
-                  <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Dados em tempo real</p>
-                  <p className="text-[10px] text-white/60 mt-1">Decisões baseadas em sinal</p>
-                </div>
               </div>
-              <div className="flex items-center gap-3">
+              <div className="flex items-center justify-end gap-3 text-right w-full">
+                <div>
+                  <p className="text-sm font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Resultados mensuráveis</p>
+                  <p className="text-xs text-white/60 mt-1">Foco no que importa</p>
+                </div>
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
                   <Target size={16} />
                 </span>
-                <div>
-                  <p className="text-xs font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Resultados mensuráveis</p>
-                  <p className="text-[10px] text-white/60 mt-1">Foco no que importa</p>
-                </div>
               </div>
             </div>
           </div>
@@ -416,7 +400,7 @@ export default function Suggestion5LandingPage() {
 
 
         {/* NARRATIVE SECTION: COMO FUNCIONA? */}
-        <section className="relative z-10 py-24 px-5 md:px-8 bg-[#03060c] w-full overflow-hidden">
+        <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full overflow-hidden">
           
           <motion.div
             variants={revealVariants}
@@ -486,20 +470,6 @@ export default function Suggestion5LandingPage() {
 
       {/* HUB ESTRATÉGICO (ex-INTERACTIVE AGENT ASSEMBLY CONTROL ROOM) */}
       <section id="control-room" className="relative z-10 overflow-hidden py-16 w-full px-5 md:px-8">
-        {/* Background image (Anexo 01) */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: "url('/images/backgrounds/bg-hub-novo.png')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        <div className="absolute inset-0 z-0 bg-black/60" />
-        
-        {/* Smooth Fade Transitions */}
-        <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-[#03060c] to-transparent z-0 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#03060c] to-transparent z-0 pointer-events-none" />
         
         <motion.div
           variants={revealVariants}
@@ -701,21 +671,6 @@ export default function Suggestion5LandingPage() {
 
       {/* SEGMENTOS IMPACTADOS */}
       <section id="segmentos" className="relative z-10 py-16 w-full px-5 md:px-8 overflow-hidden">
-        {/* Background image (backgrd_dark.png) */}
-        <div
-          className="absolute inset-0 z-0"
-          style={{
-            backgroundImage: "url('/images/backgrd_dark.png')",
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
-        {/* Dark overlay */}
-        <div className="absolute inset-0 z-0 bg-black/60" />
-        
-        {/* Smooth Fade Transitions */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#040811] to-transparent z-0 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#040811] to-transparent z-0 pointer-events-none" />
         
         <motion.div
           variants={revealVariants}
@@ -772,7 +727,7 @@ export default function Suggestion5LandingPage() {
       </section>
 
       {/* DEPOIMENTOS */}
-      <section id="depoimentos" className="relative z-10 py-16 bg-[#040811] w-full px-5 md:px-8">
+      <section id="depoimentos" className="relative z-10 py-16 bg-transparent w-full px-5 md:px-8">
         <div className="mx-auto max-w-[1260px]">
           <div className="text-center max-w-[720px] mx-auto mb-16">
             <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">Depoimentos</span>
@@ -814,7 +769,7 @@ export default function Suggestion5LandingPage() {
       <ValuesResourcesSection />
 
       {/* FAQ SECTION - layout inspired by Valores e Recursos card */}
-      <section id="faq" className="relative z-10 py-16 border-b border-white/5 bg-[#040811] w-full px-5 md:px-8">
+      <section id="faq" className="relative z-10 py-16 border-b border-white/5 bg-transparent w-full px-5 md:px-8">
         <div className="mx-auto max-w-[1260px]">
           <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] items-start">
             {/* Left: Like the pricing left column */}
