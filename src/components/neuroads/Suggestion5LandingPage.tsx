@@ -24,7 +24,6 @@ import LuccaSpecialistChatModal from './LuccaSpecialistChatModal';
 import LuccaEmbeddedChat from './LuccaEmbeddedChat';
 import PrimaryTopMenu from './PrimaryTopMenu';
 import ValuesResourcesSection from './ValuesResourcesSection';
-import VideoParallaxBackground from './VideoParallaxBackground';
 
 const testimonials = [
   {
@@ -280,7 +279,15 @@ export default function Suggestion5LandingPage() {
 
       {/* HERO SECTION WITH STORYTELLING NARRATIVE */}
       <section className="relative w-full min-h-[90vh] flex items-end z-10 pt-[115px] pb-16 md:pb-24 overflow-hidden bg-transparent">
-        <VideoParallaxBackground src="/videos/VD_Full_1.mp4" overlayOpacity="bg-black/60" />
+        <div className="absolute inset-0 z-0 w-full h-full overflow-hidden bg-[#040811] pointer-events-none">
+          <Image
+            src="/images/backgrounds/fundo_hub.jpeg"
+            alt="Fundo Hub"
+            fill
+            priority
+            className="object-cover object-center opacity-40"
+          />
+        </div>
 
         {/* Subtle left-side readability gradient — doesn't block video, just anchors text */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent z-[1] pointer-events-none" />

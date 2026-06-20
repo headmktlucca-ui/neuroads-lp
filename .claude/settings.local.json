@@ -25,7 +25,11 @@
       "Bash(python -c \"import json,sys; [print\\(x['name'], x['type']\\) for x in json.load\\(sys.stdin\\)]\")",
       "WebFetch(domain:api.github.com)",
       "Bash(npx --yes impeccable@latest install --yes --providers=.claude --project)",
-      "Bash(echo \"[[EXIT:$?]]\")"
+      "Bash(echo \"[[EXIT:$?]]\")",
+      "Bash(node .claude/skills/impeccable/scripts/context.mjs)",
+      "Skill(impeccable)",
+      "Skill(impeccable:*)",
+      "Bash(node .claude/skills/impeccable/scripts/detect-csp.mjs)"
     ]
   },
   "hooks": {
