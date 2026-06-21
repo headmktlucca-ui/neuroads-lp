@@ -411,8 +411,8 @@ export default function HubDashboard() {
         className={`${
           isMobile
             ? 'fixed inset-x-4 top-[35%] mx-auto max-w-[320px] w-auto'
-            : 'absolute bottom-[calc(100%+12px)] right-0 w-72'
-        } z-50 rounded-2xl p-4 text-[11px] backdrop-blur-xl border transition-all duration-150 animate-in fade-in slide-in-from-bottom-2 text-left`}
+            : 'absolute top-[calc(100%+12px)] right-0 w-72'
+        } z-[200] rounded-2xl p-4 text-[11px] backdrop-blur-xl border transition-all duration-150 animate-in fade-in slide-in-from-top-2 text-left`}
         style={{
           background: 'rgba(4,12,24,0.96)',
           borderColor: `${t.color}40`,
@@ -422,7 +422,7 @@ export default function HubDashboard() {
       >
         {!isMobile && (
           <div
-            className="absolute bottom-[-7px] right-4 w-3.5 h-3.5 rotate-45 border-r border-b"
+            className="absolute top-[-7px] right-4 w-3.5 h-3.5 rotate-45 border-l border-t"
             style={{
               background: 'rgba(4,12,24,0.96)',
               borderColor: `${t.color}40`,

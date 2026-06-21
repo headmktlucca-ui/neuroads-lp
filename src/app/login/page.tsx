@@ -110,15 +110,15 @@ function LoginPageContent() {
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_520px] bg-[#040d18]">
+    <div className="min-h-screen flex bg-[#040d18]">
       {/* Left Panel */}
-      <div className="hidden lg:block">
+      <div className="hidden lg:block flex-1 min-w-0">
         <AuthLeftPanel />
       </div>
 
-      {/* Right Panel — Form */}
-      <div className="flex items-center justify-center px-6 py-12 bg-[#06111f]">
-        <div className="w-full max-w-[420px]">
+      {/* Right Panel */}
+      <div className="flex-1 flex items-center justify-center bg-[#040d18] p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-[540px] p-6 sm:p-8 rounded-2xl border border-white/[0.08] bg-[#071424] shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
 
           {/* Mobile logo */}
           <div className="lg:hidden mb-8 text-center">
@@ -168,7 +168,7 @@ function LoginPageContent() {
                 Endereço de E-mail
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35 z-10" />
                 <input
                   type="email"
                   value={email}
@@ -188,7 +188,7 @@ function LoginPageContent() {
                 </Link>
               </div>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35 z-10" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   value={password}

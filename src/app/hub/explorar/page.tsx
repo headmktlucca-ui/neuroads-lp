@@ -12,7 +12,7 @@ type Update = {
   title: string;
   headline: string;
   results: string[];
-  icon: React.ElementType;
+  icon: React.ComponentType<any>;
   iconBg: string;
   iconColor: string;
   tag: string;

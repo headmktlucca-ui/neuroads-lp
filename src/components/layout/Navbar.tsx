@@ -1607,7 +1607,7 @@ export default function Navbar() {
                   <button
                     type="button"
                     onClick={() => setIsCompanySelectorOpen((prev) => !prev)}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/10 hover:bg-white/20 px-2.5 py-1 text-[10px] font-bold text-white transition-all duration-200 shadow-sm cursor-pointer whitespace-nowrap"
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/10 hover:bg-white/20 px-2.5 py-1 text-[10px] font-bold text-white transition-all duration-200 shadow-sm cursor-pointer whitespace-nowrap"
                   >
                     <Building2 size={11} className="text-white/80" />
                     <span className="max-w-[120px] truncate">
@@ -1896,7 +1896,7 @@ export default function Navbar() {
                 <Link
                   href="/hub/configuracoes?tab=perfil"
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
+                  className={`block w-full py-3.5 rounded-xl border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
                     isHubNavbarStyle
                       ? 'border-[#122034] bg-[#081120] text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]'
                       : 'border-slate-100 bg-[#F8FAFC]/60 text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
@@ -1907,7 +1907,7 @@ export default function Navbar() {
                 <Link
                   href="/hub/conectores"
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
+                  className={`block w-full py-3.5 rounded-xl border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
                     isHubNavbarStyle
                       ? 'border-[#122034] bg-[#081120] text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]'
                       : 'border-slate-100 bg-[#F8FAFC]/60 text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
@@ -1918,7 +1918,7 @@ export default function Navbar() {
                 <Link
                   href="/hub/configuracoes?tab=empresa"
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
+                  className={`block w-full py-3.5 rounded-xl border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
                     isHubNavbarStyle
                       ? 'border-[#122034] bg-[#081120] text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]'
                       : 'border-slate-100 bg-[#F8FAFC]/60 text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
@@ -1929,7 +1929,7 @@ export default function Navbar() {
                 <Link
                   href="/hub/configuracoes?tab=financeiro"
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
+                  className={`block w-full py-3.5 rounded-xl border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all ${
                     isHubNavbarStyle
                       ? 'border-[#122034] bg-[#081120] text-slate-300 hover:bg-[#122034] hover:text-[#FF6A00]'
                       : 'border-slate-100 bg-[#F8FAFC]/60 text-[#334155] hover:bg-[#F1F5F9] hover:text-[#0F172A]'
@@ -1939,7 +1939,7 @@ export default function Navbar() {
                 </Link>
                 <button
                   onClick={handleLogout}
-                  className={`w-full py-3.5 rounded-full border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                  className={`w-full py-3.5 rounded-xl border px-5 text-center text-[12px] font-extrabold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                     isHubNavbarStyle
                       ? 'border-red-950/20 bg-rose-950/20 text-rose-400 hover:bg-rose-900/30'
                       : 'border-red-100 bg-rose-50/50 text-red-500 hover:bg-rose-100/50'

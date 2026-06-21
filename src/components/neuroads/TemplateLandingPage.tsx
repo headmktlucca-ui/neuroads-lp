@@ -186,11 +186,9 @@ export default function TemplateLandingPage() {
             </p>
           </div>
           <form className="grid gap-3">
-            <div className="grid gap-3 md:grid-cols-2">
-              <input placeholder="Nome" className="h-12 rounded-full border border-white/20 bg-black/20 px-4 text-sm outline-none placeholder:text-white/45" />
-              <input placeholder="Email" className="h-12 rounded-full border border-white/20 bg-black/20 px-4 text-sm outline-none placeholder:text-white/45" />
-            </div>
-            <textarea placeholder="Conte sua situação" className="h-24 rounded-2xl border border-white/20 bg-black/20 px-4 py-3 text-sm outline-none placeholder:text-white/45" />
+            <input type="text" placeholder="Nome" className="h-12 rounded-xl border border-white/20 bg-black/20 px-4 py-3 text-sm outline-none placeholder:text-white/45" />
+            <input type="email" placeholder="E-mail" className="h-12 rounded-xl border border-white/20 bg-black/20 px-4 py-3 text-sm outline-none placeholder:text-white/45" />
+            <textarea placeholder="Conte sua situação" className="h-24 rounded-xl border border-white/20 bg-black/20 px-4 py-3 text-sm outline-none placeholder:text-white/45" />
             <button className="h-12 rounded-xl bg-[#f0824c] text-sm font-black tracking-wide text-[#171717]">ENVIAR</button>
           </form>
         </div>

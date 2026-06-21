@@ -203,7 +203,7 @@ export default function StrategicContentPageShell({ data }: { data: StrategicCon
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <Link
               href={data.primaryCta.href}
-              className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-6 py-3 text-[14px] font-black text-white shadow-[0_12px_28px_rgba(255,106,0,0.3)] transition hover:bg-[#e95f00]"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-3 text-[14px] font-black text-white shadow-[0_12px_28px_rgba(255,106,0,0.3)] transition hover:bg-[#e95f00]"
             >
               {data.primaryCta.label}
               <ArrowRight size={16} />
@@ -211,7 +211,7 @@ export default function StrategicContentPageShell({ data }: { data: StrategicCon
             {data.secondaryCta ? (
               <Link
                 href={data.secondaryCta.href}
-                className="inline-flex items-center gap-2 rounded-full border border-[#dce3ef] bg-white px-6 py-3 text-[14px] font-black text-[#202a3f] transition hover:border-[#ffcaa8] hover:text-[#ff6a00]"
+                className="inline-flex items-center gap-2 rounded-xl border border-[#dce3ef] bg-white px-6 py-3 text-[14px] font-black text-[#202a3f] transition hover:border-[#ffcaa8] hover:text-[#ff6a00]"
               >
                 {data.secondaryCta.label}
                 <ArrowRight size={16} />
@@ -466,7 +466,7 @@ export default function StrategicContentPageShell({ data }: { data: StrategicCon
             <div className="mt-6 flex flex-wrap gap-3">
               <Link
                 href={data.finalCtaBanner.primaryCta.href}
-                className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-6 py-3 text-[14px] font-black text-white shadow-[0_14px_28px_rgba(255,106,0,0.34)] transition hover:bg-[#e95f00]"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-3 text-[14px] font-black text-white shadow-[0_14px_28px_rgba(255,106,0,0.34)] transition hover:bg-[#e95f00]"
               >
                 {data.finalCtaBanner.primaryCta.label}
                 <ArrowRight size={16} />
@@ -474,7 +474,7 @@ export default function StrategicContentPageShell({ data }: { data: StrategicCon
               {data.finalCtaBanner.secondaryCta ? (
                 <Link
                   href={data.finalCtaBanner.secondaryCta.href}
-                  className="inline-flex items-center gap-2 rounded-full border border-[rgba(255,255,255,0.36)] bg-[rgba(255,255,255,0.08)] px-6 py-3 text-[14px] font-black text-white transition hover:border-[rgba(255,190,143,0.74)] hover:text-[#ffd9ba]"
+                  className="inline-flex items-center gap-2 rounded-xl border border-[rgba(255,255,255,0.36)] bg-[rgba(255,255,255,0.08)] px-6 py-3 text-[14px] font-black text-white transition hover:border-[rgba(255,190,143,0.74)] hover:text-[#ffd9ba]"
                 >
                   {data.finalCtaBanner.secondaryCta.label}
                   <ArrowRight size={16} />

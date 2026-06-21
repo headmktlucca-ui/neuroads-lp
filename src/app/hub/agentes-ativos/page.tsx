@@ -19,11 +19,24 @@ export default function HubAgentesPage() {
 
   return (
     <div className="w-full space-y-8 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-black text-white tracking-tight">Agentes IA</h1>
-        <p className="text-[#8fa0b5] max-w-2xl text-[15px]">
-          Catálogo de Agentes autônomos. Ative, monitore e gerencie os especialistas que impulsionam sua operação de marketing.
-        </p>
+      <header className="py-8 border-b border-white/[0.06] mb-8">
+        <div className="flex items-start justify-between gap-6 flex-wrap">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#FF6A00] shadow-[0_0_6px_rgba(255,106,0,0.8)] animate-pulse" />
+              <span className="text-[11px] font-black uppercase tracking-[0.16em] text-[#FF6A00]">Agentes IA</span>
+            </div>
+            <h1 className="text-3xl font-black text-white tracking-tight leading-tight">Seus Especialistas Autônomos</h1>
+            <p className="text-[#8fa0b5] text-[15px] mt-2 max-w-xl leading-relaxed">
+              Agentes de IA treinados para otimizar cada aspecto da sua operação de marketing. Ative, configure e deixe trabalhar.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#0d1a2a]/60 border border-[#FF6A00]/20 backdrop-blur-md shrink-0">
+            <Target className="w-4 h-4 text-[#FF6A00]" />
+            <span className="text-[13px] font-bold text-white">{AGENTS.length} agentes</span>
+            <span className="text-[13px] text-[#8fa0b5]">disponíveis</span>
+          </div>
+        </div>
       </header>
 
       {/* Tabs & Search */}

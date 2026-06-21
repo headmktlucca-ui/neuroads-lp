@@ -14,9 +14,24 @@ const INTEGRATIONS = [
 export default function HubIntegracoesPage() {
   return (
     <div className="w-full space-y-6 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <header className="flex flex-col gap-1 mb-8">
-        <h1 className="text-2xl font-black text-white tracking-tight">Integrações</h1>
-        <p className="text-[#8fa0b5] text-[14px]">Conecte suas plataformas favoritas para alimentar os Agentes de IA.</p>
+      <header className="py-8 border-b border-white/[0.06] mb-8">
+        <div className="flex items-start justify-between gap-6 flex-wrap">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#FF6A00] shadow-[0_0_6px_rgba(255,106,0,0.8)] animate-pulse" />
+              <span className="text-[11px] font-black uppercase tracking-[0.16em] text-[#FF6A00]">Integrações</span>
+            </div>
+            <h1 className="text-3xl font-black text-white tracking-tight leading-tight">Conecte Seus Canais</h1>
+            <p className="text-[#8fa0b5] text-[15px] mt-2 max-w-xl leading-relaxed">
+              Vincule suas plataformas de mídia paga e analytics para alimentar os Agentes de IA com dados reais da sua operação.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#0d1a2a]/60 border border-[#FF6A00]/20 backdrop-blur-md shrink-0">
+            <Link2 className="w-4 h-4 text-[#FF6A00]" />
+            <span className="text-[13px] font-bold text-white">8+ plataformas</span>
+            <span className="text-[13px] text-[#8fa0b5]">disponíveis</span>
+          </div>
+        </div>
       </header>
 
       {/* Stats row */}

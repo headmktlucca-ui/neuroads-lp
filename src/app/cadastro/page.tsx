@@ -19,7 +19,7 @@ function CadastroPageContent() {
     email: '',
     whatsapp: '',
     companyName: '',
-    site: '',
+    site: 'https://',
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -32,6 +32,30 @@ function CadastroPageContent() {
 
   const set = (field: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
+
+  const handleSiteChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let val = e.target.value;
+
+    if (val === '' || val === 'http' || val === 'https' || val === 'https:' || val === 'https:/') {
+      setForm((prev) => ({ ...prev, site: 'https://' }));
+      return;
+    }
+
+    // Auto-correct double protocol pasting
+    if (val.startsWith('https://https://')) {
+      val = val.replace('https://https://', 'https://');
+    } else if (val.startsWith('https://http://')) {
+      val = val.replace('https://http://', 'https://');
+    } else if (val.startsWith('http://') && val !== 'http://') {
+      val = val.replace('http://', 'https://');
+    }
+
+    if (!val.startsWith('https://')) {
+      val = 'https://' + val;
+    }
+
+    setForm((prev) => ({ ...prev, site: val }));
+  };
 
   const saveProfile = async (uid: string) => {
     const db = getFirebaseDb();
@@ -110,15 +134,15 @@ function CadastroPageContent() {
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-[1fr_520px] bg-[#040d18]">
+    <div className="min-h-screen flex bg-[#040d18]">
       {/* Left Panel */}
-      <div className="hidden lg:block">
+      <div className="hidden lg:block flex-1 min-w-0">
         <AuthLeftPanel />
       </div>
 
       {/* Right Panel */}
-      <div className="flex items-center justify-center px-6 py-10 bg-[#06111f] overflow-y-auto">
-        <div className="w-full max-w-[420px]">
+      <div className="flex-1 flex items-center justify-center bg-[#040d18] p-4 sm:p-6 lg:p-8 overflow-y-auto">
+        <div className="w-full max-w-[540px] p-6 sm:p-8 rounded-2xl border border-white/[0.08] bg-[#071424] shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
 
           <div className="mb-6">
             <h1 className="text-[26px] font-black text-white leading-tight">Criar uma conta</h1>
@@ -156,7 +180,7 @@ function CadastroPageContent() {
             <div>
               <label className="block text-[11px] font-black uppercase tracking-wider text-white/40 mb-1.5">Nome Completo</label>
               <div className="relative">
-                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35 z-10" />
                 <input type="text" value={form.name} onChange={set('name')} placeholder="Seu nome" required
                   className="w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.04] pl-10 pr-4 text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all" />
               </div>
@@ -166,7 +190,7 @@ function CadastroPageContent() {
             <div>
               <label className="block text-[11px] font-black uppercase tracking-wider text-white/40 mb-1.5">E-mail</label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35 z-10" />
                 <input type="email" value={form.email} onChange={set('email')} placeholder="nome@empresa.com" required
                   className="w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.04] pl-10 pr-4 text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all" />
               </div>
@@ -176,18 +200,18 @@ function CadastroPageContent() {
             <div>
               <label className="block text-[11px] font-black uppercase tracking-wider text-white/40 mb-1.5">WhatsApp</label>
               <div className="relative">
-                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35 z-10" />
                 <input type="tel" value={form.whatsapp} onChange={set('whatsapp')} placeholder="+55 11 99999-9999" required
                   className="w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.04] pl-10 pr-4 text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all" />
               </div>
             </div>
 
             {/* Nome da Empresa + Site (grid) */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-[11px] font-black uppercase tracking-wider text-white/40 mb-1.5">Nome da Empresa</label>
                 <div className="relative">
-                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/25" />
+                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/35 z-10" />
                   <input type="text" value={form.companyName} onChange={set('companyName')} placeholder="Minha Empresa" required
                     className="w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.04] pl-9 pr-3 text-[13px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all" />
                 </div>
@@ -195,8 +219,8 @@ function CadastroPageContent() {
               <div>
                 <label className="block text-[11px] font-black uppercase tracking-wider text-white/40 mb-1.5">Site</label>
                 <div className="relative">
-                  <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/25" />
-                  <input type="url" value={form.site} onChange={set('site')} placeholder="empresa.com"
+                  <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white/35 z-10" />
+                  <input type="url" value={form.site} onChange={handleSiteChange} placeholder="empresa.com"
                     className="w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.04] pl-9 pr-3 text-[13px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all" />
                 </div>
               </div>
@@ -206,7 +230,7 @@ function CadastroPageContent() {
             <div>
               <label className="block text-[11px] font-black uppercase tracking-wider text-white/40 mb-1.5">Senha</label>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-white/35 z-10" />
                 <input type={showPassword ? 'text' : 'password'} value={form.password} onChange={set('password')} placeholder="Mínimo 6 caracteres" required
                   className="w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.04] pl-10 pr-11 text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all" />
                 <button type="button" onClick={() => setShowPassword((v) => !v)}

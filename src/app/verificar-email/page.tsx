@@ -142,15 +142,15 @@ function VerificarEmailContent() {
   }
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-[1fr_480px] xl:grid-cols-[1fr_520px] bg-[#040d18]">
+    <div className="min-h-screen flex bg-[#040d18]">
       {/* Left Panel */}
-      <div className="hidden lg:block">
+      <div className="hidden lg:block flex-1 min-w-0">
         <AuthLeftPanel />
       </div>
 
-      {/* Right Panel */}
-      <div className="flex items-center justify-center px-6 py-12 bg-[#06111f]">
-        <div className="w-full max-w-[400px]">
+      {/* Right Panel — fixed width, never resizes */}
+      <div className="flex items-center justify-center bg-[#06111f] shrink-0 w-full lg:w-[520px]">
+        <div className="w-[400px] py-12">
 
           {success ? (
             <div className="text-center animate-in fade-in zoom-in-95 duration-400">

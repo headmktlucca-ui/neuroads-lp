@@ -49,7 +49,13 @@
       "Bash(find ~/.gemini/extensions -iname \"*.json\" 2>/dev/null | head -50)",
       "PowerShell([Environment]::SetEnvironmentVariable\\(\"GEMINI_API_KEY\", \"AQ.Ab8RN6JPTPqIjMaSrGInvjieiO5ODsSXcNgrijFL2Ec10PhT4g\", \"User\"\\); $env:GEMINI_API_KEY = \"AQ.Ab8RN6JPTPqIjMaSrGInvjieiO5ODsSXcNgrijFL2Ec10PhT4g\"; \"GEMINI_API_KEY definido \\(User\\). Valor atual termina em: ...\" + $env:GEMINI_API_KEY.Substring\\($env:GEMINI_API_KEY.Length-4\\))",
       "PowerShell($env:GEMINI_API_KEY = \"AQ.Ab8RN6JPTPqIjMaSrGInvjieiO5ODsSXcNgrijFL2Ec10PhT4g\"; gemini -p \"Responda apenas: OK\" 2>&1 | Select-String -NotMatch 'Warning|Hook|Skill conflict|Ripgrep|claude-mem|ParserError|Line \\\\||~~~|expression|worker-service|F12' | Out-String)",
-      "Bash(node \"C:\\\\Users\\\\claud\\\\OneDrive\\\\Documentos\\\\NeuroAds\\\\LP\\\\.claude\\\\skills\\\\impeccable\\\\scripts\\\\context.mjs\")"
+      "Bash(node \"C:\\\\Users\\\\claud\\\\OneDrive\\\\Documentos\\\\NeuroAds\\\\LP\\\\.claude\\\\skills\\\\impeccable\\\\scripts\\\\context.mjs\")",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(gh pr *)",
+      "PowerShell(winget install --id GitHub.cli --silent --accept-package-agreements --accept-source-agreements 2>&1)",
+      "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); gh --version 2>&1)"
     ]
   },
   "hooks": {

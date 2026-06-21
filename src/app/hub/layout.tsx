@@ -52,7 +52,7 @@ export default function HubLayout({ children }: { children: React.ReactNode }) {
       <HubTopNav />
 
       {/* Main Content — offset by top nav height (56px bar + 42px subnav = 98px) */}
-      <main className="flex-grow pt-[98px] pb-6 text-white font-sans relative z-10">
+      <main className="flex-grow pt-[98px] pb-6 text-white font-sans relative z-10 agent-page-button-corners">
         {children}
       </main>
 

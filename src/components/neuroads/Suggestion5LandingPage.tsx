@@ -3,8 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import HeroWaveCanvas from './HeroWaveCanvas';
-import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { motion, AnimatePresence, type Variants, useScroll, useTransform } from 'framer-motion';
 import {
   ArrowRight,
   Funnel,
@@ -584,6 +583,9 @@ export default function Suggestion5LandingPage() {
   const [isLuccaChatOpen, setIsLuccaChatOpen] = useState(false);
   const [luccaAutoMessage, setLuccaAutoMessage] = useState<string | null>(null);
 
+  const { scrollY } = useScroll();
+  const backgroundY = useTransform(scrollY, [0, 1000], [0, 200]);
+
   // Mobile responsive hook removed as 3D transforms are disabled
   useEffect(() => {
     const lenis = new Lenis({
@@ -636,8 +638,18 @@ export default function Suggestion5LandingPage() {
 
       {/* HERO SECTION WITH STORYTELLING NARRATIVE */}
       <section className="relative w-full min-h-[90vh] flex items-stretch z-10 pt-[139px] pb-16 md:pb-24 overflow-hidden bg-transparent">
-        <div className="absolute inset-0 w-full h-full z-0 pointer-events-none">
-          <HeroWaveCanvas />
+        <div className="absolute inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
+          <motion.div
+            className="absolute w-full bg-cover bg-center"
+            style={{
+              backgroundImage: "url('/images/backgrounds/bh_home.png')",
+              y: backgroundY,
+              height: '140%',
+              top: '-20%',
+              left: 0,
+              right: 0,
+            }}
+          />
         </div>
 
         {/* Smooth top gradient fade to blend background image with the top menu bar */}
