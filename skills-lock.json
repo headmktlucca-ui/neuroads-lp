@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "email-kowalski": {
+      "source": "./skills/email-kowalski",
+      "sourceType": "local",
+      "skillPath": "skills/email-kowalski/SKILL.md",
+      "computedHash": "74b97bdedca588b1687f108ffa0f35db219737888380f5b00c099db8075f76b2"
+    },
     "gemma-dev": {
       "source": "google-gemma/gemma-skills",
       "sourceType": "github",
