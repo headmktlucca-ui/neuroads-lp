@@ -62,11 +62,11 @@ export default function HubTopNav() {
         {/* Logo */}
         <Link href="/hub" className="flex items-center shrink-0">
           <Image
-            src="/images/logo2026.png"
+            src="/images/Logos/LLNeuroAds.png"
             alt="NeuroAds"
             width={148}
             height={36}
-            className="h-8 w-auto brightness-0 invert"
+            className="h-8 w-auto"
             priority
           />
         </Link>

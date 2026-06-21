@@ -46,7 +46,7 @@ export default function Footer() {
           <div className="grid gap-8 border-b border-[#eceef2] pb-8 md:grid-cols-2 xl:grid-cols-[1.25fr_repeat(4,minmax(0,1fr))]">
             <div>
               <Link href="/" className="inline-flex items-center">
-                <Image src="/images/logo2026.png" alt="NeuroAds Logo" width={176} height={44} className="h-9 w-auto object-contain" />
+                <Image src="/images/Logos/LLNeuroAds.png" alt="NeuroAds Logo" width={220} height={56} className="h-11 w-auto object-contain" />
               </Link>
               <p className="mt-3 max-w-[280px] text-[13px] text-[#5f697b]">IA agêntica para marketing de alta performance.</p>
               <div className="mt-4 flex items-center gap-3">
@@ -120,11 +120,11 @@ export default function Footer() {
           <div className="flex flex-col max-w-[300px]">
             <Link href="/" className="group flex items-center mb-6 transition-transform hover:scale-[1.02]">
               <Image
-                src="/images/logo2026.png" 
+                src="/images/Logos/LLNeuroAds.png" 
                 alt="NeuroAds Logo" 
-                width={176}
-                height={44}
-                className="h-9 lg:h-11 w-auto object-contain"
+                width={220}
+                height={56}
+                className="h-11 lg:h-13 w-auto object-contain"
               />
             </Link>
             <p className="text-text-muted text-sm leading-relaxed mb-6">

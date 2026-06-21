@@ -119,7 +119,7 @@ export default function PrimaryTopMenu({
     <>
       <header className="fixed left-1/2 top-4 z-[240] flex w-[min(calc(100%-1.5rem),1196px)] -translate-x-1/2 items-center justify-between gap-2 rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/15 backdrop-blur-xl px-3 py-3 shadow-[0_12px_40px_rgba(255,106,0,0.15)] sm:w-[min(calc(100%-2.5rem),1196px)] sm:gap-3 sm:px-5 md:px-7">
         <Link href={logoHref} className="flex items-center">
-          <Image src="/images/logo2026.png" alt="NeuroAds" width={156} height={34} className="h-8 w-auto" priority />
+          <Image src="/images/Logos/LLNeuroAds.png" alt="NeuroAds" width={156} height={34} className="h-8 w-auto" priority />
         </Link>
 
         <nav

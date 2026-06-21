@@ -41,7 +41,7 @@ export default function TemplateLandingPage() {
           <header className="rounded-full border border-white/10 bg-[#0e121d]/75 px-6 py-3 backdrop-blur">
             <div className="flex items-center justify-between gap-6">
               <a href="#inicio" className="flex items-center gap-2">
-                <Image src="/images/logo2026.png" alt="NeuroAds" width={110} height={28} className="h-7 w-auto" />
+                <Image src="/images/Logos/LLNeuroAds.png" alt="NeuroAds" width={110} height={28} className="h-7 w-auto" />
               </a>
               <nav className="hidden items-center gap-8 text-sm text-white/70 md:flex">
                 <a href="#inicio" className="border-b border-[#f0824c] pb-1 text-[#f0824c]">Início</a>

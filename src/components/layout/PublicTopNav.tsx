@@ -20,7 +20,7 @@ export default function PublicTopNav() {
         {/* Logo */}
         <Link href="/" className="flex items-center shrink-0">
           <Image
-            src="/images/logo2026.png"
+            src="/images/Logos/LLNeuroAds.png"
             alt="NeuroAds"
             width={164}
             height={40}

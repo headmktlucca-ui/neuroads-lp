@@ -11,7 +11,7 @@ const AUTOMATIONS = [
 
 export default function HubAutomacoesPage() {
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="w-full space-y-6 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="flex flex-col gap-1 mb-8">
         <h1 className="text-2xl font-black text-white tracking-tight">Automações</h1>
         <p className="text-[#8fa0b5] text-[14px]">Gerencie e monitore seus fluxos de trabalho automatizados.</p>

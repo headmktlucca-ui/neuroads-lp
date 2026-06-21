@@ -13,7 +13,7 @@ const INTEGRATIONS = [
 
 export default function HubIntegracoesPage() {
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="w-full space-y-6 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="flex flex-col gap-1 mb-8">
         <h1 className="text-2xl font-black text-white tracking-tight">Integrações</h1>
         <p className="text-[#8fa0b5] text-[14px]">Conecte suas plataformas favoritas para alimentar os Agentes de IA.</p>
@@ -21,7 +21,7 @@ export default function HubIntegracoesPage() {
 
       {/* Stats row */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="p-5 rounded-2xl bg-[#0d1a2a]/40 border border-white/[0.06] backdrop-blur-md relative overflow-hidden group hover:bg-[#0d1a2a]/60 hover:border-white/[0.1] transition-all">
+        <div className="p-5 rounded-2xl bg-[#0d1a2a]/40 border border-[#FF6A00]/20 backdrop-blur-md relative overflow-hidden group hover:bg-[#0d1a2a]/60 hover:border-[#FF6A00]/40 transition-all">
           <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/[0.03] rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-emerald-500/[0.05] transition-colors" />
           <div className="flex items-start justify-between relative">
             <div>
@@ -34,7 +34,7 @@ export default function HubIntegracoesPage() {
           </div>
         </div>
 
-        <div className="p-5 rounded-2xl bg-[#0d1a2a]/40 border border-white/[0.06] backdrop-blur-md relative overflow-hidden group hover:bg-[#0d1a2a]/60 hover:border-white/[0.1] transition-all">
+        <div className="p-5 rounded-2xl bg-[#0d1a2a]/40 border border-[#FF6A00]/20 backdrop-blur-md relative overflow-hidden group hover:bg-[#0d1a2a]/60 hover:border-[#FF6A00]/40 transition-all">
           <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/[0.03] rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-blue-500/[0.05] transition-colors" />
           <div className="flex items-start justify-between relative">
             <div>
@@ -49,7 +49,7 @@ export default function HubIntegracoesPage() {
       </div>
 
       {/* List */}
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0d1a2a]/40 backdrop-blur-md overflow-hidden shadow-lg mt-6">
+      <div className="rounded-2xl border border-[#FF6A00]/20 bg-[#0d1a2a]/40 backdrop-blur-md overflow-hidden shadow-lg mt-6">
         <div className="p-5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
           <h2 className="text-[15px] font-bold text-white">Catálogo de Integrações</h2>
         </div>

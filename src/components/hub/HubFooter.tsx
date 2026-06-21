@@ -54,7 +54,7 @@ const FOOTER_COLUMNS = [
 
 export default function HubFooter() {
   return (
-    <footer className="border-t border-white/[0.06] bg-[#08101e]/98 mt-12">
+    <footer className="border-t border-white/[0.06] bg-[#08101e]/98">
       <div className="mx-auto max-w-7xl px-6 py-12">
         {/* Columns Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-8">
@@ -62,11 +62,11 @@ export default function HubFooter() {
           <div className="col-span-2 sm:col-span-3 md:col-span-1">
             <div className="mb-3">
               <Image
-                src="/images/logo2026.png"
+                src="/images/Logos/LLNeuroAds.png"
                 alt="NeuroAds"
-                width={130}
-                height={32}
-                className="h-7 w-auto brightness-0 invert"
+                width={190}
+                height={48}
+                className="h-10 w-auto"
               />
             </div>
             <p className="text-[12px] text-white/35 leading-relaxed max-w-[200px]">

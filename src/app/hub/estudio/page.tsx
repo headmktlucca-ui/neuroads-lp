@@ -8,10 +8,10 @@ export default function HubEstudioPage() {
   const [temperature, setTemperature] = useState(0.7);
 
   return (
-    <div className="flex h-[calc(100vh-140px)] gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="flex h-[calc(100vh-140px)] gap-6 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       
       {/* Sidebar Controls */}
-      <div className="w-80 shrink-0 flex flex-col rounded-3xl bg-[#0d1a2a]/40 border border-white/[0.06] backdrop-blur-md overflow-hidden shadow-lg">
+      <div className="w-80 shrink-0 flex flex-col rounded-3xl bg-[#0d1a2a]/40 border border-[#FF6A00]/20 backdrop-blur-md overflow-hidden shadow-lg">
         <div className="p-5 border-b border-white/[0.06] bg-white/[0.02]">
           <h2 className="text-[15px] font-bold text-white flex items-center gap-2">
             <Settings2 className="w-4 h-4 text-[#FF6A00]" /> Parâmetros

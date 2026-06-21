@@ -1,86 +1,264 @@
 'use client';
 
-import React from 'react';
-import Link from 'next/link';
-import { PenTool, BarChart2, Image as ImageIcon, Zap, TrendingUp, DollarSign, Users, Target, ArrowRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { Sparkles, TrendingUp, Zap, Target, BarChart2, Bot, Layers, ArrowRight, CheckCircle2, Clock, Star } from 'lucide-react';
 
-const ATIVIDADES = [
-  { id: 'copy', title: 'Criação de Copy', description: 'Gere textos persuasivos para anúncios e landing pages.', icon: PenTool, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-  { id: 'data', title: 'Análise de Dados', description: 'Transforme métricas complexas em insights acionáveis.', icon: BarChart2, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-  { id: 'images', title: 'Geração de Imagens', description: 'Crie criativos visuais de alta conversão com IA.', icon: ImageIcon, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-  { id: 'automation', title: 'Automação de Tarefas', description: 'Crie fluxos inteligentes para reduzir trabalho manual.', icon: Zap, color: 'text-amber-400', bg: 'bg-amber-500/10' },
+type Update = {
+  id: string;
+  version: string;
+  date: string;
+  badge: 'Novo' | 'Melhoria' | 'IA' | 'Destaque';
+  badgeColor: string;
+  title: string;
+  headline: string;
+  results: string[];
+  icon: React.ElementType;
+  iconBg: string;
+  iconColor: string;
+  tag: string;
+};
+
+const UPDATES: Update[] = [
+  {
+    id: '1',
+    version: 'v2.4',
+    date: 'Junho 2026',
+    badge: 'Destaque',
+    badgeColor: 'bg-[#FF6A00]/15 text-[#FF6A00] border-[#FF6A00]/30',
+    title: 'Agentes IA com Otimização Automática de Lances',
+    headline: 'Reduza seu CPA em até 28% sem mexer nas campanhas manualmente.',
+    results: [
+      'Agente monitora performance a cada 15 minutos e ajusta lances em tempo real',
+      'Clientes beta reduziram CPA médio de R$ 42 para R$ 31 em 3 semanas',
+      'Zero configuração: basta conectar sua conta Google Ads e ativar',
+    ],
+    icon: Bot,
+    iconBg: 'bg-[#FF6A00]/10',
+    iconColor: 'text-[#FF6A00]',
+    tag: 'Agentes IA',
+  },
+  {
+    id: '2',
+    version: 'v2.3',
+    date: 'Maio 2026',
+    badge: 'IA',
+    badgeColor: 'bg-purple-500/15 text-purple-400 border-purple-500/30',
+    title: 'Assistente Lucca: Análise de Campanhas por Chat',
+    headline: 'Obtenha insights sobre suas campanhas em linguagem natural, sem precisar saber de métricas.',
+    results: [
+      'Pergunte "por que meu ROAS caiu essa semana?" e receba análise detalhada',
+      'Lucca cruza dados de GA4, Google Ads e Meta Ads automaticamente',
+      'Economize em média 3h/semana em relatórios manuais',
+    ],
+    icon: Sparkles,
+    iconBg: 'bg-purple-500/10',
+    iconColor: 'text-purple-400',
+    tag: 'Assistente IA',
+  },
+  {
+    id: '3',
+    version: 'v2.2',
+    date: 'Abril 2026',
+    badge: 'Melhoria',
+    badgeColor: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+    title: 'Dashboard com Dados em Tempo Real',
+    headline: 'Veja o desempenho das suas campanhas acontecendo agora, não apenas ontem.',
+    results: [
+      'Sincronização ao vivo com Google Ads, Meta Ads e GA4 a cada 5 minutos',
+      'Feed de atividades ao vivo: conversões, ajustes de lance e alertas instantâneos',
+      'Identifique picos e quedas de performance antes que afetem o resultado do mês',
+    ],
+    icon: TrendingUp,
+    iconBg: 'bg-emerald-500/10',
+    iconColor: 'text-emerald-400',
+    tag: 'Dashboard',
+  },
+  {
+    id: '4',
+    version: 'v2.1',
+    date: 'Março 2026',
+    badge: 'Novo',
+    badgeColor: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+    title: 'Funil de Marketing Integrado',
+    headline: 'Entenda onde você perde clientes e quanto cada etapa vale para o seu negócio.',
+    results: [
+      'Visualização clara de Awareness → Conversão com dados reais de cada canal',
+      'Descubra gargalos: clientes beta aumentaram taxa de conversão em 19% ao identificar a etapa de abandono',
+      'Funil unificado mesmo usando múltiplas plataformas simultaneamente',
+    ],
+    icon: Target,
+    iconBg: 'bg-blue-500/10',
+    iconColor: 'text-blue-400',
+    tag: 'Analytics',
+  },
+  {
+    id: '5',
+    version: 'v2.0',
+    date: 'Fevereiro 2026',
+    badge: 'Destaque',
+    badgeColor: 'bg-[#FF6A00]/15 text-[#FF6A00] border-[#FF6A00]/30',
+    title: 'Integrações com Meta Ads e LinkedIn Ads',
+    headline: 'Gerencie todos os seus canais de mídia paga em um único painel.',
+    results: [
+      'Conecte Meta Ads em menos de 2 minutos via OAuth seguro',
+      'Compare performance entre canais: veja qual traz melhor ROAS para seu segmento',
+      'Economize assinaturas de ferramentas separadas de analytics',
+    ],
+    icon: Layers,
+    iconBg: 'bg-cyan-500/10',
+    iconColor: 'text-cyan-400',
+    tag: 'Integrações',
+  },
+  {
+    id: '6',
+    version: 'v1.9',
+    date: 'Janeiro 2026',
+    badge: 'IA',
+    badgeColor: 'bg-purple-500/15 text-purple-400 border-purple-500/30',
+    title: 'Automações de Orçamento Inteligente',
+    headline: 'Seu orçamento de mídia sempre alocado onde traz mais retorno — sem decisões manuais.',
+    results: [
+      'Regras automáticas: pause campanhas com CPA acima do alvo sem precisar monitorar',
+      'Redistribuição de budget entre canais baseada em ROAS em tempo real',
+      'Usuários que ativaram automações reportaram 22% mais eficiência no investimento mensal',
+    ],
+    icon: Zap,
+    iconBg: 'bg-amber-500/10',
+    iconColor: 'text-amber-400',
+    tag: 'Automações',
+  },
 ];
 
-const OBJETIVOS = [
-  { id: 'conversion', title: 'Aumentar Conversão', description: 'Estratégias focadas em maximizar seu ROI e ROAS.', icon: TrendingUp, color: 'text-rose-400', bg: 'bg-rose-500/10' },
-  { id: 'cost', title: 'Reduzir Custos', description: 'Otimização de orçamento e eliminação de desperdícios.', icon: DollarSign, color: 'text-green-400', bg: 'bg-green-500/10' },
-  { id: 'leads', title: 'Qualificar Leads', description: 'Filtre e nutra contatos para vendas de alto ticket.', icon: Users, color: 'text-cyan-400', bg: 'bg-cyan-500/10' },
-  { id: 'campaigns', title: 'Otimizar Campanhas', description: 'Ajuste fino contínuo baseado em inteligência preditiva.', icon: Target, color: 'text-orange-400', bg: 'bg-orange-500/10' },
-];
+const BADGE_ORDER = ['Destaque', 'IA', 'Novo', 'Melhoria'] as const;
 
 export default function HubExplorarPage() {
+  const [activeFilter, setActiveFilter] = useState<string>('Todos');
+
+  const filters = ['Todos', 'Dashboard', 'Agentes IA', 'Assistente IA', 'Integrações', 'Automações', 'Analytics'];
+
+  const filtered = activeFilter === 'Todos' ? UPDATES : UPDATES.filter((u) => u.tag === activeFilter);
+
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <header className="flex flex-col gap-2">
-        <h1 className="text-3xl font-black text-white tracking-tight">Explorar</h1>
-        <p className="text-[#8fa0b5] max-w-2xl text-[15px]">
-          Descubra ferramentas e agentes de IA projetados para impulsionar seus resultados. Navegue por atividades específicas ou busque soluções focadas nos seus objetivos de negócio.
-        </p>
+    <div className="w-full px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+      {/* Hero Header */}
+      <header className="py-8 border-b border-white/[0.06] mb-8">
+        <div className="flex items-start justify-between gap-6 flex-wrap">
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#FF6A00] shadow-[0_0_6px_rgba(255,106,0,0.8)] animate-pulse" />
+              <span className="text-[11px] font-black uppercase tracking-[0.16em] text-[#FF6A00]">Novidades NeuroAds</span>
+            </div>
+            <h1 className="text-3xl font-black text-white tracking-tight leading-tight">
+              O que há de novo
+            </h1>
+            <p className="text-[#8fa0b5] text-[15px] mt-2 max-w-xl leading-relaxed">
+              Cada atualização existe para gerar um resultado concreto no seu negócio. Aqui você acompanha o que evoluiu e o que você pode usar hoje.
+            </p>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#0d1a2a]/60 border border-[#FF6A00]/20 backdrop-blur-md">
+            <Star className="w-4 h-4 text-[#FF6A00]" />
+            <span className="text-[13px] font-bold text-white">{UPDATES.length} atualizações</span>
+            <span className="text-[13px] text-[#8fa0b5]">neste ciclo</span>
+          </div>
+        </div>
       </header>
 
-      <section className="space-y-6">
-        <div className="flex items-center gap-3 border-b border-white/[0.06] pb-4">
-          <div className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.05]">
-            <Zap className="w-5 h-5 text-white/80" />
-          </div>
-          <h2 className="text-xl font-bold text-white tracking-tight">Por Atividade</h2>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {ATIVIDADES.map((item) => (
-            <Link key={item.id} href={`/hub/agentes-ativos?filter=${item.id}`} className="group relative p-5 rounded-2xl bg-[#0d1a2a]/40 border border-white/[0.06] hover:bg-[#0d1a2a]/80 hover:border-white/[0.15] hover:shadow-[0_0_24px_rgba(255,106,0,0.05)] transition-all duration-300 overflow-hidden backdrop-blur-md">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative flex items-start justify-between">
-                <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center border border-white/[0.04]`}>
-                  <item.icon className={`w-5 h-5 ${item.color}`} />
-                </div>
-                <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors duration-300 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100" />
-              </div>
-              <div className="mt-5 relative">
-                <h3 className="text-[15px] font-bold text-white group-hover:text-[#FF6A00] transition-colors duration-300">{item.title}</h3>
-                <p className="mt-2 text-[13px] text-[#8fa0b5] line-clamp-2 leading-relaxed">{item.description}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-2 flex-wrap mb-8">
+        {filters.map((f) => (
+          <button
+            key={f}
+            onClick={() => setActiveFilter(f)}
+            className={`px-4 py-1.5 rounded-full text-[13px] font-bold border transition-all duration-150 cursor-pointer ${
+              activeFilter === f
+                ? 'bg-[#FF6A00] text-white border-[#FF6A00] shadow-[0_0_16px_rgba(255,106,0,0.3)]'
+                : 'bg-[#0d1a2a]/40 text-[#8fa0b5] border-white/[0.08] hover:text-white hover:border-white/[0.2]'
+            }`}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
 
-      <section className="space-y-6">
-        <div className="flex items-center gap-3 border-b border-white/[0.06] pb-4">
-          <div className="p-2 rounded-lg bg-white/[0.03] border border-white/[0.05]">
-            <Target className="w-5 h-5 text-white/80" />
-          </div>
-          <h2 className="text-xl font-bold text-white tracking-tight">Por Objetivo</h2>
-        </div>
-        
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {OBJETIVOS.map((item) => (
-            <Link key={item.id} href={`/hub/agentes-ativos?filter=${item.id}`} className="group relative p-5 rounded-2xl bg-[#0d1a2a]/40 border border-white/[0.06] hover:bg-[#0d1a2a]/80 hover:border-white/[0.15] hover:shadow-[0_0_24px_rgba(255,106,0,0.05)] transition-all duration-300 overflow-hidden backdrop-blur-md">
-              <div className="absolute inset-0 bg-gradient-to-br from-white/[0.02] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="relative flex items-start justify-between">
-                <div className={`w-10 h-10 rounded-xl ${item.bg} flex items-center justify-center border border-white/[0.04]`}>
-                  <item.icon className={`w-5 h-5 ${item.color}`} />
+      {/* Updates List */}
+      <div className="space-y-5 pb-10">
+        {filtered.map((update) => (
+          <article
+            key={update.id}
+            className="group relative rounded-3xl border border-[#FF6A00]/20 bg-[#0d1a2a]/40 backdrop-blur-md hover:bg-[#0d1a2a]/70 hover:border-[#FF6A00]/40 hover:shadow-[0_0_32px_rgba(255,106,0,0.06)] transition-all duration-300 overflow-hidden"
+          >
+            {/* Top accent line */}
+            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF6A00]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+            <div className="p-6 flex gap-5 flex-col sm:flex-row">
+              {/* Icon */}
+              <div className="shrink-0">
+                <div className={`w-12 h-12 rounded-2xl ${update.iconBg} border border-[#FF6A00]/20 flex items-center justify-center shadow-[0_0_16px_rgba(255,106,0,0.08)]`}>
+                  <update.icon className={`w-6 h-6 ${update.iconColor}`} />
                 </div>
-                <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/60 transition-colors duration-300 -translate-x-2 group-hover:translate-x-0 opacity-0 group-hover:opacity-100" />
               </div>
-              <div className="mt-5 relative">
-                <h3 className="text-[15px] font-bold text-white group-hover:text-[#FF6A00] transition-colors duration-300">{item.title}</h3>
-                <p className="mt-2 text-[13px] text-[#8fa0b5] line-clamp-2 leading-relaxed">{item.description}</p>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-2 mb-2">
+                  <span className={`text-[11px] font-black px-2.5 py-0.5 rounded-full border ${update.badgeColor}`}>
+                    {update.badge}
+                  </span>
+                  <span className="text-[11px] font-bold text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">
+                    {update.version}
+                  </span>
+                  <div className="flex items-center gap-1 text-[11px] text-[#8fa0b5]">
+                    <Clock className="w-3 h-3" />
+                    {update.date}
+                  </div>
+                </div>
+
+                <h2 className="text-[17px] font-black text-white leading-snug mb-1 group-hover:text-[#FF6A00] transition-colors duration-200">
+                  {update.title}
+                </h2>
+                <p className="text-[14px] text-[#8fa0b5] font-medium mb-4 leading-relaxed">
+                  {update.headline}
+                </p>
+
+                {/* Results */}
+                <ul className="space-y-2">
+                  {update.results.map((result, i) => (
+                    <li key={i} className="flex items-start gap-2.5">
+                      <CheckCircle2 className="w-4 h-4 text-[#FF6A00]/70 shrink-0 mt-0.5" />
+                      <span className="text-[13px] text-white/70 leading-relaxed font-medium">{result}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </Link>
-          ))}
+
+              {/* Tag + Arrow */}
+              <div className="shrink-0 flex sm:flex-col items-center sm:items-end gap-3 sm:justify-between">
+                <span className="text-[11px] font-bold text-[#8fa0b5] bg-white/[0.04] border border-white/[0.06] px-2.5 py-1 rounded-lg whitespace-nowrap">
+                  {update.tag}
+                </span>
+                <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-[#FF6A00] transition-colors duration-200" />
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {/* Bottom CTA */}
+      <div className="border-t border-white/[0.06] py-10 text-center">
+        <div className="inline-flex flex-col items-center gap-3">
+          <BarChart2 className="w-8 h-8 text-[#FF6A00]/50" />
+          <p className="text-[#8fa0b5] text-[14px] font-medium max-w-md">
+            Quer uma funcionalidade específica? Nossa equipe prioriza o roadmap com base nas necessidades reais dos nossos clientes.
+          </p>
+          <a
+            href="mailto:avante@neuroads.com.br"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#FF6A00] text-white font-bold text-[14px] rounded-xl hover:bg-[#FF8000] transition-colors shadow-[0_0_20px_rgba(255,106,0,0.3)]"
+          >
+            Sugerir uma melhoria <ArrowRight className="w-4 h-4" />
+          </a>
         </div>
-      </section>
+      </div>
     </div>
   );
 }

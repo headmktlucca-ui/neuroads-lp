@@ -40,7 +40,8 @@ export default function HubAssistentePage() {
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-140px)] w-full max-w-4xl mx-auto rounded-3xl bg-[#0d1a2a]/40 border border-white/[0.06] backdrop-blur-md overflow-hidden relative shadow-[0_0_80px_rgba(0,0,0,0.5)] animate-in fade-in zoom-in-95 duration-500">
+    <div className="px-6">
+    <div className="flex flex-col h-[calc(100vh-140px)] w-full max-w-4xl mx-auto rounded-3xl bg-[#0d1a2a]/40 border border-[#FF6A00]/20 backdrop-blur-md overflow-hidden relative shadow-[0_0_80px_rgba(0,0,0,0.5)] animate-in fade-in zoom-in-95 duration-500">
       
       {/* Header */}
       <header className="flex items-center gap-4 p-5 border-b border-white/[0.06] bg-white/[0.02]">
@@ -124,7 +125,8 @@ export default function HubAssistentePage() {
           <span className="text-[11px] text-[#8fa0b5]">O Lucca pode cometer erros. Considere verificar as métricas importantes.</span>
         </div>
       </div>
-      
+
+    </div>
     </div>
   );
 }

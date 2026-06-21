@@ -18,7 +18,7 @@ export default function HubAgentesPage() {
   const filteredAgents = AGENTS.filter(a => activeTab === 'Todos' || a.category === activeTab);
 
   return (
-    <div className="w-full max-w-7xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="w-full space-y-8 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <header className="flex flex-col gap-2">
         <h1 className="text-3xl font-black text-white tracking-tight">Agentes IA</h1>
         <p className="text-[#8fa0b5] max-w-2xl text-[15px]">

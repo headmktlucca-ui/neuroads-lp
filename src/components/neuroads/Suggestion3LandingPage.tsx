@@ -913,7 +913,7 @@ export default function Suggestion3LandingPage() {
       <footer id="rodape" className="relative z-10 w-full overflow-hidden border-t border-white/5 bg-[#040811]/95 backdrop-blur-xl">
         <div className="relative z-10 mx-auto max-w-[1260px] px-5 py-12 md:px-8">
           <div>
-            <Image src="/images/logo2026.png" alt="NeuroAds" width={150} height={32} className="h-8 w-auto" />
+            <Image src="/images/Logos/LLNeuroAds.png" alt="NeuroAds" width={190} height={40} className="h-10 w-auto" />
             <p className="mt-3 max-w-[280px] text-[13px] text-[#707887]">IA agêntica para marketing de alta performance.</p>
             <div className="mt-4 flex items-center gap-3 text-[#525b6b]">
               <a
