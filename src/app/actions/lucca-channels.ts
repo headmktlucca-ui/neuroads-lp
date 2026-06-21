@@ -37,7 +37,7 @@ export async function sendLuccaChannelMessageAction(input: {
   const subject = input.subject?.trim() || `Lucca | ${input.front} | ${input.clientName}`;
 
   const html = `
-      <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;background:#ffffff;color:#0f172a;padding:24px;border:1px solid #e2e8f0;border-radius:12px;">
+      <div style="font-family:'Inter',system-ui,-apple-system,sans-serif;max-width:640px;margin:0 auto;background:#ffffff;color:#0f172a;padding:24px;border:1px solid #e2e8f0;border-radius:12px;">
         <p style="font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#f97316;font-weight:700;margin:0 0 12px;">Lucca Secretário Executivo</p>
         <h2 style="margin:0 0 8px;font-size:22px;line-height:1.2;color:#0f172a;">${subject}</h2>
         <p style="margin:0 0 16px;color:#334155;font-size:14px;">Frente: <strong>${input.front}</strong> • Cliente: <strong>${input.clientName}</strong></p>

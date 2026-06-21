@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, Variants } from 'framer-motion';
-import { ArrowRight, Mail, Phone, MapPin, Send, HelpCircle, ChevronDown } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, HelpCircle, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
 const revealVariants: Variants = {
@@ -53,28 +53,25 @@ export default function ContatoPage() {
       <div className="relative z-10 mx-auto max-w-[1260px] px-5 md:px-8">
         
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
-          
           {/* LEFT SIDE: Info */}
           <motion.div
             variants={revealVariants}
             initial="hidden"
             animate="visible"
           >
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 backdrop-blur-md px-4 py-1.5 mb-6">
-              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#ff8f3a]">
-                Contato Estratégico
-              </span>
-            </span>
+            <div className="text-[14px] font-bold text-[#ff6a00] mb-3">
+              Diagnóstico Estratégico de Performance
+            </div>
             <h1 className="text-[40px] md:text-[52px] font-black leading-[1.08] tracking-tight text-white mb-6">
-              Vamos escalar <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">juntos.</span>
+              Construa previsibilidade <span className="text-[#ff6a00]">de caixa.</span>
             </h1>
             <p className="text-[16px] sm:text-[18px] text-slate-300 leading-relaxed mb-12 max-w-[500px]">
-              Fale com um especialista e descubra como a IA Agêntica pode gerar previsibilidade de caixa para o seu negócio.
+              Fale com um engenheiro de performance e descubra como auditar gargalos em seus canais de aquisição para gerar previsibilidade de caixa real.
             </p>
 
             <div className="space-y-8">
               <div className="flex items-start gap-5">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#ff6a00]/10 text-[#ff8f3a] border border-[#ff6a00]/20 shadow-[0_4px_12px_rgba(255,106,0,0.15)]">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-[#ff6a00]/10 text-[#ff8f3a] border border-[#ff6a00]/20 shadow-[0_4px_12px_rgba(255,106,0,0.15)]">
                   <Phone size={24} />
                 </div>
                 <div>
@@ -83,7 +80,7 @@ export default function ContatoPage() {
                 </div>
               </div>
               <div className="flex items-start gap-5">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-zinc-800 text-white border border-white/10 shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-zinc-900 text-white border border-white/5 shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
                   <Mail size={24} />
                 </div>
                 <div>
@@ -92,7 +89,7 @@ export default function ContatoPage() {
                 </div>
               </div>
               <div className="flex items-start gap-5">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-zinc-800 text-white border border-white/10 shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl bg-zinc-900 text-white border border-white/5 shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
                   <MapPin size={24} />
                 </div>
                 <div>
@@ -109,7 +106,7 @@ export default function ContatoPage() {
               </h3>
               <div className="space-y-3">
                 {faqs.map((faq, index) => (
-                  <div key={index} className="rounded-2xl border border-white/5 bg-zinc-900/50 overflow-hidden">
+                  <div key={index} className="rounded-xl border border-white/5 bg-zinc-900/50 overflow-hidden">
                     <button
                       onClick={() => setOpenFaq(openFaq === index ? null : index)}
                       className="flex w-full items-center justify-between p-5 text-left transition-colors hover:bg-white/5"
@@ -138,81 +135,78 @@ export default function ContatoPage() {
             initial="hidden"
             animate="visible"
             transition={{ delay: 0.1 }}
-            className="relative rounded-[32px] border border-[#ff6a00]/20 bg-zinc-950/60 p-8 md:p-10 backdrop-blur-md shadow-[0_24px_64px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,106,0,0.1)]"
+            className="relative rounded-xl border border-white/10 bg-zinc-950/90 p-8 md:p-10 shadow-[0_24px_64px_rgba(0,0,0,0.6)]"
           >
-            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#ff6a00]/10 rounded-full blur-[60px] pointer-events-none" />
-            
             <h2 className="text-[24px] font-black text-white mb-2">Diagnóstico Inicial</h2>
             <p className="text-[14px] text-slate-400 mb-8">Preencha os dados abaixo e entenda o real potencial da sua operação.</p>
 
             <form className="space-y-5">
               <div>
-                <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">Nome Completo</label>
+                <label className="block text-xs font-bold text-zinc-400 mb-2">Nome Completo</label>
                 <input 
                   type="text" 
-                  className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white placeholder:text-slate-600 focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all"
+                  className="w-full rounded-lg border border-white/10 bg-zinc-900/40 px-4 py-3 text-white placeholder:text-zinc-600 focus:border-[#ff6a00] focus:outline-none transition-all text-sm"
                   placeholder="Seu nome"
                 />
               </div>
               <div className="grid grid-cols-2 gap-5">
                 <div>
-                  <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">E-mail</label>
+                  <label className="block text-xs font-bold text-zinc-400 mb-2">E-mail</label>
                   <input 
                     type="email" 
-                    className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white placeholder:text-slate-600 focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all"
+                    className="w-full rounded-lg border border-white/10 bg-zinc-900/40 px-4 py-3 text-white placeholder:text-zinc-600 focus:border-[#ff6a00] focus:outline-none transition-all text-sm"
                     placeholder="voce@empresa.com"
                   />
                 </div>
                 <div>
-                  <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">WhatsApp</label>
+                  <label className="block text-xs font-bold text-zinc-400 mb-2">WhatsApp</label>
                   <input 
                     type="tel" 
-                    className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white placeholder:text-slate-600 focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all"
+                    className="w-full rounded-lg border border-white/10 bg-zinc-900/40 px-4 py-3 text-white placeholder:text-zinc-600 focus:border-[#ff6a00] focus:outline-none transition-all text-sm"
                     placeholder="(00) 00000-0000"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">Site da Empresa</label>
+                <label className="block text-xs font-bold text-zinc-400 mb-2">Site da Empresa</label>
                 <input 
                   type="text" 
-                  className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white placeholder:text-slate-600 focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all"
+                  className="w-full rounded-lg border border-white/10 bg-zinc-900/40 px-4 py-3 text-white placeholder:text-zinc-600 focus:border-[#ff6a00] focus:outline-none transition-all text-sm"
                   placeholder="https://suaempresa.com.br"
                 />
               </div>
               <div>
-                <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">Faturamento Mensal Estimado</label>
-                <select className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all appearance-none">
-                  <option value="">Selecione uma faixa...</option>
-                  <option value="ate-30k">Até R$ 30.000</option>
-                  <option value="30k-100k">R$ 30.000 a R$ 100.000</option>
-                  <option value="100k-500k">R$ 100.000 a R$ 500.000</option>
-                  <option value="acima-500k">Acima de R$ 500.000</option>
-                </select>
+                <label className="block text-xs font-bold text-zinc-400 mb-2">Faturamento Mensal Estimado</label>
+                <div className="relative">
+                  <select className="w-full rounded-lg border border-white/10 bg-zinc-900/40 px-4 py-3 text-white focus:border-[#ff6a00] focus:outline-none transition-all text-sm appearance-none pr-10">
+                    <option value="">Selecione uma faixa...</option>
+                    <option value="ate-30k">Até R$ 30.000</option>
+                    <option value="30k-100k">R$ 30.000 a R$ 100.000</option>
+                    <option value="100k-500k">R$ 100.000 a R$ 500.000</option>
+                    <option value="acima-500k">Acima de R$ 500.000</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" size={16} />
+                </div>
               </div>
               <div>
-                <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">Qual seu principal desafio hoje?</label>
+                <label className="block text-xs font-bold text-zinc-400 mb-2">Qual seu principal desafio hoje?</label>
                 <textarea 
                   rows={3}
-                  className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white placeholder:text-slate-600 focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all resize-none"
-                  placeholder="Ex: Leads muito caros, dificuldade em converter leads do comercial..."
+                  className="w-full rounded-lg border border-white/10 bg-zinc-900/40 px-4 py-3 text-white placeholder:text-zinc-600 focus:border-[#ff6a00] focus:outline-none transition-all text-sm resize-none"
+                  placeholder="Ex: Leads muito caros, dificuldade em converter leads..."
                 />
               </div>
 
               <button
                 type="button"
-                className="group relative w-full mt-4 justify-center inline-flex items-center gap-2 rounded-xl px-8 py-4 text-[15px] font-extrabold text-white overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.98]"
-                style={{
-                  background: 'linear-gradient(145deg, #ff8f3a 0%, #e65c00 100%)',
-                  boxShadow: '0 8px 20px -4px rgba(255,106,0,0.5)'
-                }}
+                className="group relative w-full mt-4 justify-center inline-flex items-center gap-2 rounded-lg bg-[#ff6a00] hover:bg-[#e65c00] px-8 py-3.5 text-sm font-bold text-white transition-all duration-200 active:scale-[0.98] shadow-lg shadow-[#ff6a00]/20"
               >
                 <span className="relative z-10 flex items-center gap-2">
-                  Solicitar Diagnóstico
-                  <Send size={18} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                  Solicitar Diagnóstico Técnico
+                  <Send size={16} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
                 </span>
               </button>
-              <p className="text-center text-[11px] text-slate-500 mt-4">
+              <p className="text-center text-[11px] text-zinc-500 mt-4">
                 Seus dados estão seguros. Não enviamos spam.
               </p>
             </form>

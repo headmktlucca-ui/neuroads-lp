@@ -44,15 +44,14 @@ export default function LaboratorioClient({ content }: { content: SubmenuPageCon
           viewport={{ once: true }}
           className="text-center max-w-[800px] mx-auto mt-12 mb-20"
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 backdrop-blur-md px-4 py-1.5 mb-6">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#ff6a00]" />
-            <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#ff8f3a]">
+          <span className="inline-block rounded-md border border-[#ff6a00]/30 bg-[#ff6a00]/10 px-3 py-1 mb-6">
+            <span className="text-[13px] font-bold text-[#ff8f3a]">
               {content.eyebrow}
             </span>
           </span>
           <h1 className="text-[40px] md:text-[52px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
             {content.headline}{" "}
-            <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
+            <span className="text-[#ff6a00]">
               {content.highlightedHeadline}
             </span>
           </h1>
@@ -81,7 +80,7 @@ export default function LaboratorioClient({ content }: { content: SubmenuPageCon
             {content.agentExamples?.map((agent, i) => (
               <div
                 key={agent.name}
-                className="group relative rounded-[20px] border border-[#ff6a00]/15 bg-zinc-950/95 p-6 flex flex-col justify-between hover:border-[#ff6a00]/35 transition-all hover:shadow-[0_12px_32px_rgba(255,106,0,0.1)] min-h-[220px]"
+                className="group relative rounded-xl border border-white/5 bg-zinc-950/90 p-6 flex flex-col justify-between hover:border-[#ff6a00]/30 transition-all hover:shadow-[0_4px_24px_rgba(255,106,0,0.08)] min-h-[220px]"
               >
                 <div>
                   <div className="flex items-start justify-between gap-3 mb-4">

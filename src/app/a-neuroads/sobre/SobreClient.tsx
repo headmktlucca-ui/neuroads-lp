@@ -50,15 +50,15 @@ export default function SobreClient({ data }: { data: StrategicContentPageData }
           animate="visible"
           className="text-center max-w-[800px] mx-auto mb-20"
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 backdrop-blur-md px-4 py-1.5 mb-6">
-            <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#ff8f3a]">
+          <span className="inline-block rounded-md border border-[#ff6a00]/30 bg-[#ff6a00]/10 px-3 py-1 mb-6">
+            <span className="text-[13px] font-bold text-[#ff8f3a]">
               {data.eyebrow}
             </span>
           </span>
           <h1 className="text-[40px] md:text-[52px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
             {data.title}{" "}
             <br className="hidden md:block" />
-            <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
+            <span className="text-[#ff6a00]">
               {data.highlightedTitle}
             </span>
           </h1>
@@ -86,8 +86,8 @@ export default function SobreClient({ data }: { data: StrategicContentPageData }
           className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-24"
         >
           {data.highlights.map((highlight, index) => (
-            <div key={index} className="rounded-[24px] border border-white/5 bg-zinc-950/40 p-6 backdrop-blur-sm transition-all hover:border-[#ff6a00]/30 hover:bg-white/5">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#ff6a00]/10 text-[#ff8f3a] border border-[#ff6a00]/20 mb-5">
+            <div key={index} className="rounded-xl border border-white/5 bg-zinc-950/90 p-6 transition-all hover:border-[#ff6a00]/30 hover:bg-white/5">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-[#ff6a00]/10 text-[#ff8f3a] border border-[#ff6a00]/20 mb-5">
                 {iconMap[highlight.icon] || <Target size={20} />}
               </span>
               <h3 className="text-[18px] font-bold text-white mb-2">{highlight.title}</h3>
@@ -126,8 +126,8 @@ export default function SobreClient({ data }: { data: StrategicContentPageData }
                 </ul>
               </div>
               <div className="flex-1 w-full">
-                <div className="relative aspect-square md:aspect-video lg:aspect-square w-full rounded-[32px] border border-white/5 bg-zinc-900/50 overflow-hidden shadow-[0_18px_48px_rgba(0,0,0,0.5)]">
-                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,106,0,0.1)_0%,transparent_70%)]" />
+                <div className="relative aspect-square md:aspect-video lg:aspect-square w-full rounded-2xl border border-white/5 bg-zinc-950/90 overflow-hidden shadow-[0_4px_24px_rgba(0,0,0,0.5)]">
+                  <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,106,0,0.05)_0%,transparent_70%)]" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     {/* Placeholder gráfico/decorativo para a seção */}
                     <div className="w-32 h-32 rounded-full border border-[#ff6a00]/30 animate-pulse bg-[#ff6a00]/5 flex items-center justify-center">

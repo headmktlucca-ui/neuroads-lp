@@ -315,8 +315,8 @@ function UseCasesSection() {
           viewport={{ once: true, margin: "-100px" }}
           className="text-center max-w-[720px] mx-auto mb-20"
         >
-          <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">APLICAÇÕES PRÁTICAS</span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">Casos de Uso por Setor</h2>
+          <span className="text-[13px] font-bold text-[#ff6a00]">Arquitetura por Setor</span>
+          <h2 className="text-3xl sm:text-4xl font-black mt-2">Aplicações Práticas</h2>
           <p className="text-slate-400 mt-4 text-sm leading-relaxed">
             Descubra como equipes de marketing utilizam nossos agentes para automatizar e escalar resultados em cada área.
           </p>
@@ -334,9 +334,9 @@ function UseCasesSection() {
                   ref={(el) => {
                     categoryRefs.current[idx] = el;
                   }}
-                  className={`flex gap-6 p-6 rounded-[24px] border transition-all duration-500 cursor-pointer ${
+                  className={`flex gap-6 p-6 rounded-2xl border transition-all duration-500 cursor-pointer ${
                     isActive
-                      ? 'border-[#ff6a00]/30 bg-zinc-950/60 shadow-[0_12px_40px_rgba(255,106,0,0.06)]'
+                      ? 'border-[#ff6a00]/30 bg-zinc-950/90 shadow-[0_4px_24px_rgba(255,106,0,0.08)]'
                       : 'border-white/5 bg-transparent hover:border-white/10'
                   }`}
                   onClick={() => handleHeaderClick(idx)}
@@ -372,10 +372,10 @@ function UseCasesSection() {
                             {sector.cards.map((card, cIdx) => (
                               <div
                                 key={cIdx}
-                                className="rounded-[16px] border border-[#ff6a00]/20 bg-zinc-950/95 p-4 hover:border-[#ff6a00]/40 transition-colors"
+                                className="rounded-xl border border-white/5 bg-zinc-950/90 p-4 hover:border-[#ff6a00]/30 transition-colors"
                               >
-                                <span className="text-[9px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">
-                                  {sector.title.toUpperCase()}
+                                <span className="text-[11px] font-bold text-[#ff8f3a]">
+                                  {sector.title}
                                 </span>
                                 <h4 className="text-sm font-bold text-white mt-1">{card.title}</h4>
                                 <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{card.description}</p>
@@ -655,18 +655,26 @@ export default function Suggestion5LandingPage() {
           {/* LEFT — headline + subtitle: hugs the left window edge */}
           <div className="pl-4 lg:pl-8 pr-4 lg:pr-10 w-full lg:flex-[6] lg:flex lg:flex-col lg:justify-center">
             <div>
-              <h1 className="text-[40px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
+              <h1 className="text-[42px] md:text-[58px] lg:text-[68px] font-black leading-[1.05] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
                 Existe uma versão da sua empresa{" "}
                 <br className="hidden lg:inline" />
                 onde cada real investido tem destino{" "}
                 <br className="hidden lg:inline" />
-                <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
+                <span className="text-[#ff6a00]">
                   certo e retorno mensurável.
                 </span>
               </h1>
-              <p className="mt-5 text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-[520px] drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
+              <p className="mt-5 text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-[480px] drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
                 Agentes de IA que orquestram dados, mídia e criatividade para gerar resultados consistentes e escaláveis.
               </p>
+              {/* Social proof — below fold anchor */}
+              <div className="flex flex-wrap items-center gap-3 mt-6 text-xs text-white/50">
+                <span className="font-bold text-white/70">25+ empresas</span>
+                <span>·</span>
+                <span>R$ 2M+ em mídia gerenciada</span>
+                <span>·</span>
+                <span className="text-emerald-400 font-bold">ROAS médio 7.5x</span>
+              </div>
             </div>
           </div>
 
@@ -682,6 +690,13 @@ export default function Suggestion5LandingPage() {
                 Fale com um especialista
                 <ArrowRight size={16} />
               </button>
+              <Link
+                href="/hub"
+                className="w-full justify-center inline-flex items-center gap-2 rounded-full border border-white/20 hover:border-white/40 transition-all px-8 py-3.5 text-[13px] font-bold text-white/80 hover:text-white"
+              >
+                Explorar o Hub
+                <ArrowRight size={14} />
+              </Link>
             </div>
 
             {/* Feature badges — vertical list */}
@@ -733,8 +748,8 @@ export default function Suggestion5LandingPage() {
         >
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-14">
             <div>
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">AGENTES EM DESTAQUE</span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">
+              <span className="text-[13px] font-bold text-[#ff6a00]">Catálogo</span>
+              <h2 className="text-3xl sm:text-4xl font-black mt-2">
                 Agentes de IA que Executam por Você
               </h2>
               <p className="text-slate-400 mt-3 text-sm max-w-[540px]">
@@ -754,11 +769,11 @@ export default function Suggestion5LandingPage() {
             {catalogAgents.slice(0, 8).map((agent) => (
               <div
                 key={agent.title}
-                className="group relative rounded-[20px] border border-[#ff6a00]/15 bg-zinc-950/95 p-5 flex flex-col justify-between hover:border-[#ff6a00]/35 transition-all hover:shadow-[0_12px_32px_rgba(255,106,0,0.1)] min-h-[220px]"
+                className="group relative rounded-xl border border-white/5 bg-zinc-950/90 p-5 flex flex-col justify-between hover:border-[#ff6a00]/30 transition-all hover:shadow-[0_4px_24px_rgba(255,106,0,0.08)] min-h-[220px]"
               >
                 <div>
                   <div className="mb-4">
-                    <span className="inline-block rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">
+                    <span className="inline-block rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-bold text-[#ff8f3a]">
                       {agent.category}
                     </span>
                   </div>
@@ -1230,6 +1245,46 @@ export default function Suggestion5LandingPage() {
         </motion.div>
       </section>
 
+      {/* DEPOIMENTOS */}
+      <section className="relative z-10 py-20 px-5 md:px-8 w-full">
+        <motion.div
+          variants={revealVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="mx-auto max-w-[1260px]"
+        >
+          <div className="text-center max-w-[600px] mx-auto mb-12">
+            <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">Depoimentos</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">O que dizem nossos clientes</h2>
+          </div>
+
+          <div className="grid gap-5 sm:grid-cols-3">
+            {testimonials.map((t) => (
+              <div
+                key={t.name}
+                className="flex flex-col gap-5 rounded-[20px] border border-white/[0.08] bg-zinc-950/60 p-6 hover:border-[#ff6a00]/20 transition-colors"
+              >
+                <p className="text-sm leading-relaxed text-slate-300 flex-1">&ldquo;{t.quote}&rdquo;</p>
+                <div className="flex items-center gap-3 border-t border-white/[0.06] pt-4">
+                  <Image
+                    src={t.avatar}
+                    alt={t.name}
+                    width={40}
+                    height={40}
+                    className="rounded-full object-cover shrink-0"
+                  />
+                  <div>
+                    <p className="text-sm font-bold text-white leading-none">{t.name}</p>
+                    <p className="text-[11px] text-slate-500 mt-1">{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
       {/* FAQ SECTION - MuAPI style */}
       <section id="faq" className="relative z-10 py-20 bg-transparent w-full px-5 md:px-8">
         <div className="mx-auto max-w-[1260px]">
@@ -1346,6 +1401,47 @@ export default function Suggestion5LandingPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* CTA DE FECHAMENTO */}
+      <section className="relative z-10 py-24 px-5 md:px-8 w-full overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse 800px 400px at 50% 50%, rgba(255,106,0,0.07) 0%, transparent 70%)',
+          }}
+        />
+        <motion.div
+          variants={revealVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="relative z-10 mx-auto max-w-[720px] text-center"
+        >
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.1] text-white">
+            Pronto para transformar cada real investido em resultado mensurável?
+          </h2>
+          <p className="mt-5 text-[15px] text-slate-400 leading-relaxed max-w-[520px] mx-auto">
+            Agende um diagnóstico gratuito e descubra quais agentes se encaixam no seu modelo de negócio.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+            <button
+              type="button"
+              onClick={handleOpenSpecialistChat}
+              className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-10 py-4 text-[15px] font-extrabold text-white shadow-[0_4px_32px_rgba(255,106,0,0.45)] cursor-pointer"
+            >
+              Agendar diagnóstico gratuito
+              <ArrowRight size={16} />
+            </button>
+            <Link
+              href="/hub"
+              className="inline-flex items-center gap-2 rounded-full border border-white/20 hover:border-white/40 transition-all px-8 py-4 text-[14px] font-bold text-white/80 hover:text-white"
+            >
+              Explorar o Hub
+              <ArrowRight size={14} />
+            </Link>
+          </div>
+        </motion.div>
       </section>
 
       {/* Specialist Lucca Chat Modal */}

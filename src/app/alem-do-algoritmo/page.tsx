@@ -93,14 +93,14 @@ export default function AlemDoAlgoritmoPage() {
           animate="visible"
           className="text-center max-w-[800px] mx-auto mb-16"
         >
-          <span className="inline-flex items-center gap-2 rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 backdrop-blur-md px-4 py-1.5 mb-6">
+          <span className="inline-flex items-center gap-2 rounded-md border border-[#ff6a00]/30 bg-[#ff6a00]/10 px-3 py-1 mb-6">
             <BookOpen size={14} className="text-[#ff6a00]" />
-            <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#ff8f3a]">
+            <span className="text-[13px] font-bold text-[#ff8f3a]">
               Blog Oficial
             </span>
           </span>
           <h1 className="text-[40px] md:text-[52px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
-            Além do <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">Algoritmo</span>
+            Além do <span className="text-[#ff6a00]">Algoritmo</span>
           </h1>
           <p className="mt-6 text-[16px] sm:text-[18px] text-white/80 leading-relaxed drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)] max-w-[600px] mx-auto">
             Ideias, tendências e dados sobre Gestão de Tráfego, IA Agêntica e como o futuro do marketing está sendo construído agora.
@@ -112,7 +112,7 @@ export default function AlemDoAlgoritmoPage() {
           variants={revealVariants}
           initial="hidden"
           animate="visible"
-          className="mb-16 group relative rounded-[32px] border border-white/5 bg-zinc-950/50 backdrop-blur-md overflow-hidden transition-all hover:border-[#ff6a00]/30 hover:shadow-[0_18px_48px_rgba(255,106,0,0.1)]"
+          className="mb-16 group relative rounded-2xl border border-white/5 bg-zinc-950/90 overflow-hidden transition-all hover:border-[#ff6a00]/30 hover:shadow-[0_8px_32px_rgba(255,106,0,0.1)]"
         >
           <div className="grid lg:grid-cols-2 items-center">
             <div className="relative h-[300px] lg:h-[480px] w-full overflow-hidden">
@@ -127,7 +127,7 @@ export default function AlemDoAlgoritmoPage() {
             </div>
             <div className="p-8 lg:p-14 flex flex-col justify-center h-full">
               <div className="flex items-center gap-3 mb-6">
-                <span className="inline-block rounded-md border border-[#ff6a00]/30 bg-[#ff6a00]/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">
+                <span className="inline-block rounded-md border border-[#ff6a00]/30 bg-[#ff6a00]/10 px-3 py-1 text-[12px] font-bold text-[#ff8f3a]">
                   {featuredPost.category}
                 </span>
                 <span className="flex items-center gap-1.5 text-[12px] font-medium text-slate-400">
@@ -172,7 +172,7 @@ export default function AlemDoAlgoritmoPage() {
               whileInView="visible"
               viewport={{ once: true, margin: "-50px" }}
               transition={{ delay: index * 0.1 }}
-              className="group relative rounded-[24px] border border-white/5 bg-zinc-950/40 backdrop-blur-sm overflow-hidden transition-all hover:border-[#ff6a00]/30 hover:bg-white/5 hover:shadow-[0_12px_32px_rgba(255,106,0,0.08)] flex flex-col"
+              className="group relative rounded-xl border border-white/5 bg-zinc-950/90 overflow-hidden transition-all hover:border-[#ff6a00]/30 hover:bg-white/5 hover:shadow-[0_4px_24px_rgba(255,106,0,0.08)] flex flex-col"
             >
               <div className="relative h-[220px] w-full overflow-hidden">
                 <Image 
@@ -185,7 +185,7 @@ export default function AlemDoAlgoritmoPage() {
               </div>
               <div className="p-7 flex flex-col flex-1">
                 <div className="flex items-center gap-3 mb-4">
-                  <span className="inline-block rounded-md border border-[#ff6a00]/20 bg-[#ff6a00]/5 px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">
+                  <span className="inline-block rounded-md border border-[#ff6a00]/20 bg-[#ff6a00]/5 px-2.5 py-1 text-[11px] font-bold text-[#ff8f3a]">
                     {post.category}
                   </span>
                 </div>
