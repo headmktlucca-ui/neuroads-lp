@@ -50,7 +50,7 @@ export default function TemplateLandingPage() {
                 <a href="#contato" className="hover:text-white">Contato</a>
                 <a href="#login" className="hover:text-white">Login</a>
               </nav>
-              <button className="rounded-full bg-[#f0824c] px-4 py-2 text-xs font-bold tracking-wide text-[#1a1a1a]">
+              <button className="rounded-xl bg-[#f0824c] px-4 py-2 text-xs font-bold tracking-wide text-[#1a1a1a]">
                 SOLIC. AGENTE
               </button>
             </div>
@@ -160,7 +160,7 @@ export default function TemplateLandingPage() {
             <article key={plan.name} className={`rounded-2xl border p-5 text-center shadow-sm ${plan.featured ? 'border-[#f0824c] bg-[#fff7f2]' : 'border-[#e8e8e8] bg-white'}`}>
               <h3 className="text-2xl font-bold">{plan.name}</h3>
               <p className="mt-4 text-4xl font-black">{plan.price}<span className="text-base font-semibold text-[#666]">{plan.period}</span></p>
-              <button className={`mt-5 w-full rounded-full py-3 text-sm font-bold ${plan.featured ? 'bg-[#f0824c] text-white' : 'bg-[#0e1420] text-white'}`}>
+              <button className={`mt-5 w-full rounded-xl py-3 text-sm font-bold ${plan.featured ? 'bg-[#f0824c] text-white' : 'bg-[#0e1420] text-white'}`}>
                 {plan.cta}
               </button>
             </article>
@@ -191,7 +191,7 @@ export default function TemplateLandingPage() {
               <input placeholder="Email" className="h-12 rounded-full border border-white/20 bg-black/20 px-4 text-sm outline-none placeholder:text-white/45" />
             </div>
             <textarea placeholder="Conte sua situação" className="h-24 rounded-2xl border border-white/20 bg-black/20 px-4 py-3 text-sm outline-none placeholder:text-white/45" />
-            <button className="h-12 rounded-full bg-[#f0824c] text-sm font-black tracking-wide text-[#171717]">ENVIAR</button>
+            <button className="h-12 rounded-xl bg-[#f0824c] text-sm font-black tracking-wide text-[#171717]">ENVIAR</button>
           </form>
         </div>
       </section>

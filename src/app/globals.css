@@ -532,7 +532,7 @@ body::before { content: none; }
 
   /* ── BUTTONS ── */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 font-bold text-sm px-7 py-3.5 rounded-full transition-all duration-300 whitespace-nowrap;
+    @apply inline-flex items-center justify-center gap-2 font-bold text-sm px-7 py-3.5 rounded-xl transition-all duration-300 whitespace-nowrap;
   }
   .btn-primary {
     background: var(--grad-main);

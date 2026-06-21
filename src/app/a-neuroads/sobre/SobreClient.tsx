@@ -69,7 +69,7 @@ export default function SobreClient({ data }: { data: StrategicContentPageData }
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href={data.primaryCta.href}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_24px_rgba(255,106,0,0.45)]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_24px_rgba(255,106,0,0.45)]"
             >
               {data.primaryCta.label}
               <ArrowRight size={16} />

@@ -685,14 +685,14 @@ export default function Suggestion5LandingPage() {
               <button
                 type="button"
                 onClick={handleOpenSpecialistChat}
-                className="w-full justify-center inline-flex items-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_24px_rgba(255,106,0,0.45)] cursor-pointer"
+                className="w-full justify-center inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_24px_rgba(255,106,0,0.45)] cursor-pointer"
               >
                 Fale com um especialista
                 <ArrowRight size={16} />
               </button>
               <Link
                 href="/hub"
-                className="w-full justify-center inline-flex items-center gap-2 rounded-full border border-white/20 hover:border-white/40 transition-all px-8 py-3.5 text-[13px] font-bold text-white/80 hover:text-white"
+                className="w-full justify-center inline-flex items-center gap-2 rounded-xl border border-white/20 hover:border-white/40 transition-all px-8 py-3.5 text-[13px] font-bold text-white/80 hover:text-white"
               >
                 Explorar o Hub
                 <ArrowRight size={14} />
@@ -758,7 +758,7 @@ export default function Suggestion5LandingPage() {
             </div>
             <Link
               href="/agentes-ia"
-              className="inline-flex items-center gap-2 rounded-full border border-[#ff6a00]/40 px-6 py-3 text-sm font-extrabold text-[#ff8f3a] hover:bg-[#ff6a00]/10 transition-colors shrink-0"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#ff6a00]/40 px-6 py-3 text-sm font-extrabold text-[#ff8f3a] hover:bg-[#ff6a00]/10 transition-colors shrink-0"
             >
               Explorar todos os Agentes
               <ArrowRight size={14} />
@@ -1428,14 +1428,14 @@ export default function Suggestion5LandingPage() {
             <button
               type="button"
               onClick={handleOpenSpecialistChat}
-              className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-10 py-4 text-[15px] font-extrabold text-white shadow-[0_4px_32px_rgba(255,106,0,0.45)] cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-10 py-4 text-[15px] font-extrabold text-white shadow-[0_4px_32px_rgba(255,106,0,0.45)] cursor-pointer"
             >
               Agendar diagnóstico gratuito
               <ArrowRight size={16} />
             </button>
             <Link
               href="/hub"
-              className="inline-flex items-center gap-2 rounded-full border border-white/20 hover:border-white/40 transition-all px-8 py-4 text-[14px] font-bold text-white/80 hover:text-white"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:border-white/40 transition-all px-8 py-4 text-[14px] font-bold text-white/80 hover:text-white"
             >
               Explorar o Hub
               <ArrowRight size={14} />
