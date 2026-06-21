@@ -3,6 +3,7 @@ import Script from 'next/script';
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
+import GlobalLayoutClient from "../components/layout/GlobalLayoutClient";
 import fs from "fs";
 import path from "path";
 
@@ -63,8 +64,7 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       suppressHydrationWarning
-      className="h-full antialiased scroll-smooth"
-      data-scroll-behavior="smooth"
+      className="h-full antialiased"
     >
       <head>
         {/* Google tag (gtag.js) */}
@@ -90,7 +90,9 @@ export default function RootLayout({
           strategy="afterInteractive"
         />
         <AuthProvider>
-          {children}
+          <GlobalLayoutClient>
+            {children}
+          </GlobalLayoutClient>
         </AuthProvider>
       </body>
     </html>

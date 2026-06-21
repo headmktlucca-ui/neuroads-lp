@@ -598,3 +598,14 @@ body::before { content: none; }
   mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
 }
+
+@keyframes dashdraw {
+  to {
+    stroke-dashoffset: -10;
+  }
+}
+
+.animate-dashdraw {
+  stroke-dasharray: 5;
+  animation: dashdraw 0.5s linear infinite;
+}

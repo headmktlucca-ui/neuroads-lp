@@ -1383,7 +1383,7 @@ export default function Navbar() {
                 alt="NeuroAds Logo"
                 width={192}
                 height={48}
-                className={isHubNavbarStyle ? 'h-8 w-auto object-contain brightness-0 invert' : 'h-9 w-auto object-contain lg:h-10'}
+                className={isHubNavbarStyle ? 'h-8 w-auto object-contain' : 'h-9 w-auto object-contain lg:h-10'}
               />
             </Link>
           </div>

@@ -2889,7 +2889,9 @@ export default function ConnectorsHubPage() {
                         return (
                           <article
                             key={item.id}
-                            className="grid grid-cols-1 gap-4 rounded-2xl border border-white/[0.10] bg-[#071a2e]/82 p-4 shadow-[0_8px_32px_rgba(2,8,22,0.4)] backdrop-blur-xl transition-all duration-200 hover:bg-[#071a2e]/95 hover:border-white/[0.18] md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center"
+                            className={`grid grid-cols-1 gap-4 rounded-2xl border border-white/[0.10] bg-[#071a2e]/82 p-4 shadow-[0_8px_32px_rgba(2,8,22,0.4)] backdrop-blur-xl transition-all duration-200 hover:bg-[#071a2e]/95 hover:border-white/[0.18] md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center relative ${
+                              openConnectorMenuId === item.id ? 'z-30' : 'z-0'
+                            }`}
                           >
                             <div className="flex h-[88px] w-[88px] items-center justify-center rounded-2xl border border-white/[0.10] bg-white/[0.04]">
                               <BrandTile id={item.id} />
@@ -3046,54 +3048,8 @@ export default function ConnectorsHubPage() {
                   </div>
                 )}
               </div>
-
               <aside className="space-y-4">
-                {/* CARD 1: Saúde das Integrações */}
-                <section className="relative overflow-hidden rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
-                  {/* Top border ambient subtle accent */}
-                  <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
-                  
-                  <header className="border-b border-white/[0.08] bg-[#091624] px-5 py-4 flex items-center justify-between">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2">
-                        <span className={`h-2 w-2 rounded-full animate-pulse ${healthScore > 50 ? 'bg-[#10b981]' : 'bg-[#EF4444]'}`} />
-                        <h3 className="text-[13px] font-black tracking-wider uppercase text-white">
-                          Saúde das Integrações
-                        </h3>
-                      </div>
-                      <p className="text-[10px] text-[#7eb8d4]/80 font-semibold uppercase tracking-widest leading-none">
-                        Monitoramento em tempo real
-                      </p>
-                    </div>
-                    <span className="border border-[#FF6A00]/40 bg-[#FF6A00]/10 text-[#FF6A00] rounded-full px-3 py-1 text-[11px] font-bold whitespace-nowrap">
-                      {healthStatus.label}
-                    </span>
-                  </header>
-
-                  <div className="p-5">
-                    <div className="relative overflow-hidden rounded-[20px] border border-white/[0.08] bg-white/[0.03] px-2 pb-3 pt-1">
-                      <div className="hub-health-interactive-bg pointer-events-none absolute inset-0" aria-hidden />
-                      <div className="relative z-10 px-1 pb-2">
-                      <HealthGauge value={healthScore} />
-
-                      <div className="mt-3 flex flex-col items-center">
-                        <span className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1 text-[13px] font-bold ${healthStatus.bg}`}>
-                          <span className="h-2 w-2 rounded-full bg-current animate-pulse" />
-                          {healthStatus.label}
-                        </span>
-                        <p className="mt-3 text-[14px] font-bold uppercase tracking-wider text-white">Saúde Global</p>
-                        <p className="mt-1 text-[12px] text-slate-400 font-semibold">
-                          {formatLastSyncLabel(latestSyncTimestamp) || 'Sem sincronização'}
-                        </p>
-                      </div>
-                      </div>
-                    </div>
-
-                    <InteractiveHealthMetrics active={activeTrackedConnectorCount} total={trackedConnectorCount} errorsCount={activeAlerts.length} />
-                  </div>
-                </section>
-
-                {/* CARD 2: Alertas Importantes */}
+                {/* CARD: Alertas Importantes */}
                 <section className="relative overflow-hidden rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
                   {/* Top border ambient subtle accent */}
                   <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
