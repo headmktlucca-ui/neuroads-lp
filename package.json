@@ -19,10 +19,14 @@
     "video:render": "remotion render src/remotion/index.ts HelloWorld out/video.mp4"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^3.0.85",
+    "@composio/core": "^0.11.0",
+    "@composio/vercel": "^0.9.3",
     "@google/generative-ai": "^0.24.1",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "@remotion/cli": "^4.0.481",
+    "ai": "^6.0.208",
     "clsx": "^2.1.1",
     "firebase": "^12.13.0",
     "firebase-admin": "^13.10.0",
