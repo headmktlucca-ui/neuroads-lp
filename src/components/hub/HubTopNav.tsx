@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { label: 'Explorar', href: '/hub/explorar' },
   { label: 'Assistente IA', href: '/hub/assistente-ia' },
   { label: 'Automações', href: '/hub/automacoes' },
-  { label: 'Agentes IA', href: '/hub/agentes-ativos' },
+  { label: 'Agentes', href: '/hub/agentes-ativos' },
   { label: 'Estúdio', href: '/hub/estudio' },
   { label: 'API Keys', href: '/hub/api-keys' },
   { label: 'Integrações', href: '/hub/integracoes' },

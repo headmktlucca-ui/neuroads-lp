@@ -5,9 +5,10 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 const NAV_ITEMS = [
-  { label: 'Explorar', href: '/agentes-ia' },
-  { label: 'Além do Algoritmo', href: '/conteudos' },
-  { label: 'A NeuroAds', href: '/a-neuroads' },
+  { label: 'Laboratório', href: '/agentes-ia/visao-geral-dos-agentes' },
+  { label: 'Além do Algoritmo', href: '/alem-do-algoritmo' },
+  { label: 'A NeuroAds', href: '/a-neuroads/sobre' },
+  { label: 'Contato', href: '/a-neuroads/contato' },
 ];
 
 export default function PublicTopNav() {

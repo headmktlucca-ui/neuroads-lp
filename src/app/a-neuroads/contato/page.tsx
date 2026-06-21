@@ -1,99 +1,225 @@
-import type { Metadata } from 'next';
-import StrategicContentPageShell, { type StrategicContentPageData } from '@/components/neuroads/StrategicContentPageShell';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Contato NeuroAds | Diagnóstico com Especialista',
-  description:
-    'Fale com a NeuroAds e solicite diagnóstico com foco em resultado financeiro. Envie Nome, Email, WhatsApp e Site da Empresa.',
+import { motion, Variants } from 'framer-motion';
+import { ArrowRight, Mail, Phone, MapPin, Send, HelpCircle, ChevronDown } from 'lucide-react';
+import { useState } from 'react';
+
+const revealVariants: Variants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } }
 };
 
-const content: StrategicContentPageData = {
-  slug: 'a-neuroads-contato',
-  eyebrow: 'Contato NeuroAds',
-  title: 'Fale com especialista e',
-  highlightedTitle: 'ganhe clareza sobre seu próximo passo.',
-  subtitle:
-    'Se você investe todo mês e ainda não tem previsibilidade de vendas, a conversa precisa começar com diagnóstico objetivo. Aqui, sua operação é lida por impacto no caixa.',
-  primaryCta: { label: 'Preencher diagnóstico agora', href: '#rodape' },
-  secondaryCta: { label: 'Ver nosso método', href: '/a-neuroads/nosso-metodo' },
-  highlights: [
-    { title: 'Triagem estratégica', description: 'Entendimento rápido do cenário antes de qualquer proposta.', icon: 'goal' },
-    { title: 'Sem intermediários', description: 'Contato com direção sênior e linguagem de negócio.', icon: 'handshake' },
-    { title: 'Foco em dinheiro', description: 'Análise orientada a CPL, conversão, margem e receita.', icon: 'gauge' },
-    { title: 'Próximo passo claro', description: 'Você sai com rota prática, não com promessa genérica.', icon: 'layers' },
-  ],
-  sections: [
-    {
-      title: 'Quando esse contato faz sentido',
-      description: 'Ideal para empresas que já investem e precisam parar de operar no escuro.',
-      bullets: [
-        'Os números de marketing parecem bons, mas as vendas não acompanham.',
-        'Existe dúvida sobre onde o orçamento está sendo desperdiçado.',
-        'A equipe comercial recebe lead, mas a taxa de fechamento está travada.',
-        'Falta previsibilidade para tomar decisão de escala com segurança.',
-      ],
-    },
-    {
-      title: 'O que acontece após o envio',
-      description: 'Nosso fluxo foi desenhado para ser objetivo e útil desde o primeiro contato.',
-      bullets: [
-        'Leitura inicial do contexto enviado (canal, oferta, funil e operação).',
-        'Classificação do principal gargalo de aquisição ou conversão.',
-        'Retorno com direcionamento prático para próximos passos.',
-        'Se fizer sentido, estruturação da trilha de implantação.',
-      ],
-    },
-  ],
-  process: [
-    { title: 'Você envia o contexto', detail: 'Nome, contato, site e principal desafio de negócio.' },
-    { title: 'Análise inicial', detail: 'Triagem por urgência e potencial de impacto financeiro.' },
-    { title: 'Direcionamento', detail: 'Retorno com orientação objetiva de curto prazo.' },
-    { title: 'Plano de execução', detail: 'Definição de frente prioritária para começar com segurança.' },
-  ],
-  resources: [
-    {
-      title: 'Gestão de Tráfego',
-      description: 'Para reduzir desperdício e melhorar aquisição com governança.',
-      href: '/servicos/gestao-de-trafego-google-meta',
-    },
-    {
-      title: 'SEO + GEO',
-      description: 'Para aumentar presença em busca clássica e generativa.',
-      href: '/servicos/seo-geo',
-    },
-    {
-      title: 'Agentes de IA',
-      description: 'Para ganhar velocidade operacional sem perder controle.',
-      href: '/servicos/implantacao-de-agentes-ia',
-    },
-  ],
-  faq: [
-    {
-      question: 'Esse primeiro contato tem custo?',
-      answer: 'Não. A triagem inicial é sem compromisso e serve para validar aderência e prioridade de ação.',
-    },
-    {
-      question: 'Preciso ter estrutura grande para começar?',
-      answer: 'Não. O processo foi desenhado para PME com equipe enxuta e foco em ganho rápido de eficiência.',
-    },
-    {
-      question: 'Vocês só atendem tráfego pago?',
-      answer:
-        'Não. A NeuroAds integra tráfego, SEO + GEO, funil e IA agêntica para construir um sistema comercial completo.',
-    },
-  ],
-  form: {
-    title: 'Envie seus dados e seu principal desafio',
-    description: 'Quanto mais claro o contexto, mais objetivo será nosso direcionamento inicial.',
-    ctaLabel: 'Enviar para diagnóstico',
-    flow: 'claudio',
-    serviceContext: 'Contato - Diagnóstico com especialista',
-    successMessage: 'Recebemos seu contato. Em breve você recebe retorno com próximo passo recomendado.',
-    includeMessage: true,
+const faqs = [
+  {
+    q: 'Quanto tempo leva para iniciar o diagnóstico?',
+    a: 'Normalmente, retornamos o contato em até 4h úteis para agendar a reunião de diagnóstico inicial.'
   },
-};
+  {
+    q: 'O diagnóstico tem algum custo?',
+    a: 'Não. O diagnóstico de 30 minutos focado em descobrir gargalos de caixa é um investimento nosso para entender se faz sentido seguirmos.'
+  },
+  {
+    q: 'A NeuroAds atende meu segmento?',
+    a: 'Temos agentes especializados em Saúde, E-commerce B2C, Educação, Mercado Imobiliário e Serviços B2B.'
+  }
+];
 
-export default function Page() {
-  return <StrategicContentPageShell data={content} />;
+export default function ContatoPage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+
+  return (
+    <main className="relative min-h-screen bg-[#040811] text-white overflow-hidden pt-32 pb-24">
+      {/* Background radial overlays */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: [
+            'radial-gradient(ellipse 600px 600px at 25% 0%, rgba(255,106,0,0.06) 0%, transparent 70%)',
+            'radial-gradient(ellipse 700px 700px at 75% 35%, rgba(18,40,76,0.10) 0%, transparent 70%)',
+            'radial-gradient(ellipse 500px 500px at 33% 100%, rgba(255,106,0,0.03) 0%, transparent 70%)',
+          ].join(', '),
+        }}
+      />
+      
+      {/* Header Grid Line patterns */}
+      <div 
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style={{
+          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px'
+        }}
+      />
+
+      <div className="relative z-10 mx-auto max-w-[1260px] px-5 md:px-8">
+        
+        <div className="grid lg:grid-cols-2 gap-16 lg:gap-24 items-start">
+          
+          {/* LEFT SIDE: Info */}
+          <motion.div
+            variants={revealVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 backdrop-blur-md px-4 py-1.5 mb-6">
+              <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-[#ff8f3a]">
+                Contato Estratégico
+              </span>
+            </span>
+            <h1 className="text-[40px] md:text-[52px] font-black leading-[1.08] tracking-tight text-white mb-6">
+              Vamos escalar <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">juntos.</span>
+            </h1>
+            <p className="text-[16px] sm:text-[18px] text-slate-300 leading-relaxed mb-12 max-w-[500px]">
+              Fale com um especialista e descubra como a IA Agêntica pode gerar previsibilidade de caixa para o seu negócio.
+            </p>
+
+            <div className="space-y-8">
+              <div className="flex items-start gap-5">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#ff6a00]/10 text-[#ff8f3a] border border-[#ff6a00]/20 shadow-[0_4px_12px_rgba(255,106,0,0.15)]">
+                  <Phone size={24} />
+                </div>
+                <div>
+                  <h3 className="text-[14px] font-bold text-white mb-1">WhatsApp / Telefone</h3>
+                  <p className="text-[16px] text-slate-300">+55 (11) 99999-9999</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-5">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-zinc-800 text-white border border-white/10 shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
+                  <Mail size={24} />
+                </div>
+                <div>
+                  <h3 className="text-[14px] font-bold text-white mb-1">E-mail Comercial</h3>
+                  <p className="text-[16px] text-slate-300">contato@neuroads.com.br</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-5">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-zinc-800 text-white border border-white/10 shadow-[0_4px_12px_rgba(0,0,0,0.3)]">
+                  <MapPin size={24} />
+                </div>
+                <div>
+                  <h3 className="text-[14px] font-bold text-white mb-1">Sede NeuroAds</h3>
+                  <p className="text-[16px] text-slate-300">São Paulo, SP - Brasil</p>
+                </div>
+              </div>
+            </div>
+
+            {/* FAQ Accordion */}
+            <div className="mt-16 border-t border-white/10 pt-10">
+              <h3 className="text-[18px] font-bold text-white mb-6 flex items-center gap-2">
+                <HelpCircle size={18} className="text-[#ff6a00]" /> Dúvidas Frequentes
+              </h3>
+              <div className="space-y-3">
+                {faqs.map((faq, index) => (
+                  <div key={index} className="rounded-2xl border border-white/5 bg-zinc-900/50 overflow-hidden">
+                    <button
+                      onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                      className="flex w-full items-center justify-between p-5 text-left transition-colors hover:bg-white/5"
+                    >
+                      <span className="text-[14px] font-bold text-white">{faq.q}</span>
+                      <ChevronDown 
+                        size={18} 
+                        className={`text-slate-400 transition-transform duration-300 ${openFaq === index ? 'rotate-180 text-[#ff6a00]' : ''}`} 
+                      />
+                    </button>
+                    {openFaq === index && (
+                      <div className="px-5 pb-5 pt-0 text-[14px] leading-relaxed text-slate-300">
+                        {faq.a}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </motion.div>
+
+          {/* RIGHT SIDE: Form */}
+          <motion.div
+            variants={revealVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.1 }}
+            className="relative rounded-[32px] border border-[#ff6a00]/20 bg-zinc-950/60 p-8 md:p-10 backdrop-blur-md shadow-[0_24px_64px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,106,0,0.1)]"
+          >
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-[#ff6a00]/10 rounded-full blur-[60px] pointer-events-none" />
+            
+            <h2 className="text-[24px] font-black text-white mb-2">Diagnóstico Inicial</h2>
+            <p className="text-[14px] text-slate-400 mb-8">Preencha os dados abaixo e entenda o real potencial da sua operação.</p>
+
+            <form className="space-y-5">
+              <div>
+                <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">Nome Completo</label>
+                <input 
+                  type="text" 
+                  className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white placeholder:text-slate-600 focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all"
+                  placeholder="Seu nome"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">E-mail</label>
+                  <input 
+                    type="email" 
+                    className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white placeholder:text-slate-600 focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all"
+                    placeholder="voce@empresa.com"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">WhatsApp</label>
+                  <input 
+                    type="tel" 
+                    className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white placeholder:text-slate-600 focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all"
+                    placeholder="(00) 00000-0000"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">Site da Empresa</label>
+                <input 
+                  type="text" 
+                  className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white placeholder:text-slate-600 focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all"
+                  placeholder="https://suaempresa.com.br"
+                />
+              </div>
+              <div>
+                <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">Faturamento Mensal Estimado</label>
+                <select className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all appearance-none">
+                  <option value="">Selecione uma faixa...</option>
+                  <option value="ate-30k">Até R$ 30.000</option>
+                  <option value="30k-100k">R$ 30.000 a R$ 100.000</option>
+                  <option value="100k-500k">R$ 100.000 a R$ 500.000</option>
+                  <option value="acima-500k">Acima de R$ 500.000</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-[12px] font-bold uppercase tracking-wider text-slate-400 mb-2">Qual seu principal desafio hoje?</label>
+                <textarea 
+                  rows={3}
+                  className="w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3.5 text-white placeholder:text-slate-600 focus:border-[#ff6a00]/50 focus:outline-none focus:ring-1 focus:ring-[#ff6a00]/50 transition-all resize-none"
+                  placeholder="Ex: Leads muito caros, dificuldade em converter leads do comercial..."
+                />
+              </div>
+
+              <button
+                type="button"
+                className="group relative w-full mt-4 justify-center inline-flex items-center gap-2 rounded-xl px-8 py-4 text-[15px] font-extrabold text-white overflow-hidden transition-all duration-300 hover:scale-[1.01] active:scale-[0.98]"
+                style={{
+                  background: 'linear-gradient(145deg, #ff8f3a 0%, #e65c00 100%)',
+                  boxShadow: '0 8px 20px -4px rgba(255,106,0,0.5)'
+                }}
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  Solicitar Diagnóstico
+                  <Send size={18} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                </span>
+              </button>
+              <p className="text-center text-[11px] text-slate-500 mt-4">
+                Seus dados estão seguros. Não enviamos spam.
+              </p>
+            </form>
+          </motion.div>
+
+        </div>
+      </div>
+    </main>
+  );
 }
-
