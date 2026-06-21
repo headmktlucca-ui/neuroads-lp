@@ -303,13 +303,25 @@ export default function Suggestion5LandingPage() {
 
       {/* HERO SECTION WITH STORYTELLING NARRATIVE */}
       <section className="relative w-full min-h-[90vh] flex items-end z-10 pt-[115px] pb-16 md:pb-24 overflow-hidden bg-transparent">
-        <div className="absolute inset-0 z-0 w-full h-full overflow-hidden bg-[#040811] pointer-events-none">
+        <div 
+          className="absolute inset-0 w-full h-full z-0 pointer-events-none"
+          style={{
+            transform: 'translate3d(0,0,0)',
+            backfaceVisibility: 'hidden',
+            willChange: 'transform'
+          }}
+        >
           <Image
-            src="/images/backgrounds/wall01.png"
-            alt="Fundo Hub"
+            src="/images/hero-new.jpg"
+            alt="NeuroAds AI Agent Background"
             fill
             priority
+            sizes="100vw"
+            quality={90}
             className="object-cover object-center"
+            style={{
+              backfaceVisibility: 'hidden',
+            }}
           />
         </div>
 
@@ -324,6 +336,32 @@ export default function Suggestion5LandingPage() {
 
           {/* LEFT — headline + subtitle: hugs the left window edge */}
           <div className="pl-4 lg:pl-8 pr-4 lg:pr-10 w-full lg:flex-[6]">
+            {/* Robot Image */}
+            <motion.div 
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ 
+                opacity: 1, 
+                y: [0, -8, 0],
+              }}
+              transition={{
+                opacity: { duration: 0.6 },
+                y: {
+                  repeat: Infinity,
+                  duration: 4,
+                  ease: "easeInOut"
+                }
+              }}
+              className="mb-6 flex justify-start"
+            >
+              <Image 
+                src="/images/robot-hero.png"
+                alt="NeuroAds AI Robot Agent"
+                width={110}
+                height={131}
+                className="object-contain drop-shadow-[0_0_20px_rgba(255,106,0,0.15)]"
+                priority
+              />
+            </motion.div>
             {/* Orange vertical accent bar */}
             <div className="flex items-start gap-5">
               <div className="w-[3px] self-stretch bg-[#ff6a00] rounded-full shrink-0 mt-1" />

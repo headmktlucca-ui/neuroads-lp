@@ -33,7 +33,15 @@
       "PowerShell(Write-Output \"=== Python ===\"; \\(Get-Command python -ErrorAction SilentlyContinue\\).Source; python --version 2>&1; Write-Output \"=== pip ===\"; python -m pip --version 2>&1; Write-Output \"=== ffmpeg ===\"; \\(Get-Command ffmpeg -ErrorAction SilentlyContinue\\).Source; Write-Output \"=== GPU \\(nvidia\\) ===\"; \\(Get-Command nvidia-smi -ErrorAction SilentlyContinue\\) ? \\(nvidia-smi --query-gpu=name --format=csv,noheader 2>&1\\) : \"no nvidia-smi\")",
       "PowerShell(py -0p 2>&1)",
       "PowerShell(python -m pip index versions torch 2>&1)",
-      "PowerShell(python -m pip index versions onnxruntime 2>&1)"
+      "PowerShell(python -m pip index versions onnxruntime 2>&1)",
+      "Bash(npx tsc *)",
+      "Bash(echo \"=== tsc exit $? ===\")",
+      "PowerShell(npx tsc --noEmit -p tsconfig.json 2>&1 | Select-Object -First 30; Write-Output \"=== exit $LASTEXITCODE ===\")",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='node.exe'\" | Where-Object { $_.CommandLine -match 'next' } | Select-Object ProcessId, CommandLine | Format-List)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue)",
+      "PowerShell($f=\"C:\\\\Users\\\\claud\\\\AppData\\\\Local\\\\Temp\\\\claude\\\\C--Users-claud-OneDrive-Documentos-NeuroAds-LP\\\\2e7a8b70-757d-48da-ab44-28d985d64223\\\\tasks\\\\b2umv4i9v.output\"; $deadline=\\(Get-Date\\).AddSeconds\\(40\\); while\\(\\(Get-Date\\) -lt $deadline\\){ if\\(Test-Path $f\\){ $c=Get-Content $f -Raw; if\\($c -match 'Ready|Local:|error|Error'\\){break} }; Start-Sleep -Milliseconds 1500 }; Get-Content $f -Raw)",
+      "mcp__Claude_Preview__preview_start",
+      "PowerShell(Stop-Process -Id 25512,26952,21552 -Force -ErrorAction SilentlyContinue; Start-Sleep -Milliseconds 800; Write-Output \"stopped; remaining next procs:\"; \\(Get-CimInstance Win32_Process -Filter \"Name='node.exe'\" | Where-Object { $_.CommandLine -match 'next' }\\).Count)"
     ]
   },
   "hooks": {
