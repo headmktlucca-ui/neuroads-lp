@@ -388,7 +388,7 @@ function LaboratorioAgentesContent() {
             key={category.slug}
             className="overflow-hidden rounded-3xl border border-[#FF6A00]/20 bg-[#0d1a2a]/40 backdrop-blur-md shadow-[0_8px_32px_rgba(255,106,0,0.04)] text-white"
           >
-            <header className="flex items-center justify-between gap-4 bg-[#0d1a2a]/60 px-6 py-4.5 border-b border-[#FF6A00]/10">
+            <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#0d1a2a]/60 px-6 py-5 border-b border-[#FF6A00]/10">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse"></span>

@@ -367,7 +367,7 @@ function UseCasesSection() {
                           <p className="mt-3 text-slate-300 text-sm leading-relaxed">
                             {sector.description}
                           </p>
-                          <div className="mt-6 grid grid-cols-2 gap-3">
+                          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
                             {sector.cards.map((card, cIdx) => (
                               <div
                                 key={cIdx}

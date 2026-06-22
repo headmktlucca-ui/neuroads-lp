@@ -170,7 +170,7 @@ export default function HubExplorarPage() {
           <button
             key={f}
             onClick={() => setActiveFilter(f)}
-            className={`px-4 py-1.5 rounded-full text-[13px] font-bold border transition-all duration-150 cursor-pointer ${
+            className={`px-4 py-2 sm:py-1.5 rounded-full text-[13px] font-bold border transition-all duration-150 cursor-pointer ${
               activeFilter === f
                 ? 'bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] text-white border-[#FF6A00] shadow-[0_0_16px_rgba(255,106,0,0.3)]'
                 : 'bg-[#0d1a2a]/40 text-[#8fa0b5] border-white/[0.08] hover:text-white hover:border-white/[0.2]'
