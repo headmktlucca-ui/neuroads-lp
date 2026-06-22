@@ -636,8 +636,8 @@ export default function Suggestion5LandingPage() {
         }}
       />
 
-      {/* HERO SECTION WITH STORYTELLING NARRATIVE */}
-      <section className="relative w-full min-h-[90vh] flex items-stretch z-10 pt-[139px] pb-16 md:pb-24 overflow-hidden bg-transparent">
+      {/* HERO SECTION — CENTERED COMMAND STRUCTURE */}
+      <section className="relative w-full min-h-[92vh] flex items-center z-10 pt-[120px] pb-20 overflow-hidden bg-transparent">
         <div className="absolute inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
           <motion.div
             className="absolute w-full bg-cover bg-center"
@@ -652,96 +652,117 @@ export default function Suggestion5LandingPage() {
           />
         </div>
 
-        {/* Smooth top gradient fade to blend background image with the top menu bar */}
-        <div className="absolute top-0 left-0 right-0 h-36 bg-gradient-to-b from-[#08101e] via-[#08101e]/60 to-transparent z-[1] pointer-events-none" />
+        {/* Smooth top gradient */}
+        <div className="absolute top-0 left-0 right-0 h-44 bg-gradient-to-b from-[#040811] via-[#040811]/70 to-transparent z-[1] pointer-events-none" />
 
-        {/* Subtle left-side readability gradient — doesn't block video, just anchors text */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent z-[1] pointer-events-none" />
+        {/* Center readability vignette */}
+        <div className="absolute inset-0 z-[1] pointer-events-none" style={{
+          background: 'radial-gradient(ellipse 80% 80% at 50% 50%, rgba(4,8,17,0.55) 0%, rgba(4,8,17,0.10) 100%)'
+        }} />
 
-        {/* Cinematic Fade into next section */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#03060c] to-transparent z-[1] pointer-events-none" />
+        {/* Side darkening */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#040811]/60 via-transparent to-[#040811]/60 z-[1] pointer-events-none" />
 
-        {/* Full-width container — no max-w, no centering, content reaches window edges */}
-        <div className="relative z-10 w-full flex flex-col lg:flex-row items-stretch justify-between gap-8 lg:gap-0">
+        {/* Cinematic bottom fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#040811] to-transparent z-[1] pointer-events-none" />
 
-          {/* LEFT — headline + subtitle: hugs the left window edge */}
-          <div className="pl-4 lg:pl-8 pr-4 lg:pr-10 w-full lg:flex-[6] lg:flex lg:flex-col lg:justify-center">
-            <div>
-              <h1 className="text-[42px] md:text-[58px] lg:text-[68px] font-black leading-[1.05] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
-                Existe uma versão da sua empresa{" "}
-                <br className="hidden lg:inline" />
-                onde cada real investido tem destino{" "}
-                <br className="hidden lg:inline" />
-                <span className="text-[#ff6a00]">
-                  certo e retorno mensurável.
-                </span>
-              </h1>
-              <p className="mt-5 text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-[480px] drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
-                Agentes de IA que orquestram dados, mídia e criatividade para gerar resultados consistentes e escaláveis.
-              </p>
-              {/* Social proof — below fold anchor */}
-              <div className="flex flex-wrap items-center gap-3 mt-6 text-xs text-white/50">
-                <span className="font-bold text-white/70">25+ empresas</span>
-                <span>·</span>
-                <span>R$ 2M+ em mídia gerenciada</span>
-                <span>·</span>
-                <span className="text-emerald-400 font-bold">ROAS médio 7.5x</span>
-              </div>
-            </div>
-          </div>
+        {/* CENTERED CONTENT */}
+        <div className="relative z-10 w-full flex flex-col items-center text-center px-4 sm:px-6 max-w-[900px] mx-auto">
 
-          {/* RIGHT — CTAs + badges: hugs the right window edge */}
-          <div className="w-full lg:flex-[4] pl-4 lg:pl-10 pr-4 lg:pr-8 flex flex-col gap-6 lg:justify-end items-end">
-            {/* CTAs stacked vertically */}
-            <div className="flex flex-col gap-3 w-full max-w-[280px]">
-              <button
-                type="button"
-                onClick={handleOpenSpecialistChat}
-                className="w-full justify-center inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_24px_rgba(255,106,0,0.45)] cursor-pointer"
+          {/* Main headline */}
+          <motion.h1
+            variants={revealVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.08 }}
+            className="text-[42px] sm:text-[58px] lg:text-[72px] font-black leading-[1.04] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)]"
+          >
+            Cada real investido{" "}
+            <br className="hidden sm:inline" />
+            com destino certo e{" "}
+            <br className="hidden sm:inline" />
+            <span className="text-[#ff6a00]">retorno mensurável.</span>
+          </motion.h1>
+
+          {/* Subtitle */}
+          <motion.p
+            variants={revealVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.16 }}
+            className="mt-6 text-[16px] sm:text-[18px] text-white/70 leading-relaxed max-w-[600px] drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)]"
+          >
+            Agentes de IA que orquestram dados, mídia e criatividade
+            para gerar resultados consistentes e escaláveis.
+          </motion.p>
+
+          {/* CTAs */}
+          <motion.div
+            variants={revealVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.24 }}
+            className="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto"
+          >
+            <button
+              type="button"
+              onClick={handleOpenSpecialistChat}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_28px_rgba(180,70,0,0.5)] cursor-pointer"
+            >
+              Fale com um especialista
+              <ArrowRight size={16} />
+            </button>
+            <Link
+              href="/hub"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 hover:border-white/40 bg-white/[0.04] hover:bg-white/[0.08] transition-all px-8 py-4 text-[14px] font-bold text-white/80 hover:text-white"
+            >
+              Explorar o Hub
+              <ArrowRight size={14} />
+            </Link>
+          </motion.div>
+
+          {/* Social proof */}
+          <motion.div
+            variants={revealVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.32 }}
+            className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[12px] text-white/45"
+          >
+            <span className="font-bold text-white/70">25+ empresas atendidas</span>
+            <span className="opacity-40">·</span>
+            <span>R$ 2M+ em mídia gerenciada</span>
+            <span className="opacity-40">·</span>
+            <span className="text-emerald-400 font-bold">ROAS médio 7.5×</span>
+          </motion.div>
+
+          {/* Feature badges row */}
+          <motion.div
+            variants={revealVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.40 }}
+            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+          >
+            {[
+              { icon: <Cpu size={15} />, label: 'IA Agêntica', sub: 'Autônoma e orientada a metas' },
+              { icon: <TrendingUp size={15} />, label: 'Dados em tempo real', sub: 'Decisões baseadas em sinal' },
+              { icon: <Target size={15} />, label: 'Resultados mensuráveis', sub: 'Foco no que importa' },
+            ].map((badge, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/[0.08] bg-black/30 backdrop-blur-sm min-w-[200px]"
               >
-                Fale com um especialista
-                <ArrowRight size={16} />
-              </button>
-              <Link
-                href="/hub"
-                className="w-full justify-center inline-flex items-center gap-2 rounded-xl border border-white/20 hover:border-white/40 transition-all px-8 py-3.5 text-[13px] font-bold text-white/80 hover:text-white"
-              >
-                Explorar o Hub
-                <ArrowRight size={14} />
-              </Link>
-            </div>
-
-            {/* Feature badges — vertical list */}
-            <div className="flex flex-col gap-4 border-t border-white/15 pt-5 w-full max-w-[280px]">
-              <div className="flex items-center justify-end gap-3 text-right w-full">
-                <div>
-                  <p className="text-sm font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">IA Agêntica</p>
-                  <p className="text-xs text-white/60 mt-1">Autônoma e orientada a metas</p>
-                </div>
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
-                  <Cpu size={16} />
+                  {badge.icon}
                 </span>
-              </div>
-              <div className="flex items-center justify-end gap-3 text-right w-full">
-                <div>
-                  <p className="text-sm font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Dados em tempo real</p>
-                  <p className="text-xs text-white/60 mt-1">Decisões baseadas em sinal</p>
+                <div className="text-left">
+                  <p className="text-[13px] font-bold text-white leading-none">{badge.label}</p>
+                  <p className="text-[11px] text-white/50 mt-0.5">{badge.sub}</p>
                 </div>
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
-                  <TrendingUp size={16} />
-                </span>
               </div>
-              <div className="flex items-center justify-end gap-3 text-right w-full">
-                <div>
-                  <p className="text-sm font-bold text-white leading-none drop-shadow-[0_1px_4px_rgba(0,0,0,0.5)]">Resultados mensuráveis</p>
-                  <p className="text-xs text-white/60 mt-1">Foco no que importa</p>
-                </div>
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
-                  <Target size={16} />
-                </span>
-              </div>
-            </div>
-          </div>
+            ))}
+          </motion.div>
 
         </div>
       </section>
@@ -751,6 +772,14 @@ export default function Suggestion5LandingPage() {
 
       {/* AGENTES EM DESTAQUE */}
       <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full overflow-hidden">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full blur-3xl opacity-[0.10]" style={{ backgroundColor: '#ff6a00' }} />
+          <div className="absolute bottom-0 -left-16 w-72 h-72 rounded-full blur-3xl opacity-[0.07]" style={{ backgroundColor: '#3b82f6' }} />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.035]" xmlns="http://www.w3.org/2000/svg">
+            <defs><pattern id="dots-agentes" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="white" /></pattern></defs>
+            <rect width="100%" height="100%" fill="url(#dots-agentes)" />
+          </svg>
+        </div>
         <motion.div
           variants={revealVariants}
           initial="hidden"
@@ -886,6 +915,14 @@ export default function Suggestion5LandingPage() {
 
       {/* IMPLANTAÇÃO EM 4 ETAPAS */}
       <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full overflow-hidden">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-16 left-1/3 w-80 h-80 rounded-full blur-3xl opacity-[0.08]" style={{ backgroundColor: '#ff6a00' }} />
+          <div className="absolute -bottom-10 -right-20 w-72 h-72 rounded-full blur-3xl opacity-[0.06]" style={{ backgroundColor: '#10b981' }} />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.035]" xmlns="http://www.w3.org/2000/svg">
+            <defs><pattern id="dots-implantacao" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="white" /></pattern></defs>
+            <rect width="100%" height="100%" fill="url(#dots-implantacao)" />
+          </svg>
+        </div>
         <motion.div
           variants={revealVariants}
           initial="hidden"
@@ -977,6 +1014,14 @@ export default function Suggestion5LandingPage() {
 
       {/* POR QUE A NEUROADS? */}
       <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full overflow-hidden">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full blur-3xl opacity-[0.10]" style={{ backgroundColor: '#ff6a00' }} />
+          <div className="absolute top-1/2 -right-16 w-80 h-80 rounded-full blur-3xl opacity-[0.07]" style={{ backgroundColor: '#3b82f6' }} />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.035]" xmlns="http://www.w3.org/2000/svg">
+            <defs><pattern id="dots-porque" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="white" /></pattern></defs>
+            <rect width="100%" height="100%" fill="url(#dots-porque)" />
+          </svg>
+        </div>
         <div className="mx-auto max-w-[1260px]">
           <motion.div
             variants={revealVariants}
@@ -1258,7 +1303,15 @@ export default function Suggestion5LandingPage() {
       </section>
 
       {/* DEPOIMENTOS */}
-      <section className="relative z-10 py-20 px-5 md:px-8 w-full">
+      <section className="relative z-10 py-20 px-5 md:px-8 w-full overflow-hidden">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute top-1/2 -translate-y-1/2 -left-24 w-80 h-80 rounded-full blur-3xl opacity-[0.08]" style={{ backgroundColor: '#a855f7' }} />
+          <div className="absolute top-0 right-1/4 w-64 h-64 rounded-full blur-3xl opacity-[0.06]" style={{ backgroundColor: '#ff6a00' }} />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.035]" xmlns="http://www.w3.org/2000/svg">
+            <defs><pattern id="dots-depoimentos" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="white" /></pattern></defs>
+            <rect width="100%" height="100%" fill="url(#dots-depoimentos)" />
+          </svg>
+        </div>
         <motion.div
           variants={revealVariants}
           initial="hidden"
@@ -1417,12 +1470,15 @@ export default function Suggestion5LandingPage() {
 
       {/* CTA DE FECHAMENTO */}
       <section className="relative z-10 py-24 px-5 md:px-8 w-full overflow-hidden">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: 'radial-gradient(ellipse 800px 400px at 50% 50%, rgba(255,106,0,0.07) 0%, transparent 70%)',
-          }}
-        />
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[560px] h-[280px] rounded-full blur-3xl opacity-[0.12]" style={{ backgroundColor: '#ff6a00' }} />
+          <div className="absolute -top-16 -left-16 w-64 h-64 rounded-full blur-3xl opacity-[0.05]" style={{ backgroundColor: '#ff6a00' }} />
+          <div className="absolute -bottom-16 -right-16 w-64 h-64 rounded-full blur-3xl opacity-[0.05]" style={{ backgroundColor: '#a855f7' }} />
+          <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
+            <defs><pattern id="dots-cta" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="white" /></pattern></defs>
+            <rect width="100%" height="100%" fill="url(#dots-cta)" />
+          </svg>
+        </div>
         <motion.div
           variants={revealVariants}
           initial="hidden"
@@ -1440,7 +1496,7 @@ export default function Suggestion5LandingPage() {
             <button
               type="button"
               onClick={handleOpenSpecialistChat}
-              className="inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-10 py-4 text-[15px] font-extrabold text-white shadow-[0_4px_32px_rgba(255,106,0,0.45)] cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] transition-all px-10 py-4 text-[15px] font-extrabold text-white shadow-[0_4px_32px_rgba(255,106,0,0.45)] cursor-pointer"
             >
               Agendar diagnóstico gratuito
               <ArrowRight size={16} />
