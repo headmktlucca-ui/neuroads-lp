@@ -199,7 +199,7 @@ export default function ContatoPage() {
 
               <button
                 type="button"
-                className="group relative w-full mt-4 justify-center inline-flex items-center gap-2 rounded-lg bg-[#ff6a00] hover:bg-[#e65c00] px-8 py-3.5 text-sm font-bold text-white transition-all duration-200 active:scale-[0.98] shadow-lg shadow-[#ff6a00]/20"
+                className="group relative w-full mt-4 justify-center inline-flex items-center gap-2 rounded-lg bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] px-8 py-3.5 text-sm font-bold text-white transition-all duration-200 active:scale-[0.98] shadow-lg shadow-[#ff6a00]/20"
               >
                 <span className="relative z-10 flex items-center gap-2">
                   Solicitar Diagnóstico Técnico

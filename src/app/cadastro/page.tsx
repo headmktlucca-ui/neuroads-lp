@@ -241,7 +241,7 @@ function CadastroPageContent() {
             </div>
 
             <button type="submit" disabled={isSubmitting}
-              className="w-full h-11 rounded-xl bg-[#FF6A00] hover:bg-[#FF8000] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-[15px] transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)] flex items-center justify-center gap-2 mt-1">
+              className="w-full h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-[15px] transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)] flex items-center justify-center gap-2 mt-1">
               {isSubmitting
                 ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                 : <>Criar Conta →</>

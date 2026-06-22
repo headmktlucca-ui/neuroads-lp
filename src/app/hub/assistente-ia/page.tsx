@@ -137,7 +137,7 @@ export default function HubAssistentePage() {
             <button 
               type="submit" 
               disabled={!input.trim()}
-              className="p-2.5 bg-[#FF6A00] hover:bg-[#FF8000] disabled:bg-white/[0.05] disabled:text-white/20 text-white rounded-xl transition-all"
+              className="p-2.5 bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:bg-white/[0.05] disabled:text-white/20 text-white rounded-xl transition-all"
             >
               <Send className="w-4 h-4" />
             </button>

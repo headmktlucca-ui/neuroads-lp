@@ -37,7 +37,7 @@ export default function HubEstudioPage() {
           <div className="space-y-3">
             <label className="text-[12px] font-bold uppercase tracking-wider text-[#8fa0b5]">Dimensões</label>
             <div className="grid grid-cols-2 gap-2">
-              <button className="py-2 rounded-xl bg-[#FF6A00] text-white text-[13px] font-semibold border border-[#FF6A00] shadow-[0_0_15px_rgba(255,106,0,0.2)]">16:9</button>
+              <button className="py-2 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] text-white text-[13px] font-semibold border border-[#FF6A00] shadow-[0_0_15px_rgba(255,106,0,0.2)]">16:9</button>
               <button className="py-2 rounded-xl bg-[#08101e] text-[#8fa0b5] hover:text-white border border-white/[0.1] hover:border-white/[0.2] text-[13px] font-semibold transition-all">9:16</button>
               <button className="py-2 rounded-xl bg-[#08101e] text-[#8fa0b5] hover:text-white border border-white/[0.1] hover:border-white/[0.2] text-[13px] font-semibold transition-all">1:1</button>
               <button className="py-2 rounded-xl bg-[#08101e] text-[#8fa0b5] hover:text-white border border-white/[0.1] hover:border-white/[0.2] text-[13px] font-semibold transition-all">4:5</button>
@@ -95,7 +95,7 @@ export default function HubEstudioPage() {
             placeholder="Descreva o que você deseja criar..."
           />
           <div className="p-3 border-t border-white/[0.06] flex justify-end bg-gradient-to-t from-[#08101e] to-transparent">
-            <button className="flex items-center gap-2 px-6 py-2.5 bg-[#FF6A00] text-white font-bold text-[14px] rounded-xl hover:bg-[#FF8000] transition-colors shadow-[0_0_20px_rgba(255,106,0,0.4)]">
+            <button className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] text-white font-bold text-[14px] rounded-xl transition-all shadow-[0_0_20px_rgba(255,106,0,0.4)]">
               <Play className="w-4 h-4 fill-white" /> Gerar Conteúdo
             </button>
           </div>

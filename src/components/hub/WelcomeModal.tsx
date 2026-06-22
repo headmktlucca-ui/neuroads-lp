@@ -162,7 +162,7 @@ export default function WelcomeModal() {
                   onClick={dismiss}
                   className={`mt-4 w-full flex items-center justify-center gap-2 h-10 rounded-xl font-bold text-[14px] transition-all ${
                     step.highlight
-                      ? 'bg-[#FF6A00] text-white hover:bg-[#FF8000] shadow-[0_0_20px_rgba(255,106,0,0.3)]'
+                      ? 'bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] text-white shadow-[0_0_20px_rgba(255,106,0,0.3)]'
                       : 'bg-white/[0.06] text-white hover:bg-white/[0.10] border border-white/[0.08]'
                   }`}
                 >

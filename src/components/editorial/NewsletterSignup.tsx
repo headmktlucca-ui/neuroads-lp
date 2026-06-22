@@ -70,7 +70,7 @@ export default function NewsletterSignup() {
           type="submit"
           disabled={loading}
           className={`mt-2 inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-black text-white ${
-            loading ? 'bg-[#7a4b20] opacity-80' : 'bg-[#ff6a00] hover:brightness-95'
+            loading ? 'bg-[#7a4b20] opacity-80' : 'bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500]'
           }`}
         >
           {loading ? 'Enviando...' : 'Assinar semanalmente'}

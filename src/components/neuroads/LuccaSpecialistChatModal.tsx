@@ -281,7 +281,7 @@ export default function LuccaSpecialistChatModal({
                     appendMessage('user', clientName);
                     processChatInteraction(`Meu nome é ${normalizedName}. O que você pode fazer por mim?`);
                   }}
-                  className="rounded-xl bg-[#ff6a00] px-4 py-2 text-[12px] font-black text-white"
+                  className="rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] transition-all px-4 py-2 text-[12px] font-black text-white"
                 >
                   Confirmar
                 </button>

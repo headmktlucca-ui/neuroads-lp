@@ -55,7 +55,7 @@ export default function PublicTopNav() {
         {/* CTA */}
         <Link
           href="/hub"
-          className="px-4 py-1.5 rounded-xl bg-[#ff6a00] hover:bg-[#ff7b1a] transition-colors text-[13px] font-bold text-white shadow-[0_2px_12px_rgba(255,106,0,0.3)]"
+          className="px-4 py-1.5 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] transition-all text-[13px] font-bold text-white shadow-[0_2px_12px_rgba(255,106,0,0.3)]"
         >
           Acessar Hub
         </Link>

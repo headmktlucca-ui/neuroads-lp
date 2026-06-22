@@ -172,7 +172,7 @@ export default function HubExplorarPage() {
             onClick={() => setActiveFilter(f)}
             className={`px-4 py-1.5 rounded-full text-[13px] font-bold border transition-all duration-150 cursor-pointer ${
               activeFilter === f
-                ? 'bg-[#FF6A00] text-white border-[#FF6A00] shadow-[0_0_16px_rgba(255,106,0,0.3)]'
+                ? 'bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] text-white border-[#FF6A00] shadow-[0_0_16px_rgba(255,106,0,0.3)]'
                 : 'bg-[#0d1a2a]/40 text-[#8fa0b5] border-white/[0.08] hover:text-white hover:border-white/[0.2]'
             }`}
           >
@@ -253,7 +253,7 @@ export default function HubExplorarPage() {
           </p>
           <a
             href="mailto:avante@neuroads.com.br"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#FF6A00] text-white font-bold text-[14px] rounded-xl hover:bg-[#FF8000] transition-colors shadow-[0_0_20px_rgba(255,106,0,0.3)]"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] text-white font-bold text-[14px] rounded-xl transition-all shadow-[0_0_20px_rgba(255,106,0,0.3)]"
           >
             Sugerir uma melhoria <ArrowRight className="w-4 h-4" />
           </a>

@@ -388,7 +388,7 @@ export default function Suggestion3LandingPage() {
               </div>
 
               <div className="mt-7 flex flex-wrap gap-3">
-                <button type="button" onClick={handleOpenSpecialistChat} className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-3 text-[13px] font-extrabold text-white">
+                <button type="button" onClick={handleOpenSpecialistChat} className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] transition-all px-6 py-3 text-[13px] font-extrabold text-white">
                   Fale com um especialista
                   <ArrowRight size={13} />
                 </button>
@@ -754,7 +754,7 @@ export default function Suggestion3LandingPage() {
               <button
                 type="button"
                 onClick={handleOpenSpecialistChat}
-                className="inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-2.5 text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(255,106,0,0.28)] transition hover:brightness-110"
+                className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] px-6 py-2.5 text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(255,106,0,0.28)] transition-all"
               >
                 Solicitar diagnóstico do meu segmento
                 <ArrowRight size={13} />
@@ -858,7 +858,7 @@ export default function Suggestion3LandingPage() {
               <button
                 type="button"
                 onClick={handleOpenSpecialistChat}
-                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-3 text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(255,106,0,0.35)] transition hover:brightness-110"
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] px-6 py-3 text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(255,106,0,0.35)] transition-all"
               >
                 Falar com especialista
                 <ArrowRight size={13} />
@@ -895,7 +895,7 @@ export default function Suggestion3LandingPage() {
             <p className="text-[13px] text-white/82 sm:text-[14px]">Mais performance. Menos achismo.</p>
 
             <div className="mt-5 flex flex-wrap gap-2.5">
-              <button type="button" onClick={handleOpenSpecialistChat} className="inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-2.5 text-[13px] font-extrabold text-white">
+              <button type="button" onClick={handleOpenSpecialistChat} className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] transition-all px-6 py-2.5 text-[13px] font-extrabold text-white">
                 Fale com um especialista
                 <ArrowRight size={13} />
               </button>

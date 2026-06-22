@@ -675,13 +675,10 @@ export default function Suggestion5LandingPage() {
             initial="hidden"
             animate="visible"
             transition={{ delay: 0.08 }}
-            className="text-[42px] sm:text-[58px] lg:text-[72px] font-black leading-[1.04] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)]"
+            className="text-[44px] sm:text-[60px] lg:text-[76px] font-black leading-[1.04] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)]"
           >
-            Cada real investido{" "}
-            <br className="hidden sm:inline" />
-            com destino certo e{" "}
-            <br className="hidden sm:inline" />
-            <span className="text-[#ff6a00]">retorno mensurável.</span>
+            Mais receita.{" "}
+            <span className="text-[#ff6a00]">Menos desperdício.</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -690,10 +687,11 @@ export default function Suggestion5LandingPage() {
             initial="hidden"
             animate="visible"
             transition={{ delay: 0.16 }}
-            className="mt-6 text-[16px] sm:text-[18px] text-white/70 leading-relaxed max-w-[600px] drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)]"
+            className="mt-5 text-[17px] sm:text-[20px] text-white/65 leading-relaxed max-w-[680px] drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)] font-medium"
           >
-            Agentes de IA que orquestram dados, mídia e criatividade
-            para gerar resultados consistentes e escaláveis.
+            Agentes que monitoram, otimizam e executam{" "}
+            <br className="hidden sm:inline" />
+            insights e oportunidades.
           </motion.p>
 
           {/* CTAs */}
