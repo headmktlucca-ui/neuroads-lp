@@ -574,6 +574,31 @@ body::before { content: none; }
   border-radius: 16px !important;
 }
 
+/* ── GLOBAL BUTTON CONSISTENCY ──
+   All action buttons across the site must use the same border-radius on all 4 corners.
+   Excludes icon-only circular elements (h-8 w-8, h-10 w-10 etc.), 
+   badges, pills, and nav indicators that are intentionally fully round.
+*/
+.btn,
+.btn-primary,
+.btn-ghost,
+button.rounded-xl,
+button.rounded-2xl,
+a.rounded-xl,
+a.rounded-2xl,
+button[class*="border"][class*="rounded"],
+a[class*="border"][class*="rounded"] {
+  border-radius: 12px !important;
+}
+
+/* Preserve intentionally circular icon buttons and indicators */
+button.rounded-full:not([class*="px-"]):not([class*="py-2"]):not([class*="py-3"]):not([class*="py-4"]),
+.glass-pill,
+.badge,
+span.rounded-full {
+  border-radius: 9999px !important;
+}
+
 .mask-image-bottom-fade {
   mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%);

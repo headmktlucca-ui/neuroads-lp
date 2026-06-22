@@ -675,9 +675,10 @@ export default function Suggestion5LandingPage() {
             initial="hidden"
             animate="visible"
             transition={{ delay: 0.08 }}
-            className="text-[44px] sm:text-[60px] lg:text-[76px] font-black leading-[1.04] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)]"
+            className="text-[44px] sm:text-[60px] lg:text-[76px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)]"
           >
-            Mais receita.{" "}
+            Mais receita.
+            <br />
             <span className="text-[#ff6a00]">Menos desperdício.</span>
           </motion.h1>
 
@@ -719,20 +720,6 @@ export default function Suggestion5LandingPage() {
             </Link>
           </motion.div>
 
-          {/* Social proof */}
-          <motion.div
-            variants={revealVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 0.32 }}
-            className="mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1.5 text-[12px] text-white/45"
-          >
-            <span className="font-bold text-white/70">25+ empresas atendidas</span>
-            <span className="opacity-40">·</span>
-            <span>R$ 2M+ em mídia gerenciada</span>
-            <span className="opacity-40">·</span>
-            <span className="text-emerald-400 font-bold">ROAS médio 7.5×</span>
-          </motion.div>
 
           {/* Feature badges row */}
           <motion.div
