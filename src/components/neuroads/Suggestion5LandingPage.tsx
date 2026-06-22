@@ -1,42 +1,37 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { motion, AnimatePresence, type Variants, useScroll, useTransform } from 'framer-motion';
 import {
   ArrowRight,
   Funnel,
   Target,
   TrendingUp,
-  X,
-  Plus,
-  Check,
   AlertCircle,
   Cpu,
   Zap,
-  ChevronRight
+  ChevronRight,
+  MessageCircle,
+  BookOpen,
+  LayoutDashboard
 } from 'lucide-react';
-import { agents as catalogAgents, type Agent as CatalogAgent } from '../../data/agents';
+import { agents as catalogAgents } from '../../data/agents';
 import LuccaSpecialistChatModal from './LuccaSpecialistChatModal';
-import LuccaEmbeddedChat from './LuccaEmbeddedChat';
-import PrimaryTopMenu from './PrimaryTopMenu';
-import ValuesResourcesSection from './ValuesResourcesSection';
 import Lenis from 'lenis';
 
 const revealVariants: Variants = {
   hidden: {
     opacity: 0,
-    y: 40,
+    y: 30,
   },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      type: "spring",
-      stiffness: 50,
-      damping: 15,
-      duration: 0.6,
+      duration: 0.5,
+      ease: [0.16, 1, 0.3, 1],
     }
   }
 };
@@ -66,22 +61,122 @@ const faq = [
   {
     q: 'Como funciona a IA Agêntica da NeuroAds?',
     a: 'A IA Agêntica da NeuroAds conecta diagnóstico, decisão e execução em um único ecossistema. Nossos agentes analisam dados reais de mídia, funil e comportamento para recomendar e executar ajustes com supervisão estratégica do time sênior, reduzindo achismo e aumentando previsibilidade de resultado.',
+    tags: ['PLATAFORMA', 'IA AGÊNTICA'],
   },
   {
     q: 'Vocês atendem qual tipo de empresa?',
     a: 'Atendemos principalmente PMEs em fase de crescimento que já investem em marketing e precisam de mais controle sobre retorno financeiro. Em geral, são empresas com faturamento mensal entre R$ 30 mil e R$ 200 mil que querem escalar com dados reais, não com promessas vagas.',
+    tags: ['EMPRESA', 'ELEGIBILIDADE'],
   },
   {
     q: 'Em quanto tempo começam os resultados?',
     a: 'Os primeiros ganhos operacionais normalmente aparecem nas primeiras semanas, com ajustes de estrutura, segmentação e orçamento. Resultados comerciais mais robustos dependem de variáveis como oferta, histórico da conta e maturidade do funil, mas o foco desde o início é reduzir desperdício e aumentar eficiência de receita.',
+    tags: ['RESULTADOS', 'PRAZO'],
   },
   {
     q: 'Quais canais vocês gerenciam?',
     a: 'Gerenciamos Google Ads e Meta Ads de forma integrada, além de estratégias de SEO + GEO para buscadores e motores generativos. O objetivo é alinhar tráfego pago, orgânico e inteligência de conteúdo para gerar crescimento previsível em todo o ciclo de aquisição.',
+    tags: ['CANAIS', 'MÍDIA PAGA'],
   },
   {
     q: 'Como é a implementação?',
     a: 'A implementação começa com diagnóstico estratégico para mapear gargalos e priorizar os agentes certos para sua operação. Em seguida, configuramos o ambiente, conectamos dados, ativamos os fluxos de execução e acompanhamos a evolução com indicadores traduzidos para impacto no caixa.',
+    tags: ['IMPLEMENTAÇÃO', 'PROCESSO'],
+  },
+];
+
+const useCasesSectors = [
+  {
+    id: 'social-media',
+    title: 'Social Media',
+    description: 'Automatize a criação de conteúdo, análise de engajamento e distribuição inteligente para Instagram, TikTok e LinkedIn com agentes treinados na voz da sua marca.',
+    cards: [
+      { title: 'Criação de Criativos', description: 'Gere imagens e vídeos virais com IA alinhados à identidade visual.' },
+      { title: 'Calendário Editorial', description: 'Planejamento automático de pautas com base em tendências e dados do setor.' },
+    ],
+    nodes: [
+      { label: 'IDEIA DE CONTEÚDO', icon: '💡' },
+      { label: 'INSTAGRAM', icon: '📸' },
+      { label: 'TIKTOK', icon: '🎬' },
+      { label: 'LINKEDIN', icon: '💼' },
+    ],
+    outputs: [
+      { label: 'CRIATIVO IG', color: '#E1306C' },
+      { label: 'VÍDEO VIRAL', color: '#ff6a00' },
+      { label: 'POST LK', color: '#0077B5' },
+    ],
+  },
+  {
+    id: 'ecommerce',
+    title: 'E-Commerce',
+    description: 'Otimize fichas de produto, gestão de catálogo e campanhas de remarketing com inteligência artificial para aumentar o faturamento com margem sustentável.',
+    cards: [
+      { title: 'Fotos de Produto com IA', description: 'Imagens profissionais geradas automaticamente para todo o catálogo.' },
+      { title: 'Remarketing Inteligente', description: 'Campanhas dinâmicas que seguem o comportamento de compra do usuário.' },
+    ],
+    nodes: [
+      { label: 'FOTO DO PRODUTO', icon: '📦' },
+      { label: 'REMOVER FUNDO', icon: '✂️' },
+      { label: 'MELHORAR', icon: '✨' },
+    ],
+    outputs: [
+      { label: 'PRODUTO FINAL', color: '#ff6a00' },
+      { label: 'ROAS +40%', color: '#10b981' },
+    ],
+  },
+  {
+    id: 'marketing',
+    title: 'Marketing',
+    description: 'Construa funis completos, gere copies de alta conversão e gerencie campanhas multicanal com supervisão agêntica e foco direto em resultado de caixa.',
+    cards: [
+      { title: 'Funil de Captação', description: 'Páginas, e-mails e automações integradas para captar leads qualificados.' },
+      { title: 'Copy de Alta Conversão', description: 'Textos persuasivos gerados com base no perfil do público e dados de mercado.' },
+    ],
+    nodes: [
+      { label: 'PÚBLICO-ALVO', icon: '🎯' },
+      { label: 'COPY IA', icon: '✍️' },
+      { label: 'LANDING PAGE', icon: '🌐' },
+    ],
+    outputs: [
+      { label: 'LEAD QUALIFICADO', color: '#10b981' },
+      { label: 'CONVERSÃO', color: '#ff6a00' },
+    ],
+  },
+  {
+    id: 'campanhas',
+    title: 'Campanhas Patrocinadas',
+    description: 'Gerencie Google Ads e Meta Ads com inteligência artificial que otimiza lances, orçamentos e segmentações em tempo real para maximizar o ROAS da operação.',
+    cards: [
+      { title: 'Google Ads & Meta Ads', description: 'Gestão integrada com otimização automática de campanhas e lances inteligentes.' },
+      { title: 'Otimização de ROAS', description: 'Algoritmo agêntico que redistribui verba para os conjuntos com melhor retorno.' },
+    ],
+    nodes: [
+      { label: 'ORÇAMENTO', icon: '💰' },
+      { label: 'GOOGLE ADS', icon: '🔍' },
+      { label: 'META ADS', icon: '📱' },
+    ],
+    outputs: [
+      { label: 'ROAS OTIMIZADO', color: '#3b82f6' },
+      { label: 'CPL REDUZIDO', color: '#10b981' },
+    ],
+  },
+  {
+    id: 'posicionamento',
+    title: 'Posicionamento Estratégico',
+    description: 'Domine o resultado orgânico e generativo com SEO + GEO, análise de concorrentes e construção de autoridade de marca baseada em dados reais de mercado.',
+    cards: [
+      { title: 'SEO & GEO', description: 'Visibilidade em buscadores tradicionais e em IAs como ChatGPT e Gemini.' },
+      { title: 'Análise de Concorrentes', description: 'Mapeamento de lacunas e oportunidades estratégicas no seu mercado.' },
+    ],
+    nodes: [
+      { label: 'PESQUISA DE MERCADO', icon: '🔎' },
+      { label: 'SEO', icon: '📈' },
+      { label: 'GEO (IA)', icon: '🤖' },
+    ],
+    outputs: [
+      { label: 'AUTORIDADE', color: '#8b5cf6' },
+      { label: 'TRÁFEGO ORGÂNICO', color: '#10b981' },
+    ],
   },
 ];
 
@@ -134,19 +229,371 @@ const ALL_LOGS = [
   { id: 8, icon: Zap, title: 'Gerador de Criativos', subtitle: 'Nova variação de vídeo atinge 8% de CTR', value: 'Vencedor', color: 'text-emerald-400' }
 ];
 
+function UseCasesSection() {
+  const [activeSectorIndex, setActiveSectorIndex] = useState(0);
+  const categoryRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const rightPanelRef = useRef<HTMLDivElement | null>(null);
+  const [rightPanelOffset, setRightPanelOffset] = useState(0);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const activeEl = categoryRefs.current[activeSectorIndex];
+    if (!activeEl) return;
+
+    const updateOffset = () => {
+      const rightPanelEl = rightPanelRef.current;
+      const heightLeft = activeEl.offsetHeight;
+      const heightRight = rightPanelEl ? rightPanelEl.offsetHeight : 360;
+      const offset = activeEl.offsetTop + (heightLeft - heightRight) / 2;
+      setRightPanelOffset(offset);
+    };
+
+    updateOffset();
+    const timer = setTimeout(updateOffset, 150);
+
+    const resizeObserver = new ResizeObserver(updateOffset);
+    resizeObserver.observe(activeEl);
+
+    const rightPanelEl = rightPanelRef.current;
+    if (rightPanelEl) {
+      resizeObserver.observe(rightPanelEl);
+    }
+
+    window.addEventListener('resize', updateOffset);
+    return () => {
+      clearTimeout(timer);
+      resizeObserver.disconnect();
+      window.removeEventListener('resize', updateOffset);
+    };
+  }, [activeSectorIndex]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || window.innerWidth < 1024) return;
+
+    const observerOptions = {
+      root: null,
+      rootMargin: '-35% 0px -35% 0px',
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const index = categoryRefs.current.indexOf(entry.target as HTMLDivElement);
+          if (index !== -1) {
+            setActiveSectorIndex(index);
+          }
+        }
+      });
+    }, observerOptions);
+
+    categoryRefs.current.forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  const handleHeaderClick = (idx: number) => {
+    setActiveSectorIndex(idx);
+    categoryRefs.current[idx]?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
+  };
+
+  return (
+    <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full lg:overflow-visible overflow-hidden">
+      <div className="mx-auto max-w-[1260px]">
+        <motion.div
+          variants={revealVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="text-center max-w-[720px] mx-auto mb-20"
+        >
+          <span className="text-[13px] font-bold text-[#ff6a00]">Arquitetura por Setor</span>
+          <h2 className="text-3xl sm:text-4xl font-black mt-2">Aplicações Práticas</h2>
+          <p className="text-slate-400 mt-4 text-sm leading-relaxed">
+            Descubra como equipes de marketing utilizam nossos agentes para automatizar e escalar resultados em cada área.
+          </p>
+        </motion.div>
+
+        {/* Desktop Layout: Scroll-Linked Sticky Accordion */}
+        <div className="hidden lg:grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-start relative">
+          {/* Left Column: Accordions list */}
+          <div className="space-y-6">
+            {useCasesSectors.map((sector, idx) => {
+              const isActive = activeSectorIndex === idx;
+              return (
+                <div
+                  key={sector.id}
+                  ref={(el) => {
+                    categoryRefs.current[idx] = el;
+                  }}
+                  className={`flex gap-6 p-6 rounded-2xl border transition-all duration-500 cursor-pointer ${
+                    isActive
+                      ? 'border-[#ff6a00]/30 bg-zinc-950/90 shadow-[0_4px_24px_rgba(255,106,0,0.08)]'
+                      : 'border-white/5 bg-transparent hover:border-white/10'
+                  }`}
+                  onClick={() => handleHeaderClick(idx)}
+                >
+                  {/* Active side indicator */}
+                  <div className="w-[3px] shrink-0 relative rounded-full overflow-hidden bg-zinc-800">
+                    <motion.div
+                      className="absolute top-0 left-0 right-0 bg-[#ff6a00] rounded-full"
+                      initial={{ height: 0 }}
+                      animate={{ height: isActive ? '100%' : '0%' }}
+                      transition={{ duration: 0.4 }}
+                    />
+                  </div>
+
+                  <div className="flex-1">
+                    <h3 className={`text-xl font-black transition-colors duration-300 ${isActive ? 'text-white' : 'text-slate-400'}`}>
+                      {sector.title}
+                    </h3>
+
+                    <AnimatePresence initial={false}>
+                      {isActive && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.35, ease: 'easeInOut' }}
+                          className="overflow-hidden"
+                        >
+                          <p className="mt-3 text-slate-300 text-sm leading-relaxed">
+                            {sector.description}
+                          </p>
+                          <div className="mt-6 grid grid-cols-2 gap-3">
+                            {sector.cards.map((card, cIdx) => (
+                              <div
+                                key={cIdx}
+                                className="rounded-xl border border-white/5 bg-zinc-950/90 p-4 hover:border-[#ff6a00]/30 transition-colors"
+                              >
+                                <span className="text-[11px] font-bold text-[#ff8f3a]">
+                                  {sector.title}
+                                </span>
+                                <h4 className="text-sm font-bold text-white mt-1">{card.title}</h4>
+                                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{card.description}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Right Column: Sticky Workflow diagram */}
+          <motion.div
+            ref={rightPanelRef}
+            className="w-full self-start"
+            animate={{ y: rightPanelOffset }}
+            transition={{ type: 'spring', stiffness: 100, damping: 20, mass: 1 }}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeSectorIndex}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="relative rounded-[20px] border border-white/8 bg-zinc-950/90 p-6 overflow-hidden min-h-[360px] flex flex-col justify-center shadow-[0_18px_48px_rgba(0,0,0,0.4)]"
+              >
+                <div className="absolute top-0 right-0 w-48 h-48 bg-[#ff6a00]/5 rounded-full filter blur-[60px] pointer-events-none" />
+
+                {/* Workflow title */}
+                <p className="text-[9px] font-extrabold uppercase tracking-widest text-slate-500 mb-5">
+                  FLUXO AGÊNTICO — {useCasesSectors[activeSectorIndex].title.toUpperCase()}
+                </p>
+
+                {/* Node -> Output layout with curved animated SVG connectors */}
+                <div className="flex items-center gap-2 relative z-10">
+                  {/* Source nodes */}
+                  <div className="flex flex-col gap-3.5 flex-1">
+                    {useCasesSectors[activeSectorIndex].nodes.map((node, nIdx) => (
+                      <div
+                        key={nIdx}
+                        className="flex items-center gap-2.5 rounded-[10px] border border-white/8 bg-zinc-900/60 px-3 py-2.5 shadow-sm"
+                      >
+                        <span className="text-base leading-none">{node.icon}</span>
+                        <span className="text-[10px] font-mono font-bold text-slate-300 uppercase tracking-wide leading-tight">{node.label}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* SVG Connector Column */}
+                  <div className="w-16 h-[200px] relative flex items-center justify-center shrink-0">
+                    <svg className="absolute inset-0 w-full h-full overflow-visible" fill="none" viewBox="0 0 64 200" preserveAspectRatio="none">
+                      {useCasesSectors[activeSectorIndex].nodes.map((_, nIdx) => {
+                        const nodesCount = useCasesSectors[activeSectorIndex].nodes.length;
+                        const outputsCount = useCasesSectors[activeSectorIndex].outputs.length;
+                        
+                        // Distribute coordinates nicely along a 200px height viewbox
+                        const yStart = nodesCount === 1 ? 100 : (nIdx / (nodesCount - 1)) * 160 + 20;
+                        
+                        return useCasesSectors[activeSectorIndex].outputs.map((_, oIdx) => {
+                          const yEnd = outputsCount === 1 ? 100 : (oIdx / (outputsCount - 1)) * 160 + 20;
+                          return (
+                            <path
+                              key={`${nIdx}-${oIdx}`}
+                              d={`M 0,${yStart} C 32,${yStart} 32,${yEnd} 64,${yEnd}`}
+                              stroke="url(#gradient-orange-blue)"
+                              strokeWidth="1.5"
+                              className="animate-dashdraw opacity-40 hover:opacity-100 transition-opacity"
+                            />
+                          );
+                        });
+                      })}
+                      <defs>
+                        <linearGradient id="gradient-orange-blue" x1="0%" y1="0%" x2="100%" y2="0%">
+                          <stop offset="0%" stopColor="#ff6a00" />
+                          <stop offset="100%" stopColor="#ff8f3a" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </div>
+
+                  {/* Output nodes */}
+                  <div className="flex flex-col gap-3.5 flex-1">
+                    {useCasesSectors[activeSectorIndex].outputs.map((output, oIdx) => (
+                      <div
+                        key={oIdx}
+                        className="rounded-[10px] border px-3 py-2.5 text-center shadow-sm"
+                        style={{ borderColor: output.color + '40', backgroundColor: output.color + '15' }}
+                      >
+                        <span
+                          className="text-[10px] font-mono font-extrabold uppercase tracking-wide"
+                          style={{ color: output.color }}
+                        >
+                          {output.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Animated background flow line */}
+                <div className="absolute left-6 top-[70px] bottom-6 w-[2px] bg-gradient-to-b from-[#ff6a00]/30 to-transparent pointer-events-none" />
+              </motion.div>
+            </AnimatePresence>
+          </motion.div>
+        </div>
+
+        {/* Mobile & Tablet Layout: Stacked sectors */}
+        <div className="space-y-24 lg:hidden">
+          {useCasesSectors.map((sector) => (
+            <motion.div
+              key={sector.id}
+              variants={revealVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="grid gap-12 items-center"
+            >
+              {/* Content */}
+              <div className="flex gap-6">
+                <div className="w-[3px] bg-[#ff6a00] rounded-full shrink-0" />
+                <div>
+                  <h3 className="text-2xl sm:text-3xl font-black text-white">{sector.title}</h3>
+                  <p className="mt-3 text-slate-300 text-sm leading-relaxed">{sector.description}</p>
+                  <div className="mt-6 grid grid-cols-2 gap-3">
+                    {sector.cards.map((card, cIdx) => (
+                      <div
+                        key={cIdx}
+                        className="rounded-[16px] border border-[#ff6a00]/20 bg-zinc-950/95 p-4 hover:border-[#ff6a00]/40 transition-colors"
+                      >
+                        <span className="text-[9px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">
+                          {sector.title.toUpperCase()}
+                        </span>
+                        <h4 className="text-sm font-bold text-white mt-1">{card.title}</h4>
+                        <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{card.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Workflow visual */}
+              <div className="relative rounded-[20px] border border-white/8 bg-zinc-950/90 p-6 overflow-hidden min-h-[260px] flex flex-col justify-center shadow-[0_18px_48px_rgba(0,0,0,0.4)]">
+                <div className="absolute top-0 right-0 w-48 h-48 bg-[#ff6a00]/5 rounded-full filter blur-[60px] pointer-events-none" />
+
+                <p className="text-[9px] font-extrabold uppercase tracking-widest text-slate-500 mb-5">
+                  FLUXO AGÊNTICO — {sector.title.toUpperCase()}
+                </p>
+
+                <div className="flex items-center gap-4 relative z-10">
+                  {/* Source nodes */}
+                  <div className="flex flex-col gap-2.5 flex-1">
+                    {sector.nodes.map((node, nIdx) => (
+                      <div
+                        key={nIdx}
+                        className="flex items-center gap-2.5 rounded-[10px] border border-white/8 bg-zinc-900/60 px-3 py-2"
+                      >
+                        <span className="text-base leading-none">{node.icon}</span>
+                        <span className="text-[10px] font-mono font-bold text-slate-300 uppercase tracking-wide leading-tight">{node.label}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Connector */}
+                  <div className="flex flex-col items-center gap-1 shrink-0">
+                    <div className="h-[2px] w-8 border-t-2 border-dashed border-[#ff6a00]/40" />
+                    <ChevronRight size={14} className="text-[#ff6a00]/60" />
+                  </div>
+
+                  {/* Output nodes */}
+                  <div className="flex flex-col gap-2.5 flex-1">
+                    {sector.outputs.map((output, oIdx) => (
+                      <div
+                        key={oIdx}
+                        className="rounded-[10px] border px-3 py-2 text-center"
+                        style={{ borderColor: output.color + '40', backgroundColor: output.color + '15' }}
+                      >
+                        <span
+                          className="text-[10px] font-mono font-extrabold uppercase tracking-wide"
+                          style={{ color: output.color }}
+                        >
+                          {output.label}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Animated flow line */}
+                <div className="absolute left-6 top-[70px] bottom-6 w-[2px] bg-gradient-to-b from-[#ff6a00]/30 to-transparent pointer-events-none" />
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function Suggestion5LandingPage() {
-  const [activeTab, setActiveTab] = useState<'aquisicao' | 'conversao' | 'escala'>('aquisicao');
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
   const [isLuccaChatOpen, setIsLuccaChatOpen] = useState(false);
   const [luccaAutoMessage, setLuccaAutoMessage] = useState<string | null>(null);
+
+  const { scrollY } = useScroll();
+  const backgroundY = useTransform(scrollY, [0, 1000], [0, 200]);
+
   // Mobile responsive hook removed as 3D transforms are disabled
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 0.8,
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
+      lerp: 0.1,
       smoothWheel: true,
-      wheelMultiplier: 1.1,
+      wheelMultiplier: 1,
+      touchMultiplier: 2,
+      infinite: false,
     });
 
     let frameId: number;
@@ -161,128 +608,24 @@ export default function Suggestion5LandingPage() {
       lenis.destroy();
     };
   }, []);
-  // No parallax or spring bindings
-  
-  // Slots states
-  const [slots, setSlots] = useState<{
-    aquisicao: CatalogAgent | null;
-    conversao: CatalogAgent | null;
-    escala: CatalogAgent | null;
-  }>({
-    aquisicao: null,
-    conversao: null,
-    escala: null
-  });
-
-
-
-  // terminalEndRef removed to prevent auto-scrolling
-
-  // Group agents by stage for assembly choice
-  const groupedAgents = useMemo(() => {
-    const aqTitles = [
-      'Analista de Tráfego',
-      'Gerador de Criativos',
-      'Análise Viral',
-      'Analisador de Público',
-      'DNA da Marca',
-      'Público-Alvo Ideal',
-      'SEO & GEO',
-      'Agente Editorial',
-      'Radar de Oportunidades',
-      'Análise de Concorrentes'
-    ];
-    const cvTitles = [
-      'Gerador de Copies de Conversão',
-      'Rastreador Cirúrgico',
-      'Diagnóstico de Landing Page',
-      'Diagnóstico de Funil',
-      'Gerador de Testes A/B',
-      'Avaliador de Oferta'
-    ];
-    const esTitles = [
-      'Preditor de Funil',
-      'Simulador de ROAS',
-      'Auditor de Desperdício',
-      'Otimizador de Orçamento'
-    ];
-
-    const aqAgents = catalogAgents.filter(a => aqTitles.includes(a.title));
-    const cvAgents = catalogAgents.filter(a => cvTitles.includes(a.title));
-    const esAgents = catalogAgents.filter(a => esTitles.includes(a.title));
-
-    return {
-      aquisicao: aqAgents,
-      conversao: cvAgents,
-      escala: esAgents
-    };
-  }, []);
-
-  // Calculate dynamic simulator metrics based on slots
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const metrics = useMemo(() => {
-    let roas = 1.2;
-    let cpl = 45.0;
-    let conversion = 0.8;
-    let savings = 0;
-
-    if (slots.aquisicao) {
-      roas += 1.1;
-      cpl -= 12.0;
-      savings += 1500;
-    }
-    if (slots.conversao) {
-      conversion += 0.7;
-      roas += 0.8;
-      cpl -= 8.0;
-      savings += 2200;
-    }
-    if (slots.escala) {
-      roas += 1.1;
-      conversion += 0.8;
-      cpl -= 7.0;
-      savings += 3500;
-    }
-
-    return {
-      roas: roas.toFixed(1) + 'x',
-      cpl: 'R$ ' + cpl.toFixed(2),
-      conversion: conversion.toFixed(1) + '%',
-      savings: 'R$ ' + savings.toLocaleString('pt-BR') + '/mês',
-      status: slots.aquisicao && slots.conversao && slots.escala 
-        ? 'Previsibilidade e Escala Ativadas'
-        : (slots.aquisicao || slots.conversao || slots.escala ? 'Time em Configuração...' : 'Operação Manual Crítica')
-    };
-  }, [slots]);
-
-  const handleAssignAgent = (stage: 'aquisicao' | 'conversao' | 'escala', agent: CatalogAgent) => {
-    setSlots(prev => ({ ...prev, [stage]: agent }));
-  };
-
-
-  const handleClearSlots = () => {
-    setSlots({ aquisicao: null, conversao: null, escala: null });
-  };
-
-  // Scroll terminal effect removed to prevent page jumping on load and agent allocation
-
   const handleOpenSpecialistChat = () => {
     setLuccaAutoMessage(null);
     setIsLuccaChatOpen(true);
   };
 
-  const handleRequestDemo = () => {
-    const teamSummary = `Olá! Montei meu time de IA no simulador: Atração [${slots.aquisicao?.title || 'Nenhum'}], Conversão [${slots.conversao?.title || 'Nenhum'}], Escala [${slots.escala?.title || 'Nenhum'}]. Gostaria de um diagnóstico e demonstração de implantação.`;
-    setLuccaAutoMessage(teamSummary);
-    setIsLuccaChatOpen(true);
-  };
-
   return (
-    <main className="relative min-h-screen bg-[#040811] text-white overflow-hidden selection:bg-[#ff6a00] selection:text-white">
-      {/* Background radial overlays */}
-      <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-gradient-to-br from-[#ff6a00]/10 to-transparent rounded-full filter blur-[120px] pointer-events-none" />
-      <div className="absolute top-[800px] right-1/4 w-[600px] h-[600px] bg-gradient-to-br from-[#12284c]/20 to-transparent rounded-full filter blur-[150px] pointer-events-none" />
-      <div className="absolute bottom-0 left-1/3 w-[500px] h-[500px] bg-gradient-to-br from-[#ff6a00]/5 to-transparent rounded-full filter blur-[120px] pointer-events-none" />
+    <main className="relative min-h-screen bg-[#040811] text-white overflow-x-hidden selection:bg-[#ff6a00] selection:text-white">
+      {/* Background radial overlays — CSS radial-gradient avoids filter layers entirely */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: [
+            'radial-gradient(ellipse 600px 600px at 25% 0%, rgba(255,106,0,0.06) 0%, transparent 70%)',
+            'radial-gradient(ellipse 700px 700px at 75% 35%, rgba(18,40,76,0.10) 0%, transparent 70%)',
+            'radial-gradient(ellipse 500px 500px at 33% 100%, rgba(255,106,0,0.03) 0%, transparent 70%)',
+          ].join(', '),
+        }}
+      />
       
       {/* Header Grid Line patterns */}
       <div 
@@ -293,25 +636,24 @@ export default function Suggestion5LandingPage() {
         }}
       />
 
-      {/* Header Menu Wrapper */}
-      <div className="relative z-[240] mx-auto max-w-[1260px] px-5 md:px-8 pt-5">
-        <PrimaryTopMenu
-          onSpecialistClick={handleOpenSpecialistChat}
-          onRequestDemoClick={handleRequestDemo}
-        />
-      </div>
-
       {/* HERO SECTION WITH STORYTELLING NARRATIVE */}
-      <section className="relative w-full min-h-[90vh] flex items-end z-10 pt-[115px] pb-16 md:pb-24 overflow-hidden bg-transparent">
-        <div className="absolute inset-0 z-0 w-full h-full overflow-hidden bg-[#040811] pointer-events-none">
-          <Image
-            src="/images/backgrounds/wall01.png"
-            alt="Fundo Hub"
-            fill
-            priority
-            className="object-cover object-center"
+      <section className="relative w-full min-h-[90vh] flex items-stretch z-10 pt-[139px] pb-16 md:pb-24 overflow-hidden bg-transparent">
+        <div className="absolute inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
+          <motion.div
+            className="absolute w-full bg-cover bg-center"
+            style={{
+              backgroundImage: "url('/images/backgrounds/bh_home.png')",
+              y: backgroundY,
+              height: '140%',
+              top: '-20%',
+              left: 0,
+              right: 0,
+            }}
           />
         </div>
+
+        {/* Smooth top gradient fade to blend background image with the top menu bar */}
+        <div className="absolute top-0 left-0 right-0 h-36 bg-gradient-to-b from-[#08101e] via-[#08101e]/60 to-transparent z-[1] pointer-events-none" />
 
         {/* Subtle left-side readability gradient — doesn't block video, just anchors text */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/20 to-transparent z-[1] pointer-events-none" />
@@ -320,45 +662,53 @@ export default function Suggestion5LandingPage() {
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#03060c] to-transparent z-[1] pointer-events-none" />
 
         {/* Full-width container — no max-w, no centering, content reaches window edges */}
-        <div className="relative z-10 w-full flex flex-col lg:flex-row items-stretch lg:items-end justify-between gap-8 lg:gap-0">
+        <div className="relative z-10 w-full flex flex-col lg:flex-row items-stretch justify-between gap-8 lg:gap-0">
 
           {/* LEFT — headline + subtitle: hugs the left window edge */}
-          <div className="pl-4 lg:pl-8 pr-4 lg:pr-10 w-full lg:flex-[6]">
-            {/* Orange vertical accent bar */}
-            <div className="flex items-start gap-5">
-              <div className="w-[3px] self-stretch bg-[#ff6a00] rounded-full shrink-0 mt-1" />
-              <div>
-                <h1 className="text-[40px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
-                  Existe uma versão da sua empresa{" "}
-                  <br className="hidden lg:inline" />
-                  onde cada real investido tem destino{" "}
-                  <br className="hidden lg:inline" />
-                  <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
-                    certo e retorno mensurável.
-                  </span>
-                </h1>
-                <p className="mt-5 text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-[520px] drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
-                  Agentes de IA que orquestram dados, mídia e criatividade para gerar resultados consistentes e escaláveis.
-                </p>
+          <div className="pl-4 lg:pl-8 pr-4 lg:pr-10 w-full lg:flex-[6] lg:flex lg:flex-col lg:justify-center">
+            <div>
+              <h1 className="text-[42px] md:text-[58px] lg:text-[68px] font-black leading-[1.05] tracking-tight text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.6)]">
+                Existe uma versão da sua empresa{" "}
+                <br className="hidden lg:inline" />
+                onde cada real investido tem destino{" "}
+                <br className="hidden lg:inline" />
+                <span className="text-[#ff6a00]">
+                  certo e retorno mensurável.
+                </span>
+              </h1>
+              <p className="mt-5 text-[15px] sm:text-[17px] text-white/80 leading-relaxed max-w-[480px] drop-shadow-[0_1px_6px_rgba(0,0,0,0.5)]">
+                Agentes de IA que orquestram dados, mídia e criatividade para gerar resultados consistentes e escaláveis.
+              </p>
+              {/* Social proof — below fold anchor */}
+              <div className="flex flex-wrap items-center gap-3 mt-6 text-xs text-white/50">
+                <span className="font-bold text-white/70">25+ empresas</span>
+                <span>·</span>
+                <span>R$ 2M+ em mídia gerenciada</span>
+                <span>·</span>
+                <span className="text-emerald-400 font-bold">ROAS médio 7.5x</span>
               </div>
             </div>
           </div>
 
-          {/* 1px Orange Divider */}
-          <div className="hidden lg:block w-px self-stretch bg-[#ff6a00]/50 shrink-0" />
-
           {/* RIGHT — CTAs + badges: hugs the right window edge */}
-          <div className="w-full lg:flex-[4] pl-4 lg:pl-10 pr-4 lg:pr-8 flex flex-col gap-6 items-end">
+          <div className="w-full lg:flex-[4] pl-4 lg:pl-10 pr-4 lg:pr-8 flex flex-col gap-6 lg:justify-end items-end">
             {/* CTAs stacked vertically */}
             <div className="flex flex-col gap-3 w-full max-w-[280px]">
               <button
                 type="button"
                 onClick={handleOpenSpecialistChat}
-                className="w-full justify-center inline-flex items-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_24px_rgba(255,106,0,0.45)] cursor-pointer"
+                className="w-full justify-center inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_24px_rgba(255,106,0,0.45)] cursor-pointer"
               >
                 Fale com um especialista
                 <ArrowRight size={16} />
               </button>
+              <Link
+                href="/hub"
+                className="w-full justify-center inline-flex items-center gap-2 rounded-xl border border-white/20 hover:border-white/40 transition-all px-8 py-3.5 text-[13px] font-bold text-white/80 hover:text-white"
+              >
+                Explorar o Hub
+                <ArrowRight size={14} />
+              </Link>
             </div>
 
             {/* Feature badges — vertical list */}
@@ -396,8 +746,74 @@ export default function Suggestion5LandingPage() {
         </div>
       </section>
 
+      {/* CASOS DE USO POR SETOR */}
+      <UseCasesSection />
 
+      {/* AGENTES EM DESTAQUE */}
+      <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full overflow-hidden">
+        <motion.div
+          variants={revealVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          className="mx-auto max-w-[1260px]"
+        >
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-14">
+            <div>
+              <span className="text-[13px] font-bold text-[#ff6a00]">Catálogo</span>
+              <h2 className="text-3xl sm:text-4xl font-black mt-2">
+                Agentes de IA que Executam por Você
+              </h2>
+              <p className="text-slate-400 mt-3 text-sm max-w-[540px]">
+                Acesse e ative agentes especializados para cada etapa do funil — da atração à escala de resultados.
+              </p>
+            </div>
+            <Link
+              href="/agentes-ia"
+              className="inline-flex items-center gap-2 rounded-xl border border-[#ff6a00]/40 px-6 py-3 text-sm font-extrabold text-[#ff8f3a] hover:bg-[#ff6a00]/10 transition-colors shrink-0"
+            >
+              Explorar todos os Agentes
+              <ArrowRight size={14} />
+            </Link>
+          </div>
 
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {catalogAgents.slice(0, 8).map((agent) => (
+              <div
+                key={agent.title}
+                className="group relative rounded-xl border border-white/5 bg-zinc-950/90 p-5 flex flex-col justify-between hover:border-[#ff6a00]/30 transition-all hover:shadow-[0_4px_24px_rgba(255,106,0,0.08)] min-h-[220px]"
+              >
+                <div>
+                  <div className="mb-4">
+                    <span className="inline-block rounded-md bg-white/5 px-2.5 py-1 text-[11px] font-bold text-[#ff8f3a]">
+                      {agent.category}
+                    </span>
+                  </div>
+                  <h3 className="text-sm font-bold text-white group-hover:text-[#ff8f3a] transition-colors leading-snug">
+                    {agent.title}
+                  </h3>
+                  <p className="text-[11px] text-slate-400 mt-2 leading-relaxed line-clamp-3">
+                    {agent.description}
+                  </p>
+                </div>
+                <div className="mt-4 flex items-center justify-between border-t border-white/5 pt-4">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-400 font-mono uppercase">
+                    <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                    ONLINE
+                  </span>
+                  <Link
+                    href="/agentes-ia"
+                    className="inline-flex items-center gap-1 text-[10px] font-extrabold text-[#ff8f3a] hover:gap-2 transition-all"
+                  >
+                    Usar Agente
+                    <ArrowRight size={10} />
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
 
         {/* NARRATIVE SECTION: COMO FUNCIONA? */}
         <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full overflow-hidden">
@@ -468,205 +884,320 @@ export default function Suggestion5LandingPage() {
           </motion.div>
         </section>
 
-      {/* HUB ESTRATÉGICO (ex-INTERACTIVE AGENT ASSEMBLY CONTROL ROOM) */}
-      <section id="control-room" className="relative z-10 overflow-hidden py-16 w-full px-5 md:px-8">
-        
+      {/* IMPLANTAÇÃO EM 4 ETAPAS */}
+      <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full overflow-hidden">
         <motion.div
           variants={revealVariants}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-120px" }}
-          className="relative z-10 mx-auto max-w-[1260px]"
+          viewport={{ once: true, margin: "-100px" }}
+          className="mx-auto max-w-[1260px] grid gap-16 lg:grid-cols-2 items-center"
         >
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
-            <div className="max-w-[620px]">
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">Hub Estratégico (Interactive Assembly)</span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">
-                Monte sua Equipe de Agentes de IA
-              </h2>
-              <p className="text-slate-400 mt-3">
-                Preencha os slots de funil abaixo selecionando os agentes na lista. Veja em tempo real o chat de insights com Lucca e o impacto projetado nos indicadores de caixa.
-              </p>
-            </div>
-            
-            <button 
-              type="button"
-              onClick={handleClearSlots}
-              className="inline-flex cursor-pointer items-center gap-1.5 px-4 py-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-colors text-xs font-bold uppercase tracking-wider text-slate-300 self-start lg:self-auto"
-            >
-              <X size={12} />
-              Limpar Equipe
-            </button>
+          {/* Left: Steps */}
+          <div>
+            <span className="inline-block rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-[#ff8f3a] mb-6">
+              PROCESSO DE IMPLANTAÇÃO
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold leading-tight">
+              Do Diagnóstico à Escala{' '}
+              <br />
+              <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
+                em 4 Etapas
+              </span>
+            </h2>
+            <p className="text-slate-300 mt-4 text-sm leading-relaxed max-w-[480px]">
+              Nossa metodologia conecta diagnóstico, configuração, ativação e otimização em um ciclo contínuo orientado a resultados reais de caixa.
+            </p>
+            <ol className="mt-10 space-y-6">
+              {[
+                { n: 1, title: 'Diagnóstico Estratégico', desc: 'Mapeamos gargalos da operação e identificamos os agentes certos para o seu modelo de negócio.' },
+                { n: 2, title: 'Configuração do Ambiente', desc: 'Conectamos fontes de dados, APIs de mídia e fluxos para alimentar os agentes com informação real.' },
+                { n: 3, title: 'Ativação dos Agentes', desc: 'Agentes são implantados e iniciam rotinas automatizadas de análise, decisão e execução.' },
+                { n: 4, title: 'Análise e Otimização Contínua', desc: 'Monitore indicadores com relatórios traduzidos para impacto direto no caixa, em tempo real.' },
+              ].map(({ n, title, desc }) => (
+                <li key={n} className="flex gap-4">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ff6a00] text-white text-sm font-black">
+                    {n}
+                  </span>
+                  <div>
+                    <p className="text-sm font-bold text-white">{title}</p>
+                    <p className="text-[12px] text-slate-400 mt-1 leading-relaxed">{desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
-            {/* Left: The Slots & Selector Grid */}
-            <div className="space-y-8 relative">
-
-
-
-              {/* Active Slots Display */}
-              <div className="grid gap-4 sm:grid-cols-3">
-                {/* Slot 1: Aquisição */}
-                <div className={`relative rounded-[20px] border p-5 flex flex-col justify-between min-h-[170px] transition-all ${slots.aquisicao ? 'border-[#ff6a00] bg-[#ff6a00]/10 shadow-[0_10px_30px_rgba(255,106,0,0.1)]' : 'border-dashed border-[#ff6a00]/25 bg-zinc-950/45 backdrop-blur-md'}`}>
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">1. Aquisição</span>
-                      {slots.aquisicao ? (
-                        <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                      ) : (
-                        <span className="inline-flex h-2 w-2 rounded-full bg-amber-500/40" />
-                      )}
-                    </div>
-                    {slots.aquisicao ? (
-                      <div>
-                        <h4 className="text-base font-bold text-white leading-tight">{slots.aquisicao.title}</h4>
-                        <p className="text-[11px] text-slate-400 mt-1 line-clamp-3">{slots.aquisicao.description}</p>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center pt-2 text-center">
-                        <Plus size={20} className="text-slate-500 animate-bounce" />
-                        <span className="text-xs font-semibold text-slate-500 mt-2">Slot Vazio</span>
-                      </div>
-                    )}
-                  </div>
-                  {slots.aquisicao && (
-                    <div className="mt-4 flex items-center justify-between border-t border-[#ff6a00]/15 pt-3">
-                      <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase">ATIVO</span>
-                      <span className="text-[10px] text-slate-400 font-mono">Rotina #01</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Slot 2: Conversão */}
-                <div className={`relative rounded-[20px] border p-5 flex flex-col justify-between min-h-[170px] transition-all ${slots.conversao ? 'border-[#ff6a00] bg-[#ff6a00]/10 shadow-[0_10px_30px_rgba(255,106,0,0.15)]' : 'border-dashed border-[#ff6a00]/25 bg-zinc-950/45 backdrop-blur-md'}`} style={{ transitionProperty: 'all' }}>
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">2. Conversão</span>
-                      {slots.conversao ? (
-                        <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                      ) : (
-                        <span className="inline-flex h-2 w-2 rounded-full bg-amber-500/40" />
-                      )}
-                    </div>
-                    {slots.conversao ? (
-                      <div>
-                        <h4 className="text-base font-bold text-white leading-tight">{slots.conversao.title}</h4>
-                        <p className="text-[11px] text-slate-400 mt-1 line-clamp-3">{slots.conversao.description}</p>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center pt-2 text-center">
-                        <Plus size={20} className="text-slate-500 animate-bounce" />
-                        <span className="text-xs font-semibold text-slate-500 mt-2">Slot Vazio</span>
-                      </div>
-                    )}
-                  </div>
-                  {slots.conversao && (
-                    <div className="mt-4 flex items-center justify-between border-t border-[#ff6a00]/15 pt-3">
-                      <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase">ATIVO</span>
-                      <span className="text-[10px] text-slate-400 font-mono">Rotina #02</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Slot 3: Escala */}
-                <div className={`relative rounded-[20px] border p-5 flex flex-col justify-between min-h-[170px] transition-all ${slots.escala ? 'border-[#ff6a00] bg-[#ff6a00]/10 shadow-[0_10px_30px_rgba(255,106,0,0.15)]' : 'border-dashed border-[#ff6a00]/25 bg-zinc-950/45 backdrop-blur-md'}`} style={{ transitionProperty: 'all' }}>
-                  <div>
-                    <div className="flex justify-between items-center mb-3">
-                      <span className="text-[10px] uppercase tracking-widest text-slate-400 font-bold">3. Escala</span>
-                      {slots.escala ? (
-                        <span className="inline-flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-                      ) : (
-                        <span className="inline-flex h-2 w-2 rounded-full bg-amber-500/40" />
-                      )}
-                    </div>
-                    {slots.escala ? (
-                      <div>
-                        <h4 className="text-base font-bold text-white leading-tight">{slots.escala.title}</h4>
-                        <p className="text-[11px] text-slate-400 mt-1 line-clamp-3">{slots.escala.description}</p>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center justify-center pt-2 text-center">
-                        <Plus size={20} className="text-slate-500 animate-bounce" />
-                        <span className="text-xs font-semibold text-slate-500 mt-2">Slot Vazio</span>
-                      </div>
-                    )}
-                  </div>
-                  {slots.escala && (
-                    <div className="mt-4 flex items-center justify-between border-t border-[#ff6a00]/15 pt-3">
-                      <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase">ATIVO</span>
-                      <span className="text-[10px] text-slate-400 font-mono">Rotina #03</span>
-                    </div>
-                  )}
-                </div>
+          {/* Right: Terminal mockup */}
+          <div className="relative rounded-[20px] border border-white/10 bg-zinc-950/90 overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.5)]">
+            <div className="flex items-center justify-between px-5 py-3 border-b border-white/8 bg-zinc-900/60">
+              <div className="flex items-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-red-500/70" />
+                <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
+                <span className="h-3 w-3 rounded-full bg-emerald-500/70" />
+                <span className="ml-3 text-[11px] text-slate-400 font-mono">Terminal</span>
               </div>
-
-              {/* Selector Tab Controls */}
-              <div className="flex border-b border-[#ff6a00]/15">
-                <button
-                  onClick={() => setActiveTab('aquisicao')}
-                  className={`flex-1 pb-4 text-sm font-bold uppercase tracking-wider border-b-2 transition-colors cursor-pointer ${activeTab === 'aquisicao' ? 'border-[#ff6a00] text-white' : 'border-transparent text-slate-400 hover:text-white'}`}
-                >
-                  Agentes de Aquisição
-                </button>
-                <button
-                  onClick={() => setActiveTab('conversao')}
-                  className={`flex-1 pb-4 text-sm font-bold uppercase tracking-wider border-b-2 transition-colors cursor-pointer ${activeTab === 'conversao' ? 'border-[#ff6a00] text-white' : 'border-transparent text-slate-400 hover:text-white'}`}
-                >
-                  Agentes de Conversão
-                </button>
-                <button
-                  onClick={() => setActiveTab('escala')}
-                  className={`flex-1 pb-4 text-sm font-bold uppercase tracking-wider border-b-2 transition-colors cursor-pointer ${activeTab === 'escala' ? 'border-[#ff6a00] text-white' : 'border-transparent text-slate-400 hover:text-white'}`}
-                >
-                  Agentes de Escala
-                </button>
-              </div>
-
-              {/* Selector Grid of Agents */}
-              <div className="grid gap-3 sm:grid-cols-2">
-                <AnimatePresence mode="wait">
-                  {groupedAgents[activeTab].map((agent) => {
-                    const isSelected = slots[activeTab]?.title === agent.title;
-                    return (
-                      <motion.div
-                        key={agent.title}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        onClick={() => handleAssignAgent(activeTab, agent)}
-                        className="group cursor-pointer"
-                      >
-                        <div className={`relative rounded-[16px] border p-4 transition-all min-h-[140px] ${isSelected ? 'border-[#ff6a00] bg-[#ff6a00]/10 shadow-[0_10px_30px_rgba(255,106,0,0.15)]' : 'border-[#ff6a00]/15 bg-zinc-950/65 hover:border-[#ff6a00]/30 hover:bg-zinc-950/85'}`}>
-                          <div>
-                            <div className="flex items-start justify-between gap-3 mb-2">
-                              <h4 className="text-sm font-bold text-white">{agent.title}</h4>
-                              <span className={`inline-flex h-5 w-5 items-center justify-center rounded-full border text-[10px] ${isSelected ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400' : 'border-[#ff6a00]/25 text-slate-400 group-hover:border-[#ff6a00] group-hover:text-[#ff8f3a] transition-all'}`}>
-                                {isSelected ? <Check size={10} /> : <Plus size={10} />}
-                              </span>
-                            </div>
-                            <p className="text-[11px] leading-relaxed text-slate-400 line-clamp-3">
-                              {agent.description}
-                            </p>
-                          </div>
-                          <div className="mt-3 text-[10px] font-mono text-[#ff8f3a] uppercase font-bold tracking-wider">
-                            {agent.category}
-                          </div>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </AnimatePresence>
+              <div className="flex gap-1">
+                {['JSON', 'Dashboard', 'API'].map((tab, i) => (
+                  <span
+                    key={tab}
+                    className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${i === 0 ? 'bg-white/10 text-white' : 'text-slate-500'}`}
+                  >
+                    {tab}
+                  </span>
+                ))}
               </div>
             </div>
-
-            {/* Right: Lucca Insight Chat */}
-            <div className="space-y-6">
-              {/* Lucca Embedded Interactive Chat */}
-              <LuccaEmbeddedChat slots={slots} />
+            <div className="p-6 font-mono text-[12px] leading-loose space-y-1">
+              <p className="text-slate-500"># 1. Diagnóstico Estratégico</p>
+              <p><span className="text-[#ff8f3a]">POST</span> <span className="text-white">/neuroads/v1/diagnostico</span></p>
+              <p className="text-slate-300 pl-4">{`  -d '{"empresa": "Acme Corp"}'`}</p>
+              <br />
+              <p className="text-slate-500"># 2. Plano de Ação gerado:</p>
+              <p className="text-slate-300">{"{"}</p>
+              <p className="text-slate-300 pl-4">
+                {'"agentes": ['}<span className="text-emerald-400">{"\"analista-trafego\""}</span>{", "}<span className="text-emerald-400">{"\"rastreador\""}</span>{"],"}
+              </p>
+              <p className="text-slate-300 pl-4">
+                {'"status": '}<span className="text-[#ff8f3a]">{"\"pronto_para_ativar\""}</span>{","}
+              </p>
+              <p className="text-slate-300 pl-4">
+                {'"impacto_estimado": '}<span className="text-emerald-400">{"\"+38% ROAS\""}</span>
+              </p>
+              <p className="text-slate-300">{"}"}</p>
+              <br />
+              <p className="text-slate-500"># 3. Agentes ativados em produção:</p>
+              <p className="text-emerald-400">● analista-trafego &nbsp;&nbsp;ONLINE &nbsp;89ms</p>
+              <p className="text-emerald-400">● rastreador-cirurgico &nbsp;ONLINE 112ms</p>
+              <p className="text-emerald-400">● gerador-criativos &nbsp;&nbsp;ONLINE &nbsp;95ms</p>
             </div>
           </div>
         </motion.div>
+      </section>
+
+      {/* POR QUE A NEUROADS? */}
+      <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full overflow-hidden">
+        <div className="mx-auto max-w-[1260px]">
+          <motion.div
+            variants={revealVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            className="text-center max-w-[720px] mx-auto mb-20"
+          >
+            <span className="inline-block rounded-full border border-[#ff6a00]/30 bg-[#ff6a00]/10 px-3 py-1 text-[10px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">
+              POR QUE A NEUROADS
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold mt-4">
+              Por que Empresas em Crescimento Escolhem a NeuroAds
+            </h2>
+            <p className="text-slate-400 mt-4 text-sm leading-relaxed">
+              Abstraímos a complexidade de gerir múltiplos canais e ferramentas para que você foque no que realmente importa: crescer com previsibilidade.
+            </p>
+          </motion.div>
+
+          <div className="space-y-20">
+            {/* Feature 1: Custo Eficiência */}
+            <motion.div
+              variants={revealVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="grid gap-12 lg:grid-cols-2 items-center"
+            >
+              <div>
+                <div className="inline-flex items-center gap-2 mb-5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff6a00]/15 border border-[#ff6a00]/30">
+                    <TrendingUp size={16} className="text-[#ff8f3a]" />
+                  </span>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">EFICIÊNCIA DE CUSTO</span>
+                </div>
+                <h3 className="text-2xl font-black text-white leading-tight">
+                  Menor Custo por Lead com Inteligência Agêntica
+                </h3>
+                <p className="text-slate-300 mt-3 text-sm leading-relaxed">
+                  A NeuroAds entrega estratégias otimizadas por IA que reduzem o custo por lead e aumentam o ROAS médio. Em comparação com agências tradicionais, nossas metodologias agênticas entregam redução de 30–40% no CPL em média.
+                </p>
+              </div>
+              <div className="rounded-[20px] border border-white/10 bg-zinc-950/80 p-6 shadow-[0_18px_48px_rgba(0,0,0,0.4)]">
+                <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-6">COMPARATIVO DE CPL</p>
+                <div className="space-y-5">
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm text-slate-300 font-medium">Agência Tradicional</span>
+                      <span className="text-sm font-bold text-slate-300">R$ 45 /lead</span>
+                    </div>
+                    <div className="h-3 w-full rounded-full bg-zinc-800 overflow-hidden">
+                      <div className="h-full w-[85%] rounded-full bg-red-500/70" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between mb-2">
+                      <span className="text-sm text-white font-bold">NeuroAds + IA</span>
+                      <span className="text-sm font-bold text-emerald-400">R$ 28 /lead</span>
+                    </div>
+                    <div className="h-3 w-full rounded-full bg-zinc-800 overflow-hidden">
+                      <div className="h-full w-[52%] rounded-full bg-emerald-400" />
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/20 px-4 py-2">
+                  <span className="text-emerald-400 font-bold text-sm">↓ 38% de redução</span>
+                  <span className="text-slate-400 text-xs">no custo por lead</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Feature 2: Plataforma Unificada */}
+            <motion.div
+              variants={revealVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="grid gap-12 lg:grid-cols-2 items-center"
+            >
+              <div className="rounded-[20px] border border-white/10 bg-zinc-950/80 p-6 shadow-[0_18px_48px_rgba(0,0,0,0.4)]">
+                <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-6">GATEWAY AGÊNTICO UNIFICADO</p>
+                <div className="flex flex-col items-center gap-4">
+                  <div className="rounded-lg border border-[#ff6a00]/40 bg-[#ff6a00]/10 px-5 py-2.5 font-mono text-sm text-[#ff8f3a] font-bold">
+                    POST /agentes/v1/run
+                  </div>
+                  <ChevronRight size={16} className="text-slate-500 rotate-90" />
+                  <div className="grid grid-cols-3 gap-2 w-full">
+                    {[
+                      { name: 'Analista', color: '#3b82f6' },
+                      { name: 'Gerador', color: '#ff6a00' },
+                      { name: 'Rastreador', color: '#10b981' },
+                      { name: 'Preditor', color: '#8b5cf6' },
+                      { name: 'Auditor', color: '#f59e0b' },
+                      { name: 'Simulador', color: '#ec4899' },
+                    ].map(({ name, color }) => (
+                      <div
+                        key={name}
+                        className="rounded-lg border px-2 py-2 text-center"
+                        style={{ borderColor: color + '40', backgroundColor: color + '15' }}
+                      >
+                        <span className="text-[10px] font-bold" style={{ color }}>{name}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div>
+                <div className="inline-flex items-center gap-2 mb-5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff6a00]/15 border border-[#ff6a00]/30">
+                    <Cpu size={16} className="text-[#ff8f3a]" />
+                  </span>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">PLATAFORMA UNIFICADA</span>
+                </div>
+                <h3 className="text-2xl font-black text-white leading-tight">
+                  Uma Plataforma, 20+ Agentes Especializados
+                </h3>
+                <p className="text-slate-300 mt-3 text-sm leading-relaxed">
+                  Acesse análise de tráfego, criação de conteúdo, rastreamento e inteligência de escala por meio de uma única plataforma. Combine agentes sem reconstruir sua operação de marketing.
+                </p>
+              </div>
+            </motion.div>
+
+            {/* Feature 3: Confiabilidade 24/7 */}
+            <motion.div
+              variants={revealVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="grid gap-12 lg:grid-cols-2 items-center"
+            >
+              <div>
+                <div className="inline-flex items-center gap-2 mb-5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff6a00]/15 border border-[#ff6a00]/30">
+                    <TrendingUp size={16} className="text-[#ff8f3a]" />
+                  </span>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">CONFIABILIDADE</span>
+                </div>
+                <h3 className="text-2xl font-black text-white leading-tight">
+                  Disponibilidade 24/7.<br />Monitoramento Contínuo.
+                </h3>
+                <p className="text-slate-300 mt-3 text-sm leading-relaxed">
+                  A NeuroAds mantém os fluxos de marketing operando com disponibilidade monitorada, rastreamento de tarefas em tempo real e roteamento inteligente entre agentes e canais.
+                </p>
+              </div>
+              <div className="rounded-[20px] border border-white/10 bg-zinc-950/80 p-6 shadow-[0_18px_48px_rgba(0,0,0,0.4)]">
+                <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-5">STATUS DO SISTEMA</p>
+                <div className="flex items-start gap-10 mb-6">
+                  <div>
+                    <p className="text-4xl font-black text-emerald-400">99.8%</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider mt-1">UPTIME (30 DIAS)</p>
+                  </div>
+                  <div>
+                    <p className="text-4xl font-black text-white">~15min</p>
+                    <p className="text-[10px] text-slate-500 uppercase tracking-wider mt-1">RESPOSTA MÉDIA</p>
+                  </div>
+                </div>
+                <div className="flex gap-1 flex-wrap">
+                  {Array.from({ length: 30 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className={`h-5 w-3 rounded-sm ${i === 18 ? 'bg-amber-500' : 'bg-emerald-500/80'}`}
+                    />
+                  ))}
+                </div>
+                <div className="flex justify-between mt-2">
+                  <span className="text-[10px] text-slate-500">30 dias atrás</span>
+                  <span className="text-[10px] text-slate-500">Hoje</span>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Feature 4: Log de Automações */}
+            <motion.div
+              variants={revealVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              className="grid gap-12 lg:grid-cols-2 items-center"
+            >
+              <div className="rounded-[20px] border border-white/10 bg-zinc-950/80 p-6 font-mono shadow-[0_18px_48px_rgba(0,0,0,0.4)]">
+                <p className="text-[10px] font-extrabold uppercase tracking-widest text-slate-500 mb-5">LOG DE AUTOMAÇÕES</p>
+                <div className="space-y-0">
+                  {[
+                    { time: '14:32:01', task: 'analista-trafego', ms: '89ms' },
+                    { time: '14:31:47', task: 'gerador-criativos', ms: '112ms' },
+                    { time: '14:31:22', task: 'rastreador-cirurgico', ms: '95ms' },
+                  ].map((log, i) => (
+                    <div key={i} className="flex items-center gap-3 py-3 border-b border-white/5 text-[11px]">
+                      <span className="text-slate-500 shrink-0">{log.time}</span>
+                      <span className="text-slate-400">POST</span>
+                      <span className="text-[#ff8f3a]">/agentes</span>
+                      <span className="text-slate-300 flex-1 truncate">{log.task}</span>
+                      <span className="inline-flex items-center justify-center rounded px-1.5 py-0.5 text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 shrink-0">
+                        200
+                      </span>
+                      <span className="text-slate-500 shrink-0">{log.ms}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="mt-4 flex items-center gap-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[11px] text-slate-400">Live — Execução em tempo real</span>
+                </div>
+              </div>
+              <div>
+                <div className="inline-flex items-center gap-2 mb-5">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#ff6a00]/15 border border-[#ff6a00]/30">
+                    <Zap size={16} className="text-[#ff8f3a]" />
+                  </span>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">ORIENTADO A DADOS</span>
+                </div>
+                <h3 className="text-2xl font-black text-white leading-tight">
+                  Relatórios e Alertas em Tempo Real
+                </h3>
+                <p className="text-slate-300 mt-3 text-sm leading-relaxed">
+                  Receba notificações instantâneas quando resultados mudam, orçamentos são consumidos ou oportunidades surgem. Monitore cada agente com visibilidade total da operação.
+                </p>
+              </div>
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* SEGMENTOS IMPACTADOS */}
@@ -696,7 +1227,7 @@ export default function Suggestion5LandingPage() {
                 href={segment.href}
                 className="group block"
               >
-                <div className="relative overflow-hidden rounded-[24px] border border-[#ff6a00]/20 bg-zinc-950/85 backdrop-blur-xl min-h-[380px] p-6 hover:border-[#ff6a00]/40 transition-colors shadow-[0_18px_48px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(255,106,0,0.15)] flex flex-col justify-end">
+                <div className="relative overflow-hidden rounded-[24px] border border-[#ff6a00]/20 bg-zinc-950/85 backdrop-blur-md min-h-[380px] p-6 hover:border-[#ff6a00]/40 transition-colors shadow-[0_18px_48px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(255,106,0,0.15)] flex flex-col justify-end">
                   {segment.backgroundImage && (
                     <>
                       <Image 
@@ -727,220 +1258,203 @@ export default function Suggestion5LandingPage() {
       </section>
 
       {/* DEPOIMENTOS */}
-      <section id="depoimentos" className="relative z-10 py-16 bg-transparent w-full px-5 md:px-8">
-        <div className="mx-auto max-w-[1260px]">
-          <div className="text-center max-w-[720px] mx-auto mb-16">
+      <section className="relative z-10 py-20 px-5 md:px-8 w-full">
+        <motion.div
+          variants={revealVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="mx-auto max-w-[1260px]"
+        >
+          <div className="text-center max-w-[600px] mx-auto mb-12">
             <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">Depoimentos</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">
-              Quem Cresce com a Gente, Recomenda
-            </h2>
+            <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">O que dizem nossos clientes</h2>
           </div>
 
-          <div className="grid gap-6 lg:grid-cols-3">
-            {testimonials.map((item) => (
-              <div 
-                key={item.name} 
-                className="rounded-[24px] border border-[#ff6a00]/20 bg-zinc-950/85 backdrop-blur-xl p-6 flex flex-col justify-between hover:border-[#ff6a00]/40 transition-[box-shadow,border-color] duration-300 hover:shadow-[0_20px_50px_rgba(255,106,0,0.15)] shadow-[0_18px_48px_rgba(0,0,0,0.5)]"
+          <div className="grid gap-5 sm:grid-cols-3">
+            {testimonials.map((t) => (
+              <div
+                key={t.name}
+                className="flex flex-col gap-5 rounded-[20px] border border-white/[0.08] bg-zinc-950/60 p-6 hover:border-[#ff6a00]/20 transition-colors"
               >
-                <div>
-                  <span className="text-4xl font-black text-[#ff6a00] leading-none">“</span>
-                  <p className="mt-2 text-xs leading-relaxed text-slate-300">{item.quote}</p>
-                </div>
-                <div className="mt-6 flex items-center gap-3 border-t border-[#ff6a00]/15 pt-4">
-                  <Image 
-                    src={item.avatar} 
-                    alt={item.name} 
-                    width={44} 
-                    height={44} 
-                    className="h-11 w-11 rounded-full object-cover border border-[#ff6a00]/30" 
+                <p className="text-sm leading-relaxed text-slate-300 flex-1">&ldquo;{t.quote}&rdquo;</p>
+                <div className="flex items-center gap-3 border-t border-white/[0.06] pt-4">
+                  <Image
+                    src={t.avatar}
+                    alt={t.name}
+                    width={40}
+                    height={40}
+                    className="rounded-full object-cover shrink-0"
                   />
                   <div>
-                    <h4 className="text-xs font-bold text-white">{item.name}</h4>
-                    <p className="text-[10px] text-slate-400 mt-0.5">{item.role}</p>
+                    <p className="text-sm font-bold text-white leading-none">{t.name}</p>
+                    <p className="text-[11px] text-slate-500 mt-1">{t.role}</p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* VALUES AND RESOURCES SECTION (IMPORTED) */}
-      <ValuesResourcesSection />
-
-      {/* FAQ SECTION - layout inspired by Valores e Recursos card */}
-      <section id="faq" className="relative z-10 py-16 border-b border-white/5 bg-transparent w-full px-5 md:px-8">
+      {/* FAQ SECTION - MuAPI style */}
+      <section id="faq" className="relative z-10 py-20 bg-transparent w-full px-5 md:px-8">
         <div className="mx-auto max-w-[1260px]">
-          <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] items-start">
-            {/* Left: Like the pricing left column */}
-            <div className="lg:sticky lg:top-28">
-              <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">Perguntas Frequentes</span>
-              <h2 className="text-3xl font-extrabold mt-2 leading-tight">Ficou com alguma dúvida?</h2>
-              <p className="text-slate-400 mt-4 text-sm leading-relaxed">
-                Separamos as principais perguntas de empresários sobre a implantação da inteligência artificial agêntica na operação de tráfego e vendas.
-              </p>
+          <div className="text-center mb-12">
+            <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">Dúvidas Frequentes</span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">Perguntas & Respostas</h2>
+          </div>
 
-              {/* Feature check list - like Valores e Recursos */}
-              <ul className="mt-6 space-y-3">
-                {[
-                  'Consultoria 100% personalizada',
-                  'Implantação em até 72 horas',
-                  'Suporte prioritário e onboarding',
-                  'IA Agêntica monitorando 24/7',
-                ].map((feat, i) => (
-                  <li key={i} className="flex items-center gap-2.5 text-sm text-slate-300">
-                    <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#ff6a00] text-white">
-                      <Check size={11} strokeWidth={3.5} />
+          <div className="grid gap-6 lg:grid-cols-[1fr_1.6fr] items-start">
+            {/* Left: 365 card */}
+            <div className="lg:sticky lg:top-28 rounded-[24px] border border-[#ff6a00]/20 bg-zinc-950/92 backdrop-blur-sm p-8 shadow-[0_18px_48px_rgba(0,0,0,0.5)] relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-[#ff6a00]/5 filter blur-[70px] rounded-full pointer-events-none" />
+              <div className="relative z-10">
+                <div className="flex items-end gap-2 mb-1">
+                  <span className="text-7xl font-black text-white leading-none">365</span>
+                </div>
+                <p className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00] mb-8">DIAS / ANO</p>
+
+                <h3 className="text-xl font-extrabold text-white mb-3">Ainda tem dúvidas?</h3>
+                <p className="text-sm text-slate-400 leading-relaxed mb-8">
+                  Nossa equipe e comunidade estão disponíveis para apoiar sua operação em todos os canais.
+                </p>
+
+                <div className="space-y-3">
+                  <a
+                    href="https://wa.me/5551981758382"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 p-3 rounded-[14px] border border-white/[0.08] bg-white/[0.03] hover:border-[#ff6a00]/30 hover:bg-[#ff6a00]/5 transition-all group cursor-pointer"
+                  >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 border border-emerald-500/30">
+                      <MessageCircle size={14} className="text-emerald-400" />
                     </span>
-                    {feat}
-                  </li>
-                ))}
-              </ul>
-
-              <button 
-                onClick={handleOpenSpecialistChat}
-                className="mt-8 inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#ff6a00] hover:bg-[#ff7b1a] transition-colors px-6 py-3 text-sm font-extrabold text-white shadow-[0_4px_20px_rgba(255,106,0,0.3)] hover:shadow-[0_4px_25px_rgba(255,106,0,0.45)]"
-              >
-                Falar com Especialista
-                <ChevronRight size={14} />
-              </button>
+                    <div>
+                      <p className="text-xs font-bold text-white group-hover:text-[#ff8f3a] transition-colors">Suporte Direto</p>
+                      <p className="text-[10px] text-slate-500">WhatsApp & Chat</p>
+                    </div>
+                  </a>
+                  <Link
+                    href="/conteudos"
+                    className="flex items-center gap-3 p-3 rounded-[14px] border border-white/[0.08] bg-white/[0.03] hover:border-[#ff6a00]/30 hover:bg-[#ff6a00]/5 transition-all group cursor-pointer"
+                  >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#ff6a00]/15 border border-[#ff6a00]/30">
+                      <BookOpen size={14} className="text-[#ff8f3a]" />
+                    </span>
+                    <div>
+                      <p className="text-xs font-bold text-white group-hover:text-[#ff8f3a] transition-colors">Blog & Conteúdos</p>
+                      <p className="text-[10px] text-slate-500">Além do Algoritmo</p>
+                    </div>
+                  </Link>
+                  <Link
+                    href="/hub"
+                    className="flex items-center gap-3 p-3 rounded-[14px] border border-white/[0.08] bg-white/[0.03] hover:border-[#ff6a00]/30 hover:bg-[#ff6a00]/5 transition-all group cursor-pointer"
+                  >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500/15 border border-blue-500/30">
+                      <LayoutDashboard size={14} className="text-blue-400" />
+                    </span>
+                    <div>
+                      <p className="text-xs font-bold text-white group-hover:text-[#ff8f3a] transition-colors">Hub Estratégico</p>
+                      <p className="text-[10px] text-slate-500">Plataforma de Inteligência</p>
+                    </div>
+                  </Link>
+                </div>
+              </div>
             </div>
 
-            {/* Right: Accordion card like pricing card */}
-            <div className="rounded-[24px] border border-[#ff6a00]/20 bg-zinc-950/85 backdrop-blur-xl p-6 shadow-[0_18px_48px_rgba(0,0,0,0.5)] relative overflow-hidden">
-              <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff6a00]/5 filter blur-[50px] rounded-full pointer-events-none" />
-              <div className="space-y-3 relative z-10">
-                {faq.map((item, idx) => {
-                  const isOpen = openFaqIndex === idx;
-                  return (
-                    <div 
-                      key={idx} 
-                      className={`rounded-[16px] border transition-all duration-300 overflow-hidden ${
-                        isOpen 
-                          ? 'border-[#ff6a00]/30 bg-zinc-900/60 shadow-[0_4px_16px_rgba(255,106,0,0.08)]' 
-                          : 'border-[#ff6a00]/10 bg-zinc-950/40 hover:border-[#ff6a00]/20'
-                      }`}
+            {/* Right: Numbered accordion */}
+            <div className="space-y-3">
+              {faq.map((item, idx) => {
+                const isOpen = openFaqIndex === idx;
+                const num = String(idx + 1).padStart(2, '0');
+                return (
+                  <div
+                    key={idx}
+                    className={`rounded-[16px] border transition-all duration-300 overflow-hidden ${
+                      isOpen
+                        ? 'border-[#ff6a00]/30 bg-zinc-900/60 shadow-[0_4px_16px_rgba(255,106,0,0.08)]'
+                        : 'border-white/[0.08] bg-zinc-950/40 hover:border-[#ff6a00]/20'
+                    }`}
+                  >
+                    <button
+                      onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
+                      className="w-full flex items-center gap-4 p-5 text-left cursor-pointer group"
                     >
-                      <button
-                        onClick={() => setOpenFaqIndex(isOpen ? null : idx)}
-                        className="w-full flex items-center justify-between p-5 text-left text-sm font-bold text-white hover:text-[#ff8f3a] transition-colors cursor-pointer"
-                      >
-                        <span>{item.q}</span>
-                        <span className={`shrink-0 ml-3 transform transition-transform ${isOpen ? 'rotate-90 text-[#ff6a00]' : 'text-slate-400'}`}>
-                          <ChevronRight size={16} />
-                        </span>
-                      </button>
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ height: 0 }}
-                            animate={{ height: 'auto' }}
-                            exit={{ height: 0 }}
-                            transition={{ duration: 0.25, ease: 'easeInOut' }}
-                            className="overflow-hidden"
-                          >
-                            <div className="px-5 pb-5 text-xs leading-relaxed text-slate-300 border-t border-[#ff6a00]/15 pt-4">
-                              {item.a}
+                      <span className="text-[13px] font-black text-[#ff6a00]/60 shrink-0 font-mono w-6">{num}</span>
+                      <span className="flex-1 text-sm font-bold text-white group-hover:text-[#ff8f3a] transition-colors">{item.q}</span>
+                      <span className={`shrink-0 text-xl font-light transition-transform duration-200 leading-none ${isOpen ? 'text-[#ff6a00] rotate-45' : 'text-slate-400'}`}>+</span>
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          initial={{ height: 0 }}
+                          animate={{ height: 'auto' }}
+                          exit={{ height: 0 }}
+                          transition={{ duration: 0.25, ease: 'easeInOut' }}
+                          className="overflow-hidden"
+                        >
+                          <div className="px-5 pb-5 border-t border-[#ff6a00]/10 pt-4 space-y-3">
+                            <p className="text-xs leading-relaxed text-slate-300">{item.a}</p>
+                            <div className="flex flex-wrap gap-2">
+                              {item.tags.map((tag) => (
+                                <span key={tag} className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#ff6a00]/10 text-[#ff8f3a] border border-[#ff6a00]/20">
+                                  {tag}
+                                </span>
+                              ))}
                             </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  );
-                })}
-              </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
       </section>
 
-      {/* PRIMARY FOOTER */}
-      <footer className="relative z-10 w-full overflow-hidden border-t border-white/5 bg-[#040811]/95 backdrop-blur-xl">
-        <div className="relative z-10 mx-auto max-w-[1260px] px-5 py-12 md:px-8">
-          <div className="grid gap-8 border-b border-[#ff6a00]/15 pb-8 md:grid-cols-5 text-xs">
-            <div>
-              <h4 className="font-extrabold uppercase text-[#ff8f3a] mb-4">Soluções</h4>
-              <ul className="space-y-2 text-slate-400">
-                <li><a href="#control-room" className="hover:text-white transition-colors">Agentes IA</a></li>
-                <li><a href="#segmentos" className="hover:text-white transition-colors">Segmentos</a></li>
-                <li><a href="/servicos" className="hover:text-white transition-colors">Portfólio</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-extrabold uppercase text-[#ff8f3a] mb-4">Empresa</h4>
-              <ul className="space-y-2 text-slate-400">
-                <li><a href="/a-neuroads" className="hover:text-white transition-colors">Sobre a NeuroAds</a></li>
-                <li><a href="/whitepaper_ia_vendas" className="hover:text-white transition-colors">Whitepaper Vendas</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-extrabold uppercase text-[#ff8f3a] mb-4">Recursos</h4>
-              <ul className="space-y-2 text-slate-400">
-                <li><a href="/conteudos" className="hover:text-white transition-colors">Blog Além do Algoritmo</a></li>
-                <li><a href="#faq" className="hover:text-white transition-colors">Central de Ajuda</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-extrabold uppercase text-[#ff8f3a] mb-4">Legal</h4>
-              <ul className="space-y-2 text-slate-400">
-                <li><a href="/privacidade" className="hover:text-white transition-colors">Privacidade</a></li>
-                <li><a href="/termos" className="hover:text-white transition-colors">Termos de Uso</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-extrabold uppercase text-[#ff8f3a] mb-4">Mídia Social</h4>
-              <p className="text-slate-400 leading-relaxed mb-4">
-                Acompanhe discussões de IA agêntica, automações e performance comercial.
-              </p>
-              <div className="flex items-center gap-3 mt-2">
-                {/* LinkedIn */}
-                <a
-                  href="https://www.linkedin.com/company/neuroads"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="LinkedIn NeuroAds"
-                  className="group inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-[#0077B5]/20 hover:border-[#0077B5]/40 transition-all cursor-pointer"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-slate-400 group-hover:fill-[#0077B5] transition-colors" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                  </svg>
-                </a>
-                {/* Instagram */}
-                <a
-                  href="https://www.instagram.com/neuroads.ia"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Instagram NeuroAds"
-                  className="group inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-[#E1306C]/20 hover:border-[#E1306C]/40 transition-all cursor-pointer"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-slate-400 group-hover:fill-[#E1306C] transition-colors" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
-                  </svg>
-                </a>
-                {/* YouTube */}
-                <a
-                  href="https://www.youtube.com/@neuroads"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="YouTube NeuroAds"
-                  className="group inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/5 border border-white/10 hover:bg-[#FF0000]/20 hover:border-[#FF0000]/40 transition-all cursor-pointer"
-                >
-                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-slate-400 group-hover:fill-[#FF0000] transition-colors" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
-                  </svg>
-                </a>
-              </div>
-            </div>
+      {/* CTA DE FECHAMENTO */}
+      <section className="relative z-10 py-24 px-5 md:px-8 w-full overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse 800px 400px at 50% 50%, rgba(255,106,0,0.07) 0%, transparent 70%)',
+          }}
+        />
+        <motion.div
+          variants={revealVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          className="relative z-10 mx-auto max-w-[720px] text-center"
+        >
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.1] text-white">
+            Pronto para transformar cada real investido em resultado mensurável?
+          </h2>
+          <p className="mt-5 text-[15px] text-slate-400 leading-relaxed max-w-[520px] mx-auto">
+            Agende um diagnóstico gratuito e descubra quais agentes se encaixam no seu modelo de negócio.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
+            <button
+              type="button"
+              onClick={handleOpenSpecialistChat}
+              className="inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] hover:bg-[#ff7b1a] transition-all px-10 py-4 text-[15px] font-extrabold text-white shadow-[0_4px_32px_rgba(255,106,0,0.45)] cursor-pointer"
+            >
+              Agendar diagnóstico gratuito
+              <ArrowRight size={16} />
+            </button>
+            <Link
+              href="/hub"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/20 hover:border-white/40 transition-all px-8 py-4 text-[14px] font-bold text-white/80 hover:text-white"
+            >
+              Explorar o Hub
+              <ArrowRight size={14} />
+            </Link>
           </div>
-          
-          <div className="pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-[10px] text-slate-500">
-            <p>© {new Date().getFullYear()} NeuroAds LP. Todos os direitos reservados.</p>
-            <p className="flex items-center gap-1 font-mono uppercase">
-              <Zap size={10} className="text-[#ff6a00]" /> Powered by Agential AI
-            </p>
-          </div>
-        </div>
-      </footer>
+        </motion.div>
+      </section>
 
       {/* Specialist Lucca Chat Modal */}
       <LuccaSpecialistChatModal

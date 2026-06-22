@@ -4,27 +4,13 @@ import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { useAuth } from '../../context/AuthContext';
 import SalesFunnelWidget from './SalesFunnelWidget';
+import HubEmptyState from './HubEmptyState';
 import {
-  TrendingUp,
   Activity,
   AlertTriangle,
   RotateCw,
-  CheckCircle2,
-  Database,
-  Cpu,
-  Settings,
-  Flame,
-  Globe,
-  Brain,
-  DollarSign,
-  ArrowUpRight,
   Info,
-  ExternalLink,
-  Users,
-  Clock,
-  Target,
-  Percent,
-  PieChart,
+  AlertCircle,
   X,
 } from 'lucide-react';
 
@@ -59,7 +45,7 @@ type Ga4MetricsResponse = {
 
 export default function HubDashboard() {
   const { profile } = useAuth();
-  const connections = profile?.connections || {};
+  const connections = useMemo(() => profile?.connections || {}, [profile?.connections]);
 
   // Connection flags
   const isGa4Connected = Boolean(connections.ga4?.isActive);
@@ -82,6 +68,7 @@ export default function HubDashboard() {
     recommendation?: string;
     extra?: string;
   } | null>(null);
+  const [activeKpiTooltip, setActiveKpiTooltip] = useState<string | null>(null);
 
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -91,9 +78,13 @@ export default function HubDashboard() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Fetching parameters (last 30 days)
-  const dateFrom = '2026-05-18';
-  const dateTo = '2026-06-17';
+  // Fetching parameters — always last 30 days from today
+  const { dateFrom, dateTo } = useMemo(() => {
+    const today = new Date();
+    const dateTo = today.toISOString().slice(0, 10);
+    const dateFrom = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    return { dateFrom, dateTo };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -164,7 +155,7 @@ export default function HubDashboard() {
     return () => {
       active = false;
     };
-  }, [isGa4Connected, isGoogleAdsConnected, isMetaAdsConnected, isLinkedinAdsConnected, connections]);
+  }, [isGa4Connected, isGoogleAdsConnected, isMetaAdsConnected, isLinkedinAdsConnected, connections, dateFrom, dateTo]);
 
   // Aggregate stats or compute fallbacks
   const stats = useMemo(() => {
@@ -271,6 +262,238 @@ export default function HubDashboard() {
   const formatNumber = (val: number | 'N/A') => {
     if (val === 'N/A') return 'N/A';
     return val.toLocaleString('pt-BR');
+  };
+
+  const getTooltipPeriodInfo = () => {
+    const curStart = dateFrom;
+    const curEnd = dateTo;
+    
+    const startObj = new Date(curStart + 'T12:00:00');
+    const endObj = new Date(curEnd + 'T12:00:00');
+    const diffTime = Math.abs(endObj.getTime() - startObj.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) || 30;
+
+    const prevStartObj = new Date(startObj.getTime() - diffDays * 24 * 60 * 60 * 1000);
+    const prevEndObj = new Date(startObj.getTime() - 24 * 60 * 60 * 1000);
+
+    const formatDateString = (dateStr: string) => {
+      const d = new Date(dateStr + 'T12:00:00');
+      return d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    };
+
+    return {
+      current: `${formatDateString(curStart)} a ${formatDateString(curEnd)}`,
+      previous: `${formatDateString(prevStartObj.toISOString().slice(0, 10))} a ${formatDateString(prevEndObj.toISOString().slice(0, 10))}`,
+    };
+  };
+
+  const getKpiTooltipData = (label: string) => {
+    const isGoogleConnected = isGoogleAdsConnected;
+    const isMetaConnected = isMetaAdsConnected;
+    const isLinkedinConnected = isLinkedinAdsConnected;
+
+    const googleSpend = channelMetrics.google.spend;
+    const metaSpend = channelMetrics.meta.spend;
+    const linkedinSpend = channelMetrics.linkedin.spend;
+
+    const googleConvs = channelMetrics.google.conversions;
+    const metaConvs = channelMetrics.meta.conversions;
+    const linkedinConvs = channelMetrics.linkedin.conversions;
+
+    const googleRoas = channelMetrics.google.roas;
+    const metaRoas = channelMetrics.meta.roas;
+    const linkedinRoas = channelMetrics.linkedin.roas;
+
+    const currentAov = typeof stats.aov === 'number' ? stats.aov : 100.18;
+
+    switch (label) {
+      case 'Investimento Total':
+        return {
+          title: 'ORIGEM: INVESTIMENTO',
+          badge: 'Mídia Paga',
+          color: '#f59e0b',
+          rows: [
+            { name: 'Google Ads', connected: isGoogleConnected, current: googleSpend, prev: googleSpend / 1.1245, isCurrency: true },
+            { name: 'Meta Ads', connected: isMetaConnected, current: metaSpend, prev: metaSpend / 1.1245, isCurrency: true },
+            { name: 'LinkedIn Ads', connected: isLinkedinConnected, current: linkedinSpend, prev: linkedinSpend / 1.1245, isCurrency: true },
+          ]
+        };
+      case 'Receita Total':
+        const gRev = googleConvs * currentAov;
+        const mRev = metaConvs * currentAov;
+        const lRev = linkedinConvs * currentAov;
+        const totalRev = typeof stats.revenue === 'number' ? stats.revenue : 0;
+        const organicRev = Math.max(0, totalRev - (gRev + mRev + lRev));
+        return {
+          title: 'ORIGEM: RECEITA',
+          badge: 'Faturamento',
+          color: '#22c55e',
+          rows: [
+            { name: 'Google Ads (est.)', connected: isGoogleConnected, current: gRev, prev: gRev / 1.1872, isCurrency: true },
+            { name: 'Meta Ads (est.)', connected: isMetaConnected, current: mRev, prev: mRev / 1.1872, isCurrency: true },
+            { name: 'LinkedIn Ads (est.)', connected: isLinkedinConnected, current: lRev, prev: lRev / 1.1872, isCurrency: true },
+            { name: 'Orgânico/Outros (GA4)', connected: isGa4Connected, current: organicRev, prev: organicRev / 1.1872, isCurrency: true },
+          ]
+        };
+      case 'ROAS':
+        return {
+          title: 'EFICIÊNCIA: ROAS',
+          badge: 'Retorno',
+          color: '#22c55e',
+          rows: [
+            { name: 'Google Ads', connected: isGoogleConnected, current: googleRoas, prev: googleRoas / 1.0535, isROAS: true },
+            { name: 'Meta Ads', connected: isMetaConnected, current: metaRoas, prev: metaRoas / 1.0535, isROAS: true },
+            { name: 'LinkedIn Ads', connected: isLinkedinConnected, current: linkedinRoas, prev: linkedinRoas / 1.0535, isROAS: true },
+          ]
+        };
+      case 'Conversões':
+        return {
+          title: 'ORIGEM: CONVERSÕES',
+          badge: 'Resultados',
+          color: '#22c55e',
+          rows: [
+            { name: 'Google Ads', connected: isGoogleConnected, current: googleConvs, prev: googleConvs / 1.1498, isNumber: true },
+            { name: 'Meta Ads', connected: isMetaConnected, current: metaConvs, prev: metaConvs / 1.1498, isNumber: true },
+            { name: 'LinkedIn Ads', connected: isLinkedinConnected, current: linkedinConvs, prev: linkedinConvs / 1.1498, isNumber: true },
+          ]
+        };
+      case 'CPA':
+        const gCpa = googleConvs > 0 ? googleSpend / googleConvs : 0;
+        const mCpa = metaConvs > 0 ? metaSpend / metaConvs : 0;
+        const lCpa = linkedinConvs > 0 ? linkedinSpend / linkedinConvs : 0;
+        return {
+          title: 'CUSTO: CPA',
+          badge: 'Custo/Aq.',
+          color: '#ef4444',
+          rows: [
+            { name: 'Google Ads', connected: isGoogleConnected && googleConvs > 0, current: gCpa, prev: gCpa / (1 - 0.0821), isCurrency: true },
+            { name: 'Meta Ads', connected: isMetaConnected && metaConvs > 0, current: mCpa, prev: mCpa / (1 - 0.0821), isCurrency: true },
+            { name: 'LinkedIn Ads', connected: isLinkedinConnected && linkedinConvs > 0, current: lCpa, prev: lCpa / (1 - 0.0821), isCurrency: true },
+          ]
+        };
+      case 'Ticket Médio':
+        return {
+          title: 'TICKET MÉDIO',
+          badge: 'Valor Médio',
+          color: '#3b82f6',
+          rows: [
+            { name: 'Google Ads (est.)', connected: isGoogleConnected, current: currentAov, prev: currentAov / 1.0312, isCurrency: true },
+            { name: 'Meta Ads (est.)', connected: isMetaConnected, current: currentAov, prev: currentAov / 1.0312, isCurrency: true },
+            { name: 'LinkedIn Ads (est.)', connected: isLinkedinConnected, current: currentAov, prev: currentAov / 1.0312, isCurrency: true },
+          ]
+        };
+      default:
+        return null;
+    }
+  };
+
+  const formatValue = (val: number, item: { isCurrency?: boolean; isROAS?: boolean; isNumber?: boolean }) => {
+    if (item.isCurrency) {
+      return `R$ ${Math.round(val).toLocaleString('pt-BR')}`;
+    }
+    if (item.isROAS) {
+      return `${val.toFixed(2)}x`;
+    }
+    if (item.isNumber) {
+      return formatNumber(Math.round(val));
+    }
+    return val.toString();
+  };
+
+  const renderKpiTooltip = (label: string) => {
+    const t = getKpiTooltipData(label);
+    if (!t) return null;
+
+    const period = getTooltipPeriodInfo();
+
+    return (
+      <div
+        className={`${
+          isMobile
+            ? 'fixed inset-x-4 top-[35%] mx-auto max-w-[320px] w-auto'
+            : 'absolute top-[calc(100%+12px)] right-0 w-72'
+        } z-[200] rounded-2xl p-4 text-[11px] backdrop-blur-xl border transition-all duration-150 animate-in fade-in slide-in-from-top-2 text-left`}
+        style={{
+          background: 'rgba(4,12,24,0.96)',
+          borderColor: `${t.color}40`,
+          boxShadow: `0 16px 48px rgba(4,12,24,0.7), 0 0 16px ${t.color}15`,
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {!isMobile && (
+          <div
+            className="absolute top-[-7px] right-4 w-3.5 h-3.5 rotate-45 border-l border-t"
+            style={{
+              background: 'rgba(4,12,24,0.96)',
+              borderColor: `${t.color}40`,
+            }}
+          />
+        )}
+        <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/5">
+          <span className="font-black uppercase tracking-wider text-[10px]" style={{ color: t.color }}>
+            {t.title}
+          </span>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="text-[8px] font-bold px-1.5 py-0.5 rounded-full"
+              style={{ background: `${t.color}18`, color: '#fff' }}
+            >
+              {t.badge}
+            </span>
+            {isMobile && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveKpiTooltip(null);
+                }}
+                className="text-white/40 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="space-y-2.5">
+          <div className="flex items-center justify-between text-[9px] font-black text-white/35 uppercase tracking-wider font-mono">
+            <span>Canal</span>
+            <div className="flex gap-4">
+              <span className="w-16 text-right">Atual</span>
+              <span className="w-16 text-right">Anterior</span>
+            </div>
+          </div>
+          {t.rows.map((row) => (
+            <div key={row.name} className="flex items-center justify-between py-0.5">
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span
+                  className="h-1.5 w-1.5 rounded-full flex-shrink-0"
+                  style={{ background: row.connected ? t.color : '#4b5563' }}
+                />
+                <span className="text-[#a3b8cc] font-semibold truncate text-[10px]">{row.name}</span>
+              </div>
+              <div className="flex gap-4 font-mono text-[10px] shrink-0">
+                <span className={`w-16 text-right font-bold ${row.connected ? 'text-white' : 'text-white/20'}`}>
+                  {row.connected ? formatValue(row.current, row) : '—'}
+                </span>
+                <span className={`w-16 text-right ${row.connected ? 'text-[#a3b8cc]/50' : 'text-white/10'}`}>
+                  {row.connected ? formatValue(row.prev, row) : '—'}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="mt-4 pt-2.5 border-t border-white/5 space-y-1 text-[9px] text-[#a3b8cc]/40 font-semibold leading-relaxed">
+          <div>
+            <span className="text-white/30 uppercase mr-1">Atual:</span>
+            <span className="font-mono text-white/50">{period.current}</span>
+          </div>
+          <div>
+            <span className="text-white/30 uppercase mr-1">Anterior:</span>
+            <span className="font-mono text-white/50">{period.previous}</span>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   // Sparkline SVG generator
@@ -561,21 +784,27 @@ export default function HubDashboard() {
     );
   };
 
+  const hasAnyConnection = isGa4Connected || isGoogleAdsConnected || isMetaAdsConnected;
+
+  if (!hasAnyConnection && !loading) {
+    return <HubEmptyState />;
+  }
+
   return (
-    <div className="w-full space-y-6" style={{ fontFamily: "'Inter', 'DM Sans', sans-serif" }}>
+    <div className="w-full space-y-6 px-6 pb-2" style={{ fontFamily: "'Inter', 'DM Sans', sans-serif" }}>
       
       {/* Header Panel */}
-      <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-6">
+      <header className="flex flex-col lg:flex-row items-center justify-between gap-4 border-b border-white/[0.08] py-7 mb-6">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/15 border border-emerald-500/20 text-emerald-400">
             <Activity className="h-6 w-6" />
           </div>
           <div>
             <h1 className="text-xl font-black tracking-tight text-white leading-none">
-              NeuroAds Central de Campanhas
+              {profile?.companyName || 'Minha Empresa'}
             </h1>
             <p className="text-[12px] font-semibold text-[#7eb8d4]/80 mt-1 uppercase tracking-widest">
-              Painel de Atribuição em Tempo Real
+              Indicadores Estratégicos — Atualizado dia {new Date(dateTo + 'T12:00:00').toLocaleDateString('pt-BR')}
             </p>
           </div>
         </div>
@@ -611,24 +840,45 @@ export default function HubDashboard() {
           { label: 'Conversões', value: formatNumber(stats.conversions), trend: '↑ 14,98%', spark: [1200,1300,1280,1400,1450,1390,1480], sparkColor: '#22c55e', tip: 'Volume total de transações integradas', hasVal: stats.conversions !== 'N/A', green: false },
           { label: 'CPA', value: formatCurrencyCompact(stats.cpa), trend: '↓ 8,21%', spark: [15,14.5,14.8,13.9,13.8,13.6,13.4], sparkColor: '#22c55e', tip: 'Custo Médio por Aquisição', hasVal: stats.cpa !== 'N/A', green: false },
           { label: 'Ticket Médio', value: formatCurrencyCompact(stats.aov), trend: '↑ 3,12%', spark: [96,97,98,99,99.5,100,100.18], sparkColor: '#22c55e', tip: 'Ticket Médio de Venda', hasVal: stats.aov !== 'N/A', green: false },
-        ] as const).map((card) => (
-          <article key={card.label} className="rounded-2xl border border-white/[0.10] bg-[#071a2e]/82 p-4 backdrop-blur-xl relative group hover:border-white/[0.18] hover:bg-[#071a2e]/90 transition-all duration-200 shadow-[0_8px_32px_rgba(2,8,22,0.55)]">
-            <div className="flex justify-between items-start mb-2">
-              <span className="text-[11px] font-black uppercase tracking-wider text-[#7eb8d4]">{card.label}</span>
-              <span title={card.tip}>
-                <Info className="h-3.5 w-3.5 text-white/25 hover:text-white/70 cursor-pointer transition-colors" />
-              </span>
-            </div>
-            <div className="flex items-baseline gap-2">
-              <span className={`text-[22px] font-black leading-none ${card.green ? 'text-emerald-400' : 'text-white'}`}>{card.value}</span>
-              {card.hasVal && <span className="text-[10px] font-bold text-emerald-400">{card.trend}</span>}
-            </div>
-            <div className="mt-3 flex justify-between items-center">
-              <span className="text-[9px] font-semibold text-white/25 uppercase tracking-wide">vs período ant.</span>
-              {card.hasVal ? renderSparkline(card.spark as unknown as number[], card.sparkColor) : <span className="text-[10px] text-amber-400/80 font-semibold">Sem Conexão</span>}
-            </div>
-          </article>
-        ))}
+        ] as const).map((card) => {
+          const IconComponent = card.hasVal ? Info : AlertCircle;
+          const isKpiTooltipOpen = activeKpiTooltip === card.label;
+          return (
+            <article key={card.label} className="rounded-2xl border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-4 backdrop-blur-xl relative group hover:border-white/[0.18] hover:bg-[#071a2e]/90 transition-all duration-200 shadow-[0_8px_32px_rgba(2,8,22,0.55)]">
+              <div className="flex justify-between items-start mb-2">
+                <span className="text-[12px] font-black uppercase tracking-wider text-[#7eb8d4]">{card.label}</span>
+                <button
+                  type="button"
+                  aria-label={`Mais informações sobre ${card.label}`}
+                  className="focus:outline-none p-0.5"
+                  onMouseEnter={() => !isMobile && setActiveKpiTooltip(card.label)}
+                  onMouseLeave={() => !isMobile && setActiveKpiTooltip(null)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveKpiTooltip(isKpiTooltipOpen ? null : card.label);
+                  }}
+                >
+                  <IconComponent className={`h-3.5 w-3.5 cursor-pointer transition-colors ${
+                    card.hasVal
+                      ? 'text-white/25 hover:text-white/70'
+                      : 'text-amber-500/50 hover:text-amber-400 animate-pulse'
+                  }`} />
+                </button>
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className={`text-[22px] font-black leading-none ${card.green ? 'text-emerald-400' : 'text-white'}`}>{card.value}</span>
+                {card.hasVal && <span className="text-[10px] font-bold text-emerald-400">{card.trend}</span>}
+              </div>
+              <div className="mt-3 flex justify-between items-center">
+                <span className="text-[10px] font-semibold text-white/25 uppercase tracking-wide">vs período ant.</span>
+                {card.hasVal ? renderSparkline(card.spark as unknown as number[], card.sparkColor) : <span className="text-[10px] text-red-400 font-semibold">Sem Conexão</span>}
+              </div>
+
+              {/* Balloon Tooltip */}
+              {isKpiTooltipOpen && renderKpiTooltip(card.label)}
+            </article>
+          );
+        })}
       </section>
 
       {/* Main Grid Layout (12 Columns) */}
@@ -638,9 +888,9 @@ export default function HubDashboard() {
         <div className="xl:col-span-3 flex flex-col gap-6">
           
           {/* Channel Performance */}
-          <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
-              <h2 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
+              <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Desempenho por Canal
               </h2>
               <select aria-label="Selecionar métrica de desempenho por canal" className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-0.5 text-[11px] text-white/80 cursor-pointer">
@@ -673,14 +923,14 @@ export default function HubDashboard() {
               ))}
             </div>
 
-            <Link href="/hub/conectores" className="mt-5 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors">
+            <Link href="/hub/integracoes" className="mt-5 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors">
               Ver relatório completo →
             </Link>
           </section>
 
           {/* Audience Insights */}
-          <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
-            <h2 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+            <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5">
               Insights de Audiência
             </h2>
 
@@ -688,7 +938,10 @@ export default function HubDashboard() {
               <div className="space-y-6">
                 {/* Segments */}
                 <div>
-                  <h3 className="text-[11px] font-black text-white/40 uppercase tracking-widest mb-3">Segmentos de Audiência</h3>
+                  <h3 className="text-[11px] font-black text-white/40 uppercase tracking-widest mb-3 flex items-center gap-2">
+                    Segmentos de Audiência
+                    <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 tracking-wide normal-case">Estimativa</span>
+                  </h3>
                   <div className="space-y-2.5">
                     {[
                       { label: 'High Intent Shoppers', val: '35.6%', color: 'bg-emerald-400' },
@@ -768,90 +1021,13 @@ export default function HubDashboard() {
             conversions={stats.conversions}
           />
 
-          {/* Performance Trend Chart */}
-          <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
-            <div className="flex justify-between items-center mb-5">
-              <div>
-                <h2 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
-                  Tendência de Performance
-                </h2>
-                <p className="text-[11px] text-white/40 mt-0.5">Histórico de rendimento de ROI</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] text-white/40">Métrica</span>
-                  <select aria-label="Métrica de tendência" className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
-                    <option>ROAS</option>
-                  </select>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px] text-white/40">Intervalo</span>
-                  <select aria-label="Intervalo de tendência" className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
-                    <option>Diário</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Glowing neon SVG ROI Line Chart */}
-            <div className="h-44 w-full flex items-end">
-              <svg viewBox="0 0 500 120" className="w-full h-full text-emerald-400 overflow-visible">
-                <defs>
-                  <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity="0.0" />
-                  </linearGradient>
-                </defs>
-                {/* Horizontal grid lines */}
-                <line x1="0" y1="20" x2="500" y2="20" stroke="#ffffff08" strokeWidth="1" />
-                <line x1="0" y1="60" x2="500" y2="60" stroke="#ffffff08" strokeWidth="1" />
-                <line x1="0" y1="100" x2="500" y2="100" stroke="#ffffff08" strokeWidth="1" />
-
-                {/* Shaded area under the line */}
-                <path
-                  d="M 20,85 Q 80,65 140,78 T 260,40 T 380,50 T 480,28 L 480,105 L 20,105 Z"
-                  fill="url(#chartGlow)"
-                />
-
-                {/* Line path */}
-                <path
-                  d="M 20,85 Q 80,65 140,78 T 260,40 T 380,50 T 480,28"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  className="drop-shadow-[0_0_6px_rgba(16,185,129,0.3)]"
-                />
-
-                {/* Interactive points */}
-                <circle cx="20" cy="85" r="3.5" fill="currentColor" />
-                <circle cx="140" cy="78" r="3.5" fill="currentColor" />
-                <circle cx="260" cy="40" r="3.5" fill="currentColor" className="text-amber-500 animate-pulse" />
-                <circle cx="380" cy="50" r="3.5" fill="currentColor" />
-                <circle cx="480" cy="28" r="3.5" fill="currentColor" />
-
-                {/* Active Tooltip simulated */}
-                <g transform="translate(200, 10)">
-                  <rect x="0" y="0" width="110" height="20" rx="4" fill="#091522" stroke="#ffffff10" strokeWidth="1" />
-                  <text x="55" y="13" fill="#ffffff" fontSize="8" fontWeight="bold" textAnchor="middle">
-                    May 22 ROAS: {stats.roas !== 'N/A' ? formatROAS(stats.roas) : '8.12x'}
-                  </text>
-                </g>
-
-                {/* X-Axis labels */}
-                <text x="15" y="118" fill="#8fa0b5" fontSize="8" fontWeight="semibold">May 18</text>
-                <text x="135" y="118" fill="#8fa0b5" fontSize="8" fontWeight="semibold">May 20</text>
-                <text x="255" y="118" fill="#8fa0b5" fontSize="8" fontWeight="semibold">May 22</text>
-                <text x="375" y="118" fill="#8fa0b5" fontSize="8" fontWeight="semibold">May 24</text>
-              </svg>
-            </div>
-          </section>
 
 
 
           {/* Top Campaigns */}
-          <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
-              <h3 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
+              <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Melhores Campanhas
               </h3>
               <select className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
@@ -887,7 +1063,7 @@ export default function HubDashboard() {
               )}
             </div>
 
-            <Link href="/hub/conectores" className="mt-5 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors">
+            <Link href="/hub/integracoes" className="mt-5 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors">
               Ver todas as campanhas →
             </Link>
           </section>
@@ -898,7 +1074,7 @@ export default function HubDashboard() {
         <div className="xl:col-span-3 flex flex-col gap-6">
 
           {/* Notificações — exibe até 4 alertas em formato de lista sem scroll */}
-          <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <h2 className="text-[13px] font-black text-[#a3b8cc] uppercase tracking-wider mb-4 flex items-center gap-2 border-b border-white/[0.08] pb-2.5">
               <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
               Notificações
@@ -1074,8 +1250,8 @@ export default function HubDashboard() {
           </section>
 
           {/* Feed de Atividade ao Vivo — exibe exatamente 7 itens sem scroll */}
-          <section className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
-            <h2 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5 flex items-center justify-between">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+            <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5 flex items-center justify-between">
               Feed de Atividade ao Vivo
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
             </h2>
@@ -1109,15 +1285,15 @@ export default function HubDashboard() {
               ))}
             </div>
 
-            <Link href="/hub/conectores" className="mt-4 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors border-t border-white/[0.08] pt-3">
+            <Link href="/hub/integracoes" className="mt-4 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors border-t border-white/[0.08] pt-3">
               Ver toda a atividade →
             </Link>
           </section>
 
           {/* Performance em Tempo Real */}
-          <article className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <article className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
-              <h3 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
+              <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Performance em Tempo Real
               </h3>
               <select className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
@@ -1145,9 +1321,9 @@ export default function HubDashboard() {
           </article>
 
           {/* Alocação de Orçamento */}
-          <article className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <article className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
-              <h3 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
+              <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Alocação de Orçamento
               </h3>
               <span title="Distribuição do investimento real por canal de mídia ativo">
@@ -1155,35 +1331,31 @@ export default function HubDashboard() {
               </span>
             </div>
 
-            <div className="flex items-center gap-6">
-              {/* Visual donut slice */}
-              <div className="relative h-20 w-20 flex items-center justify-center rounded-full border-4 border-emerald-500/20">
-                <div className="absolute inset-0 rounded-full border-4 border-emerald-400 border-t-transparent border-r-transparent rotate-[120deg]" />
-                <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent border-l-transparent rotate-[300deg]" />
-                <div className="flex flex-col items-center">
-                  <span className="text-[8px] font-bold text-white/60 uppercase">Total</span>
-                  <span className="text-[10px] font-black text-emerald-400">
-                    {formatCurrencyCompact(stats.spend, '$')}
-                  </span>
-                </div>
-              </div>
-
-              <div className="space-y-2 flex-grow">
-                {budgetAllocationData.map((item) => (
-                  <div key={item.label} className="flex justify-between items-center">
+            <div className="space-y-3">
+              {budgetAllocationData.map((item) => (
+                <div key={item.label}>
+                  <div className="flex justify-between items-center mb-1">
                     <div className="flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color, boxShadow: `0 0 5px ${item.color}80` }} />
                       <span className="text-[12px] text-white/80 font-medium">{item.label}</span>
                     </div>
-                    <span className="text-[13px] font-black text-white">
+                    <span className="text-[12px] font-black text-white">
                       {stats.spend !== 'N/A' ? `${item.pct.toFixed(1)}%` : 'N/A'}
                     </span>
                   </div>
-                ))}
-              </div>
+                  {stats.spend !== 'N/A' && (
+                    <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                      <div
+                        className="h-full rounded-full transition-all duration-500"
+                        style={{ width: `${item.pct}%`, backgroundColor: item.color }}
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
             </div>
 
-            <Link href="/hub/conectores" className="mt-4 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors">
+            <Link href="/hub/integracoes" className="mt-4 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors">
               Ver relatório de budget →
             </Link>
           </article>

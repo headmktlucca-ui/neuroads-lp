@@ -113,7 +113,9 @@ const content: SubmenuPageContent = {
   },
 };
 
+import LaboratorioClient from './LaboratorioClient';
+
 export default function Page() {
-  return <SubmenuPageShell content={content} />;
+  return <LaboratorioClient content={content} />;
 }
 

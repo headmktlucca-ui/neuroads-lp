@@ -388,11 +388,11 @@ export default function Suggestion3LandingPage() {
               </div>
 
               <div className="mt-7 flex flex-wrap gap-3">
-                <button type="button" onClick={handleOpenSpecialistChat} className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[#ff6a00] px-6 py-3 text-[13px] font-extrabold text-white">
+                <button type="button" onClick={handleOpenSpecialistChat} className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-3 text-[13px] font-extrabold text-white">
                   Fale com um especialista
                   <ArrowRight size={13} />
                 </button>
-                <button type="button" onClick={handleRequestDemo} className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#d9dee7] bg-transparent px-6 py-3 text-[13px] font-bold text-[#2a2f3a]">
+                <button type="button" onClick={handleRequestDemo} className="inline-flex cursor-pointer items-center gap-2 rounded-xl border border-[#d9dee7] bg-transparent px-6 py-3 text-[13px] font-bold text-[#2a2f3a]">
                   Solicite Demonstração
                   <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-[#d1d6e0] text-[#434b5a]">
                     <ArrowRight size={10} />
@@ -618,7 +618,7 @@ export default function Suggestion3LandingPage() {
                               <button
                                 type="button"
                                 onClick={() => setDetailsAgent(agent)}
-                                className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#ffbd93] bg-white px-4 py-2 text-[12px] font-extrabold uppercase tracking-[0.04em] text-[#ff6a00] transition hover:bg-[#fff3ea] sm:w-auto sm:whitespace-nowrap"
+                                className="inline-flex w-full items-center justify-center gap-2 rounded-xl border border-[#ffbd93] bg-white px-4 py-2 text-[12px] font-extrabold uppercase tracking-[0.04em] text-[#ff6a00] transition hover:bg-[#fff3ea] sm:w-auto sm:whitespace-nowrap"
                               >
                                 Mais detalhes
                                 <ArrowRight size={12} className="[animation:neuroadsFlowArrowPulse_1.2s_ease-in-out_infinite]" />
@@ -754,7 +754,7 @@ export default function Suggestion3LandingPage() {
               <button
                 type="button"
                 onClick={handleOpenSpecialistChat}
-                className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-6 py-2.5 text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(255,106,0,0.28)] transition hover:brightness-110"
+                className="inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-2.5 text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(255,106,0,0.28)] transition hover:brightness-110"
               >
                 Solicitar diagnóstico do meu segmento
                 <ArrowRight size={13} />
@@ -858,7 +858,7 @@ export default function Suggestion3LandingPage() {
               <button
                 type="button"
                 onClick={handleOpenSpecialistChat}
-                className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-6 py-3 text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(255,106,0,0.35)] transition hover:brightness-110"
+                className="mt-5 inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-3 text-[13px] font-extrabold text-white shadow-[0_10px_22px_rgba(255,106,0,0.35)] transition hover:brightness-110"
               >
                 Falar com especialista
                 <ArrowRight size={13} />
@@ -895,11 +895,11 @@ export default function Suggestion3LandingPage() {
             <p className="text-[13px] text-white/82 sm:text-[14px]">Mais performance. Menos achismo.</p>
 
             <div className="mt-5 flex flex-wrap gap-2.5">
-              <button type="button" onClick={handleOpenSpecialistChat} className="inline-flex items-center gap-2 rounded-full bg-[#ff6a00] px-6 py-2.5 text-[13px] font-extrabold text-white">
+              <button type="button" onClick={handleOpenSpecialistChat} className="inline-flex items-center gap-2 rounded-xl bg-[#ff6a00] px-6 py-2.5 text-[13px] font-extrabold text-white">
                 Fale com um especialista
                 <ArrowRight size={13} />
               </button>
-              <button type="button" onClick={handleRequestDemo} className="inline-flex items-center gap-2 rounded-full border border-white/24 bg-black/25 px-6 py-2.5 text-[13px] font-bold text-white">
+              <button type="button" onClick={handleRequestDemo} className="inline-flex items-center gap-2 rounded-xl border border-white/24 bg-black/25 px-6 py-2.5 text-[13px] font-bold text-white">
                 Solicite Demonstração
                 <span className="inline-flex h-5 w-5 items-center justify-center rounded-full border border-white/30 text-white">
                   <ArrowRight size={10} />
@@ -913,7 +913,7 @@ export default function Suggestion3LandingPage() {
       <footer id="rodape" className="relative z-10 w-full overflow-hidden border-t border-white/5 bg-[#040811]/95 backdrop-blur-xl">
         <div className="relative z-10 mx-auto max-w-[1260px] px-5 py-12 md:px-8">
           <div>
-            <Image src="/images/logo2026.png" alt="NeuroAds" width={150} height={32} className="h-8 w-auto" />
+            <Image src="/images/Logos/LLNeuroAds.png" alt="NeuroAds" width={190} height={40} className="h-10 w-auto" />
             <p className="mt-3 max-w-[280px] text-[13px] text-[#707887]">IA agêntica para marketing de alta performance.</p>
             <div className="mt-4 flex items-center gap-3 text-[#525b6b]">
               <a

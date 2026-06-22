@@ -35,7 +35,7 @@ export default function Navbar() {
           
           <Link href="/" className="flex items-center group transition-transform hover:scale-[1.02]" onClick={closeMenu}>
             <Image
-              src="/images/logo2026.png" 
+              src="/images/Logos/LLNeuroAds.png" 
               alt="NeuroAds Logo" 
               width={192}
               height={48}

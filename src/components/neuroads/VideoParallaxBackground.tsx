@@ -76,6 +76,7 @@ export default function VideoParallaxBackground({
           loop={srcs.length === 1}
           muted
           playsInline
+          preload="auto"
           onEnded={handleVideoEnded}
           className="absolute inset-0 w-full h-full object-cover pointer-events-none will-change-transform"
         />

@@ -152,6 +152,8 @@ const content: StrategicContentPageData = {
   },
 };
 
+import SobreClient from './SobreClient';
+
 export default function Page() {
-  return <StrategicContentPageShell data={content} />;
+  return <SobreClient data={content} />;
 }

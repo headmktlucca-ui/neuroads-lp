@@ -38,13 +38,13 @@ export function MagneticButton({ children, className }: MagneticButtonProps) {
       ref={ref}
       type="button"
       className={cn(
-        "group relative inline-flex items-center justify-center rounded-full border border-orange-300/35 px-7 py-3 text-sm font-semibold text-white transition duration-300 will-change-transform",
+        "group relative inline-flex items-center justify-center rounded-xl border border-orange-300/35 px-7 py-3 text-sm font-semibold text-white transition duration-300 will-change-transform",
         "bg-gradient-to-r from-[#ff6a00] to-[#ff8c00] shadow-[0_0_42px_rgba(255,106,0,0.4)] hover:shadow-[0_0_52px_rgba(255,140,0,0.52)]",
         className
       )}
       {...handlers}
     >
-      <span className="absolute inset-0 rounded-full bg-white/10 opacity-0 blur-xl transition group-hover:opacity-100" />
+      <span className="absolute inset-0 rounded-xl bg-white/10 opacity-0 blur-xl transition group-hover:opacity-100" />
       <span className="relative z-10">{children}</span>
     </button>
   );
