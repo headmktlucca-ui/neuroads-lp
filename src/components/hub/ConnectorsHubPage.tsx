@@ -1312,6 +1312,10 @@ export default function ConnectorsHubPage() {
       router.replace(getHubLoginRedirect(pathname));
       return;
     }
+    if (accessState === 'unverified') {
+      router.replace('/verificar-email');
+      return;
+    }
     if (accessState === 'forbidden' && !premiumSyncing) {
       router.replace(getHubOnboardingRedirect(pathname));
     }

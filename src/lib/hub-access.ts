@@ -3,7 +3,7 @@ import type { User } from 'firebase/auth';
 export const HUB_PLAN_REQUIRED_REDIRECT = '/onboarding';
 export const HUB_ONBOARDING_REDIRECT = HUB_PLAN_REQUIRED_REDIRECT;
 
-export type HubAccessStatus = 'loading' | 'allowed' | 'unauthenticated' | 'forbidden';
+export type HubAccessStatus = 'loading' | 'allowed' | 'unauthenticated' | 'unverified' | 'forbidden';
 const INITIAL_TRIAL_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
 
 function normalizePathCandidate(value: string | null | undefined): string | null {
@@ -404,6 +404,7 @@ export function resolveHubAccessState({
 }): HubAccessStatus {
   if (loading) return 'loading';
   if (!user) return 'unauthenticated';
+  if (!user.emailVerified) return 'unverified';
   if (!profile) return 'loading';
   if (!hasHubPlanAccess(profile)) return 'forbidden';
   return 'allowed';

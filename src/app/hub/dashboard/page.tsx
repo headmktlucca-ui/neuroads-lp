@@ -3,10 +3,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { CheckCircle2, ExternalLink, Info, Power, Search, Wrench, X } from 'lucide-react';
+import { CheckCircle2, Search, Wrench, X } from 'lucide-react';
+import AgentCard from '../../../components/hub/AgentCard';
 import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
-import { agents, type Agent } from '../../../data/agents';
+import { agents } from '../../../data/agents';
 import { getContractedAgentsFromProfile, slugifyAgentTitle } from '../../../lib/hub-agents';
 import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../../lib/agent-status-cache';
 import { getFirebaseDb } from '../../../lib/firebase';
@@ -113,48 +114,6 @@ export default function HubDashboardPage() {
     ? recommendedAgents.find((agent) => slugifyAgentTitle(agent.title) === pendingActivationSlug) ?? null
     : null;
 
-  const activeAgentCardClass = 'rounded-xl border border-white/[0.08] bg-[#051120]/60 p-4 hover:border-white/[0.16] hover:bg-[#051120]/80 transition-all duration-200';
-
-  const renderActiveAgentCard = (agent: Agent) => (
-    <article key={agent.title} className={activeAgentCardClass}>
-      <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-black text-white">{agent.title}</p>
-        <button
-          type="button"
-          onClick={() => setPendingDeactivateSlug(slugifyAgentTitle(agent.title))}
-          disabled={updatingSlug === slugifyAgentTitle(agent.title)}
-          className="inline-flex items-center gap-1 text-[12px] font-black text-[#FF4D4D] hover:text-[#FF3333] transition-colors disabled:opacity-60"
-        >
-          <Power className="h-3.5 w-3.5" />
-          {updatingSlug === slugifyAgentTitle(agent.title) ? 'Desativando…' : 'Desativar Agente'}
-        </button>
-      </div>
-      <p className="mt-2 text-xs text-slate-400">{agent.description}</p>
-      <div className="mt-3 flex flex-wrap gap-2">
-        <button
-          type="button"
-          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#0A9D57] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(10,157,87,0.30)] hover:brightness-105 active:scale-95 transition-all"
-        >
-          <CheckCircle2 className="h-4 w-4" />
-          Ativo
-        </button>
-        <Link
-          href={`/hub/agente/${slugifyAgentTitle(agent.title)}`}
-          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#0f62fe] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(15,98,254,0.15)] transition-all hover:bg-[#0353e9] hover:scale-105 active:scale-95"
-        >
-          <ExternalLink className="h-4 w-4" />
-          Acessar Agente
-        </Link>
-        <Link
-          href={`/hub/agente/${slugifyAgentTitle(agent.title)}`}
-          className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-white/10 bg-white/5 px-6 text-[14px] leading-none font-black text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
-        >
-          <Info className="h-4 w-4" />
-          Mais detalhes
-        </Link>
-      </div>
-    </article>
-  );
 
   const activateAgent = async (agentTitle: string, agentSlug: string) => {
     if (!user) return;
@@ -227,7 +186,7 @@ export default function HubDashboardPage() {
     <div className="w-full space-y-6 text-white">
       <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#ff6a00]/15 border border-[#ff6a00]/20 text-[#ff6a00]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--color-hub-accent)]/15 border border-[var(--color-hub-border-accent)] text-[var(--color-hub-accent)]">
             <CheckCircle2 className="h-6 w-6" />
           </div>
           <div>
@@ -247,7 +206,7 @@ export default function HubDashboardPage() {
         <div className="flex items-center shrink-0">
           <Link
             href="/hub/laboratorio-agentes"
-            className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#FF6A00] bg-[#FF6A00] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFB98E]"
+            className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[var(--color-hub-accent)] bg-[var(--color-hub-accent)] px-6 text-[14px] leading-none font-black text-white shadow-[var(--shadow-btn-orange)] transition hover:brightness-105 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-hub-accent)]/30"
           >
             <Wrench className="h-4 w-4" />
             Acessar Laboratório
@@ -255,7 +214,7 @@ export default function HubDashboardPage() {
         </div>
       </header>
 
-      <div className="rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 p-5 md:p-6 shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
+      <div className="rounded-3xl border border-[var(--color-hub-border-accent)] bg-[var(--color-hub-deep)] backdrop-blur-md p-5 md:p-6 shadow-[var(--shadow-hub-card)]">
         <div className="relative w-full max-w-lg">
           <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400">
             <Search size={18} />
@@ -266,7 +225,7 @@ export default function HubDashboardPage() {
             placeholder="Pesquisar agentes ativos por nome ou descrição…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-11 pr-10 rounded-[12px] border border-white/[0.12] bg-white/[0.06] text-[15px] font-medium text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FFBE94]/20 focus:bg-[#071a2e]"
+            className="w-full h-11 pl-11 pr-10 rounded-[12px] border border-[var(--color-hub-border-strong)] bg-white/[0.06] text-[15px] font-medium text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:border-[var(--color-hub-accent)] focus:ring-2 focus:ring-[var(--color-hub-accent)]/20 focus:bg-[var(--color-hub-base)]"
           />
           {searchQuery ? (
             <button
@@ -282,7 +241,7 @@ export default function HubDashboardPage() {
       </div>
 
       {searchQuery && filteredActiveAgents.length === 0 ? (
-        <div className="rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 p-12 text-center shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
+        <div className="rounded-3xl border border-[var(--color-hub-border-accent)] bg-[var(--color-hub-deep)] backdrop-blur-md p-12 text-center shadow-[var(--shadow-hub-card)]">
           <p className="text-lg font-black text-white">Nenhum agente ativo encontrado</p>
           <p className="mt-1 text-sm text-slate-400">
             Não encontramos nenhum agente ativo correspondente à busca &quot;{searchQuery}&quot;.
@@ -290,7 +249,7 @@ export default function HubDashboardPage() {
           <button
             type="button"
             onClick={() => setSearchQuery('')}
-            className="mt-4 inline-flex h-10 items-center justify-center rounded-[12px] bg-[#FF6B00] px-5 text-sm font-black text-white shadow-[0_10px_20px_rgba(255,107,0,0.20)] hover:brightness-105 hover:scale-105 transition active:scale-95"
+            className="mt-4 inline-flex h-11 items-center justify-center rounded-[12px] bg-[var(--color-hub-accent)] px-6 text-[14px] leading-none font-black text-white shadow-[var(--shadow-btn-orange)] hover:brightness-105 hover:scale-105 transition active:scale-95"
           >
             Limpar busca
           </button>
@@ -303,9 +262,9 @@ export default function HubDashboardPage() {
             {activeAgentsGroupedByCategory.map(({ category, agents: categoryAgents }) => (
               <section
                 key={category}
-                className="relative overflow-hidden rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 shadow-[0_8px_32px_rgba(2,8,22,0.4)]"
+                className="relative overflow-hidden rounded-3xl border border-[var(--color-hub-border-accent)] bg-[var(--color-hub-deep)] backdrop-blur-md shadow-[var(--shadow-hub-card)]"
               >
-                <header className="bg-[#091624] px-6 py-5 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-4">
+                <header className="bg-[var(--color-hub-header)] px-6 py-5 border-b border-[var(--color-hub-border)] flex flex-wrap items-center justify-between gap-4">
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
@@ -324,7 +283,18 @@ export default function HubDashboardPage() {
 
                 <div className="p-6 md:p-8">
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                    {categoryAgents.map((agent) => renderActiveAgentCard(agent))}
+                    {categoryAgents.map((agent) => (
+                    <AgentCard
+                      key={agent.title}
+                      title={agent.title}
+                      description={agent.description}
+                      slug={slugifyAgentTitle(agent.title)}
+                      isActive
+                      variant="dashboard"
+                      isUpdating={updatingSlug === slugifyAgentTitle(agent.title)}
+                      onDeactivate={() => setPendingDeactivateSlug(slugifyAgentTitle(agent.title))}
+                    />
+                  ))}
                   </div>
                 </div>
               </section>
@@ -332,7 +302,7 @@ export default function HubDashboardPage() {
           </div>
         ) : (
           !searchQuery ? (
-            <section className="rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 p-6 md:p-8 shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
+            <section className="rounded-3xl border border-[var(--color-hub-border-accent)] bg-[var(--color-hub-deep)] backdrop-blur-md p-6 md:p-8 shadow-[var(--shadow-hub-card)]">
               <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 text-sm text-slate-300">
                 Nenhum agente ativo no momento.
               </div>
@@ -340,8 +310,8 @@ export default function HubDashboardPage() {
           ) : null
         )
       ) : (
-        <section className="relative overflow-hidden rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
-          <header className="bg-[#091624] px-6 py-5 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-4">
+        <section className="relative overflow-hidden rounded-3xl border border-[var(--color-hub-border-accent)] bg-[var(--color-hub-deep)] backdrop-blur-md shadow-[var(--shadow-hub-card)]">
+          <header className="bg-[var(--color-hub-header)] px-6 py-5 border-b border-[var(--color-hub-border)] flex flex-wrap items-center justify-between gap-4">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse" />
@@ -361,7 +331,18 @@ export default function HubDashboardPage() {
           <div className="p-6 md:p-8">
             {filteredActiveAgents.length > 0 ? (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                {filteredActiveAgents.map((agent) => renderActiveAgentCard(agent))}
+                {filteredActiveAgents.map((agent) => (
+                <AgentCard
+                  key={agent.title}
+                  title={agent.title}
+                  description={agent.description}
+                  slug={slugifyAgentTitle(agent.title)}
+                  isActive
+                  variant="dashboard"
+                  isUpdating={updatingSlug === slugifyAgentTitle(agent.title)}
+                  onDeactivate={() => setPendingDeactivateSlug(slugifyAgentTitle(agent.title))}
+                />
+              ))}
               </div>
             ) : (
               !searchQuery ? (
@@ -374,8 +355,8 @@ export default function HubDashboardPage() {
         </section>
       )}
 
-      <section className="relative overflow-hidden mt-6 rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 shadow-[0_8px_32px_rgba(2,8,22,0.4)] text-white">
-        <header className="bg-[#091624] px-6 py-5 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-4">
+      <section className="relative overflow-hidden mt-6 rounded-3xl border border-[var(--color-hub-border-accent)] bg-[var(--color-hub-deep)] backdrop-blur-md shadow-[var(--shadow-hub-card)] text-white">
+        <header className="bg-[var(--color-hub-header)] px-6 py-5 border-b border-[var(--color-hub-border)] flex flex-wrap items-center justify-between gap-4">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-[#FF6A00] animate-pulse" />
@@ -400,33 +381,18 @@ export default function HubDashboardPage() {
           {recommendedAgents.length > 0 ? (
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
               {recommendedAgents.map((agent) => (
-                <article
+                <AgentCard
                   key={agent.title}
-                  className="rounded-xl border border-white/[0.08] bg-[#051120]/60 p-4 transition-all hover:border-white/[0.16] hover:bg-[#051120]/80 duration-200"
-                >
-                  <p className="text-sm font-black text-white">{agent.title}</p>
-                  <p className="mt-1 text-xs text-slate-400">{agent.description}</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setPendingActivationSlug(slugifyAgentTitle(agent.title))}
-                      disabled={updatingSlug === slugifyAgentTitle(agent.title)}
-                      className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-[#FF6B00] bg-[#FF6B00] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105 hover:scale-105 active:scale-95 disabled:opacity-60"
-                    >
-                      <Wrench className="h-4 w-4" />
-                      {updatingSlug === slugifyAgentTitle(agent.title) ? 'Ativando…' : 'Ativar Agente'}
-                    </button>
-                    <Link
-                      href={`/hub/laboratorio-agentes?agente=${slugifyAgentTitle(agent.title)}`}
-                      className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] px-6 text-[14px] leading-none font-black transition border border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
-                    >
-                      <Info className="h-4 w-4" />
-                      Mais detalhes
-                    </Link>
-                  </div>
-                </article>
-              ))}
-            </div>
+                  title={agent.title}
+                  description={agent.description}
+                  slug={slugifyAgentTitle(agent.title)}
+                  isActive={false}
+                  variant="dashboard"
+                  isActivatable={agent.isActivatable}
+                  isUpdating={updatingSlug === slugifyAgentTitle(agent.title)}
+                  onActivate={() => setPendingActivationSlug(slugifyAgentTitle(agent.title))}
+                />
+              ))}            </div>
           ) : (
             <div className="rounded-2xl border border-white/10 bg-[#0A1E3D] text-[#C6D3E9] p-5 text-sm">
               Todos os agentes disponíveis já estão ativos na conta.
@@ -443,11 +409,11 @@ export default function HubDashboardPage() {
             className="absolute inset-0 bg-[#020816]/70 backdrop-blur-md transition-opacity duration-300"
             aria-label="Fechar confirmação"
           />
-          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/[0.12] bg-[#071a2e]/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
+          <section className="relative w-full max-w-2xl rounded-[24px] border border-[var(--color-hub-border-strong)] bg-[var(--color-hub-deep)]/95 backdrop-blur-md p-6 md:p-8 shadow-[var(--shadow-hub-card)] text-white animate-in fade-in zoom-in-95 duration-250">
             <button
               type="button"
               onClick={() => setPendingActivationSlug(null)}
-              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
+              className="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
               aria-label="Fechar"
             >
               <X className="h-5 w-5" />
@@ -471,7 +437,7 @@ export default function HubDashboardPage() {
                 type="button"
                 onClick={() => activateAgent(pendingActivationAgent.title, slugifyAgentTitle(pendingActivationAgent.title))}
                 disabled={updatingSlug === slugifyAgentTitle(pendingActivationAgent.title)}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#FF6B00] bg-[#FF6B00] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] disabled:opacity-60 transition-all hover:scale-105 active:scale-95"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[var(--color-hub-accent)] bg-[var(--color-hub-accent)] px-6 text-[14px] leading-none font-black text-white shadow-[var(--shadow-btn-orange)] disabled:opacity-60 transition-all hover:scale-105 active:scale-95"
               >
                 <Wrench className="h-4 w-4" />
                 {updatingSlug === slugifyAgentTitle(pendingActivationAgent.title) ? 'Ativando…' : 'Confirmar ativação'}
@@ -489,11 +455,11 @@ export default function HubDashboardPage() {
             className="absolute inset-0 bg-[#020816]/70 backdrop-blur-md transition-opacity duration-300"
             aria-label="Fechar confirmação"
           />
-          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/[0.12] bg-[#071a2e]/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
+          <section className="relative w-full max-w-2xl rounded-[24px] border border-[var(--color-hub-border-strong)] bg-[var(--color-hub-deep)]/95 backdrop-blur-md p-6 md:p-8 shadow-[var(--shadow-hub-card)] text-white animate-in fade-in zoom-in-95 duration-250">
             <button
               type="button"
               onClick={() => setPendingDeactivateSlug(null)}
-              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
+              className="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
               aria-label="Fechar"
             >
               <X className="h-5 w-5" />
@@ -517,7 +483,7 @@ export default function HubDashboardPage() {
                 type="button"
                 onClick={() => deactivateAgent(pendingDeactivateAgent.title, slugifyAgentTitle(pendingDeactivateAgent.title))}
                 disabled={updatingSlug === slugifyAgentTitle(pendingDeactivateAgent.title)}
-                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-[#FF4D4D] bg-[#FF4D4D] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(180,35,24,0.30)] disabled:opacity-60 transition-all hover:scale-105 active:scale-95"
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-[var(--color-hub-danger)] bg-[var(--color-hub-danger)] px-6 text-[14px] leading-none font-black text-white shadow-[var(--shadow-btn-orange)] disabled:opacity-60 transition-all hover:scale-105 active:scale-95"
               >
                 {updatingSlug === slugifyAgentTitle(pendingDeactivateAgent.title) ? 'Desativando…' : 'Confirmar desativação'}
               </button>

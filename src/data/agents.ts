@@ -1,3 +1,5 @@
+import { ConnectorKey } from '../lib/hub-access';
+
 export interface Agent {
   title: string;
   description: string;
@@ -5,9 +7,12 @@ export interface Agent {
   icon: string;
   color: string;
   category: string;
+  heroDescription?: string;
+  requiredConnectors?: ConnectorKey[];
+  isActivatable?: boolean;
 }
 
-export const agents: Agent[] = [
+const rawAgents: Agent[] = [
   {
     title: 'Analista de Tráfego',
     description: 'Diagnóstico neural de campanhas com tomada de decisão automática baseada em ROI.',
@@ -15,6 +20,9 @@ export const agents: Agent[] = [
     icon: '/images/tools/analista_trafego.png',
     color: 'var(--color-brand-orange)',
     category: 'Performance'
+  ,
+    heroDescription: 'monitora campanhas em Google Ads e Meta de forma contínua para identificar desperdícios, oportunidades de escala e ajustes de conversão com prioridade no caixa da operação. Ele cruza dados reais de desempenho, redistribui orçamento por potencial de retorno e sinaliza decisões práticas para manter CPL competitivo e ROAS saudável. O resultado é mais previsibilidade comercial, menos achismo e avanço consistente da receita.',
+    requiredConnectors: ['googleAds', 'metaAds', 'linkedinAds', 'ga4']
   },
   {
     title: 'Gerador de Criativos',
@@ -23,6 +31,9 @@ export const agents: Agent[] = [
     icon: '/images/tools/gerador_criativos.png',
     color: 'var(--color-brand-orange)',
     category: 'Criativos'
+  ,
+    heroDescription: 'conecta seus canais, lê indicadores reais de CTR, conversão e custo por lead para identificar quais mensagens e ângulos criativos têm maior potencial financeiro. Ele transforma dados de performance em oportunidades priorizadas e simulações práticas de impacto, apoiando ciclos contínuos de testes com foco em reduzir CPL e aumentar previsibilidade comercial.',
+    requiredConnectors: ['googleAds', 'metaAds', 'linkedinAds', 'ga4']
   },
   {
     title: 'Gerador de Copies de Conversão',
@@ -31,6 +42,9 @@ export const agents: Agent[] = [
     icon: '/images/tools/gerador_copies.png',
     color: 'var(--color-brand-orange)',
     category: 'Criativos'
+  ,
+    heroDescription: 'transforma sinais reais de performance em copies orientadas a resultado financeiro. Ele localiza padrões vencedores por canal, mensura prioridades de otimização e gera variações de headline, hook, corpo e CTA prontas para execução com foco em elevar conversão e controlar o custo por aquisição.',
+    requiredConnectors: ['ga4', 'crm', 'googleAds', 'metaAds']
   },
   {
     title: 'Análise Viral',
@@ -39,6 +53,9 @@ export const agents: Agent[] = [
     icon: '/images/tools/analise_viral.png',
     color: 'var(--color-brand-orange)',
     category: 'Criativos'
+  ,
+    heroDescription: 'monitora sinais quentes do mercado para mapear conteúdos em destaque nas últimas 24 horas. Ele transforma tendências em variações estratégicas de formato, narrativa e posicionamento, priorizando relevância comercial, clareza de oferta e impacto direto na geração de demanda.',
+    requiredConnectors: ['googleAds', 'metaAds', 'linkedinAds', 'ga4']
   },
   {
     title: 'Rastreador Cirúrgico',
@@ -47,6 +64,8 @@ export const agents: Agent[] = [
     icon: '/images/tools/rastreador_cirurgico.png',
     color: 'var(--color-brand-orange)',
     category: 'Técnico'
+  ,
+    requiredConnectors: ['ga4', 'serverTracking', 'warehouse']
   },
   {
     title: 'Preditor de Funil',
@@ -55,6 +74,9 @@ export const agents: Agent[] = [
     icon: '/images/tools/preditor_funil.png',
     color: 'var(--color-brand-orange)',
     category: 'Técnico'
+  ,
+    heroDescription: 'transforma sinais reais de tráfego e conversão em projeções financeiras acionáveis para cada etapa da jornada comercial. Ele estima volume necessário de cliques, leads, MQLs, SQLs e vendas para bater metas de receita, compara cenários de execução e aponta o caminho com melhor equilíbrio entre escala, custo e margem.',
+    requiredConnectors: ['googleAds', 'metaAds', 'linkedinAds', 'ga4', 'crm', 'payments']
   },
   {
     title: 'Diagnóstico de Landing Page',
@@ -63,6 +85,9 @@ export const agents: Agent[] = [
     icon: '/images/tools/diagnostico_lp.png',
     color: 'var(--color-brand-orange)',
     category: 'Inteligência'
+  ,
+    heroDescription: 'funciona como um laboratório de conversão para identificar com precisão os pontos que derrubam resultado comercial na sua página. Ele cruza clareza de oferta, UX, copy, autoridade e consistência entre anúncio e landing page para encontrar gargalos críticos, priorizar ações e simular impacto esperado em conversão. Na prática, você recebe direção objetiva para ajustar o que realmente afeta receita, retenção e eficiência da operação.',
+    requiredConnectors: ['ga4', 'googleAds', 'metaAds', 'crm']
   },
   {
     title: 'Simulador de ROAS',
@@ -71,6 +96,9 @@ export const agents: Agent[] = [
     icon: '/images/tools/simulador_roas.png',
     color: 'var(--color-brand-orange)',
     category: 'Performance'
+  ,
+    heroDescription: 'conecta seus canais de mídia, consolida indicadores reais e transforma metas de faturamento em projeções acionáveis de investimento, leads e retorno. Ele identifica gaps entre o cenário atual e a meta desejada, prioriza oportunidades por canal e sugere simulações de escala com foco em previsibilidade de caixa. Com isso, sua operação decide orçamento com mais segurança, reduz desperdício e avança com consistência financeira.',
+    requiredConnectors: ['googleAds', 'metaAds', 'linkedinAds', 'ga4', 'crm', 'payments']
   },
   {
     title: 'Analisador de Público',
@@ -79,6 +107,8 @@ export const agents: Agent[] = [
     icon: '/images/tools/analisador_publico.png',
     color: 'var(--color-brand-orange)',
     category: 'Inteligência'
+  ,
+    requiredConnectors: ['ga4', 'crm', 'warehouse']
   },
   {
     title: 'Diagnóstico de Funil',
@@ -87,6 +117,8 @@ export const agents: Agent[] = [
     icon: '/images/tools/diagnostico_funil.png',
     color: 'var(--color-brand-orange)',
     category: 'Técnico'
+  ,
+    requiredConnectors: ['ga4', 'serverTracking', 'warehouse']
   },
   {
     title: 'Auditor de Desperdício',
@@ -95,6 +127,9 @@ export const agents: Agent[] = [
     icon: '/images/tools/auditor_desperdicio.png',
     color: 'var(--color-brand-orange)',
     category: 'Performance'
+  ,
+    heroDescription: 'cruza dados reais de mídia para detectar onde sua verba está sendo drenada sem retorno proporcional. Ele identifica canais, segmentações e padrões de baixa eficiência, estima o desperdício financeiro e simula cenários de recuperação para realocar investimento com foco em margem e previsibilidade. O resultado é uma operação mais enxuta, com decisões orientadas por dados reais e impacto direto no caixa.',
+    requiredConnectors: ['googleAds', 'metaAds', 'linkedinAds', 'ga4']
   },
   {
     title: 'Otimizador de Orçamento',
@@ -103,6 +138,9 @@ export const agents: Agent[] = [
     icon: '/images/tools/alocacao.png',
     color: 'var(--color-brand-orange)',
     category: 'Performance'
+  ,
+    heroDescription: 'identifica o melhor destino para cada real investido entre seus canais ativos. Ele cruza custo, conversão e eficiência por fonte para simular realocações mais inteligentes, reduzir desperdício e aumentar previsibilidade de resultado financeiro. Na prática, você ganha um plano tático de distribuição de verba orientado por dados reais, com foco em escala previsível e consistência de caixa.',
+    requiredConnectors: ['googleAds', 'metaAds', 'linkedinAds', 'ga4']
   },
   {
     title: 'Gerador de Testes A/B',
@@ -111,6 +149,8 @@ export const agents: Agent[] = [
     icon: '/images/tools/testes.png',
     color: 'var(--color-brand-orange)',
     category: 'Técnico'
+  ,
+    requiredConnectors: ['ga4', 'serverTracking', 'warehouse']
   },
   {
     title: 'Avaliador de Oferta',
@@ -119,6 +159,8 @@ export const agents: Agent[] = [
     icon: '/images/tools/mineracao.png',
     color: 'var(--color-brand-orange)',
     category: 'Inteligência'
+  ,
+    requiredConnectors: ['ga4', 'crm', 'warehouse']
   },
   {
     title: 'Radar de Oportunidades',
@@ -127,6 +169,8 @@ export const agents: Agent[] = [
     icon: '/images/tools/analise.png',
     color: 'var(--color-brand-orange)',
     category: 'Inteligência'
+  ,
+    requiredConnectors: ['ga4', 'crm', 'warehouse']
   },
   {
     title: 'SEO & GEO',
@@ -135,6 +179,8 @@ export const agents: Agent[] = [
     icon: '/images/tools/otimizacao.png',
     color: 'var(--color-brand-orange)',
     category: 'Inteligência'
+  ,
+    requiredConnectors: ['ga4', 'crm', 'warehouse']
   },
   {
     title: 'Agente Editorial',
@@ -143,6 +189,9 @@ export const agents: Agent[] = [
     icon: '/images/tools/automacao.png',
     color: 'var(--color-brand-orange)',
     category: 'Inteligência'
+  ,
+    heroDescription: 'automatiza a produção completa de conteúdo estratégico e matérias de apoio para o canal Além do Algoritmo. Ele atua na pesquisa de palavras-chave, redação otimizada para SEO e GEO, briefing visual de imagens ultra-realistas com controle rígido de logos e textos, além de disparar rascunhos em e-mail operacional para aprovação direta dos administradores e coordenar um cronograma dinâmico de postagens para maximizar picos de audiência comercial.',
+    requiredConnectors: ['ga4', 'crm']
   },
   {
     title: 'DNA da Marca',
@@ -151,6 +200,9 @@ export const agents: Agent[] = [
     icon: '/images/tools/dna_marca.png',
     color: 'var(--color-brand-orange)',
     category: 'Inteligência'
+  ,
+    heroDescription: 'transforma posicionamento em linguagem comercial clara, garantindo consistência entre anúncios, páginas, roteiros e atendimento. Ele organiza diferenciais, dores e provas de valor para que cada mensagem reflita o que torna sua empresa única no mercado. Com isso, sua comunicação ganha força estratégica, aumenta a qualidade dos leads e melhora a conversão sem depender de improviso.',
+    requiredConnectors: ['crm', 'ga4']
   },
   {
     title: 'Análise de Concorrentes',
@@ -159,6 +211,8 @@ export const agents: Agent[] = [
     icon: '/images/tools/concorrentes.png',
     color: 'var(--color-brand-orange)',
     category: 'Inteligência'
+  ,
+    requiredConnectors: ['ga4', 'crm', 'warehouse']
   },
   {
     title: 'Público-Alvo Ideal',
@@ -167,5 +221,22 @@ export const agents: Agent[] = [
     icon: '/images/tools/publico_ideal.png',
     color: 'var(--color-brand-orange)',
     category: 'Inteligência'
+  ,
+    requiredConnectors: ['ga4', 'crm', 'warehouse']
+  },
+  {
+    title: 'Nome do Meu Agente',
+    description: 'Breve descrição do agente (1 a 2 linhas).',
+    longDescription: 'Descrição completa sobre o funcionamento e promessa do agente.',
+    icon: '/images/tools/default.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Inteligência',
+    heroDescription: 'texto introdutório para exibir na home page do agente.',
+    requiredConnectors: ['ga4', 'crm']
   }
 ];
+
+export const agents: Agent[] = rawAgents.map(agent => ({
+  ...agent,
+  isActivatable: ['Analista de Tráfego', 'Gerador de Criativos'].includes(agent.title)
+}));

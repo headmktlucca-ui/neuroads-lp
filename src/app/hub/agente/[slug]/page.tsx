@@ -5,18 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { CheckCircle2, Download, Eye, History, MoreVertical, Sparkles, Trash2, X } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import SeoGeoWorkspace from '../../../../components/agents/SeoGeoWorkspace';
-import TrafficAnalystWorkspace from '../../../../components/agents/TrafficAnalystWorkspace';
-import RoasSimulatorWorkspace from '../../../../components/agents/RoasSimulatorWorkspace';
-import FunnelPredictorWorkspace from '../../../../components/agents/FunnelPredictorWorkspace';
-import WasteAuditorWorkspace from '../../../../components/agents/WasteAuditorWorkspace';
-import BudgetOptimizerWorkspace from '../../../../components/agents/BudgetOptimizerWorkspace';
-import CreativeGeneratorWorkspace from '../../../../components/agents/CreativeGeneratorWorkspace';
-import ConversionCopyWorkspace from '../../../../components/agents/ConversionCopyWorkspace';
-import CreativeAnalysisWorkspace from '../../../../components/agents/CreativeAnalysisWorkspace';
-import LandingPageDiagnosisWorkspace from '../../../../components/agents/LandingPageDiagnosisWorkspace';
 import DnaBrandWorkspace, { DnaBrandPresentationPanel } from '../../../../components/agents/DnaBrandWorkspace';
 import GenericAgentWorkspace from '../../../../components/agents/GenericAgentWorkspace';
+import { getWorkspaceForAgent } from '../../../../lib/agent-workspace-registry';
 import { useAuth } from '../../../../context/AuthContext';
 import type { DnaBrandPresentation, DnaBrandSource } from '../../../actions/dna-brand';
 import {
@@ -113,145 +104,28 @@ function getCadenceContext(category: string, title: string) {
 }
 
 function getAgentHeroDescription(title: string) {
-  if (title === 'SEO & GEO') {
-    return (
-      <>
-        O agente <strong className="text-text-main">SEO & GEO</strong> atua como uma camada estratégica contínua para aumentar a autoridade digital da sua marca em buscadores
-        tradicionais e em mecanismos de resposta por IA. Ele organiza palavras-chave de intenção real, otimiza conteúdo e estrutura técnica das páginas, identifica
-        oportunidades de posicionamento e transforma sinais de mercado em ações práticas. Com isso, sua operação ganha mais tráfego qualificado, melhora a previsibilidade de
-        geração de demanda e constrói crescimento sustentável com impacto direto em oportunidades comerciais e receita.
-      </>
-    );
-  }
+function getAgentHeroDescription(agent: Agent | undefined): React.ReactNode | null {
+  if (!agent?.heroDescription) return null;
+  const match = agent.title === 'Agente Editorial' 
+    ? `O <strong className="text-text-main">${agent.title}</strong> `
+    : `O agente <strong className="text-text-main">${agent.title}</strong> `;
 
-  if (title === 'Analista de Tráfego') {
-    return (
-      <>
-        O agente <strong className="text-text-main">Analista de Tráfego</strong> monitora campanhas em Google Ads e Meta de forma contínua para identificar desperdícios,
-        oportunidades de escala e ajustes de conversão com prioridade no caixa da operação. Ele cruza dados reais de desempenho, redistribui orçamento por potencial de retorno e
-        sinaliza decisões práticas para manter CPL competitivo e ROAS saudável. O resultado é mais previsibilidade comercial, menos achismo e avanço consistente da receita.
-      </>
-    );
-  }
-
-  if (title === 'Simulador de ROAS') {
-    return (
-      <>
-        O agente <strong className="text-text-main">Simulador de ROAS</strong> conecta seus canais de mídia, consolida indicadores reais e transforma metas de faturamento em
-        projeções acionáveis de investimento, leads e retorno. Ele identifica gaps entre o cenário atual e a meta desejada, prioriza oportunidades por canal e sugere simulações
-        de escala com foco em previsibilidade de caixa. Com isso, sua operação decide orçamento com mais segurança, reduz desperdício e avança com consistência financeira.
-      </>
-    );
-  }
-
-  if (title === 'Preditor de Funil') {
-    return (
-      <>
-        O agente <strong className="text-text-main">Preditor de Funil</strong> transforma sinais reais de tráfego e conversão em projeções financeiras acionáveis para cada etapa
-        da jornada comercial. Ele estima volume necessário de cliques, leads, MQLs, SQLs e vendas para bater metas de receita, compara cenários de execução e aponta o caminho com
-        melhor equilíbrio entre escala, custo e margem.
-      </>
-    );
-  }
-
-  if (title === 'Auditor de Desperdício') {
-    return (
-      <>
-        O agente <strong className="text-text-main">Auditor de Desperdício</strong> cruza dados reais de mídia para detectar onde sua verba está sendo drenada sem retorno
-        proporcional. Ele identifica canais, segmentações e padrões de baixa eficiência, estima o desperdício financeiro e simula cenários de recuperação para realocar
-        investimento com foco em margem e previsibilidade. O resultado é uma operação mais enxuta, com decisões orientadas por dados reais e impacto direto no caixa.
-      </>
-    );
-  }
-
-  if (title === 'Otimizador de Orçamento') {
-    return (
-      <>
-        O agente <strong className="text-text-main">Otimizador de Orçamento</strong> identifica o melhor destino para cada real investido entre seus canais ativos. Ele cruza
-        custo, conversão e eficiência por fonte para simular realocações mais inteligentes, reduzir desperdício e aumentar previsibilidade de resultado financeiro. Na prática,
-        você ganha um plano tático de distribuição de verba orientado por dados reais, com foco em escala previsível e consistência de caixa.
-      </>
-    );
-  }
-
-  if (title === 'Gerador de Criativos') {
-    return (
-      <>
-        O agente <strong className="text-text-main">Gerador de Criativos</strong> conecta seus canais, lê indicadores reais de CTR, conversão e custo por lead para identificar
-        quais mensagens e ângulos criativos têm maior potencial financeiro. Ele transforma dados de performance em oportunidades priorizadas e simulações práticas de impacto,
-        apoiando ciclos contínuos de testes com foco em reduzir CPL e aumentar previsibilidade comercial.
-      </>
-    );
-  }
-
-  if (title === 'Gerador de Copies de Conversão') {
-    return (
-      <>
-        O agente <strong className="text-text-main">Gerador de Copies de Conversão</strong> transforma sinais reais de performance em copies orientadas a resultado financeiro.
-        Ele localiza padrões vencedores por canal, mensura prioridades de otimização e gera variações de headline, hook, corpo e CTA prontas para execução com foco em elevar
-        conversão e controlar o custo por aquisição.
-      </>
-    );
-  }
-
-  if (title === 'Análise Viral') {
-    return (
-      <>
-        O agente <strong className="text-text-main">Análise de Criativos</strong> monitora sinais quentes do mercado para mapear conteúdos em destaque nas últimas 24 horas.
-        Ele transforma tendências em variações estratégicas de formato, narrativa e posicionamento, priorizando relevância comercial, clareza de oferta e impacto direto na
-        geração de demanda.
-      </>
-    );
-  }
-
-  if (title === 'Diagnóstico de Landing Page') {
-    return (
-      <>
-        O agente <strong className="text-text-main">Diagnóstico de Landing Page</strong> funciona como um laboratório de conversão para identificar com precisão os pontos que
-        derrubam resultado comercial na sua página. Ele cruza clareza de oferta, UX, copy, autoridade e consistência entre anúncio e landing page para encontrar gargalos
-        críticos, priorizar ações e simular impacto esperado em conversão. Na prática, você recebe direção objetiva para ajustar o que realmente afeta receita, retenção e
-        eficiência da operação.
-      </>
-    );
-  }
-
-  if (title === 'DNA da Marca') {
-    return (
-      <>
-        O agente <strong className="text-text-main">DNA da Marca</strong> transforma posicionamento em linguagem comercial clara, garantindo consistência entre anúncios,
-        páginas, roteiros e atendimento. Ele organiza diferenciais, dores e provas de valor para que cada mensagem reflita o que torna sua empresa única no mercado. Com isso,
-        sua comunicação ganha força estratégica, aumenta a qualidade dos leads e melhora a conversão sem depender de improviso.
-      </>
-    );
-  }
-
-  if (title === 'Agente Editorial') {
-    return (
-      <>
-        O <strong className="text-text-main">Agente Editorial</strong> automatiza a produção completa de conteúdo estratégico e matérias de apoio para o canal Além do Algoritmo. Ele atua na pesquisa de palavras-chave, redação otimizada para SEO e GEO, briefing visual de imagens ultra-realistas com controle rígido de logos e textos, além de disparar rascunhos em e-mail operacional para aprovação direta dos administradores e coordenar um cronograma dinâmico de postagens para maximizar picos de audiência comercial.
-      </>
-    );
-  }
-
-  return null;
+  return (
+    <>
+      <span dangerouslySetInnerHTML={{ __html: match }} />
+      {agent.heroDescription}
+    </>
+  );
 }
 
-function getRequiredConnectorKeysForAgent(title: string, category: string): ConnectorKey[] {
-  if (title === 'SEO & GEO') return ['ga4', 'crm', 'warehouse'];
-  if (title === 'DNA da Marca') return ['crm', 'ga4'];
-  if (title === 'Agente Editorial') return ['ga4', 'crm'];
-  if (title === 'Diagnóstico de Landing Page') return ['ga4', 'googleAds', 'metaAds', 'crm'];
-  if (title === 'Gerador de Copies de Conversão') return ['ga4', 'crm', 'googleAds', 'metaAds'];
-  if (title === 'Gerador de Criativos' || title === 'Análise Viral') return ['googleAds', 'metaAds', 'linkedinAds', 'ga4'];
-  if (title === 'Simulador de ROAS' || title === 'Preditor de Funil') {
-    return ['googleAds', 'metaAds', 'linkedinAds', 'ga4', 'crm', 'payments'];
+function getRequiredConnectorKeysForAgent(agent: Agent | undefined): ConnectorKey[] {
+  if (agent?.requiredConnectors && agent.requiredConnectors.length > 0) {
+    return agent.requiredConnectors;
   }
-  if (title === 'Analista de Tráfego' || title === 'Auditor de Desperdício' || title === 'Otimizador de Orçamento') {
-    return ['googleAds', 'metaAds', 'linkedinAds', 'ga4'];
-  }
-  if (category === 'Performance') return ['googleAds', 'metaAds', 'linkedinAds', 'ga4'];
-  if (category === 'Criativos') return ['googleAds', 'metaAds', 'ga4'];
-  if (category === 'Técnico') return ['ga4', 'serverTracking', 'warehouse'];
+  // Fallbacks if not specified
+  if (agent?.category === 'Performance') return ['googleAds', 'metaAds', 'linkedinAds', 'ga4'];
+  if (agent?.category === 'Criativos') return ['googleAds', 'metaAds', 'ga4'];
+  if (agent?.category === 'Técnico') return ['ga4', 'serverTracking', 'warehouse'];
   return ['ga4', 'crm', 'warehouse'];
 }
 
@@ -374,12 +248,15 @@ export default function AgentEntryPage() {
     [selectedHistoryEntry]
   );
   const agentAutomationKey = useMemo(() => (entry ? slugifyAgentTitle(entry.title) : ''), [entry]);
-  const heroDescription = useMemo(() => (entry ? getAgentHeroDescription(entry.title) : null), [entry]);
+  const heroDescription = useMemo(() => getAgentHeroDescription(entry), [entry]);
   const connectorStatus = useMemo(() => getConnectionStatusFromProfile(profile), [profile]);
+  const requiredConnectorKeys = useMemo(
+    () => getRequiredConnectorKeysForAgent(entry),
+    [entry]
+  );
   const requiredConnectors = useMemo(() => {
     if (!entry) return [];
-    const requiredKeys = getRequiredConnectorKeysForAgent(entry.title, entry.category);
-    return requiredKeys.map((key) => {
+    return requiredConnectorKeys.map((key) => {
       const definition = CONNECTOR_DEFINITIONS.find((item) => item.key === key);
       return {
         key,
@@ -721,112 +598,38 @@ export default function AgentEntryPage() {
               </section>
 
               <div className="grid grid-cols-1 gap-6">
-                {entry.title === 'SEO & GEO' ? (
-                  <div className="col-span-1">
-                    <SeoGeoWorkspace agentTitle={entry.title} agentSlug={entry.slug} agentCategory={entry.category} />
-                  </div>
-                ) : entry.title === 'Analista de Tráfego' ? (
-                  <div className="col-span-1">
-                    <TrafficAnalystWorkspace
-                      userId={user?.uid}
-                      agentSlug={entry.slug}
-                      agentTitle={entry.title}
-                      agentCategory={entry.category}
-                    />
-                  </div>
-                ) : entry.title === 'Simulador de ROAS' ? (
-                  <div className="col-span-1">
-                    <RoasSimulatorWorkspace
-                      userId={user?.uid}
-                      agentSlug={entry.slug}
-                      agentTitle={entry.title}
-                      agentCategory={entry.category}
-                    />
-                  </div>
-                ) : entry.title === 'Preditor de Funil' ? (
-                  <div className="col-span-1">
-                    <FunnelPredictorWorkspace
-                      userId={user?.uid}
-                      agentSlug={entry.slug}
-                      agentTitle={entry.title}
-                      agentCategory={entry.category}
-                    />
-                  </div>
-                ) : entry.title === 'Auditor de Desperdício' ? (
-                  <div className="col-span-1">
-                    <WasteAuditorWorkspace
-                      userId={user?.uid}
-                      agentSlug={entry.slug}
-                      agentTitle={entry.title}
-                      agentCategory={entry.category}
-                    />
-                  </div>
-                ) : entry.title === 'Otimizador de Orçamento' ? (
-                  <div className="col-span-1">
-                    <BudgetOptimizerWorkspace
-                      userId={user?.uid}
-                      agentSlug={entry.slug}
-                      agentTitle={entry.title}
-                      agentCategory={entry.category}
-                    />
-                  </div>
-                ) : entry.title === 'Gerador de Criativos' ? (
-                  <div className="col-span-1">
-                    <CreativeGeneratorWorkspace
-                      userId={user?.uid}
-                      agentSlug={entry.slug}
-                      agentTitle={entry.title}
-                      agentCategory={entry.category}
-                    />
-                  </div>
-                ) : entry.title === 'Gerador de Copies de Conversão' ? (
-                  <div className="col-span-1">
-                    <ConversionCopyWorkspace
-                      userId={user?.uid}
-                      agentSlug={entry.slug}
-                      agentTitle={entry.title}
-                      agentCategory={entry.category}
-                    />
-                  </div>
-                ) : entry.title === 'Análise Viral' ? (
-                  <div className="col-span-1">
-                    <CreativeAnalysisWorkspace
-                      userId={user?.uid}
-                      agentSlug={entry.slug}
-                      agentTitle={entry.title}
-                      agentCategory={entry.category}
-                    />
-                  </div>
-                ) : entry.title === 'Diagnóstico de Landing Page' ? (
-                  <div className="col-span-1">
-                    <LandingPageDiagnosisWorkspace
-                      userId={user?.uid}
-                      agentSlug={entry.slug}
-                      agentTitle={entry.title}
-                      agentCategory={entry.category}
-                    />
-                  </div>
-                ) : entry.title === 'DNA da Marca' ? (
-                  <div className="col-span-1">
-                    <DnaBrandWorkspace
-                      userId={user?.uid}
-                      agentSlug={entry.slug}
-                      agentTitle={entry.title}
-                      agentCategory={entry.category}
-                    />
-                  </div>
-                ) : (
-                  <div className="col-span-1">
-                    <GenericAgentWorkspace
-                      key={`${user?.uid ?? 'anon'}-${entry.slug}`}
-                      userId={user?.uid}
-                      agentTitle={entry.title}
-                      category={entry.category}
-                      description={agent.longDescription}
-                      monthlyLimit={entry.planSummary?.monthlyLimit}
-                    />
-                  </div>
-                )}
+                {(() => {
+                  // ── Registry lookup: O(1) — adicionar novo agente = 2 linhas em agent-workspace-registry.ts
+                  const WorkspaceComponent = getWorkspaceForAgent(entry.title);
+                  const workspaceProps = {
+                    userId: user?.uid,
+                    agentSlug: entry.slug,
+                    agentTitle: entry.title,
+                    agentCategory: entry.category,
+                  };
+
+                  if (WorkspaceComponent) {
+                    return (
+                      <div className="col-span-1">
+                        <WorkspaceComponent {...workspaceProps} />
+                      </div>
+                    );
+                  }
+
+                  // Fallback: agente sem workspace específico
+                  return (
+                    <div className="col-span-1">
+                      <GenericAgentWorkspace
+                        key={`${user?.uid ?? 'anon'}-${entry.slug}`}
+                        userId={user?.uid}
+                        agentTitle={entry.title}
+                        category={entry.category}
+                        description={agent.longDescription}
+                        monthlyLimit={entry.planSummary?.monthlyLimit}
+                      />
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           )}

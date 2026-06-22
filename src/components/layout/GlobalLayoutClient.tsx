@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import PublicTopNav from './PublicTopNav';
 import HubFooter from '../hub/HubFooter';
 
-const HUB_PREFIXES = ['/hub', '/login', '/onboarding', '/cadastro'];
+const HUB_PREFIXES = ['/hub', '/login', '/onboarding', '/cadastro', '/verificar-email'];
 
 export default function GlobalLayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

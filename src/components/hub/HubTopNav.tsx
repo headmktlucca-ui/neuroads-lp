@@ -57,7 +57,7 @@ export default function HubTopNav() {
   }, [isDropdownOpen]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex flex-col bg-[#08101e]/98 backdrop-blur-xl shadow-[0_1px_0_rgba(255,255,255,0.06)]">
+    <header className="fixed top-0 left-0 right-0 z-50 flex flex-col bg-[var(--color-hub-base)]/98 backdrop-blur-xl shadow-[0_1px_0_rgba(255,255,255,0.06)]">
       {/* Top Bar: Logo + User */}
       <div className="flex items-center justify-between px-6 h-14 border-b border-white/[0.06]">
         {/* Logo */}
@@ -87,7 +87,7 @@ export default function HubTopNav() {
 
           {/* Dropdown Menu */}
           {isDropdownOpen && (
-            <div className="absolute right-0 top-[calc(100%+8px)] w-52 rounded-2xl border border-white/[0.10] bg-[#0d1a2a]/98 backdrop-blur-xl shadow-[0_16px_48px_rgba(0,0,0,0.6)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150 z-50">
+            <div className="absolute right-0 top-[calc(100%+8px)] w-52 rounded-2xl border border-[var(--color-hub-border)] bg-[var(--color-hub-surface)]/98 backdrop-blur-xl shadow-[var(--shadow-hub-card)] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150 z-50">
               <nav className="py-2">
                 {DROPDOWN_ITEMS.map((item) => (
                   <Link
@@ -129,7 +129,7 @@ export default function HubTopNav() {
             >
               {item.label}
               {isActive && (
-                <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t bg-gradient-to-r from-[#F24900] to-[#FF8805] shadow-[0_0_8px_rgba(255,106,0,0.6)]" />
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t bg-gradient-to-r from-[var(--color-hub-accent)] to-[var(--color-hub-accent-h)] shadow-[var(--shadow-hub-orange)]" />
               )}
             </Link>
           );

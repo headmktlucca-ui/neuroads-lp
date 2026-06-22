@@ -52,12 +52,52 @@ export async function POST(req: Request) {
       return NextResponse.json({ hasAccess: true, source: 'firestore' });
     }
 
+    const stripe = getStripeClient();
+
+    let body: Record<string, unknown> = {};
+    try {
+      body = (await req.json()) as Record<string, unknown>;
+    } catch {}
+    const sessionId = body?.sessionId;
+
+    if (sessionId) {
+      try {
+        const session = await stripe.checkout.sessions.retrieve(sessionId, {
+          expand: ['subscription'],
+        });
+        const sessionUserId = session.client_reference_id || session.metadata?.userId;
+        
+        if (sessionUserId === userId) {
+          const customerId = typeof session.customer === 'string' ? session.customer : session.customer?.id;
+          const subscription = session.subscription as Stripe.Subscription | undefined;
+          
+          if (customerId && (!subscription || isAllowedSubscriptionStatus(subscription.status))) {
+            await userRef.set(
+              {
+                isPremium: true,
+                stripeCustomerId: customerId,
+                ...(subscription ? {
+                  stripeSubscriptionId: subscription.id,
+                  subscriptionStatus: subscription.status,
+                  trialEndsAt: typeof subscription.trial_end === 'number' ? subscription.trial_end * 1000 : null,
+                } : {}),
+                updatedAt: Date.now(),
+              },
+              { merge: true }
+            );
+            return NextResponse.json({ hasAccess: true, source: 'stripe_session' });
+          }
+        }
+      } catch (err) {
+        console.warn('Falha ao buscar session no sync-premium:', err);
+      }
+    }
+
     const email = decoded.email || (typeof currentProfile?.authEmail === 'string' ? currentProfile.authEmail : null);
     if (!email) {
       return NextResponse.json({ hasAccess: false, reason: 'email_not_found' });
     }
 
-    const stripe = getStripeClient();
     const customers = await stripe.customers.list({ email, limit: 5 });
 
     for (const customer of customers.data) {

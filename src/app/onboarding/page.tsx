@@ -117,7 +117,15 @@ function OnboardingPageContent() {
           }
         }
 
-        await fetch('/api/stripe/sync-premium', { method: 'POST' });
+        const token = await user.getIdToken();
+        await fetch('/api/stripe/sync-premium', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ sessionId: checkoutSessionId || undefined }),
+        });
 
         if (!active) return;
         router.replace('/hub');
@@ -139,6 +147,10 @@ function OnboardingPageContent() {
 
   useEffect(() => {
     if (loading) return;
+    if (user && !user.emailVerified) {
+      router.replace('/verificar-email');
+      return;
+    }
     if (user && hasHubPlanAccess(profile)) {
       router.replace(nextPath);
     }

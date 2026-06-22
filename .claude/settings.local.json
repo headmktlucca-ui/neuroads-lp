@@ -56,7 +56,15 @@
       "Bash(gh pr *)",
       "PowerShell(winget install --id GitHub.cli --silent --accept-package-agreements --accept-source-agreements 2>&1)",
       "PowerShell($env:PATH = [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"PATH\", \"User\"\\); gh --version 2>&1)",
-      "Bash(gh auth *)"
+      "Bash(gh auth *)",
+      "PowerShell(Get-Content \"$env:USERPROFILE\\\\.gemini\\\\settings.json\" -Raw | ConvertFrom-Json | Out-Null; if \\($?\\) { \"JSON valido\" }; $env:GEMINI_API_KEY = \"AQ.Ab8RN6JPTPqIjMaSrGInvjieiO5ODsSXcNgrijFL2Ec10PhT4g\"; \"--- TESTE GEMINI ---\"; gemini -p \"Responda apenas: OK\" 2>&1 | Out-String)",
+      "Bash(echo \"=== find-skills \\(duplicada\\) ===\"; echo \"A \\(vence\\):  ~/.agents/skills/find-skills\"; ls -la ~/.agents/skills/find-skills/ 2>/dev/null | head; echo; echo \"B \\(perde\\):  ~/.gemini/skills/find-skills\"; ls -la ~/.gemini/skills/find-skills/ 2>/dev/null | head; echo; echo \"=== gemma-dev \\(duplicada\\) ===\"; echo \"A \\(vence\\):  ./.agents/skills/gemma-dev \\(no projeto\\)\"; ls -la \"C:/Users/claud/OneDrive/Documentos/NeuroAds/LP/.agents/skills/gemma-dev/\" 2>/dev/null | head; echo; echo \"B \\(perde\\):  ~/.agents/skills/gemma-dev\"; ls -la ~/.agents/skills/gemma-dev/ 2>/dev/null | head)",
+      "Read(//c/Users/claud/scoop/shims/**)",
+      "Read(//usr/**)",
+      "Read(//mingw64/**)",
+      "Bash(rm -rf ~/.gemini/skills/find-skills)",
+      "Bash(rm -rf ~/.agents/skills/gemma-dev)",
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); \\(Get-Command rg\\).Source; \"--- TESTE GEMINI FINAL ---\"; $env:GEMINI_API_KEY = \"AQ.Ab8RN6JPTPqIjMaSrGInvjieiO5ODsSXcNgrijFL2Ec10PhT4g\"; gemini -p \"Responda apenas: OK\" 2>&1 | Out-String)"
     ]
   },
   "hooks": {

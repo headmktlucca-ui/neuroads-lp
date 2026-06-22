@@ -73,7 +73,43 @@
   --radius-xl: var(--radius-xl);
 
   --shadow-orange: 0 4px 24px rgba(255, 77, 0, 0.3);
+
+  /* ─── Hub Dark Mode Tokens ───────────────────────────────────── */
+  /* Backgrounds */
+  --color-hub-base:     #08101e;   /* fundo geral do Hub */
+  --color-hub-surface:  #0d1a2a;   /* superfície de cards premium */
+  --color-hub-deep:     #071a2e;   /* variante mais escura (Dashboard) */
+  --color-hub-overlay:  #051120;   /* overlay de cards recomendados */
+  --color-hub-header:   #091624;   /* header de seções */
+
+  /* Borders */
+  --color-hub-border:          rgba(255,255,255,0.08);  /* borda padrão sutil */
+  --color-hub-border-strong:   rgba(255,255,255,0.12);  /* borda inputs/focus */
+  --color-hub-border-accent:   rgba(255,106,0,0.20);    /* borda laranja suave */
+  --color-hub-border-accent-h: rgba(255,106,0,0.40);    /* borda laranja hover */
+
+  /* Brand accent */
+  --color-hub-accent:   #FF6A00;   /* laranja acentos Hub */
+  --color-hub-accent-h: #FF8000;   /* hover do laranja Hub */
+
+  /* Text */
+  --color-hub-text:     #ffffff;
+  --color-hub-muted:    #8fa0b5;   /* texto secundário */
+  --color-hub-dim:      #4a6280;   /* texto terciário */
+
+  /* Status */
+  --color-hub-active:   #0A9D57;   /* verde "Ativo" */
+  --color-hub-danger:   #FF4D4D;   /* vermelho "Desativar" */
+  --color-hub-info:     #0f62fe;   /* azul "Acessar Agente" */
+
+  /* Shadows */
+  --shadow-hub-card:   0 8px 32px rgba(2,8,22,0.40);
+  --shadow-hub-orange: 0 0 32px rgba(255,106,0,0.06);
+  --shadow-btn-green:  0 10px 22px rgba(10,157,87,0.30);
+  --shadow-btn-blue:   0 10px 22px rgba(15,98,254,0.15);
+  --shadow-btn-orange: 0 10px 22px rgba(255,107,0,0.30);
 }
+
 
 html {
   scroll-behavior: smooth;

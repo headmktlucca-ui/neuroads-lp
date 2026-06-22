@@ -25,6 +25,10 @@ export default function HubLayout({ children }: { children: React.ReactNode }) {
       router.replace(getHubLoginRedirect(pathname));
       return;
     }
+    if (accessState === 'unverified') {
+      router.replace('/verificar-email');
+      return;
+    }
     if (accessState === 'forbidden' && !premiumSyncing) {
       router.replace(getHubOnboardingRedirect(pathname));
     }
@@ -32,7 +36,7 @@ export default function HubLayout({ children }: { children: React.ReactNode }) {
 
   if (accessState !== 'allowed') {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4" style={{ backgroundColor: '#08101e' }}>
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 px-4 bg-[var(--color-hub-base)]">
         <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
         {isSyncingAccess ? (
           <div className="max-w-md rounded-2xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-center">
@@ -47,7 +51,7 @@ export default function HubLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#08101e' }}>
+    <div className="min-h-screen flex flex-col bg-[var(--color-hub-base)]">
       {/* Top Navigation */}
       <HubTopNav />
 

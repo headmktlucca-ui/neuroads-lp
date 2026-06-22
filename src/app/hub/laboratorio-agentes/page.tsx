@@ -1,10 +1,10 @@
 'use client';
 
 import { Suspense, useEffect, useMemo, useState } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { CheckCircle2, ExternalLink, Info, Power, Search, Wrench, X } from 'lucide-react';
+import { Power, Search, Wrench, X } from 'lucide-react';
+import AgentCard from '../../../components/hub/AgentCard';
 import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { agents } from '../../../data/agents';
@@ -30,27 +30,9 @@ const PLAN_AGENT_CAPACITY: Record<string, number> = {
   Enterprise: 50,
 };
 
-const ACTIVATABLE_AGENT_TITLES = new Set([
-  'Analista de Tráfego',
-  'DNA da Marca',
-  'SEO & GEO',
-  'Simulador de ROAS',
-  'Preditor de Funil',
-  'Auditor de Desperdício',
-  'Otimizador de Orçamento',
-  'Gerador de Criativos',
-  'Gerador de Copies de Conversão',
-  'Diagnóstico de Landing Page',
-  'Análise Viral',
-  'Rastreador Cirúrgico',
-  'Analisador de Público',
-  'Diagnóstico de Funil',
-  'Gerador de Testes A/B',
-  'Avaliador de Oferta',
-  'Radar de Oportunidades',
-  'Análise de Concorrentes',
-  'Público-Alvo Ideal',
-]);
+const ACTIVATABLE_AGENT_TITLES = new Set(
+  agents.filter((a) => a.isActivatable).map((a) => a.title)
+);
 
 type AgentDetailsContent = {
   activities: string[];
@@ -412,88 +394,19 @@ function LaboratorioAgentesContent() {
                   const isActivatable = ACTIVATABLE_AGENT_TITLES.has(agent.title);
 
                   return (
-                    <article
+                    <AgentCard
                       key={agent.title}
-                      className="group relative rounded-2xl border border-[#FF6A00]/20 border-l-gradient-orange border-l-transparent bg-[#0d1a2a]/40 backdrop-blur-md p-5 transition-all duration-300 hover:bg-[#0d1a2a]/70 hover:border-[#FF6A00]/40 hover:shadow-[0_0_32px_rgba(255,106,0,0.06)] flex flex-col h-full"
-                    >
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between gap-3">
-                          <p className="text-sm font-black text-white">{agent.title}</p>
-                          {isActive ? (
-                            <button
-                              type="button"
-                              onClick={() => setPendingDeactivateSlug(agentSlug)}
-                              disabled={activatingSlug === agentSlug}
-                              className="inline-flex items-center gap-1 text-[12px] font-black text-[#FF4D4D] hover:text-[#FF3333] transition-colors disabled:opacity-60"
-                            >
-                              <Power className="h-3.5 w-3.5" />
-                              {activatingSlug === agentSlug ? 'Desativando…' : 'Desativar Agente'}
-                            </button>
-                          ) : null}
-                        </div>
-                        <p className="mt-1 text-xs text-slate-400">{agent.description}</p>
-                      </div>
-
-                      <div className="mt-4 flex flex-wrap gap-2">
-                        {isActive ? (
-                          <>
-                            <button
-                              type="button"
-                              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#0A9D57] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(10,157,87,0.30)] hover:brightness-105 active:scale-95 transition-all"
-                            >
-                              <CheckCircle2 className="h-4 w-4" />
-                              Ativo
-                            </button>
-                            <Link
-                              href={`/hub/agente/${agentSlug}`}
-                              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#0f62fe] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(15,98,254,0.15)] transition-all hover:bg-[#0353e9] hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#93C5FD]"
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                              Acessar Agente
-                            </Link>
-                            <button
-                              type="button"
-                              onClick={() => setSelectedDetailsSlug(agentSlug)}
-                              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-white/10 bg-white/5 px-6 text-[14px] leading-none font-black text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
-                            >
-                              <Info className="h-4 w-4" />
-                              Mais detalhes
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            {isActivatable ? (
-                              <button
-                                type="button"
-                                onClick={() => setPendingActivationSlug(agentSlug)}
-                                disabled={activatingSlug === agentSlug}
-                                className={`${HUB_CONNECTOR_BUTTON_CLASS} disabled:opacity-60`}
-                              >
-                                <Wrench className="h-4 w-4" />
-                                {activatingSlug === agentSlug ? 'Ativando…' : 'Ativar Agente'}
-                              </button>
-                            ) : (
-                              <button
-                                type="button"
-                                disabled
-                                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-white/[0.04] border border-white/[0.08] px-6 text-[14px] leading-none font-bold text-slate-500 cursor-not-allowed opacity-60"
-                              >
-                                <Wrench className="h-4 w-4" />
-                                em desenvolvimento
-                              </button>
-                            )}
-                            <button
-                              type="button"
-                              onClick={() => setSelectedDetailsSlug(agentSlug)}
-                              className="inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] border border-white/10 bg-white/5 px-6 text-[14px] leading-none font-black text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
-                            >
-                              <Info className="h-4 w-4" />
-                              Mais detalhes
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </article>
+                      title={agent.title}
+                      description={agent.description}
+                      slug={agentSlug}
+                      isActive={isActive}
+                      variant="lab"
+                      isActivatable={isActivatable}
+                      isUpdating={activatingSlug === agentSlug}
+                      onActivate={() => setPendingActivationSlug(agentSlug)}
+                      onDeactivate={() => setPendingDeactivateSlug(agentSlug)}
+                      onDetails={() => setSelectedDetailsSlug(agentSlug)}
+                    />
                   );
                 })}
               </div>

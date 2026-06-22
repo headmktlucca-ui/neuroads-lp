@@ -53,7 +53,7 @@ function LoginPageContent() {
     const planState = resolvePlanState(profileRecord);
 
     if (!emailVerified) {
-      setNoticeMessage('Seu e-mail ainda não foi verificado. Confira sua caixa de entrada.');
+      router.replace('/verificar-email');
       return;
     }
     if (!onboardingDone) { router.replace(`/onboarding?next=${encodeURIComponent(nextPath)}`); return; }

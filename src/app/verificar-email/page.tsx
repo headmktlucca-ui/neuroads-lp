@@ -15,14 +15,12 @@ function VerificarEmailContent() {
   const router = useRouter();
   const { user, loading } = useAuth();
 
-  const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(''));
+  const [code, setCode] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [isResending, setIsResending] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Redirect if already verified
   useEffect(() => {
@@ -38,37 +36,12 @@ function VerificarEmailContent() {
     return () => clearInterval(t);
   }, [resendCooldown]);
 
-  const handleDigitChange = (index: number, value: string) => {
-    const digit = value.replace(/\D/g, '').slice(-1);
-    const next = [...digits];
-    next[index] = digit;
-    setDigits(next);
-    if (digit && index < CODE_LENGTH - 1) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  };
 
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Backspace' && !digits[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  };
-
-  const handlePaste = (e: React.ClipboardEvent) => {
-    e.preventDefault();
-    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, CODE_LENGTH);
-    if (!pasted) return;
-    const next = Array(CODE_LENGTH).fill('');
-    pasted.split('').forEach((c, i) => { next[i] = c; });
-    setDigits(next);
-    inputRefs.current[Math.min(pasted.length, CODE_LENGTH - 1)]?.focus();
-  };
 
   // For now: Firebase uses email link (not OTP), so "verify" checks if the user
   // clicked the link sent to their inbox. The OTP UI is future-ready for a
   // custom backend OTP endpoint at /api/auth/verify-otp.
   const handleVerify = async () => {
-    const code = digits.join('');
     if (code.length < CODE_LENGTH) {
       setError('Digite todos os 6 dígitos do código.');
       return;
@@ -150,7 +123,7 @@ function VerificarEmailContent() {
 
       {/* Right Panel — fixed width, never resizes */}
       <div className="flex items-center justify-center bg-[#06111f] shrink-0 w-full lg:w-[520px]">
-        <div className="w-[400px] py-12">
+        <div className="w-full max-w-[400px] px-6 py-12">
 
           {success ? (
             <div className="text-center animate-in fade-in zoom-in-95 duration-400">
@@ -187,22 +160,18 @@ function VerificarEmailContent() {
                 </p>
               </div>
 
-              {/* OTP digits */}
-              <div className="flex gap-2.5 mb-5" onPaste={handlePaste}>
-                {digits.map((d, i) => (
-                  <input
-                    key={i}
-                    ref={(el) => { inputRefs.current[i] = el; }}
-                    type="text"
-                    inputMode="numeric"
-                    maxLength={1}
-                    value={d}
-                    onChange={(e) => handleDigitChange(i, e.target.value)}
-                    onKeyDown={(e) => handleKeyDown(i, e)}
-                    className={`flex-1 h-14 rounded-xl border text-center text-[22px] font-black text-white bg-white/[0.04] transition-all focus:outline-none
-                      ${d ? 'border-[#FF6A00]/60 bg-[#FF6A00]/05 shadow-[0_0_12px_rgba(255,106,0,0.15)]' : 'border-white/[0.12] focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30'}`}
-                  />
-                ))}
+              {/* OTP Input */}
+              <div className="mb-5">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={CODE_LENGTH}
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, CODE_LENGTH))}
+                  placeholder="000000"
+                  className={`w-full h-14 rounded-xl border text-center text-[22px] font-black tracking-[0.5em] text-white transition-all focus:outline-none
+                    ${code.length === CODE_LENGTH ? 'border-[#FF6A00]/60 bg-[#FF6A00]/05 shadow-[0_0_12px_rgba(255,106,0,0.15)]' : 'border-white/[0.12] bg-white/[0.04] focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30'}`}
+                />
               </div>
 
               {error && (
@@ -213,12 +182,12 @@ function VerificarEmailContent() {
 
               <button
                 onClick={handleVerify}
-                disabled={isVerifying || digits.join('').length < CODE_LENGTH}
+                disabled={isVerifying || code.length < CODE_LENGTH}
                 className="w-full h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-[15px] transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)] flex items-center justify-center gap-2 mb-5"
               >
                 {isVerifying
                   ? <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-                  : <>Verificar OTP →</>
+                  : <>Confirmar e-mail →</>
                 }
               </button>
 

@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const SLIDES = [
   {
@@ -58,14 +59,16 @@ export function AuthLeftPanel() {
 
       {/* Logo */}
       <div className="relative z-10">
-        <Image
-          src="/images/Logos/LLNeuroAds.png"
-          alt="NeuroAds"
-          width={320}
-          height={80}
-          className="h-[72px] w-auto"
-          priority
-        />
+        <Link href="/">
+          <Image
+            src="/images/Logos/LLNeuroAds.png"
+            alt="NeuroAds"
+            width={320}
+            height={80}
+            className="h-[72px] w-auto hover:opacity-80 transition-opacity"
+            priority
+          />
+        </Link>
       </div>
 
       {/* Slide content */}
