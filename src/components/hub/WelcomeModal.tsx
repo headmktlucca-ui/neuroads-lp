@@ -12,8 +12,8 @@ const STEPS = [
   {
     step: 1,
     icon: Link2,
-    iconBg: 'bg-blue-500/10',
-    iconColor: 'text-blue-400',
+    iconBg: 'bg-slate-500/10',
+    iconColor: 'text-slate-400',
     title: 'Conecte seus canais',
     desc: 'Vincule Google Ads, Meta Ads e Google Analytics 4 para alimentar os Agentes com dados reais da sua operação.',
     cta: 'Ir para Integrações',

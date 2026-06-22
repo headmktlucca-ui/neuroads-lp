@@ -139,7 +139,7 @@ export default function SalesFunnelWidget({
   // Each layer: trapezoid defined by top-ellipse (cy, rx, ry) → bottom-ellipse (cy2, rx2, ry2)
   const layers = [
     { id: 1, fill: 'url(#fg-cyan)',   stroke: '#38bdf8', topCy: 38,  topRx: 220, topRy: 24, botCy: 115, botRx: 165, botRy: 18 },
-    { id: 2, fill: 'url(#fg-blue)',   stroke: '#0ea5e9', topCy: 118, topRx: 162, topRy: 17, botCy: 195, botRx: 115, botRy: 13 },
+    { id: 2, fill: 'url(#fg-slate)',  stroke: '#94a3b8', topCy: 118, topRx: 162, topRy: 17, botCy: 195, botRx: 115, botRy: 13 },
     { id: 3, fill: 'url(#fg-green)',  stroke: '#10b981', topCy: 198, topRx: 112, topRy: 12, botCy: 272, botRx:  72, botRy:  9 },
     { id: 4, fill: 'url(#fg-glow)',   stroke: '#4ade80', topCy: 275, topRx:  70, topRy:  8, botCy: 338, botRx:  42, botRy:  6 },
   ];
@@ -183,9 +183,9 @@ export default function SalesFunnelWidget({
               <stop offset="0%" stopColor="#7dd3fc" stopOpacity="0.30" />
               <stop offset="100%" stopColor="#0369a1" stopOpacity="0.08" />
             </linearGradient>
-            <linearGradient id="fg-blue" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#60a5fa" stopOpacity="0.35" />
-              <stop offset="100%" stopColor="#1e3a8a" stopOpacity="0.08" />
+            <linearGradient id="fg-slate" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#94a3b8" stopOpacity="0.35" />
+              <stop offset="100%" stopColor="#1e293b" stopOpacity="0.08" />
             </linearGradient>
             <linearGradient id="fg-green" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#34d399" stopOpacity="0.40" />

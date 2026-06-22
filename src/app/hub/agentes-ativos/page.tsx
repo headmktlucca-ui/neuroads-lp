@@ -7,7 +7,7 @@ const TABS = ['Todos', 'Aquisição', 'Conversão', 'Inteligência de Dados'];
 
 const AGENTS = [
   { id: 1, name: 'Qualificador de Leads B2B', category: 'Conversão', status: 'online', avatar: 'bg-emerald-500/20 text-emerald-400', icon: Users, desc: 'Filtra e pontua leads automaticamente baseado no ICP.' },
-  { id: 2, name: 'Otimizador de Lances (Meta)', category: 'Aquisição', status: 'online', avatar: 'bg-blue-500/20 text-blue-400', icon: Target, desc: 'Ajusta lances em tempo real para maximizar ROAS.' },
+  { id: 2, name: 'Otimizador de Lances (Meta)', category: 'Aquisição', status: 'online', avatar: 'bg-slate-500/20 text-slate-400', icon: Target, desc: 'Ajusta lances em tempo real para maximizar ROAS.' },
   { id: 3, name: 'Análise Preditiva de Churn', category: 'Inteligência de Dados', status: 'offline', avatar: 'bg-purple-500/20 text-purple-400', icon: BarChart2, desc: 'Identifica padrões de cancelamento antes que ocorram.' },
   { id: 4, name: 'Gerador de Criativos Dinâmicos', category: 'Aquisição', status: 'online', avatar: 'bg-[#FF6A00]/20 text-[#FF6A00]', icon: Target, desc: 'Cria variações de anúncios A/B automaticamente.' },
 ];

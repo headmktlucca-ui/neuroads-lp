@@ -563,7 +563,7 @@ export default function AgentEntryPage() {
                   <button
                     type="button"
                     onClick={() => router.push('/hub/conectores')}
-                    className="rounded-full border border-blue-500/20 bg-blue-950/30 px-4 py-2 text-xs font-bold uppercase tracking-wide text-blue-400 hover:bg-blue-950/50 hover:text-white transition-all"
+                    className="rounded-full border border-slate-500/20 bg-slate-900/30 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-400 hover:bg-slate-900/50 hover:text-white transition-all"
                   >
                     Abrir Conectores
                   </button>
@@ -682,7 +682,7 @@ export default function AgentEntryPage() {
                   <button
                     type="button"
                     onClick={() => router.push('/hub/conectores')}
-                    className="rounded-full border border-blue-500/20 bg-blue-950/30 px-4 py-2 text-xs font-bold uppercase tracking-wide text-blue-400 hover:bg-blue-950/50 hover:text-white transition-all"
+                    className="rounded-full border border-slate-500/20 bg-slate-900/30 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-400 hover:bg-slate-900/50 hover:text-white transition-all"
                   >
                     Abrir Conectores
                   </button>

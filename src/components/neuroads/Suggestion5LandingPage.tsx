@@ -1389,8 +1389,8 @@ export default function Suggestion5LandingPage() {
                     href="/hub"
                     className="flex items-center gap-3 p-3 rounded-[14px] border border-white/[0.08] bg-white/[0.03] hover:border-[#ff6a00]/30 hover:bg-[#ff6a00]/5 transition-all group cursor-pointer"
                   >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-500/15 border border-blue-500/30">
-                      <LayoutDashboard size={14} className="text-blue-400" />
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-slate-500/15 border border-slate-500/30">
+                      <LayoutDashboard size={14} className="text-slate-400" />
                     </span>
                     <div>
                       <p className="text-xs font-bold text-white group-hover:text-[#ff8f3a] transition-colors">Hub Estratégico</p>

@@ -78,7 +78,7 @@ const UPDATES: Update[] = [
     version: 'v2.1',
     date: 'Março 2026',
     badge: 'Novo',
-    badgeColor: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
+    badgeColor: 'bg-slate-500/15 text-slate-400 border-slate-500/30',
     title: 'Funil de Marketing Integrado',
     headline: 'Entenda onde você perde clientes e quanto cada etapa vale para o seu negócio.',
     results: [
@@ -87,8 +87,8 @@ const UPDATES: Update[] = [
       'Funil unificado mesmo usando múltiplas plataformas simultaneamente',
     ],
     icon: Target,
-    iconBg: 'bg-blue-500/10',
-    iconColor: 'text-blue-400',
+    iconBg: 'bg-slate-500/10',
+    iconColor: 'text-slate-400',
     tag: 'Analytics',
   },
   {

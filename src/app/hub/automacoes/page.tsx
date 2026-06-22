@@ -36,7 +36,7 @@ export default function HubAutomacoesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: 'Automações Ativas', value: '12', icon: Activity, color: 'text-emerald-400', shadow: 'shadow-[0_0_15px_rgba(52,211,153,0.1)]' },
-          { label: 'Tarefas Executadas (30d)', value: '45.2k', icon: CheckCircle2, color: 'text-blue-400', shadow: 'shadow-[0_0_15px_rgba(96,165,250,0.1)]' },
+          { label: 'Tarefas Executadas (30d)', value: '45.2k', icon: CheckCircle2, color: 'text-slate-400', shadow: 'shadow-[0_0_15px_rgba(148,163,184,0.1)]' },
           { label: 'Horas Economizadas', value: '128h', icon: Clock, color: 'text-purple-400', shadow: 'shadow-[0_0_15px_rgba(192,132,252,0.1)]' },
         ].map((stat, i) => (
           <div key={i} className="p-5 rounded-2xl bg-[#0d1a2a]/40 border border-white/[0.06] backdrop-blur-md relative overflow-hidden group hover:bg-[#0d1a2a]/60 hover:border-white/[0.1] transition-all">
