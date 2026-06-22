@@ -58,7 +58,7 @@ export async function POST(req: Request) {
     try {
       body = (await req.json()) as Record<string, unknown>;
     } catch {}
-    const sessionId = body?.sessionId;
+    const sessionId = typeof body?.sessionId === 'string' ? body.sessionId : '';
 
     if (sessionId) {
       try {

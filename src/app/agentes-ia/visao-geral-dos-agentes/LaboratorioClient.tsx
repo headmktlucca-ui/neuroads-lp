@@ -12,14 +12,14 @@ const revealVariants: Variants = {
 
 export default function LaboratorioClient({ content }: { content: SubmenuPageContent }) {
   return (
-    <main className="relative min-h-screen bg-[#040811] text-white overflow-hidden pt-24 pb-24">
+    <main className="relative min-h-screen bg-[#000000] text-white overflow-hidden pt-24 pb-24">
       {/* Background radial overlays */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: [
             'radial-gradient(ellipse 600px 600px at 25% 0%, rgba(255,106,0,0.06) 0%, transparent 70%)',
-            'radial-gradient(ellipse 700px 700px at 75% 35%, rgba(18,40,76,0.10) 0%, transparent 70%)',
+            'radial-gradient(ellipse 700px 700px at 75% 35%, rgba(30,30,30,0.10) 0%, transparent 70%)',
             'radial-gradient(ellipse 500px 500px at 33% 100%, rgba(255,106,0,0.03) 0%, transparent 70%)',
           ].join(', '),
         }}

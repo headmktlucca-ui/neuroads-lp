@@ -1,4 +1,4 @@
-import { ConnectorKey } from '../lib/hub-access';
+import { ConnectorKey } from '../lib/connectors';
 
 export interface Agent {
   title: string;

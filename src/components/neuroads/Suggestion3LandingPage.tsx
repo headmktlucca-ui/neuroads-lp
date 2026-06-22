@@ -910,7 +910,7 @@ export default function Suggestion3LandingPage() {
         </div>
       </section>
 
-      <footer id="rodape" className="relative z-10 w-full overflow-hidden border-t border-white/5 bg-[#040811]/95 backdrop-blur-xl">
+      <footer id="rodape" className="relative z-10 w-full overflow-hidden border-t border-white/5 bg-[#000000]/95 backdrop-blur-xl">
         <div className="relative z-10 mx-auto max-w-[1260px] px-5 py-12 md:px-8">
           <div>
             <Image src="/images/Logos/LLNeuroAds.png" alt="NeuroAds" width={190} height={40} className="h-10 w-auto" />

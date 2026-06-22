@@ -103,22 +103,22 @@ function LoginPageContent() {
 
   if (loading || premiumSyncing) {
     return (
-      <div className="min-h-screen bg-[#040d18] flex items-center justify-center">
+      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#FF6A00] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex bg-[#040d18]">
+    <div className="min-h-screen flex bg-[#000000]">
       {/* Left Panel */}
       <div className="hidden lg:block flex-1 min-w-0">
         <AuthLeftPanel />
       </div>
 
       {/* Right Panel */}
-      <div className="flex-1 flex items-center justify-center bg-[#040d18] p-4 sm:p-6 lg:p-8">
-        <div className="w-full max-w-[540px] p-6 sm:p-8 rounded-2xl border border-white/[0.08] bg-[#071424] shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
+      <div className="flex-1 flex items-center justify-center bg-[#000000] p-4 sm:p-6 lg:p-8">
+        <div className="w-full max-w-[540px] p-6 sm:p-8 rounded-2xl border border-white/[0.08] bg-[#0a0a0a] shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
 
           {/* Mobile logo */}
           <div className="lg:hidden mb-8 text-center">
@@ -241,7 +241,7 @@ function LoginPageContent() {
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#040d18]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-[#000000]" />}>
       <LoginPageContent />
     </Suspense>
   );

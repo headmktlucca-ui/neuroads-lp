@@ -53,7 +53,7 @@ export default function HubEmptyState() {
           return (
             <div
               key={step.number}
-              className="relative rounded-2xl border border-white/[0.08] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl"
+              className="relative rounded-2xl border border-white/[0.08] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF6A00]/10 border border-[#FF6A00]/20">
@@ -72,7 +72,7 @@ export default function HubEmptyState() {
       </div>
 
       {/* Static preview */}
-      <div className="rounded-2xl border border-white/[0.06] bg-[#071a2e]/60 p-5 space-y-3 backdrop-blur-xl">
+      <div className="rounded-2xl border border-white/[0.06] bg-[#0a0a0a]/60 p-5 space-y-3 backdrop-blur-xl">
         <p className="text-[10px] font-black uppercase tracking-widest text-white/20 mb-4">
           Pré-visualização do painel
         </p>

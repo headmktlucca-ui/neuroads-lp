@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '../../context/AuthContext';
 import SalesFunnelWidget from './SalesFunnelWidget';
 import HubEmptyState from './HubEmptyState';
@@ -43,8 +44,34 @@ type Ga4MetricsResponse = {
   error?: string;
 };
 
+const DROPDOWN_ITEMS = [
+  { label: 'Explorar', href: '/hub/explorar' },
+  { label: 'Financeiro', href: '/hub/financeiro' },
+  { label: 'Times', href: '/hub/times' },
+  { label: 'Galeria', href: '/hub/galeria' },
+  { label: 'Configurações', href: '/hub/configuracoes' },
+];
+
 export default function HubDashboard() {
-  const { profile } = useAuth();
+  const { profile, user, logout } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Fecha o dropdown ao clicar fora
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
+  };
+
   const connections = useMemo(() => profile?.connections || {}, [profile?.connections]);
 
   // Connection flags
@@ -796,8 +823,48 @@ export default function HubDashboard() {
       {/* Header Panel */}
       <header className="flex flex-col lg:flex-row items-center justify-between gap-4 border-b border-white/[0.08] py-7 mb-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-500/15 border border-emerald-500/20 text-emerald-400">
-            <Activity className="h-6 w-6" />
+          <div className="flex items-center gap-3 relative" ref={dropdownRef}>
+            <button
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+              className="flex items-center justify-center h-12 w-12 rounded-full border border-white/[0.10] bg-white/[0.05] overflow-hidden hover:border-white/[0.22] transition-all duration-200 cursor-pointer shadow-sm"
+            >
+              {user?.photoURL ? (
+                <Image src={user.photoURL} alt="Perfil" width={48} height={48} className="object-cover w-full h-full" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-tr from-[#1a1a24] to-[#2c2c3a] text-white font-bold text-lg">
+                  {user?.displayName?.charAt(0).toUpperCase() || 'L'}
+                </div>
+              )}
+            </button>
+
+            {/* Dropdown Menu */}
+            {isDropdownOpen && (
+              <div className="absolute left-0 top-[calc(100%+8px)] w-56 rounded-2xl border border-white/10 bg-zinc-900/95 backdrop-blur-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150 z-50">
+                <div className="px-4 py-3 border-b border-white/5">
+                  <p className="text-sm font-bold text-white truncate">{user?.displayName || 'Lucca User'}</p>
+                  <p className="text-xs text-slate-400 truncate mt-0.5">{user?.email || 'user@neuroads.com.br'}</p>
+                </div>
+                <nav className="py-2">
+                  {DROPDOWN_ITEMS.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setIsDropdownOpen(false)}
+                      className="flex items-center px-4 py-2.5 text-[14px] font-medium text-slate-300 hover:text-white hover:bg-white/[0.05] transition-colors duration-150"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                  <div className="my-1.5 h-px bg-white/[0.06] mx-3" />
+                  <button
+                    onClick={handleLogout}
+                    className="w-full text-left flex items-center px-4 py-2.5 text-[14px] font-medium text-rose-400/80 hover:text-rose-400 hover:bg-rose-500/[0.06] transition-colors duration-150 cursor-pointer"
+                  >
+                    Sair da conta
+                  </button>
+                </nav>
+              </div>
+            )}
           </div>
           <div>
             <h1 className="text-xl font-black tracking-tight text-white leading-none">
@@ -817,7 +884,7 @@ export default function HubDashboard() {
               Sincronizando dados reais…
             </div>
           )}
-          <div className="rounded-full bg-[#071a2e]/80 border border-white/[0.12] px-4 py-2 text-[12px] font-bold text-[#a3b8cc] flex items-center gap-2 backdrop-blur-xl">
+          <div className="rounded-full bg-[#0a0a0a]/80 border border-white/[0.12] px-4 py-2 text-[12px] font-bold text-[#a3b8cc] flex items-center gap-2 backdrop-blur-xl">
             Status dos Conectores:
             <span className={`h-2.5 w-2.5 rounded-full ${isGa4Connected ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)]' : 'bg-amber-400 animate-pulse'}`} />
             GA4
@@ -844,7 +911,7 @@ export default function HubDashboard() {
           const IconComponent = card.hasVal ? Info : AlertCircle;
           const isKpiTooltipOpen = activeKpiTooltip === card.label;
           return (
-            <article key={card.label} className="rounded-2xl border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-4 backdrop-blur-xl relative group hover:border-white/[0.18] hover:bg-[#071a2e]/90 transition-all duration-200 shadow-[0_8px_32px_rgba(2,8,22,0.55)]">
+            <article key={card.label} className="rounded-2xl border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-4 backdrop-blur-xl relative group hover:border-white/[0.18] hover:bg-[#0a0a0a]/90 transition-all duration-200 shadow-[0_8px_32px_rgba(2,8,22,0.55)]">
               <div className="flex justify-between items-start mb-2">
                 <span className="text-[12px] font-black uppercase tracking-wider text-[#7eb8d4]">{card.label}</span>
                 <button
@@ -888,7 +955,7 @@ export default function HubDashboard() {
         <div className="xl:col-span-3 flex flex-col gap-6">
           
           {/* Channel Performance */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
               <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Desempenho por Canal
@@ -929,7 +996,7 @@ export default function HubDashboard() {
           </section>
 
           {/* Audience Insights */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5">
               Insights de Audiência
             </h2>
@@ -1025,7 +1092,7 @@ export default function HubDashboard() {
 
 
           {/* Top Campaigns */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
               <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Melhores Campanhas
@@ -1074,7 +1141,7 @@ export default function HubDashboard() {
         <div className="xl:col-span-3 flex flex-col gap-6">
 
           {/* Notificações — exibe até 4 alertas em formato de lista sem scroll */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <h2 className="text-[13px] font-black text-[#a3b8cc] uppercase tracking-wider mb-4 flex items-center gap-2 border-b border-white/[0.08] pb-2.5">
               <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
               Notificações
@@ -1250,7 +1317,7 @@ export default function HubDashboard() {
           </section>
 
           {/* Feed de Atividade ao Vivo — exibe exatamente 7 itens sem scroll */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5 flex items-center justify-between">
               Feed de Atividade ao Vivo
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
@@ -1291,7 +1358,7 @@ export default function HubDashboard() {
           </section>
 
           {/* Performance em Tempo Real */}
-          <article className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <article className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
               <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Performance em Tempo Real
@@ -1321,7 +1388,7 @@ export default function HubDashboard() {
           </article>
 
           {/* Alocação de Orçamento */}
-          <article className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <article className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
               <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Alocação de Orçamento

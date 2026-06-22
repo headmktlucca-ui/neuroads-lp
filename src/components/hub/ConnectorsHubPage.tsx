@@ -43,13 +43,13 @@ import { getHubLoginRedirect, getHubOnboardingRedirect, resolveHubAccessState } 
 
 const SETTINGS_MODAL_VIEWPORT = 'fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-2 py-2 sm:px-4 sm:py-4';
 const SETTINGS_MODAL_BACKDROP = 'absolute inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity duration-300';
-const SETTINGS_MODAL_FRAME = 'relative w-full max-h-[96vh] rounded-[24px] bg-[#071a2e]/95 border border-white/[0.12] shadow-[0_24px_60px_rgba(2,8,22,0.6)] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-white';
+const SETTINGS_MODAL_FRAME = 'relative w-full max-h-[96vh] rounded-[24px] bg-[#0a0a0a]/95 border border-white/[0.12] shadow-[0_24px_60px_rgba(2,8,22,0.6)] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-white';
 const SETTINGS_MODAL_SURFACE = 'max-h-[calc(96vh-4px)] flex flex-col overflow-hidden h-full bg-transparent text-white';
 const PREMIUM_MODAL_HEADER = 'relative border-b border-white/[0.08] bg-[#091624] px-6 py-5 flex flex-col gap-1 overflow-hidden';
 const PREMIUM_MODAL_CLOSE_BUTTON = 'absolute right-5 top-5 rounded-full border border-white/10 bg-white/5 p-2 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm z-50';
-const SETTINGS_PANEL = 'rounded-2xl border border-white/[0.10] bg-[#071a2e]/82 p-5 shadow-[0_8px_32px_rgba(2,8,22,0.4)] transition-all duration-200 hover:border-white/[0.16] hover:shadow-[0_8px_30px_rgba(2,8,22,0.6)] text-white';
+const SETTINGS_PANEL = 'rounded-2xl border border-white/[0.10] bg-[#0a0a0a]/82 p-5 shadow-[0_8px_32px_rgba(2,8,22,0.4)] transition-all duration-200 hover:border-white/[0.16] hover:shadow-[0_8px_30px_rgba(2,8,22,0.6)] text-white';
 const SETTINGS_LABEL = 'mb-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400';
-const SETTINGS_INPUT = 'w-full rounded-xl border border-white/[0.12] bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none transition-all duration-200 focus:border-[#FF7A00] focus:bg-[#071a2e] focus:ring-2 focus:ring-[#FF7A00]/20';
+const SETTINGS_INPUT = 'w-full rounded-xl border border-white/[0.12] bg-white/[0.06] px-4 py-3 text-sm font-semibold text-white outline-none transition-all duration-200 focus:border-[#FF7A00] focus:bg-[#0a0a0a] focus:ring-2 focus:ring-[#FF7A00]/20';
 const SETTINGS_SECONDARY_BUTTON = 'rounded-xl border border-slate-200 px-5 py-3 text-xs font-black uppercase tracking-widest text-[#667085] transition-all hover:bg-[#F8FAFC] hover:text-slate-700 hover:border-slate-300 active:scale-98';
 const SETTINGS_PRIMARY_BUTTON = 'rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-5 py-3 text-xs font-black uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(10,157,87,0.15)] transition-all hover:brightness-105 active:scale-98';
 import {
@@ -2842,7 +2842,7 @@ export default function ConnectorsHubPage() {
             <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-[1fr_360px]">
               <div>
 
-                <div className="relative overflow-hidden rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+                <div className="relative overflow-hidden rounded-3xl border border-white/[0.10] bg-[#0a0a0a]/82 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
                   <header className="bg-[#091624] px-6 py-5 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-4">
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center gap-2">
@@ -2893,7 +2893,7 @@ export default function ConnectorsHubPage() {
                         return (
                           <article
                             key={item.id}
-                            className={`grid grid-cols-1 gap-4 rounded-2xl border border-white/[0.10] bg-[#071a2e]/82 p-4 shadow-[0_8px_32px_rgba(2,8,22,0.4)] backdrop-blur-xl transition-all duration-200 hover:bg-[#071a2e]/95 hover:border-white/[0.18] md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center relative ${
+                            className={`grid grid-cols-1 gap-4 rounded-2xl border border-white/[0.10] bg-[#0a0a0a]/82 p-4 shadow-[0_8px_32px_rgba(2,8,22,0.4)] backdrop-blur-xl transition-all duration-200 hover:bg-[#0a0a0a]/95 hover:border-white/[0.18] md:grid-cols-[94px_1.3fr_1.2fr_auto] md:items-center relative ${
                               openConnectorMenuId === item.id ? 'z-30' : 'z-0'
                             }`}
                           >
@@ -3054,7 +3054,7 @@ export default function ConnectorsHubPage() {
               </div>
               <aside className="space-y-4">
                 {/* CARD: Alertas Importantes */}
-                <section className="relative overflow-hidden rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+                <section className="relative overflow-hidden rounded-[24px] border border-white/[0.10] bg-[#0a0a0a]/82 shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
                   {/* Top border ambient subtle accent */}
                   <div className="absolute top-0 left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#F97316]/40 to-transparent" />
 

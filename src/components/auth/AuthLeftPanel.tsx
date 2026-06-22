@@ -38,7 +38,7 @@ export function AuthLeftPanel() {
   const slide = SLIDES[current];
 
   return (
-    <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[#040d18] p-10 lg:p-12">
+    <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[#000000] p-10 lg:p-12">
       {/* Background glow */}
       <div className="pointer-events-none absolute inset-0">
         <div

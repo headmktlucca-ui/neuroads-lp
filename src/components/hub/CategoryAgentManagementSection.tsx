@@ -218,7 +218,7 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
           </div>
         </header>
 
-        <section className="relative overflow-hidden rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
+        <section className="relative overflow-hidden rounded-3xl border border-white/[0.10] bg-[#0a0a0a]/82 shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
           <header className="bg-[#091624] px-6 py-5 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-4">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
@@ -317,7 +317,7 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
             className="absolute inset-0 bg-[#020816]/70 backdrop-blur-md transition-opacity duration-300"
             aria-label="Fechar detalhes do agente"
           />
-          <section className="relative w-full max-w-[780px] rounded-[24px] border border-white/[0.12] bg-[#071a2e]/95 backdrop-blur-md p-6 md:p-7 shadow-[0_30px_70px_rgba(2,12,27,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
+          <section className="relative w-full max-w-[780px] rounded-[24px] border border-white/[0.12] bg-[#0a0a0a]/95 backdrop-blur-md p-6 md:p-7 shadow-[0_30px_70px_rgba(2,12,27,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
             <button
               type="button"
               onClick={() => setSelectedDetailsSlug(null)}
@@ -361,7 +361,7 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
             className="absolute inset-0 bg-[#020816]/70 backdrop-blur-md transition-opacity duration-300"
             aria-label="Fechar confirmação"
           />
-          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/[0.12] bg-[#071a2e]/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
+          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/[0.12] bg-[#0a0a0a]/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
             <button
               type="button"
               onClick={() => setPendingActivationSlug(null)}
@@ -414,7 +414,7 @@ export default function CategoryAgentManagementSection({ categorySlug }: { categ
             className="absolute inset-0 bg-[#020816]/70 backdrop-blur-md transition-opacity duration-300"
             aria-label="Fechar confirmação"
           />
-          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/[0.12] bg-[#071a2e]/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
+          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/[0.12] bg-[#0a0a0a]/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
             <button
               type="button"
               onClick={() => setPendingDeactivateSlug(null)}

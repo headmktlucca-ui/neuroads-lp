@@ -272,7 +272,7 @@ export default function DepthParallaxBackground({
 }: DepthParallaxBackgroundProps) {
   return (
     <div
-      className={`absolute inset-0 w-full h-full z-0 overflow-hidden bg-[#040811] pointer-events-none ${className}`}
+      className={`absolute inset-0 w-full h-full z-0 overflow-hidden bg-[#000000] pointer-events-none ${className}`}
     >
       <Canvas
         gl={{ antialias: true, alpha: false }}

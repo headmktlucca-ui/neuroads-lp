@@ -108,14 +108,14 @@ function VerificarEmailContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#040d18] flex items-center justify-center">
+      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#FF6A00] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex bg-[#040d18]">
+    <div className="min-h-screen flex bg-[#000000]">
       {/* Left Panel */}
       <div className="hidden lg:block flex-1 min-w-0">
         <AuthLeftPanel />
@@ -229,7 +229,7 @@ function VerificarEmailContent() {
 
 export default function VerificarEmailPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-[#040d18]" />}>
+    <Suspense fallback={<div className="min-h-screen bg-[#000000]" />}>
       <VerificarEmailContent />
     </Suspense>
   );

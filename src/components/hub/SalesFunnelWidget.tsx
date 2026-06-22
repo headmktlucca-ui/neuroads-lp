@@ -156,7 +156,7 @@ export default function SalesFunnelWidget({
 
   return (
     <section
-      className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)] relative flex flex-col items-center"
+      className="rounded-[24px] border border-white/[0.10] bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)] relative flex flex-col items-center"
       style={{ minHeight: 460 }}
     >
       {/* Header */}

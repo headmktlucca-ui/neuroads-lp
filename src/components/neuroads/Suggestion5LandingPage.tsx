@@ -90,6 +90,7 @@ const useCasesSectors = [
     id: 'social-media',
     title: 'Social Media',
     description: 'Automatize a criação de conteúdo, análise de engajamento e distribuição inteligente para Instagram, TikTok e LinkedIn com agentes treinados na voz da sua marca.',
+    printImage: '/images/prints/social-media.png',
     cards: [
       { title: 'Criação de Criativos', description: 'Gere imagens e vídeos virais com IA alinhados à identidade visual.' },
       { title: 'Calendário Editorial', description: 'Planejamento automático de pautas com base em tendências e dados do setor.' },
@@ -110,6 +111,7 @@ const useCasesSectors = [
     id: 'ecommerce',
     title: 'E-Commerce',
     description: 'Otimize fichas de produto, gestão de catálogo e campanhas de remarketing com inteligência artificial para aumentar o faturamento com margem sustentável.',
+    printImage: '/images/prints/ecommerce.png',
     cards: [
       { title: 'Fotos de Produto com IA', description: 'Imagens profissionais geradas automaticamente para todo o catálogo.' },
       { title: 'Remarketing Inteligente', description: 'Campanhas dinâmicas que seguem o comportamento de compra do usuário.' },
@@ -128,6 +130,7 @@ const useCasesSectors = [
     id: 'marketing',
     title: 'Marketing',
     description: 'Construa funis completos, gere copies de alta conversão e gerencie campanhas multicanal com supervisão agêntica e foco direto em resultado de caixa.',
+    printImage: '/images/prints/marketing.png',
     cards: [
       { title: 'Funil de Captação', description: 'Páginas, e-mails e automações integradas para captar leads qualificados.' },
       { title: 'Copy de Alta Conversão', description: 'Textos persuasivos gerados com base no perfil do público e dados de mercado.' },
@@ -146,6 +149,7 @@ const useCasesSectors = [
     id: 'campanhas',
     title: 'Campanhas Patrocinadas',
     description: 'Gerencie Google Ads e Meta Ads com inteligência artificial que otimiza lances, orçamentos e segmentações em tempo real para maximizar o ROAS da operação.',
+    printImage: '/images/prints/campanhas.png',
     cards: [
       { title: 'Google Ads & Meta Ads', description: 'Gestão integrada com otimização automática de campanhas e lances inteligentes.' },
       { title: 'Otimização de ROAS', description: 'Algoritmo agêntico que redistribui verba para os conjuntos com melhor retorno.' },
@@ -164,6 +168,7 @@ const useCasesSectors = [
     id: 'posicionamento',
     title: 'Posicionamento Estratégico',
     description: 'Domine o resultado orgânico e generativo com SEO + GEO, análise de concorrentes e construção de autoridade de marca baseada em dados reais de mercado.',
+    printImage: '/images/prints/posicionamento.png',
     cards: [
       { title: 'SEO & GEO', description: 'Visibilidade em buscadores tradicionais e em IAs como ChatGPT e Gemini.' },
       { title: 'Análise de Concorrentes', description: 'Mapeamento de lacunas e oportunidades estratégicas no seu mercado.' },
@@ -230,82 +235,8 @@ const ALL_LOGS = [
 ];
 
 function UseCasesSection() {
-  const [activeSectorIndex, setActiveSectorIndex] = useState(0);
-  const categoryRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const rightPanelRef = useRef<HTMLDivElement | null>(null);
-  const [rightPanelOffset, setRightPanelOffset] = useState(0);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const activeEl = categoryRefs.current[activeSectorIndex];
-    if (!activeEl) return;
-
-    const updateOffset = () => {
-      const rightPanelEl = rightPanelRef.current;
-      const heightLeft = activeEl.offsetHeight;
-      const heightRight = rightPanelEl ? rightPanelEl.offsetHeight : 360;
-      const offset = activeEl.offsetTop + (heightLeft - heightRight) / 2;
-      setRightPanelOffset(offset);
-    };
-
-    updateOffset();
-    const timer = setTimeout(updateOffset, 150);
-
-    const resizeObserver = new ResizeObserver(updateOffset);
-    resizeObserver.observe(activeEl);
-
-    const rightPanelEl = rightPanelRef.current;
-    if (rightPanelEl) {
-      resizeObserver.observe(rightPanelEl);
-    }
-
-    window.addEventListener('resize', updateOffset);
-    return () => {
-      clearTimeout(timer);
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', updateOffset);
-    };
-  }, [activeSectorIndex]);
-
-  useEffect(() => {
-    if (typeof window === 'undefined' || window.innerWidth < 1024) return;
-
-    const observerOptions = {
-      root: null,
-      rootMargin: '-35% 0px -35% 0px',
-      threshold: 0,
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const index = categoryRefs.current.indexOf(entry.target as HTMLDivElement);
-          if (index !== -1) {
-            setActiveSectorIndex(index);
-          }
-        }
-      });
-    }, observerOptions);
-
-    categoryRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  const handleHeaderClick = (idx: number) => {
-    setActiveSectorIndex(idx);
-    categoryRefs.current[idx]?.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
-    });
-  };
-
   return (
-    <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full lg:overflow-visible overflow-hidden">
+    <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full overflow-hidden">
       <div className="mx-auto max-w-[1260px]">
         <motion.div
           variants={revealVariants}
@@ -321,256 +252,51 @@ function UseCasesSection() {
           </p>
         </motion.div>
 
-        {/* Desktop Layout: Scroll-Linked Sticky Accordion */}
-        <div className="hidden lg:grid lg:grid-cols-[1.1fr_0.9fr] gap-12 items-start relative">
-          {/* Left Column: Accordions list */}
-          <div className="space-y-6">
-            {useCasesSectors.map((sector, idx) => {
-              const isActive = activeSectorIndex === idx;
-              return (
-                <div
-                  key={sector.id}
-                  ref={(el) => {
-                    categoryRefs.current[idx] = el;
-                  }}
-                  className={`flex gap-6 p-6 rounded-2xl border transition-all duration-500 cursor-pointer ${
-                    isActive
-                      ? 'border-[#ff6a00]/30 bg-zinc-950/90 shadow-[0_4px_24px_rgba(255,106,0,0.08)]'
-                      : 'border-white/5 bg-transparent hover:border-white/10'
-                  }`}
-                  onClick={() => handleHeaderClick(idx)}
-                >
-                  {/* Active side indicator */}
-                  <div className="w-[3px] shrink-0 relative rounded-full overflow-hidden bg-zinc-800">
-                    <motion.div
-                      className="absolute top-0 left-0 right-0 bg-[#ff6a00] rounded-full"
-                      initial={{ height: 0 }}
-                      animate={{ height: isActive ? '100%' : '0%' }}
-                      transition={{ duration: 0.4 }}
-                    />
-                  </div>
-
-                  <div className="flex-1">
-                    <h3 className={`text-xl font-black transition-colors duration-300 ${isActive ? 'text-white' : 'text-slate-400'}`}>
-                      {sector.title}
-                    </h3>
-
-                    <AnimatePresence initial={false}>
-                      {isActive && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: 'auto', opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.35, ease: 'easeInOut' }}
-                          className="overflow-hidden"
-                        >
-                          <p className="mt-3 text-slate-300 text-sm leading-relaxed">
-                            {sector.description}
-                          </p>
-                          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            {sector.cards.map((card, cIdx) => (
-                              <div
-                                key={cIdx}
-                                className="rounded-xl border border-white/5 bg-zinc-950/90 p-4 hover:border-[#ff6a00]/30 transition-colors"
-                              >
-                                <span className="text-[11px] font-bold text-[#ff8f3a]">
-                                  {sector.title}
-                                </span>
-                                <h4 className="text-sm font-bold text-white mt-1">{card.title}</h4>
-                                <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{card.description}</p>
-                              </div>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Right Column: Sticky Workflow diagram */}
-          <motion.div
-            ref={rightPanelRef}
-            className="w-full self-start"
-            animate={{ y: rightPanelOffset }}
-            transition={{ type: 'spring', stiffness: 100, damping: 20, mass: 1 }}
-          >
-            <AnimatePresence mode="wait">
+        <div className="space-y-20 lg:space-y-32">
+          {useCasesSectors.map((sector, idx) => (
+            <div key={sector.id} className="relative perspective-1000">
               <motion.div
-                key={activeSectorIndex}
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                transition={{ duration: 0.3 }}
-                className="relative rounded-[20px] border border-white/8 bg-zinc-950/90 p-6 overflow-hidden min-h-[360px] flex flex-col justify-center shadow-[0_18px_48px_rgba(0,0,0,0.4)]"
+                initial={{ opacity: 0, rotateX: 25, y: 120, scale: 0.95, translateZ: -100 }}
+                whileInView={{ opacity: 1, rotateX: 0, y: 0, scale: 1, translateZ: 0 }}
+                viewport={{ once: true, margin: "-120px" }}
+                transition={{ duration: 0.8, type: 'spring', bounce: 0.3 }}
+                className="w-full transform-style-3d group"
               >
-                <div className="absolute top-0 right-0 w-48 h-48 bg-[#ff6a00]/5 rounded-full filter blur-[60px] pointer-events-none" />
-
-                {/* Workflow title */}
-                <p className="text-[9px] font-extrabold uppercase tracking-widest text-slate-500 mb-5">
-                  FLUXO AGÊNTICO — {useCasesSectors[activeSectorIndex].title.toUpperCase()}
-                </p>
-
-                {/* Node -> Output layout with curved animated SVG connectors */}
-                <div className="flex items-center gap-2 relative z-10">
-                  {/* Source nodes */}
-                  <div className="flex flex-col gap-3.5 flex-1">
-                    {useCasesSectors[activeSectorIndex].nodes.map((node, nIdx) => (
-                      <div
-                        key={nIdx}
-                        className="flex items-center gap-2.5 rounded-[10px] border border-white/8 bg-zinc-900/60 px-3 py-2.5 shadow-sm"
-                      >
-                        <span className="text-base leading-none">{node.icon}</span>
-                        <span className="text-[10px] font-mono font-bold text-slate-300 uppercase tracking-wide leading-tight">{node.label}</span>
+                <div className="relative rounded-[24px] border border-white/5 bg-zinc-950/90 overflow-hidden shadow-[0_18px_48px_rgba(0,0,0,0.5)] hover:border-[#ff6a00]/30 transition-all duration-700">
+                  {/* Subtle Glow Background */}
+                  <div className={`absolute top-0 w-64 h-64 bg-[#ff6a00]/5 rounded-full filter blur-[80px] pointer-events-none transition-all duration-700 group-hover:bg-[#ff6a00]/15 group-hover:scale-150 ${idx % 2 !== 0 ? 'left-0' : 'right-0'}`} />
+                  
+                  <div className={`flex w-full p-8 lg:p-14 ${idx % 2 !== 0 ? 'lg:justify-end' : 'lg:justify-start'}`}>
+                    
+                    {/* Text Content and Benefits */}
+                    <div className="flex flex-col gap-6 relative z-10 w-full lg:max-w-[70%]">
+                      <div className="flex items-center gap-4">
+                        <div className="w-1.5 h-8 bg-[#ff6a00] rounded-full shadow-[0_0_12px_rgba(255,106,0,0.6)]" />
+                        <h3 className="text-3xl sm:text-4xl font-black text-white tracking-tight">{sector.title}</h3>
                       </div>
-                    ))}
-                  </div>
-
-                  {/* SVG Connector Column */}
-                  <div className="w-16 h-[200px] relative flex items-center justify-center shrink-0">
-                    <svg className="absolute inset-0 w-full h-full overflow-visible" fill="none" viewBox="0 0 64 200" preserveAspectRatio="none">
-                      {useCasesSectors[activeSectorIndex].nodes.map((_, nIdx) => {
-                        const nodesCount = useCasesSectors[activeSectorIndex].nodes.length;
-                        const outputsCount = useCasesSectors[activeSectorIndex].outputs.length;
-                        
-                        // Distribute coordinates nicely along a 200px height viewbox
-                        const yStart = nodesCount === 1 ? 100 : (nIdx / (nodesCount - 1)) * 160 + 20;
-                        
-                        return useCasesSectors[activeSectorIndex].outputs.map((_, oIdx) => {
-                          const yEnd = outputsCount === 1 ? 100 : (oIdx / (outputsCount - 1)) * 160 + 20;
-                          return (
-                            <path
-                              key={`${nIdx}-${oIdx}`}
-                              d={`M 0,${yStart} C 32,${yStart} 32,${yEnd} 64,${yEnd}`}
-                              stroke="url(#gradient-orange-blue)"
-                              strokeWidth="1.5"
-                              className="animate-dashdraw opacity-40 hover:opacity-100 transition-opacity"
-                            />
-                          );
-                        });
-                      })}
-                      <defs>
-                        <linearGradient id="gradient-orange-blue" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#ff6a00" />
-                          <stop offset="100%" stopColor="#ff8f3a" />
-                        </linearGradient>
-                      </defs>
-                    </svg>
-                  </div>
-
-                  {/* Output nodes */}
-                  <div className="flex flex-col gap-3.5 flex-1">
-                    {useCasesSectors[activeSectorIndex].outputs.map((output, oIdx) => (
-                      <div
-                        key={oIdx}
-                        className="rounded-[10px] border px-3 py-2.5 text-center shadow-sm"
-                        style={{ borderColor: output.color + '40', backgroundColor: output.color + '15' }}
-                      >
-                        <span
-                          className="text-[10px] font-mono font-extrabold uppercase tracking-wide"
-                          style={{ color: output.color }}
-                        >
-                          {output.label}
-                        </span>
+                      <p className="text-slate-300 text-[15px] sm:text-base leading-relaxed">
+                        {sector.description}
+                      </p>
+                      
+                      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {sector.cards.map((card, cIdx) => (
+                          <div
+                            key={cIdx}
+                            className="rounded-xl border border-white/5 bg-zinc-900/40 p-5 hover:bg-zinc-900/80 hover:border-white/10 transition-colors"
+                          >
+                            <span className="text-[10px] font-black uppercase tracking-widest text-[#ff8f3a]">
+                              Diferencial
+                            </span>
+                            <h4 className="text-[15px] font-bold text-white mt-1.5">{card.title}</h4>
+                            <p className="text-[12px] text-slate-400 mt-2 leading-relaxed">{card.description}</p>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    </div>
                   </div>
                 </div>
-
-                {/* Animated background flow line */}
-                <div className="absolute left-6 top-[70px] bottom-6 w-[2px] bg-gradient-to-b from-[#ff6a00]/30 to-transparent pointer-events-none" />
               </motion.div>
-            </AnimatePresence>
-          </motion.div>
-        </div>
-
-        {/* Mobile & Tablet Layout: Stacked sectors */}
-        <div className="space-y-24 lg:hidden">
-          {useCasesSectors.map((sector) => (
-            <motion.div
-              key={sector.id}
-              variants={revealVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              className="grid gap-12 items-center"
-            >
-              {/* Content */}
-              <div className="flex gap-6">
-                <div className="w-[3px] bg-[#ff6a00] rounded-full shrink-0" />
-                <div>
-                  <h3 className="text-2xl sm:text-3xl font-black text-white">{sector.title}</h3>
-                  <p className="mt-3 text-slate-300 text-sm leading-relaxed">{sector.description}</p>
-                  <div className="mt-6 grid grid-cols-2 gap-3">
-                    {sector.cards.map((card, cIdx) => (
-                      <div
-                        key={cIdx}
-                        className="rounded-[16px] border border-[#ff6a00]/20 bg-zinc-950/95 p-4 hover:border-[#ff6a00]/40 transition-colors"
-                      >
-                        <span className="text-[9px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">
-                          {sector.title.toUpperCase()}
-                        </span>
-                        <h4 className="text-sm font-bold text-white mt-1">{card.title}</h4>
-                        <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">{card.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Workflow visual */}
-              <div className="relative rounded-[20px] border border-white/8 bg-zinc-950/90 p-6 overflow-hidden min-h-[260px] flex flex-col justify-center shadow-[0_18px_48px_rgba(0,0,0,0.4)]">
-                <div className="absolute top-0 right-0 w-48 h-48 bg-[#ff6a00]/5 rounded-full filter blur-[60px] pointer-events-none" />
-
-                <p className="text-[9px] font-extrabold uppercase tracking-widest text-slate-500 mb-5">
-                  FLUXO AGÊNTICO — {sector.title.toUpperCase()}
-                </p>
-
-                <div className="flex items-center gap-4 relative z-10">
-                  {/* Source nodes */}
-                  <div className="flex flex-col gap-2.5 flex-1">
-                    {sector.nodes.map((node, nIdx) => (
-                      <div
-                        key={nIdx}
-                        className="flex items-center gap-2.5 rounded-[10px] border border-white/8 bg-zinc-900/60 px-3 py-2"
-                      >
-                        <span className="text-base leading-none">{node.icon}</span>
-                        <span className="text-[10px] font-mono font-bold text-slate-300 uppercase tracking-wide leading-tight">{node.label}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Connector */}
-                  <div className="flex flex-col items-center gap-1 shrink-0">
-                    <div className="h-[2px] w-8 border-t-2 border-dashed border-[#ff6a00]/40" />
-                    <ChevronRight size={14} className="text-[#ff6a00]/60" />
-                  </div>
-
-                  {/* Output nodes */}
-                  <div className="flex flex-col gap-2.5 flex-1">
-                    {sector.outputs.map((output, oIdx) => (
-                      <div
-                        key={oIdx}
-                        className="rounded-[10px] border px-3 py-2 text-center"
-                        style={{ borderColor: output.color + '40', backgroundColor: output.color + '15' }}
-                      >
-                        <span
-                          className="text-[10px] font-mono font-extrabold uppercase tracking-wide"
-                          style={{ color: output.color }}
-                        >
-                          {output.label}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Animated flow line */}
-                <div className="absolute left-6 top-[70px] bottom-6 w-[2px] bg-gradient-to-b from-[#ff6a00]/30 to-transparent pointer-events-none" />
-              </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -614,14 +340,14 @@ export default function Suggestion5LandingPage() {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#040811] text-white overflow-x-hidden selection:bg-[#ff6a00] selection:text-white">
+    <main className="relative min-h-screen bg-[#000000] text-white overflow-x-hidden selection:bg-[#ff6a00] selection:text-white">
       {/* Background radial overlays — CSS radial-gradient avoids filter layers entirely */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background: [
             'radial-gradient(ellipse 600px 600px at 25% 0%, rgba(255,106,0,0.06) 0%, transparent 70%)',
-            'radial-gradient(ellipse 700px 700px at 75% 35%, rgba(18,40,76,0.10) 0%, transparent 70%)',
+            'radial-gradient(ellipse 700px 700px at 75% 35%, rgba(30,30,30,0.10) 0%, transparent 70%)',
             'radial-gradient(ellipse 500px 500px at 33% 100%, rgba(255,106,0,0.03) 0%, transparent 70%)',
           ].join(', '),
         }}
@@ -653,7 +379,7 @@ export default function Suggestion5LandingPage() {
         </div>
 
         {/* Smooth top gradient */}
-        <div className="absolute top-0 left-0 right-0 h-44 bg-gradient-to-b from-[#040811] via-[#040811]/70 to-transparent z-[1] pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-44 bg-gradient-to-b from-[#000000] via-[#000000]/70 to-transparent z-[1] pointer-events-none" />
 
         {/* Center readability vignette */}
         <div className="absolute inset-0 z-[1] pointer-events-none" style={{
@@ -661,10 +387,10 @@ export default function Suggestion5LandingPage() {
         }} />
 
         {/* Side darkening */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#040811]/60 via-transparent to-[#040811]/60 z-[1] pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#000000]/60 via-transparent to-[#000000]/60 z-[1] pointer-events-none" />
 
         {/* Cinematic bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#040811] to-transparent z-[1] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#000000] to-transparent z-[1] pointer-events-none" />
 
         {/* CENTERED CONTENT */}
         <div className="relative z-10 w-full flex flex-col items-center text-center px-4 sm:px-6 max-w-[900px] mx-auto">
@@ -1267,7 +993,7 @@ export default function Suggestion5LandingPage() {
                         className="object-cover object-center opacity-40 group-hover:scale-105 transition-transform duration-500 pointer-events-none" 
                         sizes="(max-width: 768px) 100vw, 30vw"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#040811] via-[#040811]/40 to-transparent z-0" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-[#000000]/40 to-transparent z-0" />
                     </>
                   )}
                   

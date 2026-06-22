@@ -493,7 +493,7 @@ export default function SubmenuPageShell({ content }: { content: SubmenuPageCont
 
   return (
     <main 
-      className="relative min-h-screen bg-[#040811] text-white overflow-hidden selection:bg-[#ff6a00] selection:text-white bg-top bg-repeat-y bg-[length:100%_auto]"
+      className="relative min-h-screen bg-[#000000] text-white overflow-hidden selection:bg-[#ff6a00] selection:text-white bg-top bg-repeat-y bg-[length:100%_auto]"
       style={{ backgroundImage: "url('/images/backgrd_dark.png')" }}
     >
       {/* Background radial overlays */}

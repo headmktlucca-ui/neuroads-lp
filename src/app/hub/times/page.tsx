@@ -8,7 +8,7 @@ import {
 
 type Role = 'admin' | 'editor' | 'viewer';
 
-const ROLE_CONFIG: Record<Role, { label: string; desc: string; icon: React.ElementType; cls: string }> = {
+const ROLE_CONFIG: Record<Role, { label: string; desc: string; icon: React.ComponentType<{ className?: string }>; cls: string }> = {
   admin:  { label: 'Admin',        desc: 'Acesso total',           icon: Crown,       cls: 'text-[#FF6A00] bg-[#FF6A00]/10 border-[#FF6A00]/20' },
   editor: { label: 'Editor',       desc: 'Edita e executa',        icon: ShieldCheck, cls: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
   viewer: { label: 'Visualizador', desc: 'Somente leitura',        icon: Shield,      cls: 'text-slate-400 bg-slate-500/10 border-slate-500/20' },

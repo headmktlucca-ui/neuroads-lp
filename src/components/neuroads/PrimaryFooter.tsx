@@ -6,7 +6,7 @@ import Image from 'next/image';
 
 export default function PrimaryFooter() {
   return (
-    <footer className="relative z-10 w-full overflow-hidden border-t border-white/5 bg-[#040811]/95 backdrop-blur-xl">
+    <footer className="relative z-10 w-full overflow-hidden border-t border-white/5 bg-[#000000]/95 backdrop-blur-xl">
       <div className="relative z-10 mx-auto max-w-[1260px] px-5 py-12 md:px-8">
         {/* Top Grid Area - 6 columns to allow left space as seen in the image */}
         <div className="grid gap-8 border-b border-[#ff6a00]/15 pb-8 md:grid-cols-6 text-xs">

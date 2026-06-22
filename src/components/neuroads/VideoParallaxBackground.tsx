@@ -63,7 +63,7 @@ export default function VideoParallaxBackground({
   }, []);
 
   return (
-    <div className={`${position} inset-0 w-full h-full z-0 overflow-hidden bg-[#040811] pointer-events-none`}>
+    <div className={`${position} inset-0 w-full h-full z-0 overflow-hidden bg-[#000000] pointer-events-none`}>
       <div
         ref={containerRef}
         className="w-full h-full will-change-transform relative"

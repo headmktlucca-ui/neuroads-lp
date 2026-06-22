@@ -16,6 +16,7 @@ import {
   getContractedAgentsFromProfile,
   slugifyAgentTitle,
 } from '../../../../lib/hub-agents';
+import type { Agent } from '../../../../data/agents';
 import { getFirebaseDb } from '../../../../lib/firebase';
 import {
   deleteAgentReportFromDb,
@@ -103,8 +104,7 @@ function getCadenceContext(category: string, title: string) {
   return byCategory[category] ?? fallback;
 }
 
-function getAgentHeroDescription(title: string) {
-function getAgentHeroDescription(agent: Agent | undefined): React.ReactNode | null {
+function getAgentHeroDescription(agent: any): React.ReactNode | null {
   if (!agent?.heroDescription) return null;
   const match = agent.title === 'Agente Editorial' 
     ? `O <strong className="text-text-main">${agent.title}</strong> `
@@ -118,7 +118,7 @@ function getAgentHeroDescription(agent: Agent | undefined): React.ReactNode | nu
   );
 }
 
-function getRequiredConnectorKeysForAgent(agent: Agent | undefined): ConnectorKey[] {
+function getRequiredConnectorKeysForAgent(agent: any): ConnectorKey[] {
   if (agent?.requiredConnectors && agent.requiredConnectors.length > 0) {
     return agent.requiredConnectors;
   }
