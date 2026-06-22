@@ -53,7 +53,7 @@ export default function HubEmptyState() {
           return (
             <div
               key={step.number}
-              className="relative rounded-2xl border border-white/[0.08] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl"
+              className="relative rounded-2xl border border-white/[0.08] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl"
             >
               <div className="flex items-center gap-3 mb-3">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#FF6A00]/10 border border-[#FF6A00]/20">

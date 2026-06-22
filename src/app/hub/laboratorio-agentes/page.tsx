@@ -314,16 +314,16 @@ function LaboratorioAgentesContent() {
 
   return (
     <div className="w-full space-y-6">
-      <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#ff6a00]/15 border border-[#ff6a00]/20 text-[#ff6a00]">
+      <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 border-b border-white/[0.06] py-8 mb-8">
+        <div className="flex items-start gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#ff6a00]/10 border border-[#ff6a00]/20 text-[#ff6a00] shadow-[0_0_16px_rgba(255,106,0,0.08)] mt-1">
             <Wrench className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-xl font-black tracking-tight text-white leading-none">
+            <h1 className="text-3xl font-black text-white tracking-tight leading-tight">
               Laboratório de Agentes
             </h1>
-            <p className="text-[12px] font-semibold text-[#7eb8d4]/80 mt-1 max-w-3xl">
+            <p className="text-[#8fa0b5] text-[15px] font-medium mt-2 max-w-3xl leading-relaxed">
               Esta área centraliza a ativação dos agentes da sua operação, com foco em coerência estratégica, previsibilidade e impacto financeiro real.
             </p>
           </div>
@@ -331,7 +331,7 @@ function LaboratorioAgentesContent() {
       </header>
 
       {/* Search Bar Container with Dark Glassmorphism styling */}
-      <div className="rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 p-5 md:p-6 shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
+      <div className="rounded-3xl border border-[#FF6A00]/20 bg-[#0d1a2a]/40 backdrop-blur-md p-5 md:p-6 shadow-[0_8px_32px_rgba(255,106,0,0.04)]">
         <div className="relative w-full max-w-lg">
           <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400">
             <Search size={18} />
@@ -342,7 +342,7 @@ function LaboratorioAgentesContent() {
             placeholder="Pesquisar agentes por nome ou descrição…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-11 pr-10 rounded-[12px] border border-white/[0.12] bg-white/[0.06] text-[15px] font-medium text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FFBE94]/20 focus:bg-[#071a2e]"
+            className="w-full h-12 pl-11 pr-10 rounded-[12px] border border-white/[0.12] bg-white/[0.06] text-[15px] font-medium text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FFBE94]/20 focus:bg-[#0d1a2a]/60"
           />
           {searchQuery ? (
             <button
@@ -358,7 +358,7 @@ function LaboratorioAgentesContent() {
       </div>
 
       {totalVisibleAgents === 0 ? (
-        <div className="rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 p-12 text-center shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
+        <div className="rounded-3xl border border-[#FF6A00]/20 bg-[#0d1a2a]/40 backdrop-blur-md p-12 text-center shadow-[0_8px_32px_rgba(255,106,0,0.04)]">
           <p className="text-lg font-black text-white">Nenhum agente encontrado</p>
           <p className="mt-1 text-sm text-slate-400">
             Não encontramos nenhum agente que corresponda à sua busca &quot;{searchQuery}&quot;.
@@ -386,9 +386,9 @@ function LaboratorioAgentesContent() {
         return (
           <section
             key={category.slug}
-            className="overflow-hidden rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 shadow-[0_8px_32px_rgba(2,8,22,0.4)] text-white"
+            className="overflow-hidden rounded-3xl border border-[#FF6A00]/20 bg-[#0d1a2a]/40 backdrop-blur-md shadow-[0_8px_32px_rgba(255,106,0,0.04)] text-white"
           >
-            <header className="flex items-center justify-between gap-4 bg-[#091624] px-6 py-4.5 border-b border-white/[0.08]">
+            <header className="flex items-center justify-between gap-4 bg-[#0d1a2a]/60 px-6 py-4.5 border-b border-[#FF6A00]/10">
               <div className="flex flex-col gap-1">
                 <div className="flex items-center gap-2">
                   <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse"></span>
@@ -398,7 +398,7 @@ function LaboratorioAgentesContent() {
                   {category.desc}
                 </p>
               </div>
-              <div className="rounded-full border border-[#FF6A00] bg-[#FF6A00]/5 px-3 py-1 text-[11px] font-bold text-[#FF6A00] tracking-tight whitespace-nowrap">
+              <div className="rounded-full border border-[#FF6A00] bg-[#FF6A00]/5 px-4 py-1.5 text-[16px] font-bold text-[#FF6A00] tracking-tight whitespace-nowrap">
                 Ativos: {categoryActiveCount} de {categoryTotalCount}
               </div>
             </header>
@@ -414,25 +414,27 @@ function LaboratorioAgentesContent() {
                   return (
                     <article
                       key={agent.title}
-                      className="rounded-xl border border-white/[0.08] bg-[#051120]/60 p-4 transition-all duration-200 hover:border-white/[0.16] hover:bg-[#051120]/80"
+                      className="group relative rounded-2xl border border-[#FF6A00]/20 border-l-gradient-orange border-l-transparent bg-[#0d1a2a]/40 backdrop-blur-md p-5 transition-all duration-300 hover:bg-[#0d1a2a]/70 hover:border-[#FF6A00]/40 hover:shadow-[0_0_32px_rgba(255,106,0,0.06)] flex flex-col h-full"
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <p className="text-sm font-black text-white">{agent.title}</p>
-                        {isActive ? (
-                          <button
-                            type="button"
-                            onClick={() => setPendingDeactivateSlug(agentSlug)}
-                            disabled={activatingSlug === agentSlug}
-                            className="inline-flex items-center gap-1 text-[12px] font-black text-[#FF4D4D] hover:text-[#FF3333] transition-colors disabled:opacity-60"
-                          >
-                            <Power className="h-3.5 w-3.5" />
-                            {activatingSlug === agentSlug ? 'Desativando…' : 'Desativar Agente'}
-                          </button>
-                        ) : null}
+                      <div className="flex-1">
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-sm font-black text-white">{agent.title}</p>
+                          {isActive ? (
+                            <button
+                              type="button"
+                              onClick={() => setPendingDeactivateSlug(agentSlug)}
+                              disabled={activatingSlug === agentSlug}
+                              className="inline-flex items-center gap-1 text-[12px] font-black text-[#FF4D4D] hover:text-[#FF3333] transition-colors disabled:opacity-60"
+                            >
+                              <Power className="h-3.5 w-3.5" />
+                              {activatingSlug === agentSlug ? 'Desativando…' : 'Desativar Agente'}
+                            </button>
+                          ) : null}
+                        </div>
+                        <p className="mt-1 text-xs text-slate-400">{agent.description}</p>
                       </div>
-                      <p className="mt-1 text-xs text-slate-400">{agent.description}</p>
 
-                      <div className="mt-3 flex flex-wrap gap-2">
+                      <div className="mt-4 flex flex-wrap gap-2">
                         {isActive ? (
                           <>
                             <button

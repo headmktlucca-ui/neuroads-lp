@@ -844,7 +844,7 @@ export default function HubDashboard() {
           const IconComponent = card.hasVal ? Info : AlertCircle;
           const isKpiTooltipOpen = activeKpiTooltip === card.label;
           return (
-            <article key={card.label} className="rounded-2xl border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-4 backdrop-blur-xl relative group hover:border-white/[0.18] hover:bg-[#071a2e]/90 transition-all duration-200 shadow-[0_8px_32px_rgba(2,8,22,0.55)]">
+            <article key={card.label} className="rounded-2xl border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-4 backdrop-blur-xl relative group hover:border-white/[0.18] hover:bg-[#071a2e]/90 transition-all duration-200 shadow-[0_8px_32px_rgba(2,8,22,0.55)]">
               <div className="flex justify-between items-start mb-2">
                 <span className="text-[12px] font-black uppercase tracking-wider text-[#7eb8d4]">{card.label}</span>
                 <button
@@ -888,7 +888,7 @@ export default function HubDashboard() {
         <div className="xl:col-span-3 flex flex-col gap-6">
           
           {/* Channel Performance */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
               <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Desempenho por Canal
@@ -929,7 +929,7 @@ export default function HubDashboard() {
           </section>
 
           {/* Audience Insights */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5">
               Insights de Audiência
             </h2>
@@ -1025,7 +1025,7 @@ export default function HubDashboard() {
 
 
           {/* Top Campaigns */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
               <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Melhores Campanhas
@@ -1074,7 +1074,7 @@ export default function HubDashboard() {
         <div className="xl:col-span-3 flex flex-col gap-6">
 
           {/* Notificações — exibe até 4 alertas em formato de lista sem scroll */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <h2 className="text-[13px] font-black text-[#a3b8cc] uppercase tracking-wider mb-4 flex items-center gap-2 border-b border-white/[0.08] pb-2.5">
               <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
               Notificações
@@ -1250,7 +1250,7 @@ export default function HubDashboard() {
           </section>
 
           {/* Feed de Atividade ao Vivo — exibe exatamente 7 itens sem scroll */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5 flex items-center justify-between">
               Feed de Atividade ao Vivo
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
@@ -1291,7 +1291,7 @@ export default function HubDashboard() {
           </section>
 
           {/* Performance em Tempo Real */}
-          <article className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <article className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
               <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Performance em Tempo Real
@@ -1321,7 +1321,7 @@ export default function HubDashboard() {
           </article>
 
           {/* Alocação de Orçamento */}
-          <article className="rounded-[24px] border border-white/[0.10] border-l-[3px] border-l-[#FF6A00]/60 bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
+          <article className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#071a2e]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)]">
             <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
               <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
                 Alocação de Orçamento

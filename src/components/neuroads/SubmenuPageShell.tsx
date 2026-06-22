@@ -322,7 +322,7 @@ function MetricCard({
 }) {
   return (
     <div
-      className="rounded-2xl border border-white/5 bg-zinc-950/40 p-5 backdrop-blur-sm transition-all hover:border-[#ff6a00]/30 hover:bg-white/5 hover:shadow-[0_8px_24px_rgba(255,106,0,0.15)]"
+      className="rounded-2xl border border-white/5 border-l-gradient-orange border-l-transparent bg-zinc-950/40 p-5 backdrop-blur-sm transition-all hover:border-[#ff6a00]/30 hover:bg-white/5 hover:shadow-[0_8px_24px_rgba(255,106,0,0.15)]"
       style={{
         opacity: isVisible ? 1 : 0,
         transform: isVisible ? 'translateY(0)' : 'translateY(20px)',

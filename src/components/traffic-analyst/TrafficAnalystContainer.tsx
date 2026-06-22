@@ -658,7 +658,7 @@ export default function TrafficAnalystContainer({ activeApp }: { activeApp?: Act
                      </Link>
                   </div>
 
-                  <div className="glass-card p-6 border-l-4 border-l-[var(--color-brand-orange)] bg-white/5 max-h-[500px] overflow-y-auto custom-scrollbar">
+                  <div className="glass-card p-6 border-l-gradient-orange border-l-transparent bg-white/5 max-h-[500px] overflow-y-auto custom-scrollbar">
                       <h4 className="font-bold mb-4 flex items-center gap-2">
                         <BrainCircuit size={18} className="text-[var(--color-brand-orange)]" /> 
                         ANÁLISE ESTRATÉGICA NEURAL

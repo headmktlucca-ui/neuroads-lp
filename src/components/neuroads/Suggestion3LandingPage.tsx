@@ -774,7 +774,7 @@ export default function Suggestion3LandingPage() {
             <h2 className="text-center text-[28px] font-extrabold leading-tight text-white sm:text-[34px] lg:text-[42px]">Métricas que importam. Impacto que fica.</h2>
             <div className="mx-auto mt-5 grid max-w-[1150px] gap-4 md:grid-cols-2 xl:grid-cols-4">
               {metrics.map((metric) => (
-                <article key={metric.label} className="min-h-[190px] rounded-[20px] border border-[#20324b] bg-[#091423]/76 px-6 pb-3 pt-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+                <article key={metric.label} className="min-h-[190px] rounded-[20px] border border-[#20324b] border-l-gradient-orange border-l-transparent bg-[#091423]/76 px-6 pb-3 pt-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
                   <p className="text-[38px] font-extrabold leading-none text-[#ff6a00] sm:text-[44px] lg:text-[48px]">{metric.value}</p>
                   <p className="mt-2 text-[15px] leading-snug text-white/88">{metric.label}</p>
                   <div className="mt-4">
@@ -792,7 +792,7 @@ export default function Suggestion3LandingPage() {
 
         <div className="mt-8 grid gap-4 lg:grid-cols-3">
           {testimonials.map((item) => (
-            <article key={item.name} className="min-h-[230px] rounded-[18px] border border-[#f3e6dc] border-l-[2.5px] border-l-[#ffb182] bg-white p-6 shadow-[0_4px_12px_rgba(10,20,30,0.03)]">
+            <article key={item.name} className="min-h-[230px] rounded-[18px] border border-[#f3e6dc] border-l-gradient-orange border-l-transparent bg-white p-6 shadow-[0_4px_12px_rgba(10,20,30,0.03)]">
               <span className="text-[30px] font-extrabold leading-none text-[#ff7a21]">“</span>
               <p className="mt-1 text-[13px] leading-[1.75] text-[#4e5665]">{item.quote}</p>
               <div className="mt-5 flex items-center gap-3">

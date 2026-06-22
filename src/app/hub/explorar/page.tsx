@@ -182,16 +182,16 @@ export default function HubExplorarPage() {
       </div>
 
       {/* Updates List */}
-      <div className="space-y-5 pb-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pb-10">
         {filtered.map((update) => (
           <article
             key={update.id}
-            className="group relative rounded-3xl border border-[#FF6A00]/20 bg-[#0d1a2a]/40 backdrop-blur-md hover:bg-[#0d1a2a]/70 hover:border-[#FF6A00]/40 hover:shadow-[0_0_32px_rgba(255,106,0,0.06)] transition-all duration-300 overflow-hidden"
+            className="group relative rounded-3xl border border-[#FF6A00]/20 border-l-gradient-orange border-l-transparent bg-[#0d1a2a]/40 backdrop-blur-md hover:bg-[#0d1a2a]/70 hover:border-[#FF6A00]/40 hover:shadow-[0_0_32px_rgba(255,106,0,0.06)] transition-all duration-300 flex flex-col"
           >
             {/* Top accent line */}
             <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF6A00]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-            <div className="p-6 flex gap-5 flex-col sm:flex-row">
+            <div className="p-6 flex gap-5 flex-col sm:flex-row flex-1">
               {/* Icon */}
               <div className="shrink-0">
                 <div className={`w-12 h-12 rounded-2xl ${update.iconBg} border border-[#FF6A00]/20 flex items-center justify-center shadow-[0_0_16px_rgba(255,106,0,0.08)]`}>

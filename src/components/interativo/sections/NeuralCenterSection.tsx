@@ -88,7 +88,7 @@ export function NeuralCenterSection() {
 
 function MetricCard({ label, value, trend }: { label: string; value: string; trend: string }) {
   return (
-    <article className="rounded-2xl border border-white/10 bg-black/25 px-4 py-4">
+    <article className="rounded-2xl border border-white/10 border-l-gradient-orange border-l-transparent bg-black/25 px-4 py-4">
       <p className="text-sm text-white/65">{label}</p>
       <p className="mt-1 text-2xl font-semibold text-white">{value}</p>
       <p className="mt-1 text-xs uppercase tracking-[0.14em] text-[#ffb15e]">{trend}</p>

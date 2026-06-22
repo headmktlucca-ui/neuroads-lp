@@ -11,8 +11,9 @@ const NAV_ITEMS = [
   { label: 'Dashboard', href: '/hub' },
   { label: 'Explorar', href: '/hub/explorar' },
   { label: 'Assistente IA', href: '/hub/assistente-ia' },
+  { label: 'Laboratório', href: '/hub/laboratorio-agentes' },
   { label: 'Automações', href: '/hub/automacoes' },
-  { label: 'Agentes', href: '/hub/agentes-ativos' },
+  { label: 'Agentes Ativos', href: '/hub/agentes-ativos' },
   { label: 'Estúdio', href: '/hub/estudio' },
   { label: 'API Keys', href: '/hub/api-keys' },
   { label: 'Integrações', href: '/hub/integracoes' },
@@ -128,7 +129,7 @@ export default function HubTopNav() {
             >
               {item.label}
               {isActive && (
-                <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t bg-[#FF6A00] shadow-[0_0_8px_rgba(255,106,0,0.6)]" />
+                <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t bg-gradient-to-r from-[#F24900] to-[#FF8805] shadow-[0_0_8px_rgba(255,106,0,0.6)]" />
               )}
             </Link>
           );
