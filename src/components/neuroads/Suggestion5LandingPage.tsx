@@ -431,9 +431,9 @@ export default function Suggestion5LandingPage() {
             transition={{ delay: 0.08 }}
             className="text-[44px] sm:text-[60px] lg:text-[76px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)]"
           >
-            Mais receita.
+            Não é sobre investimento
             <br />
-            <span className="text-[#ff6a00]">Menos desperdício.</span>
+            <span className="text-[#ff6a00]">é sobre ESTRATÉGIA!</span>
           </motion.h1>
 
           {/* Subtitle */}

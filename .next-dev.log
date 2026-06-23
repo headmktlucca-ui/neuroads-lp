@@ -6,28 +6,16 @@
 - Local:         http://localhost:3000
 - Network:       http://192.168.255.104:3000
 - Environments: .env.local, .env
-✓ Ready in 1938ms
+✓ Ready in 868ms
 Successfully copied new Flávio Almeida avatar from brain attachment to flavio-almeida.png!
 - Experiments (use with caution):
   · serverActions
 
-○ Compiling / ...
- GET / 200 in 11.3s (next.js: 7.8s, application-code: 3.6s)
- GET / 200 in 785ms (next.js: 29ms, application-code: 755ms)
- GET / 200 in 1684ms (next.js: 13ms, application-code: 1672ms)
- GET / 200 in 811ms (next.js: 316ms, application-code: 495ms)
- GET /login 200 in 938ms (next.js: 509ms, application-code: 429ms)
- GET /hub 200 in 330ms (next.js: 257ms, application-code: 73ms)
- POST /api/hub/metrics/ga4 404 in 1418ms (next.js: 414ms, application-code: 1005ms)
- POST /api/hub/metrics/ga4 404 in 1433ms (next.js: 301ms, application-code: 1132ms)
- POST /api/traffic/extract 500 in 200ms (next.js: 159ms, application-code: 41ms)
- POST /api/traffic/extract 500 in 211ms (next.js: 190ms, application-code: 21ms)
- GET /hub/conectores 200 in 255ms (next.js: 176ms, application-code: 79ms)
-✓ Compiled in 2s
- GET /hub/conectores 200 in 4.8s (next.js: 1632ms, application-code: 3.1s)
- GET /hub 200 in 196ms (next.js: 28ms, application-code: 168ms)
- POST /api/hub/metrics/ga4 404 in 938ms (next.js: 12ms, application-code: 927ms)
- POST /api/hub/metrics/ga4 404 in 950ms (next.js: 52ms, application-code: 899ms)
- POST /api/traffic/extract 500 in 26ms (next.js: 8ms, application-code: 19ms)
- POST /api/traffic/extract 500 in 27ms (next.js: 5ms, application-code: 22ms)
-✓ Finished filesystem cache database compaction in 10.3s
+ GET / 200 in 2.4s (next.js: 1613ms, application-code: 760ms)
+ GET / 200 in 82ms (next.js: 5ms, application-code: 77ms)
+ GET / 200 in 387ms (next.js: 11ms, application-code: 376ms)
+ GET /hub 200 in 134ms (next.js: 93ms, application-code: 41ms)
+ POST /api/hub/metrics/ga4 404 in 1247ms (next.js: 14ms, application-code: 1234ms)
+ POST /api/hub/metrics/ga4 404 in 1405ms (next.js: 127ms, application-code: 1279ms)
+ POST /api/traffic/extract 500 in 81ms (next.js: 64ms, application-code: 17ms)
+ POST /api/traffic/extract 500 in 18ms (next.js: 4ms, application-code: 13ms)
