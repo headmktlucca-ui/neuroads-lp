@@ -510,15 +510,7 @@ export default function AgentEntryPage() {
                         : 'border-[#FF6B00] bg-[#FF6B00] text-white hover:brightness-105'
                     }`}
                   >
-                    {entry.title === 'Gerador de Copies de Conversão'
-                      ? 'Ativar Agente'
-                      : automationActivated
-                        ? entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil' || entry.title === 'Diagnóstico de Landing Page'
-                          ? 'Agente Ativo'
-                          : 'Automação Ativa'
-                        : entry.title === 'Auditor de Desperdício' || entry.title === 'Otimizador de Orçamento' || entry.title === 'Gerador de Criativos' || entry.title === 'Análise Viral' || entry.title === 'Preditor de Funil' || entry.title === 'Diagnóstico de Landing Page'
-                          ? 'Ativar Agente'
-                          : 'Ativar Automação'}
+                    {automationActivated ? 'Agente Ativo' : 'Ativar Agente'}
                   </button>
                   <button
                     type="button"
@@ -540,14 +532,14 @@ export default function AgentEntryPage() {
               </header>
 
               {heroDescription ? (
-                <div className="rounded-[24px] border border-white/[0.10] bg-[#071a2e]/82 p-6 backdrop-blur-xl shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
+                <div className="hub-accent-card p-6">
                   <p className="max-w-[800px] text-[14px] leading-relaxed text-[#C8D3E6] [&_strong]:text-white">
                     {heroDescription}
                   </p>
                 </div>
               ) : null}
 
-              <section className="relative overflow-hidden rounded-3xl border border-white/[0.10] bg-[#071a2e]/82 shadow-[0_8px_32px_rgba(2,8,22,0.4)] text-white">
+              <section className="hub-accent-card relative overflow-hidden text-white">
                 <div className="px-6 py-5 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-4 bg-[#091624]">
                   <div className="flex flex-col gap-1">
                     <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold">Canais Necessários</p>

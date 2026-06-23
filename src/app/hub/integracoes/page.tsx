@@ -160,7 +160,7 @@ export default function HubIntegracoesPage() {
       </header>
 
       {/* List */}
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0d1a2a]/40 backdrop-blur-md overflow-hidden shadow-lg mt-6">
+      <div className="hub-accent-card overflow-hidden shadow-lg mt-6">
         <div className="p-5 border-b border-white/[0.06] bg-white/[0.02]">
           <h2 className="text-[15px] font-bold text-white mb-4">Catálogo de Integrações</h2>
           

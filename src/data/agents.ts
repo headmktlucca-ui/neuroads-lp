@@ -236,7 +236,12 @@ const rawAgents: Agent[] = [
   }
 ];
 
-export const agents: Agent[] = rawAgents.map(agent => ({
-  ...agent,
-  isActivatable: ['Analista de Tráfego', 'Gerador de Criativos'].includes(agent.title)
-}));
+// Placeholder de desenvolvimento — não exibir como agente real
+const PLACEHOLDER_TITLES = new Set(['Nome do Meu Agente']);
+
+export const agents: Agent[] = rawAgents
+  .filter((agent) => !PLACEHOLDER_TITLES.has(agent.title))
+  .map((agent) => ({
+    ...agent,
+    isActivatable: true,
+  }));

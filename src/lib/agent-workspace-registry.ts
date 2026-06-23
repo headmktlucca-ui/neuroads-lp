@@ -36,7 +36,6 @@ import CreativeAnalysisWorkspace from '../components/agents/CreativeAnalysisWork
 import LandingPageDiagnosisWorkspace from '../components/agents/LandingPageDiagnosisWorkspace';
 import DnaBrandWorkspace from '../components/agents/DnaBrandWorkspace';
 
-import NomeDoMeuAgenteWorkspace from '../components/agents/NomeDoMeuAgenteWorkspace';
 
 // ─── Tipagem das props que todos os workspaces recebem ────────────────────────
 
@@ -78,7 +77,6 @@ export const AGENT_WORKSPACE_REGISTRY: Record<string, ComponentType<WorkspacePro
   'SEO & GEO':                    SeoGeoWorkspace,
   'DNA da Marca':                 DnaBrandWorkspace,
   'Diagnóstico de Landing Page':  LandingPageDiagnosisWorkspace,
-  'Nome do Meu Agente': NomeDoMeuAgenteWorkspace,
 };
 
 /**

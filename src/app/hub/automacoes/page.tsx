@@ -39,7 +39,7 @@ export default function HubAutomacoesPage() {
           { label: 'Tarefas Executadas (30d)', value: '45.2k', icon: CheckCircle2, color: 'text-slate-400', shadow: 'shadow-[0_0_15px_rgba(148,163,184,0.1)]' },
           { label: 'Horas Economizadas', value: '128h', icon: Clock, color: 'text-purple-400', shadow: 'shadow-[0_0_15px_rgba(192,132,252,0.1)]' },
         ].map((stat, i) => (
-          <div key={i} className="p-5 rounded-2xl bg-[#0d1a2a]/40 border border-white/[0.06] backdrop-blur-md relative overflow-hidden group hover:bg-[#0d1a2a]/60 hover:border-white/[0.1] transition-all">
+          <div key={i} className="hub-accent-card p-5 relative overflow-hidden group transition-all">
             <div className="absolute top-0 right-0 w-32 h-32 bg-white/[0.02] rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 group-hover:bg-white/[0.04] transition-colors" />
             <div className="flex items-start justify-between relative">
               <div>
@@ -55,7 +55,7 @@ export default function HubAutomacoesPage() {
       </div>
 
       {/* List */}
-      <div className="rounded-2xl border border-white/[0.06] bg-[#0d1a2a]/40 backdrop-blur-md overflow-hidden shadow-lg">
+      <div className="hub-accent-card overflow-hidden shadow-lg">
         <div className="p-5 border-b border-white/[0.06] flex items-center justify-between bg-white/[0.02]">
           <h2 className="text-[15px] font-bold text-white">Fluxos Recentes</h2>
           <button className="text-[13px] text-[#FF6A00] font-semibold hover:text-[#FF8000] transition-colors flex items-center gap-1 bg-[#FF6A00]/10 px-3 py-1.5 rounded-lg border border-[#FF6A00]/20 hover:bg-[#FF6A00]/20">

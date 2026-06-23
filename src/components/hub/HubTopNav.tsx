@@ -56,52 +56,49 @@ export default function HubTopNav() {
   }, [isDropdownOpen]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex flex-col bg-[var(--color-hub-base)]/98 backdrop-blur-xl">
-      {/* Top Bar: Logo + User */}
-      <div className="flex items-center justify-between px-6 h-14">
-        {/* Logo */}
-        <Link href="/hub" className="flex items-center shrink-0">
-          <Image
-            src="/images/Logos/LLNeuroAds.png"
-            alt="NeuroAds"
-            width={180}
-            height={44}
-            className="h-11 w-auto"
-            priority
-          />
-        </Link>
+    <header className="fixed top-0 left-0 right-0 z-50 flex items-center px-6 h-16 bg-[var(--color-hub-base)]/98 backdrop-blur-xl">
+      {/* Logo */}
+      <Link href="/hub" className="relative z-10 flex items-center shrink-0">
+        <Image
+          src="/images/Logos/LLNeuroAds.png"
+          alt="NeuroAds"
+          width={180}
+          height={44}
+          className="h-[38px] w-auto"
+          priority
+        />
+      </Link>
 
-        {/* O Avatar foi movido para o HubDashboard.tsx conforme solicitado */}
-      </div>
+      {/* Main Nav: Section Links */}
+      <nav className="absolute inset-0 flex items-center justify-center gap-0 px-4 pointer-events-none overflow-hidden">
+        <div className="flex items-center h-full pointer-events-auto overflow-x-auto scrollbar-none">
+          {NAV_ITEMS.map((item) => {
+            const isActive =
+              pathname === item.href ||
+              (item.href !== '/hub' && pathname?.startsWith(item.href));
 
-      {/* Sub-Nav: Section Links */}
-      <nav className="flex items-center justify-start md:justify-center gap-0 px-4 h-[42px] overflow-x-auto scrollbar-none">
-        {NAV_ITEMS.map((item) => {
-          const isActive =
-            pathname === item.href ||
-            (item.href !== '/hub' && pathname?.startsWith(item.href));
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`relative flex items-center px-4 h-full text-[13px] font-semibold whitespace-nowrap transition-colors duration-200 ${
-                isActive ? 'text-white' : 'text-[#8fa0b5] hover:text-white/80'
-              }`}
-            >
-              {item.label}
-              {isActive && (
-                <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t bg-gradient-to-r from-[var(--color-hub-accent)] to-[var(--color-hub-accent-h)] shadow-[var(--shadow-hub-orange)]" />
-              )}
-            </Link>
-          );
-        })}
-        <button
-          onClick={handleLogout}
-          className="relative flex items-center px-4 h-full text-[13px] font-semibold whitespace-nowrap transition-colors duration-200 text-[#ff4d4d] hover:text-[#ff1a1a]"
-        >
-          SAIR
-        </button>
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`relative flex items-center px-4 h-full text-[13px] font-semibold whitespace-nowrap transition-colors duration-200 ${
+                  isActive ? 'text-white' : 'text-[#8fa0b5] hover:text-white/80'
+                }`}
+              >
+                {item.label}
+                {isActive && (
+                  <span className="absolute bottom-0 left-0 right-0 h-[2px] rounded-t bg-gradient-to-r from-[var(--color-hub-accent)] to-[var(--color-hub-accent-h)] shadow-[var(--shadow-hub-orange)]" />
+                )}
+              </Link>
+            );
+          })}
+          <button
+            onClick={handleLogout}
+            className="relative flex items-center px-4 h-full text-[13px] font-semibold whitespace-nowrap transition-colors duration-200 text-[#ff4d4d] hover:text-[#ff1a1a]"
+          >
+            SAIR
+          </button>
+        </div>
       </nav>
     </header>
   );

@@ -313,7 +313,7 @@ function LaboratorioAgentesContent() {
       </header>
 
       {/* Search Bar Container with Dark Glassmorphism styling */}
-      <div className="rounded-3xl border border-[#FF6A00]/20 bg-[#0d1a2a]/40 backdrop-blur-md p-5 md:p-6 shadow-[0_8px_32px_rgba(255,106,0,0.04)]">
+      <div className="hub-accent-card p-5 md:p-6">
         <div className="relative w-full max-w-lg">
           <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400">
             <Search size={18} />
@@ -368,7 +368,7 @@ function LaboratorioAgentesContent() {
         return (
           <section
             key={category.slug}
-            className="overflow-hidden rounded-3xl border border-[#FF6A00]/20 bg-[#0d1a2a]/40 backdrop-blur-md shadow-[0_8px_32px_rgba(255,106,0,0.04)] text-white"
+            className="hub-accent-card overflow-hidden text-white"
           >
             <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#0d1a2a]/60 px-6 py-5 border-b border-[#FF6A00]/10">
               <div className="flex flex-col gap-1">
