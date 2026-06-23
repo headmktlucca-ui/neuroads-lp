@@ -184,7 +184,7 @@ export default function HubDashboardPage() {
 
   return (
     <div className="w-full space-y-6 text-white">
-      <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-6">
+      <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.06] py-8 mb-8">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--color-hub-accent)]/15 border border-[var(--color-hub-border-accent)] text-[var(--color-hub-accent)]">
             <CheckCircle2 className="h-6 w-6" />

@@ -66,9 +66,9 @@ export default function HubTopNav() {
           <Image
             src="/images/Logos/LLNeuroAds.png"
             alt="NeuroAds"
-            width={148}
-            height={36}
-            className="h-8 w-auto"
+            width={180}
+            height={44}
+            className="h-11 w-auto"
             priority
           />
         </Link>

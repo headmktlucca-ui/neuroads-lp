@@ -363,7 +363,7 @@ export default function Suggestion5LandingPage() {
       />
 
       {/* HERO SECTION — CENTERED COMMAND STRUCTURE */}
-      <section className="relative w-full min-h-[92vh] flex items-center z-10 pt-[120px] pb-20 overflow-hidden bg-transparent">
+      <section className="relative w-full min-h-[92vh] flex items-center z-10 pt-[90px] pb-20 overflow-hidden bg-transparent">
         <div className="absolute inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
           <motion.div
             className="absolute w-full bg-cover bg-center"
@@ -393,7 +393,35 @@ export default function Suggestion5LandingPage() {
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#000000] to-transparent z-[1] pointer-events-none" />
 
         {/* CENTERED CONTENT */}
-        <div className="relative z-10 w-full flex flex-col items-center text-center px-4 sm:px-6 max-w-[900px] mx-auto">
+        <div className="relative z-10 w-full flex flex-col items-center text-center px-4 sm:px-6 max-w-[900px] mx-auto pt-2">
+
+          {/* Feature badges row */}
+          <motion.div
+            variants={revealVariants}
+            initial="hidden"
+            animate="visible"
+            transition={{ delay: 0.05 }}
+            className="mb-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
+          >
+            {[
+              { icon: <Cpu size={15} />, label: 'IA Agêntica', sub: 'Autônoma e orientada a metas' },
+              { icon: <TrendingUp size={15} />, label: 'Dados em tempo real', sub: 'Decisões baseadas em sinal' },
+              { icon: <Target size={15} />, label: 'Resultados mensuráveis', sub: 'Foco no que importa' },
+            ].map((badge, i) => (
+              <div
+                key={i}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/[0.08] bg-black/30 backdrop-blur-sm min-w-[200px]"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
+                  {badge.icon}
+                </span>
+                <div className="text-left">
+                  <p className="text-[13px] font-bold text-white leading-none">{badge.label}</p>
+                  <p className="text-[11px] text-white/50 mt-0.5">{badge.sub}</p>
+                </div>
+              </div>
+            ))}
+          </motion.div>
 
           {/* Main headline */}
           <motion.h1
@@ -446,34 +474,6 @@ export default function Suggestion5LandingPage() {
             </Link>
           </motion.div>
 
-
-          {/* Feature badges row */}
-          <motion.div
-            variants={revealVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 0.40 }}
-            className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
-          >
-            {[
-              { icon: <Cpu size={15} />, label: 'IA Agêntica', sub: 'Autônoma e orientada a metas' },
-              { icon: <TrendingUp size={15} />, label: 'Dados em tempo real', sub: 'Decisões baseadas em sinal' },
-              { icon: <Target size={15} />, label: 'Resultados mensuráveis', sub: 'Foco no que importa' },
-            ].map((badge, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/[0.08] bg-black/30 backdrop-blur-sm min-w-[200px]"
-              >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
-                  {badge.icon}
-                </span>
-                <div className="text-left">
-                  <p className="text-[13px] font-bold text-white leading-none">{badge.label}</p>
-                  <p className="text-[11px] text-white/50 mt-0.5">{badge.sub}</p>
-                </div>
-              </div>
-            ))}
-          </motion.div>
 
         </div>
       </section>

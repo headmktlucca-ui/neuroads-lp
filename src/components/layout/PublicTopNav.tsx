@@ -32,7 +32,7 @@ export default function PublicTopNav() {
   }, [isMobileMenuOpen]);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-[#08101e]/98 backdrop-blur-xl">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-[#000000] via-[#000000]/90 to-transparent pb-4">
       <div className="flex items-center h-20 px-6 gap-8">
         {/* Logo */}
         <Link href="/" className="flex items-center shrink-0">

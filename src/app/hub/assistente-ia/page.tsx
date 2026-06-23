@@ -43,7 +43,7 @@ export default function HubAssistentePage() {
     <div className="px-6 flex flex-col animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       {/* Header */}
-      <header className="py-8 border-b border-white/[0.06] mb-6">
+      <header className="py-8 border-b border-white/[0.06] mb-8">
         <div className="flex items-start justify-between gap-6 flex-wrap">
           <div>
             <div className="flex items-center gap-2 mb-3">

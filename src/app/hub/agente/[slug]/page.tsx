@@ -480,7 +480,7 @@ export default function AgentEntryPage() {
             </div>
           ) : (
             <div className="max-w-6xl mx-auto space-y-6">
-              <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-6">
+              <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.06] py-8 mb-8">
                 <div className="flex items-start lg:items-center gap-4">
                   <div className="shrink-0 w-16 h-16 rounded-[16px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_4px_12px_rgba(255,107,0,0.26)]">
                     <div className="relative w-full h-full rounded-[14px] overflow-hidden bg-[#101A2B]">
