@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, lazy, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
+
+const KnowledgeExplorer = lazy(() => import('./KnowledgeExplorer'));
 import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -303,6 +305,12 @@ export default function SettingsHubPage() {
         >
           Financeiro
         </button>
+        <button
+          onClick={() => handleTabChange('conhecimento')}
+          className={`px-4 py-2 text-sm font-bold rounded-full transition-colors ${activeTab === 'conhecimento' ? 'bg-[#FF6B00] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
+        >
+          Base de Conhecimento
+        </button>
       </div>
 
       {/* Content */}
@@ -538,6 +546,22 @@ export default function SettingsHubPage() {
                 {isManagingPlan ? 'Abrindo...' : 'Gerenciar Plano'}
               </button>
             </div>
+          </div>
+        )}
+
+        {activeTab === 'conhecimento' && (
+          <div>
+            <div className="mb-4">
+              <h2 className="text-sm font-black text-slate-800">Base de Conhecimento</h2>
+              <p className="text-xs text-slate-500 mt-0.5">Todos os relatórios gerados pelos Agentes e conversas com o Lucca, organizados por categoria.</p>
+            </div>
+            <Suspense fallback={
+              <div className="flex items-center justify-center h-48">
+                <div className="w-6 h-6 rounded-full border-2 border-[#FF6B00]/30 border-t-[#FF6B00] animate-spin" />
+              </div>
+            }>
+              <KnowledgeExplorer />
+            </Suspense>
           </div>
         )}
       </div>

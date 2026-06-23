@@ -1,12 +1,13 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import { MessageCircle, Send, X, Maximize2, Minimize2, Paperclip, Mic, StopCircle } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { useAuth } from '../../context/AuthContext';
 import { chatWithSupport } from '../../app/actions/chat-support';
 import { getHubProfileSummary } from '../../lib/hub-profile';
+import { saveChatSession, type ChatMessage as StoredChatMessage } from '../../lib/chat-history';
 
 type MessageRole = 'assistant' | 'user';
 type SupportMessage = {
@@ -37,13 +38,34 @@ export default function LuccaHubSupportWidget() {
   const [isMaximized, setIsMaximized] = useState(false);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [messages, setMessages] = useState<SupportMessage[]>([
-    {
-      id: 'intro',
-      role: 'assistant',
-      text: `${getGreetingByHour()}! Eu sou o Lucca, seu Agente de Operações IA. Vamos transformar os dados da sua operação em decisões claras e próximos passos para escalar com previsibilidade.`,
-    },
-  ]);
+  const sessionIdRef = useRef<string | undefined>(undefined);
+  const INTRO_MSG: SupportMessage = {
+    id: 'intro',
+    role: 'assistant',
+    text: `${getGreetingByHour()}! Eu sou o Lucca, seu Agente de Operações IA. Vamos transformar os dados da sua operação em decisões claras e próximos passos para escalar com previsibilidade.`,
+  };
+  const [messages, setMessages] = useState<SupportMessage[]>([INTRO_MSG]);
+
+  // Persist session to Firestore whenever messages change (after intro)
+  const persistSession = useCallback(async (msgs: SupportMessage[]) => {
+    if (!user) return;
+    const userMsgs = msgs.filter((m) => m.role === 'user');
+    if (userMsgs.length === 0) return;
+    const stored: StoredChatMessage[] = msgs
+      .filter((m) => m.text)
+      .map((m) => ({ role: m.role, text: m.text!, createdAtMs: Date.now() }));
+    const result = await saveChatSession(user.uid, stored, sessionIdRef.current);
+    if (result.id) sessionIdRef.current = result.id;
+  }, [user]);
+
+  // Reset session id when widget opens fresh
+  useEffect(() => {
+    if (isOpen) {
+      sessionIdRef.current = undefined;
+      setMessages([INTRO_MSG]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]);
 
   const supportContext = useMemo(() => {
     const companyStorageKey = user ? `neuroads_company_profile_${user.uid}` : '';
@@ -150,7 +172,14 @@ export default function LuccaHubSupportWidget() {
       return;
     }
 
-    appendMessage('assistant', result.content || 'Posso te ajudar com mais alguma informação?');
+    const assistantText = result.content || 'Posso te ajudar com mais alguma informação?';
+    appendMessage('assistant', assistantText);
+
+    // Persist after each assistant reply
+    setMessages((prev) => {
+      persistSession(prev);
+      return prev;
+    });
 
     if (Array.isArray(result.buttons) && result.buttons.length > 0) {
       const safeLinks = result.buttons
