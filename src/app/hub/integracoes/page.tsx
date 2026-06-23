@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Link2, ShieldCheck, ArrowRight, CheckCircle2, CreditCard } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 const INTEGRATIONS = [
   { 
@@ -163,20 +164,37 @@ export default function HubIntegracoesPage() {
         <div className="p-5 border-b border-white/[0.06] bg-white/[0.02]">
           <h2 className="text-[15px] font-bold text-white mb-4">Catálogo de Integrações</h2>
           
-          <div className="flex flex-wrap gap-2">
-            {FILTERS.map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-                className={`px-3 py-1.5 rounded-full text-[12px] font-bold tracking-wide transition-all ${
-                  activeFilter === filter
-                    ? 'bg-[#FF6A00] text-white shadow-[0_0_12px_rgba(255,106,0,0.4)]'
-                    : 'bg-white/[0.04] text-[#8fa0b5] hover:bg-white/[0.08] hover:text-white'
-                }`}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-wrap gap-2">
+              {FILTERS.map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setActiveFilter(filter)}
+                  className={`px-3 py-1.5 rounded-full text-[12px] font-bold tracking-wide transition-all ${
+                    activeFilter === filter
+                      ? 'bg-[#FF6A00] text-white shadow-[0_0_12px_rgba(255,106,0,0.4)]'
+                      : 'bg-white/[0.04] text-[#8fa0b5] hover:bg-white/[0.08] hover:text-white'
+                  }`}
+                >
+                  {filter}
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex flex-wrap items-center gap-2 shrink-0">
+              <Link
+                href="/hub/api-keys"
+                className="px-4 py-1.5 rounded-full text-[12px] font-bold tracking-wide transition-all bg-white/[0.04] text-[#8fa0b5] hover:bg-white/[0.08] hover:text-white flex items-center justify-center border border-white/[0.05]"
               >
-                {filter}
-              </button>
-            ))}
+                API Keys
+              </Link>
+              <Link
+                href="/hub/mcp-cli"
+                className="px-4 py-1.5 rounded-full text-[12px] font-bold tracking-wide transition-all bg-white/[0.04] text-[#8fa0b5] hover:bg-white/[0.08] hover:text-white flex items-center justify-center border border-white/[0.05]"
+              >
+                MCP & CLI
+              </Link>
+            </div>
           </div>
         </div>
         

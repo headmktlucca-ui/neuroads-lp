@@ -15,9 +15,7 @@ const NAV_ITEMS = [
   { label: 'Automações', href: '/hub/automacoes' },
   { label: 'Agentes Ativos', href: '/hub/agentes-ativos' },
   { label: 'Estúdio', href: '/hub/estudio' },
-  { label: 'API Keys', href: '/hub/api-keys' },
   { label: 'Integrações', href: '/hub/integracoes' },
-  { label: 'MCP & CLI', href: '/hub/mcp-cli' },
   { label: 'CONFIGURAÇÕES', href: '/hub/configuracoes' },
 ];
 

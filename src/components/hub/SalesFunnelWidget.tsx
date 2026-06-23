@@ -156,17 +156,14 @@ export default function SalesFunnelWidget({
 
   return (
     <section
-      className="rounded-[24px] border border-white/[0.10] bg-[#0a0a0a]/82 p-5 backdrop-blur-xl relative flex flex-col items-center shadow-[0_12px_40px_rgba(2,8,22,0.55)] transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(2,8,22,0.55),_0_0_24px_rgba(56,189,248,0.28)]"
+      className="relative flex flex-col items-center w-full"
       style={{ minHeight: 460 }}
     >
       {/* Header */}
-      <div className="w-full flex justify-between items-center border-b border-white/[0.08] pb-2.5 mb-4">
+      <div className="w-full flex justify-between items-center border-b border-white/[0.08] pb-2.5 mb-4 px-2">
         <h2 className="text-[13px] font-black uppercase tracking-wider text-[#a3b8cc]">
           Marketing Funnel
         </h2>
-        <span className="text-[11px] text-white/35 flex items-center gap-1 font-semibold">
-          <HelpCircle className="h-3 w-3" /> Hover para detalhes
-        </span>
       </div>
 
       {/* SVG + text overlays wrapper */}
