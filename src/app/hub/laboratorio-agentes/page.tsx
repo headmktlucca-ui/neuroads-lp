@@ -295,7 +295,7 @@ function LaboratorioAgentesContent() {
   };
 
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full max-w-[1600px] mx-auto px-6 lg:px-12 space-y-8 pb-16">
       <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 border-b border-white/[0.06] py-8 mb-8">
         <div className="flex items-start gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#ff6a00]/10 border border-[#ff6a00]/20 text-[#ff6a00] shadow-[0_0_16px_rgba(255,106,0,0.08)] mt-1">
@@ -370,23 +370,23 @@ function LaboratorioAgentesContent() {
             key={category.slug}
             className="hub-accent-card overflow-hidden text-white"
           >
-            <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-[#0d1a2a]/60 px-6 py-5 border-b border-[#FF6A00]/10">
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-[#10b981] animate-pulse"></span>
-                  <h2 className="text-[16px] md:text-[18px] font-black tracking-tight text-white">{category.label}</h2>
+            <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-white/[0.04] to-transparent px-8 py-6 border-b border-white/[0.06]">
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-3">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-hub-active)] animate-pulse shadow-[0_0_8px_var(--color-hub-active)]"></span>
+                  <h2 className="text-[20px] md:text-[24px] font-black tracking-tight text-white drop-shadow-sm">{category.label}</h2>
                 </div>
-                <p className="text-[12px] font-medium text-slate-300 leading-tight">
+                <p className="text-[14px] font-medium text-slate-300 leading-relaxed max-w-2xl">
                   {category.desc}
                 </p>
               </div>
-              <div className="rounded-full border border-[#FF6A00] bg-[#FF6A00]/5 px-4 py-1.5 text-[16px] font-bold text-[#FF6A00] tracking-tight whitespace-nowrap">
-                Ativos: {categoryActiveCount} de {categoryTotalCount}
+              <div className="rounded-full border border-[var(--color-hub-accent)]/30 bg-[var(--color-hub-accent)]/10 px-5 py-2 text-[14px] font-black text-[var(--color-hub-accent)] tracking-wider uppercase whitespace-nowrap shadow-[0_4px_12px_rgba(255,106,0,0.15)]">
+                {categoryActiveCount} de {categoryTotalCount} Ativos
               </div>
             </header>
 
-            <div className="p-6 md:p-8">
-              <div className="mt-0 grid grid-cols-1 lg:grid-cols-2 gap-3">
+            <div className="p-6 md:p-10 bg-black/20">
+              <div className="mt-0 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 xl:gap-8">
                 {categoryAgents.map((agent) => {
                   const entry = getAgentEntryDefinition(agent, effectiveContracts);
                   const isActive = entry.isActive;

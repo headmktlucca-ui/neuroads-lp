@@ -429,7 +429,7 @@ export default function Suggestion5LandingPage() {
             initial="hidden"
             animate="visible"
             transition={{ delay: 0.08 }}
-            className="text-[44px] sm:text-[60px] lg:text-[76px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)]"
+            className="text-[50px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)]"
           >
             Não é sobre investimento
             <br />

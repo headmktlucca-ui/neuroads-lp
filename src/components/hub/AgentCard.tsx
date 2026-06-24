@@ -79,15 +79,28 @@ export default function AgentCard({
   onDetails,
 }: AgentCardProps) {
   return (
-    <article className="group relative rounded-2xl border border-[var(--color-hub-border-accent)] bg-[var(--color-hub-surface)]/40 backdrop-blur-md p-5 transition-all duration-300 hover:bg-[var(--color-hub-surface)]/70 hover:border-[var(--color-hub-border-accent-h)] hover:shadow-[var(--shadow-hub-orange)] flex flex-col h-full">
+    <article className="group relative rounded-[24px] border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent backdrop-blur-xl p-6 md:p-8 transition-all duration-500 hover:bg-white/[0.06] hover:border-[var(--color-hub-accent)]/30 hover:shadow-[0_8px_32px_rgba(255,106,0,0.08)] flex flex-col h-full overflow-hidden">
+      
+      {/* Subtle Glow Background on Hover */}
+      <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--color-hub-accent)]/20 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
 
       {/* Top accent line on hover */}
-      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-hub-accent)]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-t-2xl" />
+      <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[var(--color-hub-accent)]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
       {/* Content */}
-      <div className="flex-1">
-        <div className="flex items-start justify-between gap-3">
-          <p className="text-sm font-black text-[var(--color-hub-text)]">{title}</p>
+      <div className="flex-1 relative z-10">
+        <div className="flex items-start justify-between gap-4 mb-4">
+          <div className="flex items-center gap-3">
+            {isActive && (
+              <span className="relative flex h-2.5 w-2.5 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[var(--color-hub-active)] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[var(--color-hub-active)] shadow-[0_0_8px_var(--color-hub-active)]"></span>
+              </span>
+            )}
+            <h3 className="text-[18px] md:text-[20px] font-black text-white tracking-tight leading-none group-hover:text-[var(--color-hub-accent)] transition-colors">
+              {title}
+            </h3>
+          </div>
 
           {/* Deactivate inline button (shown only when active) */}
           {isActive && onDeactivate ? (
@@ -95,44 +108,42 @@ export default function AgentCard({
               type="button"
               onClick={onDeactivate}
               disabled={isUpdating}
-              className="inline-flex items-center gap-1 text-[12px] font-black text-[var(--color-hub-danger)] hover:text-[#FF3333] transition-colors disabled:opacity-60 shrink-0"
+              className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-[var(--color-hub-danger)] hover:text-[#FF3333] transition-colors disabled:opacity-60 shrink-0"
             >
-              <Power className="h-3.5 w-3.5" />
-              {isUpdating ? 'Desativando…' : 'Desativar Agente'}
+              <Power className="h-3 w-3" />
+              {isUpdating ? 'Desativando' : 'Desativar'}
             </button>
           ) : null}
         </div>
 
-        <p className="mt-1 text-xs text-[var(--color-hub-muted)]">{description}</p>
+        <p className="text-[14px] leading-[1.6] text-slate-300">
+          {description}
+        </p>
       </div>
 
-      {/* Actions */}
-      <div className="mt-4 flex flex-wrap gap-2">
+      {/* Actions (Docked at bottom with a separator) */}
+      <div className="mt-8 pt-5 border-t border-white/[0.06] flex flex-wrap gap-3 relative z-10">
         {isActive ? (
           <>
-            {/* Active indicator */}
             <button type="button" className={BTN_ACTIVE} disabled>
               <CheckCircle2 className="h-4 w-4" />
               Ativo
             </button>
 
-            {/* Access workspace */}
             <Link href={`/hub/agente/${slug}`} className={BTN_BLUE}>
               <ExternalLink className="h-4 w-4" />
-              Acessar Agente
+              Acessar
             </Link>
 
-            {/* Details (lab only) */}
             {variant === 'lab' && onDetails ? (
               <button type="button" onClick={onDetails} className={BTN_GHOST}>
                 <Info className="h-4 w-4" />
-                Mais detalhes
+                Detalhes
               </button>
             ) : null}
           </>
         ) : (
           <>
-            {/* Activate / In Development */}
             {isActivatable ? (
               <button
                 type="button"
@@ -150,11 +161,10 @@ export default function AgentCard({
               </button>
             )}
 
-            {/* Details (lab only) */}
             {variant === 'lab' && onDetails ? (
               <button type="button" onClick={onDetails} className={BTN_GHOST}>
                 <Info className="h-4 w-4" />
-                Mais detalhes
+                Detalhes
               </button>
             ) : null}
           </>
