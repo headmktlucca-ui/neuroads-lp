@@ -404,9 +404,9 @@ export default function Suggestion5LandingPage() {
             className="mb-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
           >
             {[
-              { icon: <Cpu size={15} />, label: 'IA Agêntica', sub: 'Autônoma e orientada a metas' },
-              { icon: <TrendingUp size={15} />, label: 'Dados em tempo real', sub: 'Decisões baseadas em sinal' },
-              { icon: <Target size={15} />, label: 'Resultados mensuráveis', sub: 'Foco no que importa' },
+              { icon: <AlertCircle size={15} />, label: 'Dados soltos custam caro', sub: 'Decisões sem dados são apostas' },
+              { icon: <TrendingUp size={15} />, label: 'ROAS em tempo real', sub: 'Retorno exato de cada real' },
+              { icon: <Cpu size={15} />, label: 'Agentes que executam', sub: 'Não só recomendam — fazem' },
             ].map((badge, i) => (
               <div
                 key={i}
@@ -431,9 +431,9 @@ export default function Suggestion5LandingPage() {
             transition={{ delay: 0.08 }}
             className="text-[50px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)]"
           >
-            Não é sobre investimento
+            Nenhuma campanha vale nada
             <br />
-            <span className="text-[#ff6a00]">é sobre ESTRATÉGIA!</span>
+            <span className="text-[#ff6a00]">sem dados que provem o retorno.</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -444,9 +444,9 @@ export default function Suggestion5LandingPage() {
             transition={{ delay: 0.16 }}
             className="mt-5 text-[17px] sm:text-[20px] text-white/65 leading-relaxed max-w-[680px] drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)] font-medium"
           >
-            Agentes que monitoram, otimizam e executam{" "}
+            Dados soltos entre Google Ads, Meta Ads e GA4 geram decisões cegas.{" "}
             <br className="hidden sm:inline" />
-            insights e oportunidades.
+            Agentes de IA que unificam, analisam e executam — 24/7.
           </motion.p>
 
           {/* CTAs */}
@@ -571,13 +571,23 @@ export default function Suggestion5LandingPage() {
               <div>
                 <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">COMO FUNCIONA?</span>
                 <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">
-                  Os Agentes da NeuroAds transformam dados em decisões estratégicas.
+                  Se você não confia 100% nos seus dados, cada decisão é uma aposta.
                 </h2>
+                <div className="mt-6 space-y-3">
+                  {[
+                    'Você sabe, com certeza, qual campanha está drenando seu orçamento hoje?',
+                    'Seu time sabe quais leads do Google Ads merecem atenção agora?',
+                    'Todo mês, alguém passa horas montando relatórios que já deveriam chegar prontos?',
+                    'Sua campanha está no ar — mas você sabe como está performando em tempo real?',
+                  ].map((q, i) => (
+                    <div key={i} className="flex gap-3 items-start">
+                      <span className="text-[#ff6a00] shrink-0 mt-0.5 font-black">→</span>
+                      <p className="text-sm text-slate-300 italic leading-relaxed">{q}</p>
+                    </div>
+                  ))}
+                </div>
                 <p className="text-slate-300 mt-6 text-sm leading-relaxed">
-                  Os Agentes da NeuroAds analisam o comportamento dos seus clientes atuais, identificam os fatores que impulsionam vendas e criam um insights detalhados das oportunidades de posicionamento e receita.
-                </p>
-                <p className="text-slate-300 mt-4 text-sm leading-relaxed">
-                  Ao comparar o perfil dos seus melhores clientes com o perfil ideal de mercado, os agentes encontram padrões valiosos que orientam ações de marketing, comunicação e posicionamento. Dessa forma, sua empresa deixa de trabalhar com suposições e passa a construir autoridade com base em inteligência de dados.
+                  Se alguma dessas perguntas gerou desconforto, você precisa de mais do que uma agência — precisa de inteligência operacional. Os Agentes da NeuroAds conectam Google Ads, Meta Ads e GA4 em um ecossistema único, transformam dados em decisões e executam ajustes sem depender de relatórios manuais.
                 </p>
               </div>
 
@@ -649,12 +659,12 @@ export default function Suggestion5LandingPage() {
             <h2 className="text-3xl sm:text-4xl font-extrabold leading-tight">
               Do Diagnóstico à Escala{' '}
               <br />
-              <span className="bg-[linear-gradient(90deg,#ff8a00_0%,#ff6a00_50%,#ff9f1a_100%)] bg-clip-text text-transparent">
+              <span className="text-[#ff6a00]">
                 em 4 Etapas
               </span>
             </h2>
             <p className="text-slate-300 mt-4 text-sm leading-relaxed max-w-[480px]">
-              Nossa metodologia conecta diagnóstico, configuração, ativação e otimização em um ciclo contínuo orientado a resultados reais de caixa.
+              O analista deixa de coletar dados e volta a interpretá-los. Nossa metodologia conecta diagnóstico, configuração, ativação e otimização em um ciclo contínuo — com impacto direto no caixa.
             </p>
             <ol className="mt-10 space-y-6">
               {[
@@ -745,10 +755,10 @@ export default function Suggestion5LandingPage() {
               POR QUE A NEUROADS
             </span>
             <h2 className="text-3xl sm:text-4xl font-extrabold mt-4">
-              Por que Empresas em Crescimento Escolhem a NeuroAds
+              Dados soltos entre plataformas são um grande problema
             </h2>
             <p className="text-slate-400 mt-4 text-sm leading-relaxed">
-              Abstraímos a complexidade de gerir múltiplos canais e ferramentas para que você foque no que realmente importa: crescer com previsibilidade.
+              Google Ads, Meta Ads e GA4 geram dados separados — e sem unificação, cada decisão é baseada em pedaços incompletos da verdade. A NeuroAds centraliza tudo e entrega crescimento previsível.
             </p>
           </motion.div>
 
@@ -1198,10 +1208,10 @@ export default function Suggestion5LandingPage() {
           className="relative z-10 mx-auto max-w-[720px] text-center"
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.1] text-white">
-            Pronto para transformar cada real investido em resultado mensurável?
+            Sua campanha está no ar agora. Você sabe exatamente o que está funcionando?
           </h2>
           <p className="mt-5 text-[15px] text-slate-400 leading-relaxed max-w-[520px] mx-auto">
-            Agende um diagnóstico gratuito e descubra quais agentes se encaixam no seu modelo de negócio.
+            Agende um diagnóstico gratuito e descubra onde seu orçamento está sendo desperdiçado — e quais agentes vão mudar isso.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
             <button
