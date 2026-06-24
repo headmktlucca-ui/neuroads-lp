@@ -185,43 +185,6 @@ const useCasesSectors = [
   },
 ];
 
-const segmentLandingCards = [
-  {
-    title: 'Mercado Imobiliário',
-    href: '/servicos/mercado-imobiliario',
-    backgroundImage: '/images/segment-backgrounds/mercado-imobiliario-bg.png',
-    pain: 'Plantão cheio, mas poucas visitas com perfil de fechamento.',
-    impact: 'Mais previsibilidade entre lead, visita e proposta.',
-  },
-  {
-    title: 'Saúde & Clínicas',
-    href: '/servicos/saude-clinicas',
-    backgroundImage: '/images/segment-backgrounds/saude-clinicas-bg.png',
-    pain: 'Agenda instável com contatos sem aderência clínica.',
-    impact: 'Redução de desperdício e melhor ocupação da agenda.',
-  },
-  {
-    title: 'E-commerce & Varejo',
-    href: '/servicos/e-commerce-varejo',
-    backgroundImage: '/images/segment-backgrounds/ecommerce-varejo-bg.png',
-    pain: 'Tráfego alto sem conversão consistente em faturamento.',
-    impact: 'Escala de vendas com foco em margem e ROAS sustentável.',
-  },
-  {
-    title: 'Serviços Profissionais',
-    href: '/servicos/servicos-profissionais',
-    backgroundImage: '/images/segment-backgrounds/servicos-profissionais-bg.png',
-    pain: 'Dependência de indicação e pipeline comercial irregular.',
-    impact: 'Fluxo recorrente de reuniões com perfil ideal.',
-  },
-  {
-    title: 'Educação Digital',
-    href: '/servicos/educacao-digital',
-    backgroundImage: '/images/segment-backgrounds/educacao-digital-bg.png',
-    pain: 'Receita dependente de picos de lançamento.',
-    impact: 'Matrículas previsíveis com sistema contínuo de aquisição.',
-  },
-] as const;
 
 const ALL_LOGS = [
   { id: 1, icon: Target, title: 'Analista de Tráfego', subtitle: 'Realocou R$ 500 para campanha de Remarketing', value: '+12% ROAS', color: 'text-[#ff8f3a]' },
@@ -964,63 +927,6 @@ export default function Suggestion5LandingPage() {
             </motion.div>
           </div>
         </div>
-      </section>
-
-      {/* SEGMENTOS IMPACTADOS */}
-      <section id="segmentos" className="relative z-10 py-16 w-full px-5 md:px-8 overflow-hidden">
-        
-        <motion.div
-          variants={revealVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-120px" }}
-          className="relative z-10 mx-auto max-w-[1260px]"
-        >
-          <div className="text-center max-w-[720px] mx-auto mb-16">
-            <span className="text-xs font-extrabold uppercase tracking-widest text-[#ff6a00]">Segmentos Impactados</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold mt-2">
-              Soluções Agênticas no seu Modelo de Negócio
-            </h2>
-            <p className="text-slate-400 mt-4">
-              Cada segmento tem uma lógica de compra diferente. Conheça nossas estratégias com funis de captação e inteligência artificial específicos por indústria.
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 justify-center">
-            {segmentLandingCards.map((segment) => (
-              <Link
-                key={segment.href}
-                href={segment.href}
-                className="group block"
-              >
-                <div className="relative overflow-hidden rounded-[24px] border border-[#ff6a00]/20 bg-zinc-950/85 backdrop-blur-md min-h-[380px] p-6 hover:border-[#ff6a00]/40 transition-colors shadow-[0_18px_48px_rgba(0,0,0,0.5)] hover:shadow-[0_20px_50px_rgba(255,106,0,0.15)] flex flex-col justify-end">
-                  {segment.backgroundImage && (
-                    <>
-                      <Image 
-                        src={segment.backgroundImage} 
-                        alt={segment.title} 
-                        fill 
-                        className="object-cover object-center opacity-40 group-hover:scale-105 transition-transform duration-500 pointer-events-none" 
-                        sizes="(max-width: 768px) 100vw, 30vw"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#000000] via-[#000000]/40 to-transparent z-0" />
-                    </>
-                  )}
-                  
-                  <div className="relative z-10">
-                    <h3 className="text-xl font-black text-white group-hover:text-[#ff8f3a] transition-colors">{segment.title}</h3>
-                    <p className="mt-2 text-xs leading-relaxed text-slate-300">{segment.pain}</p>
-                    <p className="mt-3 text-xs font-semibold leading-relaxed text-emerald-400">{segment.impact}</p>
-                    <span className="mt-5 inline-flex items-center gap-1.5 text-xs font-extrabold text-[#ff8f3a] group-hover:gap-2 transition-all">
-                      Conhecer Soluções
-                      <ArrowRight size={12} />
-                    </span>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </motion.div>
       </section>
 
       {/* DEPOIMENTOS */}
