@@ -6,6 +6,7 @@ import HubFooter from '../hub/HubFooter';
 
 const HUB_PREFIXES = ['/hub', '/login', '/onboarding', '/cadastro', '/verificar-email'];
 
+
 export default function GlobalLayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isPrivateRoute = HUB_PREFIXES.some((prefix) => pathname?.startsWith(prefix));

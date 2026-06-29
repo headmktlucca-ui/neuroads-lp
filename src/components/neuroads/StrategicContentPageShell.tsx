@@ -3,8 +3,8 @@
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2, CircleHelp, FolderKanban, Gauge, Goal, Handshake, Layers3 } from 'lucide-react';
-import PrimaryTopMenu from './PrimaryTopMenu';
-import PrimaryFooter from './PrimaryFooter';
+
+
 import HomePageBackground from './HomePageBackground';
 import { submitLuccaLeadAction } from '@/app/actions/lucca-leads';
 
@@ -178,7 +178,7 @@ export default function StrategicContentPageShell({ data }: { data: StrategicCon
     <main className="relative min-h-screen overflow-hidden bg-white text-[#1a2234]">
       <HomePageBackground />
       <div className="relative z-10">
-        <PrimaryTopMenu />
+
 
         <section className="mx-auto max-w-[1260px] px-5 pb-14 pt-5 md:px-8">
         <div className="h-[84px]" />
@@ -485,7 +485,7 @@ export default function StrategicContentPageShell({ data }: { data: StrategicCon
         ) : null}
         </section>
 
-        <PrimaryFooter />
+
       </div>
     </main>
   );
