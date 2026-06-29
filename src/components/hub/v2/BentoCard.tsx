@@ -60,6 +60,7 @@ export default function BentoCard({
         boxShadow: isNeumorphic
           ? '6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff'
           : `0 1px 0 0 rgba(255,255,255,0.04) inset, 0 24px 60px -28px ${finalGlowColor}`,
+        ...(isNeumorphic && { borderLeft: `3px solid ${accentColor}` }),
       }}
     >
       {/* Spotlight glow */}

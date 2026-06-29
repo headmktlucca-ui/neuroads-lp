@@ -177,7 +177,7 @@ export default function HubExplorarPage() {
         {filtered.map((update) => (
           <article
             key={update.id}
-            className="group relative rounded-3xl border border-white/50 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] transition-all duration-300 flex flex-col"
+            className="hub-neu-card group relative shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] transition-all duration-300 flex flex-col"
           >
             <div className="p-6 flex gap-5 flex-col sm:flex-row flex-1">
               {/* Icon */}

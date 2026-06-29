@@ -783,6 +783,23 @@ input:-webkit-autofill:active {
   z-index: 10;
 }
 
+/* ── Hub Neumorphic Card — standard light card with left accent ── */
+.hub-neu-card {
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  background: #eef2f7;
+  box-shadow: 5px 5px 10px #d1d9e6, -5px -5px 10px #ffffff;
+  border-left: 3px solid #FF6A00;
+}
+
+/* Variant with amber accent (warnings / diagnostics) */
+.hub-neu-card--amber { border-left-color: #d97706; }
+/* Variant with teal accent (success / analytics) */
+.hub-neu-card--teal  { border-left-color: #0d9488; }
+/* Variant with blue accent */
+.hub-neu-card--blue  { border-left-color: #2563eb; }
+
+
 /* Correção do Autofill do navegador para o dark mode */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 

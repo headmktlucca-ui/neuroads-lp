@@ -1,108 +1,351 @@
 'use client';
 
-import React from 'react';
-import { Activity, Power, Clock, ArrowRight, Settings, CheckCircle2 } from 'lucide-react';
+/**
+ * Automações — exibe apenas as automações ativas do usuário logado.
+ * Dados reais lidos do perfil Firebase (campo automations / workflows).
+ * Se nenhuma automação estiver ativa, exibe empty state com CTA.
+ */
 
-const AUTOMATIONS = [
-  { id: 1, name: 'Sincronização de Leads Premium', status: 'active', lastRun: 'Há 5 minutos', runs: 1240 },
-  { id: 2, name: 'Otimização de Lance (Meta Ads)', status: 'active', lastRun: 'Há 1 hora', runs: 86 },
-  { id: 3, name: 'Relatório Semanal Consolidado', status: 'inactive', lastRun: 'Há 3 dias', runs: 14 },
-];
+import Link from 'next/link';
+import { useEffect, useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Activity, ArrowRight, Brain, CheckCircle2, ChevronRight,
+  Clock, Cpu, ExternalLink, Power, Search, Sparkles, X, Zap,
+} from 'lucide-react';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { useAuth } from '../../../context/AuthContext';
+import { getFirebaseDb } from '../../../lib/firebase';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface Automation {
+  id: string;
+  name: string;
+  description: string;
+  trigger: string;
+  frequency: string;
+  category: string;
+  runsTotal: number;
+  lastRunAt: string | null;
+  createdAt: string;
+  isActive: boolean;
+}
+
+// ─── Category accent colors ───────────────────────────────────────────────────
+
+const CATEGORY_COLORS: Record<string, string> = {
+  Performance:    '#0891b2',
+  Criativos:      '#FF6A00',
+  'Técnico':      '#7c3aed',
+  'Inteligência': '#059669',
+  Leads:          '#d97706',
+  Relatórios:     '#6366f1',
+};
+function accentFor(category: string) {
+  return CATEGORY_COLORS[category] ?? '#FF6A00';
+}
+
+const CATEGORY_FILTERS = ['Todos', 'Performance', 'Criativos', 'Técnico', 'Inteligência', 'Leads', 'Relatórios'];
+
+// ─── Automation card ──────────────────────────────────────────────────────────
+
+function AutomationCard({
+  automation,
+}: {
+  automation: Automation;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const color = accentFor(automation.category);
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      className="hub-neu-card p-5 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] hover:shadow-[6px_6px_14px_#d1d9e6,_-6px_-6px_14px_#ffffff] transition-all duration-300 cursor-pointer group"
+      style={{ borderLeftColor: color }}
+      onClick={() => setExpanded((e) => !e)}
+    >
+      {/* Header */}
+      <div className="flex items-start gap-4">
+        <div
+          className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border border-white/50 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.06),_inset_-2px_-2px_4px_#ffffff]"
+          style={{ background: `${color}18` }}
+        >
+          <Zap size={20} style={{ color }} />
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="text-[14px] font-black text-[#0f172a] truncate">{automation.name}</h3>
+            <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full border bg-emerald-500/10 border-emerald-500/20 text-emerald-700">
+              <CheckCircle2 size={9} />
+              Ativa
+            </span>
+            <span
+              className="text-[10px] font-bold px-2 py-0.5 rounded-full border"
+              style={{ color, background: `${color}12`, borderColor: `${color}30` }}
+            >
+              {automation.category}
+            </span>
+          </div>
+          <p className="text-[11.5px] text-slate-500 font-semibold mt-0.5 leading-snug line-clamp-2">
+            {automation.description}
+          </p>
+        </div>
+
+        <ChevronRight
+          size={15}
+          className={`text-slate-400 shrink-0 transition-transform duration-300 ${expanded ? 'rotate-90' : ''} group-hover:text-[#FF6A00]`}
+        />
+      </div>
+
+      {/* Meta row */}
+      <div className="flex items-center gap-4 mt-3 text-[11px] text-slate-400 font-semibold">
+        <span className="flex items-center gap-1">
+          <Clock size={10} />
+          {automation.lastRunAt ?? 'Ainda não executada'}
+        </span>
+        <span className="flex items-center gap-1">
+          <Activity size={10} />
+          {automation.frequency}
+        </span>
+        {automation.runsTotal > 0 && (
+          <span className="ml-auto flex items-center gap-1 px-2 py-0.5 rounded-lg bg-orange-500/8 border border-orange-500/15">
+            <Sparkles size={9} className="text-[#FF6A00]" />
+            <span className="text-[10px] font-black text-[#FF6A00]">{automation.runsTotal} execuções</span>
+          </span>
+        )}
+      </div>
+
+      {/* Expanded */}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="overflow-hidden"
+          >
+            <div className="mt-4 pt-4 border-t border-slate-200/60 space-y-2">
+              <p className="text-[11px] text-slate-400 font-semibold">
+                <span className="font-black text-slate-600">Gatilho:</span> {automation.trigger}
+              </p>
+              <p className="text-[11px] text-slate-400 font-semibold">
+                <span className="font-black text-slate-600">Criada em:</span> {automation.createdAt}
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
+// ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function HubAutomacoesPage() {
-  return (
-    <div className="w-full space-y-6 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500 text-[#1e293b]">
-      <header className="py-8 border-b border-slate-200 mb-8">
-        <div className="flex items-start justify-between gap-6 flex-wrap">
-          <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#FF6A00]" />
-              <span className="text-[11px] font-black uppercase tracking-[0.16em] text-[#FF6A00]">Automações</span>
-            </div>
-            <h1 className="text-3xl font-black text-[#0f172a] tracking-tight leading-tight">Fluxos Inteligentes</h1>
-            <p className="text-slate-500 text-[15px] mt-2 max-w-xl font-bold leading-relaxed">
-              Automatize tarefas repetitivas e libere sua equipe para o que realmente importa. Cada fluxo trabalha 24/7 no seu lugar.
-            </p>
-          </div>
-          <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] shrink-0">
-            <Activity className="w-4 h-4 text-[#FF6A00]" />
-            <span className="text-[13px] font-bold text-[#1e293b]">12 automações</span>
-            <span className="text-[13px] text-slate-500 font-medium">ativas</span>
-          </div>
-        </div>
-      </header>
+  const { user } = useAuth();
 
-      {/* Stats row */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {[
-          { label: 'Automações Ativas', value: '12', icon: Activity, color: 'text-emerald-600' },
-          { label: 'Tarefas Executadas (30d)', value: '45.2k', icon: CheckCircle2, color: 'text-slate-500' },
-          { label: 'Horas Economizadas', value: '128h', icon: Clock, color: 'text-orange-600' },
-        ].map((stat, i) => (
-          <div
-            key={i}
-            className="group relative rounded-2xl border border-white/50 bg-[#eef2f7] p-5 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] transition-all duration-300"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-[13px] font-bold text-slate-500">{stat.label}</p>
-                <h3 className="text-2xl font-black text-[#0f172a] mt-1 tracking-tight">{stat.value}</h3>
-              </div>
-              <div className={`w-9 h-9 rounded-xl flex items-center justify-center border border-white/40 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,inset_-2px_-2px_4px_#ffffff] ${stat.color}`}>
-                <stat.icon className="w-5 h-5" />
-              </div>
+  const [automations, setAutomations] = useState<Automation[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [filterCategory, setFilterCategory] = useState('Todos');
+
+  // Realtime listener from Firestore automations sub-collection
+  useEffect(() => {
+    if (!user) {
+      setAutomations([]);
+      setLoading(false);
+      return;
+    }
+    try {
+      const db = getFirebaseDb();
+      const q = query(
+        collection(db, 'users', user.uid, 'automations'),
+        where('isActive', '==', true)
+      );
+      const unsub = onSnapshot(
+        q,
+        (snap) => {
+          const docs: Automation[] = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Automation, 'id'>) }));
+          setAutomations(docs);
+          setLoading(false);
+        },
+        () => {
+          // If collection doesn't exist yet, just show empty
+          setAutomations([]);
+          setLoading(false);
+        }
+      );
+      return () => unsub();
+    } catch {
+      setAutomations([]);
+      setLoading(false);
+    }
+  }, [user]);
+
+  const filtered = useMemo(() =>
+    automations.filter((a) => {
+      const matchSearch = !search ||
+        a.name.toLowerCase().includes(search.toLowerCase()) ||
+        a.description?.toLowerCase().includes(search.toLowerCase());
+      const matchCat = filterCategory === 'Todos' || a.category === filterCategory;
+      return matchSearch && matchCat;
+    }),
+    [automations, search, filterCategory]
+  );
+
+  // Category breakdown
+  const byCategory = useMemo(() => {
+    const counts: Record<string, number> = {};
+    automations.forEach((a) => { counts[a.category] = (counts[a.category] ?? 0) + 1; });
+    return counts;
+  }, [automations]);
+
+  const totalActive = automations.length;
+  const topCategory = Object.entries(byCategory).sort((a, b) => b[1] - a[1])[0]?.[0] ?? '—';
+
+  return (
+    <div className="space-y-8 w-full px-6 pb-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+      {/* ── Page header ── */}
+      <div className="flex items-start justify-between gap-4 py-8 border-b border-slate-200">
+        <div>
+          <div className="inline-flex items-center gap-2 mb-2 px-3 py-1 rounded-full border border-white/60 bg-[#eef2f7] shadow-[2px_2px_5px_#d1d9e6,_-2px_-2px_5px_#ffffff]">
+            <Cpu size={12} className="text-[#FF6A00]" />
+            <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#FF6A00]">Automações</span>
+          </div>
+          <h1 className="text-[26px] font-black text-[#0f172a] tracking-tight">Fluxos Inteligentes</h1>
+          <p className="text-[13px] text-slate-500 font-semibold mt-1 max-w-xl">
+            {loading
+              ? 'Carregando automações…'
+              : totalActive === 0
+              ? 'Nenhuma automação ativa. Crie fluxos para automatizar sua operação.'
+              : `${totalActive} automação${totalActive > 1 ? 'ões' : ''} ativa${totalActive > 1 ? 's' : ''} trabalhando na sua operação.`}
+          </p>
+        </div>
+      </div>
+
+      {/* ── Summary stats ── */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {([
+          { label: 'Ativas',          value: loading ? '…' : String(totalActive),  color: '#059669', bg: 'bg-emerald-500/8',  border: 'border-emerald-500/15' },
+          { label: 'Performance',     value: loading ? '…' : String(byCategory['Performance'] ?? 0),   color: '#0891b2', bg: 'bg-sky-500/8',    border: 'border-sky-500/15'     },
+          { label: 'Criativos',       value: loading ? '…' : String(byCategory['Criativos'] ?? 0),     color: '#FF6A00', bg: 'bg-orange-500/8', border: 'border-orange-500/15'  },
+          { label: 'Top categoria',   value: loading ? '…' : topCategory,           color: '#7c3aed', bg: 'bg-violet-500/8', border: 'border-violet-500/15'  },
+        ] as Array<{ label: string; value: string; color: string; bg: string; border: string }>).map(({ label, value, color, bg, border }) => (
+          <div key={label} className="rounded-2xl border border-white/60 bg-[#eef2f7] p-4 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff]">
+            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-2">{label}</p>
+            <div className={`inline-flex px-2.5 py-1 rounded-xl text-[16px] font-black ${bg} border ${border} max-w-full truncate`} style={{ color }}>
+              {value}
             </div>
           </div>
         ))}
       </div>
 
-      {/* List */}
-      <div className="rounded-3xl border border-white/50 bg-[#eef2f7] overflow-hidden text-[#1e293b] shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff]">
-        <div className="p-5 border-b border-slate-200 bg-slate-100/30 flex items-center justify-between">
-          <h2 className="text-[15px] font-black text-[#0f172a]">Fluxos Recentes</h2>
-          <button className="inline-flex h-10 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-gradient-to-r from-[#FF6A00] to-[#FF8805] px-5 text-[13px] font-bold text-white shadow-[0_4px_12px_rgba(255,106,0,0.25)] transition hover:brightness-105 hover:scale-[1.02] active:scale-95">
-            <span>Novo Fluxo</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+      {/* ── Filters ── */}
+      <div className="flex flex-col sm:flex-row gap-3">
+        {/* Search */}
+        <div className="flex items-center gap-2.5 flex-1 max-w-xs px-3.5 h-10 rounded-2xl border border-white/30 bg-[#eef2f7] shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff]">
+          <Search size={14} className="text-slate-400 shrink-0" />
+          <input
+            className="flex-1 bg-transparent text-[13px] font-semibold text-slate-600 placeholder:text-slate-400 outline-none"
+            placeholder="Buscar automação…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          {search && (
+            <button type="button" onClick={() => setSearch('')} className="text-slate-400 hover:text-[#FF6A00] transition">
+              <X size={13} />
+            </button>
+          )}
         </div>
-        <div className="divide-y divide-slate-200 bg-slate-50/10">
-          {AUTOMATIONS.map((flow) => (
-            <div key={flow.id} className="p-5 flex items-center justify-between hover:bg-slate-100/10 transition-colors group">
-              <div className="flex items-center gap-4">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-all ${
-                  flow.status === 'active' 
-                    ? 'bg-emerald-50/50 border-emerald-500/20 text-[#0d9488]' 
-                    : 'bg-[#eef2f7] border border-white/40 text-slate-400 shadow-[inset_2px_2px_4px_#d1d9e6,inset_-2px_-2px_4px_#ffffff]'
-                }`}>
-                  <Power className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="text-[14px] font-bold text-[#1e293b] group-hover:text-[#FF6A00] transition-colors">{flow.name}</h3>
-                  <div className="flex items-center gap-3 mt-1 text-[12px] text-slate-500 font-semibold">
-                    <span className="flex items-center gap-1">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" /> {flow.lastRun}
-                    </span>
-                    <span>•</span>
-                    <span>{flow.runs} execuções</span>
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border ${
-                  flow.status === 'active' 
-                    ? 'bg-emerald-500/10 border-emerald-500/20 text-[#0d9488]' 
-                    : 'bg-slate-200/50 border-slate-300 text-slate-500'
-                }`}>
-                  {flow.status === 'active' ? 'Ativo' : 'Pausado'}
-                </div>
-                <button className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 rounded-lg transition-colors opacity-0 group-hover:opacity-100">
-                  <Settings className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+
+        {/* Category pills */}
+        <div className="flex gap-2 flex-wrap">
+          {CATEGORY_FILTERS.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setFilterCategory(cat)}
+              className={`px-3.5 py-2 rounded-xl text-[11px] font-black transition-all duration-200 bg-[#eef2f7] ${
+                filterCategory === cat
+                  ? 'shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] border border-orange-500/20 text-[#FF6A00]'
+                  : 'text-slate-500 border border-white/60 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+              }`}
+            >
+              {cat}
+            </button>
           ))}
         </div>
       </div>
+
+      {/* ── Grid / Empty state ── */}
+      {loading ? (
+        <div className="py-16 text-center">
+          <div className="inline-block w-8 h-8 rounded-full border-2 border-[#FF6A00] border-t-transparent animate-spin" />
+          <p className="text-[13px] font-black text-slate-400 mt-3">Carregando automações…</p>
+        </div>
+      ) : (
+        <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <AnimatePresence>
+            {totalActive === 0 ? (
+              /* No active automations at all */
+              <motion.div
+                key="empty-global"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-2"
+              >
+                <div className="hub-neu-card p-12 text-center flex flex-col items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-orange-500/8 border border-orange-500/15 flex items-center justify-center">
+                    <Zap size={28} className="text-[#FF6A00]" />
+                  </div>
+                  <div>
+                    <p className="text-[16px] font-black text-[#0f172a]">Nenhuma automação ativa</p>
+                    <p className="text-[13px] text-slate-500 font-semibold mt-1 max-w-sm mx-auto">
+                      Crie fluxos inteligentes para automatizar tarefas repetitivas da sua operação de marketing.
+                    </p>
+                  </div>
+                  <div className="flex gap-3">
+                    <Link
+                      href="/hub/laboratorio-agentes"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-black text-white shadow-[0_4px_12px_rgba(255,106,0,0.25)] hover:scale-[1.02] transition-all"
+                      style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', textDecoration: 'none' }}
+                    >
+                      <Brain size={14} />
+                      Ativar Agentes
+                    </Link>
+                  </div>
+                </div>
+              </motion.div>
+            ) : filtered.length === 0 ? (
+              /* No results for current filter */
+              <motion.div
+                key="empty-filter"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-2 py-12 text-center"
+              >
+                <Zap size={28} className="mx-auto text-slate-300 mb-3" />
+                <p className="text-[14px] font-black text-slate-400">Nenhuma automação encontrada.</p>
+                <button
+                  onClick={() => { setSearch(''); setFilterCategory('Todos'); }}
+                  className="mt-3 text-[12px] font-black text-[#FF6A00] hover:underline"
+                >
+                  Limpar filtros
+                </button>
+              </motion.div>
+            ) : (
+              filtered.map((automation) => (
+                <AutomationCard key={automation.id} automation={automation} />
+              ))
+            )}
+          </AnimatePresence>
+        </motion.div>
+      )}
     </div>
   );
 }

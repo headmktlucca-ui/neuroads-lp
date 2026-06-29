@@ -36,7 +36,7 @@ const DEFAULT_COMPANY_FORM = {
 };
 
 const SETTINGS_LABEL = "text-[10px] font-black uppercase tracking-widest text-slate-400";
-const SETTINGS_PANEL = "rounded-2xl border border-white/50 bg-[#eef2f7] p-5 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]";
+const SETTINGS_PANEL = "hub-neu-card p-5";
 const SETTINGS_INPUT = "w-full h-[46px] rounded-xl border border-white/30 bg-[#eef2f7] px-4 text-sm font-semibold text-slate-800 shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-colors focus:border-[#FF6A00] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FF6A00]/10 placeholder:text-slate-400 placeholder:font-medium";
 const SETTINGS_PRIMARY_BUTTON = "inline-flex h-[46px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#FF8805] px-6 text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(255,106,0,0.25)] transition-all hover:brightness-105 active:scale-95 disabled:pointer-events-none disabled:opacity-50";
 

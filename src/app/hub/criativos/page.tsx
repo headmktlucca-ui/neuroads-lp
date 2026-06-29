@@ -1,8 +1,7 @@
 'use client';
 
-import CategoryHubPageShell from '../../../components/hub/CategoryHubPageShell';
+import CategoryAgentsPageShell from '../../../components/hub/CategoryAgentsPageShell';
 
 export default function HubCriativosPage() {
-  return <CategoryHubPageShell categorySlug="criativos" />;
+  return <CategoryAgentsPageShell categorySlug="criativos" />;
 }
-

@@ -41,8 +41,10 @@ function fmtDateShort(ms: number): string {
 function EmptyPane({ label }: { label: string }) {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-16">
-      <FolderOpen className="w-10 h-10 text-white/10" />
-      <p className="text-[13px] text-[#4a6280]">{label}</p>
+      <div className="w-12 h-12 rounded-2xl bg-[#eef2f7] border border-white/50 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] flex items-center justify-center">
+        <FolderOpen className="w-5 h-5 text-slate-400" />
+      </div>
+      <p className="text-[13px] font-semibold text-slate-500">{label}</p>
     </div>
   );
 }
@@ -70,11 +72,11 @@ function ReportViewer({
   return (
     <div className="flex flex-col h-full">
       {/* Viewer header */}
-      <div className="flex items-start justify-between gap-4 p-5 border-b border-white/[0.06]">
+      <div className="flex items-start justify-between gap-4 p-5 border-b border-slate-200">
         <div className="min-w-0">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-[#FF6A00] mb-1">{entry.agentTitle}</p>
-          <h3 className="text-[15px] font-black text-white leading-tight truncate">{entry.reportTitle}</h3>
-          <p className="text-[11px] text-[#8fa0b5] mt-1 flex items-center gap-1">
+          <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00] mb-1">{entry.agentTitle}</p>
+          <h3 className="text-[15px] font-black text-[#0f172a] leading-tight truncate">{entry.reportTitle}</h3>
+          <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1 font-semibold">
             <Clock className="w-3 h-3" />
             {fmtDate(entry.createdAtMs)}
           </p>
@@ -82,18 +84,18 @@ function ReportViewer({
         <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => downloadAgentReport(entry)}
-            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl bg-white/[0.05] border border-white/[0.08] text-[12px] font-bold text-white/70 hover:text-white hover:bg-white/10 transition-all"
+            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-[12px] font-bold text-slate-600 hover:text-slate-800 transition-all"
           >
             <Download className="w-3.5 h-3.5" /> PDF
           </button>
           <button
             onClick={handleDelete}
             disabled={deleting}
-            className="inline-flex items-center justify-center h-9 w-9 rounded-xl bg-white/[0.03] border border-white/[0.06] text-[#FF4D4D]/60 hover:text-[#FF4D4D] hover:bg-[#FF4D4D]/10 transition-all disabled:opacity-40"
+            className="inline-flex items-center justify-center h-9 w-9 rounded-xl border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-red-400 hover:text-red-600 transition-all disabled:opacity-40"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
-          <button onClick={onClose} className="inline-flex items-center justify-center h-9 w-9 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white/40 hover:text-white hover:bg-white/10 transition-all">
+          <button onClick={onClose} className="inline-flex items-center justify-center h-9 w-9 rounded-xl border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-400 hover:text-slate-700 transition-all">
             <X className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -101,8 +103,8 @@ function ReportViewer({
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-5">
-        <div className="prose prose-invert prose-sm max-w-none">
-          <pre className="whitespace-pre-wrap font-sans text-[13px] leading-relaxed text-[#c8d8e8]">
+        <div className="rounded-2xl border border-white/50 bg-[#eef2f7] p-4 shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff]">
+          <pre className="whitespace-pre-wrap font-sans text-[13px] leading-relaxed text-slate-700 font-medium">
             {entry.reportContent}
           </pre>
         </div>
@@ -133,11 +135,11 @@ function ChatViewer({
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-start justify-between gap-4 p-5 border-b border-white/[0.06]">
+      <div className="flex items-start justify-between gap-4 p-5 border-b border-slate-200">
         <div className="min-w-0">
-          <p className="text-[11px] font-bold uppercase tracking-widest text-[#FF6A00] mb-1">Chat com Lucca</p>
-          <h3 className="text-[15px] font-black text-white leading-tight truncate">{session.title}</h3>
-          <p className="text-[11px] text-[#8fa0b5] mt-1 flex items-center gap-1">
+          <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00] mb-1">Chat com Lucca</p>
+          <h3 className="text-[15px] font-black text-[#0f172a] leading-tight truncate">{session.title}</h3>
+          <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1 font-semibold">
             <Clock className="w-3 h-3" />
             {fmtDate(session.updatedAtMs)}
             <span className="ml-2">· {session.messages.length} mensagens</span>
@@ -147,11 +149,11 @@ function ChatViewer({
           <button
             onClick={handleDelete}
             disabled={deleting}
-            className="inline-flex items-center justify-center h-9 w-9 rounded-xl bg-white/[0.03] border border-white/[0.06] text-[#FF4D4D]/60 hover:text-[#FF4D4D] hover:bg-[#FF4D4D]/10 transition-all disabled:opacity-40"
+            className="inline-flex items-center justify-center h-9 w-9 rounded-xl border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-red-400 hover:text-red-600 transition-all disabled:opacity-40"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
-          <button onClick={onClose} className="inline-flex items-center justify-center h-9 w-9 rounded-xl bg-white/[0.03] border border-white/[0.06] text-white/40 hover:text-white hover:bg-white/10 transition-all">
+          <button onClick={onClose} className="inline-flex items-center justify-center h-9 w-9 rounded-xl border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-400 hover:text-slate-700 transition-all">
             <X className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -160,10 +162,10 @@ function ChatViewer({
       <div className="flex-1 overflow-y-auto p-5 space-y-3">
         {session.messages.filter((m) => m.role !== 'assistant' || m.text !== session.messages[0]?.text).map((msg, i) => (
           <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed ${
+            <div className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-[13px] leading-relaxed font-medium ${
               msg.role === 'user'
-                ? 'bg-[#FF6A00]/20 border border-[#FF6A00]/30 text-white'
-                : 'bg-white/[0.04] border border-white/[0.08] text-[#c8d8e8]'
+                ? 'bg-[#FF6B00]/10 border border-[#FF6B00]/20 text-[#0f172a] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]'
+                : 'bg-[#eef2f7] border border-white/50 text-slate-700 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
             }`}>
               {msg.text}
             </div>
@@ -248,48 +250,52 @@ export default function KnowledgeExplorer() {
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex gap-0 h-[600px] rounded-2xl overflow-hidden border border-[rgba(255,106,0,0.15)] bg-[#08101e]">
+    <div className="flex gap-0 h-[600px] rounded-3xl overflow-hidden border border-white/80 bg-[#eef2f7] shadow-[8px_8px_20px_#c8d0dc,_-8px_-8px_20px_#ffffff]">
 
       {/* ── Left sidebar ── */}
-      <div className="w-64 shrink-0 flex flex-col border-r border-white/[0.06]">
+      <div className="w-64 shrink-0 flex flex-col border-r border-slate-200 bg-[#eef2f7]">
 
         {/* Search */}
-        <div className="p-3 border-b border-white/[0.06]">
-          <div className="flex items-center gap-2 bg-white/[0.04] border border-white/[0.07] rounded-xl px-3 py-2">
-            <Search className="w-3.5 h-3.5 text-[#4a6280] shrink-0" />
+        <div className="p-3 border-b border-slate-200">
+          <div className="flex items-center gap-2 bg-[#eef2f7] border border-white/30 rounded-xl px-3 py-2 shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff]">
+            <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar…"
-              className="flex-1 bg-transparent text-[12px] text-white placeholder:text-[#4a6280] outline-none"
+              className="flex-1 bg-transparent text-[12px] font-semibold text-slate-700 placeholder:text-slate-400 outline-none"
             />
           </div>
         </div>
 
         {/* Section tabs */}
-        <div className="flex border-b border-white/[0.06]">
+        <div className="flex border-b border-slate-200">
           <button
             onClick={() => setSection('agentes')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-bold transition-colors ${
-              section === 'agentes' ? 'text-[#FF6A00] border-b-2 border-[#FF6A00]' : 'text-[#4a6280] hover:text-white'
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-bold transition-all ${
+              section === 'agentes'
+                ? 'text-[#FF6B00] shadow-[inset_0_-2px_0_0_#FF6B00]'
+                : 'text-slate-500 hover:text-slate-700'
             }`}
           >
             <Bot className="w-3.5 h-3.5" />
             Agentes
             {reports.length > 0 && (
-              <span className="bg-[#FF6A00]/20 text-[#FF6A00] text-[9px] px-1.5 py-0.5 rounded-full">{reports.length}</span>
+              <span className="bg-[#FF6B00]/10 text-[#FF6B00] text-[9px] font-black px-1.5 py-0.5 rounded-full border border-[#FF6B00]/20">{reports.length}</span>
             )}
           </button>
           <button
             onClick={() => setSection('chats')}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-bold transition-colors ${
-              section === 'chats' ? 'text-[#FF6A00] border-b-2 border-[#FF6A00]' : 'text-[#4a6280] hover:text-white'
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-[11px] font-bold transition-all ${
+              section === 'chats'
+                ? 'text-[#FF6B00] shadow-[inset_0_-2px_0_0_#FF6B00]'
+                : 'text-slate-500 hover:text-slate-700'
             }`}
           >
             <MessageSquare className="w-3.5 h-3.5" />
             Chats
             {chatSessions.length > 0 && (
-              <span className="bg-[#FF6A00]/20 text-[#FF6A00] text-[9px] px-1.5 py-0.5 rounded-full">{chatSessions.length}</span>
+              <span className="bg-[#FF6B00]/10 text-[#FF6B00] text-[9px] font-black px-1.5 py-0.5 rounded-full border border-[#FF6B00]/20">{chatSessions.length}</span>
             )}
           </button>
         </div>
@@ -298,7 +304,7 @@ export default function KnowledgeExplorer() {
         <div className="flex-1 overflow-y-auto py-2">
           {loading ? (
             <div className="flex items-center justify-center py-10">
-              <div className="w-5 h-5 rounded-full border-2 border-[#FF6A00]/30 border-t-[#FF6A00] animate-spin" />
+              <div className="w-5 h-5 rounded-full border-2 border-[#FF6B00]/30 border-t-[#FF6B00] animate-spin" />
             </div>
           ) : section === 'agentes' ? (
             filteredAgentKeys.length === 0 ? (
@@ -311,15 +317,15 @@ export default function KnowledgeExplorer() {
                   <div key={agentKey}>
                     <button
                       onClick={() => toggleAgent(agentKey)}
-                      className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-white/[0.03] transition-colors group"
+                      className="w-full flex items-center gap-2 px-3 py-2.5 text-left hover:bg-slate-200/50 transition-colors group"
                     >
                       {isExpanded
-                        ? <ChevronDown className="w-3.5 h-3.5 text-[#FF6A00] shrink-0" />
-                        : <ChevronRight className="w-3.5 h-3.5 text-[#4a6280] group-hover:text-[#FF6A00] shrink-0" />
+                        ? <ChevronDown className="w-3.5 h-3.5 text-[#FF6B00] shrink-0" />
+                        : <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#FF6B00] shrink-0" />
                       }
-                      <Bot className="w-3.5 h-3.5 text-[#FF6A00]/70 shrink-0" />
-                      <span className="text-[12px] font-bold text-white/80 truncate flex-1">{agentKey}</span>
-                      <span className="text-[10px] text-[#4a6280]">{agentReports.length}</span>
+                      <Bot className="w-3.5 h-3.5 text-[#FF6B00]/80 shrink-0" />
+                      <span className="text-[12px] font-bold text-slate-700 truncate flex-1">{agentKey}</span>
+                      <span className="text-[10px] font-bold text-slate-400 bg-[#eef2f7] px-1.5 py-0.5 rounded-full shadow-[1px_1px_2px_#d1d9e6,_-1px_-1px_2px_#ffffff]">{agentReports.length}</span>
                     </button>
 
                     {isExpanded && agentReports.map((r) => {
@@ -328,16 +334,16 @@ export default function KnowledgeExplorer() {
                         <button
                           key={r.id}
                           onClick={() => setSelected({ kind: 'report', entry: r })}
-                          className={`w-full flex items-start gap-2 pl-9 pr-3 py-2 text-left transition-colors ${
-                            isSelected ? 'bg-[#FF6A00]/10 border-l-2 border-[#FF6A00]' : 'hover:bg-white/[0.03] border-l-2 border-transparent'
+                          className={`w-full flex items-start gap-2 pl-9 pr-3 py-2 text-left transition-all ${
+                            isSelected ? 'bg-[#FF6B00]/10 border-l-2 border-[#FF6B00] shadow-[inset_1px_0_3px_rgba(255,107,0,0.1)]' : 'hover:bg-slate-200/40 border-l-2 border-transparent'
                           }`}
                         >
-                          <FileText className={`w-3 h-3 mt-0.5 shrink-0 ${isSelected ? 'text-[#FF6A00]' : 'text-[#4a6280]'}`} />
+                          <FileText className={`w-3 h-3 mt-0.5 shrink-0 ${isSelected ? 'text-[#FF6B00]' : 'text-slate-400'}`} />
                           <div className="min-w-0">
-                            <p className={`text-[11px] font-semibold truncate ${isSelected ? 'text-white' : 'text-white/60'}`}>
+                            <p className={`text-[11px] font-semibold truncate ${isSelected ? 'text-[#0f172a]' : 'text-slate-600'}`}>
                               {r.reportTitle}
                             </p>
-                            <p className="text-[10px] text-[#4a6280]">{fmtDateShort(r.createdAtMs)}</p>
+                            <p className="text-[10px] text-slate-400 font-semibold">{fmtDateShort(r.createdAtMs)}</p>
                           </div>
                         </button>
                       );
@@ -356,14 +362,14 @@ export default function KnowledgeExplorer() {
                   <button
                     key={s.id}
                     onClick={() => setSelected({ kind: 'chat', session: s })}
-                    className={`w-full flex items-start gap-2 px-3 py-2.5 text-left transition-colors ${
-                      isSelected ? 'bg-[#FF6A00]/10 border-l-2 border-[#FF6A00]' : 'hover:bg-white/[0.03] border-l-2 border-transparent'
+                    className={`w-full flex items-start gap-2 px-3 py-2.5 text-left transition-all ${
+                      isSelected ? 'bg-[#FF6B00]/10 border-l-2 border-[#FF6B00] shadow-[inset_1px_0_3px_rgba(255,107,0,0.1)]' : 'hover:bg-slate-200/40 border-l-2 border-transparent'
                     }`}
                   >
-                    <MessageSquare className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${isSelected ? 'text-[#FF6A00]' : 'text-[#4a6280]'}`} />
+                    <MessageSquare className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${isSelected ? 'text-[#FF6B00]' : 'text-slate-400'}`} />
                     <div className="min-w-0">
-                      <p className={`text-[12px] font-semibold truncate ${isSelected ? 'text-white' : 'text-white/70'}`}>{s.title}</p>
-                      <p className="text-[10px] text-[#4a6280]">{fmtDateShort(s.updatedAtMs)} · {s.messages.length} msgs</p>
+                      <p className={`text-[12px] font-semibold truncate ${isSelected ? 'text-[#0f172a]' : 'text-slate-600'}`}>{s.title}</p>
+                      <p className="text-[10px] text-slate-400 font-semibold">{fmtDateShort(s.updatedAtMs)} · {s.messages.length} msgs</p>
                     </div>
                   </button>
                 );
@@ -374,15 +380,15 @@ export default function KnowledgeExplorer() {
       </div>
 
       {/* ── Right viewer panel ── */}
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 bg-[#eef2f7]">
         {!selected ? (
           <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center">
-              <FolderOpen className="w-7 h-7 text-[#FF6A00]/40" />
+            <div className="w-16 h-16 rounded-2xl bg-[#eef2f7] border border-white/50 shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff] flex items-center justify-center">
+              <FolderOpen className="w-7 h-7 text-[#FF6B00]/50" />
             </div>
             <div>
-              <p className="text-[14px] font-bold text-white/50">Selecione um item</p>
-              <p className="text-[12px] text-[#4a6280] mt-1">Escolha um relatório ou conversa na lista ao lado.</p>
+              <p className="text-[14px] font-black text-slate-600">Selecione um item</p>
+              <p className="text-[12px] text-slate-400 mt-1 font-semibold">Escolha um relatório ou conversa na lista ao lado.</p>
             </div>
           </div>
         ) : selected.kind === 'report' ? (

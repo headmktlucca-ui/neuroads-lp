@@ -56,7 +56,7 @@ async function fetchGoogleAdsData(accessToken: string, customerId?: string, logi
     WHERE segments.date DURING LAST_30_DAYS
   `;
 
-  const response = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
+  const response = await fetch(`https://googleads.googleapis.com/v24/customers/${customerId}/googleAds:search`, {
     method: 'POST',
     headers,
     body: JSON.stringify({ query })

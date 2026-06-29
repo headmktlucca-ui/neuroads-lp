@@ -1,8 +1,7 @@
 'use client';
 
-import CategoryHubPageShell from '../../../components/hub/CategoryHubPageShell';
+import CategoryAgentsPageShell from '../../../components/hub/CategoryAgentsPageShell';
 
 export default function HubPerformancePage() {
-  return <CategoryHubPageShell categorySlug="performance" />;
+  return <CategoryAgentsPageShell categorySlug="performance" />;
 }
-

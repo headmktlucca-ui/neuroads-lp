@@ -7,8 +7,17 @@ function toStringValue(value: unknown): string {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const accessToken = toStringValue(body?.accessToken);
+    let accessToken = toStringValue(body?.accessToken);
     const accountId = toStringValue(body?.accountId);
+    const uid = toStringValue(body?.uid);
+
+    if (uid) {
+      const { getValidAccessToken } = await import('@/lib/connector-refresh-server');
+      const freshToken = await getValidAccessToken(uid, 'ga4');
+      if (freshToken) {
+        accessToken = freshToken;
+      }
+    }
 
     if (!accessToken) {
       return NextResponse.json({ error: 'access_token_required' }, { status: 400 });

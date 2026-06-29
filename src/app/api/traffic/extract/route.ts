@@ -68,7 +68,7 @@ async function fetchGoogleAdsChannel(
   }
 
   const response = await fetch(
-    `https://googleads.googleapis.com/v17/customers/${sanitizedCustomerId}/googleAds:search`,
+    `https://googleads.googleapis.com/v24/customers/${sanitizedCustomerId}/googleAds:search`,
     {
       method: 'POST',
       headers,
@@ -172,21 +172,45 @@ async function fetchLinkedinAdsChannel(channel: ChannelPayload, dateFrom: string
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as ExtractionPayload;
+    const body = (await request.json()) as ExtractionPayload & { uid?: string };
     if (!body?.dateFrom || !body?.dateTo || !Array.isArray(body.channels) || body.channels.length === 0) {
       return NextResponse.json({ success: false, error: 'Parâmetros inválidos para extração.' }, { status: 400 });
     }
 
-    const channelResults = await Promise.all(
+    const uid = body.uid ? String(body.uid).trim() : '';
+
+    const results = await Promise.all(
       body.channels.map(async (channel) => {
-        if (channel.platform === 'googleAds') return fetchGoogleAdsChannel(channel, body.dateFrom, body.dateTo);
-        if (channel.platform === 'metaAds') return fetchMetaAdsChannel(channel, body.dateFrom, body.dateTo);
-        if (channel.platform === 'linkedinAds') return fetchLinkedinAdsChannel(channel, body.dateFrom, body.dateTo);
-        throw new Error(`Canal não suportado: ${channel.platform}`);
+        try {
+          const resolvedChannel = { ...channel };
+          if (uid && (channel.platform === 'googleAds' || channel.platform === 'linkedinAds')) {
+            const { getValidAccessToken } = await import('@/lib/connector-refresh-server');
+            const freshToken = await getValidAccessToken(uid, channel.platform);
+            if (freshToken) {
+              resolvedChannel.accessToken = freshToken;
+            }
+          }
+
+          if (resolvedChannel.platform === 'googleAds') return await fetchGoogleAdsChannel(resolvedChannel, body.dateFrom, body.dateTo);
+          if (resolvedChannel.platform === 'metaAds') return await fetchMetaAdsChannel(resolvedChannel, body.dateFrom, body.dateTo);
+          if (resolvedChannel.platform === 'linkedinAds') return await fetchLinkedinAdsChannel(resolvedChannel, body.dateFrom, body.dateTo);
+          throw new Error(`Canal não suportado: ${channel.platform}`);
+        } catch (err) {
+          const errorMsg = err instanceof Error ? err.message : 'Erro na API';
+          console.error(`Erro ao carregar dados do canal ${channel.platform}:`, errorMsg);
+          return {
+            platform: channel.platform === 'googleAds' ? 'Google Ads' : channel.platform === 'metaAds' ? 'Meta Ads' : 'LinkedIn Ads',
+            spend: 0,
+            impressions: 0,
+            clicks: 0,
+            conversions: 0,
+            error: errorMsg
+          };
+        }
       })
     );
 
-    const totals = channelResults.reduce(
+    const totals = results.reduce(
       (acc, item) => {
         acc.spend += item.spend;
         acc.impressions += item.impressions;
@@ -197,7 +221,7 @@ export async function POST(request: Request) {
       { spend: 0, impressions: 0, clicks: 0, conversions: 0 }
     );
 
-    return NextResponse.json({ success: true, channels: channelResults, totals });
+    return NextResponse.json({ success: true, channels: results, totals });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Falha ao extrair indicadores.';
     return NextResponse.json({ success: false, error: message }, { status: 500 });

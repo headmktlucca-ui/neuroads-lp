@@ -23,7 +23,7 @@ export async function GET(request: Request) {
 
   try {
     const response = await fetch(
-      'https://googleads.googleapis.com/v17/customers:listAccessibleCustomers',
+      'https://googleads.googleapis.com/v24/customers:listAccessibleCustomers',
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

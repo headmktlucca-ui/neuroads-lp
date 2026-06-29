@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { CheckCircle2, Download, Eye, History, MoreVertical, Sparkles, Trash2, X } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
-import DnaBrandWorkspace, { DnaBrandPresentationPanel } from '../../../../components/agents/DnaBrandWorkspace';
+import { DnaBrandPresentationPanel } from '../../../../components/agents/DnaBrandWorkspace';
 import GenericAgentWorkspace from '../../../../components/agents/GenericAgentWorkspace';
 import { getWorkspaceForAgent } from '../../../../lib/agent-workspace-registry';
 import { useAuth } from '../../../../context/AuthContext';
@@ -16,7 +16,7 @@ import {
   getContractedAgentsFromProfile,
   slugifyAgentTitle,
 } from '../../../../lib/hub-agents';
-import type { Agent } from '../../../../data/agents';
+import { Agent } from '../../../../data/agents';
 import { getFirebaseDb } from '../../../../lib/firebase';
 import {
   deleteAgentReportFromDb,
@@ -104,11 +104,12 @@ function getCadenceContext(category: string, title: string) {
   return byCategory[category] ?? fallback;
 }
 
-function getAgentHeroDescription(agent: any): React.ReactNode | null {
+function getAgentHeroDescription(agent: Agent | null): React.ReactNode | null {
   if (!agent?.heroDescription) return null;
-  const match = agent.title === 'Agente Editorial' 
-    ? `O <strong className="text-text-main">${agent.title}</strong> `
-    : `O agente <strong className="text-text-main">${agent.title}</strong> `;
+  const titleStr = agent.title;
+  const match = titleStr === 'Agente Editorial' 
+    ? `O <strong className="text-[#0f172a]">${titleStr}</strong> `
+    : `O agente <strong className="text-[#0f172a]">${titleStr}</strong> `;
 
   return (
     <>
@@ -118,7 +119,7 @@ function getAgentHeroDescription(agent: any): React.ReactNode | null {
   );
 }
 
-function getRequiredConnectorKeysForAgent(agent: any): ConnectorKey[] {
+function getRequiredConnectorKeysForAgent(agent: Agent | null): ConnectorKey[] {
   if (agent?.requiredConnectors && agent.requiredConnectors.length > 0) {
     return agent.requiredConnectors;
   }
@@ -248,11 +249,11 @@ export default function AgentEntryPage() {
     [selectedHistoryEntry]
   );
   const agentAutomationKey = useMemo(() => (entry ? slugifyAgentTitle(entry.title) : ''), [entry]);
-  const heroDescription = useMemo(() => getAgentHeroDescription(entry), [entry]);
+  const heroDescription = useMemo(() => getAgentHeroDescription(agent ?? null), [agent]);
   const connectorStatus = useMemo(() => getConnectionStatusFromProfile(profile), [profile]);
   const requiredConnectorKeys = useMemo(
-    () => getRequiredConnectorKeysForAgent(entry),
-    [entry]
+    () => getRequiredConnectorKeysForAgent(agent ?? null),
+    [agent]
   );
   const requiredConnectors = useMemo(() => {
     if (!entry) return [];
@@ -265,7 +266,7 @@ export default function AgentEntryPage() {
         isActive: connectorStatus[key],
       };
     });
-  }, [connectorStatus, entry]);
+  }, [connectorStatus, entry, requiredConnectorKeys]);
   const inactiveRequiredConnectors = useMemo(
     () => requiredConnectors.filter((connector) => !connector.isActive),
     [requiredConnectors]
@@ -410,37 +411,38 @@ export default function AgentEntryPage() {
   }, [agentAutomationKey, entry, user]);
 
   return (
-    <div className="w-full space-y-6 text-white">
+    <div className="w-full space-y-6 text-slate-800">
       <div className="relative">
         <div className="relative z-10 py-6">
           {!agent || !entry ? (
-            <div className="max-w-3xl mx-auto rounded-3xl border border-white/[0.10] bg-[#0c213a]/60 backdrop-blur-xl p-8 md:p-10 shadow-[0_8px_32px_rgba(2,8,22,0.4)] text-center text-white">
+            <div className="max-w-3xl mx-auto p-8 md:p-10 rounded-3xl border border-white/50 bg-[#eef2f7] shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff] text-center text-slate-800">
               <p className="text-xs uppercase tracking-widest text-slate-400 font-bold mb-3">Agente</p>
-              <h1 className="text-3xl md:text-4xl font-black text-white mb-4">Agente não encontrado</h1>
-              <p className="text-base text-slate-300 mb-8">
+              <h1 className="text-3xl md:text-4xl font-black text-[#0f172a] mb-4">Agente não encontrado</h1>
+              <p className="text-base text-slate-600 font-semibold mb-8">
                 O endereço informado não corresponde a um agente válido do Hub.
               </p>
               <button
+                type="button"
                 onClick={() => router.push('/hub')}
-                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/10 bg-white/5 px-6 text-sm font-black text-white/80 hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 transition-all shadow-sm"
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/50 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] text-slate-700 font-bold px-6 text-[13px] transition-all hover:scale-105 active:scale-95"
               >
                 Voltar ao Hub
               </button>
             </div>
           ) : !entry.isActive ? (
-            <div className="max-w-3xl mx-auto rounded-3xl border border-white/[0.10] bg-[#0c213a]/60 backdrop-blur-xl p-8 md:p-10 shadow-[0_8px_32px_rgba(2,8,22,0.4)] text-white">
+            <div className="max-w-3xl mx-auto p-8 md:p-10 rounded-3xl border border-white/50 bg-[#eef2f7] shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff] text-slate-800">
               <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold mb-3">{entry.category}</p>
-              <h1 className="text-3xl md:text-4xl font-black text-white mb-4">{entry.title}</h1>
-              <p className="text-base text-slate-300 mb-8">
+              <h1 className="text-3xl md:text-4xl font-black text-[#0f172a] mb-4">{entry.title}</h1>
+              <p className="text-base text-slate-600 font-semibold mb-8">
                 Este agente ainda não está ativo na sua conta. Faça a contratação no Hub para liberar a janela funcional individual.
               </p>
-              <div className="mb-8 rounded-2xl border border-white/[0.08] bg-[#051120]/60 p-4">
+              <div className="mb-8 rounded-2xl border border-white/20 bg-[#eef2f7] p-4 shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-sm font-black text-white">Canais necessários para operação</p>
+                  <p className="text-sm font-black text-[#0f172a]">Canais necessários para operação</p>
                   <button
                     type="button"
                     onClick={() => router.push('/hub/conectores')}
-                    className="rounded-full border border-slate-500/20 bg-slate-900/30 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-400 hover:bg-slate-900/50 hover:text-white transition-all"
+                    className="rounded-full border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-700 font-bold px-4 py-2 text-xs transition-all"
                   >
                     Abrir Conectores
                   </button>
@@ -449,19 +451,19 @@ export default function AgentEntryPage() {
                   {requiredConnectors.map((connector) => (
                     <div
                       key={connector.key}
-                      className={`rounded-full border px-5 py-2.5 ${
+                      className={`rounded-full border px-5 py-2.5 shadow-[1px_1px_2px_#d1d9e6,_-1px_-1px_2px_#ffffff] ${
                         connector.isActive
-                           ? 'border-emerald-500/30 bg-emerald-950/20 text-emerald-400'
-                           : 'border-red-500/30 bg-red-950/20 text-red-400'
+                           ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700'
+                           : 'border-red-500/20 bg-red-500/10 text-red-700'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-xs font-black text-white">{connector.name}</p>
+                        <p className="text-xs font-black text-slate-700">{connector.name}</p>
                         <span
                           className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-black ${
                             connector.isActive
-                              ? 'border-emerald-500/20 bg-emerald-950/30 text-emerald-400'
-                              : 'border-red-500/30 bg-red-950/30 text-red-400'
+                              ? 'border-emerald-500/20 bg-emerald-500/20 text-emerald-700'
+                              : 'border-red-500/20 bg-red-500/20 text-red-700'
                           }`}
                         >
                           {connector.isActive ? 'ATIVA' : 'INATIVA'}
@@ -472,26 +474,27 @@ export default function AgentEntryPage() {
                 </div>
               </div>
               <button
+                type="button"
                 onClick={() => router.push('/hub')}
-                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/10 bg-white/5 px-6 text-sm font-black text-white/80 hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 transition-all shadow-sm"
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/50 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] text-slate-700 font-bold px-6 text-[13px] transition-all hover:scale-105 active:scale-95"
               >
                 Voltar ao Hub
               </button>
             </div>
           ) : (
             <div className="max-w-6xl mx-auto space-y-6">
-              <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.06] py-8 mb-8">
+              <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-200 py-8 mb-8">
                 <div className="flex items-start lg:items-center gap-4">
-                  <div className="shrink-0 w-16 h-16 rounded-[16px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[0_4px_12px_rgba(255,107,0,0.26)]">
-                    <div className="relative w-full h-full rounded-[14px] overflow-hidden bg-[#101A2B]">
+                  <div className="shrink-0 w-16 h-16 rounded-[16px] p-[2px] bg-gradient-to-br from-[#FF6B00] via-[#FF8F1F] to-[#B83A00] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]">
+                    <div className="relative w-full h-full rounded-[14px] overflow-hidden bg-[#eef2f7]">
                       <Image src={agent.icon} alt={entry.title} fill className="object-cover" />
                     </div>
                   </div>
                   <div>
-                    <h1 className="text-2xl font-black tracking-tight text-white leading-none">
+                    <h1 className="text-2xl font-black tracking-tight text-[#0f172a] leading-none">
                       {entry.title}
                     </h1>
-                    <p className="text-[12px] font-semibold text-[#FF9A4D] mt-1 uppercase tracking-widest">
+                    <p className="text-[12px] font-bold text-[#FF6B00] mt-1.5 uppercase tracking-widest">
                       {entry.category}
                     </p>
                   </div>
@@ -504,10 +507,10 @@ export default function AgentEntryPage() {
                       setAutomationNotice(null);
                       setIsAutomationModalOpen(true);
                     }}
-                    className={`h-11 px-5 rounded-xl border text-[13px] font-black uppercase tracking-wider transition shadow-sm ${
+                    className={`h-11 px-6 rounded-xl border text-[13px] font-bold uppercase tracking-wider transition-all shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] ${
                       automationActivated
-                        ? 'border-[#08B760] bg-[#08B760]/10 text-[#08B760] hover:bg-[#08B760]/20'
-                        : 'border-[#FF6B00] bg-[#FF6B00] text-white hover:brightness-105'
+                        ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-700 hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff]'
+                        : 'border-[#FF6B00]/40 bg-gradient-to-br from-[#FF6B00] to-[#FF8F1F] text-white shadow-[3px_3px_6px_rgba(255,106,0,0.2),_-3px_-3px_6px_#ffffff] hover:brightness-105'
                     }`}
                   >
                     {automationActivated ? 'Agente Ativo' : 'Ativar Agente'}
@@ -517,14 +520,15 @@ export default function AgentEntryPage() {
                     onClick={() => {
                       void openHistoryModal();
                     }}
-                    className="h-11 px-5 rounded-xl border border-white/10 bg-white/5 text-[13px] font-black uppercase tracking-wider text-white hover:bg-white/10 transition shadow-sm"
+                    className="h-11 px-6 rounded-xl border border-white/50 bg-[#eef2f7] text-[13px] font-bold uppercase tracking-wider text-slate-700 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] transition-all"
                   >
-                    <History size={14} className="inline mr-2 -mt-[2px]" />
+                    <History size={14} className="inline mr-2 -mt-[2px] text-slate-500" />
                     Histórico
                   </button>
                   <button
+                    type="button"
                     onClick={() => router.push('/hub')}
-                    className="h-11 px-5 rounded-xl border border-white/10 bg-transparent text-[13px] font-black uppercase tracking-wider text-white/80 hover:bg-white/5 transition shadow-sm"
+                    className="h-11 px-6 rounded-xl border border-white/50 bg-[#eef2f7] text-[13px] font-bold uppercase tracking-wider text-slate-700 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] transition-all"
                   >
                     Voltar ao Hub
                   </button>
@@ -532,52 +536,52 @@ export default function AgentEntryPage() {
               </header>
 
               {heroDescription ? (
-                <div className="hub-accent-card p-6">
-                  <p className="max-w-[800px] text-[14px] leading-relaxed text-[#C8D3E6] [&_strong]:text-white">
+                <div className="p-6 rounded-3xl border border-white/50 bg-[#eef2f7] shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff]">
+                  <p className="max-w-[800px] text-[14px] leading-relaxed text-slate-600 font-semibold [&_strong]:text-[#0f172a]">
                     {heroDescription}
                   </p>
                 </div>
               ) : null}
 
-              <section className="hub-accent-card relative overflow-hidden text-white">
-                <div className="px-6 py-5 border-b border-white/[0.08] flex flex-wrap items-center justify-between gap-4 bg-[#091624]">
+              <section className="relative overflow-hidden p-6 rounded-3xl border border-white/50 bg-[#eef2f7] shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff] text-slate-800">
+                <div className="pb-5 border-b border-slate-200 flex flex-wrap items-center justify-between gap-4 bg-transparent">
                   <div className="flex flex-col gap-1">
                     <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold">Canais Necessários</p>
-                    <h2 className="text-xl md:text-2xl font-black text-white tracking-tight">Status operacional deste agente</h2>
-                    <p className="text-xs font-semibold text-slate-300">
+                    <h2 className="text-xl md:text-2xl font-black text-[#0f172a] tracking-tight">Status operacional deste agente</h2>
+                    <p className="text-xs font-semibold text-slate-500">
                       As conexões são gerenciadas exclusivamente na janela <strong>Conectores</strong>.
                     </p>
                   </div>
                   <button
                     type="button"
                     onClick={() => router.push('/hub/conectores')}
-                    className="rounded-full border border-slate-500/20 bg-slate-900/30 px-4 py-2 text-xs font-bold uppercase tracking-wide text-slate-400 hover:bg-slate-900/50 hover:text-white transition-all"
+                    className="rounded-full border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-700 font-bold px-4 py-2 text-xs transition-all"
                   >
                     Abrir Conectores
                   </button>
                 </div>
 
-                <div className="p-6 md:p-8">
+                <div className="pt-6">
                   <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
                     {requiredConnectors.map((connector) => (
                       <div
                         key={connector.key}
-                        className={`rounded-[24px] border p-4 transition-all duration-200 ${
+                        className={`rounded-[24px] border p-4 transition-all duration-200 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] ${
                           connector.isActive
-                            ? 'border-emerald-500/30 bg-emerald-950/20 text-emerald-400'
-                            : 'border-red-500/30 bg-red-950/20 text-red-400'
+                            ? 'border-emerald-500/20 bg-[#eef2f7]'
+                            : 'border-red-500/20 bg-[#eef2f7]'
                         }`}
                       >
                         <div className="flex items-center justify-between gap-3">
                           <div>
-                            <p className="text-sm font-black text-white">{connector.name}</p>
-                            <p className="text-xs text-slate-400">{connector.source}</p>
+                            <p className="text-sm font-black text-[#0f172a]">{connector.name}</p>
+                            <p className="text-xs text-slate-400 font-semibold">{connector.source}</p>
                           </div>
                           <span
                             className={`inline-flex items-center rounded-full border px-3 py-1 text-[11px] font-black ${
                               connector.isActive
-                                ? 'border-emerald-500/20 bg-emerald-950/30 text-emerald-400'
-                                : 'border-red-500/20 bg-red-950/30 text-red-400'
+                                ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700'
+                                : 'border-red-500/20 bg-red-500/10 text-red-700'
                             }`}
                           >
                             {connector.isActive ? 'ATIVA' : 'INATIVA'}
@@ -589,7 +593,7 @@ export default function AgentEntryPage() {
                 </div>
               </section>
 
-              <div className="grid grid-cols-1 gap-6">
+              <div className="grid grid-cols-1 gap-6 text-slate-800">
                 {(() => {
                   // ── Registry lookup: O(1) — adicionar novo agente = 2 linhas em agent-workspace-registry.ts
                   const WorkspaceComponent = getWorkspaceForAgent(entry.title);
@@ -630,19 +634,19 @@ export default function AgentEntryPage() {
 
       {entry && isAutomationModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-4 py-4">
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setIsAutomationModalOpen(false)} />
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setIsAutomationModalOpen(false)} />
 
-          <div className="relative w-full max-w-[1120px] max-h-[96vh] rounded-[24px] bg-[#071a2e]/98 border border-white/[0.12] shadow-[0_24px_60px_rgba(2,8,22,0.6)] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-white flex flex-col">
-            <div className="relative border-b border-white/[0.08] bg-[#091624] px-6 py-5 flex flex-col gap-1 shrink-0">
+          <div className="relative w-full max-w-[1120px] max-h-[96vh] rounded-[32px] bg-[#eef2f7] border border-white/80 shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-slate-800 flex flex-col">
+            <div className="relative border-b border-slate-200 bg-[#eef2f7] px-6 py-5 flex flex-col gap-1 shrink-0">
               <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold">Automação Inteligente</p>
-              <h3 className="text-2xl font-black text-white">Ativar Rotina do Agente</h3>
-              <p className="text-xs font-semibold text-slate-300 mt-1">
+              <h3 className="text-2xl font-black text-[#0f172a]">Ativar Rotina do Agente</h3>
+              <p className="text-xs font-semibold text-slate-500 mt-1">
                 Selecione uma cadência para <strong>{entry.title}</strong>, respeitando o plano atual e o limite contratado.
               </p>
               <button
                 type="button"
                 onClick={() => setIsAutomationModalOpen(false)}
-                className="absolute right-5 top-5 rounded-full border border-white/10 bg-white/5 p-2 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm z-50"
+                className="absolute right-5 top-5 rounded-full border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-500 p-2 transition-all hover:scale-105 active:scale-95 z-50 animate-all"
                 aria-label="Fechar modal de automação"
               >
                 <X size={16} />
@@ -650,17 +654,17 @@ export default function AgentEntryPage() {
             </div>
 
             <div className="p-6 overflow-y-auto space-y-4 flex-1">
-              <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-3 text-sm text-slate-300">
-                Plano: <strong className="text-white">{entry.planSummary?.planName ?? 'A confirmar'}</strong> • Limite mensal:{' '}
-                <strong className="text-white">{entry.planSummary?.monthlyLimit ?? 0} execuções</strong>
+              <div className="rounded-xl border border-white/30 bg-[#eef2f7] px-4 py-3 text-sm text-slate-600 font-semibold shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
+                Plano: <strong className="text-[#0f172a]">{entry.planSummary?.planName ?? 'A confirmar'}</strong> • Limite mensal:{' '}
+                <strong className="text-[#0f172a]">{entry.planSummary?.monthlyLimit ?? 0} execuções</strong>
               </div>
               {isLoadingAutomation && (
-                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-3 text-sm text-slate-300">
+                <div className="rounded-xl border border-white/30 bg-[#eef2f7] px-4 py-3 text-sm text-slate-600 font-semibold shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
                   Carregando configuração de automação salva…
                 </div>
               )}
               {inactiveRequiredConnectors.length > 0 && (
-                <div className="rounded-xl border border-orange-500/30 bg-orange-950/20 px-4 py-3 text-sm text-orange-400">
+                <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-4 py-3 text-sm text-orange-700 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
                   Para ativar esta automação, conecte primeiro: {inactiveRequiredConnectors.map((connector) => connector.name).join(', ')}.
                 </div>
               )}
@@ -682,24 +686,24 @@ export default function AgentEntryPage() {
                       tabIndex={0}
                       className={`w-full cursor-pointer text-left rounded-2xl border p-4 transition-all duration-200 ${
                         isSelected
-                          ? 'border-[#FF7A00]/50 bg-[#FF7A00]/10 shadow-[0_8px_24px_rgba(255,122,0,0.15)] text-white'
-                          : 'border-white/[0.08] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04] text-slate-300'
+                          ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] text-[#0f172a]'
+                          : 'border-white/50 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] text-slate-700'
                       }`}
                     >
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <p className="text-base font-black text-white">{option.title}</p>
-                        <span className="inline-flex items-center rounded-full border border-emerald-500/30 bg-emerald-950/30 px-3 py-1 text-xs font-bold text-emerald-400">
+                        <p className="text-base font-black text-[#0f172a]">{option.title}</p>
+                        <span className="inline-flex items-center rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-700">
                           {option.monthlyExecutions} execuções/mês
                         </span>
                       </div>
-                      <p className={`mt-2 text-xs leading-relaxed ${isSelected ? 'text-slate-200' : 'text-slate-400 line-clamp-2'}`}>{option.objective}</p>
-                      <p className="mt-3 text-xs text-slate-400">
-                        Cadência: <strong className="text-white">{option.cadence}</strong>
+                      <p className={`mt-2 text-xs leading-relaxed ${isSelected ? 'text-slate-600 font-semibold' : 'text-slate-500 font-semibold line-clamp-2'}`}>{option.objective}</p>
+                      <p className="mt-3 text-xs text-slate-500 font-semibold">
+                        Cadência: <strong className="text-[#0f172a]">{option.cadence}</strong>
                       </p>
-                      {isSelected ? <p className="mt-1.5 text-xs text-slate-400">{option.distribution}</p> : null}
+                      {isSelected ? <p className="mt-1.5 text-xs text-slate-500 font-semibold">{option.distribution}</p> : null}
                       {isSelected ? (
-                        <div className="mt-4 rounded-xl border border-white/[0.08] bg-[#051120]/60 p-3.5 space-y-2">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">
+                        <div className="mt-4 rounded-xl border border-white/20 bg-[#eef2f7] p-3.5 space-y-2 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">
                             Sugestões de dias e horários
                           </p>
                           <div className="mt-2 grid grid-cols-1 gap-2">
@@ -715,12 +719,12 @@ export default function AgentEntryPage() {
                                   }}
                                   className={`cursor-pointer rounded-xl border p-3 text-left transition-all duration-200 w-full ${
                                     isScheduleSelected
-                                      ? 'border-[#FF7A00]/50 bg-[#FF7A00]/10 shadow-[0_4px_12px_rgba(255,122,0,0.1)]'
-                                      : 'border-white/[0.08] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04]'
+                                      ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                                      : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]'
                                   }`}
                                 >
-                                  <p className="text-xs font-black text-white">{schedule.label}</p>
-                                  <p className="mt-1 text-[11px] leading-snug text-slate-400">{schedule.detail}</p>
+                                  <p className="text-xs font-black text-[#0f172a]">{schedule.label}</p>
+                                  <p className="mt-1 text-[11px] leading-snug text-slate-500 font-semibold">{schedule.detail}</p>
                                 </button>
                               );
                             })}
@@ -732,11 +736,11 @@ export default function AgentEntryPage() {
                 })}
               </div>
 
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/[0.08] shrink-0">
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-slate-200 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsAutomationModalOpen(false)}
-                  className="rounded-xl border border-white/10 bg-white/5 px-5 py-3 text-xs font-black uppercase tracking-widest text-slate-300 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
+                  className="rounded-xl border border-white/50 bg-[#eef2f7] px-6 py-3 text-xs font-bold uppercase tracking-wider text-slate-700 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] transition-all hover:scale-105 active:scale-95"
                 >
                   Fechar
                 </button>
@@ -805,10 +809,10 @@ export default function AgentEntryPage() {
                       setIsSavingAutomation(false);
                     }
                   }}
-                  className={`inline-flex items-center gap-2 rounded-xl px-6 py-3 text-xs font-black uppercase tracking-widest transition-all ${
+                  className={`inline-flex items-center gap-2 rounded-xl px-6 py-3 text-xs font-bold uppercase tracking-wider transition-all ${
                     selectedSuggestion && !isSavingAutomation && inactiveRequiredConnectors.length === 0
-                      ? 'bg-gradient-to-r from-[#08B760] to-[#0A9D57] text-white shadow-[0_8px_18px_rgba(10,157,87,0.15)] hover:brightness-105 active:scale-98'
-                      : 'bg-white/[0.04] text-slate-500 border border-white/[0.08] cursor-not-allowed'
+                      ? 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] text-white shadow-[3px_3px_6px_rgba(8,183,96,0.2),_-3px_-3px_6px_#ffffff] hover:brightness-105 active:scale-98'
+                      : 'bg-[#eef2f7] text-slate-400 border border-white/20 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] cursor-not-allowed'
                   }`}
                 >
                   <Sparkles size={14} className="shrink-0" />
@@ -817,7 +821,7 @@ export default function AgentEntryPage() {
               </div>
 
               {automationActivated && selectedSuggestion && (
-                <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-sm text-emerald-400 flex items-start gap-2">
+                <div className="mt-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 flex items-start gap-2 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
                   <CheckCircle2 size={16} className="mt-0.5 shrink-0" />
                   <span>
                     Automação ativada com a configuração <strong>{selectedSuggestion.title}</strong> para o agente{' '}
@@ -832,7 +836,7 @@ export default function AgentEntryPage() {
                 </div>
               )}
               {automationNotice && !automationActivated && (
-                <div className="mt-4 rounded-xl border border-emerald-500/30 bg-emerald-950/20 px-4 py-3 text-sm text-emerald-400">
+                <div className="mt-4 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
                   {automationNotice}
                 </div>
               )}
@@ -843,19 +847,19 @@ export default function AgentEntryPage() {
 
       {entry && isHistoryModalOpen && (
         <div className="fixed inset-0 z-[9999] flex items-start justify-center overflow-y-auto px-4 py-6 sm:items-center">
-          <div className="absolute inset-0 bg-slate-950/60 backdrop-blur-md" onClick={() => setIsHistoryModalOpen(false)} />
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setIsHistoryModalOpen(false)} />
 
-          <div className="relative w-full max-w-6xl max-h-[92vh] overflow-hidden rounded-[24px] border border-white/[0.12] bg-[#071a2e]/98 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white flex flex-col">
-            <div className="relative border-b border-white/[0.08] bg-[#091624] px-6 py-5 flex flex-col gap-1 shrink-0">
+          <div className="relative w-full max-w-6xl max-h-[92vh] overflow-hidden rounded-[32px] border border-white/80 bg-[#eef2f7] shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] text-slate-800 flex flex-col animate-in fade-in duration-250">
+            <div className="relative border-b border-slate-200 bg-[#eef2f7] px-6 py-5 flex flex-col gap-1 shrink-0">
               <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold">{entry.category}</p>
-              <h3 className="text-2xl font-black text-white">Histórico de Relatórios</h3>
-              <p className="text-xs font-semibold text-slate-300 mt-1">
+              <h3 className="text-2xl font-black text-[#0f172a]">Histórico de Relatórios</h3>
+              <p className="text-xs font-semibold text-slate-500 mt-1">
                 Últimos 10 relatórios do agente <strong>{entry.title}</strong>, prontos para visualização e download.
               </p>
               <button
                 type="button"
                 onClick={() => setIsHistoryModalOpen(false)}
-                className="absolute right-5 top-5 rounded-full border border-white/10 bg-white/5 p-2 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm z-50"
+                className="absolute right-5 top-5 rounded-full border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-500 p-2 transition-all hover:scale-105 active:scale-95 shadow-sm z-50 animate-all"
                 aria-label="Fechar histórico"
               >
                 <X size={16} />
@@ -864,27 +868,27 @@ export default function AgentEntryPage() {
 
             {isLoadingHistory ? (
               <div className="p-6">
-                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-5 py-6 text-sm text-slate-400">
+                <div className="rounded-xl border border-white/30 bg-[#eef2f7] px-5 py-6 text-sm text-slate-500 font-semibold shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
                   Carregando histórico…
                 </div>
               </div>
             ) : historyError ? (
               <div className="p-6">
-                <div className="rounded-xl border border-orange-500/30 bg-orange-950/20 px-5 py-6 text-sm text-orange-400">
+                <div className="rounded-xl border border-orange-500/20 bg-orange-500/10 px-5 py-6 text-sm text-orange-700 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
                   {historyError}
                 </div>
               </div>
             ) : historyEntries.length === 0 ? (
               <div className="p-6">
-                <div className="rounded-xl border border-white/[0.08] bg-white/[0.02] px-5 py-6 text-sm text-slate-400">
+                <div className="rounded-xl border border-white/30 bg-[#eef2f7] px-5 py-6 text-sm text-slate-500 font-semibold shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
                   Ainda não existem relatórios salvos neste agente. Gere um relatório para iniciar o histórico.
                 </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-0 min-h-0 flex-1 overflow-hidden">
-                <aside className="border-r border-white/[0.08] p-4 overflow-y-auto bg-[#071a2e]/40">
+                <aside className="border-r border-slate-200 p-4 overflow-y-auto bg-[#eef2f7] shadow-[inset_3px_0_6px_-3px_#d1d9e6]">
                   {historyActionError ? (
-                    <div className="mb-3 rounded-xl border border-orange-500/30 bg-orange-950/20 px-3 py-2 text-xs font-semibold text-orange-400">
+                    <div className="mb-3 rounded-xl border border-orange-500/20 bg-orange-500/10 px-3 py-2 text-xs font-semibold text-orange-700 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
                       {historyActionError}
                     </div>
                   ) : null}
@@ -901,13 +905,13 @@ export default function AgentEntryPage() {
                           data-history-menu-root="true"
                           className={`w-full rounded-2xl border p-4 text-left transition-all duration-200 cursor-pointer ${
                             isSelected
-                              ? 'border-[#FF7A00]/50 bg-[#FF7A00]/10 shadow-[0_8px_24px_rgba(255,122,0,0.15)] text-white'
-                              : 'border-white/[0.08] bg-white/[0.02] hover:border-white/20 hover:bg-white/[0.04] text-slate-300'
+                              ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] text-[#0f172a]'
+                              : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] text-slate-700'
                           }`}
                           onClick={() => setSelectedHistoryId(item.id)}
                         >
                           <div className="flex items-start justify-between gap-2">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">Relatório {historyEntries.length - index}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">Relatório {historyEntries.length - index}</p>
                             <div className="relative">
                               <button
                                 type="button"
@@ -915,14 +919,14 @@ export default function AgentEntryPage() {
                                   e.stopPropagation();
                                   setHistoryMenuReportId((current) => (current === item.id ? null : item.id));
                                 }}
-                                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 hover:bg-white/10 hover:text-white"
+                                className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-500"
                                 aria-label="Abrir menu de ações do relatório"
                               >
                                 <MoreVertical size={14} />
                               </button>
 
                               {historyMenuReportId === item.id ? (
-                                <div className="absolute right-0 top-9 z-20 min-w-[148px] overflow-hidden rounded-xl border border-white/[0.12] bg-[#071a2e] shadow-[0_16px_28px_rgba(15,23,42,0.4)]">
+                                <div className="absolute right-0 top-9 z-20 min-w-[148px] overflow-hidden rounded-2xl border border-white/80 bg-[#eef2f7] shadow-[5px_5px_15px_#d1d9e6,_-5px_-5px_15px_#ffffff]">
                                   <button
                                     type="button"
                                     onClick={(e) => {
@@ -930,9 +934,9 @@ export default function AgentEntryPage() {
                                       setSelectedHistoryId(item.id);
                                       setHistoryMenuReportId(null);
                                     }}
-                                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-white hover:bg-white/[0.04]"
+                                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-[#0f172a] hover:bg-slate-200"
                                   >
-                                    <Eye size={13} className="text-slate-400" />
+                                    <Eye size={13} className="text-slate-500" />
                                     Visualizar
                                   </button>
                                   <button
@@ -942,7 +946,7 @@ export default function AgentEntryPage() {
                                       void downloadAgentReport(item);
                                       setHistoryMenuReportId(null);
                                     }}
-                                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-emerald-400 hover:bg-emerald-950/20"
+                                    className="flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold text-emerald-700 hover:bg-emerald-500/10"
                                   >
                                     <Download size={13} />
                                     Download
@@ -956,8 +960,8 @@ export default function AgentEntryPage() {
                                     disabled={isDeletingCurrent}
                                     className={`flex w-full items-center gap-2 px-3 py-2 text-left text-xs font-semibold ${
                                       isDeletingCurrent
-                                        ? 'cursor-not-allowed text-red-400 bg-red-950/20'
-                                        : 'text-red-400 hover:bg-red-950/30'
+                                        ? 'cursor-not-allowed text-red-700 bg-red-500/10'
+                                        : 'text-red-700 hover:bg-red-500/20'
                                     }`}
                                   >
                                     <Trash2 size={13} />
@@ -967,10 +971,10 @@ export default function AgentEntryPage() {
                               ) : null}
                             </div>
                           </div>
-                          <p className="mt-2 text-sm font-bold text-white break-all">{item.reportTitle || cleanedUrl}</p>
-                          <p className="mt-1 text-xs text-slate-400">{formatHistoryDate(item.generatedAt)}</p>
+                          <p className="mt-2 text-sm font-bold text-[#0f172a] break-all">{item.reportTitle || cleanedUrl}</p>
+                          <p className="mt-1 text-xs text-slate-500 font-semibold">{formatHistoryDate(item.generatedAt)}</p>
                           {item.metadata?.websiteUrl ? (
-                            <p className="mt-2 text-xs text-slate-400 line-clamp-2">{String(item.metadata.websiteUrl)}</p>
+                            <p className="mt-2 text-xs text-slate-400 font-semibold line-clamp-2">{String(item.metadata.websiteUrl)}</p>
                           ) : null}
                         </div>
                       );
@@ -981,40 +985,40 @@ export default function AgentEntryPage() {
                 <section className="p-5 md:p-6 overflow-y-auto flex-1 bg-transparent">
                   {selectedHistoryEntry ? (
                     <div className="space-y-4">
-                      <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-4 text-slate-300">
+                      <div className="rounded-2xl border border-white/50 bg-[#eef2f7] p-4 text-slate-600 font-semibold shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff]">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                           <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">Agente</p>
-                            <p className="mt-1 font-bold text-white break-all">{selectedHistoryEntry.agentTitle}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">Agente</p>
+                            <p className="mt-1 font-bold text-[#0f172a] break-all">{selectedHistoryEntry.agentTitle}</p>
                           </div>
                           <div>
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">Gerado em</p>
-                            <p className="mt-1 font-bold text-white">{formatHistoryDate(selectedHistoryEntry.generatedAt)}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">Gerado em</p>
+                            <p className="mt-1 font-bold text-[#0f172a]">{formatHistoryDate(selectedHistoryEntry.generatedAt)}</p>
                           </div>
                         </div>
                         {selectedHistoryEntry.metadata?.websiteUrl ? (
                           <div className="mt-4">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">Referência</p>
-                            <p className="mt-1 text-sm font-semibold text-white break-all">{String(selectedHistoryEntry.metadata.websiteUrl)}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">Referência</p>
+                            <p className="mt-1 text-sm font-bold text-[#0f172a] break-all">{String(selectedHistoryEntry.metadata.websiteUrl)}</p>
                           </div>
                         ) : null}
                         {selectedHistoryEntry.metadata?.businessContext ? (
                           <div className="mt-4">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF7A00]">Contexto informado</p>
-                            <p className="mt-1 text-sm text-slate-300">{String(selectedHistoryEntry.metadata.businessContext)}</p>
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">Contexto informado</p>
+                            <p className="mt-1 text-sm text-slate-700">{String(selectedHistoryEntry.metadata.businessContext)}</p>
                           </div>
                         ) : null}
                       </div>
 
-                      <article className="rounded-2xl border border-white/[0.08] bg-[#071a2e]/82 p-5 shadow-[0_8px_32px_rgba(2,8,22,0.4)]">
-                        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-white/[0.08]">
-                          <h4 className="text-base font-black text-white">Resultado Completo</h4>
+                      <article className="rounded-2xl border border-white/50 bg-[#eef2f7] p-5 shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff]">
+                        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-200">
+                          <h4 className="text-base font-black text-[#0f172a]">Resultado Completo</h4>
                           <button
                             type="button"
                             onClick={() => {
                               void downloadAgentReport(selectedHistoryEntry);
                             }}
-                            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-[#08B760] to-[#0A9D57] px-4 py-2.5 text-xs font-black uppercase tracking-widest text-white shadow-[0_8px_18px_rgba(10,157,87,0.15)] transition-all hover:brightness-105"
+                            className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-br from-[#08B760] to-[#0A9D57] px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white shadow-[3px_3px_6px_rgba(8,183,96,0.2),_-3px_-3px_6px_#ffffff] transition-all hover:brightness-105"
                           >
                             <Download size={14} />
                             Download
@@ -1027,7 +1031,7 @@ export default function AgentEntryPage() {
                             generatedAt={selectedHistoryEntry.generatedAt}
                           />
                         ) : (
-                          <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-slate-300 font-sans">
+                          <pre className="whitespace-pre-wrap break-words text-[13px] leading-relaxed text-slate-700 font-semibold font-sans">
                             {selectedHistoryEntry.reportContent}
                           </pre>
                         )}

@@ -52,7 +52,7 @@ export default function AgentCard({
   onDetails,
 }: AgentCardProps) {
   return (
-    <article className="group relative rounded-[20px] border border-white/50 bg-[#eef2f7] p-6 md:p-7 shadow-[4px_4px_8px_#d1d9e6,_-4px_-4px_8px_#ffffff] hover:shadow-[5px_5px_10px_#c2cbd9,_-5px_-5px_10px_#ffffff] transition-all duration-300 flex flex-col h-full overflow-hidden">
+    <article className="hub-neu-card group relative p-6 md:p-7 shadow-[4px_4px_8px_#d1d9e6,_-4px_-4px_8px_#ffffff] hover:shadow-[5px_5px_10px_#c2cbd9,_-5px_-5px_10px_#ffffff] transition-all duration-300 flex flex-col h-full overflow-hidden">
       {/* Content */}
       <div className="flex-1 relative z-10">
         <div className="flex items-start justify-between gap-4 mb-4">
