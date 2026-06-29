@@ -256,9 +256,9 @@ function CadastroPageContent() {
 
           <p className="mt-4 text-center text-[11px] text-white/20 leading-relaxed">
             Ao criar uma conta, você concorda com nossos{' '}
-            <a href="#" className="underline hover:text-white/40 transition-colors">Termos de Uso</a>{' '}
+            <a href="/termos" className="underline hover:text-white/40 transition-colors">Termos de Uso</a>{' '}
             e{' '}
-            <a href="#" className="underline hover:text-white/40 transition-colors">Política de Privacidade</a>.
+            <a href="/privacidade" className="underline hover:text-white/40 transition-colors">Política de Privacidade</a>.
           </p>
         </div>
       </div>

@@ -229,9 +229,9 @@ function LoginPageContent() {
 
           <p className="mt-4 text-center text-[11px] text-white/20 leading-relaxed">
             Ao entrar, você concorda com nossos{' '}
-            <a href="#" className="underline hover:text-white/40 transition-colors">Termos</a>{' '}
+            <a href="/termos" className="underline hover:text-white/40 transition-colors">Termos</a>{' '}
             e{' '}
-            <a href="#" className="underline hover:text-white/40 transition-colors">Política de Privacidade</a>.
+            <a href="/privacidade" className="underline hover:text-white/40 transition-colors">Política de Privacidade</a>.
           </p>
         </div>
       </div>

@@ -34,6 +34,7 @@
     "framer-motion": "^12.38.0",
     "googleapis": "^173.0.0",
     "gsap": "^3.15.0",
+    "headroom-ai": "^0.22.4",
     "hostinger-api-sdk": "^0.0.17",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",

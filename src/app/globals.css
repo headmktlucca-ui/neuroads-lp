@@ -76,7 +76,7 @@
 
   /* ─── Hub Dark Mode Tokens ───────────────────────────────────── */
   /* Backgrounds */
-  --color-hub-base:     #08101e;   /* fundo geral do Hub */
+  --color-hub-base:     #EBEBEC;   /* fundo geral do Hub — cinza frio claro */
   --color-hub-surface:  #0d1a2a;   /* superfície de cards premium */
   --color-hub-deep:     #0a0a0a;   /* variante mais escura (Dashboard) */
   --color-hub-overlay:  #051120;   /* overlay de cards recomendados */
@@ -93,9 +93,9 @@
   --color-hub-accent-h: #FF8000;   /* hover do laranja Hub */
 
   /* Text */
-  --color-hub-text:     #ffffff;
-  --color-hub-muted:    #8fa0b5;   /* texto secundário */
-  --color-hub-dim:      #4a6280;   /* texto terciário */
+  --color-hub-text:     #1C1C1E;   /* texto principal */
+  --color-hub-muted:    #8A8A8E;   /* texto secundário */
+  --color-hub-dim:      #C7C7CC;   /* texto terciário */
 
   /* Status */
   --color-hub-active:   #0A9D57;   /* verde "Ativo" */
@@ -110,8 +110,33 @@
   --shadow-btn-orange: 0 10px 22px rgba(255,107,0,0.30);
 }
 
+/* ─── Hub Frosted Glass Background ──────────────────────────────── */
+.hub-glass-bg {
+  background: linear-gradient(135deg, #EEF2FF 0%, #F0FDF4 35%, #FFF7ED 65%, #F0F9FF 100%);
+  position: relative;
+}
 
-/* ─── Hub accent card — borda laranja + destaque esquerdo ─────────────────── */
+.hub-glass-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 20%, rgba(139, 92, 246, 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 10%, rgba(59, 130, 246, 0.09) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 80%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 70%, rgba(255, 106, 0, 0.07) 0%, transparent 45%);
+  pointer-events: none;
+  z-index: 0;
+  animation: hubGlassOrbFloat 20s ease-in-out infinite alternate;
+}
+
+@keyframes hubGlassOrbFloat {
+  0%   { transform: scale(1) translate(0, 0); }
+  50%  { transform: scale(1.04) translate(-1%, 1.5%); }
+  100% { transform: scale(1) translate(1%, -1%); }
+}
+
+
 .hub-accent-card {
   position: relative;
   border-radius: 16px;

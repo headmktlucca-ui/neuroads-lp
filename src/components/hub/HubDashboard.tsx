@@ -441,9 +441,9 @@ export default function HubDashboard() {
             : 'absolute top-[calc(100%+12px)] right-0 w-72'
         } z-[200] rounded-2xl p-4 text-[11px] backdrop-blur-xl border transition-all duration-150 animate-in fade-in slide-in-from-top-2 text-left`}
         style={{
-          background: 'rgba(4,12,24,0.96)',
+          background: 'rgba(255,255,255,0.96)',
           borderColor: `${t.color}40`,
-          boxShadow: `0 16px 48px rgba(4,12,24,0.7), 0 0 16px ${t.color}15`,
+          boxShadow: `0 16px 48px rgba(0,0,0,0.1), 0 0 16px ${t.color}15`,
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -451,12 +451,12 @@ export default function HubDashboard() {
           <div
             className="absolute top-[-7px] right-4 w-3.5 h-3.5 rotate-45 border-l border-t"
             style={{
-              background: 'rgba(4,12,24,0.96)',
+              background: 'rgba(255,255,255,0.96)',
               borderColor: `${t.color}40`,
             }}
           />
         )}
-        <div className="flex items-center justify-between mb-3 pb-2 border-b border-white/5">
+        <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#F0F0F2]">
           <span className="font-black uppercase tracking-wider text-[10px]" style={{ color: t.color }}>
             {t.title}
           </span>
@@ -474,7 +474,7 @@ export default function HubDashboard() {
                   e.stopPropagation();
                   setActiveKpiTooltip(null);
                 }}
-                className="text-white/40 hover:text-white transition-colors cursor-pointer"
+                className="text-[#1C1C1E]/40 hover:text-[#1C1C1E] transition-colors cursor-pointer"
               >
                 <X className="h-3.5 w-3.5" />
               </button>
@@ -482,7 +482,7 @@ export default function HubDashboard() {
           </div>
         </div>
         <div className="space-y-2.5">
-          <div className="flex items-center justify-between text-[9px] font-black text-white/35 uppercase tracking-wider font-mono">
+          <div className="flex items-center justify-between text-[9px] font-black text-[#1C1C1E]/35 uppercase tracking-wider font-mono">
             <span>Canal</span>
             <div className="flex gap-4">
               <span className="w-16 text-right">Atual</span>
@@ -496,27 +496,27 @@ export default function HubDashboard() {
                   className="h-1.5 w-1.5 rounded-full flex-shrink-0"
                   style={{ background: row.connected ? t.color : '#4b5563' }}
                 />
-                <span className="text-[#a3b8cc] font-semibold truncate text-[10px]">{row.name}</span>
+                <span className="text-[#8A8A8E] font-semibold truncate text-[10px]">{row.name}</span>
               </div>
               <div className="flex gap-4 font-mono text-[10px] shrink-0">
-                <span className={`w-16 text-right font-bold ${row.connected ? 'text-white' : 'text-white/20'}`}>
+                <span className={`w-16 text-right font-bold ${row.connected ? 'text-[#1C1C1E]' : 'text-[#1C1C1E]/20'}`}>
                   {row.connected ? formatValue(row.current, row) : '—'}
                 </span>
-                <span className={`w-16 text-right ${row.connected ? 'text-[#a3b8cc]/50' : 'text-white/10'}`}>
+                <span className={`w-16 text-right ${row.connected ? 'text-[#8A8A8E]/50' : 'text-[#1C1C1E]/10'}`}>
                   {row.connected ? formatValue(row.prev, row) : '—'}
                 </span>
               </div>
             </div>
           ))}
         </div>
-        <div className="mt-4 pt-2.5 border-t border-white/5 space-y-1 text-[9px] text-[#a3b8cc]/40 font-semibold leading-relaxed">
+        <div className="mt-4 pt-2.5 border-t border-[#F0F0F2] space-y-1 text-[9px] text-[#8A8A8E]/40 font-semibold leading-relaxed">
           <div>
-            <span className="text-white/30 uppercase mr-1">Atual:</span>
-            <span className="font-mono text-white/50">{period.current}</span>
+            <span className="text-[#1C1C1E]/30 uppercase mr-1">Atual:</span>
+            <span className="font-mono text-[#1C1C1E]/50">{period.current}</span>
           </div>
           <div>
-            <span className="text-white/30 uppercase mr-1">Anterior:</span>
-            <span className="font-mono text-white/50">{period.previous}</span>
+            <span className="text-[#1C1C1E]/30 uppercase mr-1">Anterior:</span>
+            <span className="font-mono text-[#1C1C1E]/50">{period.previous}</span>
           </div>
         </div>
       </div>
@@ -757,9 +757,9 @@ export default function HubDashboard() {
             : 'absolute right-[calc(100%+16px)] top-0 w-64'
         } z-50 rounded-2xl p-4 text-[11px] backdrop-blur-xl border transition-all duration-150 animate-in fade-in slide-in-from-bottom-2 md:slide-in-from-right-2`}
         style={{
-          background: 'rgba(4,12,24,0.96)',
+          background: 'rgba(255,255,255,0.96)',
           borderColor: `${balloon.color}40`,
-          boxShadow: `0 16px 48px rgba(4,12,24,0.7), 0 0 16px ${balloon.color}15`,
+          boxShadow: `0 16px 48px rgba(0,0,0,0.1), 0 0 16px ${balloon.color}15`,
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -768,7 +768,7 @@ export default function HubDashboard() {
           <div
             className="absolute -right-[7px] top-5 w-3 h-3 rotate-45 border-t border-r"
             style={{
-              background: 'rgba(4,12,24,0.96)',
+              background: 'rgba(255,255,255,0.96)',
               borderColor: `${balloon.color}40`,
             }}
           />
@@ -789,22 +789,22 @@ export default function HubDashboard() {
                 e.stopPropagation();
                 setActiveBalloon(null);
               }}
-              className="text-white/40 hover:text-white transition-colors cursor-pointer"
+              className="text-[#1C1C1E]/40 hover:text-[#1C1C1E] transition-colors cursor-pointer"
             >
               <X className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
-        <div className="space-y-2 text-white/80 leading-relaxed font-sans">
-          <p className="text-[12px] font-semibold text-white leading-snug">{balloon.content}</p>
+        <div className="space-y-2 text-[#1C1C1E]/80 leading-relaxed font-sans">
+          <p className="text-[12px] font-semibold text-[#1C1C1E] leading-snug">{balloon.content}</p>
           {balloon.recommendation && (
-            <div className="mt-2.5 pt-2 border-t border-white/5">
+            <div className="mt-2.5 pt-2 border-t border-[#F0F0F2]">
               <span className="font-black text-[9px] uppercase tracking-wider text-amber-400 block mb-0.5">Recomendação</span>
-              <p className="text-[10px] text-white/60 font-medium leading-relaxed">{balloon.recommendation}</p>
+              <p className="text-[10px] text-[#1C1C1E]/60 font-medium leading-relaxed">{balloon.recommendation}</p>
             </div>
           )}
           {balloon.extra && (
-            <p className="text-[9px] font-mono text-white/40 mt-1">{balloon.extra}</p>
+            <p className="text-[9px] font-mono text-[#1C1C1E]/40 mt-1">{balloon.extra}</p>
           )}
         </div>
       </div>
@@ -821,17 +821,17 @@ export default function HubDashboard() {
     <div className="w-full space-y-6 px-6 pb-2" style={{ fontFamily: "'Inter', 'DM Sans', sans-serif" }}>
       
       {/* Header Panel */}
-      <header className="flex flex-col lg:flex-row items-center justify-between gap-4 border-b border-white/[0.06] py-8 mb-8">
+      <header className="flex flex-col lg:flex-row items-center justify-between gap-4 border-b border-[#F0F0F2] py-8 mb-8">
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-3 relative" ref={dropdownRef}>
             <button
               onClick={() => setIsDropdownOpen((prev) => !prev)}
-              className="flex items-center justify-center h-12 w-12 rounded-full border border-white/[0.10] bg-white/[0.05] overflow-hidden hover:border-white/[0.22] transition-all duration-200 cursor-pointer shadow-sm"
+              className="flex items-center justify-center h-12 w-12 rounded-full border border-[#E5E5E7] bg-stone-50 overflow-hidden hover:border-stone-300 transition-all duration-200 cursor-pointer shadow-sm"
             >
               {user?.photoURL ? (
                 <Image src={user.photoURL} alt="Perfil" width={48} height={48} className="object-cover w-full h-full" />
               ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gradient-to-tr from-[#1a1a24] to-[#2c2c3a] text-white font-bold text-lg">
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-tr from-[#1a1a24] to-[#2c2c3a] text-[#1C1C1E] font-bold text-lg">
                   {user?.displayName?.charAt(0).toUpperCase() || 'L'}
                 </div>
               )}
@@ -839,10 +839,10 @@ export default function HubDashboard() {
 
             {/* Dropdown Menu */}
             {isDropdownOpen && (
-              <div className="absolute left-0 top-[calc(100%+8px)] w-56 rounded-2xl border border-white/10 bg-zinc-900/95 backdrop-blur-xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150 z-50">
-                <div className="px-4 py-3 border-b border-white/5">
-                  <p className="text-sm font-bold text-white truncate">{user?.displayName || 'Lucca User'}</p>
-                  <p className="text-xs text-slate-400 truncate mt-0.5">{user?.email || 'user@neuroads.com.br'}</p>
+              <div className="absolute left-0 top-[calc(100%+8px)] w-56 rounded-2xl border border-[#E5E5E7] bg-white/95 backdrop-blur-xl shadow-lg overflow-hidden animate-in fade-in slide-in-from-top-2 duration-150 z-50">
+                <div className="px-4 py-3 border-b border-[#F0F0F2]">
+                  <p className="text-sm font-bold text-[#1C1C1E] truncate">{user?.displayName || 'Lucca User'}</p>
+                  <p className="text-xs text-stone-400 truncate mt-0.5">{user?.email || 'user@neuroads.com.br'}</p>
                 </div>
                 <nav className="py-2">
                   {DROPDOWN_ITEMS.map((item) => (
@@ -850,12 +850,12 @@ export default function HubDashboard() {
                       key={item.href}
                       href={item.href}
                       onClick={() => setIsDropdownOpen(false)}
-                      className="flex items-center px-4 py-2.5 text-[14px] font-medium text-slate-300 hover:text-white hover:bg-white/[0.05] transition-colors duration-150"
+                      className="flex items-center px-4 py-2.5 text-[14px] font-medium text-stone-300 hover:text-[#1C1C1E] hover:bg-[#FAFAFA] transition-colors duration-150"
                     >
                       {item.label}
                     </Link>
                   ))}
-                  <div className="my-1.5 h-px bg-white/[0.06] mx-3" />
+                  <div className="my-1.5 h-px bg-[#F5F5F7] mx-3" />
                   <button
                     onClick={handleLogout}
                     className="w-full text-left flex items-center px-4 py-2.5 text-[14px] font-medium text-rose-400/80 hover:text-rose-400 hover:bg-rose-500/[0.06] transition-colors duration-150 cursor-pointer"
@@ -867,11 +867,11 @@ export default function HubDashboard() {
             )}
           </div>
           <div>
-            <h1 className="text-xl font-black tracking-tight text-white leading-none">
+            <h1 className="text-xl font-black tracking-tight text-[#1C1C1E] leading-none">
               {profile?.companyName || 'Minha Empresa'}
             </h1>
             <div className="flex flex-col mt-1">
-              <p className="text-[12px] font-semibold text-[#7eb8d4]/80 uppercase tracking-widest">
+              <p className="text-[12px] font-semibold text-blue-600/80 uppercase tracking-widest">
                 Indicadores Estratégicos
               </p>
               <p className="text-[11px] font-bold text-emerald-400 mt-0.5">
@@ -889,7 +889,7 @@ export default function HubDashboard() {
               Sincronizando dados reais…
             </div>
           )}
-          <div className="flex items-center gap-2 text-[12px] font-bold text-[#a3b8cc]">
+          <div className="flex items-center gap-2 text-[12px] font-bold text-[#8A8A8E]">
             Status dos Conectores:
             <span className={`h-2.5 w-2.5 rounded-full ${isGa4Connected ? 'bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)]' : 'bg-amber-400 animate-pulse'}`} />
             GA4
@@ -916,9 +916,9 @@ export default function HubDashboard() {
           const IconComponent = card.hasVal ? Info : AlertCircle;
           const isKpiTooltipOpen = activeKpiTooltip === card.label;
           return (
-            <article key={card.label} className="rounded-2xl border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-4 backdrop-blur-xl relative group hover:border-white/[0.18] hover:bg-[#0a0a0a]/90 transition-all duration-200 shadow-[0_8px_32px_rgba(2,8,22,0.55)] hover:[box-shadow:0_8px_32px_rgba(2,8,22,0.55),var(--card-glow)]" style={{ '--card-glow': `0 0 24px ${card.sparkColor}35` } as React.CSSProperties}>
+            <article key={card.label} className="rounded-2xl border border-[#E5E5E7] border-l-gradient-orange border-l-transparent bg-white/65 backdrop-blur-xl relative group hover:border-stone-300 hover:bg-[#FAFAFA] transition-all duration-200 shadow-sm hover:shadow-md" style={{ '--card-glow': `0 0 24px ${card.sparkColor}35` } as React.CSSProperties}>
               <div className="flex justify-between items-start mb-2">
-                <span className="text-[12px] font-black uppercase tracking-wider text-[#7eb8d4]">{card.label}</span>
+                <span className="text-[12px] font-black uppercase tracking-wider text-blue-600">{card.label}</span>
                 <button
                   type="button"
                   aria-label={`Mais informações sobre ${card.label}`}
@@ -932,17 +932,17 @@ export default function HubDashboard() {
                 >
                   <IconComponent className={`h-3.5 w-3.5 cursor-pointer transition-colors ${
                     card.hasVal
-                      ? 'text-white/25 hover:text-white/70'
+                      ? 'text-[#1C1C1E]/25 hover:text-[#1C1C1E]/70'
                       : 'text-amber-500/50 hover:text-amber-400 animate-pulse'
                   }`} />
                 </button>
               </div>
               <div className="flex items-baseline gap-2">
-                <span className={`text-[22px] font-black leading-none ${card.green ? 'text-emerald-400' : 'text-white'}`}>{card.value}</span>
+                <span className={`text-[22px] font-black leading-none ${card.green ? 'text-emerald-400' : 'text-[#1C1C1E]'}`}>{card.value}</span>
                 {card.hasVal && <span className="text-[10px] font-bold text-emerald-400">{card.trend}</span>}
               </div>
               <div className="mt-3 flex justify-between items-center">
-                <span className="text-[10px] font-semibold text-white/25 uppercase tracking-wide">vs período ant.</span>
+                <span className="text-[10px] font-semibold text-[#1C1C1E]/25 uppercase tracking-wide">vs período ant.</span>
                 {card.hasVal ? renderSparkline(card.spark as unknown as number[], card.sparkColor) : <span className="text-[10px] text-red-400 font-semibold">Sem Conexão</span>}
               </div>
 
@@ -960,27 +960,27 @@ export default function HubDashboard() {
         <div className="xl:col-span-3 flex flex-col gap-6">
           
           {/* Channel Performance */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)] transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(2,8,22,0.55),_0_0_24px_rgba(255,106,0,0.28)]">
-            <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
-              <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
+          <section className="rounded-[24px] border border-[#E5E5E7] border-l-gradient-orange border-l-transparent bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),_0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-md">
+            <div className="flex justify-between items-center mb-4 border-b border-[#E5E5E7] pb-2.5">
+              <h2 className="text-[14px] font-black uppercase tracking-wider text-[#8A8A8E]">
                 Desempenho por Canal
               </h2>
-              <select aria-label="Selecionar métrica de desempenho por canal" className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-0.5 text-[11px] text-white/80 cursor-pointer">
+              <select aria-label="Selecionar métrica de desempenho por canal" className="rounded-lg bg-[#F5F5F7] border border-[#E5E5E7] px-2 py-0.5 text-[11px] text-[#1C1C1E]/80 cursor-pointer">
                 <option>ROAS</option>
               </select>
             </div>
 
             <div className="space-y-2.5">
               {channelPerformanceData.map((ch) => (
-                <div key={ch.name} className="flex items-center justify-between py-1.5 border-b border-white/[0.04] last:border-0">
+                <div key={ch.name} className="flex items-center justify-between py-1.5 border-b border-[#F0F0F2] last:border-0">
                   <div className="flex flex-col">
-                    <span className="text-[13px] font-semibold text-white/90">{ch.name}</span>
-                    <span className={`text-[10px] font-bold tracking-tight mt-0.5 ${ch.connected ? 'text-emerald-400/80' : 'text-white/25'}`}>
+                    <span className="text-[13px] font-semibold text-[#1C1C1E]/90">{ch.name}</span>
+                    <span className={`text-[10px] font-bold tracking-tight mt-0.5 ${ch.connected ? 'text-emerald-400/80' : 'text-[#1C1C1E]/25'}`}>
                       {ch.connected ? '● conectado' : '○ n/a'}
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className={`text-[13px] font-black ${ch.connected ? 'text-emerald-400' : 'text-white/20'}`}>
+                    <span className={`text-[13px] font-black ${ch.connected ? 'text-emerald-400' : 'text-[#1C1C1E]/20'}`}>
                       {ch.connected ? formatROAS(ch.roas) : 'N/A'}
                     </span>
                     <div className="w-[50px] flex justify-end">
@@ -1001,8 +1001,8 @@ export default function HubDashboard() {
           </section>
 
           {/* Audience Insights */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)] transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(2,8,22,0.55),_0_0_24px_rgba(255,106,0,0.28)]">
-            <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5">
+          <section className="rounded-[24px] border border-[#E5E5E7] border-l-gradient-orange border-l-transparent bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),_0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-md">
+            <h2 className="text-[14px] font-black uppercase tracking-wider text-[#8A8A8E] mb-4 border-b border-[#E5E5E7] pb-2.5">
               Insights de Audiência
             </h2>
 
@@ -1010,7 +1010,7 @@ export default function HubDashboard() {
               <div className="space-y-6">
                 {/* Segments */}
                 <div>
-                  <h3 className="text-[11px] font-black text-white/40 uppercase tracking-widest mb-3 flex items-center gap-2">
+                  <h3 className="text-[11px] font-black text-[#1C1C1E]/40 uppercase tracking-widest mb-3 flex items-center gap-2">
                     Segmentos de Audiência
                     <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 tracking-wide normal-case">Estimativa</span>
                   </h3>
@@ -1020,14 +1020,14 @@ export default function HubDashboard() {
                       { label: 'Lookalike 1%', val: '24.3%', color: 'bg-emerald-500' },
                       { label: 'Cart Abandoners', val: '18.7%', color: 'bg-emerald-600' },
                       { label: 'Blog Readers', val: '12.7%', color: 'bg-amber-500' },
-                      { label: 'Outros', val: '9.3%', color: 'bg-slate-600' }
+                      { label: 'Outros', val: '9.3%', color: 'bg-stone-600' }
                     ].map((seg) => (
                       <div key={seg.label}>
                         <div className="flex justify-between text-[12px] mb-1">
-                          <span className="text-white/75 font-medium">{seg.label}</span>
-                          <span className="font-bold text-white">{seg.val}</span>
+                          <span className="text-[#1C1C1E]/75 font-medium">{seg.label}</span>
+                          <span className="font-bold text-[#1C1C1E]">{seg.val}</span>
                         </div>
-                        <div className="w-full bg-white/[0.06] h-1.5 rounded-full overflow-hidden">
+                        <div className="w-full bg-[#F5F5F7] h-1.5 rounded-full overflow-hidden">
                           <div className={`${seg.color} h-full rounded-full shadow-[0_0_6px_rgba(52,211,153,0.4)]`} style={{ width: seg.val }} />
                         </div>
                       </div>
@@ -1037,7 +1037,7 @@ export default function HubDashboard() {
 
                 {/* Demographics Age Chart */}
                 <div className="pt-2">
-                  <h3 className="text-[11px] font-black text-white/40 uppercase tracking-widest mb-3">Faixa Etária</h3>
+                  <h3 className="text-[11px] font-black text-[#1C1C1E]/40 uppercase tracking-widest mb-3">Faixa Etária</h3>
                   <div className="space-y-2">
                     {[
                       { age: '18-24', pct: 14.2 },
@@ -1047,10 +1047,10 @@ export default function HubDashboard() {
                       { age: '55+', pct: 7.2 }
                     ].map((demo) => (
                       <div key={demo.age} className="flex items-center gap-2 text-[12px]">
-                        <span className="w-10 text-white/60 font-semibold">{demo.age}</span>
-                        <div className="flex-grow bg-white/[0.06] h-3 rounded-sm overflow-hidden relative">
+                        <span className="w-10 text-[#1C1C1E]/60 font-semibold">{demo.age}</span>
+                        <div className="flex-grow bg-[#F5F5F7] h-3 rounded-sm overflow-hidden relative">
                           <div className="bg-emerald-500 h-full rounded-sm shadow-[0_0_4px_rgba(34,197,94,0.4)]" style={{ width: `${demo.pct}%` }} />
-                          <span className="absolute right-1.5 top-0 text-[9px] font-bold text-white/90 leading-3">{demo.pct}%</span>
+                          <span className="absolute right-1.5 top-0 text-[9px] font-bold text-[#1C1C1E]/90 leading-3">{demo.pct}%</span>
                         </div>
                       </div>
                     ))}
@@ -1058,10 +1058,10 @@ export default function HubDashboard() {
                 </div>
 
                 {/* Gender Donut */}
-                <div className="flex items-center justify-between border-t border-white/[0.08] pt-4">
+                <div className="flex items-center justify-between border-t border-[#E5E5E7] pt-4">
                   <div>
-                    <h3 className="text-[11px] font-black text-white/40 uppercase tracking-widest mb-1">Gênero</h3>
-                    <p className="text-[12px] text-white/70 font-medium">Público Predominante</p>
+                    <h3 className="text-[11px] font-black text-[#1C1C1E]/40 uppercase tracking-widest mb-1">Gênero</h3>
+                    <p className="text-[12px] text-[#1C1C1E]/70 font-medium">Público Predominante</p>
                   </div>
                   <div className="relative h-14 w-14 flex items-center justify-center rounded-full border-[3px] border-emerald-500/20">
                     <div className="absolute inset-0 rounded-full border-[3px] border-emerald-400 border-t-transparent border-r-transparent rotate-[45deg] shadow-[0_0_8px_rgba(34,197,94,0.3)]" />
@@ -1070,10 +1070,10 @@ export default function HubDashboard() {
                 </div>
               </div>
             ) : (
-              <div className="py-8 text-center border border-white/[0.08] bg-white/[0.02] rounded-xl">
+              <div className="py-8 text-center border border-[#E5E5E7] bg-[#F5F5F7] rounded-xl">
                 <Info className="h-6 w-6 text-amber-400/70 mx-auto mb-2" />
-                <span className="text-[13px] text-white/50 block font-semibold">Métricas de Audiência Indisponíveis</span>
-                <span className="text-[11px] text-white/30 mt-1.5 block">Conecte o GA4 para carregar dados demográficos</span>
+                <span className="text-[13px] text-[#1C1C1E]/50 block font-semibold">Métricas de Audiência Indisponíveis</span>
+                <span className="text-[11px] text-[#1C1C1E]/30 mt-1.5 block">Conecte o GA4 para carregar dados demográficos</span>
               </div>
             )}
           </section>
@@ -1097,12 +1097,12 @@ export default function HubDashboard() {
 
 
           {/* Top Campaigns */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)] transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(2,8,22,0.55),_0_0_24px_rgba(255,106,0,0.28)]">
-            <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
-              <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
+          <section className="rounded-[24px] border border-[#E5E5E7] border-l-gradient-orange border-l-transparent bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),_0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-md">
+            <div className="flex justify-between items-center mb-4 border-b border-[#E5E5E7] pb-2.5">
+              <h3 className="text-[14px] font-black uppercase tracking-wider text-[#8A8A8E]">
                 Melhores Campanhas
               </h3>
-              <select className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
+              <select className="rounded-lg bg-[#F5F5F7] border border-[#E5E5E7] px-2 py-1 text-[11px] text-[#1C1C1E] cursor-pointer">
                 <option>ROAS</option>
               </select>
             </div>
@@ -1110,14 +1110,14 @@ export default function HubDashboard() {
             <div className="space-y-2">
               {isGoogleAdsConnected || isMetaAdsConnected || isLinkedinAdsConnected ? (
                 topCampaignsData.map((camp) => (
-                  <div key={camp.name} className="flex justify-between items-center py-2 border-b border-white/[0.04] last:border-0">
+                  <div key={camp.name} className="flex justify-between items-center py-2 border-b border-[#F0F0F2] last:border-0">
                     <div className="flex items-center gap-3">
                       <div className="h-8 w-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-[11px] font-black text-emerald-400">
                         {camp.name.slice(0, 2).toUpperCase()}
                       </div>
                       <div className="flex flex-col">
-                        <span className="text-[13px] font-bold text-white leading-tight">{camp.name}</span>
-                        <span className="text-[11px] text-white/40 font-medium mt-0.5">{camp.spend} investido</span>
+                        <span className="text-[13px] font-bold text-[#1C1C1E] leading-tight">{camp.name}</span>
+                        <span className="text-[11px] text-[#1C1C1E]/40 font-medium mt-0.5">{camp.spend} investido</span>
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-right">
@@ -1127,10 +1127,10 @@ export default function HubDashboard() {
                   </div>
                 ))
               ) : (
-                <div className="py-8 text-center border border-white/[0.08] bg-white/[0.02] rounded-xl">
+                <div className="py-8 text-center border border-[#E5E5E7] bg-[#F5F5F7] rounded-xl">
                   <Info className="h-6 w-6 text-amber-400/70 mx-auto mb-2" />
-                  <span className="text-[13px] text-white/50 block font-semibold">Nenhuma Campanha Ativa Encontrada</span>
-                  <span className="text-[11px] text-white/30 mt-1.5 block">Conecte contas de anúncios para puxar campanhas</span>
+                  <span className="text-[13px] text-[#1C1C1E]/50 block font-semibold">Nenhuma Campanha Ativa Encontrada</span>
+                  <span className="text-[11px] text-[#1C1C1E]/30 mt-1.5 block">Conecte contas de anúncios para puxar campanhas</span>
                 </div>
               )}
             </div>
@@ -1146,8 +1146,8 @@ export default function HubDashboard() {
         <div className="xl:col-span-3 flex flex-col gap-6">
 
           {/* Notificações — exibe até 4 alertas em formato de lista sem scroll */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)] transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(2,8,22,0.55),_0_0_24px_rgba(255,106,0,0.28)]">
-            <h2 className="text-[13px] font-black text-[#a3b8cc] uppercase tracking-wider mb-4 flex items-center gap-2 border-b border-white/[0.08] pb-2.5">
+          <section className="rounded-[24px] border border-[#E5E5E7] border-l-gradient-orange border-l-transparent bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),_0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-md">
+            <h2 className="text-[13px] font-black text-[#8A8A8E] uppercase tracking-wider mb-4 flex items-center gap-2 border-b border-[#E5E5E7] pb-2.5">
               <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
               Notificações
             </h2>
@@ -1165,7 +1165,7 @@ export default function HubDashboard() {
                     content: 'O Google Analytics 4 não está conectado. Isso impede o carregamento de métricas essenciais como faturamento (receita total), conversões de e-commerce e segmentações de audiência no painel principal.',
                     recommendation: 'Vá para a página de Conectores para configurar a conta do GA4.'
                   })}
-                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                  className="border-b border-[#F0F0F2] pb-3 last:border-0 relative cursor-pointer hover:bg-[#F5F5F7] p-1.5 rounded-lg transition-colors group"
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-[11px] font-black uppercase tracking-wide text-amber-400">
@@ -1173,8 +1173,8 @@ export default function HubDashboard() {
                     </span>
                     <span className="text-[10px] text-amber-400/80 font-bold group-hover:underline">Atenção</span>
                   </div>
-                  <p className="text-[13px] font-bold text-white leading-snug">GA4 desativado</p>
-                  <p className="text-[11px] text-white/50 mt-0.5">
+                  <p className="text-[13px] font-bold text-[#1C1C1E] leading-snug">GA4 desativado</p>
+                  <p className="text-[11px] text-[#1C1C1E]/50 mt-0.5">
                     Métricas de faturamento e audiência indisponíveis.{' '}
                     <span className="underline font-bold text-[#FF6A00]">Conectar</span>
                   </p>
@@ -1194,7 +1194,7 @@ export default function HubDashboard() {
                     content: 'A conta do Google Ads está desconectada. Dados de investimento de mídia paga (Custo), cliques em anúncios e campanhas ativas do Google não serão consolidados nos KPIs.',
                     recommendation: 'Ative a integração de Google Ads na tela de conexões.'
                   })}
-                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                  className="border-b border-[#F0F0F2] pb-3 last:border-0 relative cursor-pointer hover:bg-[#F5F5F7] p-1.5 rounded-lg transition-colors group"
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-[11px] font-black uppercase tracking-wide text-amber-400">
@@ -1202,8 +1202,8 @@ export default function HubDashboard() {
                     </span>
                     <span className="text-[10px] text-amber-400/80 font-bold group-hover:underline">Atenção</span>
                   </div>
-                  <p className="text-[13px] font-bold text-white leading-snug">Google Ads desativado</p>
-                  <p className="text-[11px] text-white/50 mt-0.5">
+                  <p className="text-[13px] font-bold text-[#1C1C1E] leading-snug">Google Ads desativado</p>
+                  <p className="text-[11px] text-[#1C1C1E]/50 mt-0.5">
                     Custo de mídia e cliques não consolidados.{' '}
                     <span className="underline font-bold text-[#FF6A00]">Ativar</span>
                   </p>
@@ -1223,7 +1223,7 @@ export default function HubDashboard() {
                     content: 'A conexão com o Meta Ads (Facebook/Instagram) está inativa. O faturamento, investimento de mídia real, impressões e taxas de conversões do ecossistema Meta não constam nos dados.',
                     recommendation: 'Ative a integração do Meta Ads para consolidar esses dados.'
                   })}
-                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                  className="border-b border-[#F0F0F2] pb-3 last:border-0 relative cursor-pointer hover:bg-[#F5F5F7] p-1.5 rounded-lg transition-colors group"
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-[11px] font-black uppercase tracking-wide text-amber-400">
@@ -1231,8 +1231,8 @@ export default function HubDashboard() {
                     </span>
                     <span className="text-[10px] text-amber-400/80 font-bold group-hover:underline">Atenção</span>
                   </div>
-                  <p className="text-[13px] font-bold text-white leading-snug">Meta Ads desativado</p>
-                  <p className="text-[11px] text-white/50 mt-0.5">
+                  <p className="text-[13px] font-bold text-[#1C1C1E] leading-snug">Meta Ads desativado</p>
+                  <p className="text-[11px] text-[#1C1C1E]/50 mt-0.5">
                     Investimento e conversões do ecossistema Meta ausentes.{' '}
                     <span className="underline font-bold text-[#FF6A00]">Ativar</span>
                   </p>
@@ -1252,7 +1252,7 @@ export default function HubDashboard() {
                     content: 'A conta de anúncios do TikTok Ads não está vinculada. Métricas de investimento e conversão de vídeos patrocinados não serão exibidas em tempo real.',
                     recommendation: 'Vincule o TikTok Ads na página de conectores.'
                   })}
-                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                  className="border-b border-[#F0F0F2] pb-3 last:border-0 relative cursor-pointer hover:bg-[#F5F5F7] p-1.5 rounded-lg transition-colors group"
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-[11px] font-black uppercase tracking-wide text-amber-400">
@@ -1260,8 +1260,8 @@ export default function HubDashboard() {
                     </span>
                     <span className="text-[10px] text-amber-400/80 font-bold group-hover:underline">Atenção</span>
                   </div>
-                  <p className="text-[13px] font-bold text-white leading-snug">TikTok Ads desativado</p>
-                  <p className="text-[11px] text-white/50 mt-0.5">
+                  <p className="text-[13px] font-bold text-[#1C1C1E] leading-snug">TikTok Ads desativado</p>
+                  <p className="text-[11px] text-[#1C1C1E]/50 mt-0.5">
                     Métricas de investimento não ativas.{' '}
                     <span className="underline font-bold text-[#FF6A00]">Vincular</span>
                   </p>
@@ -1280,7 +1280,7 @@ export default function HubDashboard() {
                   content: 'Essas plataformas não possuem sincronização automática por meio da API de tempo real configurada. Seus indicadores exibirão permanentemente "N/A" até a liberação de novos conectores.',
                   recommendation: 'Nenhuma ação é necessária no momento.'
                 })}
-                className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                className="border-b border-[#F0F0F2] pb-3 last:border-0 relative cursor-pointer hover:bg-[#F5F5F7] p-1.5 rounded-lg transition-colors group"
               >
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-[11px] font-black uppercase tracking-wide text-[#8fa0b5]">
@@ -1288,7 +1288,7 @@ export default function HubDashboard() {
                   </span>
                   <span className="text-[10px] text-[#8fa0b5]/50 font-bold group-hover:underline">Info</span>
                 </div>
-                <p className="text-[13px] font-bold text-white leading-snug">Sem suporte de sync automático</p>
+                <p className="text-[13px] font-bold text-[#1C1C1E] leading-snug">Sem suporte de sync automático</p>
                 <p className="text-[11px] text-[#8fa0b5]/70 mt-0.5">indicadores exibem N/A permanentemente.</p>
                 {activeBalloon?.type === 'notification' && activeBalloon.key === 'twitsnap' && renderBalloon(activeBalloon)}
               </article>
@@ -1305,7 +1305,7 @@ export default function HubDashboard() {
                     content: 'Operação central totalmente integrada! GA4, Google Ads e Meta Ads estão conectados e sincronizando dados reais sem problemas no ecossistema.',
                     recommendation: 'Tudo funcionando perfeitamente. Continue acompanhando o funil em tempo real.'
                   })}
-                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                  className="border-b border-[#F0F0F2] pb-3 last:border-0 relative cursor-pointer hover:bg-[#F5F5F7] p-1.5 rounded-lg transition-colors group"
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-[11px] font-black uppercase tracking-wide text-emerald-400">
@@ -1313,8 +1313,8 @@ export default function HubDashboard() {
                     </span>
                     <span className="text-[10px] text-emerald-400/80 font-bold group-hover:underline">Ativo</span>
                   </div>
-                  <p className="text-[13px] font-bold text-white leading-snug">Operação central integrada!</p>
-                  <p className="text-[11px] text-white/50 mt-0.5">GA4, Google Ads e Meta Ads carregando em tempo real.</p>
+                  <p className="text-[13px] font-bold text-[#1C1C1E] leading-snug">Operação central integrada!</p>
+                  <p className="text-[11px] text-[#1C1C1E]/50 mt-0.5">GA4, Google Ads e Meta Ads carregando em tempo real.</p>
                   {activeBalloon?.type === 'notification' && activeBalloon.key === 'success' && renderBalloon(activeBalloon)}
                 </article>
               )}
@@ -1322,8 +1322,8 @@ export default function HubDashboard() {
           </section>
 
           {/* Feed de Atividade ao Vivo — exibe exatamente 7 itens sem scroll */}
-          <section className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)] transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(2,8,22,0.55),_0_0_24px_rgba(255,106,0,0.28)]">
-            <h2 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc] mb-4 border-b border-white/[0.08] pb-2.5 flex items-center justify-between">
+          <section className="rounded-[24px] border border-[#E5E5E7] border-l-gradient-orange border-l-transparent bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),_0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-md">
+            <h2 className="text-[14px] font-black uppercase tracking-wider text-[#8A8A8E] mb-4 border-b border-[#E5E5E7] pb-2.5 flex items-center justify-between">
               Feed de Atividade ao Vivo
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
             </h2>
@@ -1342,33 +1342,33 @@ export default function HubDashboard() {
                     recommendation: act.recommendation,
                     extra: `Ocorrência: ${act.time} | Valor: ${act.value}`
                   })}
-                  className="border-b border-white/[0.06] pb-3 last:border-0 relative cursor-pointer hover:bg-white/[0.02] p-1.5 rounded-lg transition-colors group"
+                  className="border-b border-[#F0F0F2] pb-3 last:border-0 relative cursor-pointer hover:bg-[#F5F5F7] p-1.5 rounded-lg transition-colors group"
                 >
                   <div className="flex justify-between items-center mb-1">
                     <span className="text-[11px] font-black uppercase tracking-wide" style={{ color: act.color }}>
                       {act.platform}
                     </span>
-                    <span className="text-[10px] text-white/30 font-medium group-hover:underline">{act.time}</span>
+                    <span className="text-[10px] text-[#1C1C1E]/30 font-medium group-hover:underline">{act.time}</span>
                   </div>
-                  <p className="text-[13px] font-bold text-white leading-snug">{act.detail}</p>
-                  <p className="text-[11px] text-white/50 mt-0.5 font-mono">{act.value}</p>
+                  <p className="text-[13px] font-bold text-[#1C1C1E] leading-snug">{act.detail}</p>
+                  <p className="text-[11px] text-[#1C1C1E]/50 mt-0.5 font-mono">{act.value}</p>
                   {activeBalloon?.type === 'activity' && activeBalloon.key === idx && renderBalloon(activeBalloon)}
                 </article>
               ))}
             </div>
 
-            <Link href="/hub/integracoes" className="mt-4 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors border-t border-white/[0.08] pt-3">
+            <Link href="/hub/integracoes" className="mt-4 block text-center text-[12px] font-bold text-[#FF6A00] hover:text-[#ff8c38] transition-colors border-t border-[#E5E5E7] pt-3">
               Ver toda a atividade →
             </Link>
           </section>
 
           {/* Performance em Tempo Real */}
-          <article className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)] transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(2,8,22,0.55),_0_0_24px_rgba(255,106,0,0.28)]">
-            <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
-              <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
+          <article className="rounded-[24px] border border-[#E5E5E7] border-l-gradient-orange border-l-transparent bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),_0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-md">
+            <div className="flex justify-between items-center mb-4 border-b border-[#E5E5E7] pb-2.5">
+              <h3 className="text-[14px] font-black uppercase tracking-wider text-[#8A8A8E]">
                 Performance em Tempo Real
               </h3>
-              <select className="rounded-lg bg-white/[0.06] border border-white/[0.10] px-2 py-1 text-[11px] text-white cursor-pointer">
+              <select className="rounded-lg bg-[#F5F5F7] border border-[#E5E5E7] px-2 py-1 text-[11px] text-[#1C1C1E] cursor-pointer">
                 <option>Últimos 30 min</option>
               </select>
             </div>
@@ -1376,9 +1376,9 @@ export default function HubDashboard() {
             <div className="space-y-3">
               {realTimePerformanceData.map((row) => (
                 <div key={row.label} className="flex justify-between items-center">
-                  <span className="text-[12px] font-semibold text-white/75">{row.label}</span>
+                  <span className="text-[12px] font-semibold text-[#1C1C1E]/75">{row.label}</span>
                   <div className="flex items-center gap-3">
-                    <span className="text-[13px] font-black text-white">{row.value}</span>
+                    <span className="text-[13px] font-black text-[#1C1C1E]">{row.value}</span>
                     <div className="w-[50px] flex justify-end">
                       {stats.spend !== 'N/A' ? (
                         renderSparkline(row.spark, '#22c55e', 50, 16)
@@ -1393,13 +1393,13 @@ export default function HubDashboard() {
           </article>
 
           {/* Alocação de Orçamento */}
-          <article className="rounded-[24px] border border-white/[0.10] border-l-gradient-orange border-l-transparent bg-[#0a0a0a]/82 p-5 backdrop-blur-xl shadow-[0_12px_40px_rgba(2,8,22,0.55)] transition-shadow duration-300 hover:shadow-[0_12px_40px_rgba(2,8,22,0.55),_0_0_24px_rgba(255,106,0,0.28)]">
-            <div className="flex justify-between items-center mb-4 border-b border-white/[0.08] pb-2.5">
-              <h3 className="text-[14px] font-black uppercase tracking-wider text-[#a3b8cc]">
+          <article className="rounded-[24px] border border-[#E5E5E7] border-l-gradient-orange border-l-transparent bg-white p-5 shadow-[0_1px_3px_rgba(0,0,0,0.06),_0_1px_2px_rgba(0,0,0,0.04)] transition-shadow duration-300 hover:shadow-md">
+            <div className="flex justify-between items-center mb-4 border-b border-[#E5E5E7] pb-2.5">
+              <h3 className="text-[14px] font-black uppercase tracking-wider text-[#8A8A8E]">
                 Alocação de Orçamento
               </h3>
               <span title="Distribuição do investimento real por canal de mídia ativo">
-                <Info className="h-3.5 w-3.5 text-white/30 hover:text-white/70 cursor-pointer transition-colors" />
+                <Info className="h-3.5 w-3.5 text-[#1C1C1E]/30 hover:text-[#1C1C1E]/70 cursor-pointer transition-colors" />
               </span>
             </div>
 
@@ -1409,14 +1409,14 @@ export default function HubDashboard() {
                   <div className="flex justify-between items-center mb-1">
                     <div className="flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full flex-shrink-0" style={{ backgroundColor: item.color, boxShadow: `0 0 5px ${item.color}80` }} />
-                      <span className="text-[12px] text-white/80 font-medium">{item.label}</span>
+                      <span className="text-[12px] text-[#1C1C1E]/80 font-medium">{item.label}</span>
                     </div>
-                    <span className="text-[12px] font-black text-white">
+                    <span className="text-[12px] font-black text-[#1C1C1E]">
                       {stats.spend !== 'N/A' ? `${item.pct.toFixed(1)}%` : 'N/A'}
                     </span>
                   </div>
                   {stats.spend !== 'N/A' && (
-                    <div className="h-1.5 w-full bg-white/[0.06] rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-[#F5F5F7] rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-500"
                         style={{ width: `${item.pct}%`, backgroundColor: item.color }}

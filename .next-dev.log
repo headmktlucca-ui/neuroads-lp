@@ -6,40 +6,108 @@
 - Local:         http://localhost:3000
 - Network:       http://192.168.255.104:3000
 - Environments: .env.local, .env
-✓ Ready in 868ms
+✓ Ready in 2.3s
 Successfully copied new Flávio Almeida avatar from brain attachment to flavio-almeida.png!
 - Experiments (use with caution):
   · serverActions
 
- GET / 200 in 2.4s (next.js: 1613ms, application-code: 760ms)
- GET / 200 in 82ms (next.js: 5ms, application-code: 77ms)
- GET / 200 in 387ms (next.js: 11ms, application-code: 376ms)
- GET /hub 200 in 134ms (next.js: 93ms, application-code: 41ms)
- POST /api/hub/metrics/ga4 404 in 1247ms (next.js: 14ms, application-code: 1234ms)
- POST /api/hub/metrics/ga4 404 in 1405ms (next.js: 127ms, application-code: 1279ms)
- POST /api/traffic/extract 500 in 81ms (next.js: 64ms, application-code: 17ms)
- POST /api/traffic/extract 500 in 18ms (next.js: 4ms, application-code: 13ms)
-✓ Compiled in 2.1s
- GET / 200 in 1264ms (next.js: 562ms, application-code: 703ms)
- GET /hub 200 in 50ms (next.js: 14ms, application-code: 36ms)
- POST /api/hub/metrics/ga4 404 in 1079ms (next.js: 3ms, application-code: 1076ms)
- POST /api/hub/metrics/ga4 404 in 1104ms (next.js: 5ms, application-code: 1098ms)
- POST /api/traffic/extract 500 in 23ms (next.js: 6ms, application-code: 18ms)
- POST /api/traffic/extract 500 in 16ms (next.js: 3ms, application-code: 12ms)
- GET /hub 200 in 136ms (next.js: 6ms, application-code: 130ms)
- POST /api/hub/metrics/ga4 404 in 772ms (next.js: 6ms, application-code: 766ms)
- POST /api/hub/metrics/ga4 404 in 769ms (next.js: 4ms, application-code: 765ms)
- POST /api/traffic/extract 500 in 19ms (next.js: 9ms, application-code: 10ms)
- POST /api/traffic/extract 500 in 14ms (next.js: 5ms, application-code: 9ms)
-✓ Compiled in 3s
- GET /hub/explorar 200 in 492ms (next.js: 398ms, application-code: 95ms)
-✓ Compiled in 3.2s
- GET /hub 200 in 247ms (next.js: 200ms, application-code: 47ms)
- POST /api/hub/metrics/ga4 404 in 1087ms (next.js: 7ms, application-code: 1080ms)
- POST /api/hub/metrics/ga4 404 in 1092ms (next.js: 21ms, application-code: 1071ms)
- POST /api/traffic/extract 500 in 17ms (next.js: 6ms, application-code: 12ms)
- POST /api/traffic/extract 500 in 35ms (next.js: 21ms, application-code: 14ms)
- GET /hub/explorar 200 in 732ms (next.js: 531ms, application-code: 200ms)
- GET /login 200 in 376ms (next.js: 191ms, application-code: 185ms)
- GET /login?next=%2Fhub%2Fexplorar 200 in 377ms (next.js: 279ms, application-code: 99ms)
- GET / 200 in 54ms (next.js: 25ms, application-code: 30ms)
+○ Compiling / ...
+ GET / 200 in 8.8s (next.js: 6.8s, application-code: 2.1s)
+ GET / 200 in 387ms (next.js: 21ms, application-code: 366ms)
+ GET / 200 in 1106ms (next.js: 33ms, application-code: 1073ms)
+ GET / 200 in 389ms (next.js: 21ms, application-code: 368ms)
+ GET /hub 200 in 134ms (next.js: 99ms, application-code: 35ms)
+ POST /api/hub/metrics/ga4 404 in 1344ms (next.js: 208ms, application-code: 1136ms)
+ POST /api/hub/metrics/ga4 404 in 1376ms (next.js: 176ms, application-code: 1200ms)
+ POST /api/traffic/extract 500 in 105ms (next.js: 82ms, application-code: 23ms)
+ POST /api/traffic/extract 500 in 24ms (next.js: 5ms, application-code: 19ms)
+ GET /hub/explorar 200 in 138ms (next.js: 84ms, application-code: 53ms)
+ GET /hub/configuracoes 200 in 103ms (next.js: 59ms, application-code: 44ms)
+ GET /hub/integracoes 200 in 64ms (next.js: 42ms, application-code: 22ms)
+ GET /hub/estudio 200 in 93ms (next.js: 59ms, application-code: 34ms)
+ GET /hub/agentes-ativos 200 in 44ms (next.js: 28ms, application-code: 16ms)
+ GET /hub/integracoes 200 in 49ms (next.js: 9ms, application-code: 40ms)
+✓ Compiled in 7.2s
+✓ Compiled in 3.5s
+ GET /hub/integracoes 200 in 364ms (next.js: 199ms, application-code: 164ms)
+ GET /hub/integracoes 200 in 59ms (next.js: 6ms, application-code: 54ms)
+ GET /api/auth/connectors/ga4/start?next=/hub/integracoes 307 in 850ms (next.js: 833ms, application-code: 16ms)
+ GET /api/auth/connectors/ga4/callback?state=eyJjb25uZWN0b3IiOiJnYTQiLCJwcm92aWRlciI6Imdvb2dsZSIsIm5leHQiOiIvaHViL2ludGVncmFjb2VzIiwibm9uY2UiOiI1MjViOTAwNS1hZjQ3LTRjY2ItYTVhYy1hNTgwOGZhYzk5NGEiLCJpc3N1ZWRBdCI6MTc4MjY4MjM4ODAwNH0&iss=https://accounts.google.com&code=4/0AdkVLPxu_MUrV62SQ15uLA6Dq5BlsPkQNcNoT7u3MWlH5cJvDMANRibRxRPZb8gJLUTxGw&scope=email%20profile%20https://www.googleapis.com/auth/webmasters.readonly%20https://www.googleapis.com/auth/bigquery%20https://www.googleapis.com/auth/analytics.readonly%20https://www.googleapis.com/auth/adwords%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email%20openid&authuser=0&prompt=consent 307 in 875ms (next.js: 376ms, application-code: 499ms)
+ GET /hub/integracoes?connector=ga4&connector_auth_success=1&connector_provider=google&connector_access_token=ya29.a0AT3oNZ_42pdSHjQVGbUh7m_-Juwl6ERn-VuOAo0b96NFL_B3kDy0rIvnmihDekso23WMdYMtrPndGnwt8MNYnMxqNJoRXkzYx7TSo_tsLAGIPNoyawqM61FoEx_WIMnqUHfHby6pNuyx1e3gXQVWqTWWmgxg-0BhQYQ-kJQZsHTI6GgSVNS_2Zt2uD3_DB1ayheTTEgaCgYKARQSARASFQHGX2MiKn-4b-giaOBcOEdlvZEONw0206&connector_refresh_token=1%2F%2F0h3uz3SDuwt2zCgYIARAAGBESNwF-L9IryPFz_bASZ-6eZs7Ny4ddUwCX8Y_S_rIc3EIfEUmYADbCaZa4QEIrGQ-IhMODHCqfodg&connector_expires_in=3599 200 in 264ms (next.js: 3ms, application-code: 262ms)
+ GET /hub/integracoes 200 in 23ms (next.js: 5ms, application-code: 17ms)
+ GET /hub/integracoes 200 in 21ms (next.js: 5ms, application-code: 16ms)
+ GET /hub/integracoes 200 in 72ms (next.js: 14ms, application-code: 59ms)
+ GET /hub/integracoes 200 in 33ms (next.js: 6ms, application-code: 26ms)
+[GA4 Accounts API] Response payload: {
+  "accounts": [
+    {
+      "name": "accounts/379286557",
+      "createTime": "2026-01-05T00:35:52.301Z",
+      "updateTime": "2026-06-09T04:46:45.293Z",
+      "displayName": "NeuroAds 2026",
+      "regionCode": "BR"
+    }
+  ]
+}
+ POST /api/auth/connectors/ga4/accounts 200 in 1515ms (next.js: 277ms, application-code: 1239ms)
+[GA4 Accounts API] Response payload: {
+  "accounts": [
+    {
+      "name": "accounts/379286557",
+      "createTime": "2026-01-05T00:35:52.301Z",
+      "updateTime": "2026-06-09T04:46:45.293Z",
+      "displayName": "NeuroAds 2026",
+      "regionCode": "BR"
+    }
+  ]
+}
+ POST /api/auth/connectors/ga4/accounts 200 in 2.4s (next.js: 295ms, application-code: 2.1s)
+ GET /hub 200 in 48ms (next.js: 26ms, application-code: 22ms)
+ POST /api/hub/metrics/ga4 404 in 910ms (next.js: 41ms, application-code: 869ms)
+ POST /api/traffic/extract 500 in 57ms (next.js: 43ms, application-code: 15ms)
+ POST /api/hub/metrics/ga4 404 in 922ms (next.js: 4ms, application-code: 918ms)
+ POST /api/traffic/extract 500 in 13ms (next.js: 2ms, application-code: 11ms)
+ GET /hub/explorar 200 in 87ms (next.js: 39ms, application-code: 49ms)
+ GET /hub/integracoes 200 in 49ms (next.js: 7ms, application-code: 41ms)
+ GET /api/auth/connectors/ga4/start?next=/hub/integracoes 307 in 12ms (next.js: 4ms, application-code: 7ms)
+ GET /api/auth/connectors/ga4/callback?state=eyJjb25uZWN0b3IiOiJnYTQiLCJwcm92aWRlciI6Imdvb2dsZSIsIm5leHQiOiIvaHViL2ludGVncmFjb2VzIiwibm9uY2UiOiJlMjUxNzFkNy00NWZlLTRlZGUtYTA5Yi1mYmFhNzNjNzFiMGYiLCJpc3N1ZWRBdCI6MTc4MjY4MjQ0Njg4N30&iss=https://accounts.google.com&code=4/0AdkVLPwFCCBrwdzP54LF2OWE0eE82vk5RqHvTc8vlgnbhInQHapUZAH_XrW8lalA2H5mJw&scope=email%20profile%20https://www.googleapis.com/auth/webmasters.readonly%20https://www.googleapis.com/auth/bigquery%20https://www.googleapis.com/auth/analytics.readonly%20https://www.googleapis.com/auth/adwords%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/userinfo.email%20openid&authuser=0&prompt=consent 307 in 416ms (next.js: 4ms, application-code: 412ms)
+ GET /hub/integracoes?connector=ga4&connector_auth_success=1&connector_provider=google&connector_access_token=ya29.a0AT3oNZ-LzCSMfxJEUyJebK0Mh16bSAx2DViAeyPCYhkLTiVMhtHQCxaDM_l5jTwC611yC0dT6TKFcOeqDnKMBuqEjE2VG3gl7kNSUlHLnhyJM-FGpSj-LUmKgBKnZuvxtVftyePxnjrGct04CyZPFRV9UB3mdR3Hsc06lOOhhAshDmHcV1tLZd421mk32UWdPukF2aYaCgYKAYISARASFQHGX2MizdH2z9SBmYQghwRMPDaKSQ0206&connector_refresh_token=1%2F%2F0hOey3GxQugI8CgYIARAAGBESNwF-L9IrkvXvOF97Kz2mGyi5uxygLes__5j9mhGh0K4FZtjHfZCpY6t5NzQEIW_44-cpUkcyNHY&connector_expires_in=3599 200 in 41ms (next.js: 2ms, application-code: 38ms)
+ GET /hub/integracoes 200 in 53ms (next.js: 22ms, application-code: 32ms)
+ GET /hub/integracoes 200 in 65ms (next.js: 10ms, application-code: 56ms)
+ GET /hub/integracoes 200 in 145ms (next.js: 11ms, application-code: 134ms)
+ GET /hub/integracoes 200 in 95ms (next.js: 14ms, application-code: 81ms)
+[GA4 Accounts API] Response payload: {
+  "accounts": [
+    {
+      "name": "accounts/379286557",
+      "createTime": "2026-01-05T00:35:52.301Z",
+      "updateTime": "2026-06-09T04:46:45.293Z",
+      "displayName": "NeuroAds 2026",
+      "regionCode": "BR"
+    }
+  ]
+}
+ POST /api/auth/connectors/ga4/accounts 200 in 1071ms (next.js: 9ms, application-code: 1062ms)
+[GA4 Accounts API] Response payload: {
+  "accounts": [
+    {
+      "name": "accounts/379286557",
+      "createTime": "2026-01-05T00:35:52.301Z",
+      "updateTime": "2026-06-09T04:46:45.293Z",
+      "displayName": "NeuroAds 2026",
+      "regionCode": "BR"
+    }
+  ]
+}
+ POST /api/auth/connectors/ga4/accounts 200 in 1081ms (next.js: 34ms, application-code: 1046ms)
+ GET /hub/estudio 200 in 49ms (next.js: 24ms, application-code: 25ms)
+ GET /hub/integracoes 200 in 22ms (next.js: 2ms, application-code: 19ms)
+ GET /hub/explorar 200 in 118ms (next.js: 12ms, application-code: 106ms)
+ GET /hub/assistente-ia 200 in 446ms (next.js: 316ms, application-code: 131ms)
+ GET /hub/laboratorio-agentes 200 in 489ms (next.js: 312ms, application-code: 177ms)
+ GET /hub 200 in 151ms (next.js: 20ms, application-code: 132ms)
+ POST /api/hub/metrics/ga4 404 in 581ms (next.js: 16ms, application-code: 565ms)
+ POST /api/traffic/extract 500 in 51ms (next.js: 12ms, application-code: 39ms)
+ POST /api/hub/metrics/ga4 404 in 1145ms (next.js: 55ms, application-code: 1090ms)
+ POST /api/traffic/extract 500 in 47ms (next.js: 13ms, application-code: 33ms)
+[?25h

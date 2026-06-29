@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Power, Search, Wrench, X } from 'lucide-react';
+import { Loader2, Power, Search, Wrench, X } from 'lucide-react';
 import AgentCard from '../../../components/hub/AgentCard';
 import { doc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
@@ -20,7 +20,7 @@ const categories = [
 ];
 
 const HUB_CONNECTOR_BUTTON_CLASS =
-  'inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#FF6B00] px-6 text-[14px] leading-none font-black text-white shadow-[0_10px_22px_rgba(255,107,0,0.30)] transition hover:brightness-105 hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FFBE94]';
+  'inline-flex h-11 shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[12px] bg-[#FF6B00] px-6 text-[13px] leading-none font-bold text-white shadow-[0_4px_12px_rgba(255,107,0,0.25)] transition hover:brightness-105 hover:scale-[1.02] active:scale-95 focus-visible:outline-none';
 
 const PLAN_AGENT_CAPACITY: Record<string, number> = {
   Lite: 5,
@@ -295,25 +295,24 @@ function LaboratorioAgentesContent() {
   };
 
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-6 lg:px-12 space-y-8 pb-16">
-      <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 border-b border-white/[0.06] py-8 mb-8">
-        <div className="flex items-start gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#ff6a00]/10 border border-[#ff6a00]/20 text-[#ff6a00] shadow-[0_0_16px_rgba(255,106,0,0.08)] mt-1">
-            <Wrench className="h-6 w-6" />
-          </div>
+    <div className="w-full space-y-6 px-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-16 text-[#1e293b]">
+      <header className="py-8 border-b border-slate-200 mb-8">
+        <div className="flex items-start justify-between gap-6 flex-wrap">
           <div>
-            <h1 className="text-3xl font-black text-white tracking-tight leading-tight">
-              Laboratório de Agentes
-            </h1>
-            <p className="text-[#8fa0b5] text-[15px] font-medium mt-2 max-w-3xl leading-relaxed">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#FF6A00]" />
+              <span className="text-[11px] font-black uppercase tracking-[0.16em] text-[#FF6A00]">Laboratório</span>
+            </div>
+            <h1 className="text-3xl font-black text-[#0f172a] tracking-tight leading-tight">Laboratório de Agentes</h1>
+            <p className="text-slate-500 text-[15px] mt-2 max-w-3xl font-bold leading-relaxed">
               Esta área centraliza a ativação dos agentes da sua operação, com foco em coerência estratégica, previsibilidade e impacto financeiro real.
             </p>
           </div>
         </div>
       </header>
 
-      {/* Search Bar Container with Dark Glassmorphism styling */}
-      <div className="hub-accent-card p-5 md:p-6">
+      {/* Search Bar Container */}
+      <div className="rounded-2xl border border-white/50 bg-[#eef2f7] p-5 md:p-6 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]">
         <div className="relative w-full max-w-lg">
           <span className="absolute inset-y-0 left-4 flex items-center pointer-events-none text-slate-400">
             <Search size={18} />
@@ -324,13 +323,13 @@ function LaboratorioAgentesContent() {
             placeholder="Pesquisar agentes por nome ou descrição…"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full h-12 pl-11 pr-10 rounded-[12px] border border-white/[0.12] bg-white/[0.06] text-[15px] font-medium text-white placeholder-slate-400 transition-all duration-300 focus:outline-none focus:border-[#FF6B00] focus:ring-2 focus:ring-[#FFBE94]/20 focus:bg-[#0d1a2a]/60"
+            className="w-full h-12 pl-11 pr-10 rounded-[12px] border border-white/30 bg-[#eef2f7] text-[15px] font-semibold text-slate-800 placeholder-slate-400 shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] focus:outline-none focus:ring-2 focus:ring-[#FF6A00]/25 transition-all"
           />
           {searchQuery ? (
             <button
               type="button"
               onClick={() => setSearchQuery('')}
-              className="absolute inset-y-0 right-3 flex items-center px-1 text-slate-400 hover:text-white transition"
+              className="absolute inset-y-0 right-3 flex items-center px-1 text-slate-400 hover:text-[#FF6A00] transition"
               aria-label="Limpar pesquisa"
             >
               <X size={16} />
@@ -340,15 +339,15 @@ function LaboratorioAgentesContent() {
       </div>
 
       {totalVisibleAgents === 0 ? (
-        <div className="rounded-3xl border border-[#FF6A00]/20 bg-[#0d1a2a]/40 backdrop-blur-md p-12 text-center shadow-[0_8px_32px_rgba(255,106,0,0.04)]">
-          <p className="text-lg font-black text-white">Nenhum agente encontrado</p>
-          <p className="mt-1 text-sm text-slate-400">
+        <div className="rounded-2xl border border-white/50 bg-[#eef2f7] p-12 text-center shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]">
+          <p className="text-lg font-black text-[#0f172a]">Nenhum agente encontrado</p>
+          <p className="mt-1 text-sm text-slate-500 font-semibold">
             Não encontramos nenhum agente que corresponda à sua busca &quot;{searchQuery}&quot;.
           </p>
           <button
             type="button"
             onClick={() => setSearchQuery('')}
-            className="mt-4 inline-flex h-10 items-center justify-center rounded-[12px] bg-[#FF6B00] px-5 text-sm font-black text-white shadow-[0_10px_20px_rgba(255,107,0,0.20)] hover:brightness-105 hover:scale-105 transition active:scale-95"
+            className="mt-4 inline-flex h-10 items-center justify-center rounded-[12px] bg-gradient-to-r from-[#FF6A00] to-[#FF8805] px-5 text-sm font-bold text-white shadow-[0_4px_12px_rgba(255,106,0,0.25)] hover:brightness-105 hover:scale-102 transition active:scale-95"
           >
             Limpar busca
           </button>
@@ -368,25 +367,25 @@ function LaboratorioAgentesContent() {
         return (
           <section
             key={category.slug}
-            className="hub-accent-card overflow-hidden text-white"
+            className="rounded-2xl border border-white/50 bg-[#eef2f7] overflow-hidden text-[#1e293b] shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff]"
           >
-            <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-gradient-to-r from-white/[0.04] to-transparent px-8 py-6 border-b border-white/[0.06]">
+            <header className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-100/30 px-8 py-6 border-b border-slate-200">
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-3">
-                  <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-hub-active)] animate-pulse shadow-[0_0_8px_var(--color-hub-active)]"></span>
-                  <h2 className="text-[20px] md:text-[24px] font-black tracking-tight text-white drop-shadow-sm">{category.label}</h2>
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#10b981] animate-pulse"></span>
+                  <h2 className="text-[20px] md:text-[24px] font-black tracking-tight text-[#0f172a]">{category.label}</h2>
                 </div>
-                <p className="text-[14px] font-medium text-slate-300 leading-relaxed max-w-2xl">
+                <p className="text-[14px] font-semibold text-slate-500 leading-relaxed max-w-2xl">
                   {category.desc}
                 </p>
               </div>
-              <div className="rounded-full border border-[var(--color-hub-accent)]/30 bg-[var(--color-hub-accent)]/10 px-5 py-2 text-[14px] font-black text-[var(--color-hub-accent)] tracking-wider uppercase whitespace-nowrap shadow-[0_4px_12px_rgba(255,106,0,0.15)]">
+              <div className="rounded-full border border-orange-500/20 bg-orange-500/10 px-5 py-2 text-[12px] font-black text-[#FF6A00] tracking-wider uppercase whitespace-nowrap shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]">
                 {categoryActiveCount} de {categoryTotalCount} Ativos
               </div>
             </header>
 
-            <div className="p-6 md:p-10 bg-black/20">
-              <div className="mt-0 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 xl:gap-8">
+            <div className="p-6 md:p-10 bg-slate-50/30">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {categoryAgents.map((agent) => {
                   const entry = getAgentEntryDefinition(agent, effectiveContracts);
                   const isActive = entry.isActive;
@@ -420,22 +419,22 @@ function LaboratorioAgentesContent() {
           <button
             type="button"
             onClick={() => setPendingDeactivateSlug(null)}
-            className="absolute inset-0 bg-[#020816]/70 backdrop-blur-md transition-opacity duration-300"
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"
             aria-label="Fechar confirmação"
           />
-          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/[0.12] bg-[#0a0a0a]/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
+          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/80 bg-white/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(13,26,42,0.15)] text-[#1e293b] animate-in fade-in zoom-in-95 duration-250">
             <button
               type="button"
               onClick={() => setPendingDeactivateSlug(null)}
-              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
+              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-slate-600 transition-all hover:bg-slate-200 hover:text-slate-800 hover:scale-105 active:scale-95 shadow-sm"
               aria-label="Fechar"
             >
               <X className="h-5 w-5" />
             </button>
 
-            <p className="text-xs font-black uppercase tracking-[0.12em] text-[#FF4D4D]">Confirmar desativação</p>
-            <h3 className="mt-1 text-3xl font-black tracking-tight text-white">{pendingDeactivateAgent.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+            <p className="text-xs font-black uppercase tracking-[0.12em] text-rose-600">Confirmar desativação</p>
+            <h3 className="mt-1 text-3xl font-black tracking-tight text-[#0f172a]">{pendingDeactivateAgent.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500 font-medium">
               Ao confirmar, o agente será desativado e deixará de aparecer como ativo até uma nova ativação.
             </p>
 
@@ -443,7 +442,7 @@ function LaboratorioAgentesContent() {
               <button
                 type="button"
                 onClick={() => setPendingDeactivateSlug(null)}
-                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/10 bg-white/5 px-5 text-sm font-black text-white/80 hover:bg-white/10 hover:text-white transition-all active:scale-95"
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-slate-200 bg-slate-100 px-5 text-sm font-bold text-slate-700 hover:bg-slate-200 transition-all active:scale-95"
               >
                 Cancelar
               </button>
@@ -453,7 +452,7 @@ function LaboratorioAgentesContent() {
                   deactivateAgent(pendingDeactivateAgent.title, slugifyAgentTitle(pendingDeactivateAgent.title))
                 }
                 disabled={activatingSlug === slugifyAgentTitle(pendingDeactivateAgent.title)}
-                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] border border-[#FF4D4D] bg-[#FF4D4D] px-5 text-sm font-black text-white shadow-[0_10px_22px_rgba(255,77,77,0.30)] hover:brightness-105 active:scale-95 disabled:opacity-60 transition-all"
+                className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] bg-rose-600 px-5 text-sm font-bold text-white shadow-[0_4px_12px_rgba(225,29,72,0.25)] hover:bg-rose-700 active:scale-95 disabled:opacity-60 transition-all"
               >
                 <Power className="h-4 w-4" />
                 {activatingSlug === slugifyAgentTitle(pendingDeactivateAgent.title)
@@ -470,33 +469,33 @@ function LaboratorioAgentesContent() {
           <button
             type="button"
             onClick={() => setSelectedDetailsSlug(null)}
-            className="absolute inset-0 bg-[#020816]/70 backdrop-blur-md transition-opacity duration-300"
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"
             aria-label="Fechar detalhes do agente"
           />
-          <section className="relative w-full max-w-[780px] rounded-[24px] border border-white/[0.12] bg-[#0a0a0a]/95 backdrop-blur-md p-6 md:p-7 shadow-[0_30px_70px_rgba(2,12,27,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
+          <section className="relative w-full max-w-[780px] rounded-[24px] border border-white/80 bg-white/95 backdrop-blur-md p-6 md:p-7 shadow-[0_24px_60px_rgba(13,26,42,0.15)] text-[#1e293b] animate-in fade-in zoom-in-95 duration-250">
             <button
               type="button"
               onClick={() => setSelectedDetailsSlug(null)}
-              className="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
+              className="absolute right-5 top-5 inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-slate-600 transition-all hover:bg-slate-200 hover:text-slate-800 hover:scale-105 active:scale-95 shadow-sm"
               aria-label="Fechar"
             >
               <X className="h-5 w-5" />
             </button>
 
             <div className="flex items-start gap-4 pr-14">
-              <div className="relative h-[76px] w-[76px] shrink-0 overflow-hidden rounded-[16px] border-2 border-[#FF6B00] shadow-[0_10px_24px_rgba(2,12,27,0.18)]">
+              <div className="relative h-[76px] w-[76px] shrink-0 overflow-hidden rounded-[16px] border border-white/55 bg-[#eef2f7] shadow-[4px_4px_8px_#d1d9e6,_-4px_-4px_8px_#ffffff]">
                 <Image src={detailsAgent.icon} alt={detailsAgent.title} fill className="object-cover" sizes="76px" />
               </div>
               <div>
                 <p className="pt-1 text-[11px] font-black uppercase tracking-[0.12em] text-[#FF6B00]">Agente de IA</p>
-                <h3 className="mt-1 text-[30px] leading-[1.05] font-black tracking-tight text-white sm:text-[38px] md:text-[44px]">{detailsAgent.title}</h3>
-                <p className="mt-3 max-w-3xl text-[15px] leading-[1.45] text-slate-300 sm:text-[16px]">{detailsAgent.description}</p>
+                <h3 className="mt-1 text-[30px] leading-[1.05] font-black tracking-tight text-[#0f172a] sm:text-[38px] md:text-[44px]">{detailsAgent.title}</h3>
+                <p className="mt-3 max-w-3xl text-[15px] leading-[1.45] text-slate-500 font-semibold sm:text-[16px]">{detailsAgent.description}</p>
               </div>
             </div>
 
-            <article className="mt-7 rounded-[18px] border border-white/[0.08] bg-[#051120]/60 p-5 md:p-6">
+            <article className="mt-7 rounded-[18px] border border-slate-200 bg-slate-50 p-5 md:p-6">
               <h4 className="text-[13px] font-black uppercase tracking-[0.08em] text-[#FF6B00]">Atividades relacionadas</h4>
-              <ul className="mt-4 space-y-4 text-[15px] leading-[1.5] text-slate-300 sm:text-[16px]">
+              <ul className="mt-4 space-y-4 text-[15px] leading-[1.5] text-slate-600 font-medium">
                 {detailsContent.activities.map((item) => (
                   <li key={item} className="flex items-start gap-2">
                     <span className="mt-[0.62em] inline-flex h-[7px] w-[7px] shrink-0 rounded-full bg-[#FF6B00]" />
@@ -514,28 +513,28 @@ function LaboratorioAgentesContent() {
           <button
             type="button"
             onClick={() => setPendingActivationSlug(null)}
-            className="absolute inset-0 bg-[#020816]/70 backdrop-blur-md transition-opacity duration-300"
+            className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300"
             aria-label="Fechar confirmação"
           />
-          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/[0.12] bg-[#0a0a0a]/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(2,8,22,0.6)] text-white animate-in fade-in zoom-in-95 duration-250">
+          <section className="relative w-full max-w-2xl rounded-[24px] border border-white/80 bg-white/95 backdrop-blur-md p-6 md:p-8 shadow-[0_24px_60px_rgba(13,26,42,0.15)] text-[#1e293b] animate-in fade-in zoom-in-95 duration-250">
             <button
               type="button"
               onClick={() => setPendingActivationSlug(null)}
-              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/80 transition-all hover:bg-white/10 hover:text-white hover:scale-105 active:scale-95 shadow-sm"
+              className="absolute right-5 top-5 inline-flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-slate-100 text-slate-600 transition-all hover:bg-slate-200 hover:text-slate-800 hover:scale-105 active:scale-95 shadow-sm"
               aria-label="Fechar"
             >
               <X className="h-5 w-5" />
             </button>
 
             <p className="text-xs font-black uppercase tracking-[0.12em] text-[#FF6B00]">Confirmar ativação</p>
-            <h3 className="mt-1 text-3xl font-black tracking-tight text-white">{pendingAgent.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-slate-300">
+            <h3 className="mt-1 text-3xl font-black tracking-tight text-[#0f172a]">{pendingAgent.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-slate-500 font-medium">
               Você está prestes a ativar este agente. Confira como ficará a capacidade do plano ativo.
             </p>
 
-            <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-white space-y-1">
+            <div className="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700 space-y-1">
               <p>
-                <strong>Plano ativo:</strong> <span className="text-[#FF6B00]">{activePlanName}</span>
+                <strong>Plano ativo:</strong> <span className="text-[#FF6B00] font-bold">{activePlanName}</span>
               </p>
               <p>
                 <strong>Capacidade do plano:</strong> {planCapacity} agentes
@@ -544,7 +543,7 @@ function LaboratorioAgentesContent() {
                 <strong>Ativos atualmente:</strong> {activeAgentsCount}
               </p>
               <p>
-                <strong>Após confirmação:</strong> {nextActiveCount} de {planCapacity}
+                <strong>Após confirmação:</strong> <span className="font-bold text-[#FF6B00]">{nextActiveCount} de {planCapacity}</span>
               </p>
             </div>
 
@@ -552,7 +551,7 @@ function LaboratorioAgentesContent() {
               <button
                 type="button"
                 onClick={() => setPendingActivationSlug(null)}
-                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-white/10 bg-white/5 px-5 text-sm font-black text-white/80 hover:bg-white/10 hover:text-white transition-all active:scale-95"
+                className="inline-flex h-11 items-center justify-center rounded-[12px] border border-slate-200 bg-slate-100 px-5 text-sm font-bold text-slate-700 hover:bg-slate-200 transition-all active:scale-95"
               >
                 Cancelar
               </button>
@@ -577,8 +576,8 @@ export default function LaboratorioAgentesPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-full flex items-center justify-center py-32">
+          <Loader2 className="h-6 w-6 text-[#FF6A00] animate-spin" />
         </div>
       }
     >

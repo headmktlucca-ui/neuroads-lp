@@ -8,12 +8,11 @@ type Update = {
   version: string;
   date: string;
   badge: 'Novo' | 'Melhoria' | 'IA' | 'Destaque';
-  badgeColor: string;
+  badgeColorClass: string;
   title: string;
   headline: string;
   results: string[];
-  icon: React.ComponentType<any>;
-  iconBg: string;
+  icon: React.ComponentType<{ className?: string }>;
   iconColor: string;
   tag: string;
 };
@@ -24,7 +23,7 @@ const UPDATES: Update[] = [
     version: 'v2.4',
     date: 'Junho 2026',
     badge: 'Destaque',
-    badgeColor: 'bg-[#FF6A00]/15 text-[#FF6A00] border-[#FF6A00]/30',
+    badgeColorClass: 'bg-orange-500/10 text-[#FF6A00] border-orange-500/20',
     title: 'Agentes IA com Otimização Automática de Lances',
     headline: 'Reduza seu CPA em até 28% sem mexer nas campanhas manualmente.',
     results: [
@@ -33,7 +32,6 @@ const UPDATES: Update[] = [
       'Zero configuração: basta conectar sua conta Google Ads e ativar',
     ],
     icon: Bot,
-    iconBg: 'bg-[#FF6A00]/10',
     iconColor: 'text-[#FF6A00]',
     tag: 'Agentes IA',
   },
@@ -42,7 +40,7 @@ const UPDATES: Update[] = [
     version: 'v2.3',
     date: 'Maio 2026',
     badge: 'IA',
-    badgeColor: 'bg-purple-500/15 text-purple-400 border-purple-500/30',
+    badgeColorClass: 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20',
     title: 'Assistente Lucca: Análise de Campanhas por Chat',
     headline: 'Obtenha insights sobre suas campanhas em linguagem natural, sem precisar saber de métricas.',
     results: [
@@ -51,8 +49,7 @@ const UPDATES: Update[] = [
       'Economize em média 3h/semana em relatórios manuais',
     ],
     icon: Sparkles,
-    iconBg: 'bg-purple-500/10',
-    iconColor: 'text-purple-400',
+    iconColor: 'text-cyan-600',
     tag: 'Assistente IA',
   },
   {
@@ -60,7 +57,7 @@ const UPDATES: Update[] = [
     version: 'v2.2',
     date: 'Abril 2026',
     badge: 'Melhoria',
-    badgeColor: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30',
+    badgeColorClass: 'bg-emerald-500/10 text-[#0d9488] border-emerald-500/20',
     title: 'Dashboard com Dados em Tempo Real',
     headline: 'Veja o desempenho das suas campanhas acontecendo agora, não apenas ontem.',
     results: [
@@ -69,8 +66,7 @@ const UPDATES: Update[] = [
       'Identifique picos e quedas de performance antes que afetem o resultado do mês',
     ],
     icon: TrendingUp,
-    iconBg: 'bg-emerald-500/10',
-    iconColor: 'text-emerald-400',
+    iconColor: 'text-[#0d9488]',
     tag: 'Dashboard',
   },
   {
@@ -78,7 +74,7 @@ const UPDATES: Update[] = [
     version: 'v2.1',
     date: 'Março 2026',
     badge: 'Novo',
-    badgeColor: 'bg-slate-500/15 text-slate-400 border-slate-500/30',
+    badgeColorClass: 'bg-slate-200/50 text-slate-600 border-slate-300',
     title: 'Funil de Marketing Integrado',
     headline: 'Entenda onde você perde clientes e quanto cada etapa vale para o seu negócio.',
     results: [
@@ -87,8 +83,7 @@ const UPDATES: Update[] = [
       'Funil unificado mesmo usando múltiplas plataformas simultaneamente',
     ],
     icon: Target,
-    iconBg: 'bg-slate-500/10',
-    iconColor: 'text-slate-400',
+    iconColor: 'text-slate-600',
     tag: 'Analytics',
   },
   {
@@ -96,17 +91,16 @@ const UPDATES: Update[] = [
     version: 'v2.0',
     date: 'Fevereiro 2026',
     badge: 'Destaque',
-    badgeColor: 'bg-[#FF6A00]/15 text-[#FF6A00] border-[#FF6A00]/30',
+    badgeColorClass: 'bg-orange-500/10 text-[#FF6A00] border-orange-500/20',
     title: 'Integrações com Meta Ads e LinkedIn Ads',
     headline: 'Gerencie todos os seus canais de mídia paga em um único painel.',
     results: [
-      'Conecte Meta Ads em menos de 2 minutos via OAuth seguro',
+      'Conecte Meta Ads in less than 2 minutes via OAuth seguro',
       'Compare performance entre canais: veja qual traz melhor ROAS para seu segmento',
       'Economize assinaturas de ferramentas separadas de analytics',
     ],
     icon: Layers,
-    iconBg: 'bg-cyan-500/10',
-    iconColor: 'text-cyan-400',
+    iconColor: 'text-[#FF6A00]',
     tag: 'Integrações',
   },
   {
@@ -114,7 +108,7 @@ const UPDATES: Update[] = [
     version: 'v1.9',
     date: 'Janeiro 2026',
     badge: 'IA',
-    badgeColor: 'bg-purple-500/15 text-purple-400 border-purple-500/30',
+    badgeColorClass: 'bg-cyan-500/10 text-cyan-600 border-cyan-500/20',
     title: 'Automações de Orçamento Inteligente',
     headline: 'Seu orçamento de mídia sempre alocado onde traz mais retorno — sem decisões manuais.',
     results: [
@@ -123,13 +117,10 @@ const UPDATES: Update[] = [
       'Usuários que ativaram automações reportaram 22% mais eficiência no investimento mensal',
     ],
     icon: Zap,
-    iconBg: 'bg-amber-500/10',
-    iconColor: 'text-amber-400',
+    iconColor: 'text-cyan-600',
     tag: 'Automações',
   },
 ];
-
-const BADGE_ORDER = ['Destaque', 'IA', 'Novo', 'Melhoria'] as const;
 
 export default function HubExplorarPage() {
   const [activeFilter, setActiveFilter] = useState<string>('Todos');
@@ -139,27 +130,27 @@ export default function HubExplorarPage() {
   const filtered = activeFilter === 'Todos' ? UPDATES : UPDATES.filter((u) => u.tag === activeFilter);
 
   return (
-    <div className="w-full px-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="w-full px-6 animate-in fade-in slide-in-from-bottom-4 duration-500 text-[#1e293b]">
 
       {/* Hero Header */}
-      <header className="py-8 border-b border-white/[0.06] mb-8">
+      <header className="py-8 border-b border-slate-200 mb-8">
         <div className="flex items-start justify-between gap-6 flex-wrap">
           <div>
             <div className="flex items-center gap-2 mb-3">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#FF6A00] shadow-[0_0_6px_rgba(255,106,0,0.8)] animate-pulse" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#FF6A00]" />
               <span className="text-[11px] font-black uppercase tracking-[0.16em] text-[#FF6A00]">Novidades NeuroAds</span>
             </div>
-            <h1 className="text-3xl font-black text-white tracking-tight leading-tight">
+            <h1 className="text-3xl font-black text-[#0f172a] tracking-tight leading-tight">
               O que há de novo
             </h1>
-            <p className="text-[#8fa0b5] text-[15px] mt-2 max-w-xl leading-relaxed">
+            <p className="text-slate-500 text-[15px] mt-2 max-w-xl font-bold leading-relaxed">
               Cada atualização existe para gerar um resultado concreto no seu negócio. Aqui você acompanha o que evoluiu e o que você pode usar hoje.
             </p>
           </div>
-          <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-[#0d1a2a]/60 border border-[#FF6A00]/20 backdrop-blur-md">
+          <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]">
             <Star className="w-4 h-4 text-[#FF6A00]" />
-            <span className="text-[13px] font-bold text-white">{UPDATES.length} atualizações</span>
-            <span className="text-[13px] text-[#8fa0b5]">neste ciclo</span>
+            <span className="text-[13px] font-bold text-[#1e293b]">{UPDATES.length} atualizações</span>
+            <span className="text-[13px] text-slate-500 font-medium">neste ciclo</span>
           </div>
         </div>
       </header>
@@ -172,8 +163,8 @@ export default function HubExplorarPage() {
             onClick={() => setActiveFilter(f)}
             className={`px-4 py-2 sm:py-1.5 rounded-full text-[13px] font-bold border transition-all duration-150 cursor-pointer ${
               activeFilter === f
-                ? 'bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] text-white border-[#FF6A00] shadow-[0_0_16px_rgba(255,106,0,0.3)]'
-                : 'bg-[#0d1a2a]/40 text-[#8fa0b5] border-white/[0.08] hover:text-white hover:border-white/[0.2]'
+                ? 'bg-[#eef2f7] text-[#FF6A00] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border border-white/20'
+                : 'bg-[#eef2f7] border border-white/40 text-slate-600 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff]'
             }`}
           >
             {f}
@@ -182,19 +173,16 @@ export default function HubExplorarPage() {
       </div>
 
       {/* Updates List */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 pb-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-10">
         {filtered.map((update) => (
           <article
             key={update.id}
-            className="group relative rounded-3xl border border-[#FF6A00]/20 border-l-gradient-orange border-l-transparent bg-[#0d1a2a]/40 backdrop-blur-md hover:bg-[#0d1a2a]/70 hover:border-[#FF6A00]/40 hover:shadow-[0_0_32px_rgba(255,106,0,0.06)] transition-all duration-300 flex flex-col"
+            className="group relative rounded-3xl border border-white/50 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] transition-all duration-300 flex flex-col"
           >
-            {/* Top accent line */}
-            <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-[#FF6A00]/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
             <div className="p-6 flex gap-5 flex-col sm:flex-row flex-1">
               {/* Icon */}
               <div className="shrink-0">
-                <div className={`w-12 h-12 rounded-2xl ${update.iconBg} border border-[#FF6A00]/20 flex items-center justify-center shadow-[0_0_16px_rgba(255,106,0,0.08)]`}>
+                <div className="w-12 h-12 rounded-2xl bg-[#eef2f7] border border-white/40 shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] flex items-center justify-center">
                   <update.icon className={`w-6 h-6 ${update.iconColor}`} />
                 </div>
               </div>
@@ -202,22 +190,22 @@ export default function HubExplorarPage() {
               {/* Content */}
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-2">
-                  <span className={`text-[11px] font-black px-2.5 py-0.5 rounded-full border ${update.badgeColor}`}>
+                  <span className={`text-[11px] font-black px-2.5 py-0.5 rounded-full border shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] ${update.badgeColorClass}`}>
                     {update.badge}
                   </span>
-                  <span className="text-[11px] font-bold text-white/30 border border-white/[0.08] px-2 py-0.5 rounded-full">
+                  <span className="text-[11px] font-bold text-slate-500 border border-slate-300 px-2 py-0.5 rounded-full bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]">
                     {update.version}
                   </span>
-                  <div className="flex items-center gap-1 text-[11px] text-[#8fa0b5]">
-                    <Clock className="w-3 h-3" />
+                  <div className="flex items-center gap-1 text-[11px] text-slate-400">
+                    <Clock className="w-3.5 h-3.5" />
                     {update.date}
                   </div>
                 </div>
 
-                <h2 className="text-[17px] font-black text-white leading-snug mb-1 group-hover:text-[#FF6A00] transition-colors duration-200">
+                <h2 className="text-[17px] font-black text-[#0f172a] leading-snug mb-1 group-hover:text-[#FF6A00] transition-colors duration-200">
                   {update.title}
                 </h2>
-                <p className="text-[14px] text-[#8fa0b5] font-medium mb-4 leading-relaxed">
+                <p className="text-[14px] text-slate-500 font-semibold mb-4 leading-relaxed">
                   {update.headline}
                 </p>
 
@@ -226,7 +214,7 @@ export default function HubExplorarPage() {
                   {update.results.map((result, i) => (
                     <li key={i} className="flex items-start gap-2.5">
                       <CheckCircle2 className="w-4 h-4 text-[#FF6A00]/70 shrink-0 mt-0.5" />
-                      <span className="text-[13px] text-white/70 leading-relaxed font-medium">{result}</span>
+                      <span className="text-[13px] text-slate-600 leading-relaxed font-semibold">{result}</span>
                     </li>
                   ))}
                 </ul>
@@ -234,10 +222,10 @@ export default function HubExplorarPage() {
 
               {/* Tag + Arrow */}
               <div className="shrink-0 flex sm:flex-col items-center sm:items-end gap-3 sm:justify-between">
-                <span className="text-[11px] font-bold text-[#8fa0b5] bg-white/[0.04] border border-white/[0.06] px-2.5 py-1 rounded-lg whitespace-nowrap">
+                <span className="text-[11px] font-bold text-slate-500 bg-[#eef2f7] border border-white/40 px-2.5 py-1 rounded-lg whitespace-nowrap shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]">
                   {update.tag}
                 </span>
-                <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-[#FF6A00] transition-colors duration-200" />
+                <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-[#FF6A00] transition-colors duration-200" />
               </div>
             </div>
           </article>
@@ -245,17 +233,19 @@ export default function HubExplorarPage() {
       </div>
 
       {/* Bottom CTA */}
-      <div className="border-t border-white/[0.06] py-10 text-center">
+      <div className="border-t border-slate-200 py-10 text-center">
         <div className="inline-flex flex-col items-center gap-3">
           <BarChart2 className="w-8 h-8 text-[#FF6A00]/50" />
-          <p className="text-[#8fa0b5] text-[14px] font-medium max-w-md">
+          <p className="text-slate-500 text-[14px] font-bold max-w-md">
             Quer uma funcionalidade específica? Nossa equipe prioriza o roadmap com base nas necessidades reais dos nossos clientes.
           </p>
           <a
             href="mailto:avante@neuroads.com.br"
-            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] text-white font-bold text-[14px] rounded-xl transition-all shadow-[0_0_20px_rgba(255,106,0,0.3)]"
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-[12px] bg-gradient-to-r from-[#FF6A00] to-[#FF8805] px-6 text-[13px] font-bold text-white shadow-[0_4px_12px_rgba(255,106,0,0.25)] hover:brightness-105 hover:scale-[1.02] active:scale-95 transition-all"
+            style={{ textDecoration: 'none' }}
           >
-            Sugerir uma melhoria <ArrowRight className="w-4 h-4" />
+            <span>Sugerir uma melhoria</span>
+            <ArrowRight className="w-4 h-4" />
           </a>
         </div>
       </div>

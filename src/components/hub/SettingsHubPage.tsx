@@ -14,9 +14,7 @@ import {
 import { getFirebaseDb } from '../../lib/firebase';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getHubProfileSummary } from '../../lib/hub-profile';
-import { getContractedAgentsFromProfile } from '../../lib/hub-agents';
 
-import { readAgentStatusOverrides } from '../../lib/agent-status-cache';
 
 // Reusing identical helper functions from Navbar
 function readString(value: unknown): string {
@@ -37,10 +35,10 @@ const DEFAULT_COMPANY_FORM = {
   blog: '',
 };
 
-const SETTINGS_LABEL = "text-[10px] font-black uppercase tracking-widest";
-const SETTINGS_PANEL = "rounded-2xl border border-slate-100 bg-white p-5 shadow-sm";
-const SETTINGS_INPUT = "w-full h-[46px] rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-semibold text-slate-800 transition-colors focus:border-[#FF6B00] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FF6B00]/10 placeholder:text-slate-400 placeholder:font-medium";
-const SETTINGS_PRIMARY_BUTTON = "inline-flex h-[46px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#FF8A2B] to-[#FF6B00] px-6 text-xs font-black uppercase tracking-widest text-white shadow-[0_6px_20px_rgba(255,107,0,0.2)] transition-all hover:brightness-105 active:scale-95 disabled:pointer-events-none disabled:opacity-50";
+const SETTINGS_LABEL = "text-[10px] font-black uppercase tracking-widest text-slate-400";
+const SETTINGS_PANEL = "rounded-2xl border border-white/50 bg-[#eef2f7] p-5 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]";
+const SETTINGS_INPUT = "w-full h-[46px] rounded-xl border border-white/30 bg-[#eef2f7] px-4 text-sm font-semibold text-slate-800 shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-colors focus:border-[#FF6A00] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FF6A00]/10 placeholder:text-slate-400 placeholder:font-medium";
+const SETTINGS_PRIMARY_BUTTON = "inline-flex h-[46px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#FF8805] px-6 text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(255,106,0,0.25)] transition-all hover:brightness-105 active:scale-95 disabled:pointer-events-none disabled:opacity-50";
 
 export default function SettingsHubPage() {
   const { user, profile, logout } = useAuth();
@@ -63,25 +61,14 @@ export default function SettingsHubPage() {
   const [isManagingPlan, setIsManagingPlan] = useState(false);
 
   // Derived Info
-  const userEmail = user?.email || readString((profile as any)?.email);
+  const userEmail = user?.email || readString((profile as Record<string, unknown> | null)?.email);
   const hubProfile = useMemo(() => getHubProfileSummary(profile), [profile]);
-  const contractedAgents = useMemo(() => getContractedAgentsFromProfile(profile), [profile]);
-  const activeAgentsCount = useMemo(() => {
-    const overrides = readAgentStatusOverrides(user?.uid);
-    const merged = new Map(contractedAgents);
-    for (const [title, isActive] of Object.entries(overrides)) {
-      const current = merged.get(title) ?? { isActive: false };
-      merged.set(title, { ...current, isActive });
-    }
-    return Array.from(merged.values()).filter((agent) => agent.isActive).length;
-  }, [contractedAgents, user?.uid]);
-  
+  const connectedPlatforms = profile?.connections
+    ? Object.values(profile.connections).filter((connection: unknown) => (connection as Record<string, unknown>)?.isActive).length
+    : 0;
   const planDisplayLabel = hubProfile.planName ?? (profile?.isPremium ? 'NeuroAds IA Pro' : 'NeuroAds IA Pro');
   const financialPlanName = hubProfile.planName ?? planDisplayLabel;
   const financialPlanAmount = (hubProfile.planAmountCents ?? 0) > 0 ? `R$ ${((hubProfile.planAmountCents ?? 0) / 100).toFixed(2).replace('.', ',')}` : 'Grátis';
-  const connectedPlatforms = profile?.connections
-    ? Object.values(profile.connections).filter((connection: any) => connection?.isActive).length
-    : 0;
   const usageCount = profile?.usageStats ? Object.keys(profile.usageStats).length : 0;
 
   // Formatting helpers for trial
@@ -133,7 +120,7 @@ export default function SettingsHubPage() {
           tiktok: parsed.tiktok || '',
           blog: parsed.blog || '',
         };
-      } catch (e) {}
+      } catch {}
     }
     setCompanyForm(nextCompanyForm);
 
@@ -145,7 +132,7 @@ export default function SettingsHubPage() {
       try {
         const parsed = JSON.parse(contactRaw);
         nextWhatsapp = nextWhatsapp || parsed.whatsapp || fallbackWhatsapp;
-      } catch (e) {}
+      } catch {}
     }
     setWhatsApp(nextWhatsapp);
   }, [user, profile]);
@@ -257,7 +244,7 @@ export default function SettingsHubPage() {
       const data = await response.json();
       if (!response.ok || !data?.url) throw new Error(data?.error || 'Não foi possível abrir o gerenciamento.');
       window.open(data.url, '_blank');
-    } catch (error) {
+    } catch {
       alert('Não foi possível acessar o gerenciamento do plano agora.');
     } finally {
       setIsManagingPlan(false);
@@ -269,16 +256,16 @@ export default function SettingsHubPage() {
   return (
     <div className="w-full space-y-6">
       {/* Header */}
-      <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-white/[0.08] pb-4 mb-6">
+      <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-500/15 border border-slate-500/20 text-slate-400">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-500/10 border border-slate-300 text-slate-500">
             <User className="h-6 w-6" />
           </div>
           <div>
-            <h1 className="text-xl font-black tracking-tight text-white leading-none">
+            <h1 className="text-xl font-black tracking-tight text-[#0f172a] leading-none">
               Configurações
             </h1>
-            <p className="text-[12px] font-semibold text-[#7eb8d4]/80 mt-1 uppercase tracking-widest">
+            <p className="text-[11px] font-black text-slate-500 mt-1 uppercase tracking-widest">
               Gerencie seu perfil, detalhes institucionais e financeiro
             </p>
           </div>
@@ -287,30 +274,27 @@ export default function SettingsHubPage() {
 
       {/* Tabs */}
       <div className="flex flex-wrap gap-2 px-1">
-        <button
-          onClick={() => handleTabChange('perfil')}
-          className={`px-4 py-2 text-sm font-bold rounded-full transition-colors ${activeTab === 'perfil' ? 'bg-[#FF6B00] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-        >
-          Meu Perfil
-        </button>
-        <button
-          onClick={() => handleTabChange('empresa')}
-          className={`px-4 py-2 text-sm font-bold rounded-full transition-colors ${activeTab === 'empresa' ? 'bg-[#FF6B00] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-        >
-          Sua Empresa
-        </button>
-        <button
-          onClick={() => handleTabChange('financeiro')}
-          className={`px-4 py-2 text-sm font-bold rounded-full transition-colors ${activeTab === 'financeiro' ? 'bg-[#FF6B00] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-        >
-          Financeiro
-        </button>
-        <button
-          onClick={() => handleTabChange('conhecimento')}
-          className={`px-4 py-2 text-sm font-bold rounded-full transition-colors ${activeTab === 'conhecimento' ? 'bg-[#FF6B00] text-white' : 'bg-white text-slate-600 hover:bg-slate-100'}`}
-        >
-          Base de Conhecimento
-        </button>
+        {[
+          { id: 'perfil', label: 'Meu Perfil' },
+          { id: 'empresa', label: 'Sua Empresa' },
+          { id: 'financeiro', label: 'Financeiro' },
+          { id: 'conhecimento', label: 'Base de Conhecimento' }
+        ].map((tab) => {
+          const active = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => handleTabChange(tab.id)}
+              className={`px-4 py-2 rounded-full text-[13px] font-bold border transition-all duration-150 cursor-pointer ${
+                active
+                  ? 'bg-[#eef2f7] text-[#FF6A00] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border border-white/20'
+                  : 'bg-[#eef2f7] border border-white/40 text-slate-600 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff]'
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* Content */}
@@ -376,9 +360,9 @@ export default function SettingsHubPage() {
                 <Fingerprint size={13} />
                 <span className={SETTINGS_LABEL}>ID do usuário</span>
               </div>
-              <p className="text-xs font-semibold text-slate-600 break-all bg-slate-50 px-2 py-1 rounded border border-slate-100">{user.uid}</p>
+              <p className="text-xs font-semibold text-slate-600 break-all bg-[#eef2f7] px-2 py-1 rounded border border-white/20 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">{user.uid}</p>
             </div>
-            <div className="rounded-2xl border border-rose-100 bg-rose-50/20 p-5 space-y-3 sm:col-span-2">
+            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-5 space-y-3 sm:col-span-2 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]">
               <div className="flex items-center gap-1.5 text-rose-600">
                 <ShieldAlert size={16} />
                 <span className="text-xs uppercase tracking-wider font-black">Zona de risco</span>
@@ -386,7 +370,7 @@ export default function SettingsHubPage() {
               <p className="text-xs text-rose-700/80 font-medium leading-relaxed">
                 Ao excluir a conta, seu plano será cancelado imediatamente e o cadastro será removido do banco de dados de forma definitiva.
               </p>
-              <button onClick={handleDeleteAccount} disabled={isDeletingAccount} className="inline-flex items-center justify-center gap-2 px-5 h-[42px] rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-black uppercase transition-colors shadow-sm disabled:opacity-60 cursor-pointer">
+              <button onClick={handleDeleteAccount} disabled={isDeletingAccount} className="inline-flex items-center justify-center gap-2 px-5 h-[42px] rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold uppercase transition-all shadow-[0_4px_12px_rgba(225,29,72,0.25)] hover:scale-[1.02] active:scale-95 disabled:opacity-60 cursor-pointer">
                 <Trash2 size={13} />
                 {isDeletingAccount ? 'Excluindo...' : 'Excluir conta'}
               </button>
@@ -396,7 +380,7 @@ export default function SettingsHubPage() {
         )}
 
         {activeTab === 'empresa' && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 p-5 bg-white rounded-2xl shadow-sm border border-slate-100">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 p-6 rounded-3xl border border-white/50 bg-[#eef2f7] shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff]">
             <div className="sm:col-span-2">
               <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
                 <Building2 size={13} />
@@ -470,8 +454,8 @@ export default function SettingsHubPage() {
                 placeholder="blog.seudominio.com"
               />
             </div>
-            <div className="sm:col-span-2 pt-4 flex items-center justify-between border-t border-slate-100 mt-2">
-              <p className={`text-xs font-semibold ${companySaved ? 'text-emerald-600' : 'text-slate-400'}`}>
+             <div className="sm:col-span-2 pt-4 flex items-center justify-between border-t border-slate-200 mt-2">
+              <p className={`text-xs font-bold ${companySaved ? 'text-emerald-600' : 'text-slate-500'}`}>
                 {companySaved ? '✓ Dados salvos com sucesso.' : 'Preencha os dados da empresa.'}
               </p>
               <button type="button" onClick={handleSaveCompany} className={SETTINGS_PRIMARY_BUTTON}>
@@ -482,27 +466,27 @@ export default function SettingsHubPage() {
         )}
 
         {activeTab === 'financeiro' && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 p-5 bg-white rounded-2xl shadow-sm border border-slate-100">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 p-6 rounded-3xl border border-white/50 bg-[#eef2f7] shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff]">
             <div className={SETTINGS_PANEL}>
               <div className="flex items-center gap-1.5 text-slate-400 mb-1">
                 <Crown size={13} />
                 <span className={SETTINGS_LABEL}>Plano atual</span>
               </div>
-              <p className="text-sm font-black text-slate-800">{financialPlanName}</p>
+              <p className="text-sm font-black text-[#0f172a]">{financialPlanName}</p>
             </div>
             <div className={SETTINGS_PANEL}>
               <div className="flex items-center gap-1.5 text-slate-400 mb-1">
                 <DollarSign size={13} />
                 <span className={SETTINGS_LABEL}>Valor mensal</span>
               </div>
-              <p className="text-sm font-black text-slate-800">{financialPlanAmount}</p>
+              <p className="text-sm font-black text-[#0f172a]">{financialPlanAmount}</p>
             </div>
             <div className={SETTINGS_PANEL}>
               <div className="flex items-center gap-1.5 text-slate-400 mb-1">
                 <Activity size={13} />
                 <span className={SETTINGS_LABEL}>Status da assinatura</span>
               </div>
-              <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-black uppercase tracking-wider ${hubProfile.isSubscriptionActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-orange-50 text-[#FF6B00] border border-orange-100'}`}>
+              <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-black uppercase tracking-wider shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] ${hubProfile.isSubscriptionActive ? 'bg-emerald-500/10 text-emerald-700 border border-emerald-500/20' : 'bg-orange-50 text-[#FF6B00] border border-orange-100'}`}>
                 {hubProfile.statusLabel}
               </span>
             </div>
@@ -511,32 +495,32 @@ export default function SettingsHubPage() {
                 <ShieldCheck size={13} />
                 <span className={SETTINGS_LABEL}>Acesso operacional</span>
               </div>
-              <p className="text-sm font-bold text-slate-800">{hubProfile.accessLabel}</p>
+              <p className="text-sm font-bold text-slate-700">{hubProfile.accessLabel}</p>
             </div>
             <div className={`${SETTINGS_PANEL} sm:col-span-2`}>
               <div className="flex items-center gap-1.5 text-slate-400 mb-1">
                 <Workflow size={13} />
                 <span className={SETTINGS_LABEL}>Recursos incluídos</span>
               </div>
-              <p className="text-sm font-bold text-slate-800">{hubProfile.operationLabel}</p>
+              <p className="text-sm font-bold text-slate-700">{hubProfile.operationLabel}</p>
               {hubProfile.includedExecutions != null && (
-                <div className="mt-3 flex items-center gap-2 bg-slate-50 border border-slate-100 rounded-lg p-2.5">
+                <div className="mt-3 flex items-center gap-2 bg-[#eef2f7] border border-white/20 rounded-lg p-2.5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
                   <Gauge size={14} className="text-slate-400" />
                   <p className="text-xs font-semibold text-slate-600">
-                    Execuções inclusas por mês: <span className="font-bold text-slate-800">{hubProfile.includedExecutions.toLocaleString('pt-BR')}</span>
+                    Execuções inclusas por mês: <span className="font-bold text-[#0f172a]">{hubProfile.includedExecutions.toLocaleString('pt-BR')}</span>
                   </p>
                 </div>
               )}
             </div>
             {hubProfile.isTrialing && (hubProfile.trialRemainingMs ?? 0) > 0 ? (
-              <div className="rounded-2xl border border-orange-100 bg-orange-50/20 p-5 space-y-2.5 sm:col-span-2">
+              <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-5 space-y-2.5 sm:col-span-2 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]">
                 <div className="flex items-center gap-1.5 text-[#FF6B00]">
                   <Calendar size={16} />
                   <span className="text-xs uppercase tracking-wider font-black">Período gratuito ativo</span>
                 </div>
                 <p className="text-base font-black text-slate-800">{trialRemainingLabel}</p>
                 <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                  Sua primeira cobrança no valor de <span className="font-bold text-slate-800">{financialPlanAmount}</span> está prevista para: <span className="font-bold text-slate-700 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">{trialEndsAtLabel}</span>.
+                  Sua primeira cobrança no valor de <span className="font-bold text-slate-800">{financialPlanAmount}</span> está prevista para: <span className="font-bold text-slate-700 bg-[#eef2f7] px-2 py-0.5 rounded border border-white/20 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">{trialEndsAtLabel}</span>.
                 </p>
               </div>
             ) : null}

@@ -45,8 +45,8 @@ const FOOTER_COLUMNS = [
     title: 'Empresa',
     links: [
       { label: 'Sobre a NeuroAds', href: '#' },
-      { label: 'Termos de Uso', href: '#' },
-      { label: 'Política de Privacidade', href: '#' },
+      { label: 'Termos de Uso', href: '/termos' },
+      { label: 'Política de Privacidade', href: '/privacidade' },
       { label: 'Política de Reembolso', href: '#' },
     ],
   },
