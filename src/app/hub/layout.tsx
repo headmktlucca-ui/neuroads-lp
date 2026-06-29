@@ -187,26 +187,24 @@ function getGreeting(): string {
   return 'Boa noite';
 }
 
-/* ─── Sidebar Component ────────────────────────────────────────────── */
-function Sidebar({
+/* ─── Sidebar content (shared by desktop sidebar + mobile drawer) ───── */
+function SidebarContent({
   userName,
   userPhoto,
   companyName,
   pathname,
+  currentTab,
   onSignOut,
 }: {
   userName: string;
   userPhoto?: string | null;
   companyName?: string;
   pathname: string;
+  currentTab: string | null;
   onSignOut: () => void;
 }) {
-  const searchParams = useSearchParams();
-  const currentTab = searchParams.get('tab');
-
   return (
-    <aside className="hidden lg:flex flex-col w-[230px] shrink-0 border-r border-white/40 bg-[#eef2f7] relative z-20 shadow-[4px_0_12px_rgba(0,0,0,0.015)]">
-
+    <>
       {/* User card — top of sidebar */}
       <div className="px-4 pt-5 pb-4 border-b border-white/40 shrink-0">
         <div className="flex items-center gap-3 px-3 py-3 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[3px_3px_8px_#d1d9e6,_-3px_-3px_8px_#ffffff]">
@@ -261,10 +259,42 @@ function Sidebar({
           <span>Sair</span>
         </button>
       </div>
+    </>
+  );
+}
+
+/* ─── Sidebar Component (desktop) ──────────────────────────────────── */
+function Sidebar({
+  userName,
+  userPhoto,
+  companyName,
+  pathname,
+  onSignOut,
+}: {
+  userName: string;
+  userPhoto?: string | null;
+  companyName?: string;
+  pathname: string;
+  onSignOut: () => void;
+}) {
+  const searchParams = useSearchParams();
+  const currentTab = searchParams.get('tab');
+
+  return (
+    <aside className="hidden lg:flex flex-col w-[230px] shrink-0 border-r border-white/40 bg-[#eef2f7] relative z-20 shadow-[4px_0_12px_rgba(0,0,0,0.015)]">
+      <SidebarContent
+        userName={userName}
+        userPhoto={userPhoto}
+        companyName={companyName}
+        pathname={pathname}
+        currentTab={currentTab}
+        onSignOut={onSignOut}
+      />
     </aside>
   );
 }
 
+<<<<<<< HEAD
 /* ─── Mobile Page Title Helper ─────────────────────────────────────── */
 function getMobilePageTitle(pathname: string): string {
   if (pathname === '/hub') return 'Dashboard';
@@ -372,6 +402,11 @@ function MobileBottomNav({
 /* ─── Mobile Drawer ─────────────────────────────────────────────────── */
 function MobileDrawer({
   isOpen,
+=======
+/* ─── Mobile nav drawer (off-canvas) ───────────────────────────────── */
+function MobileNavDrawer({
+  open,
+>>>>>>> 25d00d14f153b420f7eed91a0444b42042e205e5
   onClose,
   userName,
   userPhoto,
@@ -379,7 +414,11 @@ function MobileDrawer({
   pathname,
   onSignOut,
 }: {
+<<<<<<< HEAD
   isOpen: boolean;
+=======
+  open: boolean;
+>>>>>>> 25d00d14f153b420f7eed91a0444b42042e205e5
   onClose: () => void;
   userName: string;
   userPhoto?: string | null;
@@ -390,6 +429,7 @@ function MobileDrawer({
   const searchParams = useSearchParams();
   const currentTab = searchParams.get('tab');
 
+<<<<<<< HEAD
   return (
     <AnimatePresence>
       {isOpen && (
@@ -480,11 +520,77 @@ function MobileDrawer({
         </>
       )}
     </AnimatePresence>
+=======
+  // Lock body scroll while the drawer is open
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = previous; };
+  }, [open]);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+
+  return (
+    <div className={`lg:hidden fixed inset-0 z-[60] ${open ? '' : 'pointer-events-none'}`} aria-hidden={!open}>
+      {/* Backdrop */}
+      <div
+        onClick={onClose}
+        className={`absolute inset-0 bg-[#0f172a]/40 backdrop-blur-sm transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
+      />
+
+      {/* Panel */}
+      <aside
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu de navegação"
+        className={`absolute inset-y-0 left-0 flex flex-col w-[82%] max-w-[300px] border-r border-white/40 bg-[#eef2f7] shadow-[8px_0_24px_rgba(0,0,0,0.12)] transition-transform duration-300 ease-out ${open ? 'translate-x-0' : '-translate-x-full'}`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Drawer header with logo + close */}
+        <div className="flex items-center justify-between px-4 h-16 shrink-0 border-b border-white/40">
+          <Link href="/hub" onClick={onClose} className="flex items-center">
+            <Image
+              src="/images/Logos/LLNeuroAds.png"
+              alt="NeuroAds"
+              width={150}
+              height={36}
+              className="h-8 w-auto"
+            />
+          </Link>
+          <button
+            onClick={onClose}
+            aria-label="Fechar menu"
+            className="flex items-center justify-center w-10 h-10 rounded-xl text-slate-500 border border-white/40 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        <div className="flex flex-col flex-1 min-h-0" onClick={onClose}>
+          <SidebarContent
+            userName={userName}
+            userPhoto={userPhoto}
+            companyName={companyName}
+            pathname={pathname}
+            currentTab={currentTab}
+            onSignOut={onSignOut}
+          />
+        </div>
+      </aside>
+    </div>
+>>>>>>> 25d00d14f153b420f7eed91a0444b42042e205e5
   );
 }
 
 /* ─── TopBar Component ─────────────────────────────────────────────── */
-function TopBar({ onRefresh }: { onRefresh: () => void }) {
+function TopBar({ onRefresh, onMenuClick }: { onRefresh: () => void; onMenuClick: () => void }) {
   const {
     selectedPeriod,
     setSelectedPeriod,
@@ -523,29 +629,45 @@ function TopBar({ onRefresh }: { onRefresh: () => void }) {
   const activePeriodLabel = periods.find(p => p.value === selectedPeriod)?.label || 'Últimos 30 dias';
 
   return (
+<<<<<<< HEAD
     <header className="hidden lg:flex items-center gap-4 px-8 h-16 border-b border-white/40 bg-[#eef2f7] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
       <div className="flex items-center gap-2.5 flex-1 max-w-xs px-3.5 h-10 rounded-2xl border border-white/30 bg-[#eef2f7] text-[13px] text-[#475569] shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] focus-within:ring-2 focus-within:ring-[#FF6A00]/25 transition-all">
+=======
+    <header className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 lg:px-8 h-16 border-b border-white/40 bg-[#eef2f7] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+      {/* Mobile menu trigger */}
+      <button
+        onClick={onMenuClick}
+        aria-label="Abrir menu de navegação"
+        className="lg:hidden flex items-center justify-center w-10 h-10 shrink-0 rounded-xl text-[#475569] border border-white/40 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all"
+      >
+        <Menu size={18} />
+      </button>
+
+      <div className="hidden sm:flex items-center gap-2.5 flex-1 max-w-xs px-3.5 h-10 rounded-2xl border border-white/30 bg-[#eef2f7] text-[13px] text-[#475569] shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] focus-within:ring-2 focus-within:ring-[#FF6A00]/25 transition-all">
+>>>>>>> 25d00d14f153b420f7eed91a0444b42042e205e5
         <Search size={14} className="text-slate-400" />
         <span className="select-none text-slate-400 font-bold">Buscar no Hub…</span>
       </div>
 
-      <div className="ml-auto flex items-center gap-3 relative">
+      <div className="ml-auto flex items-center gap-2 sm:gap-3 relative">
         {/* Refresh */}
         <button
           onClick={onRefresh}
-          className="flex items-center gap-2 px-4 h-9 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-bold text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
+          aria-label="Atualizar"
+          className="flex items-center gap-2 px-2.5 sm:px-4 h-9 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-bold text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
         >
           <RefreshCw size={13} />
-          <span>Atualizar</span>
+          <span className="hidden sm:inline">Atualizar</span>
         </button>
 
         {/* Period Selector */}
         <div className="relative" ref={periodRef}>
           <button
             onClick={() => setIsPeriodOpen(prev => !prev)}
-            className="flex items-center gap-1.5 px-4 h-9 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-bold text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
+            className="flex items-center gap-1.5 px-2.5 sm:px-4 h-9 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-bold text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
           >
-            <span>{activePeriodLabel}</span>
+            <span className="hidden sm:inline">{activePeriodLabel}</span>
+            <span className="sm:hidden">{selectedPeriod}d</span>
             <ChevronRight size={13} className={`transition-transform duration-200 text-slate-400 ${isPeriodOpen ? 'rotate-90' : '-rotate-90'}`} />
           </button>
 
@@ -664,17 +786,27 @@ function HubLayoutInner({
   pathname: string;
   onSignOut: () => void;
 }) {
+<<<<<<< HEAD
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+=======
+  const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+>>>>>>> 25d00d14f153b420f7eed91a0444b42042e205e5
 
   return (
     <div className="flex h-screen overflow-hidden font-sans antialiased bg-[#eef2f7] text-[#1e293b]">
       {/* Desktop sidebar */}
       <Sidebar userName={userName} userPhoto={userPhoto} companyName={companyName} pathname={pathname} onSignOut={onSignOut} />
 
+<<<<<<< HEAD
       {/* Mobile slide-in drawer */}
       <MobileDrawer
         isOpen={mobileDrawerOpen}
         onClose={() => setMobileDrawerOpen(false)}
+=======
+      <MobileNavDrawer
+        open={isMobileNavOpen}
+        onClose={() => setIsMobileNavOpen(false)}
+>>>>>>> 25d00d14f153b420f7eed91a0444b42042e205e5
         userName={userName}
         userPhoto={userPhoto}
         companyName={companyName}
@@ -683,6 +815,7 @@ function HubLayoutInner({
       />
 
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden relative">
+<<<<<<< HEAD
         {/* Mobile header — hidden on desktop */}
         <MobileHeader pathname={pathname} onMenuOpen={() => setMobileDrawerOpen(true)} />
 
@@ -694,6 +827,10 @@ function HubLayoutInner({
           className="flex-1 overflow-y-auto px-4 py-4 lg:px-8 lg:py-8 lg:pb-8 relative z-10 mobile-content-area"
           style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
         >
+=======
+        <TopBar onRefresh={() => window.location.reload()} onMenuClick={() => setIsMobileNavOpen(true)} />
+        <div className="flex-1 overflow-y-auto px-4 py-5 sm:px-6 lg:px-8 lg:py-8 relative z-10">
+>>>>>>> 25d00d14f153b420f7eed91a0444b42042e205e5
           {children}
         </div>
         <style>{`@media (min-width: 1024px) { .mobile-content-area { padding-bottom: 2rem !important; } }`}</style>
