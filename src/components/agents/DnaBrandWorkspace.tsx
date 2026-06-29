@@ -598,14 +598,17 @@ function InputField({
 
 function SectionCard({ title, items }: { title: string; items: string[] }) {
   return (
-    <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-      <h4 className="text-base font-black text-text-main mb-2">{title}</h4>
-      <div className="space-y-2">
-        {items.map((item, index) => (
-          <p key={`${title}-${index}`} className="text-sm leading-relaxed text-text-muted">
-            {item}
-          </p>
-        ))}
+    <article className="relative overflow-hidden rounded-2xl border border-slate-200/60 bg-gradient-to-br from-[#F8FAFF] to-[#F2F5FC] p-5 shadow-[0_4px_16px_rgba(15,23,42,0.07)]">
+      <div className="absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b from-[#FF6B00] to-[#FF9D00] rounded-l-2xl" />
+      <div className="pl-4">
+        <h4 className="text-[15px] font-black text-slate-900 mb-3">{title}</h4>
+        <div className="space-y-2">
+          {items.map((item, index) => (
+            <p key={`${title}-${index}`} className="text-[13px] leading-relaxed text-slate-600">
+              {item}
+            </p>
+          ))}
+        </div>
       </div>
     </article>
   );
@@ -621,14 +624,18 @@ function ScoreMeter({
   accentClass: string;
 }) {
   const safeScore = clampScore(score);
+  const isHigh = safeScore >= 70;
+  const isMid = safeScore >= 40;
   return (
-    <div className="rounded-2xl border border-[#E7ECF3] bg-white p-4">
-      <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-bold uppercase tracking-wide text-text-dim">{label}</p>
-        <p className="text-sm font-black text-text-main">{safeScore}%</p>
+    <div className="rounded-2xl border border-slate-200/60 bg-gradient-to-br from-white to-[#F8FAFF] p-4 shadow-[0_2px_8px_rgba(15,23,42,0.06)]">
+      <div className="flex items-center justify-between gap-2 mb-3">
+        <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">{label}</p>
+        <p className={`text-xl font-black ${isHigh ? 'text-[#08B760]' : isMid ? 'text-[#FF6B00]' : 'text-slate-500'}`}>
+          {safeScore}<span className="text-xs font-bold opacity-70">%</span>
+        </p>
       </div>
-      <div className="mt-2 h-2 w-full rounded-full bg-[#E9EEF5]">
-        <div className={`h-2 rounded-full ${accentClass}`} style={{ width: `${safeScore}%` }} />
+      <div className="h-2.5 w-full rounded-full bg-slate-100 overflow-hidden">
+        <div className={`h-full rounded-full ${accentClass}`} style={{ width: `${safeScore}%` }} />
       </div>
     </div>
   );
@@ -655,9 +662,11 @@ function IconList({
   return (
     <div className="space-y-2">
       {items.map((item, index) => (
-        <div key={`${icon}-${index}`} className="flex items-start gap-2 rounded-xl border border-[#EEF2F7] bg-white px-3 py-2">
-          <IconComponent className="mt-0.5 h-4 w-4 text-[#FF6B00]" />
-          <p className="text-sm text-text-muted">{item}</p>
+        <div key={`${icon}-${index}`} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2.5 shadow-[0_1px_4px_rgba(15,23,42,0.05)]">
+          <div className="mt-0.5 w-6 h-6 rounded-lg bg-[#FFF1E8] flex items-center justify-center shrink-0">
+            <IconComponent className="h-3.5 w-3.5 text-[#FF6B00]" />
+          </div>
+          <p className="text-[13px] text-slate-700 leading-relaxed">{item}</p>
         </div>
       ))}
     </div>
@@ -832,10 +841,10 @@ function BrandColorPaletteSection({ palette }: { palette: DnaBrandColorPalette }
   if (!palette || !palette.colors || palette.colors.length === 0) return null;
 
   return (
-    <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] space-y-4">
+    <article className="rounded-2xl border border-slate-200/60 bg-gradient-to-br from-[#F8FAFF] to-[#F2F5FC] p-5 shadow-[0_4px_16px_rgba(15,23,42,0.07)] space-y-4">
       <div className="flex flex-wrap items-center gap-2">
         <Palette className="h-5 w-5 text-[#FF6B00]" />
-        <h4 className="text-base font-black text-text-main">🎨 Paleta de Cores e Identidade Visual</h4>
+        <h4 className="text-[16px] font-black text-slate-900">🎨 Paleta de Cores e Identidade Visual</h4>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -847,29 +856,29 @@ function BrandColorPaletteSection({ palette }: { palette: DnaBrandColorPalette }
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
         <div className="space-y-4">
           {palette.psychologicalImpact ? (
-            <div className="rounded-2xl border border-[#EEF2F7] bg-white p-4">
-              <p className="text-xs font-bold uppercase tracking-wide text-text-dim mb-1">🧠 Impacto Psicológico</p>
-              <p className="text-sm leading-relaxed text-text-muted">{palette.psychologicalImpact}</p>
+            <div className="rounded-xl border border-slate-100 bg-white p-4 shadow-[0_1px_4px_rgba(15,23,42,0.05)]">
+              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500 mb-1">🧠 Impacto Psicológico</p>
+              <p className="text-[13px] leading-relaxed text-slate-600">{palette.psychologicalImpact}</p>
             </div>
           ) : null}
 
           {palette.contrastAccessibility ? (
-            <div className="rounded-2xl border border-[#EEF2F7] bg-white p-4">
-              <p className="text-xs font-bold uppercase tracking-wide text-text-dim mb-1">♿ Contraste e Acessibilidade</p>
-              <p className="text-sm leading-relaxed text-text-muted">{palette.contrastAccessibility}</p>
+            <div className="rounded-xl border border-slate-100 bg-white p-4 shadow-[0_1px_4px_rgba(15,23,42,0.05)]">
+              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500 mb-1">♿ Contraste e Acessibilidade</p>
+              <p className="text-[13px] leading-relaxed text-slate-600">{palette.contrastAccessibility}</p>
             </div>
           ) : null}
 
           {palette.visualStyleDescription ? (
-            <div className="rounded-2xl border border-[#EEF2F7] bg-white p-4">
-              <p className="text-xs font-bold uppercase tracking-wide text-text-dim mb-1">📸 Estilo Visual Recomendado</p>
-              <p className="text-sm leading-relaxed text-text-muted">{palette.visualStyleDescription}</p>
+            <div className="rounded-xl border border-slate-100 bg-white p-4 shadow-[0_1px_4px_rgba(15,23,42,0.05)]">
+              <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500 mb-1">📸 Estilo Visual Recomendado</p>
+              <p className="text-[13px] leading-relaxed text-slate-600">{palette.visualStyleDescription}</p>
             </div>
           ) : null}
         </div>
 
         <div className="space-y-2">
-          <p className="text-xs font-bold uppercase tracking-wide text-text-dim px-1">💻 Exportador de Design Tokens</p>
+          <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500 px-1">💻 Exportador de Design Tokens</p>
           <DesignTokensExporter colors={palette.colors} />
         </div>
       </div>
@@ -892,31 +901,40 @@ export function DnaBrandPresentationPanel({
 
   return (
     <div className="rounded-[30px] p-[2px] bg-gradient-to-br from-white/40 via-orange-300/80 to-[#FF6B00] shadow-[0_24px_52px_-30px_rgba(255,107,0,0.42)]">
-      <div className="rounded-[28px] bg-white/85 p-[1px]">
-        <div className="rounded-[26px] border border-[#FFF1E8] bg-white p-6 md:p-8 space-y-5">
-          <div>
-            <p className="text-xs uppercase tracking-widest text-primary font-bold">📊 Apresentação Estratégica</p>
-            <h3 className="mt-1 text-2xl md:text-3xl font-black text-text-main">{presentation.presentationTitle}</h3>
-            <p className="mt-2 text-sm text-text-muted">
+      <div className="rounded-[28px] bg-white/95 p-[1px]">
+        <div className="rounded-[26px] border border-[#FFF1E8] bg-white p-6 md:p-8 space-y-6">
+          <div className="relative pb-5 border-b border-slate-100">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#FFF1E8] border border-[#FFD0B3] px-3 py-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#FF6B00]" />
+                <span className="text-[10px] font-black uppercase tracking-[0.14em] text-[#FF6B00]">📊 Apresentação Estratégica</span>
+              </span>
+            </div>
+            <h3 className="text-2xl md:text-3xl font-black text-slate-900 leading-tight">{presentation.presentationTitle}</h3>
+            <p className="mt-2 text-[12px] text-slate-400 flex items-center gap-1.5">
+              <CheckCircle2 className="h-3.5 w-3.5 text-[#08B760] shrink-0" />
               Gerado em {new Date(generatedAt).toLocaleString('pt-BR')} com análise de branding, posicionamento e execução.
             </p>
           </div>
 
-          <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-            <h4 className="text-base font-black text-text-main mb-2">🚀 Resumo Executivo</h4>
-            <p className="text-sm leading-relaxed text-text-muted">{presentation.executiveSummary}</p>
+          <article className="relative overflow-hidden rounded-2xl border border-slate-200/60 bg-gradient-to-br from-[#F8FAFF] to-[#EEF4FF] p-5 shadow-[0_4px_16px_rgba(15,23,42,0.07)]">
+            <div className="absolute top-0 left-0 bottom-0 w-1 bg-gradient-to-b from-[#FF6B00] to-[#FF9D00] rounded-l-2xl" />
+            <div className="pl-4">
+              <h4 className="text-[16px] font-black text-slate-900 mb-3">🚀 Resumo Executivo</h4>
+              <p className="text-[13px] leading-relaxed text-slate-600">{presentation.executiveSummary}</p>
+            </div>
           </article>
 
-          <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
+          <article className="rounded-2xl border border-slate-200/60 bg-gradient-to-br from-[#F8FAFF] to-[#F2F5FC] p-5 shadow-[0_4px_16px_rgba(15,23,42,0.07)]">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex-1 min-w-[200px]">
-                <h4 className="text-base font-black text-text-main mb-2">🎯 Posicionamento Central</h4>
-                <p className="text-sm leading-relaxed text-text-muted">{presentation.positioningStatement}</p>
+                <h4 className="text-[16px] font-black text-slate-900 mb-3">🎯 Posicionamento Central</h4>
+                <p className="text-[13px] leading-relaxed text-slate-600">{presentation.positioningStatement}</p>
               </div>
               {presentation.brandArchetype && (
-                <div className="rounded-2xl border border-orange-200 bg-orange-50/50 px-5 py-3 text-right shrink-0">
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-orange-700">Arquétipo de Marca</p>
-                  <p className="text-base font-black text-orange-950 mt-1">{presentation.brandArchetype}</p>
+                <div className="rounded-2xl bg-gradient-to-br from-[#0F172A] to-[#1E293B] px-5 py-3 text-right shrink-0 shadow-[0_8px_20px_rgba(15,23,42,0.25)]">
+                  <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-400">Arquétipo de Marca</p>
+                  <p className="text-base font-black text-white mt-1">{presentation.brandArchetype}</p>
                 </div>
               )}
             </div>
@@ -924,34 +942,34 @@ export function DnaBrandPresentationPanel({
 
           <BrandColorPaletteSection palette={presentation.colorPalette} />
 
-          <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
+          <article className="rounded-2xl border border-slate-200/60 bg-gradient-to-br from-[#F8FAFF] to-[#F2F5FC] p-5 shadow-[0_4px_16px_rgba(15,23,42,0.07)]">
             <div className="flex flex-wrap items-center gap-2">
               <UsersRound className="h-5 w-5 text-[#FF6B00]" />
-              <h4 className="text-base font-black text-text-main">👥 Perfil Ideal De Cliente Com Maior Probabilidade E Necessidade</h4>
+              <h4 className="text-[16px] font-black text-slate-900">👥 Perfil Ideal De Cliente Com Maior Probabilidade E Necessidade</h4>
             </div>
-            <p className="mt-2 text-sm leading-relaxed text-text-main font-semibold">{presentation.idealCustomerProfile.headline}</p>
+            <p className="mt-2 text-[13px] leading-relaxed text-slate-800 font-semibold">{presentation.idealCustomerProfile.headline}</p>
             <div className="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
-              <div className="rounded-2xl border border-[#EEF2F7] bg-white p-4">
+              <div className="rounded-xl border border-slate-100 bg-white p-4 shadow-[0_1px_4px_rgba(15,23,42,0.05)]">
                 <div className="flex items-center gap-2">
                   <BriefcaseBusiness className="h-4 w-4 text-[#FF6B00]" />
-                  <p className="text-xs font-bold uppercase tracking-wide text-text-dim">Segmento E Porte</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">Segmento E Porte</p>
                 </div>
-                <p className="mt-2 text-sm text-text-main">{presentation.idealCustomerProfile.segment}</p>
-                <p className="mt-1 text-sm text-text-muted">{presentation.idealCustomerProfile.companySize}</p>
+                <p className="mt-2 text-[13px] text-slate-800">{presentation.idealCustomerProfile.segment}</p>
+                <p className="mt-1 text-[12px] text-slate-500">{presentation.idealCustomerProfile.companySize}</p>
               </div>
-              <div className="rounded-2xl border border-[#EEF2F7] bg-white p-4">
+              <div className="rounded-xl border border-slate-100 bg-white p-4 shadow-[0_1px_4px_rgba(15,23,42,0.05)]">
                 <div className="flex items-center gap-2">
                   <HandCoins className="h-4 w-4 text-[#FF6B00]" />
-                  <p className="text-xs font-bold uppercase tracking-wide text-text-dim">Faixa De Receita</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">Faixa De Receita</p>
                 </div>
-                <p className="mt-2 text-sm text-text-main">{presentation.idealCustomerProfile.annualRevenueRange}</p>
+                <p className="mt-2 text-[13px] text-slate-800">{presentation.idealCustomerProfile.annualRevenueRange}</p>
               </div>
-              <div className="rounded-2xl border border-[#EEF2F7] bg-white p-4">
+              <div className="rounded-xl border border-slate-100 bg-white p-4 shadow-[0_1px_4px_rgba(15,23,42,0.05)]">
                 <div className="flex items-center gap-2">
                   <CircleGauge className="h-4 w-4 text-[#FF6B00]" />
-                  <p className="text-xs font-bold uppercase tracking-wide text-text-dim">Contexto De Urgência</p>
+                  <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">Contexto De Urgência</p>
                 </div>
-                <p className="mt-2 text-sm text-text-main">{presentation.idealCustomerProfile.urgencyContext}</p>
+                <p className="mt-2 text-[13px] text-slate-800">{presentation.idealCustomerProfile.urgencyContext}</p>
               </div>
             </div>
 
@@ -970,36 +988,36 @@ export function DnaBrandPresentationPanel({
 
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">😣 Principais dores</p>
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">😣 Principais dores</p>
                 <IconList items={presentation.idealCustomerProfile.mainPainPoints} icon="pain" />
               </div>
               <div>
-                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">💡 Gatilhos de decisão</p>
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">💡 Gatilhos de decisão</p>
                 <IconList items={presentation.idealCustomerProfile.buyingTriggers} icon="trigger" />
               </div>
             </div>
 
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-[#EEF2F7] pt-4">
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4 border-t border-slate-100 pt-4">
               {presentation.idealCustomerProfile.fears && presentation.idealCustomerProfile.fears.length > 0 && (
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">⚠️ Medos Subconscientes</p>
-                  <ul className="list-disc pl-4 space-y-1 text-xs text-text-muted">
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">⚠️ Medos Subconscientes</p>
+                  <ul className="list-disc pl-4 space-y-1 text-[12px] text-slate-600">
                     {presentation.idealCustomerProfile.fears.map((f, i) => <li key={i}>{f}</li>)}
                   </ul>
                 </div>
               )}
               {presentation.idealCustomerProfile.values && presentation.idealCustomerProfile.values.length > 0 && (
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">💎 Valores & Crenças</p>
-                  <ul className="list-disc pl-4 space-y-1 text-xs text-text-muted">
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">💎 Valores & Crenças</p>
+                  <ul className="list-disc pl-4 space-y-1 text-[12px] text-slate-600">
                     {presentation.idealCustomerProfile.values.map((v, i) => <li key={i}>{v}</li>)}
                   </ul>
                 </div>
               )}
               {presentation.idealCustomerProfile.digitalHabits && presentation.idealCustomerProfile.digitalHabits.length > 0 && (
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">📱 Hábitos Digitais</p>
-                  <ul className="list-disc pl-4 space-y-1 text-xs text-text-muted">
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">📱 Hábitos Digitais</p>
+                  <ul className="list-disc pl-4 space-y-1 text-[12px] text-slate-600">
                     {presentation.idealCustomerProfile.digitalHabits.map((h, i) => <li key={i}>{h}</li>)}
                   </ul>
                 </div>
@@ -1007,24 +1025,24 @@ export function DnaBrandPresentationPanel({
             </div>
           </article>
 
-          <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
+          <article className="rounded-2xl border border-slate-200/60 bg-gradient-to-br from-[#F8FAFF] to-[#F2F5FC] p-5 shadow-[0_4px_16px_rgba(15,23,42,0.07)]">
             <div className="flex flex-wrap items-center gap-2">
               <BarChart3 className="h-5 w-5 text-[#FF6B00]" />
-              <h4 className="text-base font-black text-text-main">📣 Conteúdo Que Mais Gera Interesse E Interação</h4>
+              <h4 className="text-[16px] font-black text-slate-900">📣 Conteúdo Que Mais Gera Interesse E Interação</h4>
             </div>
-            <p className="mt-2 text-sm text-text-muted">{presentation.audienceContentProfile.summary}</p>
+            <p className="mt-2 text-[13px] text-slate-600">{presentation.audienceContentProfile.summary}</p>
 
             <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">🎬 Formatos preferidos</p>
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">🎬 Formatos preferidos</p>
                 <IconList items={presentation.audienceContentProfile.preferredFormats} icon="format" />
               </div>
               <div>
-                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">🧠 Temas de alta intenção</p>
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">🧠 Temas de alta intenção</p>
                 <IconList items={presentation.audienceContentProfile.highIntentTopics} icon="topic" />
               </div>
               <div>
-                <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">⚡ Drivers de interação</p>
+                <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">⚡ Drivers de interação</p>
                 <IconList items={presentation.audienceContentProfile.interactionDrivers} icon="driver" />
               </div>
             </div>
@@ -1033,20 +1051,20 @@ export function DnaBrandPresentationPanel({
               {presentation.audienceContentProfile.recommendedContentMix.map((item, index) => {
                 const score = clampScore(item.engagementPotential);
                 return (
-                  <div key={`${item.topic}-${index}`} className="rounded-xl border border-[#E7ECF3] bg-white p-4">
+                  <div key={`${item.topic}-${index}`} className="rounded-xl border border-slate-100 bg-white p-4 shadow-[0_1px_4px_rgba(15,23,42,0.05)]">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="text-sm font-black text-text-main">{item.topic}</p>
-                      <span className="rounded-full border border-[#D6DEE8] bg-[#F8FAFC] px-2 py-1 text-[11px] font-bold uppercase tracking-wide text-text-dim">
+                      <p className="text-[13px] font-black text-slate-900">{item.topic}</p>
+                      <span className="rounded-full border border-slate-200 bg-slate-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-500">
                         {item.format} • {item.channel}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm text-text-muted">{item.whyItWorks}</p>
+                    <p className="mt-2 text-[13px] text-slate-600">{item.whyItWorks}</p>
                     <div className="mt-3 flex items-center gap-3">
-                      <p className="text-xs font-bold uppercase tracking-wide text-text-dim">Engajamento potencial</p>
-                      <p className="text-xs font-black text-text-main">{score}%</p>
+                      <p className="text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">Engajamento potencial</p>
+                      <p className="text-[13px] font-black text-slate-900">{score}%</p>
                     </div>
-                    <div className="mt-1 h-2 w-full rounded-full bg-[#E9EEF5]">
-                      <div className="h-2 rounded-full bg-gradient-to-r from-[#1D4ED8] to-[#06B6D4]" style={{ width: `${score}%` }} />
+                    <div className="mt-1 h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                      <div className="h-full rounded-full bg-gradient-to-r from-[#1D4ED8] to-[#06B6D4]" style={{ width: `${score}%` }} />
                     </div>
                   </div>
                 );
@@ -1055,24 +1073,26 @@ export function DnaBrandPresentationPanel({
           </article>
 
           {practical ? (
-            <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
+            <article className="rounded-2xl border border-slate-200/60 bg-gradient-to-br from-[#F8FAFF] to-[#F2F5FC] p-5 shadow-[0_4px_16px_rgba(15,23,42,0.07)]">
               <div className="flex flex-wrap items-center gap-2">
                 <Sparkles className="h-5 w-5 text-[#FF6B00]" />
-                <h4 className="text-base font-black text-text-main">🛠️ Oportunidades Práticas Para Fortalecer O Posicionamento</h4>
+                <h4 className="text-[16px] font-black text-slate-900">🛠️ Oportunidades Práticas Para Fortalecer O Posicionamento</h4>
               </div>
 
               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">🎯 Posicionamento</p>
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">🎯 Posicionamento</p>
                   <IconList items={practical.positioningOpportunities} icon="topic" />
                 </div>
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">📚 Materiais sugeridos</p>
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">📚 Materiais sugeridos</p>
                   <div className="space-y-2">
                     {practical.materialSuggestions.map((item, index) => (
-                      <div key={`material-${index}`} className="flex items-start gap-2 rounded-xl border border-[#EEF2F7] bg-white px-3 py-2">
-                        <FileText className="mt-0.5 h-4 w-4 text-[#FF6B00]" />
-                        <p className="text-sm text-text-muted">{item}</p>
+                      <div key={`material-${index}`} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2.5 shadow-[0_1px_4px_rgba(15,23,42,0.05)]">
+                        <div className="mt-0.5 w-6 h-6 rounded-lg bg-[#FFF1E8] flex items-center justify-center shrink-0">
+                          <FileText className="h-3.5 w-3.5 text-[#FF6B00]" />
+                        </div>
+                        <p className="text-[13px] text-slate-700 leading-relaxed">{item}</p>
                       </div>
                     ))}
                   </div>
@@ -1081,27 +1101,29 @@ export function DnaBrandPresentationPanel({
 
               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">💡 Ideias de conteúdo</p>
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">💡 Ideias de conteúdo</p>
                   <IconList items={practical.contentIdeas} icon="format" />
                 </div>
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">🔁 Funil de relacionamento</p>
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">🔁 Funil de relacionamento</p>
                   <IconList items={practical.relationshipFunnel} icon="driver" />
                 </div>
               </div>
 
               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">📢 Campanhas patrocinadas</p>
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">📢 Campanhas patrocinadas</p>
                   <IconList items={practical.paidCampaignOpportunities} icon="format" />
                 </div>
                 <div>
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">✉️ Email marketing</p>
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">✉️ Email marketing</p>
                   <div className="space-y-2">
                     {practical.emailMarketingOpportunities.map((item, index) => (
-                      <div key={`email-${index}`} className="flex items-start gap-2 rounded-xl border border-[#EEF2F7] bg-white px-3 py-2">
-                        <Mail className="mt-0.5 h-4 w-4 text-[#FF6B00]" />
-                        <p className="text-sm text-text-muted">{item}</p>
+                      <div key={`email-${index}`} className="flex items-start gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2.5 shadow-[0_1px_4px_rgba(15,23,42,0.05)]">
+                        <div className="mt-0.5 w-6 h-6 rounded-lg bg-[#FFF1E8] flex items-center justify-center shrink-0">
+                          <Mail className="h-3.5 w-3.5 text-[#FF6B00]" />
+                        </div>
+                        <p className="text-[13px] text-slate-700 leading-relaxed">{item}</p>
                       </div>
                     ))}
                   </div>
@@ -1110,7 +1132,7 @@ export function DnaBrandPresentationPanel({
 
               {practical.otherPracticalOpportunities.length > 0 ? (
                 <div className="mt-4">
-                  <p className="mb-2 text-xs font-bold uppercase tracking-wide text-text-dim">🧩 Outras oportunidades práticas</p>
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">🧩 Outras oportunidades práticas</p>
                   <IconList items={practical.otherPracticalOpportunities} icon="topic" />
                 </div>
               ) : null}
@@ -1120,21 +1142,21 @@ export function DnaBrandPresentationPanel({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <SectionCard title="Regras de Voz da Marca" items={presentation.brandVoiceRules} />
             {((presentation.brandVoiceDos && presentation.brandVoiceDos.length > 0) || (presentation.brandVoiceDonts && presentation.brandVoiceDonts.length > 0)) && (
-              <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)] space-y-4">
-                <h4 className="text-base font-black text-text-main">{"🗣️ Diretrizes Verbais (Do's & Don'ts)"}</h4>
+              <article className="rounded-2xl border border-slate-200/60 bg-gradient-to-br from-[#F8FAFF] to-[#F2F5FC] p-5 shadow-[0_4px_16px_rgba(15,23,42,0.07)] space-y-4">
+                <h4 className="text-[15px] font-black text-slate-900">{"🗣️ Diretrizes Verbais (Do's & Don'ts)"}</h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   {presentation.brandVoiceDos && presentation.brandVoiceDos.length > 0 && (
-                    <div className="rounded-lg border border-[#BDE8CF] bg-[#F2FFF7]/30 p-3">
+                    <div className="rounded-xl border border-emerald-200/60 bg-gradient-to-br from-[#F0FFF8] to-[#E8FFF4] p-3">
                       <p className="font-bold text-[#0A9D57] uppercase tracking-wide mb-1">{"Como nos comunicamos (Do's)"}</p>
-                      <ul className="list-disc pl-4 space-y-1 text-text-muted">
+                      <ul className="list-disc pl-4 space-y-1 text-slate-600">
                         {presentation.brandVoiceDos.map((d, i) => <li key={i}>{d}</li>)}
                       </ul>
                     </div>
                   )}
                   {presentation.brandVoiceDonts && presentation.brandVoiceDonts.length > 0 && (
-                    <div className="rounded-lg border border-red-200 bg-red-50/10 p-3">
+                    <div className="rounded-xl border border-red-200/60 bg-gradient-to-br from-[#FFF8F8] to-[#FFF0F0] p-3">
                       <p className="font-bold text-[#B42318] uppercase tracking-wide mb-1">{"O que evitar (Don'ts)"}</p>
-                      <ul className="list-disc pl-4 space-y-1 text-text-muted">
+                      <ul className="list-disc pl-4 space-y-1 text-slate-600">
                         {presentation.brandVoiceDonts.map((d, i) => <li key={i}>{d}</li>)}
                       </ul>
                     </div>
@@ -1153,31 +1175,47 @@ export function DnaBrandPresentationPanel({
             {presentation.slides.map((slide, index) => (
               <article
                 key={`${slide.title}-${index}`}
-                className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]"
+                className="rounded-2xl border border-slate-200/60 bg-gradient-to-br from-[#F8FAFF] to-[#F2F5FC] p-5 shadow-[0_4px_16px_rgba(15,23,42,0.07)]"
               >
-                <h4 className="text-base font-black text-text-main">🧭 {index + 1}. {slide.title}</h4>
-                <p className="mt-2 text-sm leading-relaxed text-text-muted">{slide.analysis}</p>
-                <div className="mt-3 space-y-1">
-                  {slide.recommendations.map((rec, recIndex) => (
-                    <p key={`${slide.title}-rec-${recIndex}`} className="text-sm text-text-muted">✅ {rec}</p>
-                  ))}
+                <div className="flex items-start gap-4">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#FF6B00] to-[#FF9D00] flex items-center justify-center shrink-0 shadow-[0_4px_8px_rgba(255,107,0,0.30)] mt-0.5">
+                    <span className="text-[11px] font-black text-white">{index + 1}</span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-[15px] font-black text-slate-900 leading-tight">{slide.title}</h4>
+                    <p className="mt-2 text-[13px] leading-relaxed text-slate-600">{slide.analysis}</p>
+                    <div className="mt-3 space-y-1.5">
+                      {slide.recommendations.map((rec, recIndex) => (
+                        <div key={`${slide.title}-rec-${recIndex}`} className="flex items-start gap-2">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-[#08B760] shrink-0 mt-0.5" />
+                          <p className="text-[13px] text-slate-600">{rec}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4 inline-flex items-center gap-2 rounded-xl border border-[#FFD0B3] bg-[#FFF8F2] px-3 py-1.5">
+                      <span className="text-[10px] font-black uppercase tracking-[0.1em] text-[#FF6B00]">💰 Impacto financeiro:</span>
+                      <span className="text-[13px] font-black text-slate-900">{slide.financialImpact}</span>
+                    </div>
+                  </div>
                 </div>
-                <p className="mt-3 text-sm font-semibold text-text-main">💰 Impacto financeiro esperado: {slide.financialImpact}</p>
               </article>
             ))}
           </div>
 
-          <article className="rounded-2xl border border-[#E7ECF3] bg-[#FBFCFE] p-5 shadow-[0_10px_24px_rgba(15,23,42,0.05)]">
-            <h4 className="text-base font-black text-text-main mb-2">Fontes analisadas</h4>
+          <article className="rounded-2xl border border-slate-700/40 bg-gradient-to-br from-[#0F172A] to-[#1A2540] p-5 shadow-[0_4px_20px_rgba(15,23,42,0.20)]">
+            <h4 className="text-[13px] font-black text-slate-300 mb-3 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#08B760] animate-pulse" />
+              Fontes analisadas
+            </h4>
             <div className="space-y-2">
               {sources.map((source) => (
-                <div key={`${source.label}-${source.requestedUrl}`} className="rounded-xl border border-[#E7ECF3] bg-white px-3 py-2">
-                  <p className="text-xs font-bold uppercase tracking-wide text-text-dim">{source.label}</p>
-                  <p className="text-sm text-text-main break-all">{source.finalUrl || source.requestedUrl}</p>
+                <div key={`${source.label}-${source.requestedUrl}`} className="rounded-xl border border-slate-700/50 bg-slate-800/40 px-3 py-2.5">
+                  <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">{source.label}</p>
+                  <p className="text-[13px] text-slate-200 break-all font-mono mt-0.5">{source.finalUrl || source.requestedUrl}</p>
                   {source.error ? (
-                    <p className="text-xs text-[#B42318] mt-1">{source.error}</p>
+                    <p className="text-[12px] text-red-400 mt-1">{source.error}</p>
                   ) : (
-                    <p className="text-xs text-text-muted mt-1">{source.title || source.description || 'Fonte capturada com sucesso.'}</p>
+                    <p className="text-[12px] text-slate-500 mt-1">{source.title || source.description || 'Fonte capturada com sucesso.'}</p>
                   )}
                 </div>
               ))}

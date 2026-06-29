@@ -33,6 +33,8 @@ import {
   ChevronDown,
   Wrench,
   Lightbulb,
+  Menu,
+  X,
 } from 'lucide-react';
 
 /* ─── Types ────────────────────────────────────────────────────────── */
@@ -263,6 +265,224 @@ function Sidebar({
   );
 }
 
+/* ─── Mobile Page Title Helper ─────────────────────────────────────── */
+function getMobilePageTitle(pathname: string): string {
+  if (pathname === '/hub') return 'Dashboard';
+  if (pathname.startsWith('/hub/agentes-ativos')) return 'Agentes Ativos';
+  if (pathname.startsWith('/hub/laboratorio-agentes')) return 'Laboratório IA';
+  if (pathname.startsWith('/hub/performance')) return 'Performance';
+  if (pathname.startsWith('/hub/criativos')) return 'Criativos';
+  if (pathname.startsWith('/hub/tecnico')) return 'Técnico';
+  if (pathname.startsWith('/hub/inteligencia')) return 'Inteligência';
+  if (pathname.startsWith('/hub/integracoes')) return 'Integrações';
+  if (pathname.startsWith('/hub/automacoes')) return 'Automações';
+  if (pathname.startsWith('/hub/explorar')) return 'Explorar';
+  if (pathname.startsWith('/hub/configuracoes')) return 'Configurações';
+  return 'Hub';
+}
+
+/* ─── Mobile Header (visible only on mobile) ────────────────────────── */
+function MobileHeader({
+  pathname,
+  onMenuOpen,
+}: {
+  pathname: string;
+  onMenuOpen: () => void;
+}) {
+  const { unreadCount, isNotificationsOpen, setIsNotificationsOpen } = useHub();
+  const pageTitle = getMobilePageTitle(pathname);
+
+  return (
+    <header className="flex lg:hidden items-center gap-3 px-4 h-14 border-b border-white/40 bg-[#eef2f7] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+      <button
+        onClick={onMenuOpen}
+        className="w-11 h-11 rounded-xl flex items-center justify-center text-[#475569] border border-white/40 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
+        aria-label="Abrir menu de navegação"
+      >
+        <Menu size={18} />
+      </button>
+
+      <span className="flex-1 text-[15px] font-black text-[#1e293b] truncate">{pageTitle}</span>
+
+      <button
+        onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+        className="relative w-11 h-11 rounded-xl border border-white/40 bg-[#eef2f7] flex items-center justify-center text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
+        aria-label="Notificações"
+      >
+        <Bell size={18} />
+        {unreadCount > 0 && (
+          <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#FF6A00]" />
+        )}
+      </button>
+    </header>
+  );
+}
+
+/* ─── Mobile Bottom Nav ─────────────────────────────────────────────── */
+const BOTTOM_NAV_ITEMS = [
+  { icon: LayoutDashboard, label: 'Dashboard', href: '/hub',               exact: true  },
+  { icon: Bot,             label: 'Agentes',   href: '/hub/agentes-ativos', exact: false },
+  { icon: Plug2,           label: 'Integrar',  href: '/hub/integracoes',    exact: false },
+  { icon: Layers,          label: 'Explorar',  href: '/hub/explorar',       exact: false },
+] as const;
+
+function MobileBottomNav({
+  pathname,
+  onMenuOpen,
+}: {
+  pathname: string;
+  onMenuOpen: () => void;
+}) {
+  return (
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden bg-[#eef2f7] border-t border-white/50 shadow-[0_-4px_16px_rgba(0,0,0,0.08)]"
+      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      aria-label="Navegação principal"
+    >
+      {BOTTOM_NAV_ITEMS.map(({ icon: Icon, label, href, exact }) => {
+        const isActive = exact
+          ? pathname === href
+          : pathname.startsWith(href);
+        return (
+          <Link
+            key={href}
+            href={href}
+            className={`flex-1 flex flex-col items-center justify-center gap-1 h-16 min-w-0 transition-colors ${
+              isActive ? 'text-[#FF6A00]' : 'text-slate-400'
+            }`}
+            aria-current={isActive ? 'page' : undefined}
+          >
+            <Icon size={20} strokeWidth={isActive ? 2.5 : 1.8} />
+            <span className="text-[10px] font-bold leading-none">{label}</span>
+          </Link>
+        );
+      })}
+      <button
+        onClick={onMenuOpen}
+        className="flex-1 flex flex-col items-center justify-center gap-1 h-16 min-w-0 text-slate-400 active:text-[#FF6A00] transition-colors"
+        aria-label="Mais opções de navegação"
+      >
+        <Menu size={20} strokeWidth={1.8} />
+        <span className="text-[10px] font-bold leading-none">Menu</span>
+      </button>
+    </nav>
+  );
+}
+
+/* ─── Mobile Drawer ─────────────────────────────────────────────────── */
+function MobileDrawer({
+  isOpen,
+  onClose,
+  userName,
+  userPhoto,
+  companyName,
+  pathname,
+  onSignOut,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  userName: string;
+  userPhoto?: string | null;
+  companyName?: string;
+  pathname: string;
+  onSignOut: () => void;
+}) {
+  const searchParams = useSearchParams();
+  const currentTab = searchParams.get('tab');
+
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <>
+          {/* Backdrop */}
+          <motion.div
+            key="mobile-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm lg:hidden"
+            onClick={onClose}
+            aria-hidden="true"
+          />
+
+          {/* Drawer panel */}
+          <motion.aside
+            key="mobile-drawer"
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ type: 'spring', damping: 28, stiffness: 280 }}
+            className="fixed inset-y-0 left-0 z-50 w-[280px] flex flex-col bg-[#eef2f7] lg:hidden shadow-[4px_0_24px_rgba(0,0,0,0.10)]"
+            aria-label="Menu de navegação"
+          >
+            {/* Drawer top bar */}
+            <div className="flex items-center justify-between px-4 pt-4 pb-3 border-b border-white/40 shrink-0">
+              <span className="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em]">Navegação</span>
+              <button
+                onClick={onClose}
+                className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-500 border border-white/30 bg-[#eef2f7] shadow-[2px_2px_5px_#d1d9e6,_-2px_-2px_5px_#ffffff] active:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] transition-all"
+                aria-label="Fechar menu"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* User card */}
+            <div className="px-4 pt-4 pb-3 border-b border-white/40 shrink-0">
+              <div className="flex items-center gap-3 px-3 py-3 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[3px_3px_8px_#d1d9e6,_-3px_-3px_8px_#ffffff]">
+                <div
+                  className="w-10 h-10 rounded-xl overflow-hidden shrink-0 flex items-center justify-center border border-white/30 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.06)]"
+                  style={{ background: 'linear-gradient(135deg, #FF6A00, #FF8805)' }}
+                >
+                  {userPhoto ? (
+                    <Image src={userPhoto} alt="" width={40} height={40} className="object-cover w-full h-full" />
+                  ) : (
+                    <span className="text-white text-[15px] font-black">{(userName.charAt(0) || 'N').toUpperCase()}</span>
+                  )}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] font-bold text-slate-400 leading-none mb-0.5">{getGreeting()},</p>
+                  <p className="text-[13px] font-black text-[#1e293b] truncate leading-tight">{userName}</p>
+                  {companyName && (
+                    <p className="text-[11px] font-semibold text-[#FF6A00] truncate leading-tight mt-0.5">{companyName}</p>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Nav — onClick on nav closes drawer on any link tap */}
+            <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto" onClick={onClose}>
+              {NAV_ITEMS.map(item => (
+                <NavLink
+                  key={item.href}
+                  item={item}
+                  pathname={pathname}
+                  currentTab={currentTab}
+                />
+              ))}
+            </nav>
+
+            {/* Sign out */}
+            <div
+              className="px-3 pt-3 shrink-0 border-t border-white/40"
+              style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}
+            >
+              <button
+                onClick={() => { onClose(); onSignOut(); }}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-[13px] font-bold text-[#475569] hover:text-rose-600 hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] transition-all duration-200 border border-transparent hover:border-rose-500/15"
+              >
+                <LogOut size={15} className="text-slate-400 shrink-0" />
+                <span>Sair</span>
+              </button>
+            </div>
+          </motion.aside>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
 /* ─── TopBar Component ─────────────────────────────────────────────── */
 function TopBar({ onRefresh }: { onRefresh: () => void }) {
   const {
@@ -303,7 +523,7 @@ function TopBar({ onRefresh }: { onRefresh: () => void }) {
   const activePeriodLabel = periods.find(p => p.value === selectedPeriod)?.label || 'Últimos 30 dias';
 
   return (
-    <header className="flex items-center gap-4 px-8 h-16 border-b border-white/40 bg-[#eef2f7] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+    <header className="hidden lg:flex items-center gap-4 px-8 h-16 border-b border-white/40 bg-[#eef2f7] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
       <div className="flex items-center gap-2.5 flex-1 max-w-xs px-3.5 h-10 rounded-2xl border border-white/30 bg-[#eef2f7] text-[13px] text-[#475569] shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] focus-within:ring-2 focus-within:ring-[#FF6A00]/25 transition-all">
         <Search size={14} className="text-slate-400" />
         <span className="select-none text-slate-400 font-bold">Buscar no Hub…</span>
@@ -444,16 +664,43 @@ function HubLayoutInner({
   pathname: string;
   onSignOut: () => void;
 }) {
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+
   return (
     <div className="flex h-screen overflow-hidden font-sans antialiased bg-[#eef2f7] text-[#1e293b]">
+      {/* Desktop sidebar */}
       <Sidebar userName={userName} userPhoto={userPhoto} companyName={companyName} pathname={pathname} onSignOut={onSignOut} />
 
+      {/* Mobile slide-in drawer */}
+      <MobileDrawer
+        isOpen={mobileDrawerOpen}
+        onClose={() => setMobileDrawerOpen(false)}
+        userName={userName}
+        userPhoto={userPhoto}
+        companyName={companyName}
+        pathname={pathname}
+        onSignOut={onSignOut}
+      />
+
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden relative">
+        {/* Mobile header — hidden on desktop */}
+        <MobileHeader pathname={pathname} onMenuOpen={() => setMobileDrawerOpen(true)} />
+
+        {/* Desktop topbar — hidden on mobile */}
         <TopBar onRefresh={() => window.location.reload()} />
-        <div className="flex-1 overflow-y-auto px-8 py-8 relative z-10">
+
+        {/* Main content — responsive padding + bottom clearance for mobile nav */}
+        <div
+          className="flex-1 overflow-y-auto px-4 py-4 lg:px-8 lg:py-8 lg:pb-8 relative z-10 mobile-content-area"
+          style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
+        >
           {children}
         </div>
+        <style>{`@media (min-width: 1024px) { .mobile-content-area { padding-bottom: 2rem !important; } }`}</style>
       </div>
+
+      {/* Mobile bottom navigation bar */}
+      <MobileBottomNav pathname={pathname} onMenuOpen={() => setMobileDrawerOpen(true)} />
 
       <div className="relative z-30">
         <LuccaHubSupportWidget />
