@@ -1147,34 +1147,6 @@ export default function HubDashboardLight() {
           </div>
         </BentoCard>
       </div>
-
-      {/* Quick-Access Interactive Ribbon */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {[
-          { icon: Link2,       label: 'Integrações',    sub: `${Object.values(connections).filter((c) => typeof c === 'object' && c !== null && 'isActive' in c && (c as ConnectionItem).isActive).length} canais ativos`,      href: '/hub/integracoes',       color: '#3b82f6', glow: 'rgba(59,130,246,0.1)' },
-          { icon: FlaskConical, label: 'Criativos',     sub: '12 peças no ar',      href: '/hub/criativos',         color: '#FF6A00', glow: 'rgba(255,106,0,0.1)'  },
-          { icon: Cpu,          label: 'Automações',    sub: '5 fluxos rodando',     href: '/hub/automacoes',        color: '#0d9488', glow: 'rgba(13,148,136,0.1)' },
-          { icon: Sparkles,     label: 'Assistente IA', sub: 'Insights em tempo real',href: '/hub/assistente-ia',     color: '#d97706', glow: 'rgba(217,119,6,0.1)' },
-        ].map(({ icon: Icon, label, sub, href, color }) => {
-          return (
-            <Link
-              key={label}
-              href={href}
-              className="group relative flex items-center gap-3.5 px-5 py-5 rounded-2xl border border-white/50 bg-[#eef2f7] shadow-[4px_4px_8px_#d1d9e6,_-4px_-4px_8px_#ffffff] hover:shadow-[inset_3px_3px_6px_#d1d9e6,_inset_-3px_-3px_6px_#ffffff] transition-all duration-300 hover:scale-[0.99] active:scale-[0.97]"
-              style={{ textDecoration: 'none' }}
-            >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border border-white/40 bg-[#eef2f7]" style={{ boxShadow: 'inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff' }}>
-                <Icon size={18} style={{ color }} />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[14px] font-bold text-[#1e293b] truncate">{label}</p>
-                <p className="text-[11px] text-slate-500 truncate mt-0.5">{sub}</p>
-              </div>
-              <ArrowUpRight size={14} className="ml-auto shrink-0 text-slate-400 group-hover:text-[#FF6A00] transition-colors" />
-            </Link>
-          );
-        })}
-      </div>
     </div>
   );
 }

@@ -44,32 +44,30 @@ type NavItem = {
   icon: LucideIcon;
   label: string;
   href: string;
+  avatarImage?: string; // optional image to use instead of icon
   children?: NavItem[];
 };
 
 /* ─── Nav items ────────────────────────────────────────────────────── */
 const NAV_ITEMS: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard',           href: '/hub'                                    },
-  { icon: Bot,             label: 'Agentes Ativos',      href: '/hub/agentes-ativos'                     },
+  { icon: Bot,             label: 'Operacional',         href: '/hub/agentes-ativos'                     },
+  { icon: Cpu,             label: 'Automações',           href: '/hub/automacoes'                         },
+  { icon: Sparkles,        label: 'Oportunidades',        href: '/hub/explorar'                           },
+  { icon: Plug2,           label: 'Integrações',          href: '/hub/integracoes'                        },
   {
     icon: Brain,
     label: 'Laboratório IA',
     href: '/hub/laboratorio-agentes',
     children: [
-      { icon: BarChart2,    label: 'Performance',  href: '/hub/performance'  },
-      { icon: FlaskConical, label: 'Criativos',    href: '/hub/criativos'    },
-      { icon: Wrench,       label: 'Técnico',      href: '/hub/tecnico'      },
-      { icon: Lightbulb,    label: 'Inteligência', href: '/hub/inteligencia' },
+      { icon: Sparkles,     label: 'Atração',    href: '/hub/funil/atracao'    },
+      { icon: BarChart2,    label: 'Engajamento', href: '/hub/funil/engajamento' },
+      { icon: ChevronRight, label: 'Conversão',  href: '/hub/funil/conversao'  },
+      { icon: RefreshCw,    label: 'Retenção',   href: '/hub/funil/retencao'   },
     ],
   },
-  { icon: Plug2,        label: 'Integrações',         href: '/hub/integracoes'                             },
-  { icon: Cpu,          label: 'Automações',           href: '/hub/automacoes'                             },
-  { icon: Sparkles,     label: 'Oportunidades',        href: '/hub/explorar'                               },
   { icon: BookOpen,     label: 'Base de Conhecimento', href: '/hub/configuracoes?tab=conhecimento'         },
   { icon: Settings,     label: 'Configurações',        href: '/hub/configuracoes'                          },
-  { icon: MessageSquare, label: 'Lucca | Online', href: '/hub/assistente-ia',
-    // Special item — green dot indicator
-  },
 ];
 
 
@@ -179,7 +177,20 @@ function NavLink({
         textDecoration: 'none',
       }}
     >
-      <LeafIcon size={depth === 1 ? 13 : 16} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-600' : 'text-[#FF6A00]') : 'text-slate-500'}`} />
+      {/* Icon: use avatar image for Lucca, regular icon for others */}
+      {item.avatarImage ? (
+        <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-emerald-500/30 shadow-[0_0_6px_rgba(16,185,129,0.25)]">
+          <Image
+            src={item.avatarImage}
+            alt={item.label}
+            width={24}
+            height={24}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      ) : (
+        <LeafIcon size={depth === 1 ? 13 : 16} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-600' : 'text-[#FF6A00]') : 'text-slate-500'}`} />
+      )}
       <span className="flex-1">{item.label}</span>
       {isLucca && (
         <span className="flex items-center gap-1 shrink-0">
@@ -217,35 +228,50 @@ function SidebarContent({
 }) {
   return (
     <>
-      {/* User card — top of sidebar */}
+      {/* User card — editorial two-zone layout */}
       <div className="px-4 pt-5 pb-4 border-b border-white/40 shrink-0">
-        <div className="flex items-center gap-3 px-3 py-3 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[3px_3px_8px_#d1d9e6,_-3px_-3px_8px_#ffffff]">
-          {/* Avatar */}
-          <div
-            className="w-10 h-10 rounded-xl overflow-hidden shrink-0 flex items-center justify-center border border-white/30 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.06)]"
-            style={{ background: 'linear-gradient(135deg, #FF6A00, #FF8805)' }}
-          >
+        <div className="flex items-stretch gap-0 rounded-2xl overflow-hidden border border-white/60 shadow-[3px_3px_8px_#d1d9e6,_-3px_-3px_8px_#ffffff] bg-[#eef2f7]">
+
+          {/* LEFT — photo zone (square crop, ~40% width) */}
+          <div className="relative w-[72px] shrink-0 overflow-hidden" style={{ minHeight: 72 }}>
             {userPhoto ? (
-              <Image src={userPhoto} alt="" width={40} height={40} className="object-cover w-full h-full" />
+              <Image
+                src={userPhoto}
+                alt=""
+                fill
+                className="object-cover object-center"
+                sizes="72px"
+                priority
+              />
             ) : (
-              <span className="text-white text-[15px] font-black">{(userName.charAt(0) || 'N').toUpperCase()}</span>
+              <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'linear-gradient(160deg, #FF4D00 0%, #FF8805 100%)' }}>
+                <span className="text-white text-[22px] font-black select-none">
+                  {(userName.charAt(0) || 'N').toUpperCase()}
+                </span>
+              </div>
             )}
+            {/* Warm edge fade into divider */}
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent 55%, rgba(238,242,247,0.7) 85%, #eef2f7 100%)' }} />
           </div>
 
-          {/* Info */}
-          <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-bold text-slate-400 leading-none mb-0.5">
-              {getGreeting()},
+          {/* Vertical divider — 1px, subtle */}
+          <div className="w-px bg-gradient-to-b from-transparent via-slate-300/60 to-transparent shrink-0 my-3" />
+
+          {/* RIGHT — text zone */}
+          <div className="flex flex-col justify-center px-3.5 py-3 min-w-0 flex-1">
+            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.18em] leading-none mb-1.5">
+              {getGreeting()}
             </p>
-            <p className="text-[13px] font-black text-[#1e293b] truncate leading-tight">
+            <p className="text-[14px] font-black text-[#0f172a] truncate leading-none tracking-tight">
               {userName}
             </p>
             {companyName && (
-              <p className="text-[11px] font-semibold text-[#FF6A00] truncate leading-tight mt-0.5">
+              <p className="text-[11px] font-bold text-[#FF6A00] truncate leading-tight mt-1.5 tracking-tight">
                 {companyName}
               </p>
             )}
           </div>
+
         </div>
       </div>
 
@@ -259,6 +285,30 @@ function SidebarContent({
             currentTab={currentTab}
           />
         ))}
+
+        {/* Lucca — positioned after Configurações, before Sair */}
+        <div className="pt-1">
+          <Link
+            href="/hub/assistente-ia"
+            className={`group flex items-center gap-3 pl-4 pr-3 py-3 rounded-2xl text-[13px] font-bold transition-all duration-200 ${
+              pathname === '/hub/assistente-ia'
+                ? 'text-emerald-600'
+                : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
+            }`}
+            style={{
+              boxShadow: pathname === '/hub/assistente-ia' ? 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff' : 'none',
+              background: pathname === '/hub/assistente-ia' ? '#ecfdf5' : 'transparent',
+              borderLeft: pathname === '/hub/assistente-ia' ? '2px solid #10b981' : '2px solid transparent',
+              textDecoration: 'none',
+            }}
+          >
+            <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-emerald-400/40 shadow-[0_0_8px_rgba(16,185,129,0.3)]">
+              <Image src="/images/Avatar_Lucca_Novo.jpeg" alt="Lucca" width={24} height={24} className="w-full h-full object-cover" />
+            </div>
+            <span className="flex-1">Lucca | Online</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)] animate-pulse shrink-0" />
+          </Link>
+        </div>
       </nav>
 
       {/* Sign out */}
@@ -749,6 +799,7 @@ function HubLayoutInner({
           </div>
         ) : (
           <div
+            id="hub-scroll-container"
             className="flex-1 overflow-y-auto px-4 py-4 lg:px-8 lg:py-8 lg:pb-8 relative z-10 mobile-content-area"
             style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
           >

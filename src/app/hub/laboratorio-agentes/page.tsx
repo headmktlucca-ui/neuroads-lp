@@ -1,7 +1,7 @@
 'use client';
 
-import CategoryAgentsPageShell from '../../../components/hub/CategoryAgentsPageShell';
+import TeamLabShell from '../../../components/hub/TeamLabShell';
 
 export default function HubLaboratorioPage() {
-  return <CategoryAgentsPageShell categorySlug="all" />;
+  return <TeamLabShell />;
 }
