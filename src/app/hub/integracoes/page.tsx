@@ -169,6 +169,18 @@ const INTEGRATIONS: IntegrationDef[] = [
 
 const FILTERS = ['Todos', 'SOCIAL', 'CRM', 'ADS', 'ANALYTICS', 'SEO', 'FINANCEIRO', 'MARKETING'];
 
+// Category left-border accent colors
+const CATEGORY_BORDER: Record<string, string> = {
+  SOCIAL:     '#E1306C', // Instagram pink
+  CRM:        '#8B5CF6', // violet
+  ADS:        '#FF6A00', // NeuroAds orange
+  ANALYTICS:  '#3B82F6', // blue
+  SEO:        '#10B981', // emerald
+  FINANCEIRO: '#059669', // green
+  MARKETING:  '#7C3AED', // purple
+};
+
+
 // ---------------------------------------------------------------------------
 // Modal / state types
 // ---------------------------------------------------------------------------
@@ -475,7 +487,13 @@ function HubIntegracoesContent() {
               const isError = cf?.phase === 'error';
 
               return (
-                <div key={integ.id} className="hub-neu-card group relative flex flex-col gap-4 p-5 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] transition-all duration-300">
+                <div
+                  key={integ.id}
+                  className="hub-neu-card group relative flex flex-col gap-4 p-5 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] transition-all duration-300 overflow-hidden"
+                  style={{
+                    borderLeft: `3px solid ${CATEGORY_BORDER[integ.category] ?? '#E5E7EB'}`,
+                  }}
+                >
                   <div className="flex items-start justify-between gap-2">
                     <div className="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center border border-white/40 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] overflow-hidden p-1">
                       {integ.isComponentIcon ? (

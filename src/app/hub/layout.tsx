@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { resolveHubAccessState, getHubLoginRedirect, getHubOnboardingRedirect } from '../../lib/hub-access';
-import LuccaHubSupportWidget from '../../components/hub/LuccaHubSupportWidget';
 import { HubProvider, useHub } from '../../context/HubContext';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -35,7 +34,10 @@ import {
   Lightbulb,
   Menu,
   X,
+  MessageSquare,
+  Sparkles,
 } from 'lucide-react';
+
 
 /* ─── Types ────────────────────────────────────────────────────────── */
 type NavItem = {
@@ -60,12 +62,16 @@ const NAV_ITEMS: NavItem[] = [
       { icon: Lightbulb,    label: 'Inteligência', href: '/hub/inteligencia' },
     ],
   },
-  { icon: Plug2,    label: 'Integrações',          href: '/hub/integracoes'                              },
-  { icon: Cpu,      label: 'Automações',            href: '/hub/automacoes'                              },
-  { icon: Layers,   label: 'Explorar',              href: '/hub/explorar'                                },
-  { icon: BookOpen, label: 'Base de Conhecimento',  href: '/hub/configuracoes?tab=conhecimento'          },
-  { icon: Settings, label: 'Configurações',         href: '/hub/configuracoes'                           },
+  { icon: Plug2,        label: 'Integrações',         href: '/hub/integracoes'                             },
+  { icon: Cpu,          label: 'Automações',           href: '/hub/automacoes'                             },
+  { icon: Sparkles,     label: 'Oportunidades',        href: '/hub/explorar'                               },
+  { icon: BookOpen,     label: 'Base de Conhecimento', href: '/hub/configuracoes?tab=conhecimento'         },
+  { icon: Settings,     label: 'Configurações',        href: '/hub/configuracoes'                          },
+  { icon: MessageSquare, label: 'Lucca | Online', href: '/hub/assistente-ia',
+    // Special item — green dot indicator
+  },
 ];
+
 
 /* ─── Single nav link ───────────────────────────────────────────────── */
 function NavLink({
@@ -157,24 +163,30 @@ function NavLink({
 
   /* ── Leaf link ── */
   const LeafIcon = item.icon;
+  const isLucca = item.href === '/hub/assistente-ia';
   return (
     <Link
       href={item.href}
       className={`group flex items-center gap-3 ${paddingLeft} pr-3 py-${depth === 1 ? '2.5' : '3'} rounded-2xl ${textSize} font-bold transition-all duration-200 ${
         isActive
-          ? 'text-[#FF6A00]'
+          ? isLucca ? 'text-emerald-600' : 'text-[#FF6A00]'
           : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
       }`}
       style={{
         boxShadow:   isActive ? 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff' : 'none',
-        background:  isActive ? '#eef2f7' : 'transparent',
-        borderLeft:  isActive ? '2px solid #FF6A00' : '2px solid transparent',
+        background:  isActive ? (isLucca ? '#ecfdf5' : '#eef2f7') : 'transparent',
+        borderLeft:  isActive ? `2px solid ${isLucca ? '#10b981' : '#FF6A00'}` : '2px solid transparent',
         textDecoration: 'none',
       }}
     >
-      <LeafIcon size={depth === 1 ? 13 : 16} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? 'text-[#FF6A00]' : 'text-slate-500'}`} />
-      <span>{item.label}</span>
-      {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#FF6A00]" />}
+      <LeafIcon size={depth === 1 ? 13 : 16} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-600' : 'text-[#FF6A00]') : 'text-slate-500'}`} />
+      <span className="flex-1">{item.label}</span>
+      {isLucca && (
+        <span className="flex items-center gap-1 shrink-0">
+          <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)] animate-pulse" />
+        </span>
+      )}
+      {isActive && !isLucca && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#FF6A00]" />}
     </Link>
   );
 }
@@ -305,7 +317,8 @@ function getMobilePageTitle(pathname: string): string {
   if (pathname.startsWith('/hub/inteligencia')) return 'Inteligência';
   if (pathname.startsWith('/hub/integracoes')) return 'Integrações';
   if (pathname.startsWith('/hub/automacoes')) return 'Automações';
-  if (pathname.startsWith('/hub/explorar')) return 'Explorar';
+  if (pathname.startsWith('/hub/explorar')) return 'Oportunidades';
+  if (pathname.startsWith('/hub/assistente-ia')) return 'Lucca | Online';
   if (pathname.startsWith('/hub/configuracoes')) return 'Configurações';
   return 'Hub';
 }
@@ -514,7 +527,7 @@ function MobileDrawer({
 }
 
 /* ─── TopBar Component ─────────────────────────────────────────────── */
-function TopBar({ onRefresh }: { onRefresh: () => void }) {
+function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: string }) {
   const {
     selectedPeriod,
     setSelectedPeriod,
@@ -529,6 +542,9 @@ function TopBar({ onRefresh }: { onRefresh: () => void }) {
   const [isPeriodOpen, setIsPeriodOpen] = useState(false);
   const periodRef = useRef<HTMLDivElement>(null);
   const bellRef = useRef<HTMLDivElement>(null);
+
+  // Only show refresh/period on the main Dashboard page
+  const isDashboard = pathname === '/hub';
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
@@ -552,6 +568,7 @@ function TopBar({ onRefresh }: { onRefresh: () => void }) {
 
   const activePeriodLabel = periods.find(p => p.value === selectedPeriod)?.label || 'Últimos 30 dias';
 
+
   return (
     <header className="hidden lg:flex items-center gap-4 px-8 h-16 border-b border-white/40 bg-[#eef2f7] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
       <div className="flex items-center gap-2.5 flex-1 max-w-xs px-3.5 h-10 rounded-2xl border border-white/30 bg-[#eef2f7] text-[13px] text-[#475569] shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] focus-within:ring-2 focus-within:ring-[#FF6A00]/25 transition-all">
@@ -560,51 +577,55 @@ function TopBar({ onRefresh }: { onRefresh: () => void }) {
       </div>
 
       <div className="ml-auto flex items-center gap-2 sm:gap-3 relative">
-        {/* Refresh */}
-        <button
-          onClick={onRefresh}
-          aria-label="Atualizar"
-          className="flex items-center gap-2 px-2.5 sm:px-4 h-9 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-bold text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
-        >
-          <RefreshCw size={13} />
-          <span className="hidden sm:inline">Atualizar</span>
-        </button>
-
-        {/* Period Selector */}
-        <div className="relative" ref={periodRef}>
+        {/* Refresh — only on Dashboard */}
+        {isDashboard && (
           <button
-            onClick={() => setIsPeriodOpen(prev => !prev)}
-            className="flex items-center gap-1.5 px-2.5 sm:px-4 h-9 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-bold text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
+            onClick={onRefresh}
+            aria-label="Atualizar"
+            className="flex items-center gap-2 px-2.5 sm:px-4 h-9 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-bold text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
           >
-            <span className="hidden sm:inline">{activePeriodLabel}</span>
-            <span className="sm:hidden">{selectedPeriod}d</span>
-            <ChevronRight size={13} className={`transition-transform duration-200 text-slate-400 ${isPeriodOpen ? 'rotate-90' : '-rotate-90'}`} />
+            <RefreshCw size={13} />
+            <span className="hidden sm:inline">Atualizar</span>
           </button>
+        )}
 
-          {isPeriodOpen && (
-            <div className="absolute right-0 mt-2 z-[999] w-48 rounded-2xl border border-white/80 bg-[#eef2f7] p-2.5 shadow-[5px_5px_15px_#d1d9e6,_-5px_-5px_15px_#ffffff]">
-              <div className="space-y-1">
-                {periods.map((p) => {
-                  const active = p.value === selectedPeriod;
-                  return (
-                    <button
-                      key={p.value}
-                      onClick={() => { setSelectedPeriod(p.value); setIsPeriodOpen(false); }}
-                      className={`flex w-full items-center justify-between px-3 py-2 rounded-xl text-[12px] font-bold text-left transition-all ${
-                        active
-                          ? 'text-[#FF6A00] bg-slate-100/60 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
-                          : 'text-[#475569] hover:bg-slate-200/50'
-                      }`}
-                    >
-                      <span>{p.label}</span>
-                      {active && <Check size={13} />}
-                    </button>
-                  );
-                })}
+        {/* Period Selector — only on Dashboard */}
+        {isDashboard && (
+          <div className="relative" ref={periodRef}>
+            <button
+              onClick={() => setIsPeriodOpen(prev => !prev)}
+              className="flex items-center gap-1.5 px-2.5 sm:px-4 h-9 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-bold text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
+            >
+              <span className="hidden sm:inline">{activePeriodLabel}</span>
+              <span className="sm:hidden">{selectedPeriod}d</span>
+              <ChevronRight size={13} className={`transition-transform duration-200 text-slate-400 ${isPeriodOpen ? 'rotate-90' : '-rotate-90'}`} />
+            </button>
+
+            {isPeriodOpen && (
+              <div className="absolute right-0 mt-2 z-[999] w-48 rounded-2xl border border-white/80 bg-[#eef2f7] p-2.5 shadow-[5px_5px_15px_#d1d9e6,_-5px_-5px_15px_#ffffff]">
+                <div className="space-y-1">
+                  {periods.map((p) => {
+                    const active = p.value === selectedPeriod;
+                    return (
+                      <button
+                        key={p.value}
+                        onClick={() => { setSelectedPeriod(p.value); setIsPeriodOpen(false); }}
+                        className={`flex w-full items-center justify-between px-3 py-2 rounded-xl text-[12px] font-bold text-left transition-all ${
+                          active
+                            ? 'text-[#FF6A00] bg-slate-100/60 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                            : 'text-[#475569] hover:bg-slate-200/50'
+                        }`}
+                      >
+                        <span>{p.label}</span>
+                        {active && <Check size={13} />}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
+        )}
 
         {/* Notifications */}
         <div className="relative" ref={bellRef}>
@@ -719,24 +740,26 @@ function HubLayoutInner({
         <MobileHeader pathname={pathname} onMenuOpen={() => setMobileDrawerOpen(true)} />
 
         {/* Desktop topbar — hidden on mobile */}
-        <TopBar onRefresh={() => window.location.reload()} />
+        <TopBar onRefresh={() => window.location.reload()} pathname={pathname} />
 
-        {/* Main content — responsive padding + bottom clearance for mobile nav */}
-        <div
-          className="flex-1 overflow-y-auto px-4 py-4 lg:px-8 lg:py-8 lg:pb-8 relative z-10 mobile-content-area"
-          style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
-        >
-          {children}
-        </div>
+        {/* Main content area — full height for chat page, padded for others */}
+        {pathname === '/hub/assistente-ia' ? (
+          <div className="flex-1 overflow-hidden relative z-10 p-4">
+            {children}
+          </div>
+        ) : (
+          <div
+            className="flex-1 overflow-y-auto px-4 py-4 lg:px-8 lg:py-8 lg:pb-8 relative z-10 mobile-content-area"
+            style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
+          >
+            {children}
+          </div>
+        )}
         <style>{`@media (min-width: 1024px) { .mobile-content-area { padding-bottom: 2rem !important; } }`}</style>
       </div>
 
       {/* Mobile bottom navigation bar */}
       <MobileBottomNav pathname={pathname} onMenuOpen={() => setMobileDrawerOpen(true)} />
-
-      <div className="relative z-30">
-        <LuccaHubSupportWidget />
-      </div>
     </div>
   );
 }

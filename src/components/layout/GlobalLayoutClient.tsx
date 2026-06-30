@@ -5,7 +5,7 @@ import PublicTopNav from './PublicTopNav';
 import HubFooter from '../hub/HubFooter';
 
 // Rotas privadas (Hub/auth) renderizam seu próprio chrome.
-const HUB_PREFIXES = ['/hub', '/login', '/onboarding', '/cadastro', '/verificar-email'];
+const HUB_PREFIXES = ['/hub', '/login', '/onboarding', '/cadastro', '/verificar-email', '/preview-chat'];
 
 // Rotas públicas que já trazem a própria navegação (PrimaryTopMenu) e o próprio
 // rodapé (PrimaryFooter) — não devem receber a PublicTopNav/HubFooter globais,
