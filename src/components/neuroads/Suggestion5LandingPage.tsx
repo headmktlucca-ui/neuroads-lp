@@ -394,9 +394,9 @@ export default function Suggestion5LandingPage() {
             transition={{ delay: 0.08 }}
             className="text-[50px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)]"
           >
-            Nenhuma campanha vale nada
+            Inteligência Estratégica em
             <br />
-            <span className="text-[#ff6a00]">sem dados que provem o retorno.</span>
+            <span className="text-[#ff6a00]">Marketing e Vendas B2B.</span>
           </motion.h1>
 
           {/* Subtitle */}
@@ -407,9 +407,7 @@ export default function Suggestion5LandingPage() {
             transition={{ delay: 0.16 }}
             className="mt-5 text-[17px] sm:text-[20px] text-white/65 leading-relaxed max-w-[680px] drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)] font-medium"
           >
-            Dados soltos entre Google Ads, Meta Ads e GA4 geram decisões cegas.{" "}
-            <br className="hidden sm:inline" />
-            Agentes de IA que unificam, analisam e executam — 24/7.
+            Aumente sua receita com Agentes IA que identificam, nutrem e qualificam o cliente ideal até o fechamento.
           </motion.p>
 
           {/* CTAs */}
