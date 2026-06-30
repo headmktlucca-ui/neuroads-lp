@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 
-const GADS_BASE = 'https://googleads.googleapis.com/v24';
+const GADS_BASE = 'https://googleads.googleapis.com/v18';
 
 type GoogleAdsCustomer = {
   id: string;
   name: string;
-  customerId: string;
+  accountId: string;
 };
 
 export async function POST(request: Request) {
@@ -22,15 +22,16 @@ export async function POST(request: Request) {
     const developerToken =
       body.developerToken?.trim() || process.env.GOOGLE_ADS_DEVELOPER_TOKEN || '';
 
-    const baseHeaders = {
+    const baseHeaders: Record<string, string> = {
       Authorization: `Bearer ${accessToken}`,
       'developer-token': developerToken,
+      'Content-Type': 'application/json',
     };
 
-    // 1. List accessible customer resource names
+    // 1. List accessible customer resource names (top-level accounts)
     const listRes = await fetch(`${GADS_BASE}/customers:listAccessibleCustomers`, {
       method: 'GET',
-      headers: baseHeaders,
+      headers: { Authorization: baseHeaders.Authorization, 'developer-token': developerToken },
     });
 
     if (!listRes.ok) {
@@ -48,29 +49,91 @@ export async function POST(request: Request) {
       return NextResponse.json({ customers: [] });
     }
 
-    // 2. Fetch name/id for each customer via GAQL search
-    const customers: GoogleAdsCustomer[] = await Promise.all(
-      resourceNames.slice(0, 20).map(async (resourceName) => {
-        const customerId = resourceName.replace('customers/', '');
+    // 2. For each accessible customer, try to list sub-accounts via customer_client (MCC traversal)
+    const allAccounts = new Map<string, GoogleAdsCustomer>();
+
+    await Promise.all(
+      resourceNames.slice(0, 10).map(async (resourceName) => {
+        const managerId = resourceName.replace('customers/', '');
         try {
-          const searchRes = await fetch(
-            `${GADS_BASE}/customers/${customerId}/googleAds:search`,
+          // Try to get sub-accounts (works for MCC/manager accounts)
+          const mccRes = await fetch(
+            `${GADS_BASE}/customers/${managerId}/googleAds:search`,
             {
               method: 'POST',
-              headers: {
-                ...baseHeaders,
-                'Content-Type': 'application/json',
-                'login-customer-id': customerId,
-              },
+              headers: { ...baseHeaders, 'login-customer-id': managerId },
               body: JSON.stringify({
-                query:
-                  'SELECT customer.id, customer.descriptive_name FROM customer LIMIT 1',
+                query: `
+                  SELECT
+                    customer_client.client_customer,
+                    customer_client.descriptive_name,
+                    customer_client.id,
+                    customer_client.manager,
+                    customer_client.level
+                  FROM customer_client
+                  WHERE customer_client.status = 'ENABLED'
+                    AND customer_client.manager = FALSE
+                    AND customer_client.level <= 3
+                `,
+              }),
+            }
+          );
+
+          if (mccRes.ok) {
+            const mccData = (await mccRes.json()) as {
+              results?: Array<{
+                customerClient?: {
+                  clientCustomer?: string;
+                  descriptiveName?: string;
+                  id?: string;
+                  manager?: boolean;
+                  level?: number;
+                };
+              }>;
+            };
+
+            if (mccData.results && mccData.results.length > 0) {
+              for (const row of mccData.results) {
+                const client = row.customerClient;
+                if (!client?.id) continue;
+                const customerId = String(client.id);
+                if (!allAccounts.has(customerId)) {
+                  allAccounts.set(customerId, {
+                    id: `customers/${customerId}`,
+                    name: client.descriptiveName || `Conta ${customerId}`,
+                    accountId: customerId,
+                  });
+                }
+              }
+              return; // Successfully listed sub-accounts, skip direct account fetch
+            }
+          }
+        } catch {
+          // MCC query failed, fall through to direct account info
+        }
+
+        // Fallback: fetch basic info for this customer directly
+        try {
+          const searchRes = await fetch(
+            `${GADS_BASE}/customers/${managerId}/googleAds:search`,
+            {
+              method: 'POST',
+              headers: { ...baseHeaders, 'login-customer-id': managerId },
+              body: JSON.stringify({
+                query: 'SELECT customer.id, customer.descriptive_name FROM customer LIMIT 1',
               }),
             }
           );
 
           if (!searchRes.ok) {
-            return { id: resourceName, name: `Conta ${customerId}`, customerId };
+            if (!allAccounts.has(managerId)) {
+              allAccounts.set(managerId, {
+                id: resourceName,
+                name: `Conta ${managerId}`,
+                accountId: managerId,
+              });
+            }
+            return;
           }
 
           const searchData = (await searchRes.json()) as {
@@ -80,17 +143,27 @@ export async function POST(request: Request) {
           };
 
           const customerInfo = searchData.results?.[0]?.customer;
-          return {
-            id: resourceName,
-            name: customerInfo?.descriptiveName || `Conta ${customerId}`,
-            customerId: customerInfo?.id || customerId,
-          };
+          const cid = customerInfo?.id ? String(customerInfo.id) : managerId;
+          if (!allAccounts.has(cid)) {
+            allAccounts.set(cid, {
+              id: resourceName,
+              name: customerInfo?.descriptiveName || `Conta ${managerId}`,
+              accountId: cid,
+            });
+          }
         } catch {
-          return { id: resourceName, name: `Conta ${customerId}`, customerId };
+          if (!allAccounts.has(managerId)) {
+            allAccounts.set(managerId, {
+              id: resourceName,
+              name: `Conta ${managerId}`,
+              accountId: managerId,
+            });
+          }
         }
       })
     );
 
+    const customers = Array.from(allAccounts.values()).slice(0, 50);
     return NextResponse.json({ customers });
   } catch {
     return NextResponse.json(

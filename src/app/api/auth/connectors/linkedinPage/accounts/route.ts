@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 export type LinkedinPageOption = {
   id: string;
   name: string;
+  accountId: string;
 };
 
 function toStringValue(value: unknown): string {
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
             name = toStringValue(orgDetails.localizedName);
           }
           
-          accounts.push({ id, name });
+          accounts.push({ id, name, accountId: id });
         }
       }
     }

@@ -114,7 +114,16 @@ function buildActivities(longDescription: string): string[] {
   ];
 }
 
-// ─── Agent card (visual idêntico ao Agentes Ativos) ──────────────────────────
+// ─── Category left-border colors (same palette as integrations) ───────────────
+
+const CATEGORY_BORDER_COLOR: Record<string, string> = {
+  Performance:   '#0891b2',
+  Criativos:     '#FF6A00',
+  Técnico:       '#7c3aed',
+  Inteligência:  '#059669',
+};
+
+// ─── Agent card — identical visual logic to integrations catalog ──────────────
 
 function AgentCard({
   agent,
@@ -135,102 +144,160 @@ function AgentCard({
   onDeactivate: () => void;
   onDetails: () => void;
 }) {
-  const [expanded, setExpanded] = useState(false);
+  const borderColor = CATEGORY_BORDER_COLOR[agent.category] ?? accentColor;
+  const [confirmDeactivate, setConfirmDeactivate] = useState(false);
 
-  const statusCfg = isActive
-    ? { label: 'Ativo',   color: 'text-emerald-700', bg: 'bg-emerald-500/10 border-emerald-500/20', Icon: CheckCircle2 }
-    : { label: 'Inativo', color: 'text-slate-500',    bg: 'bg-slate-200/60 border-slate-300/40',     Icon: Power };
-
-  const StatusIcon = statusCfg.Icon;
-
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="hub-neu-card p-5 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] hover:shadow-[6px_6px_14px_#d1d9e6,_-6px_-6px_14px_#ffffff] transition-all duration-300 cursor-pointer group"
-      style={{ borderLeftColor: accentColor }}
-      onClick={() => setExpanded((e) => !e)}
-    >
-      {/* Header */}
-      <div className="flex items-start gap-4">
+  // ── Shared inner content ──
+  const cardInner = (
+    <>
+      {/* Top: icon + category badge */}
+      <div className="flex items-start justify-between gap-2">
         <div
-          className="w-11 h-11 rounded-2xl flex items-center justify-center shrink-0 border border-white/50 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.06),_inset_-2px_-2px_4px_#ffffff] overflow-hidden"
-          style={{ background: `${accentColor}18` }}
+          className="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center border border-white/40 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] overflow-hidden p-1"
         >
-          <Image src={agent.icon} alt={agent.title} width={28} height={28} className="object-cover" />
+          <Image src={agent.icon} alt={agent.title} width={36} height={36} className="h-full w-full rounded-lg object-cover" />
         </div>
-
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h3 className="text-[14px] font-black text-[#0f172a] truncate">{agent.title}</h3>
-            <span className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full border ${statusCfg.bg} ${statusCfg.color}`}>
-              <StatusIcon size={9} />
-              {statusCfg.label}
-            </span>
-          </div>
-          <p className="text-[11.5px] text-slate-500 font-semibold mt-0.5 leading-snug line-clamp-2">
-            {agent.description}
-          </p>
-        </div>
-
-        <ChevronRight
-          size={15}
-          className={`text-slate-400 shrink-0 transition-transform duration-300 ${expanded ? 'rotate-90' : ''} group-hover:text-[#FF6A00]`}
-        />
+        <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border border-white/60 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] text-slate-500 shrink-0">
+          {agent.category}
+        </span>
       </div>
 
-      {/* Expanded actions */}
-      <AnimatePresence>
-        {expanded && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden"
-          >
-            <div className="mt-4 pt-4 border-t border-slate-200/60 flex flex-wrap gap-3">
-              {isActive ? (
-                <>
-                  <Link
-                    href={`/hub/agente/${slugifyAgentTitle(agent.title)}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-black text-white transition-all shadow-[0_4px_12px_rgba(37,99,235,0.25)] hover:shadow-[0_4px_18px_rgba(37,99,235,0.38)] hover:scale-[1.02] active:scale-[0.98]"
-                    style={{ background: 'linear-gradient(135deg, #2563eb, #3b82f6)', textDecoration: 'none' }}
-                  >
-                    <ExternalLink size={12} />
-                    Acessar Agente
-                  </Link>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); onDeactivate(); }}
-                    disabled={isDeactivating}
-                    className="px-4 py-2.5 rounded-xl text-[12px] font-black text-rose-600 border border-rose-500/20 bg-rose-500/5 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] transition-all disabled:opacity-50"
-                  >
-                    {isDeactivating ? 'Desativando…' : 'Desativar'}
-                  </button>
-                </>
-              ) : (
+      {/* Middle: name + description */}
+      <div className="flex-1">
+        <h3 className="text-[14px] font-black text-[#0f172a] group-hover:text-[#FF6A00] transition-colors leading-tight">{agent.title}</h3>
+        <p className="mt-1.5 text-[12px] text-slate-500 font-semibold leading-snug line-clamp-3">{agent.description}</p>
+      </div>
+    </>
+  );
+
+  // ── Status bar ──
+  const isTransitioning = isActivating || isDeactivating;
+
+  if (isActive) {
+    // ── Active card: plain div, green gradient status bar ──
+    return (
+      <>
+        {/* ── Deactivation confirmation modal ── */}
+        {confirmDeactivate && (
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4">
+            <button type="button" onClick={() => setConfirmDeactivate(false)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" aria-label="Cancelar" />
+            <div className="relative w-full max-w-sm rounded-[24px] border border-white/80 bg-[#eef2f7] p-6 shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] animate-in fade-in zoom-in-95 duration-200">
+              {/* Icon */}
+              <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 mx-auto mb-4">
+                <Image src={agent.icon} alt={agent.title} width={32} height={32} className="rounded-xl object-cover" />
+              </div>
+              <h3 className="text-[17px] font-black text-[#0f172a] text-center leading-snug mb-1">
+                Desativar {agent.title}?
+              </h3>
+              <p className="text-[12px] text-slate-500 font-semibold text-center mb-6 leading-snug">
+                O agente sera pausado e deixara de executar tarefas. Voce pode reativa-lo a qualquer momento.
+              </p>
+              <div className="flex gap-3">
                 <button
-                  onClick={(e) => { e.stopPropagation(); onActivate(); }}
-                  disabled={isActivating}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[12px] font-black text-white transition-all shadow-[0_4px_12px_rgba(255,106,0,0.25)] hover:shadow-[0_4px_18px_rgba(255,106,0,0.38)] hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50"
-                  style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)' }}
+                  type="button"
+                  onClick={() => setConfirmDeactivate(false)}
+                  className="flex-1 px-4 py-2.5 rounded-2xl text-[13px] font-black text-slate-600 border border-white/60 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] transition-all"
                 >
-                  <Wrench size={12} />
-                  {isActivating ? 'Ativando…' : 'Ativar Agente'}
+                  Cancelar
                 </button>
-              )}
-              <button
-                onClick={(e) => { e.stopPropagation(); onDetails(); }}
-                className="px-4 py-2.5 rounded-xl text-[12px] font-black text-slate-600 border border-white/60 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] transition-all"
+                <button
+                  type="button"
+                  onClick={() => { setConfirmDeactivate(false); onDeactivate(); }}
+                  className="flex-1 px-4 py-2.5 rounded-2xl text-[13px] font-black text-white bg-gradient-to-r from-rose-600 to-red-500 shadow-[0_4px_14px_rgba(239,68,68,0.35)] hover:shadow-[0_6px_20px_rgba(239,68,68,0.45)] hover:brightness-105 active:scale-[0.98] transition-all"
+                >
+                  {isDeactivating ? 'Desativando…' : 'Sim, desativar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <motion.div
+          layout
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="hub-neu-card group relative flex flex-col gap-4 p-5 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] transition-all duration-300 overflow-hidden"
+          style={{ borderLeft: `3px solid ${borderColor}` }}
+        >
+          {cardInner}
+
+          {/* Green gradient status bar — full-width bleed */}
+          <div className="mt-auto -mx-5 -mb-5 px-4 py-2.5 rounded-b-2xl bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-500 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)] flex items-center justify-between gap-2">
+            <div className="flex items-center gap-1.5">
+              <CheckCircle2 className="w-3.5 h-3.5 text-white/90" />
+              <span className="text-[11px] font-black uppercase tracking-widest text-white">
+                {isDeactivating ? 'Desativando…' : 'Ativo'}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              {/* Acessar — orange gradient */}
+              <Link
+                href={`/hub/agente/${slugifyAgentTitle(agent.title)}`}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black text-white transition-all hover:brightness-110 active:scale-[0.97]"
+                style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', textDecoration: 'none', boxShadow: '0 2px 8px rgba(255,106,0,0.4)' }}
               >
-                <Info size={13} />
+                <ExternalLink size={10} />
+                Acessar
+              </Link>
+              {/* Desativar — red gradient, opens confirm modal */}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); setConfirmDeactivate(true); }}
+                disabled={isDeactivating}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black text-white transition-all hover:brightness-110 active:scale-[0.97] disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, #be123c, #ef4444)', boxShadow: '0 2px 8px rgba(239,68,68,0.4)' }}
+              >
+                Desativar
+              </button>
+              {/* Info */}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onDetails(); }}
+                className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/20 hover:bg-white/30 border border-white/30 text-white transition-all"
+                aria-label="Detalhes"
+              >
+                <Info size={12} />
               </button>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+          </div>
+        </motion.div>
+      </>
+    );
+  }
+
+  // ── Inactive card: entire card is clickable ──
+  return (
+    <motion.button
+      layout
+      type="button"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      onClick={onActivate}
+      disabled={isTransitioning}
+      className="hub-neu-card group relative flex flex-col gap-4 p-5 text-left w-full cursor-pointer shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[0_0_0_2px_rgba(255,106,0,0.18),_6px_6px_14px_#c2cbd9,_-6px_-6px_14px_#ffffff] hover:scale-[1.015] active:scale-[1.005] transition-all duration-200 overflow-hidden disabled:opacity-60 disabled:cursor-wait"
+      style={{ borderLeft: `3px solid ${borderColor}` }}
+    >
+      {cardInner}
+
+      {/* Inactive CTA bar */}
+      <div className="mt-auto pt-3 border-t border-slate-200">
+        <div className="flex items-center gap-1.5 text-[#FF6A00] group-hover:text-[#ff8f3a] transition-colors">
+          {isActivating ? (
+            <>
+              <Activity className="w-3.5 h-3.5 animate-pulse" />
+              <span className="text-[12px] font-bold">Ativando…</span>
+            </>
+          ) : (
+            <>
+              <Wrench className="w-3.5 h-3.5" />
+              <span className="text-[12px] font-bold">Ativar Agente</span>
+              <ChevronRight className="w-3.5 h-3.5 ml-auto group-hover:translate-x-0.5 transition-transform" />
+            </>
+          )}
+        </div>
+      </div>
+    </motion.button>
   );
 }
 
@@ -416,10 +483,10 @@ export default function CategoryAgentsPageShell({
               <button
                 key={cat.slug}
                 onClick={() => setFilterCategory(cat.slug)}
-                className={`px-3.5 py-2 rounded-xl text-[11px] font-black transition-all duration-200 bg-[#eef2f7] ${
+                className={`px-3.5 py-1.5 rounded-full text-[12px] font-bold tracking-wide transition-all bg-[#eef2f7] ${
                   filterCategory === cat.slug
-                    ? 'shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] border border-orange-500/20 text-[#FF6A00]'
-                    : 'text-slate-500 border border-white/60 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                    ? 'shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border border-white/20 text-[#FF6A00]'
+                    : 'text-slate-600 border border-white/40 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff]'
                 }`}
               >
                 {cat.label}
@@ -434,10 +501,10 @@ export default function CategoryAgentsPageShell({
             <button
               key={s}
               onClick={() => setFilterStatus(s)}
-              className={`px-3.5 py-2 rounded-xl text-[11px] font-black transition-all duration-200 bg-[#eef2f7] ${
+              className={`px-3.5 py-1.5 rounded-full text-[12px] font-bold tracking-wide transition-all bg-[#eef2f7] ${
                 filterStatus === s
-                  ? 'shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] border border-orange-500/20 text-[#FF6A00]'
-                  : 'text-slate-500 border border-white/60 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                  ? 'shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border border-white/20 text-[#FF6A00]'
+                  : 'text-slate-600 border border-white/40 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff]'
               }`}
             >
               {s}
@@ -446,11 +513,11 @@ export default function CategoryAgentsPageShell({
         </div>
       </div>
 
-      {/* ── Agents grid ── */}
-      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* ── Agents grid — 4 cols at lg, same as integrations catalog ── */}
+      <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <AnimatePresence>
           {filtered.length === 0 ? (
-            <div className="col-span-2 py-16 text-center">
+            <div className="col-span-4 py-16 text-center">
               <Brain size={32} className="mx-auto text-slate-300 mb-3" />
               <p className="text-[14px] font-black text-slate-400">Nenhum agente encontrado.</p>
             </div>

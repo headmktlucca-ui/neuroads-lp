@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 export type LinkedinAdsAccountOption = {
   id: string;
   name: string;
+  accountId: string;
   currency: string;
   status: string;
 };
@@ -73,6 +74,7 @@ export async function POST(request: Request) {
       accounts.push({
         id,
         name: `${baseName} (${translatedStatus})`,
+        accountId: id,
         currency: toStringValue(item.currency) || '',
         status: rawStatus,
       });
