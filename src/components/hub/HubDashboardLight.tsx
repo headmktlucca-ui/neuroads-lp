@@ -4,6 +4,7 @@ import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import {
   Activity,
   ArrowDownRight,
@@ -28,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useHub } from '../../context/HubContext';
+import { getHubAutomationsFromProfile, formatAutomationDateTime } from '../../lib/hub-automations';
 import HubEmptyState from './HubEmptyState';
 import BentoCard from './v2/BentoCard';
 import CountUp from './v2/CountUp';
@@ -249,24 +251,15 @@ function KpiHelpPopover({ label, isNa }: { label: string; isNa: boolean }) {
 
 // ─── GA4 Custom Charts ───────────────────────────────────────────────
 function GA4TrafficDonut() {
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const data = [
-    { label: '(direct) / (none)', value: 216, color: '#FF6A00' },
-    { label: 'linkedin.com / referral', value: 58, color: '#2563eb' },
-    { label: 'accounts.google.com / referral', value: 46, color: '#059669' },
-    { label: 'hpanel.hostinger.com / referral', value: 11, color: '#7c3aed' },
-    { label: 'pay.luccaos.pro / referral', value: 5, color: '#db2777' },
-    { label: 'google / organic', value: 4, color: '#0369a1' },
-    { label: 'bit.ly / referral', value: 1, color: '#b45309' },
+    { name: '(direct) / (none)', value: 216, color: '#FF6A00' },
+    { name: 'linkedin.com / referral', value: 58, color: '#2563eb' },
+    { name: 'accounts.google.com / referral', value: 46, color: '#059669' },
+    { name: 'hpanel.hostinger.com / referral', value: 11, color: '#7c3aed' },
+    { name: 'pay.luccaos.pro / referral', value: 5, color: '#db2777' },
+    { name: 'google / organic', value: 4, color: '#0369a1' },
+    { name: 'bit.ly / referral', value: 1, color: '#b45309' },
   ];
-  const total = data.reduce((acc, d) => acc + d.value, 0);
-
-  // SVG circle dimensions
-  const R = 50;
-  const C = 2 * Math.PI * R; // ~314.16
-
-  let accumulated = 0;
-
   return (
     <div className="flex flex-col h-full justify-between">
       <div className="flex items-center justify-between border-b border-white/40 pb-3 mb-3">
@@ -279,64 +272,25 @@ function GA4TrafficDonut() {
           GA4
         </div>
       </div>
-      <div className="flex items-center gap-4 flex-1 py-1">
-        {/* SVG Donut */}
-        <div className="relative w-36 h-36 shrink-0 flex items-center justify-center">
-          <svg width="140" height="140" viewBox="0 0 140 140" className="overflow-visible">
-            {data.map((item, idx) => {
-              const percentage = item.value / total;
-              const strokeLength = percentage * C;
-              const strokeOffset = C - (accumulated * C);
-              accumulated += percentage;
-              const isHovered = hoveredIdx === idx;
-
-              return (
-                <circle
-                  key={item.label}
-                  cx="70"
-                  cy="70"
-                  r={R}
-                  fill="transparent"
-                  stroke={item.color}
-                  strokeWidth={isHovered ? 18 : 14}
-                  strokeDasharray={`${strokeLength} ${C}`}
-                  strokeDashoffset={strokeOffset}
-                  transform="rotate(-90 70 70)"
-                  onMouseEnter={() => setHoveredIdx(idx)}
-                  onMouseLeave={() => setHoveredIdx(null)}
-                  className="transition-all duration-200 cursor-pointer"
-                  style={{
-                    filter: isHovered ? `drop-shadow(0 0 6px ${item.color}60)` : 'none'
-                  }}
-                />
-              );
-            })}
-          </svg>
-          {/* Center labels */}
-          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-[18px] font-black text-[#0f172a] font-mono leading-none">
-              {hoveredIdx !== null ? data[hoveredIdx].value : total}
-            </span>
-            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1">
-              {hoveredIdx !== null ? `${((data[hoveredIdx].value / total) * 100).toFixed(1)}%` : 'Sessões'}
-            </span>
-          </div>
+      <div className="flex flex-1 items-center gap-4 py-1">
+        <div className="w-36 h-36 shrink-0 relative flex items-center justify-center">
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <Pie data={data} dataKey="value" innerRadius={45} outerRadius={60} paddingAngle={2} stroke="none">
+                {data.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <RechartsTooltip formatter={(value) => [`${value} Sessões`, 'Total']} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', fontSize: '12px', fontWeight: 'bold' }} />
+            </PieChart>
+          </ResponsiveContainer>
         </div>
-
-        {/* Legend list */}
         <div className="flex-1 space-y-1 overflow-y-auto max-h-[170px] pr-1">
-          {data.map((item, idx) => (
-            <div
-              key={item.label}
-              className={`flex items-center justify-between text-[10.5px] font-semibold px-2 py-0.5 rounded-lg transition-all ${
-                hoveredIdx === idx ? 'bg-white shadow-[2px_2px_5px_#d1d9e6]' : ''
-              }`}
-              onMouseEnter={() => setHoveredIdx(idx)}
-              onMouseLeave={() => setHoveredIdx(null)}
-            >
+          {data.map((item) => (
+            <div key={item.name} className="flex items-center justify-between text-[10.5px] font-semibold px-2 py-0.5 rounded-lg transition-all hover:bg-white hover:shadow-[2px_2px_5px_#d1d9e6]">
               <div className="flex items-center gap-1.5 min-w-0">
                 <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                <span className="text-slate-600 truncate">{item.label}</span>
+                <span className="text-slate-600 truncate" title={item.name}>{item.name}</span>
               </div>
               <span className="font-bold text-slate-800 font-mono shrink-0 ml-2">{item.value}</span>
             </div>
@@ -348,7 +302,6 @@ function GA4TrafficDonut() {
 }
 
 function GA4UserLineChart() {
-  const [activeIdx, setActiveIdx] = useState<number | null>(null);
   const data = [
     { date: '07 Jun', newUsers: 0, returningUsers: 0 },
     { date: '08 Jun', newUsers: 2, returningUsers: 1 },
@@ -375,31 +328,6 @@ function GA4UserLineChart() {
     { date: '29 Jun', newUsers: 15, returningUsers: 11 },
   ];
 
-  const width = 450;
-  const height = 220;
-  const paddingLeft = 30;
-  const paddingRight = 40;
-  const paddingTop = 20;
-  const paddingBottom = 30;
-
-  const chartWidth = width - paddingLeft - paddingRight;
-  const chartHeight = height - paddingTop - paddingBottom;
-  const maxValue = 20;
-
-  const getX = (idx: number) => paddingLeft + (idx / (data.length - 1)) * chartWidth;
-  const getY = (val: number) => (paddingTop + chartHeight) - (val / maxValue) * chartHeight;
-
-  const returningPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${getX(i)} ${getY(d.returningUsers)}`).join(' ');
-  const newPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${getX(i)} ${getY(d.newUsers)}`).join(' ');
-
-  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const mouseX = e.clientX - rect.left;
-    const relativeX = (mouseX - (paddingLeft / width * rect.width)) / ((chartWidth / width) * rect.width);
-    const closestIdx = Math.max(0, Math.min(data.length - 1, Math.round(relativeX * (data.length - 1))));
-    setActiveIdx(closestIdx);
-  };
-
   return (
     <div className="flex flex-col h-full justify-between">
       <div className="flex items-center justify-between border-b border-white/40 pb-3 mb-3">
@@ -411,132 +339,22 @@ function GA4UserLineChart() {
       </div>
 
       <div className="relative flex-1 flex items-center justify-center h-40">
-        <svg
-          width="100%"
-          height="100%"
-          viewBox={`0 0 ${width} ${height}`}
-          className="overflow-visible"
-          onMouseMove={handleMouseMove}
-          onMouseLeave={() => setActiveIdx(null)}
-        >
-          {/* Grid lines */}
-          {[0, 5, 10, 15, 20].map(val => (
-            <g key={val}>
-              <line
-                x1={paddingLeft}
-                y1={getY(val)}
-                x2={width - paddingRight}
-                y2={getY(val)}
-                stroke="rgba(203,213,225,0.4)"
-                strokeWidth="1"
-                strokeDasharray="4 4"
-              />
-              <text
-                x={width - paddingRight + 8}
-                y={getY(val) + 3}
-                fill="#94a3b8"
-                className="text-[9px] font-mono font-bold"
-              >
-                {val}
-              </text>
-            </g>
-          ))}
-
-          {/* X axis labels */}
-          {[
-            { idx: 0, label: '07 jun.' },
-            { idx: 7, label: '14' },
-            { idx: 14, label: '21' },
-            { idx: 21, label: '28' },
-          ].map(labelItem => (
-            <text
-              key={labelItem.idx}
-              x={getX(labelItem.idx)}
-              y={height - 8}
-              textAnchor="middle"
-              fill="#94a3b8"
-              className="text-[9px] font-bold"
-            >
-              {labelItem.label}
-            </text>
-          ))}
-
-          {/* Returning Line (Blue) */}
-          <path
-            d={returningPath}
-            fill="none"
-            stroke="#2563eb"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-
-          {/* New Line (Green) */}
-          <path
-            d={newPath}
-            fill="none"
-            stroke="#22c55e"
-            strokeWidth="2.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-
-          {/* Hover items */}
-          {activeIdx !== null && (
-            <g>
-              <line
-                x1={getX(activeIdx)}
-                y1={paddingTop}
-                x2={getX(activeIdx)}
-                y2={height - paddingBottom}
-                stroke="#64748b"
-                strokeWidth="1"
-                strokeDasharray="2 2"
-              />
-              <circle
-                cx={getX(activeIdx)}
-                cy={getY(data[activeIdx].returningUsers)}
-                r="6"
-                fill="#2563eb"
-                stroke="#fff"
-                strokeWidth="2"
-              />
-              <circle
-                cx={getX(activeIdx)}
-                cy={getY(data[activeIdx].newUsers)}
-                r="6"
-                fill="#22c55e"
-                stroke="#fff"
-                strokeWidth="2"
-              />
-            </g>
-          )}
-        </svg>
-
-        {/* Tooltip Overlay */}
-        {activeIdx !== null && (
-          <div
-            className="absolute z-20 bg-white/95 backdrop-blur-sm border border-slate-200/80 p-2.5 rounded-xl shadow-lg text-[10px] font-bold text-slate-700 pointer-events-none"
-            style={{
-              left: activeIdx > data.length / 2 ? `${(getX(activeIdx) - 120) / width * 100}%` : `${(getX(activeIdx) + 15) / width * 100}%`,
-              top: '10%',
-            }}
-          >
-            <p className="text-slate-900 border-b border-slate-100 pb-1 mb-1.5">{data[activeIdx].date} de 2026</p>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="w-2 h-2 rounded-full bg-[#2563eb]" />
-              <span>Recorrentes: <strong className="text-slate-900 font-mono">{data[activeIdx].returningUsers}</strong></span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[#22c55e]" />
-              <span>Novos: <strong className="text-slate-900 font-mono">{data[activeIdx].newUsers}</strong></span>
-            </div>
-          </div>
-        )}
+        <ResponsiveContainer width="100%" height="100%">
+          <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(203,213,225,0.4)" />
+            <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 'bold' }} axisLine={false} tickLine={false} minTickGap={20} />
+            <YAxis tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+            <RechartsTooltip
+              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', fontSize: '10px' }}
+              labelStyle={{ fontWeight: 'bold', color: '#0f172a', marginBottom: '4px' }}
+            />
+            <Line type="monotone" dataKey="returningUsers" name="Recorrentes" stroke="#2563eb" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
+            <Line type="monotone" dataKey="newUsers" name="Novos" stroke="#22c55e" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
+          </LineChart>
+        </ResponsiveContainer>
       </div>
 
-      {/* Legend Bottom */}
-      <div className="flex items-center justify-center gap-6 text-[10px] font-black uppercase text-slate-500 pt-2 border-t border-slate-200/50">
+      <div className="flex items-center justify-center gap-6 text-[10px] font-black uppercase text-slate-500 pt-2 border-t border-slate-200/50 mt-2">
         <div className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-[#2563eb]" />
           <span>returning</span>
@@ -573,59 +391,24 @@ function GA4ActiveRegions() {
         </div>
       </div>
 
-      <div className="flex gap-4 flex-1 items-center py-1">
-        {/* SVG Map of Continents */}
-        <div className="w-[45%] h-32 shrink-0 relative flex items-center justify-center border border-white/50 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,inset_-1px_-1px_3px_#ffffff] rounded-2xl p-2">
-          <svg viewBox="0 0 200 100" width="100%" height="100%" className="overflow-visible opacity-70">
-            {/* Americas */}
-            <path d="M15,10 C20,15 25,18 22,25 C18,30 25,35 20,45 C15,50 18,60 22,65 C25,70 20,80 25,85 C30,90 28,95 28,98" fill="none" stroke="#cbd5e1" strokeWidth="6" strokeLinecap="round" />
-            <path d="M10,8 C15,12 30,12 32,20 C34,25 28,28 30,35 C32,40 38,32 40,25" fill="none" stroke="#cbd5e1" strokeWidth="6" strokeLinecap="round" />
-            {/* Africa */}
-            <path d="M80,45 C90,40 100,45 105,55 C110,65 105,75 95,80 C90,82 85,75 82,65 Z" fill="none" stroke="#cbd5e1" strokeWidth="8" strokeLinecap="round" />
-            {/* Europe / Asia */}
-            <path d="M75,25 C85,15 105,10 120,15 C135,10 155,18 165,22 C175,26 180,35 170,45 C160,50 150,42 140,45 L130,50 L115,55 Z" fill="none" stroke="#cbd5e1" strokeWidth="8" strokeLinecap="round" />
-            {/* Australia / Oceania */}
-            <path d="M165,70 C175,70 178,75 175,80 C170,85 160,82 165,70" fill="none" stroke="#cbd5e1" strokeWidth="6" strokeLinecap="round" />
-
-            {/* Active Glowing Markers */}
-            {/* Brazil */}
-            <circle cx="34" cy="68" r="4.5" fill="#FF6A00" className="animate-ping" />
-            <circle cx="34" cy="68" r="3.5" fill="#FF6A00" style={{ filter: 'drop-shadow(0 0 4px #FF6A00)' }} />
-
-            {/* USA */}
-            <circle cx="22" cy="22" r="3.5" fill="#2563eb" className="animate-ping" />
-            <circle cx="22" cy="22" r="2.5" fill="#2563eb" style={{ filter: 'drop-shadow(0 0 4px #2563eb)' }} />
-
-            {/* Netherlands (Europe) */}
-            <circle cx="92" cy="22" r="2" fill="#7c3aed" />
-
-            {/* India */}
-            <circle cx="130" cy="40" r="2" fill="#db2777" />
-
-            {/* Poland */}
-            <circle cx="98" cy="20" r="2" fill="#0369a1" />
-          </svg>
-          <div className="absolute bottom-2 left-2 text-[7.5px] font-bold text-slate-400 pointer-events-none">Dados cartográficos ©2026</div>
-        </div>
-
-        {/* Country List */}
-        <div className="flex-1 space-y-1.5 overflow-y-auto max-h-[170px] pr-1">
+      <div className="flex-1 overflow-y-auto max-h-[170px] pr-1">
+        <div className="space-y-3">
           {regions.map(r => (
-            <div key={r.country} className="space-y-0.5">
-              <div className="flex items-center justify-between text-[10.5px] font-bold">
-                <span className="text-slate-700 truncate max-w-[55%]">{r.country}</span>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-slate-800 font-mono">{r.value}</span>
+            <div key={r.country} className="space-y-1">
+              <div className="flex items-center justify-between text-[11px] font-bold">
+                <span className="text-slate-700 truncate">{r.country}</span>
+                <div className="flex items-center gap-2">
+                  <span className="text-slate-800 font-mono text-[12px]">{r.value}</span>
                   {r.change !== '0%' && (
-                    <span className={`text-[8.5px] font-black px-1 py-0.2 rounded ${
-                      r.positive === true ? 'text-emerald-600 bg-emerald-500/5' : 'text-rose-600 bg-rose-500/5'
+                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
+                      r.positive === true ? 'text-emerald-600 bg-emerald-500/5' : r.positive === false ? 'text-rose-600 bg-rose-500/5' : 'text-slate-600 bg-slate-500/5'
                     }`}>
                       {r.change}
                     </span>
                   )}
                 </div>
               </div>
-              <div className="h-1 w-full bg-slate-200/60 rounded-full overflow-hidden">
+              <div className="h-1.5 w-full bg-slate-200/60 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-500"
                   style={{
@@ -647,6 +430,7 @@ export default function HubDashboardLight() {
   const { user, profile } = useAuth();
   const { dateRange } = useHub();
   const { dateFrom, dateTo } = dateRange;
+  const [selectedAlert, setSelectedAlert] = useState<{title: string, desc: string, platform: string} | null>(null);
 
   const [funnelFilter, setFunnelFilter] = useState<'all' | 'googleAds' | 'metaAds' | 'linkedinAds'>('all');
   const [loading, setLoading] = useState(false);
@@ -655,16 +439,23 @@ export default function HubDashboardLight() {
 
   const connections = useMemo(() => (profile?.connections || {}) as Record<string, ConnectionItem>, [profile?.connections]);
   const isGa4Connected = Boolean(connections.ga4?.isActive);
-  const isGoogleAdsConnected = Boolean(connections.google_ads?.isActive);
-  const isMetaAdsConnected = Boolean(connections.meta_ads?.isActive);
-  const isLinkedinAdsConnected = Boolean(connections.linkedin_ads?.isActive);
+  const isGoogleAdsConnected = Boolean(connections.googleAds?.isActive);
+  const isMetaAdsConnected = Boolean(connections.metaAds?.isActive);
+  const isLinkedinAdsConnected = Boolean(connections.linkedinAds?.isActive);
   const isInstagramConnected = Boolean(connections.instagram?.isActive);
-  const isLinkedinPageConnected = Boolean(connections.linkedin_page?.isActive);
-  const isSearchConsoleConnected = Boolean(connections.search_console?.isActive);
+  const isLinkedinPageConnected = Boolean(connections.linkedinPage?.isActive);
+  const isSearchConsoleConnected = Boolean(connections.searchConsole?.isActive);
 
   const [igData, setIgData] = useState<InstagramResponse | null>(null);
   const [linkedinPageData, setLinkedinPageData] = useState<LinkedinPageResponse | null>(null);
   const [searchConsoleData, setSearchConsoleData] = useState<SearchConsoleResponse | null>(null);
+
+  const recentAutomations = useMemo(() => {
+    return getHubAutomationsFromProfile(profile)
+      .filter(a => a.status === 'active' || a.lastUpdateAt != null)
+      .sort((a, b) => (b.lastUpdateAt || 0) - (a.lastUpdateAt || 0))
+      .slice(0, 5);
+  }, [profile]);
 
   useEffect(() => {
     let active = true;
@@ -687,23 +478,23 @@ export default function HubDashboardLight() {
         if (isGoogleAdsConnected) {
           activeChannels.push({
             platform: 'googleAds',
-            accessToken: connections.google_ads?.accessToken || '',
-            accountId: connections.google_ads?.loginCustomerId || connections.google_ads?.accountId,
-            loginCustomerId: connections.google_ads?.loginCustomerId,
+            accessToken: connections.googleAds?.accessToken || '',
+            accountId: connections.googleAds?.loginCustomerId || connections.googleAds?.accountId,
+            loginCustomerId: connections.googleAds?.loginCustomerId,
           });
         }
         if (isMetaAdsConnected) {
           activeChannels.push({
             platform: 'metaAds',
-            accessToken: connections.meta_ads?.accessToken || '',
-            accountId: connections.meta_ads?.accountId,
+            accessToken: connections.metaAds?.accessToken || '',
+            accountId: connections.metaAds?.accountId,
           });
         }
         if (isLinkedinAdsConnected) {
           activeChannels.push({
             platform: 'linkedinAds',
-            accessToken: connections.linkedin_ads?.accessToken || '',
-            accountId: connections.linkedin_ads?.accountId,
+            accessToken: connections.linkedinAds?.accessToken || '',
+            accountId: connections.linkedinAds?.accountId,
           });
         }
         if (activeChannels.length > 0) {
@@ -724,12 +515,12 @@ export default function HubDashboardLight() {
         }
 
         // LinkedIn Page
-        if (isLinkedinPageConnected && connections.linkedin_page?.accessToken) {
+        if (isLinkedinPageConnected && connections.linkedinPage?.accessToken) {
           const res = await fetch('/api/hub/metrics/linkedin-page', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              accessToken: connections.linkedin_page.accessToken,
-              accountId: connections.linkedin_page.accountId ?? '',
+              accessToken: connections.linkedinPage.accessToken,
+              accountId: connections.linkedinPage.accountId ?? '',
               uid: user.uid,
             }),
           });
@@ -737,10 +528,10 @@ export default function HubDashboardLight() {
         }
 
         // Search Console
-        if (isSearchConsoleConnected && connections.search_console?.accessToken) {
+        if (isSearchConsoleConnected && connections.searchConsole?.accessToken) {
           const res = await fetch('/api/hub/metrics/search-console', {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ accessToken: connections.search_console.accessToken, uid: user.uid }),
+            body: JSON.stringify({ accessToken: connections.searchConsole.accessToken, uid: user.uid }),
           });
           if (active) setSearchConsoleData(await res.json());
         }
@@ -942,76 +733,85 @@ export default function HubDashboardLight() {
         </Link>
       </motion.div>
 
-      {/* Diagnostics / Troubleshooting Panel */}
-      <BentoCard variant="neumorphic" glowColor="rgba(245, 158, 11, 0.05)" accentColor="#d97706" className="p-5 flex flex-col gap-4">
-        <div className="flex items-center gap-2">
-          <AlertTriangle className="text-amber-500 shrink-0" size={18} />
-          <h2 className="text-[14px] font-black uppercase tracking-wider text-[#0f172a]">Diagnóstico de Saúde das APIs & Conexões</h2>
-        </div>
+      {/* Operational Alerts */}
+      {(() => {
+        const activeAlerts = [];
+        if (isGoogleAdsConnected && googleAdsErr) activeAlerts.push({ platform: 'Google Ads', title: 'Conta conectada mas sem dados', desc: 'Verifique se há campanhas rodando no período selecionado. Contas inativas podem gerar dados zerados.' });
+        if (isMetaAdsConnected && metaAdsErr) activeAlerts.push({ platform: 'Meta Ads', title: 'Erro de Token', desc: 'O token do Meta expirou ou é inválido. Acesse a tela de Integrações para reconectar e reativar a sincronização.' });
+        if (isLinkedinAdsConnected && linkedinAdsErr) activeAlerts.push({ platform: 'LinkedIn Ads', title: 'Erro de API', desc: 'O Token do LinkedIn Ads expirou. É necessário reconectar sua conta B2B na tela de Integrações.' });
         
-        <p className="text-[12.5px] font-semibold text-slate-600 leading-relaxed">
-          Para garantir que os resultados exibidos reflitam o desempenho em tempo real das suas contas de marketing e do site, monitoramos a saúde de cada API integrada. Confira abaixo as ações necessárias para resolver possíveis interrupções:
-        </p>
+        if (activeAlerts.length === 0) return null;
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-1">
-          {/* GA4 Diagnostic */}
-          <div className="p-3.5 rounded-xl border border-white/50 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,inset_-2px_-2px_4px_#ffffff]">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-black text-slate-700 uppercase">Google Analytics 4</span>
-              <span className={`w-2.5 h-2.5 rounded-full ${isGa4Connected ? 'bg-emerald-500' : 'bg-rose-500'}`} />
+        return (
+          <BentoCard variant="neumorphic" glowColor="rgba(245, 158, 11, 0.05)" accentColor="#d97706" className="p-5 flex flex-col gap-4">
+            <div className="flex items-center gap-2">
+              <AlertTriangle className="text-rose-500 shrink-0" size={18} />
+              <h2 className="text-[14px] font-black uppercase tracking-wider text-[#0f172a]">Alertas Operacionais</h2>
             </div>
-            <p className="text-[11px] font-semibold text-slate-500 leading-snug">
-              {isGa4Connected 
-                ? 'Conexão ativa. Dados de tráfego, receita de e-commerce e usuários ativos sincronizados.'
-                : 'Pendente: Conecte o GA4 na aba de Integrações para medir receita e usuários.'}
-            </p>
-          </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-1">
+              {activeAlerts.map(alert => (
+                <div key={alert.platform} onClick={() => setSelectedAlert(alert)} className="p-3.5 rounded-xl border border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10 transition-colors cursor-pointer flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[11px] font-black text-rose-700 uppercase">{alert.platform}</span>
+                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
+                    </div>
+                    <p className="text-[11px] font-bold text-rose-800 leading-snug line-clamp-2">
+                      {alert.title}
+                    </p>
+                  </div>
+                  <span className="text-[9px] font-black uppercase text-rose-600 mt-3 hover:underline">Ver detalhes</span>
+                </div>
+              ))}
+            </div>
+          </BentoCard>
+        );
+      })()}
 
-          {/* Google Ads Diagnostic */}
-          <div className="p-3.5 rounded-xl border border-white/50 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,inset_-2px_-2px_4px_#ffffff]">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-black text-slate-700 uppercase">Google Ads</span>
-              <span className={`w-2.5 h-2.5 rounded-full ${isGoogleAdsConnected ? (googleAdsErr ? 'bg-amber-500' : 'bg-emerald-500') : 'bg-slate-400'}`} />
-            </div>
-            <p className="text-[11px] font-semibold text-slate-500 leading-snug">
-              {!isGoogleAdsConnected
-                ? 'Não conectado. Faça login via OAuth para carregar campanhas reais.'
-                : googleAdsErr
-                  ? 'Aviso: Conta conectada mas sem dados no período. Verifique se há campanhas rodando.'
-                  : 'Conexão saudável. Investimentos e conversões atualizados.'}
-            </p>
+      <AnimatePresence>
+        {selectedAlert && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm" onClick={() => setSelectedAlert(null)}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-md rounded-2xl border border-white/95 bg-[#eef2f7] p-6 shadow-2xl relative"
+            >
+              <button
+                type="button"
+                onClick={() => setSelectedAlert(null)}
+                className="absolute top-4 right-4 w-7 h-7 rounded-full flex items-center justify-center border border-white/60 bg-[#eef2f7] text-slate-500 hover:text-slate-700 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]"
+              >
+                X
+              </button>
+              <div className="flex items-center gap-2 mb-4">
+                <AlertTriangle className="text-rose-500" size={20} />
+                <h3 className="text-[16px] font-black uppercase text-[#0f172a]">{selectedAlert.platform}</h3>
+              </div>
+              <h4 className="text-[14px] font-bold text-rose-600 mb-2">{selectedAlert.title}</h4>
+              <p className="text-[13px] font-semibold text-slate-600 leading-relaxed mb-6">
+                {selectedAlert.desc}
+              </p>
+              <div className="flex justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSelectedAlert(null)}
+                  className="px-4 py-2 rounded-xl text-[12px] font-bold text-slate-600 hover:text-slate-800 transition-colors"
+                >
+                  Fechar
+                </button>
+                <Link
+                  href="/hub/integracoes"
+                  className="px-4 py-2 rounded-xl text-[12px] font-bold text-white bg-rose-500 hover:bg-rose-600 transition-colors shadow-md"
+                >
+                  Resolver em Integrações
+                </Link>
+              </div>
+            </motion.div>
           </div>
-
-          {/* Meta Ads Diagnostic */}
-          <div className="p-3.5 rounded-xl border border-white/50 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,inset_-2px_-2px_4px_#ffffff]">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-black text-slate-700 uppercase">Meta Ads</span>
-              <span className={`w-2.5 h-2.5 rounded-full ${isMetaAdsConnected ? (metaAdsErr ? 'bg-rose-500' : 'bg-emerald-500') : 'bg-slate-400'}`} />
-            </div>
-            <p className="text-[11px] font-semibold text-slate-500 leading-snug">
-              {!isMetaAdsConnected
-                ? 'Não conectado. Integre o Facebook Business SDK para coletar métricas.'
-                : metaAdsErr
-                  ? 'Erro de Token: O token do Meta expirou. Vá em Integrações e reconecte.'
-                  : 'Conexão ativa. Campanhas de Facebook e Instagram sincronizadas.'}
-            </p>
-          </div>
-
-          {/* LinkedIn Ads Diagnostic */}
-          <div className="p-3.5 rounded-xl border border-white/50 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,inset_-2px_-2px_4px_#ffffff]">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[11px] font-black text-slate-700 uppercase">LinkedIn Ads</span>
-              <span className={`w-2.5 h-2.5 rounded-full ${isLinkedinAdsConnected ? (linkedinAdsErr ? 'bg-rose-500' : 'bg-emerald-500') : 'bg-slate-400'}`} />
-            </div>
-            <p className="text-[11px] font-semibold text-slate-500 leading-snug">
-              {!isLinkedinAdsConnected
-                ? 'Não conectado. Conecte sua conta do LinkedIn Business para obter insights.'
-                : linkedinAdsErr
-                  ? 'Erro de API: Token do LinkedIn Ads inválido ou expirado. Clique em Reconectar.'
-                  : 'Conexão ativa. Dados de anúncios B2B importados.'}
-            </p>
-          </div>
-        </div>
+        )}
+      </AnimatePresence>
 
         <div className="flex items-center justify-between gap-4 p-3 bg-amber-500/5 rounded-xl border border-amber-500/20 mt-1">
           <div className="flex items-center gap-2">
@@ -1024,7 +824,6 @@ export default function HubDashboardLight() {
             Gerenciar Integrações
           </Link>
         </div>
-      </BentoCard>
 
       {/* KPI Bento Grid */}
       <motion.div 
@@ -1263,11 +1062,11 @@ export default function HubDashboardLight() {
             </div>
           </BentoCard>
 
-          {/* Active Agents Bento Block */}
+          {/* Active Automations Bento Block */}
           <BentoCard variant="neumorphic" className="flex flex-col" glowColor="rgba(59, 130, 246, 0.03)">
             <div className="flex items-center gap-2 px-5 py-4 border-b border-white/40">
               <Brain size={15} className="text-[#FF6A00]" />
-              <span className="text-[13px] font-black uppercase tracking-wider text-[#0f172a]">Agentes em Ação</span>
+              <span className="text-[13px] font-black uppercase tracking-wider text-[#0f172a]">Últimas Automações</span>
               <Link 
                 href="/hub/laboratorio-agentes" 
                 className="ml-auto text-[11px] font-black text-[#FF6A00] flex items-center gap-0.5 transition-colors hover:text-[#ff8f3a]"
@@ -1278,30 +1077,34 @@ export default function HubDashboardLight() {
               </Link>
             </div>
             <div className="divide-y divide-white/20">
-              {STATIC_AGENTS.map(ag => (
-                <div key={ag.name} className="flex items-center gap-3.5 px-5 py-4 hover:bg-slate-100/10 transition-colors">
+              {recentAutomations.length > 0 ? recentAutomations.map(ag => (
+                <div key={ag.key} className="flex items-center gap-3.5 px-5 py-4 hover:bg-slate-100/10 transition-colors">
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border border-white/40 bg-[#eef2f7]" style={{ boxShadow: 'inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff' }}>
                     <Zap size={13} className="text-[#FF6A00]" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[13px] font-bold text-[#1e293b] truncate">{ag.name}</p>
-                    <p className="text-[11px] text-slate-500 truncate mt-0.5">{ag.desc}</p>
+                    <p className="text-[13px] font-bold text-[#1e293b] truncate">{ag.agentTitle}</p>
+                    <p className="text-[11px] text-slate-500 truncate mt-0.5">{ag.cadenceTitle}{ag.lastUpdateAt ? ` - Última exec.: ${formatAutomationDateTime(ag.lastUpdateAt)}` : ''}</p>
                   </div>
                   <div className="text-right shrink-0">
                     <span
                       className="text-[9px] font-black px-2 py-0.5 rounded-full border"
                       style={{ 
-                        color: ag.status === 'Ativo' ? '#0d9488' : '#d97706', 
-                        borderColor: ag.status === 'Ativo' ? 'rgba(13, 148, 136, 0.2)' : 'rgba(217, 119, 6, 0.2)',
-                        background: ag.status === 'Ativo' ? 'rgba(13, 148, 136, 0.05)' : 'rgba(217, 119, 6, 0.05)' 
+                        color: ag.status === 'active' ? '#0d9488' : '#d97706', 
+                        borderColor: ag.status === 'active' ? 'rgba(13, 148, 136, 0.2)' : 'rgba(217, 119, 6, 0.2)',
+                        background: ag.status === 'active' ? 'rgba(13, 148, 136, 0.05)' : 'rgba(217, 119, 6, 0.05)' 
                       }}
                     >
-                      {ag.status}
+                      {ag.status === 'active' ? 'Ativo' : ag.status === 'paused' ? 'Pausado' : 'Inativo'}
                     </span>
-                    <p className="text-[10px] text-slate-400 mt-1 font-bold">{ag.runs} runs</p>
+                    <p className="text-[10px] text-slate-400 mt-1 font-bold">{ag.monthlyExecutions || 0} runs</p>
                   </div>
                 </div>
-              ))}
+              )) : (
+                <div className="px-5 py-8 text-center">
+                  <p className="text-[12px] font-bold text-slate-500">Nenhuma automação ativa</p>
+                </div>
+              )}
             </div>
           </BentoCard>
 

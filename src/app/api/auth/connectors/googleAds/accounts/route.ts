@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const GADS_BASE = 'https://googleads.googleapis.com/v18';
+const GADS_BASE = 'https://googleads.googleapis.com/v17';
 
 type GoogleAdsCustomer = {
   id: string;

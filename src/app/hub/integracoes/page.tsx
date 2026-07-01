@@ -323,7 +323,9 @@ const INTEGRATIONS: IntegrationDef[] = [
   {
     id: 'stripe', connectorKey: 'payments', name: 'Stripe', category: 'FINANCEIRO',
     desc: 'Conecte pagamentos para liberar receita confirmada, LTV e conciliacao comercial.',
-    isComponentIcon: true, flow: 'oauth', oauthConnector: 'payments',
+    isComponentIcon: true, flow: 'api-key',
+    apiKeyLabel: 'Chave Secreta da API Stripe (Secret Key)',
+    apiKeyPlaceholder: 'sk_live_...',
   },
   {
     id: 'tiktok', connectorKey: 'tiktok', name: 'Tik Tok', category: 'SOCIAL',

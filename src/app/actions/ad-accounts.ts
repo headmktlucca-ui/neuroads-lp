@@ -24,8 +24,7 @@ export async function listGoogleAdsAccounts(accessToken: string) {
     }
 
     // 1. Get Accessible Customers (direct access)
-    // Using v17 - latest stable
-    const listResponse = await fetch('https://googleads.googleapis.com/v24/customers:listAccessibleCustomers', {
+    const listResponse = await fetch('https://googleads.googleapis.com/v17/customers:listAccessibleCustomers', {
       headers: {
         'Authorization': `Bearer ${accessToken}`,
         'developer-token': developerToken,
@@ -65,7 +64,7 @@ export async function listGoogleAdsAccounts(accessToken: string) {
       `;
 
       try {
-        let searchRes = await fetch(`https://googleads.googleapis.com/v24/customers/${customerId}/googleAds:search`, {
+        let searchRes = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${accessToken}`,
@@ -76,7 +75,7 @@ export async function listGoogleAdsAccounts(accessToken: string) {
         });
 
         if (!searchRes.ok) {
-          searchRes = await fetch(`https://googleads.googleapis.com/v24/customers/${customerId}/googleAds:search`, {
+          searchRes = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${accessToken}`,
@@ -110,7 +109,7 @@ export async function listGoogleAdsAccounts(accessToken: string) {
                 WHERE customer_client.status = 'ENABLED'
               `;
               
-              const clientRes = await fetch(`https://googleads.googleapis.com/v24/customers/${customerId}/googleAds:search`, {
+              const clientRes = await fetch(`https://googleads.googleapis.com/v17/customers/${customerId}/googleAds:search`, {
                 method: 'POST',
                 headers: {
                   'Authorization': `Bearer ${accessToken}`,
