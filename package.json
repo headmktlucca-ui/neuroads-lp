@@ -27,6 +27,7 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.6.1",
     "@remotion/cli": "^4.0.481",
+    "@studio-freight/react-lenis": "^0.0.47",
     "ai": "^6.0.208",
     "clsx": "^2.1.1",
     "firebase": "^12.13.0",

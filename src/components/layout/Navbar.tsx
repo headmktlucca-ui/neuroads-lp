@@ -586,7 +586,7 @@ export default function Navbar() {
         { name: 'Agentes Ativos', href: '/hub/agentes-ativos' },
       ];
   const laboratorySubLinks = [
-    { name: 'Laboratório de Agentes', href: '/hub/laboratorio-agentes?agente=auditor-de-desperdicio' },
+    { name: 'Equipe de Agentes IA', href: '/hub/laboratorio-agentes?agente=auditor-de-desperdicio' },
     { name: 'Performance', href: '/hub/performance' },
     { name: 'Criativos', href: '/hub/criativos' },
     { name: 'Técnico', href: '/hub/tecnico' },

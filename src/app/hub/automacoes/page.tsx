@@ -13,7 +13,7 @@ import {
   Activity, ArrowRight, Brain, CheckCircle2, ChevronRight,
   Clock, Cpu, ExternalLink, Power, Search, Sparkles, X, Zap,
 } from 'lucide-react';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, updateDoc, doc, addDoc, increment } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { getFirebaseDb } from '../../../lib/firebase';
 
@@ -48,15 +48,162 @@ function accentFor(category: string) {
 
 const CATEGORY_FILTERS = ['Todos', 'Performance', 'Criativos', 'Técnico', 'Inteligência', 'Leads', 'Relatórios'];
 
+// ─── Opportunity templates generated on execution ────────────────────────────
+const OPPORTUNITY_TEMPLATES: Record<string, any> = {
+  'Performance': {
+    priority: 'alta',
+    category: 'receita',
+    title: 'Redistribuir budget do TikTok para Meta Ads',
+    impact: 'Aumento de receita estimado',
+    impactValue: '+R$ 38.200/mês',
+    rationale: 'O Agente de Performance identificou que suas campanhas TikTok têm ROAS 1.8x contra 4.2x do Meta Ads. Com o mesmo investimento realocado, você projeta +R$ 38k/mês em receita atribuída sem aumentar o budget total.',
+    actions: [
+      'Reduzir budget TikTok em 40% (de R$ 12.000 para R$ 7.200)',
+      'Alocar R$ 4.800 adicionais em campanhas de Retargeting Meta',
+      'Criar conjunto de anúncios Mirror das campanhas Black Friday Hero',
+      'Monitorar ROAS por 7 dias antes de escalar',
+    ],
+    agent: 'Agente Performance',
+    effort: 'baixo',
+    timeframe: '3–5 dias',
+    source: ['Meta Ads', 'TikTok Ads', 'GA4'],
+  },
+  'Inteligência': {
+    priority: 'alta',
+    category: 'eficiencia',
+    title: 'Ativar Lance Automático via IA nos top 3 grupos',
+    impact: 'Redução de CPA esperada',
+    impactValue: '–22% CPA',
+    rationale: 'Com base nos últimos 28 dias, os grupos Retargeting 30d, Lookalike 2% e Interesses Broad têm padrões de conversão estáveis o suficiente para o Agente de Lances assumir controle e otimizar bid a cada 15min.',
+    actions: [
+      'Ativar modo Agente de Lances nos 3 grupos identificados',
+      'Definir CPA alvo de R$ 28 (atual médio: R$ 36)',
+      'Configurar alertas se CPA > R$ 42 por 6h consecutivas',
+      'Revisar performance após 14 dias',
+    ],
+    agent: 'Agente de Lances IA',
+    effort: 'baixo',
+    timeframe: '1 dia',
+    source: ['Google Ads', 'Meta Ads'],
+  },
+  'Técnico': {
+    priority: 'alta',
+    category: 'risco',
+    title: 'Corrigir discrepância de atribuição CAPI vs pixel',
+    impact: 'Conversões não contabilizadas',
+    impactValue: '~34% eventos perdidos',
+    rationale: 'O Agente Técnico detectou que 34% das conversões de compra não estão chegando via CAPI — apenas pelo pixel browser. Com iOS 17+ e bloqueadores, você está tomando decisões com dados incompletos, superestimando CPA real.',
+    actions: [
+      'Auditar configuração do GTM Server com o relatório de deduplicação',
+      'Implementar event_id único compartilhado entre CAPI e pixel',
+      'Validar eventos no Events Manager durante 48h',
+      'Recalibrar metas de CPA após estabilização',
+    ],
+    agent: 'Agente Técnico',
+    effort: 'medio',
+    timeframe: '5–7 dias',
+    source: ['GTM Server', 'Meta Ads', 'GA4'],
+  },
+  'Criativos': {
+    priority: 'media',
+    category: 'crescimento',
+    title: 'Escalar criativos de vídeo curto — formato ganhador',
+    impact: 'Potencial de escala de CTR',
+    impactValue: '+40% CTR médio',
+    rationale: 'O Agente de Criativos analisou 14 peças das últimas 4 semanas. Vídeos ≤15s superam imagens estáticas em 40% CTR e 28% taxa de conversão. O criativo Video_30s_BlackFriday_v3 está saturando — hora de criar variações.',
+    actions: [
+      'Produzir 3 variações do Video_30s_BlackFriday_v3 com CTA alternativo',
+      'Testar headline "Oferta por tempo limitado" vs "Frete grátis hoje"',
+      'Rodar teste A/B por 7 dias com budget de R$ 2.000 por variante',
+      'Escalar o vencedor com orçamento do criativo saturado',
+    ],
+    agent: 'Agente Criativos',
+    effort: 'medio',
+    timeframe: '7–14 dias',
+    source: ['Meta Ads', 'GA4'],
+  },
+  'Leads': {
+    priority: 'media',
+    category: 'receita',
+    title: 'Ativar campanha de recuperação de carrinhos abandonados',
+    impact: 'Receita recuperável estimada',
+    impactValue: '+R$ 15.800/mês',
+    rationale: 'O Agente CRM identificou que 68% dos carrinhos abandonados nas últimas 2 semanas não receberam follow-up. Com uma sequência de e-mail + WhatsApp em 1h, 3h e 24h, a taxa de recuperação histórica do setor é 18–22%.',
+    actions: [
+      'Configurar automação de carrinho no RD Station',
+      'Criar sequência: E-mail 1h → WhatsApp 3h → E-mail 24h com desconto 10%',
+      'Segmentar por ticket médio (>R$ 150 recebe oferta VIP)',
+      'Medir taxa de recuperação após 30 dias',
+    ],
+    agent: 'Agente CRM',
+    effort: 'medio',
+    timeframe: '3–5 dias',
+    source: ['RD Station', 'GA4', 'Stripe'],
+  },
+};
+
 // ─── Automation card ──────────────────────────────────────────────────────────
 
 function AutomationCard({
   automation,
+  userId,
 }: {
   automation: Automation;
+  userId?: string;
 }) {
   const [expanded, setExpanded] = useState(false);
+  const [running, setRunning] = useState(false);
+  const [runSuccess, setRunSuccess] = useState(false);
   const color = accentFor(automation.category);
+
+  const handleRun = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (running || !userId) return;
+    setRunning(true);
+    setRunSuccess(false);
+
+    try {
+      const db = getFirebaseDb();
+      const autoRef = doc(db, 'users', userId, 'automations', automation.id);
+      const now = new Date();
+      const formattedDate = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+      await updateDoc(autoRef, {
+        runsTotal: increment(1),
+        lastRunAt: formattedDate,
+      });
+
+      const template = OPPORTUNITY_TEMPLATES[automation.category] ?? {
+        priority: 'baixa',
+        category: 'crescimento',
+        title: 'Integrar Google Search Console para captar demanda orgânica',
+        impact: 'Visibilidade de palavras-chave',
+        impactValue: '480+ termos identificados',
+        rationale: 'O Search Console ainda não está conectado. Com 480 palavras-chave captadas na última análise pública do domínio, você está perdendo dados cruciais de intenção de compra para alimentar campanhas de DSA.',
+        actions: [
+          'Conectar Google Search Console em Integrações',
+          'Identificar termos de alta conversão',
+        ],
+        agent: 'Agente SEO',
+        effort: 'baixo',
+        timeframe: '1 dia',
+        source: ['Search Console', 'GA4'],
+      };
+
+      const oppsRef = collection(db, 'users', userId, 'opportunities');
+      await addDoc(oppsRef, {
+        ...template,
+        createdAt: Date.now(),
+      });
+
+      setRunSuccess(true);
+      setTimeout(() => setRunSuccess(false), 3000);
+    } catch (err) {
+      console.error('Error running automation:', err);
+    } finally {
+      setRunning(false);
+    }
+  };
 
   return (
     <motion.div
@@ -120,6 +267,40 @@ function AutomationCard({
         )}
       </div>
 
+      {/* Trigger & Run Now Row */}
+      <div className="mt-4 pt-3 border-t border-slate-200/50 flex items-center justify-between">
+        <span className="text-[10.5px] text-slate-400 font-bold truncate max-w-[60%]">
+          Gatilho: {automation.trigger}
+        </span>
+        <button
+          type="button"
+          onClick={handleRun}
+          disabled={running}
+          className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
+            runSuccess
+              ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-600'
+              : 'bg-[#FF6A00] text-white hover:bg-[#e05d00] shadow-[2px_2px_6px_rgba(255,106,0,0.25)]'
+          }`}
+        >
+          {running ? (
+            <>
+              <span className="w-3 h-3 rounded-full border border-current border-t-transparent animate-spin shrink-0" />
+              Executando...
+            </>
+          ) : runSuccess ? (
+            <>
+              <CheckCircle2 size={12} />
+              Sucesso!
+            </>
+          ) : (
+            <>
+              <Cpu size={12} />
+              Executar Agora
+            </>
+          )}
+        </button>
+      </div>
+
       {/* Expanded */}
       <AnimatePresence>
         {expanded && (
@@ -130,9 +311,6 @@ function AutomationCard({
             className="overflow-hidden"
           >
             <div className="mt-4 pt-4 border-t border-slate-200/60 space-y-2">
-              <p className="text-[11px] text-slate-400 font-semibold">
-                <span className="font-black text-slate-600">Gatilho:</span> {automation.trigger}
-              </p>
               <p className="text-[11px] text-slate-400 font-semibold">
                 <span className="font-black text-slate-600">Criada em:</span> {automation.createdAt}
               </p>
@@ -169,9 +347,55 @@ export default function HubAutomacoesPage() {
       );
       const unsub = onSnapshot(
         q,
-        (snap) => {
-          const docs: Automation[] = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Automation, 'id'>) }));
-          setAutomations(docs);
+        async (snap) => {
+          if (snap.empty) {
+            try {
+              const colRef = collection(db, 'users', user.uid, 'automations');
+              const defaults = [
+                {
+                  name: 'Otimização de Lance em Tempo Real (Meta Ads)',
+                  description: 'Ajusta bids de grupos de anúncios a cada 15 minutos com base em CPA dinâmico.',
+                  trigger: 'Alteração de CPA nos últimos 30min',
+                  frequency: 'A cada 15 minutos',
+                  category: 'Performance',
+                  runsTotal: 0,
+                  lastRunAt: null,
+                  createdAt: new Date().toLocaleDateString('pt-BR'),
+                  isActive: true
+                },
+                {
+                  name: 'Geração de Criativos de Conversão',
+                  description: 'Analisa copies vencedores e gera novas variações de anúncios de imagem/vídeo.',
+                  trigger: 'Queda de CTR abaixo de 1.5%',
+                  frequency: 'Semanal',
+                  category: 'Criativos',
+                  runsTotal: 0,
+                  lastRunAt: null,
+                  createdAt: new Date().toLocaleDateString('pt-BR'),
+                  isActive: true
+                },
+                {
+                  name: 'Monitoramento Server-Side de Deduplicação',
+                  description: 'Compara eventos do Pixel vs CAPI e corrige desvios de rastreamento.',
+                  trigger: 'Discrepância de eventos > 10%',
+                  frequency: 'Diário',
+                  category: 'Técnico',
+                  runsTotal: 0,
+                  lastRunAt: null,
+                  createdAt: new Date().toLocaleDateString('pt-BR'),
+                  isActive: true
+                }
+              ];
+              for (const item of defaults) {
+                await addDoc(colRef, item);
+              }
+            } catch (err) {
+              console.error('Error seeding automations:', err);
+            }
+          } else {
+            const docs: Automation[] = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Automation, 'id'>) }));
+            setAutomations(docs);
+          }
           setLoading(false);
         },
         () => {
@@ -340,7 +564,7 @@ export default function HubAutomacoesPage() {
               </motion.div>
             ) : (
               filtered.map((automation) => (
-                <AutomationCard key={automation.id} automation={automation} />
+                <AutomationCard key={automation.id} automation={automation} userId={user?.uid} />
               ))
             )}
           </AnimatePresence>

@@ -424,7 +424,7 @@ export default function CategoryAgentsPageShell({
             </span>
           </div>
           <h1 className="text-[26px] font-black text-[#0f172a] tracking-tight">
-            {isAll ? 'Laboratório de Agentes' : meta.label}
+            {isAll ? 'Equipe de Agentes IA' : meta.label}
           </h1>
           <p className="text-[13px] text-slate-500 font-semibold mt-1 max-w-xl">{meta.summary}</p>
           <p className="text-[12px] font-black mt-1" style={{ color: meta.accentColor }}>{meta.impact}</p>

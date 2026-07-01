@@ -269,7 +269,7 @@ export default function TeamLabShell() {
             Equipe IA · NeuroAds
           </span>
         </div>
-        <h1 className="text-[26px] font-black text-[#0f172a] tracking-tight">Laboratório de Agentes</h1>
+        <h1 className="text-[26px] font-black text-[#0f172a] tracking-tight">Equipe de Agentes IA</h1>
         <p className="text-[13px] text-slate-500 font-semibold mt-1 max-w-2xl">
           Seu time de IA que assume o Marketing &amp; Vendas da operação. Cada Agente tem identidade própria e especialidades disponíveis 24h.
         </p>

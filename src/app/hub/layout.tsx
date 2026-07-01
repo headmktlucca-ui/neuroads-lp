@@ -51,7 +51,7 @@ type NavItem = {
 /* ─── Nav items ────────────────────────────────────────────────────── */
 const NAV_ITEMS: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard',           href: '/hub'                                    },
-  { icon: Bot,             label: 'Operacional',         href: '/hub/agentes-ativos'                     },
+  { icon: Bot,             label: 'Agentes IA',          href: '/hub/laboratorio-agentes'                },
   { icon: Cpu,             label: 'Automações',           href: '/hub/automacoes'                         },
   { icon: Sparkles,        label: 'Oportunidades',        href: '/hub/explorar'                           },
   { icon: Plug2,           label: 'Integrações',          href: '/hub/integracoes'                        },
@@ -107,11 +107,11 @@ function NavLink({
   if (hasChildren) {
     return (
       <div>
-        {/* Parent row — clickable to expand/collapse, also navigates */}
-        <Link
-          href={item.href}
+        {/* Parent row — clickable to expand/collapse */}
+        <button
+          type="button"
           onClick={() => setOpen(o => !o)}
-          className={`group flex items-center gap-3 ${paddingLeft} pr-3 py-3 rounded-2xl ${textSize} font-bold transition-all duration-200 ${
+          className={`w-full text-left group flex items-center gap-3 ${paddingLeft} pr-3 py-3 rounded-2xl ${textSize} font-bold transition-all duration-200 cursor-pointer ${
             isActive
               ? 'text-[#FF6A00]'
               : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
@@ -120,7 +120,6 @@ function NavLink({
             boxShadow:   isActive ? 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff' : 'none',
             background:  isActive ? '#eef2f7' : 'transparent',
             borderLeft:  isActive ? '2px solid #FF6A00' : '2px solid transparent',
-            textDecoration: 'none',
           }}
         >
           <ParentIcon size={16} className={`transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-[#FF6A00]' : 'text-slate-500'}`} />
@@ -130,7 +129,7 @@ function NavLink({
             size={13}
             className={`text-slate-400 transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
           />
-        </Link>
+        </button>
 
         {/* Children */}
         <AnimatePresence initial={false}>

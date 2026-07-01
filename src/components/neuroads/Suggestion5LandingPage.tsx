@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motion, AnimatePresence, type Variants, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, type Variants, useScroll, useTransform, type MotionValue } from 'framer-motion';
 import {
   ArrowRight,
   Funnel,
@@ -18,8 +18,10 @@ import {
   LayoutDashboard
 } from 'lucide-react';
 import { agents as catalogAgents } from '../../data/agents';
+import { TEAM_AGENTS } from '../../data/team-agents';
 import LuccaSpecialistChatModal from './LuccaSpecialistChatModal';
 import Lenis from 'lenis';
+import RadialOrbitalTimeline from '../ui/radial-orbital-timeline';
 
 const revealVariants: Variants = {
   hidden: {
@@ -197,71 +199,165 @@ const ALL_LOGS = [
   { id: 8, icon: Zap, title: 'Gerador de Criativos', subtitle: 'Nova variação de vídeo atinge 8% de CTR', value: 'Vencedor', color: 'text-emerald-400' }
 ];
 
-function UseCasesSection() {
-  return (
-    <section className="relative z-10 py-24 px-5 md:px-8 bg-transparent w-full overflow-hidden">
-      <div className="mx-auto max-w-[1260px]">
-        <motion.div
-          variants={revealVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center max-w-[720px] mx-auto mb-20"
-        >
-          <span className="text-[13px] font-bold text-[#ff6a00]">Arquitetura por Setor</span>
-          <h2 className="text-3xl sm:text-4xl font-black mt-2">Aplicações Práticas</h2>
-          <p className="text-slate-400 mt-4 text-sm leading-relaxed">
-            Descubra como equipes de marketing utilizam nossos agentes para automatizar e escalar resultados em cada área.
-          </p>
-        </motion.div>
+interface SectorCardProps {
+  i: number;
+  sector: typeof useCasesSectors[number];
+  progress: MotionValue<number>;
+  range: [number, number];
+  targetScale: number;
+}
 
-        <div className="space-y-20 lg:space-y-32">
-          {useCasesSectors.map((sector, idx) => (
-            <div key={sector.id} className="relative perspective-1000">
-              <motion.div
-                initial={{ opacity: 0, rotateX: 25, y: 120, scale: 0.95, translateZ: -100 }}
-                whileInView={{ opacity: 1, rotateX: 0, y: 0, scale: 1, translateZ: 0 }}
-                viewport={{ once: true, margin: "-120px" }}
-                transition={{ duration: 0.8, type: 'spring', bounce: 0.3 }}
-                className="w-full transform-style-3d group"
+function SectorCard({ i, sector, progress, range, targetScale }: SectorCardProps) {
+  const container = useRef<HTMLDivElement>(null);
+  const scale = useTransform(progress, range, [1, targetScale]);
+
+  return (
+    <div
+      ref={container}
+      className="h-screen flex items-center justify-center sticky top-0 overflow-hidden"
+    >
+      <motion.div
+        style={{
+          scale,
+          top: `calc(4vh + ${i * 24}px)`,
+        }}
+        className="relative flex flex-col lg:flex-row h-[520px] w-[90%] max-w-[1200px] rounded-[32px] border border-white/10 bg-zinc-950/95 backdrop-blur-md shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] p-8 lg:p-12 origin-top overflow-hidden"
+      >
+        {/* Subtle Glow Background */}
+        <div className="absolute top-0 right-0 w-80 h-80 bg-[#ff6a00]/5 rounded-full filter blur-[100px] pointer-events-none" />
+
+        {/* LEFT COLUMN — Text and differentials */}
+        <div className="flex-1 flex flex-col justify-between z-10 lg:pr-8">
+          <div>
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-1.5 h-8 bg-[#ff6a00] rounded-full shadow-[0_0_12px_rgba(255,106,0,0.6)]" />
+              <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">{sector.title}</h3>
+            </div>
+            <p className="text-slate-300 text-sm leading-relaxed mb-6">
+              {sector.description}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-auto">
+            {sector.cards.map((card, cIdx) => (
+              <div
+                key={cIdx}
+                className="rounded-2xl border border-white/5 bg-zinc-900/30 p-5 hover:bg-zinc-900/60 hover:border-[#ff6a00]/25 transition-all duration-300 group/card"
               >
-                <div className="relative rounded-[24px] border border-white/5 bg-zinc-950/90 overflow-hidden shadow-[0_18px_48px_rgba(0,0,0,0.5)] hover:border-[#ff6a00]/30 transition-all duration-700">
-                  {/* Subtle Glow Background */}
-                  <div className={`absolute top-0 w-64 h-64 bg-[#ff6a00]/5 rounded-full filter blur-[80px] pointer-events-none transition-all duration-700 group-hover:bg-[#ff6a00]/15 group-hover:scale-150 ${idx % 2 !== 0 ? 'left-0' : 'right-0'}`} />
-                  
-                  <div className={`flex w-full p-8 lg:p-14 ${idx % 2 !== 0 ? 'lg:justify-end' : 'lg:justify-start'}`}>
-                    
-                    {/* Text Content and Benefits */}
-                    <div className="flex flex-col gap-6 relative z-10 w-full lg:max-w-[70%]">
-                      <div className="flex items-center gap-4">
-                        <div className="w-1.5 h-8 bg-[#ff6a00] rounded-full shadow-[0_0_12px_rgba(255,106,0,0.6)]" />
-                        <h3 className="text-3xl sm:text-4xl font-black text-white tracking-tight">{sector.title}</h3>
-                      </div>
-                      <p className="text-slate-300 text-[15px] sm:text-base leading-relaxed">
-                        {sector.description}
-                      </p>
-                      
-                      <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {sector.cards.map((card, cIdx) => (
-                          <div
-                            key={cIdx}
-                            className="rounded-xl border border-white/5 bg-zinc-900/40 p-5 hover:bg-zinc-900/80 hover:border-white/10 transition-colors"
-                          >
-                            <span className="text-[10px] font-black uppercase tracking-widest text-[#ff8f3a]">
-                              Diferencial
-                            </span>
-                            <h4 className="text-[15px] font-bold text-white mt-1.5">{card.title}</h4>
-                            <p className="text-[12px] text-slate-400 mt-2 leading-relaxed">{card.description}</p>
-                          </div>
-                        ))}
-                      </div>
+                <span className="text-[9px] font-black uppercase tracking-widest text-[#ff8f3a]">
+                  Diferencial
+                </span>
+                <h4 className="text-[14px] font-bold text-white mt-1.5">{card.title}</h4>
+                <p className="text-[11px] text-slate-400 mt-2 leading-relaxed">{card.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN — Visual flow diagram or mockup */}
+        <div className="hidden lg:flex w-[45%] flex-col justify-center items-center relative pl-8 border-l border-white/5 z-10 min-h-[300px]">
+          {sector.id === 'ecommerce' ? (
+            /* Render Mockup Window with the print */
+            <div className="w-full rounded-2xl border border-white/10 bg-black/60 p-1.5 shadow-2xl relative overflow-hidden group">
+              <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/5 bg-zinc-950/80 rounded-t-xl">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
+                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
+                <span className="ml-3 text-[10px] text-slate-400 font-mono">dashboard_final.png</span>
+              </div>
+              <div className="relative h-[240px] w-full bg-zinc-900 rounded-b-xl overflow-hidden">
+                <img
+                  src="/images/prints/ecommerce-print.png"
+                  alt="E-commerce Dashboard Mockup"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
+              </div>
+            </div>
+          ) : (
+            /* Render Flowchart Diagram */
+            <div className="w-full h-full flex flex-col justify-center items-center gap-4 relative">
+              <div className="flex items-center justify-between w-full max-w-[420px] relative z-10 py-4">
+                
+                {/* Inputs Stack (Nodes) */}
+                <div className="flex flex-col gap-2.5 w-[140px]">
+                  {sector.nodes.map((node, nIdx) => (
+                    <div
+                      key={nIdx}
+                      className="flex items-center gap-2 px-3 py-2 rounded-xl border border-white/5 bg-zinc-900/40 backdrop-blur-sm text-[11px] font-bold text-slate-300"
+                    >
+                      <span className="text-sm shrink-0">{node.icon}</span>
+                      <span className="truncate">{node.label}</span>
                     </div>
+                  ))}
+                </div>
+
+                {/* Connecting lines or animated arrow */}
+                <div className="flex flex-col items-center justify-center flex-1 relative h-20 min-w-[50px]">
+                  <div className="absolute w-full h-[2px] bg-gradient-to-r from-[#ff6a00]/30 to-[#ff6a00] opacity-40" />
+                  <div className="w-8 h-8 rounded-full bg-[#ff6a00]/10 border border-[#ff6a00]/40 flex items-center justify-center animate-pulse relative z-10 shadow-[0_0_15px_rgba(255,106,0,0.2)]">
+                    <span className="w-2 h-2 rounded-full bg-[#ff6a00]" />
                   </div>
                 </div>
-              </motion.div>
+
+                {/* Outputs Stack */}
+                <div className="flex flex-col gap-2.5 w-[140px]">
+                  {sector.outputs.map((out, oIdx) => (
+                    <div
+                      key={oIdx}
+                      className="flex items-center justify-center px-3 py-2 rounded-xl border font-bold text-[10px] uppercase text-center shadow-md"
+                      style={{
+                        borderColor: `${out.color}30`,
+                        backgroundColor: `${out.color}08`,
+                        color: out.color,
+                      }}
+                    >
+                      {out.label}
+                    </div>
+                  ))}
+                </div>
+
+              </div>
             </div>
-          ))}
+          )}
         </div>
+      </motion.div>
+    </div>
+  );
+}
+
+function UseCasesSection() {
+  const container = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: container,
+    offset: ['start start', 'end end'],
+  });
+
+  return (
+    <section ref={container} className="relative min-h-[500vh] bg-transparent w-full pb-20">
+      {/* Scrollable header (moves out of view) */}
+      <div className="w-full text-center max-w-[720px] mx-auto mb-10 pt-24 px-5">
+        <span className="text-[13px] font-bold text-[#ff6a00]">Arquitetura por Setor</span>
+        <h2 className="text-3xl sm:text-4xl font-black mt-2 text-white">Aplicações Práticas</h2>
+        <p className="text-slate-400 mt-4 text-sm leading-relaxed">
+          Descubra como equipes de marketing utilizam nossos agentes para automatizar e escalar resultados em cada área.
+        </p>
+      </div>
+
+      <div className="w-full relative z-10">
+        {useCasesSectors.map((sector, idx) => {
+          const targetScale = 1 - (useCasesSectors.length - idx) * 0.025;
+          return (
+            <SectorCard
+              key={sector.id}
+              i={idx}
+              sector={sector}
+              progress={scrollYProgress}
+              range={[idx * 0.2, 1]}
+              targetScale={targetScale}
+            />
+          );
+        })}
       </div>
     </section>
   );
@@ -303,7 +399,7 @@ export default function Suggestion5LandingPage() {
   };
 
   return (
-    <main className="relative min-h-screen bg-[#000000] text-white overflow-x-hidden selection:bg-[#ff6a00] selection:text-white">
+    <main className="relative min-h-screen bg-[#000000] text-white overflow-x-clip selection:bg-[#ff6a00] selection:text-white">
       {/* Background radial overlays — CSS radial-gradient avoids filter layers entirely */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -325,7 +421,7 @@ export default function Suggestion5LandingPage() {
         }}
       />
 
-      {/* HERO SECTION — CENTERED COMMAND STRUCTURE */}
+      {/* HERO SECTION — LEFT-ALIGNED + ORBITAL AGENTS */}
       <section className="relative w-full min-h-[92vh] flex items-center z-10 pt-[90px] pb-20 overflow-hidden bg-transparent">
         <div className="absolute inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
           <motion.div
@@ -344,98 +440,116 @@ export default function Suggestion5LandingPage() {
         {/* Smooth top gradient */}
         <div className="absolute top-0 left-0 right-0 h-44 bg-gradient-to-b from-[#000000] via-[#000000]/70 to-transparent z-[1] pointer-events-none" />
 
-        {/* Center readability vignette */}
+        {/* Left side fade for readability */}
         <div className="absolute inset-0 z-[1] pointer-events-none" style={{
-          background: 'radial-gradient(ellipse 80% 80% at 50% 50%, rgba(4,8,17,0.55) 0%, rgba(4,8,17,0.10) 100%)'
+          background: 'radial-gradient(ellipse 60% 80% at 30% 50%, rgba(4,8,17,0.65) 0%, rgba(4,8,17,0.10) 100%)'
         }} />
-
-        {/* Side darkening */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#000000]/60 via-transparent to-[#000000]/60 z-[1] pointer-events-none" />
 
         {/* Cinematic bottom fade */}
         <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#000000] to-transparent z-[1] pointer-events-none" />
 
-        {/* CENTERED CONTENT */}
-        <div className="relative z-10 w-full flex flex-col items-center text-center px-4 sm:px-6 max-w-[900px] mx-auto pt-2">
+        {/* TWO-COLUMN CONTENT */}
+        <div className="relative z-10 w-full px-4 sm:px-8 lg:px-16 max-w-[1400px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
 
-          {/* Feature badges row */}
-          <motion.div
-            variants={revealVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 0.05 }}
-            className="mb-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4"
-          >
-            {[
-              { icon: <AlertCircle size={15} />, label: 'Dados soltos custam caro', sub: 'Decisões sem dados são apostas' },
-              { icon: <TrendingUp size={15} />, label: 'ROAS em tempo real', sub: 'Retorno exato de cada real' },
-              { icon: <Cpu size={15} />, label: 'Agentes que executam', sub: 'Não só recomendam — fazem' },
-            ].map((badge, i) => (
-              <div
-                key={i}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl border border-white/[0.08] bg-black/30 backdrop-blur-sm min-w-[200px]"
+            {/* LEFT COLUMN — text, left-aligned */}
+            <div className="flex flex-col items-start">
+
+              {/* Feature badges */}
+              <motion.div
+                variants={revealVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.05 }}
+                className="mb-8 flex flex-col sm:flex-row items-start gap-3"
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
-                  {badge.icon}
-                </span>
-                <div className="text-left">
-                  <p className="text-[13px] font-bold text-white leading-none">{badge.label}</p>
-                  <p className="text-[11px] text-white/50 mt-0.5">{badge.sub}</p>
-                </div>
-              </div>
-            ))}
-          </motion.div>
+                {[
+                  { icon: <AlertCircle size={14} />, label: 'Dados soltos custam caro' },
+                  { icon: <TrendingUp size={14} />, label: 'ROAS em tempo real' },
+                  { icon: <Cpu size={14} />, label: 'Agentes que executam' },
+                ].map((badge, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white/[0.10] bg-black/30 backdrop-blur-sm"
+                  >
+                    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[#ff6a00]/20 text-[#ff8f3a] border border-[#ff6a00]/30">
+                      {badge.icon}
+                    </span>
+                    <p className="text-[12px] font-bold text-white whitespace-nowrap">{badge.label}</p>
+                  </div>
+                ))}
+              </motion.div>
 
-          {/* Main headline */}
-          <motion.h1
-            variants={revealVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 0.08 }}
-            className="text-[50px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)]"
-          >
-            Inteligência Estratégica em
-            <br />
-            <span className="text-[#ff6a00]">Marketing e Vendas B2B.</span>
-          </motion.h1>
+              {/* Main headline */}
+              <motion.h1
+                variants={revealVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.08 }}
+                className="text-[36px] sm:text-[42px] font-black leading-[1.08] tracking-tight text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.7)] text-left"
+              >
+                Inteligência Estratégica em
+                <br />
+                <span className="text-[#ff6a00]">Marketing & Vendas B2B.</span>
+              </motion.h1>
 
-          {/* Subtitle */}
-          <motion.p
-            variants={revealVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 0.16 }}
-            className="mt-5 text-[17px] sm:text-[20px] text-white/65 leading-relaxed max-w-[680px] drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)] font-medium"
-          >
-            Aumente sua receita com Agentes IA que identificam, nutrem e qualificam o cliente ideal até o fechamento.
-          </motion.p>
+              {/* Subtitle */}
+              <motion.p
+                variants={revealVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.16 }}
+                className="mt-5 text-[17px] text-white/65 leading-relaxed max-w-[560px] drop-shadow-[0_1px_8px_rgba(0,0,0,0.6)] font-medium text-left"
+              >
+                Aumente sua receita com Agentes IA que identificam, nutrem e qualificam o cliente ideal até o fechamento.
+              </motion.p>
 
-          {/* CTAs */}
-          <motion.div
-            variants={revealVariants}
-            initial="hidden"
-            animate="visible"
-            transition={{ delay: 0.24 }}
-            className="mt-8 flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto"
-          >
-            <button
-              type="button"
-              onClick={handleOpenSpecialistChat}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] transition-all px-8 py-4 text-[14px] font-extrabold text-white shadow-[0_4px_28px_rgba(180,70,0,0.5)] cursor-pointer"
+              {/* CTAs */}
+              <motion.div
+                variants={revealVariants}
+                initial="hidden"
+                animate="visible"
+                transition={{ delay: 0.24 }}
+                className="mt-8 flex flex-col sm:flex-row items-start gap-3"
+              >
+                <button
+                  type="button"
+                  onClick={handleOpenSpecialistChat}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] transition-all px-7 py-3.5 text-[14px] font-extrabold text-white shadow-[0_4px_28px_rgba(180,70,0,0.5)] cursor-pointer"
+                >
+                  Fale com um especialista
+                  <ArrowRight size={16} />
+                </button>
+                <Link
+                  href="/hub"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 hover:border-white/40 bg-white/[0.04] hover:bg-white/[0.08] transition-all px-7 py-3.5 text-[14px] font-bold text-white/80 hover:text-white"
+                >
+                  Explorar o Hub
+                  <ArrowRight size={14} />
+                </Link>
+              </motion.div>
+            </div>
+
+            {/* RIGHT COLUMN — Orbital agents animation */}
+            <motion.div
+              variants={revealVariants}
+              initial="hidden"
+              animate="visible"
+              transition={{ delay: 0.3 }}
+              className="hidden lg:flex items-center justify-center"
             >
-              Fale com um especialista
-              <ArrowRight size={16} />
-            </button>
-            <Link
-              href="/hub"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 hover:border-white/40 bg-white/[0.04] hover:bg-white/[0.08] transition-all px-8 py-4 text-[14px] font-bold text-white/80 hover:text-white"
-            >
-              Explorar o Hub
-              <ArrowRight size={14} />
-            </Link>
-          </motion.div>
+              <RadialOrbitalTimeline
+                items={TEAM_AGENTS.map((agent, idx) => ({
+                  id: idx + 1,
+                  title: agent.nome,
+                  image: agent.avatarSrc,
+                  category: agent.funcao,
+                }))}
+                centerLabel={<img src="/images/icon_neuroads_transparente.png" alt="NeuroAds" width={80} height={80} style={{objectFit:'contain'}} />}
+              />
+            </motion.div>
 
-
+          </div>
         </div>
       </section>
 

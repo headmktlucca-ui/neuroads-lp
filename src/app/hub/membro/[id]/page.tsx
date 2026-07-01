@@ -347,7 +347,7 @@ export default function MembroPage() {
         style={{ textDecoration: 'none' }}
       >
         <ArrowLeft size={14} />
-        Laboratório de Agentes
+        Equipe de Agentes IA
       </Link>
 
       {/* ── Hero identity ── */}

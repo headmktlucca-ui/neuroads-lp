@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, TrendingUp, TrendingDown, AlertTriangle, ArrowRight,
@@ -9,6 +9,9 @@ import {
   RefreshCw, Star, Shield, Cpu,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '../../../context/AuthContext';
+import { getFirebaseDb } from '../../../lib/firebase';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 /* ── Types ── */
 type Priority = 'alta' | 'media' | 'baixa';
@@ -29,150 +32,6 @@ type Opportunity = {
   source: string[];
 };
 
-/* ── Data — insights generated from integrated data sources ── */
-const OPPORTUNITIES: Opportunity[] = [
-  {
-    id: 'op1',
-    priority: 'alta',
-    category: 'receita',
-    title: 'Redistribuir budget do TikTok para Meta Ads',
-    impact: 'Aumento de receita estimado',
-    impactValue: '+R$ 38.200/mês',
-    rationale:
-      'O Agente de Performance identificou que suas campanhas TikTok têm ROAS 1.8x contra 4.2x do Meta Ads. Com o mesmo investimento realocado, você projeta +R$ 38k/mês em receita atribuída sem aumentar o budget total.',
-    actions: [
-      'Reduzir budget TikTok em 40% (de R$ 12.000 para R$ 7.200)',
-      'Alocar R$ 4.800 adicionais em campanhas de Retargeting Meta',
-      'Criar conjunto de anúncios Mirror das campanhas Black Friday Hero',
-      'Monitorar ROAS por 7 dias antes de escalar',
-    ],
-    agent: 'Agente Performance',
-    effort: 'baixo',
-    timeframe: '3–5 dias',
-    source: ['Meta Ads', 'TikTok Ads', 'GA4'],
-  },
-  {
-    id: 'op2',
-    priority: 'alta',
-    category: 'eficiencia',
-    title: 'Ativar Lance Automático via IA nos top 3 grupos',
-    impact: 'Redução de CPA esperada',
-    impactValue: '–22% CPA',
-    rationale:
-      'Com base nos últimos 28 dias, os grupos Retargeting 30d, Lookalike 2% e Interesses Broad têm padrões de conversão estáveis o suficiente para o Agente de Lances assumir controle e otimizar bid a cada 15min.',
-    actions: [
-      'Ativar modo Agente de Lances nos 3 grupos identificados',
-      'Definir CPA alvo de R$ 28 (atual médio: R$ 36)',
-      'Configurar alertas se CPA > R$ 42 por 6h consecutivas',
-      'Revisar performance após 14 dias',
-    ],
-    agent: 'Agente de Lances IA',
-    effort: 'baixo',
-    timeframe: '1 dia',
-    source: ['Google Ads', 'Meta Ads'],
-  },
-  {
-    id: 'op3',
-    priority: 'alta',
-    category: 'risco',
-    title: 'Corrigir discrepância de atribuição CAPI vs pixel',
-    impact: 'Conversões não contabilizadas',
-    impactValue: '~34% eventos perdidos',
-    rationale:
-      'O Agente Técnico detectou que 34% das conversões de compra não estão chegando via CAPI — apenas pelo pixel browser. Com iOS 17+ e bloqueadores, você está tomando decisões com dados incompletos, superestimando CPA real.',
-    actions: [
-      'Auditar configuração do GTM Server com o relatório de deduplicação',
-      'Implementar event_id único compartilhado entre CAPI e pixel',
-      'Validar eventos no Events Manager durante 48h',
-      'Recalibrar metas de CPA após estabilização',
-    ],
-    agent: 'Agente Técnico',
-    effort: 'medio',
-    timeframe: '5–7 dias',
-    source: ['GTM Server', 'Meta Ads', 'GA4'],
-  },
-  {
-    id: 'op4',
-    priority: 'media',
-    category: 'crescimento',
-    title: 'Escalar criativos de vídeo curto — formato ganhador',
-    impact: 'Potencial de escala de CTR',
-    impactValue: '+40% CTR médio',
-    rationale:
-      'O Agente de Criativos analisou 14 peças das últimas 4 semanas. Vídeos ≤15s superam imagens estáticas em 40% CTR e 28% taxa de conversão. O criativo Video_30s_BlackFriday_v3 está saturando — hora de criar variações.',
-    actions: [
-      'Produzir 3 variações do Video_30s_BlackFriday_v3 com CTA alternativo',
-      'Testar headline "Oferta por tempo limitado" vs "Frete grátis hoje"',
-      'Rodar teste A/B por 7 dias com budget de R$ 2.000 por variante',
-      'Escalar o vencedor com orçamento do criativo saturado',
-    ],
-    agent: 'Agente Criativos',
-    effort: 'medio',
-    timeframe: '7–14 dias',
-    source: ['Meta Ads', 'GA4'],
-  },
-  {
-    id: 'op5',
-    priority: 'media',
-    category: 'receita',
-    title: 'Ativar campanha de recuperação de carrinhos abandonados',
-    impact: 'Receita recuperável estimada',
-    impactValue: '+R$ 15.800/mês',
-    rationale:
-      'O Agente CRM identificou que 68% dos carrinhos abandonados nas últimas 2 semanas não receberam follow-up. Com uma sequência de e-mail + WhatsApp em 1h, 3h e 24h, a taxa de recuperação histórica do setor é 18–22%.',
-    actions: [
-      'Configurar automação de carrinho no RD Station',
-      'Criar sequência: E-mail 1h → WhatsApp 3h → E-mail 24h com desconto 10%',
-      'Segmentar por ticket médio (>R$ 150 recebe oferta VIP)',
-      'Medir taxa de recuperação após 30 dias',
-    ],
-    agent: 'Agente CRM',
-    effort: 'medio',
-    timeframe: '3–5 dias',
-    source: ['RD Station', 'GA4', 'Stripe'],
-  },
-  {
-    id: 'op6',
-    priority: 'media',
-    category: 'eficiencia',
-    title: 'Implementar Lookalike 1% de compradores recentes',
-    impact: 'Novos leads qualificados',
-    impactValue: 'CPL estimado R$ 18–24',
-    rationale:
-      'Sua base atual de compradores dos últimos 60 dias (1.840 pessoas) ainda não foi usada para criar público Lookalike 1%. Historicamente, LKA de compradores converte 3x melhor que interesses frios.',
-    actions: [
-      'Criar Custom Audience de compradores 60d no Meta',
-      'Gerar Lookalike 1% Brasil com base neste público',
-      'Alocar R$ 3.500 de budget de prospecting frio',
-      'Comparar CPL vs Lookalike 2-5% existentes',
-    ],
-    agent: 'Agente Performance',
-    effort: 'baixo',
-    timeframe: '2–3 dias',
-    source: ['Meta Ads', 'GA4'],
-  },
-  {
-    id: 'op7',
-    priority: 'baixa',
-    category: 'crescimento',
-    title: 'Integrar Google Search Console para captar demanda orgânica',
-    impact: 'Visibilidade de palavras-chave',
-    impactValue: '480+ termos identificados',
-    rationale:
-      'O Search Console ainda não está conectado. Com 480 palavras-chave captadas na última análise pública do domínio, você está perdendo dados cruciais de intenção de compra para alimentar campanhas de DSA e content strategy.',
-    actions: [
-      'Conectar Google Search Console em Integrações',
-      'Identificar top 20 termos de alta conversão não cobertos por ads',
-      'Criar campanha DSA para termos orgânicos top',
-      'Alimentar blog com conteúdo para termos de cauda longa',
-    ],
-    agent: 'Agente SEO',
-    effort: 'baixo',
-    timeframe: '1 dia',
-    source: ['Search Console', 'GA4'],
-  },
-];
-
 /* ── Config ── */
 const PRIORITY_CONFIG = {
   alta:  { label: 'Prioridade Alta',   color: 'text-rose-600',    bg: 'bg-rose-500/10',    border: 'border-rose-500/30',    dot: 'bg-rose-500'    },
@@ -190,16 +49,8 @@ const CATEGORY_CONFIG = {
 const EFFORT_LABEL = { baixo: 'Esforço Baixo', medio: 'Esforço Médio', alto: 'Esforço Alto' };
 const FILTERS = ['Todas', 'Receita', 'Eficiência', 'Risco', 'Crescimento', 'Alta Prioridade'];
 
-/* ── KPI summary ── */
-const KPIS = [
-  { label: 'Oportunidades Identificadas', value: '7', icon: Sparkles, color: 'text-[#FF6A00]', bg: 'bg-orange-500/10' },
-  { label: 'Impacto Estimado / mês',       value: '+R$ 54k',    icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
-  { label: 'Alta Prioridade',              value: '3',          icon: AlertTriangle, color: 'text-rose-600',  bg: 'bg-rose-500/10'   },
-  { label: 'Agentes Envolvidos',           value: '6',          icon: Bot,        color: 'text-blue-600',    bg: 'bg-blue-500/10'    },
-];
-
 /* ── Components ── */
-function KpiCard({ label, value, icon: Icon, color, bg }: typeof KPIS[0]) {
+function KpiCard({ label, value, icon: Icon, color, bg }: { label: string; value: string; icon: any; color: string; bg: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -342,10 +193,49 @@ function OpportunityCard({ opp, index }: { opp: Opportunity; index: number }) {
 
 /* ── Main Page ── */
 export default function OportunidadesPage() {
+  const { user } = useAuth();
+  const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('Todas');
-  const [lastUpdated] = useState(new Date());
+  const [lastUpdated, setLastUpdated] = useState(new Date());
 
-  const filtered = OPPORTUNITIES.filter(opp => {
+  useEffect(() => {
+    if (!user) {
+      setOpportunities([]);
+      setLoading(false);
+      return;
+    }
+    try {
+      const db = getFirebaseDb();
+      const q = query(
+        collection(db, 'users', user.uid, 'opportunities'),
+        orderBy('createdAt', 'desc')
+      );
+      const unsub = onSnapshot(
+        q,
+        (snap) => {
+          const docs: Opportunity[] = snap.docs.map((d) => ({
+            id: d.id,
+            ...(d.data() as Omit<Opportunity, 'id'>)
+          }));
+          setOpportunities(docs);
+          setLastUpdated(new Date());
+          setLoading(false);
+        },
+        () => {
+          setOpportunities([]);
+          setLoading(false);
+        }
+      );
+      return () => unsub();
+    } catch (err) {
+      console.error('Error fetching opportunities:', err);
+      setOpportunities([]);
+      setLoading(false);
+    }
+  }, [user]);
+
+  const filtered = opportunities.filter(opp => {
     if (activeFilter === 'Todas') return true;
     if (activeFilter === 'Alta Prioridade') return opp.priority === 'alta';
     const catMap: Record<string, Category> = {
@@ -356,6 +246,62 @@ export default function OportunidadesPage() {
     };
     return opp.category === catMap[activeFilter];
   });
+
+  const kpis = [
+    { label: 'Oportunidades Identificadas', value: String(opportunities.length), icon: Sparkles, color: 'text-[#FF6A00]', bg: 'bg-orange-500/10' },
+    { label: 'Impacto Estimado / mês',       value: opportunities.length > 0 ? '+R$ 54.000' : '—',    icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
+    { label: 'Alta Prioridade',              value: String(opportunities.filter(o => o.priority === 'alta').length), icon: AlertTriangle, color: 'text-rose-600',  bg: 'bg-rose-500/10'   },
+    { label: 'Agentes Envolvidos',           value: String(new Set(opportunities.map(o => o.agent)).size), icon: Bot, color: 'text-blue-600', bg: 'bg-blue-500/10' },
+  ];
+
+  if (loading) {
+    return (
+      <div className="py-24 text-center">
+        <div className="inline-block w-8 h-8 rounded-full border-2 border-[#FF6A00] border-t-transparent animate-spin" />
+        <p className="text-[13px] font-black text-slate-400 mt-3">Carregando oportunidades…</p>
+      </div>
+    );
+  }
+
+  if (opportunities.length === 0) {
+    return (
+      <div className="space-y-6 w-full">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles size={18} className="text-[#FF6A00]" />
+              <h1 className="text-[22px] font-black text-[#1e293b]">Oportunidades</h1>
+            </div>
+            <p className="text-[13px] text-slate-500 font-semibold">
+              Insights gerados pelos Agentes IA com base nos seus dados integrados — priorizados por impacto.
+            </p>
+          </div>
+        </div>
+
+        {/* Empty state card */}
+        <div className="rounded-2xl border border-white/60 bg-[#eef2f7] p-12 text-center flex flex-col items-center gap-4 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff]">
+          <div className="w-16 h-16 rounded-2xl bg-orange-500/8 border border-orange-500/15 flex items-center justify-center">
+            <Sparkles size={28} className="text-[#FF6A00]" />
+          </div>
+          <div>
+            <p className="text-[16px] font-black text-[#0f172a]">Nenhuma oportunidade gerada ainda</p>
+            <p className="text-[13px] text-slate-500 font-semibold mt-1 max-w-sm mx-auto">
+              As oportunidades e insights de otimização serão listadas aqui assim que os seus Agentes IA executarem os fluxos de Automação.
+            </p>
+          </div>
+          <Link
+            href="/hub/automacoes"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-[13px] font-black text-white shadow-[0_4px_12px_rgba(255,106,0,0.25)] hover:scale-[1.02] transition-all"
+            style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', textDecoration: 'none' }}
+          >
+            <Cpu size={14} />
+            Ver Automações
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 w-full">
@@ -382,7 +328,7 @@ export default function OportunidadesPage() {
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {KPIS.map((kpi, i) => (
+        {kpis.map((kpi, i) => (
           <motion.div key={kpi.label} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}>
             <KpiCard {...kpi} />
           </motion.div>
