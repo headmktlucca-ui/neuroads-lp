@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft, Bot, ExternalLink, Lock,
-  Send, Sparkles, Users, Paperclip, Mic,
+  Send, Sparkles, Users, Paperclip, Mic, Terminal,
 } from 'lucide-react';
 import { getTeamAgentById } from '../../../../data/team-agents';
 import { agents as allSpecialties } from '../../../../data/agents';
@@ -98,25 +98,31 @@ function ComingSoonCard({ title, description }: { title: string; description: st
 
 // ─── Agent chat — style similar to assistente-ia (light, clean) ──────────────
 
-function AgentChat({ agentNome, agentCor, agentFrase, agentAvatarSrc }: {
+function AgentChat({ agentNome, agentCor, agentFrase, agentAvatarSrc, agentPrompt }: {
   agentNome: string;
   agentCor: string;
   agentFrase: string;
   agentAvatarSrc: string;
+  agentPrompt?: string;
 }) {
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: '0',
-      role: 'agent',
-      content: `Olá! Sou ${agentNome}. ${agentFrase}\n\nComo posso ajudar hoje?`,
-      ts: Date.now(),
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [focused, setFocused] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
+
+  // Initialize message when component mounts or agentFrase changes
+  useEffect(() => {
+    setMessages([
+      {
+        id: '0',
+        role: 'agent',
+        content: `Olá! Sou ${agentNome}. ${agentFrase}\n\nComo posso ajudar hoje?`,
+        ts: Date.now(),
+      },
+    ]);
+  }, [agentNome, agentFrase]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -138,7 +144,7 @@ function AgentChat({ agentNome, agentCor, agentFrase, agentAvatarSrc }: {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: text,
-          agentContext: `Você é ${agentNome}, um Agente IA da equipe NeuroAds especializado em marketing B2B. Responda de forma direta, técnica e confiante como ${agentNome}.`,
+          agentContext: agentPrompt || `Você é ${agentNome}, um Agente IA da equipe NeuroAds especializado em marketing B2B. Responda de forma direta, técnica e confiante como ${agentNome}.`,
         }),
       });
       const data = await res.json();
@@ -463,6 +469,7 @@ export default function MembroPage() {
             agentCor={teamAgent.cor}
             agentFrase={teamAgent.frase}
             agentAvatarSrc={teamAgent.avatarSrc}
+            agentPrompt={teamAgent.prompt}
           />
         </div>
       </div>
@@ -479,6 +486,31 @@ export default function MembroPage() {
               <span className="text-[13px] text-slate-600 font-semibold">{h}</span>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* ── Script de Operação / Prompt ── */}
+      <div className="rounded-[24px] border border-white/60 bg-[#eef2f7] p-6 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff]">
+        <div className="flex items-center gap-2 mb-4">
+          <Terminal size={14} style={{ color: teamAgent.cor }} />
+          <h2 className="text-[14px] font-black text-[#0f172a] uppercase tracking-widest">
+            Script de Operação & Diretrizes (System Prompt)
+          </h2>
+        </div>
+        <div className="bg-slate-900 rounded-2xl p-5 border border-slate-800 shadow-inner font-mono text-[12px] text-slate-300 whitespace-pre-wrap leading-relaxed overflow-x-auto max-h-[350px]">
+          {teamAgent.prompt || `# IDENTIDADE
+Você é ${teamAgent.nome}, o ${teamAgent.funcao} Autônomo da NeuroAds.
+
+# CARGO E RESPONSABILIDADES
+${teamAgent.habilidades.map((h) => `- ${h}`).join('\n')}
+
+# TOM DE VOZ
+${teamAgent.personalidade.replace(/ · /g, ', ')} — Direto, profissional e focado em resultados.
+
+# REGRAS DE OPERAÇÃO
+1. Responda de forma direta, técnica e confiante.
+2. Toda recomendação deve ser fundamentada em dados e melhores práticas de mercado.
+3. Se o usuário solicitar dados reais de plataformas não integradas, atue de forma simulada indicando a necessidade de conectar a fonte.`}
         </div>
       </div>
     </div>
