@@ -240,6 +240,38 @@ function TeamAgentCard({
           <p className="text-[11.5px] text-slate-400 font-medium italic mt-1.5 leading-snug">
             &ldquo;{teamAgent.tagline}&rdquo;
           </p>
+
+          <div className="mt-3.5 flex flex-col items-start gap-2.5">
+            <Link
+              href={`/hub/assistente-ia?agent=${teamAgent.id}`}
+              className="inline-flex items-center justify-center px-4 py-1.5 rounded-xl text-[11px] font-black text-white hover:brightness-110 active:scale-95 transition-all shadow-[0_2px_8px_rgba(255,106,0,0.25)]"
+              style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', textDecoration: 'none' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              Enviar Mensagem
+            </Link>
+            {activeCount > 0 ? (
+              <span 
+                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+                style={{ 
+                  boxShadow: '0 0 8px rgba(16, 185, 129, 0.4), inset 0 0 4px rgba(16, 185, 129, 0.2)',
+                  textShadow: '0 0 4px rgba(16, 185, 129, 0.6)' 
+                }}
+              >
+                Ativo
+              </span>
+            ) : (
+              <span 
+                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-400 border border-rose-500/30"
+                style={{ 
+                  boxShadow: '0 0 8px rgba(244, 63, 94, 0.4), inset 0 0 4px rgba(244, 63, 94, 0.2)',
+                  textShadow: '0 0 4px rgba(244, 63, 94, 0.6)' 
+                }}
+              >
+                Inativo
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Right: stats + chevron */}
