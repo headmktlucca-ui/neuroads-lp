@@ -91,8 +91,8 @@ function SpecialtyRow({
       onMouseLeave={() => setHovered(false)}
     >
       {/* Icon */}
-      <div className="w-8 h-8 shrink-0 rounded-xl overflow-hidden border border-white/40 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] mt-0.5">
-        <Image src={specialty.icon} alt={specialty.title} width={32} height={32} className="w-full h-full object-cover" />
+      <div className="w-16 h-16 shrink-0 rounded-2xl overflow-hidden border border-white/40 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] mt-0.5">
+        <Image src={specialty.icon} alt={specialty.title} width={64} height={64} className="w-full h-full object-cover" />
       </div>
 
       {/* Content wrapper */}
@@ -167,9 +167,9 @@ function SpecialtyRow({
 
 function ComingSoonRow({ title, description }: { title: string; description: string }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/40 bg-[#eef2f7]/40 opacity-60">
-      <div className="w-8 h-8 shrink-0 rounded-xl border border-slate-300/40 bg-slate-200/60 flex items-center justify-center">
-        <Lock size={13} className="text-slate-400" />
+    <div className="flex items-start gap-3 px-4 py-3 rounded-2xl border border-white/40 bg-[#eef2f7]/40 opacity-60">
+      <div className="w-16 h-16 shrink-0 rounded-2xl border border-slate-300/40 bg-slate-200/60 flex items-center justify-center mt-0.5">
+        <Lock size={26} className="text-slate-400" />
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-[13px] font-black text-slate-400 leading-tight truncate">{title}</p>
