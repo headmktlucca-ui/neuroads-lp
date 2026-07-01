@@ -15,7 +15,9 @@ import {
   ChevronRight,
   MessageCircle,
   BookOpen,
-  LayoutDashboard
+  LayoutDashboard,
+  Database,
+  Filter
 } from 'lucide-react';
 import { agents as catalogAgents } from '../../data/agents';
 import { TEAM_AGENTS } from '../../data/team-agents';
@@ -87,107 +89,6 @@ const faq = [
   },
 ];
 
-const useCasesSectors = [
-  {
-    id: 'social-media',
-    title: 'Social Media',
-    description: 'Automatize a criação de conteúdo, análise de engajamento e distribuição inteligente para Instagram, TikTok e LinkedIn com agentes treinados na voz da sua marca.',
-    printImage: '/images/prints/social-media.png',
-    cards: [
-      { title: 'Criação de Criativos', description: 'Gere imagens e vídeos virais com IA alinhados à identidade visual.' },
-      { title: 'Calendário Editorial', description: 'Planejamento automático de pautas com base em tendências e dados do setor.' },
-    ],
-    nodes: [
-      { label: 'IDEIA DE CONTEÚDO', icon: '💡' },
-      { label: 'INSTAGRAM', icon: '📸' },
-      { label: 'TIKTOK', icon: '🎬' },
-      { label: 'LINKEDIN', icon: '💼' },
-    ],
-    outputs: [
-      { label: 'CRIATIVO IG', color: '#E1306C' },
-      { label: 'VÍDEO VIRAL', color: '#ff6a00' },
-      { label: 'POST LK', color: '#0077B5' },
-    ],
-  },
-  {
-    id: 'ecommerce',
-    title: 'E-Commerce',
-    description: 'Otimize fichas de produto, gestão de catálogo e campanhas de remarketing com inteligência artificial para aumentar o faturamento com margem sustentável.',
-    printImage: '/images/prints/ecommerce.png',
-    cards: [
-      { title: 'Fotos de Produto com IA', description: 'Imagens profissionais geradas automaticamente para todo o catálogo.' },
-      { title: 'Remarketing Inteligente', description: 'Campanhas dinâmicas que seguem o comportamento de compra do usuário.' },
-    ],
-    nodes: [
-      { label: 'FOTO DO PRODUTO', icon: '📦' },
-      { label: 'REMOVER FUNDO', icon: '✂️' },
-      { label: 'MELHORAR', icon: '✨' },
-    ],
-    outputs: [
-      { label: 'PRODUTO FINAL', color: '#ff6a00' },
-      { label: 'ROAS +40%', color: '#10b981' },
-    ],
-  },
-  {
-    id: 'marketing',
-    title: 'Marketing',
-    description: 'Construa funis completos, gere copies de alta conversão e gerencie campanhas multicanal com supervisão agêntica e foco direto em resultado de caixa.',
-    printImage: '/images/prints/marketing.png',
-    cards: [
-      { title: 'Funil de Captação', description: 'Páginas, e-mails e automações integradas para captar leads qualificados.' },
-      { title: 'Copy de Alta Conversão', description: 'Textos persuasivos gerados com base no perfil do público e dados de mercado.' },
-    ],
-    nodes: [
-      { label: 'PÚBLICO-ALVO', icon: '🎯' },
-      { label: 'COPY IA', icon: '✍️' },
-      { label: 'LANDING PAGE', icon: '🌐' },
-    ],
-    outputs: [
-      { label: 'LEAD QUALIFICADO', color: '#10b981' },
-      { label: 'CONVERSÃO', color: '#ff6a00' },
-    ],
-  },
-  {
-    id: 'campanhas',
-    title: 'Campanhas Patrocinadas',
-    description: 'Gerencie Google Ads e Meta Ads com inteligência artificial que otimiza lances, orçamentos e segmentações em tempo real para maximizar o ROAS da operação.',
-    printImage: '/images/prints/campanhas.png',
-    cards: [
-      { title: 'Google Ads & Meta Ads', description: 'Gestão integrada com otimização automática de campanhas e lances inteligentes.' },
-      { title: 'Otimização de ROAS', description: 'Algoritmo agêntico que redistribui verba para os conjuntos com melhor retorno.' },
-    ],
-    nodes: [
-      { label: 'ORÇAMENTO', icon: '💰' },
-      { label: 'GOOGLE ADS', icon: '🔍' },
-      { label: 'META ADS', icon: '📱' },
-    ],
-    outputs: [
-      { label: 'ROAS OTIMIZADO', color: '#3b82f6' },
-      { label: 'CPL REDUZIDO', color: '#10b981' },
-    ],
-  },
-  {
-    id: 'posicionamento',
-    title: 'Posicionamento Estratégico',
-    description: 'Domine o resultado orgânico e generativo com SEO + GEO, análise de concorrentes e construção de autoridade de marca baseada em dados reais de mercado.',
-    printImage: '/images/prints/posicionamento.png',
-    cards: [
-      { title: 'SEO & GEO', description: 'Visibilidade em buscadores tradicionais e em IAs como ChatGPT e Gemini.' },
-      { title: 'Análise de Concorrentes', description: 'Mapeamento de lacunas e oportunidades estratégicas no seu mercado.' },
-    ],
-    nodes: [
-      { label: 'PESQUISA DE MERCADO', icon: '🔎' },
-      { label: 'SEO', icon: '📈' },
-      { label: 'GEO (IA)', icon: '🤖' },
-    ],
-    outputs: [
-      { label: 'AUTORIDADE', color: '#8b5cf6' },
-      { label: 'TRÁFEGO ORGÂNICO', color: '#10b981' },
-    ],
-  },
-];
-
-
 const ALL_LOGS = [
   { id: 1, icon: Target, title: 'Analista de Tráfego', subtitle: 'Realocou R$ 500 para campanha de Remarketing', value: '+12% ROAS', color: 'text-[#ff8f3a]' },
   { id: 2, icon: Funnel, title: 'Rastreador Cirúrgico', subtitle: 'Detectou falha de atribuição no iOS 17', value: 'Resolvido', color: 'text-emerald-400' },
@@ -198,6 +99,445 @@ const ALL_LOGS = [
   { id: 7, icon: TrendingUp, title: 'Simulador de ROAS', subtitle: 'Cenário otimista validado para Black Friday', value: 'Sinal Verde', color: 'text-emerald-400' },
   { id: 8, icon: Zap, title: 'Gerador de Criativos', subtitle: 'Nova variação de vídeo atinge 8% de CTR', value: 'Vencedor', color: 'text-emerald-400' }
 ];
+
+const useCasesSectors = [
+  {
+    id: 'centralizar-dados',
+    title: 'Centralizar dados',
+    description: 'Unifique dados de múltiplas ferramentas em um único lugar. Mídia paga, leads, prospects, negócios, clientes... Todos seus dados organizados e centralizados, prontos para análises que seriam muito complexas sem a Laiki.',
+    cards: [
+      { title: 'Conectores Nativos', description: 'Integração nativa com as principais plataformas de tráfego, CRM e vendas do mercado.' },
+      { title: 'Single Source of Truth', description: 'Evite discrepâncias entre plataformas tendo uma única base de dados consolidada.' },
+    ],
+  },
+  {
+    id: 'segmentar-base',
+    title: 'Segmente sua base',
+    description: 'Crie listas com base em qualquer dado do seu ecossistema: perfil do lead, campos personalizados, comportamento, engajamento... Filtre, combine critérios e crie segmentações mais inteligentes para que o time possa trabalhar de forma mais eficiente.',
+    cards: [
+      { title: 'Filtros Avançados', description: 'Combine critérios de comportamento de compra, UTMs de origem e status de CRM.' },
+      { title: 'Atualização em Tempo Real', description: 'Listas dinâmicas que se atualizam automaticamente à medida que novos dados entram.' },
+    ],
+  },
+  {
+    id: 'dashboards-dinamicos',
+    title: 'Dashboards dinâmicos',
+    description: 'Crie dashboards com gráficos dinâmicos a partir de dados centralizados de marketing e vendas. Cruze mídia com dados de vendas, acompanhe funis, conversões e indicadores de crescimento praticamente em tempo real, tudo reunido em uma única tela.',
+    cards: [
+      { title: 'Métricas Unificadas', description: 'Cruze dados de investimento de mídia diretamente com receita de vendas do CRM.' },
+      { title: 'Tempo Real', description: 'Acompanhe o desempenho da sua operação comercial com dados sempre atualizados.' },
+    ],
+  },
+  {
+    id: 'metricas-calculadas',
+    title: 'Métricas calculadas',
+    description: 'Crie relatórios com métricas de negócio personalizadas a partir de dados de marketing, vendas e mídia. Faça operações de cálculo e acompanhe indicadores que fazem sentido dentro da sua operação.',
+    cards: [
+      { title: 'Indicadores Customizados', description: 'Calcule ROI real, LTV, taxa de conversão entre etapas e margem de contribuição.' },
+      { title: 'Sem Planilhas Manuais', description: 'Automatize cálculos complexos e elimine o trabalho manual de consolidação semanal.' },
+    ],
+  },
+  {
+    id: 'processamento-dados',
+    title: 'Processamento de dados',
+    description: 'Construa workflows para enriquecer, e normalizar qualquer dado recebido antes de enviá-lo ao destino final. Conecte qualquer plataforma com API pública, processe dados em tempo real e automatize tarefas sem depender de time técnico.',
+    cards: [
+      { title: 'Tratamento Automático', description: 'Limpe nomes, padronize formatos de telefone e unifique parâmetros de UTM.' },
+      { title: 'Roteamento de Leads', description: 'Envie os dados certos para o vendedor certo ou ferramenta de CRM no exato segundo da conversão.' },
+    ],
+  },
+  {
+    id: 'analise-ia',
+    title: 'Análise com IA',
+    description: 'Use inteligência artificial para analisar seus dados e gerar insights baseados no seu próprio funil. Faça perguntas sobre performance, campanhas e leads e receba respostas e sugestões em segundos.',
+    cards: [
+      { title: 'Insights Preditivos', description: 'Identifique gargalos de conversão ou desvios de CAC antes que eles afetem seu caixa.' },
+      { title: 'Chat Interativo', description: 'Consulte sua base de dados fazendo perguntas em português, como se estivesse conversando com um analista.' },
+    ],
+  },
+];
+
+function CentralizarMockup() {
+  const platforms = [
+    { name: 'Google Ads', color: '#4285F4' },
+    { name: 'Meta Ads', color: '#1877F2' },
+    { name: 'LinkedIn Ads', color: '#0077B5' },
+    { name: 'RD Station', color: '#F95F62' },
+    { name: 'Pipedrive', color: '#262626' },
+    { name: 'Kommo CRM', color: '#3A9BEA' },
+    { name: 'CVCRM', color: '#10B981' },
+    { name: 'Exact Sales', color: '#F59E0B' },
+  ];
+
+  return (
+    <div className="w-full h-full flex flex-col justify-center items-center relative overflow-hidden p-4 min-h-[300px]">
+      <div className="relative z-20 flex flex-col items-center justify-center p-6 rounded-full bg-zinc-900/90 border border-[#ff6a00]/30 shadow-[0_0_30px_rgba(255,106,0,0.15)] w-28 h-28 animate-pulse">
+        <Database size={32} className="text-[#ff6a00]" />
+        <span className="text-xs font-black text-white mt-1.5">Laiki</span>
+        <span className="text-[8px] text-[#ff8f3a] font-bold uppercase tracking-wider">DATABASE</span>
+      </div>
+
+      <div className="absolute inset-0 z-10 w-full h-full">
+        {platforms.map((plat, idx) => {
+          const angle = (idx * 360) / platforms.length;
+          const radius = 110;
+          const radians = (angle * Math.PI) / 180;
+          const x = Math.round(radius * Math.cos(radians));
+          const y = Math.round(radius * Math.sin(radians));
+
+          return (
+            <div
+              key={idx}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex items-center justify-center"
+              style={{
+                transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`,
+              }}
+            >
+              <div
+                className="px-2.5 py-1.5 rounded-lg border text-[9px] font-bold text-white bg-zinc-950/80 backdrop-blur-sm shadow-md transition-all duration-300 hover:scale-105"
+                style={{
+                  borderColor: `${plat.color}40`,
+                  boxShadow: `0 4px 12px ${plat.color}15`,
+                }}
+              >
+                {plat.name}
+              </div>
+              <svg className="absolute overflow-visible pointer-events-none z-0" style={{ left: '50%', top: '50%' }}>
+                <line
+                  x1={0}
+                  y1={0}
+                  x2={-x}
+                  y2={-y}
+                  stroke="#ffffff"
+                  strokeOpacity="0.08"
+                  strokeWidth="1.5"
+                  strokeDasharray="4 4"
+                />
+              </svg>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function SegmentarMockup() {
+  return (
+    <div className="w-full rounded-2xl border border-zinc-200 bg-zinc-50 p-4 shadow-xl text-zinc-800">
+      <div className="flex items-center gap-1.5 pb-3 border-b border-zinc-200/80 mb-3">
+        <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
+        <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+        <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" />
+        <span className="ml-3 text-[10px] text-zinc-400 font-mono">segmentador_laiki.ui</span>
+      </div>
+
+      <div className="space-y-3 font-sans text-xs">
+        <div className="flex items-center justify-between">
+          <span className="text-[10px] uppercase font-bold text-blue-600 tracking-wider">Recursos</span>
+          <span className="text-[10px] bg-zinc-200/70 text-zinc-600 px-2 py-0.5 rounded-full font-semibold">Segmente sua base</span>
+        </div>
+
+        <div className="p-3 bg-white rounded-xl border border-zinc-200 shadow-sm space-y-2">
+          <div className="flex items-center gap-2 text-[10px] font-bold text-blue-600">
+            <Filter size={10} />
+            <span>REGRA DE ENTRADA</span>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex-1 p-2 rounded-lg bg-zinc-50 border border-zinc-200 text-[10px] font-semibold text-zinc-700">
+              Evento
+            </div>
+            <div className="flex-1 p-2 rounded-lg bg-zinc-50 border border-zinc-200 text-[10px] font-semibold text-zinc-700">
+              Nome do Evento...
+            </div>
+            <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-200 text-[10px] text-zinc-500 font-semibold">
+              Igual a
+            </div>
+            <div className="flex-1 p-2 rounded-lg bg-blue-50/50 border border-blue-200 text-[10px] font-bold text-blue-700">
+              Lead Qualificado
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 pl-4">
+          <span className="text-[9px] font-black bg-amber-500/10 text-amber-600 border border-amber-500/20 px-2.5 py-0.5 rounded-md uppercase tracking-wider">OU</span>
+          <div className="flex-1 h-[1px] bg-zinc-200" />
+        </div>
+
+        <div className="p-3 bg-white rounded-xl border border-zinc-200 shadow-sm space-y-2">
+          <div className="flex items-center gap-2 text-[10px] font-bold text-amber-600">
+            <Filter size={10} />
+            <span>CONDIÇÃO SECUNDÁRIA</span>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <div className="flex-1 p-2 rounded-lg bg-zinc-50 border border-zinc-200 text-[10px] font-semibold text-zinc-700">
+              Evento
+            </div>
+            <div className="flex-1 p-2 rounded-lg bg-zinc-50 border border-zinc-200 text-[10px] font-semibold text-zinc-700">
+              UTM Medium...
+            </div>
+            <div className="p-2 rounded-lg bg-zinc-50 border border-zinc-200 text-[10px] text-zinc-500 font-semibold">
+              Igual a
+            </div>
+            <div className="flex-1 p-2 rounded-lg bg-amber-50/50 border border-amber-200 text-[10px] font-bold text-amber-700">
+              cpc
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DashboardsMockup() {
+  return (
+    <div className="w-full rounded-2xl border border-white/10 bg-zinc-950 p-4 shadow-2xl text-slate-200 text-xs font-sans">
+      <div className="flex items-center justify-between pb-3 border-b border-white/5 mb-3">
+        <div className="flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-blue-500" />
+          <span className="font-bold text-[10px] uppercase tracking-wider text-slate-400">Laki &gt; Dashboard</span>
+        </div>
+        <div className="text-[9px] bg-zinc-900 border border-white/10 px-2 py-0.5 rounded text-slate-400">
+          Mês passado
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 mb-3">
+        <div className="p-3 rounded-xl border border-white/5 bg-zinc-900/50">
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Tempo médio na página</p>
+          <p className="text-lg font-black text-white mt-1">1m 13s</p>
+          <p className="text-[9px] text-emerald-400 font-semibold mt-0.5">▲ +15.8% vs. 1-30 Abr</p>
+        </div>
+        <div className="p-3 rounded-xl border border-white/5 bg-zinc-900/50">
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Investimento no Mês</p>
+          <p className="text-lg font-black text-white mt-1">R$ 5.000,00</p>
+          <p className="text-[9px] text-emerald-400 font-semibold mt-0.5">▼ -12% vs. planejado</p>
+        </div>
+        <div className="p-3 rounded-xl border border-white/5 bg-zinc-900/50">
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">CAC Mídia</p>
+          <p className="text-lg font-black text-white mt-1">R$ 135,57</p>
+          <p className="text-[9px] text-[#ff8f3a] font-semibold mt-0.5">▲ +6.1% dentro do limite</p>
+        </div>
+        <div className="p-3 rounded-xl border border-white/5 bg-zinc-900/50">
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Conversões - Laki</p>
+          <p className="text-lg font-black text-white mt-1">37</p>
+          <p className="text-[9px] text-emerald-400 font-semibold mt-0.5">▲ +40.2% vs. Abr</p>
+        </div>
+      </div>
+
+      <div className="p-3 rounded-xl border border-white/5 bg-zinc-900/30 space-y-2">
+        <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Funil de Aquisição</p>
+        <div className="space-y-1.5 pt-1">
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] font-bold text-slate-400 w-16 truncate">Cliques</span>
+            <div className="flex-1 h-3 rounded bg-zinc-800 overflow-hidden">
+              <div className="h-full bg-blue-500 rounded" style={{ width: '100%' }} />
+            </div>
+            <span className="text-[9px] font-black text-white w-8 text-right">440</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] font-bold text-slate-400 w-16 truncate">Conversões</span>
+            <div className="flex-1 h-3 rounded bg-zinc-800 overflow-hidden">
+              <div className="h-full bg-[#ff6a00] rounded" style={{ width: '60%' }} />
+            </div>
+            <span className="text-[9px] font-black text-white w-8 text-right">37</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[9px] font-bold text-slate-400 w-16 truncate">Reuniões</span>
+            <div className="flex-1 h-3 rounded bg-zinc-800 overflow-hidden">
+              <div className="h-full bg-emerald-500 rounded" style={{ width: '35%' }} />
+            </div>
+            <span className="text-[9px] font-black text-white w-8 text-right">20</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MetricasMockup() {
+  return (
+    <div className="w-full rounded-2xl border border-white/10 bg-zinc-950 p-5 shadow-2xl space-y-4 text-xs font-sans">
+      <div className="flex items-center justify-between pb-2 border-b border-white/5">
+        <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Métricas Calculadas</span>
+        <span className="text-[9px] font-semibold text-[#ff6a00]">Fórmulas Ativas</span>
+      </div>
+
+      <div className="p-4 rounded-xl border border-white/5 bg-zinc-900/60 relative overflow-hidden group">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Valor total das OP (MRR)</p>
+          <span className="text-[8px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-2 py-0.5 rounded-full font-bold">Ver leads</span>
+        </div>
+        <p className="text-2xl font-black text-white tracking-tight">R$ 6.750,00</p>
+        
+        <div className="h-10 mt-3 relative overflow-hidden">
+          <svg className="w-full h-full" viewBox="0 0 100 20" preserveAspectRatio="none">
+            <path
+              d="M0 15 Q20 5 40 12 T80 4 T100 8"
+              fill="none"
+              stroke="#10b981"
+              strokeWidth="2.5"
+            />
+            <path
+              d="M0 15 Q20 5 40 12 T80 4 T100 8 L100 20 L0 20 Z"
+              fill="url(#gradient-green)"
+              opacity="0.1"
+            />
+            <defs>
+              <linearGradient id="gradient-green" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#10b981" />
+                <stop offset="100%" stopColor="#10b981" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+
+      <div className="p-4 rounded-xl border border-white/5 bg-zinc-900/30">
+        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Reuniões Agendadas</p>
+        <div className="flex items-baseline gap-2 mt-1">
+          <p className="text-xl font-black text-white">24</p>
+          <span className="text-[10px] text-emerald-400 font-bold">▲ +12% esta semana</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ProcessamentoMockup() {
+  const dots: { x: number; y: number; size: number; color: string; delay: number }[] = [];
+  
+  const addEdgeDots = (x1: number, y1: number, x2: number, y2: number, count: number) => {
+    for (let i = 0; i <= count; i++) {
+      const t = i / count;
+      const baseX = x1 + (x2 - x1) * t;
+      const baseY = y1 + (y2 - y1) * t;
+      
+      const jitterX = (Math.random() - 0.5) * 8;
+      const jitterY = (Math.random() - 0.5) * 8;
+      const size = Math.random() * 2 + 1.5;
+      
+      const colors = ['#8B5CF6', '#3B82F6', '#EC4899', '#A78BFA', '#93C5FD'];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      
+      dots.push({
+        x: baseX + jitterX,
+        y: baseY + jitterY,
+        size,
+        color,
+        delay: Math.random() * 2,
+      });
+    }
+  };
+
+  addEdgeDots(100, 40, 40, 160, 20);
+  addEdgeDots(40, 160, 160, 160, 20);
+  addEdgeDots(160, 160, 100, 40, 20);
+
+  return (
+    <div className="w-full rounded-2xl border border-white/10 bg-zinc-950 p-6 shadow-2xl flex flex-col items-center justify-center min-h-[260px] relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff6a00]/5 filter blur-2xl rounded-full" />
+      <span className="absolute top-4 left-4 text-[9px] uppercase font-bold text-slate-500 tracking-wider">Workflow Pipeline</span>
+      
+      <svg className="w-40 h-40 overflow-visible" viewBox="0 0 200 200">
+        {dots.map((dot, idx) => (
+          <circle
+            key={idx}
+            cx={dot.x}
+            cy={dot.y}
+            r={dot.size}
+            fill={dot.color}
+            opacity="0.8"
+            style={{
+              animation: `pulse ${1.5 + Math.random()}s infinite alternate`,
+              animationDelay: `${dot.delay}s`,
+            }}
+          />
+        ))}
+      </svg>
+      
+      <style>{`
+        @keyframes pulse {
+          0% { transform: scale(0.9); opacity: 0.4; }
+          100% { transform: scale(1.1); opacity: 0.9; }
+        }
+      `}</style>
+    </div>
+  );
+}
+
+function AnaliseIaMockup() {
+  return (
+    <div className="w-full rounded-2xl border border-white/10 bg-zinc-950 p-4 shadow-2xl text-slate-200 text-[11px] font-sans">
+      <div className="flex items-center justify-between pb-2.5 border-b border-white/5 mb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-full bg-[#ff6a00]/20 flex items-center justify-center border border-[#ff6a00]/30 animate-pulse">
+            <Cpu size={10} className="text-[#ff6a00]" />
+          </div>
+          <span className="font-bold text-[10px] uppercase tracking-wider text-slate-300">Laiki Copilot</span>
+        </div>
+        <span className="text-[8px] bg-[#ff6a00]/10 text-[#ff8f3a] border border-[#ff6a00]/20 px-2 py-0.5 rounded font-bold uppercase tracking-wider">Inteligência</span>
+      </div>
+
+      <div className="space-y-3 max-h-[190px] overflow-y-auto pr-1">
+        <div className="p-3 rounded-xl border border-white/5 bg-zinc-900/40 space-y-2">
+          <p className="font-bold text-white text-[10px] border-b border-white/5 pb-1">Target de junho:</p>
+          <ul className="space-y-1 text-slate-300">
+            <li className="flex items-center gap-1.5">
+              <span className="text-emerald-400">✓</span>
+              <span>Conversões: <strong className="text-white">50+</strong> (vs. 26 atuais)</span>
+            </li>
+            <li className="flex items-center gap-1.5">
+              <span className="text-emerald-400">✓</span>
+              <span>CPL: <strong className="text-white">R$ 80 máximo</strong> (vs. R$ 166 atual)</span>
+            </li>
+            <li className="flex items-center gap-1.5">
+              <span className="text-emerald-400">✓</span>
+              <span>Vendas fechadas: <strong className="text-white">3+</strong> (vs. 0 atual)</span>
+            </li>
+            <li className="flex items-center gap-1.5">
+              <span className="text-emerald-400">✓</span>
+              <span>Taxa lead→reunião: <strong className="text-white">90%+</strong> (está em 96%)</span>
+            </li>
+          </ul>
+          
+          <p className="text-[10px] text-slate-400 pt-1 leading-relaxed border-t border-white/5 mt-2">
+            Se atingir esses targets: Junho encerra rentável; julho pode escalar.
+          </p>
+          <p className="text-[10px] text-[#ff8f3a] font-semibold mt-1">
+            📅 Próximo checkpoint: 03/06 (diagnóstico pós-auditoria)
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between text-[9px] text-slate-500 px-1">
+          <span>Este insight foi útil?</span>
+          <div className="flex gap-2">
+            <button className="hover:text-white transition-colors cursor-pointer">👍</button>
+            <button className="hover:text-white transition-colors cursor-pointer">👎</button>
+          </div>
+        </div>
+
+        <div className="flex gap-1.5 overflow-x-auto pb-1 shrink-0 scrollbar-none">
+          <div className="px-2 py-1 rounded bg-zinc-900 border border-white/5 text-[9px] text-slate-400 truncate shrink-0 cursor-pointer hover:border-white/20">
+            Qual a sugestão para melhorar a performance nas próximas 48h?
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-3 flex gap-2">
+        <input
+          type="text"
+          placeholder="Pergunte sobre este insight..."
+          readOnly
+          className="flex-1 px-3 py-2 rounded-xl bg-zinc-950 border border-white/5 text-[10px] text-slate-400 placeholder:text-slate-600 focus:outline-none"
+        />
+        <div className="w-8 h-8 rounded-xl bg-[#ff6a00]/10 border border-[#ff6a00]/30 flex items-center justify-center cursor-pointer hover:bg-[#ff6a00]/20">
+          <ArrowRight size={12} className="text-[#ff6a00]" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface SectorCardProps {
   i: number;
@@ -223,7 +563,6 @@ function SectorCard({ i, sector, progress, range, targetScale }: SectorCardProps
         }}
         className="relative flex flex-col lg:flex-row h-[520px] w-[90%] max-w-[1200px] rounded-[32px] border border-white/10 bg-zinc-950/95 backdrop-blur-md shadow-[0_30px_80px_-20px_rgba(0,0,0,0.8)] p-8 lg:p-12 origin-top overflow-hidden"
       >
-        {/* Subtle Glow Background */}
         <div className="absolute top-0 right-0 w-80 h-80 bg-[#ff6a00]/5 rounded-full filter blur-[100px] pointer-events-none" />
 
         {/* LEFT COLUMN — Text and differentials */}
@@ -254,72 +593,14 @@ function SectorCard({ i, sector, progress, range, targetScale }: SectorCardProps
           </div>
         </div>
 
-        {/* RIGHT COLUMN — Visual flow diagram or mockup */}
+        {/* RIGHT COLUMN — Visual mockup */}
         <div className="hidden lg:flex w-[45%] flex-col justify-center items-center relative pl-8 border-l border-white/5 z-10 min-h-[300px]">
-          {sector.id === 'ecommerce' ? (
-            /* Render Mockup Window with the print */
-            <div className="w-full rounded-2xl border border-white/10 bg-black/60 p-1.5 shadow-2xl relative overflow-hidden group">
-              <div className="flex items-center gap-1.5 px-3 py-2 border-b border-white/5 bg-zinc-950/80 rounded-t-xl">
-                <span className="w-2.5 h-2.5 rounded-full bg-red-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/70" />
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/70" />
-                <span className="ml-3 text-[10px] text-slate-400 font-mono">dashboard_final.png</span>
-              </div>
-              <div className="relative h-[240px] w-full bg-zinc-900 rounded-b-xl overflow-hidden">
-                <img
-                  src="/images/prints/ecommerce-print.png"
-                  alt="E-commerce Dashboard Mockup"
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none" />
-              </div>
-            </div>
-          ) : (
-            /* Render Flowchart Diagram */
-            <div className="w-full h-full flex flex-col justify-center items-center gap-4 relative">
-              <div className="flex items-center justify-between w-full max-w-[420px] relative z-10 py-4">
-                
-                {/* Inputs Stack (Nodes) */}
-                <div className="flex flex-col gap-2.5 w-[140px]">
-                  {sector.nodes.map((node, nIdx) => (
-                    <div
-                      key={nIdx}
-                      className="flex items-center gap-2 px-3 py-2 rounded-xl border border-white/5 bg-zinc-900/40 backdrop-blur-sm text-[11px] font-bold text-slate-300"
-                    >
-                      <span className="text-sm shrink-0">{node.icon}</span>
-                      <span className="truncate">{node.label}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Connecting lines or animated arrow */}
-                <div className="flex flex-col items-center justify-center flex-1 relative h-20 min-w-[50px]">
-                  <div className="absolute w-full h-[2px] bg-gradient-to-r from-[#ff6a00]/30 to-[#ff6a00] opacity-40" />
-                  <div className="w-8 h-8 rounded-full bg-[#ff6a00]/10 border border-[#ff6a00]/40 flex items-center justify-center animate-pulse relative z-10 shadow-[0_0_15px_rgba(255,106,0,0.2)]">
-                    <span className="w-2 h-2 rounded-full bg-[#ff6a00]" />
-                  </div>
-                </div>
-
-                {/* Outputs Stack */}
-                <div className="flex flex-col gap-2.5 w-[140px]">
-                  {sector.outputs.map((out, oIdx) => (
-                    <div
-                      key={oIdx}
-                      className="flex items-center justify-center px-3 py-2 rounded-xl border font-bold text-[10px] uppercase text-center shadow-md"
-                      style={{
-                        borderColor: `${out.color}30`,
-                        backgroundColor: `${out.color}08`,
-                        color: out.color,
-                      }}
-                    >
-                      {out.label}
-                    </div>
-                  ))}
-                </div>
-
-              </div>
-            </div>
-          )}
+          {sector.id === 'centralizar-dados' && <CentralizarMockup />}
+          {sector.id === 'segmentar-base' && <SegmentarMockup />}
+          {sector.id === 'dashboards-dinamicos' && <DashboardsMockup />}
+          {sector.id === 'metricas-calculadas' && <MetricasMockup />}
+          {sector.id === 'processamento-dados' && <ProcessamentoMockup />}
+          {sector.id === 'analise-ia' && <AnaliseIaMockup />}
         </div>
       </motion.div>
     </div>
@@ -334,13 +615,13 @@ function UseCasesSection() {
   });
 
   return (
-    <section ref={container} className="relative min-h-[500vh] bg-transparent w-full pb-20">
+    <section ref={container} className="relative min-h-[600vh] bg-transparent w-full pb-20">
       {/* Scrollable header (moves out of view) */}
       <div className="w-full text-center max-w-[720px] mx-auto mb-10 pt-24 px-5">
-        <span className="text-[13px] font-bold text-[#ff6a00]">Arquitetura por Setor</span>
-        <h2 className="text-3xl sm:text-4xl font-black mt-2 text-white">Aplicações Práticas</h2>
+        <span className="text-[13px] font-bold text-[#ff6a00]">Arquitetura de Dados</span>
+        <h2 className="text-3xl sm:text-4xl font-black mt-2 text-white">Recursos Integrados</h2>
         <p className="text-slate-400 mt-4 text-sm leading-relaxed">
-          Descubra como equipes de marketing utilizam nossos agentes para automatizar e escalar resultados em cada área.
+          Descubra como a plataforma Laiki centraliza, segmenta e automatiza a inteligência dos seus dados em tempo real.
         </p>
       </div>
 
@@ -353,7 +634,7 @@ function UseCasesSection() {
               i={idx}
               sector={sector}
               progress={scrollYProgress}
-              range={[idx * 0.2, 1]}
+              range={[idx * (1 / useCasesSectors.length), 1]}
               targetScale={targetScale}
             />
           );
@@ -1226,10 +1507,10 @@ export default function Suggestion5LandingPage() {
           className="relative z-10 mx-auto max-w-[720px] text-center"
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black leading-[1.1] text-white">
-            Sua campanha está no ar agora. Você sabe exatamente o que está funcionando?
+            Nenhuma estratégia tem valor se você não puder provar que realmente funciona.
           </h2>
           <p className="mt-5 text-[15px] text-slate-400 leading-relaxed max-w-[520px] mx-auto">
-            Agende um diagnóstico gratuito e descubra onde seu orçamento está sendo desperdiçado — e quais agentes vão mudar isso.
+            A Laiki reúne todos os recursos que sua operação precisa para transformar dados em crescimento.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-10">
             <button

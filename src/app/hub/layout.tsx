@@ -94,7 +94,7 @@ function NavLink({
   const isActive = (() => {
     if (isConhecimento)    return pathname === '/hub/configuracoes' && currentTab === 'conhecimento';
     if (isSettingsGeneral) return pathname === '/hub/configuracoes' && currentTab !== 'conhecimento';
-    if (hasChildren)       return pathname === item.href || isChildActive;
+    if (hasChildren)       return isChildActive;
     return pathname === item.href || (item.href !== '/hub' && pathname.startsWith(item.href));
   })();
 

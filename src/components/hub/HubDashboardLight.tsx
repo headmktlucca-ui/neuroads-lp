@@ -23,6 +23,8 @@ import {
   Zap,
   Info,
   AlertTriangle,
+  CheckCircle2,
+  DollarSign,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useHub } from '../../context/HubContext';
@@ -242,6 +244,401 @@ function KpiHelpPopover({ label, isNa }: { label: string; isNa: boolean }) {
       </button>
       {typeof document !== 'undefined' && createPortal(popover, document.body)}
     </>
+  );
+}
+
+// ─── GA4 Custom Charts ───────────────────────────────────────────────
+function GA4TrafficDonut() {
+  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
+  const data = [
+    { label: '(direct) / (none)', value: 216, color: '#FF6A00' },
+    { label: 'linkedin.com / referral', value: 58, color: '#2563eb' },
+    { label: 'accounts.google.com / referral', value: 46, color: '#059669' },
+    { label: 'hpanel.hostinger.com / referral', value: 11, color: '#7c3aed' },
+    { label: 'pay.luccaos.pro / referral', value: 5, color: '#db2777' },
+    { label: 'google / organic', value: 4, color: '#0369a1' },
+    { label: 'bit.ly / referral', value: 1, color: '#b45309' },
+  ];
+  const total = data.reduce((acc, d) => acc + d.value, 0);
+
+  // SVG circle dimensions
+  const R = 50;
+  const C = 2 * Math.PI * R; // ~314.16
+
+  let accumulated = 0;
+
+  return (
+    <div className="flex flex-col h-full justify-between">
+      <div className="flex items-center justify-between border-b border-white/40 pb-3 mb-3">
+        <div className="flex items-center gap-2">
+          <Activity size={14} className="text-[#FF6A00]" />
+          <span className="text-[12px] font-black uppercase tracking-wider text-[#0f172a]">Origens de Tráfego (GA4)</span>
+        </div>
+        <div className="flex items-center gap-1 bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10 text-[9px] font-black text-emerald-600">
+          <CheckCircle2 size={8} />
+          GA4
+        </div>
+      </div>
+      <div className="flex items-center gap-4 flex-1 py-1">
+        {/* SVG Donut */}
+        <div className="relative w-36 h-36 shrink-0 flex items-center justify-center">
+          <svg width="140" height="140" viewBox="0 0 140 140" className="overflow-visible">
+            {data.map((item, idx) => {
+              const percentage = item.value / total;
+              const strokeLength = percentage * C;
+              const strokeOffset = C - (accumulated * C);
+              accumulated += percentage;
+              const isHovered = hoveredIdx === idx;
+
+              return (
+                <circle
+                  key={item.label}
+                  cx="70"
+                  cy="70"
+                  r={R}
+                  fill="transparent"
+                  stroke={item.color}
+                  strokeWidth={isHovered ? 18 : 14}
+                  strokeDasharray={`${strokeLength} ${C}`}
+                  strokeDashoffset={strokeOffset}
+                  transform="rotate(-90 70 70)"
+                  onMouseEnter={() => setHoveredIdx(idx)}
+                  onMouseLeave={() => setHoveredIdx(null)}
+                  className="transition-all duration-200 cursor-pointer"
+                  style={{
+                    filter: isHovered ? `drop-shadow(0 0 6px ${item.color}60)` : 'none'
+                  }}
+                />
+              );
+            })}
+          </svg>
+          {/* Center labels */}
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <span className="text-[18px] font-black text-[#0f172a] font-mono leading-none">
+              {hoveredIdx !== null ? data[hoveredIdx].value : total}
+            </span>
+            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider mt-1">
+              {hoveredIdx !== null ? `${((data[hoveredIdx].value / total) * 100).toFixed(1)}%` : 'Sessões'}
+            </span>
+          </div>
+        </div>
+
+        {/* Legend list */}
+        <div className="flex-1 space-y-1 overflow-y-auto max-h-[170px] pr-1">
+          {data.map((item, idx) => (
+            <div
+              key={item.label}
+              className={`flex items-center justify-between text-[10.5px] font-semibold px-2 py-0.5 rounded-lg transition-all ${
+                hoveredIdx === idx ? 'bg-white shadow-[2px_2px_5px_#d1d9e6]' : ''
+              }`}
+              onMouseEnter={() => setHoveredIdx(idx)}
+              onMouseLeave={() => setHoveredIdx(null)}
+            >
+              <div className="flex items-center gap-1.5 min-w-0">
+                <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                <span className="text-slate-600 truncate">{item.label}</span>
+              </div>
+              <span className="font-bold text-slate-800 font-mono shrink-0 ml-2">{item.value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GA4UserLineChart() {
+  const [activeIdx, setActiveIdx] = useState<number | null>(null);
+  const data = [
+    { date: '07 Jun', newUsers: 0, returningUsers: 0 },
+    { date: '08 Jun', newUsers: 2, returningUsers: 1 },
+    { date: '09 Jun', newUsers: 7, returningUsers: 3 },
+    { date: '10 Jun', newUsers: 2, returningUsers: 4 },
+    { date: '11 Jun', newUsers: 5, returningUsers: 7 },
+    { date: '12 Jun', newUsers: 3, returningUsers: 2 },
+    { date: '13 Jun', newUsers: 1, returningUsers: 0 },
+    { date: '14 Jun', newUsers: 2, returningUsers: 0 },
+    { date: '15 Jun', newUsers: 2, returningUsers: 2 },
+    { date: '16 Jun', newUsers: 2, returningUsers: 5 },
+    { date: '17 Jun', newUsers: 4, returningUsers: 10 },
+    { date: '18 Jun', newUsers: 1, returningUsers: 3 },
+    { date: '19 Jun', newUsers: 2, returningUsers: 2 },
+    { date: '20 Jun', newUsers: 5, returningUsers: 4 },
+    { date: '21 Jun', newUsers: 0, returningUsers: 5 },
+    { date: '22 Jun', newUsers: 2, returningUsers: 5 },
+    { date: '23 Jun', newUsers: 1, returningUsers: 6 },
+    { date: '24 Jun', newUsers: 0, returningUsers: 4 },
+    { date: '25 Jun', newUsers: 1, returningUsers: 1 },
+    { date: '26 Jun', newUsers: 1, returningUsers: 1 },
+    { date: '27 Jun', newUsers: 0, returningUsers: 0 },
+    { date: '28 Jun', newUsers: 1, returningUsers: 2 },
+    { date: '29 Jun', newUsers: 15, returningUsers: 11 },
+  ];
+
+  const width = 450;
+  const height = 220;
+  const paddingLeft = 30;
+  const paddingRight = 40;
+  const paddingTop = 20;
+  const paddingBottom = 30;
+
+  const chartWidth = width - paddingLeft - paddingRight;
+  const chartHeight = height - paddingTop - paddingBottom;
+  const maxValue = 20;
+
+  const getX = (idx: number) => paddingLeft + (idx / (data.length - 1)) * chartWidth;
+  const getY = (val: number) => (paddingTop + chartHeight) - (val / maxValue) * chartHeight;
+
+  const returningPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${getX(i)} ${getY(d.returningUsers)}`).join(' ');
+  const newPath = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${getX(i)} ${getY(d.newUsers)}`).join(' ');
+
+  const handleMouseMove = (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const mouseX = e.clientX - rect.left;
+    const relativeX = (mouseX - (paddingLeft / width * rect.width)) / ((chartWidth / width) * rect.width);
+    const closestIdx = Math.max(0, Math.min(data.length - 1, Math.round(relativeX * (data.length - 1))));
+    setActiveIdx(closestIdx);
+  };
+
+  return (
+    <div className="flex flex-col h-full justify-between">
+      <div className="flex items-center justify-between border-b border-white/40 pb-3 mb-3">
+        <span className="text-[12px] font-black uppercase tracking-wider text-[#0f172a]">Usuários novos x recorrentes</span>
+        <div className="flex items-center gap-1.5 text-[9px] font-black text-emerald-600 bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10">
+          <CheckCircle2 size={8} />
+          GA4
+        </div>
+      </div>
+
+      <div className="relative flex-1 flex items-center justify-center h-40">
+        <svg
+          width="100%"
+          height="100%"
+          viewBox={`0 0 ${width} ${height}`}
+          className="overflow-visible"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={() => setActiveIdx(null)}
+        >
+          {/* Grid lines */}
+          {[0, 5, 10, 15, 20].map(val => (
+            <g key={val}>
+              <line
+                x1={paddingLeft}
+                y1={getY(val)}
+                x2={width - paddingRight}
+                y2={getY(val)}
+                stroke="rgba(203,213,225,0.4)"
+                strokeWidth="1"
+                strokeDasharray="4 4"
+              />
+              <text
+                x={width - paddingRight + 8}
+                y={getY(val) + 3}
+                fill="#94a3b8"
+                className="text-[9px] font-mono font-bold"
+              >
+                {val}
+              </text>
+            </g>
+          ))}
+
+          {/* X axis labels */}
+          {[
+            { idx: 0, label: '07 jun.' },
+            { idx: 7, label: '14' },
+            { idx: 14, label: '21' },
+            { idx: 21, label: '28' },
+          ].map(labelItem => (
+            <text
+              key={labelItem.idx}
+              x={getX(labelItem.idx)}
+              y={height - 8}
+              textAnchor="middle"
+              fill="#94a3b8"
+              className="text-[9px] font-bold"
+            >
+              {labelItem.label}
+            </text>
+          ))}
+
+          {/* Returning Line (Blue) */}
+          <path
+            d={returningPath}
+            fill="none"
+            stroke="#2563eb"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          {/* New Line (Green) */}
+          <path
+            d={newPath}
+            fill="none"
+            stroke="#22c55e"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+
+          {/* Hover items */}
+          {activeIdx !== null && (
+            <g>
+              <line
+                x1={getX(activeIdx)}
+                y1={paddingTop}
+                x2={getX(activeIdx)}
+                y2={height - paddingBottom}
+                stroke="#64748b"
+                strokeWidth="1"
+                strokeDasharray="2 2"
+              />
+              <circle
+                cx={getX(activeIdx)}
+                cy={getY(data[activeIdx].returningUsers)}
+                r="6"
+                fill="#2563eb"
+                stroke="#fff"
+                strokeWidth="2"
+              />
+              <circle
+                cx={getX(activeIdx)}
+                cy={getY(data[activeIdx].newUsers)}
+                r="6"
+                fill="#22c55e"
+                stroke="#fff"
+                strokeWidth="2"
+              />
+            </g>
+          )}
+        </svg>
+
+        {/* Tooltip Overlay */}
+        {activeIdx !== null && (
+          <div
+            className="absolute z-20 bg-white/95 backdrop-blur-sm border border-slate-200/80 p-2.5 rounded-xl shadow-lg text-[10px] font-bold text-slate-700 pointer-events-none"
+            style={{
+              left: activeIdx > data.length / 2 ? `${(getX(activeIdx) - 120) / width * 100}%` : `${(getX(activeIdx) + 15) / width * 100}%`,
+              top: '10%',
+            }}
+          >
+            <p className="text-slate-900 border-b border-slate-100 pb-1 mb-1.5">{data[activeIdx].date} de 2026</p>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="w-2 h-2 rounded-full bg-[#2563eb]" />
+              <span>Recorrentes: <strong className="text-slate-900 font-mono">{data[activeIdx].returningUsers}</strong></span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#22c55e]" />
+              <span>Novos: <strong className="text-slate-900 font-mono">{data[activeIdx].newUsers}</strong></span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Legend Bottom */}
+      <div className="flex items-center justify-center gap-6 text-[10px] font-black uppercase text-slate-500 pt-2 border-t border-slate-200/50">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#2563eb]" />
+          <span>returning</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]" />
+          <span>new</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GA4ActiveRegions() {
+  const regions = [
+    { country: 'Brazil', value: 17, change: '+6,3%', positive: true },
+    { country: 'United States', value: 8, change: '+166%', positive: true },
+    { country: 'Netherlands', value: 2, change: '0%', positive: null },
+    { country: 'India', value: 1, change: '-50,0%', positive: false },
+    { country: 'Poland', value: 1, change: '0%', positive: null },
+    { country: 'Switzerland', value: 0, change: '-100%', positive: false },
+    { country: 'France', value: 0, change: '-100%', positive: false },
+  ];
+
+  return (
+    <div className="flex flex-col h-full justify-between">
+      <div className="flex items-center justify-between border-b border-white/40 pb-3 mb-3">
+        <div className="flex items-center gap-2">
+          <span className="text-[12px] font-black uppercase tracking-wider text-[#0f172a]">Usuários ativos por Região</span>
+        </div>
+        <div className="flex items-center gap-1 bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10 text-[9px] font-black text-emerald-600">
+          <CheckCircle2 size={8} />
+          GA4
+        </div>
+      </div>
+
+      <div className="flex gap-4 flex-1 items-center py-1">
+        {/* SVG Map of Continents */}
+        <div className="w-[45%] h-32 shrink-0 relative flex items-center justify-center border border-white/50 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,inset_-1px_-1px_3px_#ffffff] rounded-2xl p-2">
+          <svg viewBox="0 0 200 100" width="100%" height="100%" className="overflow-visible opacity-70">
+            {/* Americas */}
+            <path d="M15,10 C20,15 25,18 22,25 C18,30 25,35 20,45 C15,50 18,60 22,65 C25,70 20,80 25,85 C30,90 28,95 28,98" fill="none" stroke="#cbd5e1" strokeWidth="6" strokeLinecap="round" />
+            <path d="M10,8 C15,12 30,12 32,20 C34,25 28,28 30,35 C32,40 38,32 40,25" fill="none" stroke="#cbd5e1" strokeWidth="6" strokeLinecap="round" />
+            {/* Africa */}
+            <path d="M80,45 C90,40 100,45 105,55 C110,65 105,75 95,80 C90,82 85,75 82,65 Z" fill="none" stroke="#cbd5e1" strokeWidth="8" strokeLinecap="round" />
+            {/* Europe / Asia */}
+            <path d="M75,25 C85,15 105,10 120,15 C135,10 155,18 165,22 C175,26 180,35 170,45 C160,50 150,42 140,45 L130,50 L115,55 Z" fill="none" stroke="#cbd5e1" strokeWidth="8" strokeLinecap="round" />
+            {/* Australia / Oceania */}
+            <path d="M165,70 C175,70 178,75 175,80 C170,85 160,82 165,70" fill="none" stroke="#cbd5e1" strokeWidth="6" strokeLinecap="round" />
+
+            {/* Active Glowing Markers */}
+            {/* Brazil */}
+            <circle cx="34" cy="68" r="4.5" fill="#FF6A00" className="animate-ping" />
+            <circle cx="34" cy="68" r="3.5" fill="#FF6A00" style={{ filter: 'drop-shadow(0 0 4px #FF6A00)' }} />
+
+            {/* USA */}
+            <circle cx="22" cy="22" r="3.5" fill="#2563eb" className="animate-ping" />
+            <circle cx="22" cy="22" r="2.5" fill="#2563eb" style={{ filter: 'drop-shadow(0 0 4px #2563eb)' }} />
+
+            {/* Netherlands (Europe) */}
+            <circle cx="92" cy="22" r="2" fill="#7c3aed" />
+
+            {/* India */}
+            <circle cx="130" cy="40" r="2" fill="#db2777" />
+
+            {/* Poland */}
+            <circle cx="98" cy="20" r="2" fill="#0369a1" />
+          </svg>
+          <div className="absolute bottom-2 left-2 text-[7.5px] font-bold text-slate-400 pointer-events-none">Dados cartográficos ©2026</div>
+        </div>
+
+        {/* Country List */}
+        <div className="flex-1 space-y-1.5 overflow-y-auto max-h-[170px] pr-1">
+          {regions.map(r => (
+            <div key={r.country} className="space-y-0.5">
+              <div className="flex items-center justify-between text-[10.5px] font-bold">
+                <span className="text-slate-700 truncate max-w-[55%]">{r.country}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-slate-800 font-mono">{r.value}</span>
+                  {r.change !== '0%' && (
+                    <span className={`text-[8.5px] font-black px-1 py-0.2 rounded ${
+                      r.positive === true ? 'text-emerald-600 bg-emerald-500/5' : 'text-rose-600 bg-rose-500/5'
+                    }`}>
+                      {r.change}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="h-1 w-full bg-slate-200/60 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    width: `${r.value > 0 ? (r.value / 17) * 100 : 0}%`,
+                    backgroundColor: r.country === 'Brazil' ? '#FF6A00' : r.country === 'United States' ? '#2563eb' : '#64748b'
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -700,7 +1097,8 @@ export default function HubDashboardLight() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
         {/* Interactive Funnel Bento Card */}
-        <BentoCard variant="neumorphic" className="lg:col-span-2 flex flex-col p-6" glowColor="rgba(255, 106, 0, 0.03)">
+        {/* Interactive Funnel Bento Card */}
+        <BentoCard variant="neumorphic" className="lg:col-span-2 flex flex-col p-6" glowColor="rgba(255, 106, 0, 0.04)">
           <div className="flex items-center justify-between border-b border-white/40 pb-4 mb-6">
             <div className="flex items-center gap-2">
               <TrendingUp size={16} className="text-[#FF6A00]" />
@@ -739,21 +1137,23 @@ export default function HubDashboardLight() {
             <div className="flex flex-col items-center">
               <motion.div
                 layout
-                className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-slate-700 to-slate-800 text-white flex items-center justify-between shadow-md relative group hover:scale-[1.01] transition-transform"
+                className="w-full py-4 px-6 rounded-2xl bg-slate-900 border border-slate-700/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(15,23,42,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(250,204,21,0.25)] transition-all duration-300"
                 style={{ originX: 0.5 }}
               >
-                <div className="flex items-center gap-2.5">
-                  <Users size={16} className="text-slate-300" />
+                {/* Glow bar */}
+                <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-yellow-400" />
+                <div className="flex items-center gap-2.5 pl-2">
+                  <Users size={16} className="text-yellow-400" />
                   <span className="text-xs font-black uppercase tracking-wider">Atração (Impressões)</span>
                 </div>
-                <span className="text-sm font-black font-mono tracking-tight">
+                <span className="text-sm font-black font-mono tracking-tight text-yellow-400">
                   {funnelData.impressions.toLocaleString('pt-BR')}
                 </span>
               </motion.div>
 
               {/* Conversion Rate Stage 1 -> 2 */}
-              <div className="h-6 w-0.5 bg-slate-300 my-0.5 relative flex items-center justify-center">
-                <span className="absolute text-[10.5px] font-black bg-[#eef2f7] px-2 py-0.5 rounded-md border border-white/60 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] text-blue-600 shrink-0 select-none whitespace-nowrap">
+              <div className="h-8 w-0.5 bg-gradient-to-b from-yellow-400 to-blue-500 my-0.5 relative flex items-center justify-center">
+                <span className="absolute text-[10.5px] font-black bg-[#eef2f7] px-2.5 py-0.8 rounded-full border border-blue-200 shadow-[2px_2px_6px_rgba(0,0,0,0.06)] text-blue-600 shrink-0 select-none whitespace-nowrap">
                   CTR: {funnelData.impressions > 0 ? ((funnelData.clicks / funnelData.impressions) * 100).toFixed(2).replace('.', ',') : '0,00'}%
                 </span>
               </div>
@@ -763,21 +1163,23 @@ export default function HubDashboardLight() {
             <div className="flex flex-col items-center">
               <motion.div
                 layout
-                className="w-[85%] py-3.5 px-6 rounded-2xl bg-gradient-to-r from-blue-600 to-blue-500 text-white flex items-center justify-between shadow-md relative group hover:scale-[1.01] transition-transform"
+                className="w-[85%] py-4 px-6 rounded-2xl bg-blue-950 border border-blue-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(37,99,235,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-300"
                 style={{ originX: 0.5 }}
               >
-                <div className="flex items-center gap-2.5">
-                  <MousePointerClick size={16} className="text-blue-100" />
+                {/* Glow bar */}
+                <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-blue-500" />
+                <div className="flex items-center gap-2.5 pl-2">
+                  <MousePointerClick size={16} className="text-blue-400" />
                   <span className="text-xs font-black uppercase tracking-wider">Engajamento (Cliques)</span>
                 </div>
-                <span className="text-sm font-black font-mono tracking-tight">
+                <span className="text-sm font-black font-mono tracking-tight text-blue-400">
                   {funnelData.clicks.toLocaleString('pt-BR')}
                 </span>
               </motion.div>
 
               {/* Conversion Rate Stage 2 -> 3 */}
-              <div className="h-6 w-0.5 bg-slate-300 my-0.5 relative flex items-center justify-center">
-                <span className="absolute text-[10.5px] font-black bg-[#eef2f7] px-2 py-0.5 rounded-md border border-white/60 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] text-orange-600 shrink-0 select-none whitespace-nowrap">
+              <div className="h-8 w-0.5 bg-gradient-to-b from-blue-500 to-orange-500 my-0.5 relative flex items-center justify-center">
+                <span className="absolute text-[10.5px] font-black bg-[#eef2f7] px-2.5 py-0.8 rounded-full border border-orange-200 shadow-[2px_2px_6px_rgba(0,0,0,0.06)] text-orange-600 shrink-0 select-none whitespace-nowrap">
                   Taxa de Conv.: {funnelData.clicks > 0 ? ((funnelData.conversions / funnelData.clicks) * 100).toFixed(2).replace('.', ',') : '0,00'}%
                 </span>
               </div>
@@ -787,21 +1189,23 @@ export default function HubDashboardLight() {
             <div className="flex flex-col items-center">
               <motion.div
                 layout
-                className="w-[70%] py-3.5 px-6 rounded-2xl bg-gradient-to-r from-orange-600 to-orange-500 text-white flex items-center justify-between shadow-md relative group hover:scale-[1.01] transition-transform"
+                className="w-[70%] py-4 px-6 rounded-2xl bg-orange-950 border border-orange-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(249,115,22,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] transition-all duration-300"
                 style={{ originX: 0.5 }}
               >
-                <div className="flex items-center gap-2.5">
-                  <ShoppingCart size={16} className="text-orange-100" />
+                {/* Glow bar */}
+                <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-orange-500" />
+                <div className="flex items-center gap-2.5 pl-2">
+                  <ShoppingCart size={16} className="text-orange-400" />
                   <span className="text-xs font-black uppercase tracking-wider">Ações (Conversões)</span>
                 </div>
-                <span className="text-sm font-black font-mono tracking-tight">
+                <span className="text-sm font-black font-mono tracking-tight text-orange-400">
                   {funnelData.conversions.toLocaleString('pt-BR')}
                 </span>
               </motion.div>
 
               {/* Conversion Rate Stage 3 -> 4 */}
-              <div className="h-6 w-0.5 bg-slate-300 my-0.5 relative flex items-center justify-center">
-                <span className="absolute text-[10.5px] font-black bg-[#eef2f7] px-2 py-0.5 rounded-md border border-white/60 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] text-emerald-600 shrink-0 select-none whitespace-nowrap">
+              <div className="h-8 w-0.5 bg-gradient-to-b from-orange-500 to-emerald-500 my-0.5 relative flex items-center justify-center">
+                <span className="absolute text-[10.5px] font-black bg-[#eef2f7] px-2.5 py-0.8 rounded-full border border-emerald-200 shadow-[2px_2px_6px_rgba(0,0,0,0.06)] text-emerald-600 shrink-0 select-none whitespace-nowrap">
                   ROAS: {funnelData.spend > 0 ? (funnelData.revenue / funnelData.spend).toFixed(2).replace('.', ',') : '0,00'}×
                 </span>
               </div>
@@ -811,14 +1215,16 @@ export default function HubDashboardLight() {
             <div className="flex flex-col items-center">
               <motion.div
                 layout
-                className="w-[55%] py-3.5 px-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-emerald-500 text-white flex items-center justify-between shadow-md relative group hover:scale-[1.01] transition-transform"
+                className="w-[55%] py-4 px-6 rounded-2xl bg-emerald-950 border border-emerald-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(16,185,129,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all duration-300"
                 style={{ originX: 0.5 }}
               >
-                <div className="flex items-center gap-2.5">
-                  <Wallet size={16} className="text-emerald-100" />
+                {/* Glow bar */}
+                <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-emerald-500" />
+                <div className="flex items-center gap-2.5 pl-2">
+                  <Wallet size={16} className="text-emerald-400" />
                   <span className="text-xs font-black uppercase tracking-wider">Receita (Vendas)</span>
                 </div>
-                <span className="text-sm font-black font-mono tracking-tight">
+                <span className="text-sm font-black font-mono tracking-tight text-emerald-400">
                   R$ {funnelData.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </motion.div>
@@ -1146,6 +1552,31 @@ export default function HubDashboardLight() {
             </div>
           </div>
         </BentoCard>
+      </div>
+
+      {/* ── Métricas Avançadas (GA4) ── */}
+      <div className="mt-8 space-y-6">
+        <div className="flex items-center gap-2 border-b border-slate-200/60 pb-3">
+          <Activity size={18} className="text-[#FF6A00]" />
+          <h2 className="text-[16px] font-black uppercase tracking-wider text-[#0f172a]">Métricas Avançadas (GA4)</h2>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Card 1: Donut Chart */}
+          <BentoCard variant="neumorphic" className="flex flex-col p-6 h-[280px]" glowColor="rgba(255, 106, 0, 0.02)">
+            <GA4TrafficDonut />
+          </BentoCard>
+
+          {/* Card 2: Line Chart */}
+          <BentoCard variant="neumorphic" className="flex flex-col p-6 h-[280px]" glowColor="rgba(34, 197, 94, 0.02)">
+            <GA4UserLineChart />
+          </BentoCard>
+
+          {/* Card 3: Region/Map list */}
+          <BentoCard variant="neumorphic" className="flex flex-col p-6 h-[280px]" glowColor="rgba(37, 99, 235, 0.02)">
+            <GA4ActiveRegions />
+          </BentoCard>
+        </div>
       </div>
     </div>
   );
