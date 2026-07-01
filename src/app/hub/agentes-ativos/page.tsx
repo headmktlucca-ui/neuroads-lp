@@ -87,8 +87,9 @@ function OperacionalCard({
       <div className="w-full flex items-start gap-4 p-5">
 
         {/* Avatar — hover reveals "Ver perfil" overlay */}
-        <div
-          className="relative shrink-0 rounded-2xl overflow-hidden border-2 border-white/80 cursor-pointer"
+        <Link
+          href={`/hub/membro/${teamAgent.id}`}
+          className="relative shrink-0 rounded-2xl overflow-hidden border-2 border-white/80 cursor-pointer block"
           style={{
             width: 88,
             height: 88,
@@ -97,6 +98,7 @@ function OperacionalCard({
               ? `0 0 0 3px ${teamAgent.cor}60, 4px 4px 12px #d1d9e6, -4px -4px 12px #ffffff`
               : `0 0 0 3px ${teamAgent.cor}30, 4px 4px 12px #d1d9e6, -4px -4px 12px #ffffff`,
             transition: 'box-shadow 0.2s ease',
+            textDecoration: 'none',
           }}
           onMouseEnter={() => setAvatarHovered(true)}
           onMouseLeave={() => setAvatarHovered(false)}
@@ -120,18 +122,15 @@ function OperacionalCard({
                 style={{ background: `linear-gradient(160deg, ${teamAgent.cor}e0 0%, ${teamAgent.cor}b0 100%)`, backdropFilter: 'blur(2px)' }}
               >
                 <Sparkles size={14} className="text-white/90" />
-                <Link
-                  href={`/hub/membro/${teamAgent.id}`}
+                <span
                   className="text-[9px] font-black text-white uppercase tracking-wider text-center leading-tight px-1"
-                  style={{ textDecoration: 'none' }}
-                  onClick={(e) => e.stopPropagation()}
                 >
                   Ver perfil
-                </Link>
+                </span>
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </Link>
 
         {/* Identity */}
         <div className="flex-1 min-w-0">

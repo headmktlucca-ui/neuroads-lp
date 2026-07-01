@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo, useEffect } from 'react';
-import { ExternalLink, Lock, Sparkles, Users, Wrench, Activity, ChevronDown } from 'lucide-react';
+import { ExternalLink, Lock, Sparkles, Users, Wrench, Activity, ChevronDown, CheckCircle2, X } from 'lucide-react';
 import { doc, setDoc } from 'firebase/firestore';
 import { TEAM_AGENTS, TeamAgent } from '../../data/team-agents';
 import { agents as allSpecialties } from '../../data/agents';
@@ -60,24 +60,29 @@ const STAGE_META: Record<FunilStage, {
 };
 
 // ─── Specialty row with hover action and descriptions ────────────────────────
+
 function SpecialtyRow({
   specialty,
   agentCor,
   isActive,
   isActivating,
+  isDeactivating,
   onActivate,
+  onDeactivate,
 }: {
   specialty: typeof allSpecialties[number];
   agentCor: string;
   isActive: boolean;
   isActivating: boolean;
+  isDeactivating: boolean;
   onActivate: () => void;
+  onDeactivate: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
-      className="flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all duration-200 cursor-pointer"
+      className="flex items-start gap-3 px-4 py-3 rounded-2xl border transition-all duration-200"
       style={{
         background: hovered ? `${agentCor}08` : 'rgba(238,242,247,0.6)',
         borderColor: hovered ? `${agentCor}30` : 'rgba(255,255,255,0.6)',
@@ -86,45 +91,80 @@ function SpecialtyRow({
       onMouseLeave={() => setHovered(false)}
     >
       {/* Icon */}
-      <div className="w-8 h-8 shrink-0 rounded-xl overflow-hidden border border-white/40 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
+      <div className="w-8 h-8 shrink-0 rounded-xl overflow-hidden border border-white/40 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] mt-0.5">
         <Image src={specialty.icon} alt={specialty.title} width={32} height={32} className="w-full h-full object-cover" />
       </div>
 
-      {/* Name + desc */}
+      {/* Content wrapper */}
       <div className="flex-1 min-w-0">
+        {/* Line 1: Name */}
         <p className="text-[13px] font-black text-[#0f172a] leading-tight truncate">{specialty.title}</p>
-        <p className="text-[11px] text-slate-500 font-semibold leading-snug line-clamp-1 mt-0.5">{specialty.description}</p>
-      </div>
+        {/* Line 2: Desc */}
+        <p className="text-[11px] text-slate-500 font-semibold leading-snug line-clamp-2 mt-0.5">{specialty.description}</p>
+        
+        {/* Line 3: Buttons in a row */}
+        <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+          {isActive ? (
+            <>
+              {/* Ativo Badge */}
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                <CheckCircle2 size={10} /> Ativo
+              </span>
 
-      {/* Action button */}
-      <div className="shrink-0">
-        {isActive ? (
-          <Link
-            href={`/hub/agente/${slugifyAgentTitle(specialty.title)}`}
-            onClick={(e) => e.stopPropagation()}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black text-white hover:brightness-110 transition-all"
-            style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', textDecoration: 'none', boxShadow: '0 2px 6px rgba(255,106,0,0.3)' }}
-          >
-            <ExternalLink size={10} /> Acessar
-          </Link>
-        ) : (
-          <button
-            type="button"
-            onClick={(e) => { e.stopPropagation(); onActivate(); }}
-            disabled={isActivating}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-black text-white hover:brightness-110 active:scale-95 disabled:opacity-50 transition-all cursor-pointer"
-            style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', boxShadow: '0 2px 6px rgba(255,106,0,0.2)' }}
-          >
-            {isActivating ? <Activity size={10} className="animate-pulse" /> : <Wrench size={10} />}
-            {isActivating ? 'Ativando…' : 'Ativar'}
-          </button>
-        )}
+              {/* Acessar Operação */}
+              <Link
+                href={`/hub/agente/${slugifyAgentTitle(specialty.title)}`}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-white hover:brightness-110 transition-all"
+                style={{ background: 'linear-gradient(135deg, #2563EB, #06B6D4)', textDecoration: 'none', boxShadow: '0 2px 6px rgba(37,99,235,0.3)' }}
+              >
+                <ExternalLink size={10} /> Acessar Operação
+              </Link>
+
+              {/* Desativar */}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onDeactivate(); }}
+                disabled={isDeactivating}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-600 border border-white/60 bg-[#eef2f7] hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all active:scale-95 cursor-pointer"
+              >
+                {isDeactivating ? <Activity size={10} className="animate-pulse" /> : <X size={10} />}
+                Desativar
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Ativar */}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onActivate(); }}
+                disabled={isActivating}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-white hover:brightness-110 active:scale-95 disabled:opacity-50 transition-all cursor-pointer"
+                style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', boxShadow: '0 2px 6px rgba(255,106,0,0.2)' }}
+              >
+                {isActivating ? <Activity size={10} className="animate-pulse" /> : <Wrench size={10} />}
+                Ativar
+              </button>
+
+              {/* Acessar Operação (Disabled style) */}
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-400 border border-slate-200 bg-slate-100 opacity-60 cursor-not-allowed">
+                <ExternalLink size={10} /> Acessar Operação
+              </span>
+
+              {/* Desativar (Disabled style) */}
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-400 border border-slate-200 bg-slate-100 opacity-60 cursor-not-allowed">
+                <X size={10} /> Desativar
+              </span>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 // ─── Coming-soon specialty row with lock icon ───────────────────────────────
+
 function ComingSoonRow({ title, description }: { title: string; description: string }) {
   return (
     <div className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-white/40 bg-[#eef2f7]/40 opacity-60">
@@ -148,12 +188,16 @@ function AgentOperationCard({
   teamAgent,
   statusOverrides,
   activatingTitle,
+  deactivatingTitle,
   onActivate,
+  onDeactivate,
 }: {
   teamAgent: TeamAgent;
   statusOverrides: Record<string, boolean>;
   activatingTitle: string | null;
+  deactivatingTitle: string | null;
   onActivate: (title: string) => void;
+  onDeactivate: (title: string) => void;
 }) {
   const specialties = allSpecialties.filter((s) => teamAgent.specialtyTitles.includes(s.title));
   const comingSoon = teamAgent.comingSoonSpecialties;
@@ -177,8 +221,9 @@ function AgentOperationCard({
         className="w-full flex items-start gap-4 p-5 text-left group"
       >
         {/* Avatar image — 192×192 with hover overlay */}
-        <div
-          className="relative shrink-0 rounded-2xl overflow-hidden border-2 border-white/80 cursor-pointer"
+        <Link
+          href={`/hub/membro/${teamAgent.id}`}
+          className="relative shrink-0 rounded-2xl overflow-hidden border-2 border-white/80 cursor-pointer block"
           style={{
             width: 192,
             height: 192,
@@ -187,6 +232,7 @@ function AgentOperationCard({
               ? `0 0 0 4px ${teamAgent.cor}55, 4px 4px 14px #d1d9e6, -4px -4px 14px #ffffff`
               : `0 0 0 3px ${teamAgent.cor}30, 4px 4px 12px #d1d9e6, -4px -4px 12px #ffffff`,
             transition: 'box-shadow 0.2s ease',
+            textDecoration: 'none',
           }}
           onMouseEnter={() => setAvatarHovered(true)}
           onMouseLeave={() => setAvatarHovered(false)}
@@ -211,18 +257,15 @@ function AgentOperationCard({
                 style={{ background: `linear-gradient(160deg, ${teamAgent.cor}e0 0%, ${teamAgent.cor}b5 100%)`, backdropFilter: 'blur(2px)' }}
               >
                 <Sparkles size={16} className="text-white/90" />
-                <Link
-                  href={`/hub/membro/${teamAgent.id}`}
+                <span
                   className="text-[10px] font-black text-white uppercase tracking-wider text-center leading-tight px-2"
-                  style={{ textDecoration: 'none' }}
-                  onClick={(e) => e.stopPropagation()}
                 >
                   Ver perfil
-                </Link>
+                </span>
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </Link>
 
         {/* Identity */}
         <div className="flex-1 min-w-0">
@@ -282,7 +325,9 @@ function AgentOperationCard({
                   agentCor={teamAgent.cor}
                   isActive={statusOverrides[specialty.title] === true}
                   isActivating={activatingTitle === specialty.title}
+                  isDeactivating={deactivatingTitle === specialty.title}
                   onActivate={() => onActivate(specialty.title)}
+                  onDeactivate={() => onDeactivate(specialty.title)}
                 />
               ))}
 
@@ -418,7 +463,9 @@ export default function FunilStagePage({ stage }: { stage: FunilStage }) {
             teamAgent={ta}
             statusOverrides={statusOverrides}
             activatingTitle={activatingTitle}
+            deactivatingTitle={deactivatingTitle}
             onActivate={activateSpecialty}
+            onDeactivate={deactivateSpecialty}
           />
         ))}
       </div>

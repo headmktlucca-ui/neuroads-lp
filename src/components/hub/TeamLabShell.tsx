@@ -2,31 +2,44 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  ChevronDown, ExternalLink, Lock,
-  Search, Sparkles, Users, X,
+  ChevronDown, ExternalLink, Lock, CheckCircle2,
+  Search, Sparkles, Users, X, Wrench, Activity
 } from 'lucide-react';
+import { doc, setDoc } from 'firebase/firestore';
 import { TEAM_AGENTS, TeamAgent } from '../../data/team-agents';
 import { agents as allSpecialties } from '../../data/agents';
 import { slugifyAgentTitle } from '../../lib/hub-agents';
+import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../lib/agent-status-cache';
+import { useAuth } from '../../context/AuthContext';
+import { getFirebaseDb } from '../../lib/firebase';
 
-
-// ─── Specialty row — all available, hover reveals "Entrar" ───────────────────
+// ─── Specialty row — activation states and access action ───────────────────
 
 function SpecialtyRow({
   specialty,
   agentCor,
+  isActive,
+  isActivating,
+  isDeactivating,
+  onActivate,
+  onDeactivate,
 }: {
   specialty: (typeof allSpecialties)[number];
   agentCor: string;
+  isActive: boolean;
+  isActivating: boolean;
+  isDeactivating: boolean;
+  onActivate: () => void;
+  onDeactivate: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
-      className="flex items-center gap-3 px-4 py-3 rounded-2xl border transition-all duration-200 cursor-pointer"
+      className="flex items-start gap-3 px-4 py-3 rounded-2xl border transition-all duration-200"
       style={{
         background: hovered ? `${agentCor}08` : 'rgba(238,242,247,0.6)',
         borderColor: hovered ? `${agentCor}30` : 'rgba(255,255,255,0.6)',
@@ -35,37 +48,74 @@ function SpecialtyRow({
       onMouseLeave={() => setHovered(false)}
     >
       {/* Icon */}
-      <div className="w-8 h-8 shrink-0 rounded-xl overflow-hidden border border-white/40 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
+      <div className="w-8 h-8 shrink-0 rounded-xl overflow-hidden border border-white/40 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] mt-0.5">
         <Image src={specialty.icon} alt={specialty.title} width={32} height={32} className="w-full h-full object-cover" />
       </div>
 
-      {/* Name + desc */}
+      {/* Content wrapper */}
       <div className="flex-1 min-w-0">
+        {/* Line 1: Name */}
         <p className="text-[13px] font-black text-[#0f172a] leading-tight truncate">{specialty.title}</p>
-        <p className="text-[11px] text-slate-500 font-semibold leading-snug line-clamp-1 mt-0.5">{specialty.description}</p>
-      </div>
+        {/* Line 2: Desc */}
+        <p className="text-[11px] text-slate-500 font-semibold leading-snug line-clamp-2 mt-0.5">{specialty.description}</p>
+        
+        {/* Line 3: Buttons in a row */}
+        <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+          {isActive ? (
+            <>
+              {/* Ativo Badge */}
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                <CheckCircle2 size={10} /> Ativo
+              </span>
 
-      {/* Hover action — Entrar */}
-      <AnimatePresence>
-        {hovered && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.15 }}
-          >
-            <Link
-              href={`/hub/agente/${slugifyAgentTitle(specialty.title)}`}
-              onClick={(e) => e.stopPropagation()}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl text-[11px] font-black text-white transition-all hover:brightness-110"
-              style={{ background: `linear-gradient(135deg, ${agentCor}, ${agentCor}cc)`, textDecoration: 'none', boxShadow: `0 2px 8px ${agentCor}40` }}
-            >
-              <ExternalLink size={10} />
-              Entrar
-            </Link>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              {/* Acessar Operação */}
+              <Link
+                href={`/hub/agente/${slugifyAgentTitle(specialty.title)}`}
+                onClick={(e) => e.stopPropagation()}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-white hover:brightness-110 transition-all"
+                style={{ background: 'linear-gradient(135deg, #2563EB, #06B6D4)', textDecoration: 'none', boxShadow: '0 2px 6px rgba(37,99,235,0.3)' }}
+              >
+                <ExternalLink size={10} /> Acessar Operação
+              </Link>
+
+              {/* Desativar */}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onDeactivate(); }}
+                disabled={isDeactivating}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-600 border border-white/60 bg-[#eef2f7] hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all active:scale-95 cursor-pointer"
+              >
+                {isDeactivating ? <Activity size={10} className="animate-pulse" /> : <X size={10} />}
+                Desativar
+              </button>
+            </>
+          ) : (
+            <>
+              {/* Ativar */}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); onActivate(); }}
+                disabled={isActivating}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-white hover:brightness-110 active:scale-95 disabled:opacity-50 transition-all cursor-pointer"
+                style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', boxShadow: '0 2px 6px rgba(255,106,0,0.2)' }}
+              >
+                {isActivating ? <Activity size={10} className="animate-pulse" /> : <Wrench size={10} />}
+                Ativar
+              </button>
+
+              {/* Acessar Operação (Disabled style) */}
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-400 border border-slate-200 bg-slate-100 opacity-60 cursor-not-allowed">
+                <ExternalLink size={10} /> Acessar Operação
+              </span>
+
+              {/* Desativar (Disabled style) */}
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-400 border border-slate-200 bg-slate-100 opacity-60 cursor-not-allowed">
+                <X size={10} /> Desativar
+              </span>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -94,13 +144,24 @@ function ComingSoonRow({ title, description }: { title: string; description: str
 function TeamAgentCard({
   teamAgent,
   specialtiesForAgent,
+  statusOverrides,
+  activatingTitle,
+  deactivatingTitle,
+  onActivate,
+  onDeactivate,
 }: {
   teamAgent: TeamAgent;
   specialtiesForAgent: (typeof allSpecialties);
+  statusOverrides: Record<string, boolean>;
+  activatingTitle: string | null;
+  deactivatingTitle: string | null;
+  onActivate: (title: string) => void;
+  onDeactivate: (title: string) => void;
 }) {
   const [expanded, setExpanded] = useState(true);
   const [avatarHovered, setAvatarHovered] = useState(false);
   const hasSpecialties = specialtiesForAgent.length > 0 || teamAgent.comingSoonSpecialties.length > 0;
+  const activeCount = specialtiesForAgent.filter((s) => statusOverrides[s.title] === true).length;
   const totalSpecialties = specialtiesForAgent.length + teamAgent.comingSoonSpecialties.length;
 
   return (
@@ -118,8 +179,9 @@ function TeamAgentCard({
         className="w-full flex items-start gap-4 p-5 text-left group"
       >
         {/* Avatar image — 192×192 with hover overlay */}
-        <div
-          className="relative shrink-0 rounded-2xl overflow-hidden border-2 border-white/80 cursor-pointer"
+        <Link
+          href={`/hub/membro/${teamAgent.id}`}
+          className="relative shrink-0 rounded-2xl overflow-hidden border-2 border-white/80 cursor-pointer block"
           style={{
             width: 192,
             height: 192,
@@ -128,6 +190,7 @@ function TeamAgentCard({
               ? `0 0 0 4px ${teamAgent.cor}55, 4px 4px 14px #d1d9e6, -4px -4px 14px #ffffff`
               : `0 0 0 3px ${teamAgent.cor}30, 4px 4px 12px #d1d9e6, -4px -4px 12px #ffffff`,
             transition: 'box-shadow 0.2s ease',
+            textDecoration: 'none',
           }}
           onMouseEnter={() => setAvatarHovered(true)}
           onMouseLeave={() => setAvatarHovered(false)}
@@ -152,17 +215,15 @@ function TeamAgentCard({
                 style={{ background: `linear-gradient(160deg, ${teamAgent.cor}e0 0%, ${teamAgent.cor}b5 100%)`, backdropFilter: 'blur(2px)' }}
               >
                 <Sparkles size={16} className="text-white/90" />
-                <Link
-                  href={`/hub/membro/${teamAgent.id}`}
+                <span
                   className="text-[10px] font-black text-white uppercase tracking-wider text-center leading-tight px-2"
-                  style={{ textDecoration: 'none' }}
                 >
                   Ver perfil
-                </Link>
+                </span>
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </Link>
 
         {/* Identity */}
         <div className="flex-1 min-w-0">
@@ -185,7 +246,7 @@ function TeamAgentCard({
         <div className="flex flex-col items-end gap-2 shrink-0">
           {hasSpecialties && (
             <span className="text-[10px] font-black text-slate-400">
-              {totalSpecialties} especialidades
+              {activeCount}/{totalSpecialties} ativas
             </span>
           )}
           <ChevronDown
@@ -223,6 +284,11 @@ function TeamAgentCard({
                   key={specialty.title}
                   specialty={specialty}
                   agentCor={teamAgent.cor}
+                  isActive={statusOverrides[specialty.title] === true}
+                  isActivating={activatingTitle === specialty.title}
+                  isDeactivating={deactivatingTitle === specialty.title}
+                  onActivate={() => onActivate(specialty.title)}
+                  onDeactivate={() => onDeactivate(specialty.title)}
                 />
               ))}
 
@@ -242,8 +308,64 @@ function TeamAgentCard({
 
 export default function TeamLabShell() {
   const [search, setSearch] = useState('');
+  const { user } = useAuth();
+  const [statusOverrides, setStatusOverrides] = useState<Record<string, boolean>>({});
+  const [activatingTitle, setActivatingTitle] = useState<string | null>(null);
+  const [deactivatingTitle, setDeactivatingTitle] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) { setStatusOverrides({}); return; }
+    setStatusOverrides(readAgentStatusOverrides(user.uid));
+  }, [user]);
+
+  const activateSpecialty = async (agentTitle: string) => {
+    if (!user) return;
+    setActivatingTitle(agentTitle);
+    const overrides = { ...statusOverrides, [agentTitle]: true };
+    setStatusOverrides(overrides);
+    writeAgentStatusOverrides(user.uid, overrides);
+    try {
+      const db = getFirebaseDb();
+      await setDoc(doc(db, 'users', user.uid), {
+        activeAgents: {
+          [agentTitle]: {
+            isActive: true,
+            planName: 'Growth',
+            monthlyLimit: 15,
+            usageUsed: 0,
+            updatedAt: Date.now()
+          }
+        },
+      }, { merge: true });
+    } catch { /* noop */ } finally { setActivatingTitle(null); }
+  };
+
+  const deactivateSpecialty = async (agentTitle: string) => {
+    if (!user) return;
+    setDeactivatingTitle(agentTitle);
+    const overrides = { ...statusOverrides, [agentTitle]: false };
+    setStatusOverrides(overrides);
+    writeAgentStatusOverrides(user.uid, overrides);
+    try {
+      const db = getFirebaseDb();
+      await setDoc(doc(db, 'users', user.uid), {
+        activeAgents: {
+          [agentTitle]: {
+            isActive: false,
+            updatedAt: Date.now()
+          }
+        },
+      }, { merge: true });
+    } catch { /* noop */ } finally { setDeactivatingTitle(null); }
+  };
 
   const totalSpecialties = allSpecialties.length;
+
+  const totalActive = useMemo(() => {
+    return TEAM_AGENTS.reduce((acc, a) => {
+      return acc + a.specialtyTitles.filter((t) => statusOverrides[t] === true).length;
+    }, 0);
+  }, [statusOverrides]);
 
   // Filtered team agents
   const filteredTeam = useMemo(() => {
@@ -274,7 +396,7 @@ export default function TeamLabShell() {
           Seu time de IA que assume o Marketing &amp; Vendas da operação. Cada Agente tem identidade própria e especialidades disponíveis 24h.
         </p>
         <p className="text-[12px] font-black mt-1.5 text-[#FF6A00]">
-          10 Agentes · {totalSpecialties} especialidades disponíveis · Online 24h
+          10 Agentes · {totalActive}/{totalSpecialties} especialidades ativas · Online 24h
         </p>
       </div>
 
@@ -282,7 +404,7 @@ export default function TeamLabShell() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: 'Agentes da Equipe', value: '10',          color: '#FF6A00' },
-          { label: 'Especialidades', value: totalSpecialties, color: '#2563eb' },
+          { label: 'Especialidades Ativas', value: `${totalActive}/${totalSpecialties}`, color: '#2563eb' },
           { label: 'Online Agora', value: '10',              color: '#059669' },
           { label: 'Em Breve', value: TEAM_AGENTS.reduce((acc, a) => acc + a.comingSoonSpecialties.length, 0), color: '#d97706' },
         ].map(({ label, value, color }) => (
@@ -312,7 +434,7 @@ export default function TeamLabShell() {
       </div>
 
       {/* ── Team grid ── */}
-      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <AnimatePresence>
           {filteredTeam.map((ta) => {
             const specialtiesForAgent = allSpecialties.filter((s) =>
@@ -323,6 +445,11 @@ export default function TeamLabShell() {
                 key={ta.id}
                 teamAgent={ta}
                 specialtiesForAgent={specialtiesForAgent}
+                statusOverrides={statusOverrides}
+                activatingTitle={activatingTitle}
+                deactivatingTitle={deactivatingTitle}
+                onActivate={activateSpecialty}
+                onDeactivate={deactivateSpecialty}
               />
             );
           })}
