@@ -15,6 +15,9 @@ interface RadialOrbitalTimelineProps {
   items: OrbitalItem[];
   centerImage?: string;
   centerLabel?: string | React.ReactNode;
+  theme?: 'dark' | 'light';
+  onActiveItemChange?: (item: OrbitalItem | null) => void;
+  showTooltip?: boolean;
 }
 
 function assignOrbits(items: OrbitalItem[]) {
@@ -47,15 +50,19 @@ interface OrbiterProps {
   isActive: boolean;
   onHover: (id: number | null) => void;
   onClick: (id: number) => void;
+  isPaused: boolean;
 }
 
-function Orbiter({ item, isActive, onHover, onClick }: OrbiterProps) {
+function Orbiter({ item, isActive, onHover, onClick, isPaused }: OrbiterProps) {
   const size = 52;
   return (
-    <motion.div
+    <div
       className="absolute inset-0 pointer-events-none"
-      animate={{ rotate: 360 }}
-      transition={{ duration: item.orbitDuration, delay: item.orbitDelay, repeat: Infinity, ease: 'linear' }}
+      style={{
+        animation: `orbit-rotate ${item.orbitDuration}s linear ${item.orbitDelay}s infinite`,
+        animationPlayState: isPaused ? 'paused' : 'running',
+        transformOrigin: 'center center'
+      }}
     >
       <motion.div
         className="absolute pointer-events-auto cursor-pointer"
@@ -64,9 +71,10 @@ function Orbiter({ item, isActive, onHover, onClick }: OrbiterProps) {
           top: '50%', left: '50%',
           marginTop: -size / 2,
           marginLeft: item.orbitRadius - size / 2,
+          animation: `orbit-counter-rotate ${item.orbitDuration}s linear ${item.orbitDelay}s infinite`,
+          animationPlayState: isPaused ? 'paused' : 'running',
+          transformOrigin: 'center center'
         }}
-        animate={{ rotate: -360 }}
-        transition={{ duration: item.orbitDuration, delay: item.orbitDelay, repeat: Infinity, ease: 'linear' }}
         onHoverStart={() => onHover(item.id)}
         onHoverEnd={() => onHover(null)}
         onClick={() => onClick(item.id)}
@@ -86,16 +94,24 @@ function Orbiter({ item, isActive, onHover, onClick }: OrbiterProps) {
           <Image src={item.image} alt={item.title} width={size} height={size} className="w-full h-full object-cover" />
         </div>
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
-export default function RadialOrbitalTimeline({ items, centerImage, centerLabel = 'NeuroAds' }: RadialOrbitalTimelineProps) {
+export default function RadialOrbitalTimeline({
+  items,
+  centerImage,
+  centerLabel = 'NeuroAds',
+  theme = 'dark',
+  onActiveItemChange,
+  showTooltip = true,
+}: RadialOrbitalTimelineProps) {
   const [activeId, setActiveId] = useState<number | null>(null);
   const [clicked, setClicked] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const assignedItems = assignOrbits(items);
   const activeItem = assignedItems.find((i) => i.id === (clicked ?? activeId));
+  const isPaused = activeId !== null;
 
   const handleHover = useCallback((id: number | null) => {
     if (clicked === null) setActiveId(id);
@@ -105,6 +121,12 @@ export default function RadialOrbitalTimeline({ items, centerImage, centerLabel 
     setClicked((prev) => (prev === id ? null : id));
     setActiveId(id);
   }, []);
+
+  useEffect(() => {
+    if (onActiveItemChange) {
+      onActiveItemChange(activeItem || null);
+    }
+  }, [activeItem, onActiveItemChange]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -119,7 +141,15 @@ export default function RadialOrbitalTimeline({ items, centerImage, centerLabel 
   return (
     <div ref={containerRef} className="relative flex flex-col items-center justify-center select-none" style={{ width: 580, height: 580, maxWidth: '100%' }}>
       {[110, 185, 260].map((r) => (
-        <div key={r} className="absolute rounded-full border border-white/[0.06] pointer-events-none" style={{ width: r * 2, height: r * 2 }} />
+        <div 
+          key={r} 
+          className={`absolute rounded-full border pointer-events-none transition-colors duration-300 ${
+            theme === 'light' 
+              ? 'border-slate-300/40 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.05),_1px_1px_2px_#ffffff]' 
+              : 'border-white/[0.06]'
+          }`} 
+          style={{ width: r * 2, height: r * 2 }} 
+        />
       ))}
       <div className="absolute rounded-full pointer-events-none" style={{ width: 160, height: 160, background: 'radial-gradient(circle, rgba(255,106,0,0.18) 0%, transparent 70%)', filter: 'blur(20px)' }} />
       <div className="relative flex flex-col items-center gap-2">
@@ -140,24 +170,39 @@ export default function RadialOrbitalTimeline({ items, centerImage, centerLabel 
       </div>
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         {assignedItems.map((item) => (
-          <Orbiter key={item.id} item={item} isActive={item.id === (clicked ?? activeId)} onHover={handleHover} onClick={handleClick} />
+          <Orbiter key={item.id} item={item} isActive={item.id === (clicked ?? activeId)} onHover={handleHover} onClick={handleClick} isPaused={isPaused} />
         ))}
       </div>
       <AnimatePresence>
-        {activeItem && (
+        {showTooltip && activeItem && (
           <motion.div
             key={activeItem.id}
             initial={{ opacity: 0, y: 8, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 4, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute bottom-[-72px] left-1/2 -translate-x-1/2 z-30 px-4 py-2.5 rounded-xl border border-[#ff6a00]/30 bg-zinc-950/90 backdrop-blur-md shadow-xl pointer-events-none whitespace-nowrap"
+            className={`absolute bottom-[-72px] left-1/2 -translate-x-1/2 z-30 px-4 py-2.5 rounded-xl border border-[#ff6a00]/30 backdrop-blur-md shadow-xl pointer-events-none whitespace-nowrap ${
+              theme === 'light'
+                ? 'bg-[#EDF1F5]/90 text-slate-800 shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff]'
+                : 'bg-zinc-950/90 text-white shadow-2xl'
+            }`}
           >
-            <p className="text-[12px] font-bold text-white">{activeItem.title}</p>
+            <p className={`text-[12px] font-bold ${theme === 'light' ? 'text-slate-800' : 'text-white'}`}>{activeItem.title}</p>
             {activeItem.category && <p className="text-[10px] text-[#ff8f3a] font-medium">{activeItem.category}</p>}
           </motion.div>
         )}
       </AnimatePresence>
+
+      <style dangerouslySetInnerHTML={{ __html: `
+        @keyframes orbit-rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        @keyframes orbit-counter-rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(-360deg); }
+        }
+      `}} />
     </div>
   );
 }

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2 } from 'lucide-react';
-import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
+import RadialOrbitalTimeline from '../../components/ui/radial-orbital-timeline';
 
 const cardVariants = {
   hidden: { opacity: 0, y: 25, scale: 0.98 },
