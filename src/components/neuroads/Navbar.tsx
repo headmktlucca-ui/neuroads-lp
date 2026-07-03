@@ -22,6 +22,7 @@ export default function Navbar() {
     window.location.href = '/hub';
   };
 
+
   const navLinks = [
     { name: 'Agentes Neurais', href: '#servicos' },
     { name: 'Ecossistema', href: '#lucca' },
@@ -35,14 +36,13 @@ export default function Navbar() {
           
           <Link href="/" className="flex items-center group transition-transform hover:scale-[1.02]" onClick={closeMenu}>
             <Image
-              src="/images/Logos/LLNeuroAds.png" 
+              src={isScrolled ? '/images/Logos/Logo_primario.png' : '/images/Logos/LLNeuroAds.png'}
               alt="NeuroAds Logo" 
               width={192}
               height={48}
               className="h-10 lg:h-12 w-auto object-contain"
             />
           </Link>
-
           <div className="hidden lg:flex items-center gap-10">
             <ul className="flex items-center gap-8 list-none m-0 p-0">
               {navLinks.map((link) => (

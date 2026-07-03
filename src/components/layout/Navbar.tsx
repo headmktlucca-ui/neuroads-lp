@@ -1379,7 +1379,7 @@ export default function Navbar() {
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="flex items-center group transition-transform duration-300 hover:scale-[1.01]">
               <Image
-                src="/images/Logos/LLNeuroAds.png"
+                src={isHubNavbarStyle ? '/images/Logos/LLNeuroAds.png' : '/images/Logos/Logo_primario.png'}
                 alt="NeuroAds Logo"
                 width={192}
                 height={48}

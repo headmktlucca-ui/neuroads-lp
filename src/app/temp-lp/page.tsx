@@ -218,15 +218,15 @@ export default function TempLandingPage() {
       <header className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-full py-4 px-8 flex items-center justify-between transition-all duration-300">
           {/* Logo */}
-          <Link href="#" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 rounded-full bg-[#EDF1F5] shadow-[2px_2px_5px_#c8d0e7,-2px_-2px_5px_#ffffff] flex items-center justify-center border border-white/40 group-hover:scale-105 transition-all">
-              <svg className="w-4 h-4 text-[#FF5500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            </div>
-            <span className="font-head font-extrabold text-xl tracking-tight text-slate-900">
-              Neuro<span className="text-[#FF5500]">Ads</span>
-            </span>
+          <Link href="#" className="flex items-center group transition-transform duration-300 hover:scale-[1.01]">
+            <Image
+              src="/images/Logos/Logo_primario.png"
+              alt="NeuroAds Logo"
+              width={132}
+              height={30}
+              className="h-7 w-auto object-contain"
+              priority
+            />
           </Link>
 
           {/* Navigation */}
