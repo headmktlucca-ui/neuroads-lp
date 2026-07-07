@@ -28,11 +28,11 @@ function SectionCard({ id, num, title, children }: {
 }) {
   return (
     <div id={id} className="scroll-mt-32 space-y-3">
-      <h2 className="flex items-baseline gap-2.5 text-[1.05rem] font-black text-white">
-        <span className="text-[#ff6a00] text-[0.9rem] tabular-nums">{num}.</span>
+      <h2 className="flex items-baseline gap-2.5 text-[1.05rem] font-black text-slate-900">
+        <span className="text-[#FF5500] text-[0.9rem] tabular-nums">{num}.</span>
         {title}
       </h2>
-      <div className="text-slate-300 text-[0.9rem] leading-[1.75] font-medium pl-6 border-l border-white/8">
+      <div className="text-slate-600 text-[0.9rem] leading-[1.75] font-medium pl-6 border-l border-slate-300/40">
         {children}
       </div>
     </div>
@@ -48,14 +48,14 @@ export default function TermsPage() {
     >
       <motion.div {...fadeUp}>
         {/* Header */}
-        <div className="mb-10 pb-8 border-b border-white/8">
-          <p className="inline-flex items-center gap-1.5 rounded-full bg-[#ff6a00]/12 border border-[#ff6a00]/25 px-3 py-1 text-[11px] font-black text-[#ff8f3a] mb-5">
+        <div className="mb-10 pb-8 border-b border-slate-300/30">
+          <p className="inline-flex items-center gap-1.5 rounded-full bg-[#FF5500]/10 border border-[#FF5500]/20 px-3 py-1 text-[11px] font-black text-[#FF5500] mb-5">
             Documento Legal
           </p>
-          <h1 className="text-[2rem] sm:text-[2.4rem] font-black text-white tracking-tight leading-[1.08] mb-4">
-            Termos de <span className="text-[#ff6a00] italic">Uso</span>
+          <h1 className="text-[2rem] sm:text-[2.4rem] font-black text-slate-900 tracking-tight leading-[1.08] mb-4">
+            Termos de <span className="text-[#FF5500] italic">Uso</span>
           </h1>
-          <p className="text-slate-300 text-[0.97rem] leading-relaxed font-medium max-w-[640px]">
+          <p className="text-slate-600 text-[0.97rem] leading-relaxed font-medium max-w-[640px]">
             Ao acessar ou utilizar o site e os serviços da NeuroAds, você concorda em cumprir e estar vinculado aos
             seguintes Termos de Uso. Leia-os atentamente antes de prosseguir.
           </p>
@@ -103,11 +103,11 @@ export default function TermsPage() {
           </SectionCard>
 
           {/* Footer note */}
-          <div className="mt-8 pt-8 border-t border-white/8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <p className="text-slate-400 text-[0.88rem] font-medium">
+          <div className="mt-8 pt-8 border-t border-slate-300/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <p className="text-slate-500 text-[0.88rem] font-medium">
               Estes termos são regidos e interpretados de acordo com as leis do Brasil.
             </p>
-            <p className="text-slate-600 text-[0.72rem] uppercase tracking-widest font-bold whitespace-nowrap">
+            <p className="text-slate-400 text-[0.72rem] uppercase tracking-widest font-bold whitespace-nowrap">
               Abril de 2026 · NeuroAds Laboratory
             </p>
           </div>

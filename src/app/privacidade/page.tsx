@@ -28,11 +28,11 @@ function SectionCard({ id, num, title, children }: {
 }) {
   return (
     <div id={id} className="scroll-mt-32 space-y-3">
-      <h2 className="flex items-baseline gap-2.5 text-[1.05rem] font-black text-white">
-        <span className="text-[#ff6a00] text-[0.9rem] tabular-nums">{num}.</span>
+      <h2 className="flex items-baseline gap-2.5 text-[1.05rem] font-black text-slate-900">
+        <span className="text-[#FF5500] text-[0.9rem] tabular-nums">{num}.</span>
         {title}
       </h2>
-      <div className="text-slate-300 text-[0.9rem] leading-[1.75] font-medium pl-6 border-l border-white/8 space-y-3">
+      <div className="text-slate-600 text-[0.9rem] leading-[1.75] font-medium pl-6 border-l border-slate-300/40 space-y-3">
         {children}
       </div>
     </div>
@@ -48,14 +48,14 @@ export default function PrivacyPage() {
     >
       <motion.div {...fadeUp}>
         {/* Header */}
-        <div className="mb-10 pb-8 border-b border-white/8">
-          <p className="inline-flex items-center gap-1.5 rounded-full bg-[#ff6a00]/12 border border-[#ff6a00]/25 px-3 py-1 text-[11px] font-black text-[#ff8f3a] mb-5">
+        <div className="mb-10 pb-8 border-b border-slate-300/30">
+          <p className="inline-flex items-center gap-1.5 rounded-full bg-[#FF5500]/10 border border-[#FF5500]/20 px-3 py-1 text-[11px] font-black text-[#FF5500] mb-5">
             Documento Legal
           </p>
-          <h1 className="text-[2rem] sm:text-[2.4rem] font-black text-white tracking-tight leading-[1.08] mb-4">
-            Política de <span className="text-[#ff6a00] italic">Privacidade</span>
+          <h1 className="text-[2rem] sm:text-[2.4rem] font-black text-slate-900 tracking-tight leading-[1.08] mb-4">
+            Política de <span className="text-[#FF5500] italic">Privacidade</span>
           </h1>
-          <p className="text-slate-300 text-[0.97rem] leading-relaxed font-medium max-w-[640px]">
+          <p className="text-slate-600 text-[0.97rem] leading-relaxed font-medium max-w-[640px]">
             Sua privacidade é fundamental para a NeuroAds. Esta política descreve como coletamos, usamos e protegemos
             suas informações quando você utiliza nossa plataforma e serviços de consultoria estratégica.
           </p>
@@ -81,7 +81,7 @@ export default function PrivacyPage() {
                 'Informações sobre a situação atual do seu marketing e vendas.',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5">
-                  <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-[#ff6a00] shrink-0" />
+                  <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-[#FF5500] shrink-0" />
                   {item}
                 </li>
               ))}
@@ -98,7 +98,7 @@ export default function PrivacyPage() {
                 'Melhorar continuamente nossa plataforma e estratégias de marketing.',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5">
-                  <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-[#ff6a00] shrink-0" />
+                  <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-[#FF5500] shrink-0" />
                   {item}
                 </li>
               ))}
@@ -140,7 +140,7 @@ export default function PrivacyPage() {
                 'Com o consentimento explícito do usuário.',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5">
-                  <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-[#ff6a00] shrink-0" />
+                  <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-[#FF5500] shrink-0" />
                   {item}
                 </li>
               ))}
@@ -155,7 +155,7 @@ export default function PrivacyPage() {
             <p>Nossa equipe de proteção de dados está à disposição para esclarecer qualquer ponto desta política.</p>
             <a
               href="mailto:avante@neuroads.com.br"
-              className="inline-block font-black text-[#ff8f3a] hover:underline text-[0.9rem]"
+              className="inline-block font-black text-[#FF5500] hover:underline text-[0.9rem]"
               style={{ textDecoration: 'none' }}
             >
               avante@neuroads.com.br
@@ -163,11 +163,11 @@ export default function PrivacyPage() {
           </SectionCard>
 
           {/* Footer */}
-          <div className="mt-8 pt-8 border-t border-white/8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-            <p className="text-slate-400 text-[0.88rem] font-medium">
+          <div className="mt-8 pt-8 border-t border-slate-300/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <p className="text-slate-500 text-[0.88rem] font-medium">
               Em conformidade com a LGPD — Lei nº 13.709/2018
             </p>
-            <p className="text-slate-600 text-[0.72rem] uppercase tracking-widest font-bold whitespace-nowrap">
+            <p className="text-slate-400 text-[0.72rem] uppercase tracking-widest font-bold whitespace-nowrap">
               Junho de 2026 · NeuroAds Laboratory
             </p>
           </div>

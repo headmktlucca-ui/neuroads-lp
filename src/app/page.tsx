@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from 'f
 import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Bot, Target, Workflow, PieChart, LineChart, GitMerge, Crosshair, Menu, X } from 'lucide-react';
 import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
 import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
+import FunnelInteractiveShowcase from '@/components/neuroads/FunnelInteractiveShowcase';
 
 const cardVariants = {
   hidden: { opacity: 0, y: 25, scale: 0.98 },
@@ -209,6 +210,23 @@ export default function TempLandingPage() {
     setActiveAgent(orbitalItems[0]);
   }, []);
 
+  // Rotaciona automaticamente os agentes no mobile (quando a animação orbital está oculta)
+  useEffect(() => {
+    const handleAutoRotate = () => {
+      if (window.innerWidth < 1024) { // Breakpoint lg
+        setActiveAgent((current: any) => {
+          if (!current) return orbitalItems[0];
+          const currentIndex = orbitalItems.findIndex((a) => a.id === current.id);
+          const nextIndex = (currentIndex + 1) % orbitalItems.length;
+          return orbitalItems[nextIndex];
+        });
+      }
+    };
+
+    const interval = setInterval(handleAutoRotate, 5000); // Rotaciona a cada 5 segundos
+    return () => clearInterval(interval);
+  }, []);
+
   const centerLogoNode = (
     <div className="w-20 h-20 rounded-full overflow-hidden bg-black flex items-center justify-center shadow-[4px_4px_12px_rgba(0,0,0,0.15),_inset_2px_2px_5px_rgba(255,255,255,0.1)] border border-neutral-950 select-none">
       <Image
@@ -229,7 +247,7 @@ export default function TempLandingPage() {
       {/* HEADER TEMPLATE 01 */}
       {/* ========================================================================= */}
       <header className="fixed top-4 left-0 right-0 w-full z-[999] px-4 sm:px-8 lg:px-24">
-        <div className="bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-full py-4 px-8 flex items-center justify-between transition-all duration-300">
+        <div className="bg-transparent md:bg-white shadow-none md:shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border-none md:border md:border-white/50 rounded-none md:rounded-full py-2 md:py-4 px-0 md:px-8 flex items-center justify-between transition-all duration-300">
           {/* Logo */}
           <Link href="#" className="flex items-center group transition-transform duration-300 hover:scale-[1.01]">
             <Image
@@ -237,7 +255,7 @@ export default function TempLandingPage() {
               alt="NeuroAds Logo"
               width={172}
               height={39}
-              className="h-9 w-auto object-contain"
+              className="h-7 md:h-9 w-auto object-contain"
               priority
             />
           </Link>
@@ -262,7 +280,7 @@ export default function TempLandingPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="inline-flex items-center justify-center font-bold text-xs px-6 py-2.5 rounded-full bg-white text-slate-700 shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff] border border-white/60 hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:bg-[#e4ecf5] active:scale-[0.98] transition-all duration-200"
+              className="hidden md:inline-flex items-center justify-center font-bold text-xs px-6 py-2.5 rounded-full bg-white text-slate-700 shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff] border border-white/60 hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:bg-[#e4ecf5] active:scale-[0.98] transition-all duration-200"
             >
               Acessar Hub
             </Link>
@@ -270,9 +288,9 @@ export default function TempLandingPage() {
             {/* Hamburger Toggle for Mobile */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="flex md:hidden items-center justify-center p-2 rounded-full bg-white text-slate-700 shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff] border border-white/60 hover:bg-[#e4ecf5] active:scale-95 transition-all duration-200 cursor-pointer"
+              className="flex md:hidden w-11 h-11 items-center justify-center rounded-full text-slate-700 hover:text-[#FF5500] active:bg-slate-200/50 active:scale-95 transition-all duration-200 cursor-pointer"
             >
-              {isMenuOpen ? <X size={16} /> : <Menu size={16} />}
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
@@ -285,7 +303,7 @@ export default function TempLandingPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-20 left-4 right-4 bg-white border border-white/50 shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] rounded-[24px] p-6 flex flex-col gap-4 md:hidden z-[998]"
+              className="absolute top-16 left-4 right-4 bg-white border border-white/50 shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] rounded-[24px] p-6 flex flex-col gap-4 md:hidden z-[998]"
             >
               <Link
                 href="#publico-alvo"
@@ -381,7 +399,7 @@ export default function TempLandingPage() {
           </div>
 
           {/* Right Side - Radial Orbit Animation */}
-          <div className="lg:col-span-5 flex items-center justify-center relative mt-8 lg:mt-0">
+          <div className="hidden lg:flex lg:col-span-5 items-center justify-center relative mt-8 lg:mt-0">
             <RadialOrbitalTimeline
               items={orbitalItems}
               centerLabel={centerLogoNode}
@@ -486,7 +504,7 @@ export default function TempLandingPage() {
           {/* Card 1: Agentes IA */}
           <motion.div
             variants={cardVariants}
-            className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between min-h-[380px] relative transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
+            className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-start min-h-[260px] relative transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
           >
             {/* Mais procurado badge */}
             <div className="absolute top-6 right-6">
@@ -505,29 +523,16 @@ export default function TempLandingPage() {
               <h3 className="font-head font-bold text-slate-800 text-lg tracking-tight mb-3">
                 Agentes IA Comerciais
               </h3>
-              <p className="text-slate-500 text-xs leading-relaxed mb-6">
+              <p className="text-slate-500 text-xs leading-relaxed">
                 Ecossistema com 10 agentes especializados — SDR, atendimento, follow-up e orquestração — qualificando e conduzindo leads até a proposta, sem pausa.
               </p>
             </div>
-
-            {/* Bottom metric & Action */}
-            <div className="flex items-center justify-between mt-auto">
-              <div className="bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] rounded-xl px-4 py-2 flex items-baseline gap-1 border border-white/30">
-                <span className="text-[#FF5500] font-head font-extrabold text-sm">3,2x</span>
-                <span className="text-[9px] font-bold text-slate-500 leading-none">mais reuniões<br/>agendadas / mês</span>
-              </div>
-              <button className="w-8 h-8 rounded-full bg-[#FF5500] text-white flex items-center justify-center shadow-[3px_3px_6px_rgba(255,85,0,0.3),-3px_-3px_6px_#ffffff] hover:scale-105 active:scale-95 transition-all duration-200 border border-orange-400/20 cursor-pointer">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </button>
-            </div>
           </motion.div>
 
-          {/* Card 2: Campanhas Patrocinadas */}
+          {/* Card 2: Posicionamento & Autoridade */}
           <motion.div
             variants={cardVariants}
-            className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between min-h-[380px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
+            className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-start min-h-[260px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
           >
             {/* Icon */}
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#1a73e8] to-[#0052cc] shadow-[3px_3px_8px_rgba(26,115,232,0.25)] shrink-0 flex items-center justify-center mb-6">
@@ -537,31 +542,18 @@ export default function TempLandingPage() {
             {/* Content */}
             <div className="flex-1 flex flex-col justify-start">
               <h3 className="font-head font-bold text-slate-800 text-lg tracking-tight mb-3">
-                Campanhas Patrocinadas
+                Posicionamento & Autoridade
               </h3>
-              <p className="text-slate-500 text-xs leading-relaxed mb-6">
-                Gestão de tráfego pago em Google e Meta com otimização contínua por dados, criativos de alta conversão e foco absoluto em CAC e ROI para B2B.
+              <p className="text-slate-500 text-xs leading-relaxed">
+                Otimização e consolidação da presença digital da sua marca em canais tradicionais e novos buscadores de IA (GEO), gerando relevância e liderança no seu setor B2B.
               </p>
-            </div>
-
-            {/* Bottom metric & Action */}
-            <div className="flex items-center justify-between mt-auto">
-              <div className="bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] rounded-xl px-4 py-2 flex items-baseline gap-1 border border-white/30">
-                <span className="text-[#FF5500] font-head font-extrabold text-sm">-41%</span>
-                <span className="text-[9px] font-bold text-slate-500 leading-none">de redução média<br/>no custo por lead</span>
-              </div>
-              <button className="w-8 h-8 rounded-full bg-[#FF5500] text-white flex items-center justify-center shadow-[3px_3px_6px_rgba(255,85,0,0.3),-3px_-3px_6px_#ffffff] hover:scale-105 active:scale-95 transition-all duration-200 border border-orange-400/20 cursor-pointer">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </button>
             </div>
           </motion.div>
 
           {/* Card 3: Automação & CRM */}
           <motion.div
             variants={cardVariants}
-            className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between min-h-[380px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
+            className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-start min-h-[260px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
           >
             {/* Icon */}
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#6c3fc5] to-[#4b2fa8] shadow-[3px_3px_8px_rgba(108,63,197,0.25)] shrink-0 flex items-center justify-center mb-6">
@@ -573,26 +565,16 @@ export default function TempLandingPage() {
               <h3 className="font-head font-bold text-slate-800 text-lg tracking-tight mb-3">
                 Automação & CRM
               </h3>
-              <p className="text-slate-500 text-xs leading-relaxed mb-6">
+              <p className="text-slate-500 text-xs leading-relaxed">
                 Fluxos de nutrição, integrações e RAG conectados ao seu CRM. Cada lead recebe a mensagem certa, no momento certo — automaticamente.
               </p>
-            </div>
-
-            {/* Bottom metric & Action */}
-            <div className="flex items-center justify-between mt-auto">
-              <div className="bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] rounded-xl px-4 py-2 flex items-baseline gap-1 border border-white/30">
-                <span className="text-[#FF5500] font-head font-extrabold text-sm">+68%</span>
-                <span className="text-[9px] font-bold text-slate-500 leading-none">de aumento na<br/>taxa de conversão</span>
-              </div>
-              <button className="w-8 h-8 rounded-full bg-[#FF5500] text-white flex items-center justify-center shadow-[3px_3px_6px_rgba(255,85,0,0.3),-3px_-3px_6px_#ffffff] hover:scale-105 active:scale-95 transition-all duration-200 border border-orange-400/20 cursor-pointer">
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                </svg>
-              </button>
             </div>
           </motion.div>
 
         </motion.div>
+
+        {/* Funnel Interactive Specialties Showcase */}
+        <FunnelInteractiveShowcase />
 
         {/* Bottom CTA Bar */}
         <motion.div
@@ -637,7 +619,7 @@ export default function TempLandingPage() {
         </div>
 
         <footer className="relative z-[2] max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-[32px] p-8 md:p-12">
+          <div className="p-8 md:p-12">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             <div className="md:col-span-8 space-y-4">
               <div className="flex items-center">
@@ -1253,6 +1235,7 @@ function AgentsGridSection() {
   ];
 
   const [active, setActive] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   const handleNext = React.useCallback(() => {
     setActive((prev) => (prev + 1) % agents.length);
@@ -1263,9 +1246,10 @@ function AgentsGridSection() {
   };
 
   useEffect(() => {
+    if (!isPlaying) return;
     const interval = setInterval(handleNext, 5000);
     return () => clearInterval(interval);
-  }, [handleNext]);
+  }, [handleNext, isPlaying, active]);
 
   const isActive = (index: number) => index === active;
 
@@ -1389,6 +1373,24 @@ function AgentsGridSection() {
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
               </svg>
             </button>
+
+            {/* Play/Pause Button */}
+            <button
+              onClick={() => setIsPlaying(!isPlaying)}
+              aria-label={isPlaying ? "Pausar rotação" : "Iniciar rotação"}
+              className="group w-10 h-10 rounded-full bg-white border border-white/60 shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff] flex items-center justify-center hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] active:scale-95 transition-all duration-200"
+            >
+              {isPlaying ? (
+                <svg className="w-4 h-4 text-slate-600" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+                </svg>
+              ) : (
+                <svg className="w-4 h-4 text-slate-600 ml-0.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              )}
+            </button>
+
             <button
               onClick={handleNext}
               aria-label="Próximo agente"
