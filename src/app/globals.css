@@ -808,4 +808,46 @@ input:-webkit-autofill:active {
   -webkit-box-shadow: 0 0 0 30px #0a0a0a inset !important;
   -webkit-text-fill-color: #ffffff !important;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Camada 2 — Reflexos de vidro (CSS) */
+.glass {
+  position: absolute;
+  inset: -20%;
+  background: linear-gradient(115deg,
+    transparent 18%, rgba(255, 255, 255, .10) 24%, transparent 31%,
+    transparent 48%, rgba(255, 255, 255, .07) 52%, transparent 57%,
+    transparent 72%, rgba(255, 255, 255, .12) 80%, transparent 88%);
+  filter: blur(28px);
+  animation: glassDrift 46s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+@keyframes glassDrift {
+  from { transform: translateX(-3.5%); }
+  to { transform: translateX(3.5%); }
+}
+
+/* Camada 3 — Vinheta de contraste (CSS, estática) */
+.veil {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 100% at 78% 50%, transparent 42%, rgba(250, 251, 253, .55) 100%),
+    linear-gradient(90deg, rgba(250, 251, 253, .82) 0%, rgba(250, 251, 253, .35) 38%, transparent 62%);
+}
+/* Mobile (≤640px): vinheta migra para o topo */
+@media (max-width: 640px) {
+  .veil {
+    background:
+      radial-gradient(120% 100% at 50% 30%, transparent 30%, rgba(250, 251, 253, .6) 100%),
+      linear-gradient(180deg, rgba(250, 251, 253, .75) 0%, rgba(250, 251, 253, .3) 55%, transparent 80%);
+  }
+}
+
+/* Reduced motion preference fallback for .glass animation */
+@media (prefers-reduced-motion: reduce) {
+  .glass {
+    animation: none !important;
+  }
 }

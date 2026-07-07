@@ -20,11 +20,11 @@ interface RadialOrbitalTimelineProps {
   showTooltip?: boolean;
 }
 
-function assignOrbits(items: OrbitalItem[]) {
+function assignOrbits(items: OrbitalItem[], scaleFactor: number) {
   const rings = [
-    { radius: 110, count: 4, duration: 22 },
-    { radius: 185, count: 6, duration: 34 },
-    { radius: 260, count: 8, duration: 48 },
+    { radius: Math.round(110 * scaleFactor), count: 4, duration: 22 },
+    { radius: Math.round(185 * scaleFactor), count: 6, duration: 34 },
+    { radius: Math.round(260 * scaleFactor), count: 8, duration: 48 },
   ];
 
   let itemIdx = 0;
@@ -51,10 +51,11 @@ interface OrbiterProps {
   onHover: (id: number | null) => void;
   onClick: (id: number) => void;
   isPaused: boolean;
+  scaleFactor: number;
 }
 
-function Orbiter({ item, isActive, onHover, onClick, isPaused }: OrbiterProps) {
-  const size = 52;
+function Orbiter({ item, isActive, onHover, onClick, isPaused, scaleFactor }: OrbiterProps) {
+  const size = Math.round(52 * (scaleFactor < 0.8 ? 0.75 : 1));
   return (
     <div
       className="absolute inset-0 pointer-events-none"
@@ -106,10 +107,30 @@ export default function RadialOrbitalTimeline({
   onActiveItemChange,
   showTooltip = true,
 }: RadialOrbitalTimelineProps) {
+  const [scaleFactor, setScaleFactor] = useState(1);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 480) {
+        setScaleFactor(0.55);
+      } else if (window.innerWidth < 640) {
+        setScaleFactor(0.7);
+      } else if (window.innerWidth < 1024) {
+        setScaleFactor(0.85);
+      } else {
+        setScaleFactor(1);
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [activeId, setActiveId] = useState<number | null>(null);
   const [clicked, setClicked] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const assignedItems = assignOrbits(items);
+  const assignedItems = assignOrbits(items, scaleFactor);
   const activeItem = assignedItems.find((i) => i.id === (clicked ?? activeId));
   const isPaused = activeId !== null;
 
@@ -139,7 +160,7 @@ export default function RadialOrbitalTimeline({
   }, []);
 
   return (
-    <div ref={containerRef} className="relative flex flex-col items-center justify-center select-none" style={{ width: 580, height: 580, maxWidth: '100%' }}>
+    <div ref={containerRef} className="relative flex flex-col items-center justify-center select-none" style={{ width: Math.round(580 * scaleFactor), height: Math.round(580 * scaleFactor), maxWidth: '100%' }}>
       {[110, 185, 260].map((r) => (
         <div 
           key={r} 
@@ -148,29 +169,29 @@ export default function RadialOrbitalTimeline({
               ? 'border-slate-300/40 shadow-[inset_1px_1px_2px_rgba(0,0,0,0.05),_1px_1px_2px_#ffffff]' 
               : 'border-white/[0.06]'
           }`} 
-          style={{ width: r * 2, height: r * 2 }} 
+          style={{ width: Math.round(r * 2 * scaleFactor), height: Math.round(r * 2 * scaleFactor) }} 
         />
       ))}
-      <div className="absolute rounded-full pointer-events-none" style={{ width: 160, height: 160, background: 'radial-gradient(circle, rgba(255,106,0,0.18) 0%, transparent 70%)', filter: 'blur(20px)' }} />
-      <div className="relative flex flex-col items-center gap-2">
+      <div className="absolute rounded-full pointer-events-none" style={{ width: Math.round(160 * scaleFactor), height: Math.round(160 * scaleFactor), background: 'radial-gradient(circle, rgba(255,106,0,0.18) 0%, transparent 70%)', filter: 'blur(20px)' }} />
+      <div className="relative flex flex-col items-center gap-1.5">
         {centerImage ? (
-          <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#ff6a00]/60 shadow-[0_0_24px_rgba(255,106,0,0.4)]">
-            <Image src={centerImage} alt={typeof centerLabel === 'string' ? centerLabel : 'NeuroAds'} width={64} height={64} className="w-full h-full object-cover" />
+          <div className={`rounded-full overflow-hidden border-2 border-[#ff6a00]/60 shadow-[0_0_24px_rgba(255,106,0,0.4)] ${scaleFactor < 0.8 ? 'w-12 h-12' : 'w-16 h-16'}`}>
+            <Image src={centerImage} alt={typeof centerLabel === 'string' ? centerLabel : 'NeuroAds'} width={scaleFactor < 0.8 ? 48 : 64} height={scaleFactor < 0.8 ? 48 : 64} className="w-full h-full object-cover" />
           </div>
         ) : typeof centerLabel === 'string' ? (
-          <div className="w-16 h-16 rounded-full flex items-center justify-center bg-gradient-to-br from-[#ff6a00] to-[#FF8805] shadow-[0_0_32px_rgba(255,106,0,0.5)]">
-            <span className="text-white font-black text-lg">N</span>
+          <div className={`rounded-full flex items-center justify-center bg-gradient-to-br from-[#ff6a00] to-[#FF8805] shadow-[0_0_32px_rgba(255,106,0,0.5)] ${scaleFactor < 0.8 ? 'w-12 h-12' : 'w-16 h-16'}`}>
+            <span className={`text-white font-black ${scaleFactor < 0.8 ? 'text-sm' : 'text-lg'}`}>N</span>
           </div>
         ) : null}
         {typeof centerLabel === 'string' ? (
-          <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#ff8f3a]">{centerLabel}</span>
+          <span className={`font-extrabold uppercase tracking-widest text-[#ff8f3a] ${scaleFactor < 0.8 ? 'text-[8px]' : 'text-[10px]'}`}>{centerLabel}</span>
         ) : (
           centerLabel
         )}
       </div>
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         {assignedItems.map((item) => (
-          <Orbiter key={item.id} item={item} isActive={item.id === (clicked ?? activeId)} onHover={handleHover} onClick={handleClick} isPaused={isPaused} />
+          <Orbiter key={item.id} item={item} isActive={item.id === (clicked ?? activeId)} onHover={handleHover} onClick={handleClick} isPaused={isPaused} scaleFactor={scaleFactor} />
         ))}
       </div>
       <AnimatePresence>

@@ -4,8 +4,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from 'framer-motion';
-import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Bot, Target, Workflow, PieChart, LineChart, GitMerge, Crosshair } from 'lucide-react';
+import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Bot, Target, Workflow, PieChart, LineChart, GitMerge, Crosshair, Menu, X } from 'lucide-react';
 import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
+import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
 
 const cardVariants = {
   hidden: { opacity: 0, y: 25, scale: 0.98 },
@@ -91,6 +92,17 @@ export default function TempLandingPage() {
   const [pulse, setPulse] = useState(true);
   const [activeAgent, setActiveAgent] = useState<any>(null);
   const [isSobreOpen, setIsSobreOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { scrollY } = useScroll();
+  const backgroundY = useTransform(scrollY, [0, 1000], [0, 500]);
+
+  const solutionsSectionRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: solutionsScrollYProgress } = useScroll({
+    target: solutionsSectionRef,
+    offset: ["start end", "end start"]
+  });
+  const solutionsBackgroundY = useTransform(solutionsScrollYProgress, [0, 1], [-300, 300]);
 
   // Live indicator pulsing effect
   useEffect(() => {
@@ -211,12 +223,12 @@ export default function TempLandingPage() {
   );
 
   return (
-    <div className="bg-[#EDF1F5] min-h-screen text-slate-800 font-sans antialiased overflow-x-clip pb-16 selection:bg-[#FF5500]/20 selection:text-[#FF5500]">
+    <div className="bg-[#EDF1F5] min-h-screen text-slate-800 font-sans antialiased overflow-x-clip pb-0 selection:bg-[#FF5500]/20 selection:text-[#FF5500]">
       
       {/* ========================================================================= */}
       {/* HEADER TEMPLATE 01 */}
       {/* ========================================================================= */}
-      <header className="sticky top-4 z-[999] max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="fixed top-4 left-0 right-0 w-full z-[999] px-4 sm:px-8 lg:px-24">
         <div className="bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-full py-4 px-8 flex items-center justify-between transition-all duration-300">
           {/* Logo */}
           <Link href="#" className="flex items-center group transition-transform duration-300 hover:scale-[1.01]">
@@ -232,87 +244,159 @@ export default function TempLandingPage() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="#publico-alvo" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
+            <Link href="#publico-alvo" className="text-slate-650 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
               Público-Alvo
             </Link>
-            <Link href="#agentes" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
+            <Link href="#agentes" className="text-slate-650 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
               Agentes IA
             </Link>
-            <Link href="#solucoes" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
+            <Link href="#solucoes" className="text-slate-650 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
               Soluções
             </Link>
-            <Link href="#demonstracao" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
+            <Link href="#demonstracao" className="text-slate-650 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
               Demonstração
             </Link>
           </nav>
 
-          {/* Action Button */}
-          <div>
+          {/* Action Button & Mobile Menu Toggle */}
+          <div className="flex items-center gap-3">
             <Link
               href="/login"
               className="inline-flex items-center justify-center font-bold text-xs px-6 py-2.5 rounded-full bg-white text-slate-700 shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff] border border-white/60 hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:bg-[#e4ecf5] active:scale-[0.98] transition-all duration-200"
             >
               Acessar Hub
             </Link>
+
+            {/* Hamburger Toggle for Mobile */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="flex md:hidden items-center justify-center p-2 rounded-full bg-white text-slate-700 shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff] border border-white/60 hover:bg-[#e4ecf5] active:scale-95 transition-all duration-200 cursor-pointer"
+            >
+              {isMenuOpen ? <X size={16} /> : <Menu size={16} />}
+            </button>
           </div>
         </div>
+
+        {/* Mobile Dropdown Menu */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-20 left-4 right-4 bg-white border border-white/50 shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] rounded-[24px] p-6 flex flex-col gap-4 md:hidden z-[998]"
+            >
+              <Link
+                href="#publico-alvo"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-slate-650 font-bold text-xs uppercase tracking-wider hover:text-[#FF5500] py-2 transition-colors duration-200"
+              >
+                Público-Alvo
+              </Link>
+              <Link
+                href="#agentes"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-slate-650 font-bold text-xs uppercase tracking-wider hover:text-[#FF5500] py-2 transition-colors duration-200"
+              >
+                Agentes IA
+              </Link>
+              <Link
+                href="#solucoes"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-slate-650 font-bold text-xs uppercase tracking-wider hover:text-[#FF5500] py-2 transition-colors duration-200"
+              >
+                Soluções
+              </Link>
+              <Link
+                href="#demonstracao"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-slate-650 font-bold text-xs uppercase tracking-wider hover:text-[#FF5500] py-2 transition-colors duration-200"
+              >
+                Demonstração
+              </Link>
+              <div className="border-t border-slate-200 pt-4 mt-2">
+                <Link
+                  href="/login"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-center font-bold text-xs py-3 rounded-xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[3px_3px_8px_rgba(255,85,0,0.25)]"
+                >
+                  Acessar Hub
+                </Link>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
       {/* ========================================================================= */}
-      {/* HERO SECTION TEMPLATE 01 */}
+      {/* HERO SECTION WITH PARALLAX BACKGROUND */}
       {/* ========================================================================= */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 md:pt-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
-        {/* Left Side Info */}
-        <div className="lg:col-span-7 flex flex-col items-start">
-          {/* Category Tag */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#FF5500] shadow-[0_0_8px_rgba(255,85,0,0.5)]"></span>
-            MARKETING · VENDAS · AUTOMAÇÃO · AGENTES IA
+      <div className="relative w-full overflow-hidden pt-28 pb-8 md:pb-16">
+        {/* Parallax Background Wrapper */}
+        <motion.div
+          style={{ y: backgroundY }}
+          className="absolute -top-80 -bottom-80 inset-x-0 overflow-hidden bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] z-[1]"
+        >
+          <div className="absolute top-80 bottom-80 inset-x-0">
+            <HeroCircuitBackground />
+          </div>
+        </motion.div>
+
+        {/* HERO CONTENT */}
+        <section className="relative z-[2] w-full px-4 sm:px-8 lg:px-24 pt-6 md:pt-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+          {/* Left Side Info */}
+          <div className="lg:col-span-7 flex flex-col items-start">
+            {/* Category Tag */}
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#FF5500] shadow-[0_0_8px_rgba(255,85,0,0.5)]"></span>
+              MARKETING · VENDAS · AUTOMAÇÃO · AGENTES IA
+            </div>
+
+            {/* Headline */}
+            <h1 className="font-head font-extrabold text-3xl md:text-4xl lg:text-5xl text-slate-900 leading-[1.12] tracking-tight mt-6 max-w-3xl">
+              Operações IA Estratégicas em <span className="text-[#FF5500]">Marketing & Vendas B2B</span>.
+            </h1>
+
+            {/* Subtitle */}
+            <p className="text-slate-600 text-base md:text-lg leading-relaxed mt-6 max-w-xl">
+              A NeuroAds une campanhas patrocinadas, automação e um ecossistema de agentes inteligentes para transformar o marketing e o comercial da sua empresa B2B em uma máquina previsível de receita.
+            </p>
+
+            {/* Call to Actions */}
+            <div className="flex flex-col items-start mt-8 w-full">
+              <Link
+                href="/cadastro"
+                className="inline-flex items-center justify-center font-bold text-sm px-8 py-4 rounded-2xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[4px_4px_12px_rgba(255,85,0,0.3),-4px_-4px_12px_#ffffff] hover:shadow-[6px_6px_16px_rgba(255,85,0,0.45),-6px_-6px_16px_#ffffff] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 gap-2 border border-orange-400/20"
+              >
+                Ativar meu ecossistema <span className="text-xs">→</span>
+              </Link>
+              <span className="text-slate-500 text-[11px] mt-2.5 ml-2 font-bold tracking-wider uppercase">
+                Experimente por 14 dias sem custos.
+              </span>
+            </div>
+
+            {/* Dynamic Interactive Agent Profile Card (Anexo 03 Style) */}
+            <AgentProfileCard agent={activeAgent} />
           </div>
 
-          {/* Headline */}
-          <h1 className="font-head font-extrabold text-3xl md:text-4xl lg:text-5xl text-slate-900 leading-[1.12] tracking-tight mt-6 max-w-3xl">
-            Operações IA Estratégicas em <span className="text-[#FF5500]">Marketing & Vendas B2B</span>.
-          </h1>
-
-          {/* Subtitle */}
-          <p className="text-slate-600 text-base md:text-lg leading-relaxed mt-6 max-w-xl">
-            A NeuroAds une campanhas patrocinadas, automação e um ecossistema de agentes inteligentes para transformar o marketing e o comercial da sua empresa B2B em uma máquina previsível de receita.
-          </p>
-
-          {/* Call to Actions */}
-          <div className="flex flex-col items-start mt-8 w-full">
-            <Link
-              href="/cadastro"
-              className="inline-flex items-center justify-center font-bold text-sm px-8 py-4 rounded-2xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[4px_4px_12px_rgba(255,85,0,0.3),-4px_-4px_12px_#ffffff] hover:shadow-[6px_6px_16px_rgba(255,85,0,0.45),-6px_-6px_16px_#ffffff] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 gap-2 border border-orange-400/20"
-            >
-              Ativar meu ecossistema <span className="text-xs">→</span>
-            </Link>
-            <span className="text-slate-500 text-[11px] mt-2.5 ml-2 font-bold tracking-wider uppercase">
-              Experimente por 14 dias sem custos.
-            </span>
+          {/* Right Side - Radial Orbit Animation */}
+          <div className="lg:col-span-5 flex items-center justify-center relative mt-8 lg:mt-0">
+            <RadialOrbitalTimeline
+              items={orbitalItems}
+              centerLabel={centerLogoNode}
+              theme="light"
+              onActiveItemChange={(item) => {
+                if (item) {
+                  const fullAgent = orbitalItems.find((a) => a.id === item.id);
+                  setActiveAgent(fullAgent || item);
+                }
+              }}
+              showTooltip={false}
+            />
           </div>
-
-          {/* Dynamic Interactive Agent Profile Card (Anexo 03 Style) */}
-          <AgentProfileCard agent={activeAgent} />
-        </div>
-
-        {/* Right Side - Radial Orbit Animation */}
-        <div className="lg:col-span-5 flex items-center justify-center relative mt-8 lg:mt-0">
-          <RadialOrbitalTimeline
-            items={orbitalItems}
-            centerLabel={centerLogoNode}
-            theme="light"
-            onActiveItemChange={(item) => {
-              if (item) {
-                const fullAgent = orbitalItems.find((a) => a.id === item.id);
-                setActiveAgent(fullAgent || item);
-              }
-            }}
-            showTooltip={false}
-          />
-        </div>
-      </section>
+        </section>
+      </div>
 
 
 
@@ -344,7 +428,18 @@ export default function TempLandingPage() {
       {/* ========================================================================= */}
       {/* SOLUTIONS SECTION TEMPLATE 02 */}
       {/* ========================================================================= */}
-      <section id="solucoes" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28">
+      <div ref={solutionsSectionRef} className="relative w-full overflow-hidden py-24 md:py-28">
+        {/* Parallax Background Wrapper */}
+        <motion.div
+          style={{ y: solutionsBackgroundY }}
+          className="absolute -top-80 -bottom-80 inset-x-0 overflow-hidden bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] z-[1]"
+        >
+          <div className="absolute top-80 bottom-80 inset-x-0">
+            <HeroCircuitBackground id="circuit-solutions" />
+          </div>
+        </motion.div>
+
+        <section id="solucoes" className="relative z-[2] max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header grid */}
         <motion.div
@@ -519,6 +614,7 @@ export default function TempLandingPage() {
         </motion.div>
 
       </section>
+    </div>
 
 
 
@@ -534,8 +630,14 @@ export default function TempLandingPage() {
       {/* ========================================================================= */}
       {/* FOOTER */}
       {/* ========================================================================= */}
-      <footer className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
-        <div className="bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-[32px] p-8 md:p-12">
+      <div className="relative w-full overflow-hidden py-16 md:py-24 mt-24">
+        {/* Footer Background Wrapper */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] z-[1]">
+          <HeroCircuitBackground id="circuit-footer" />
+        </div>
+
+        <footer className="relative z-[2] max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-[32px] p-8 md:p-12">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             <div className="md:col-span-8 space-y-4">
               <div className="flex items-center">
@@ -572,6 +674,7 @@ export default function TempLandingPage() {
           </div>
         </div>
       </footer>
+    </div>
 
 
 

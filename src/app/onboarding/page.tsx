@@ -407,7 +407,7 @@ function OnboardingPageContent() {
                 <p className="text-[11px] font-black uppercase tracking-[0.14em] text-[#FF6A00]">
                   NeuroAds · Ativação
                 </p>
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.10] bg-slate-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-900/40">
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-500">
                   <CheckCircle2 size={12} className="text-[#08B760]" />
                   Etapa {step} de 3
                 </div>
@@ -415,7 +415,7 @@ function OnboardingPageContent() {
               <h1 className="text-[24px] font-black text-slate-900 leading-tight">
                 {STEP_LABELS[step]}
               </h1>
-              <p className="mt-1.5 text-[13px] text-slate-900/40 font-medium">
+              <p className="mt-1.5 text-[13px] text-slate-500 font-medium">
                 {step === 1 && 'Preencha os dados do seu negócio para personalizar seu Hub.'}
                 {step === 2 && 'Selecione as dores prioritárias para calibrar seus agentes.'}
                 {step === 3 && 'Comece com trial grátis de 14 dias ou ative diretamente com cartão.'}
@@ -431,7 +431,7 @@ function OnboardingPageContent() {
                     s === step
                       ? 'flex-[2] bg-[#FF6A00]'
                       : s < step
-                      ? 'flex-1 bg-[#FF6A00]/40'
+                      ? 'flex-1 bg-[#FF6A00]/30'
                       : 'flex-1 bg-slate-100'
                   }`}
                 />
@@ -454,40 +454,40 @@ function OnboardingPageContent() {
             {step === 1 ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                     Empresa *
                   </label>
                   <div className="relative">
-                    <Building2 size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-900/35" />
+                    <Building2 size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
                       value={form.companyName}
                       onChange={(e) => setForm((prev) => ({ ...prev, companyName: e.target.value }))}
                       placeholder="Nome da empresa"
-                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 pl-10 pr-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                      className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-[14px] text-slate-950 placeholder:text-slate-400 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                     Segmento *
                   </label>
                   <input
                     value={form.segment}
                     onChange={(e) => setForm((prev) => ({ ...prev, segment: e.target.value }))}
                     placeholder="Ex: Serviços profissionais"
-                    className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 px-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                    className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-[14px] text-slate-950 placeholder:text-slate-400 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                     Faturamento mensal *
                   </label>
                   <select
                     value={form.revenueRange}
                     onChange={(e) => setForm((prev) => ({ ...prev, revenueRange: e.target.value }))}
-                    className="w-full h-11 rounded-xl border border-white/[0.10] bg-white px-4 text-[14px] text-slate-900 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all [&>option]:bg-white [&>option]:text-slate-900"
+                    className="w-full h-11 rounded-xl border border-slate-200 bg-white px-4 text-[14px] text-slate-955 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all [&>option]:bg-white [&>option]:text-slate-955"
                   >
                     <option value="">Selecione a faixa</option>
                     <option value="R$ 30k - R$ 60k">R$ 30k - R$ 60k</option>
@@ -498,33 +498,33 @@ function OnboardingPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                     Site *
                   </label>
                   <div className="relative">
-                    <Globe size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-900/35" />
+                    <Globe size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
                       value={form.site}
                       onChange={(e) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))}
                       onBlur={(e) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))}
                       placeholder="https://empresa.com.br"
-                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 pl-10 pr-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                      className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-[14px] text-slate-955 placeholder:text-slate-400 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
+                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                     WhatsApp *
                   </label>
                   <div className="relative">
-                    <Phone size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-900/35" />
+                    <Phone size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
                       value={form.whatsapp}
                       onChange={(e) => setForm((prev) => ({ ...prev, whatsapp: formatWhatsappInput(e.target.value) }))}
                       maxLength={15}
                       placeholder="(00) 00000-0000"
-                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 pl-10 pr-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                      className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-[14px] text-slate-955 placeholder:text-slate-400 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                     />
                   </div>
                 </div>
@@ -550,7 +550,7 @@ function OnboardingPageContent() {
                       className={`w-full rounded-xl border px-4 py-3 text-left text-[14px] font-semibold transition-all duration-200 ${
                         selected
                           ? 'border-[#08B760]/50 bg-[#08B760]/10 text-[#08B760]'
-                          : 'border-white/[0.10] bg-slate-50 text-slate-900/70 hover:border-[#FF6A00]/40 hover:text-slate-900'
+                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-[#FF6A00]/40 hover:text-slate-950'
                       }`}
                     >
                       {objective}
@@ -564,7 +564,7 @@ function OnboardingPageContent() {
             {step === 3 ? (
               plan ? (
                 <div>
-                  <div className="relative overflow-hidden rounded-2xl border border-white/[0.10] bg-white p-5">
+                  <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5">
                     <div className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full bg-[#FF6A00]/15 blur-3xl" />
                     <div className="pointer-events-none absolute inset-0 rounded-2xl border border-[#FF6A00]/20" />
 
@@ -582,8 +582,8 @@ function OnboardingPageContent() {
 
                       <div className="flex-1">
                         <h3 className="text-[22px] font-black leading-none text-[#FF6A00]">{plan.name}</h3>
-                        <p className="mt-1.5 text-[13px] text-slate-900/40 leading-snug">
-                          IA avançada e inteligência profunda para escalar sua operação.
+                        <p className="mt-1.5 text-[13px] text-slate-500 leading-snug">
+                          IA avançada e inteligência profunda para escalar sua operation.
                         </p>
 
                         <div className="mt-3 flex flex-wrap items-end gap-2 pb-3 border-b border-slate-300">
@@ -602,7 +602,7 @@ function OnboardingPageContent() {
 
                         <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-y-1.5 gap-x-3">
                           {['Insights de IA (acesso total)', 'Fontes de dados ilimitadas', 'Analytics avançado', 'Modelagem preditiva'].map((feature) => (
-                            <li key={feature} className="flex items-start gap-2 text-[12px] leading-snug text-slate-900/60">
+                            <li key={feature} className="flex items-start gap-2 text-[12px] leading-snug text-slate-600">
                               <span className="mt-0.5 inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-[#FF6A00] text-slate-900">
                                 <Check size={9} strokeWidth={3.5} />
                               </span>
@@ -614,7 +614,7 @@ function OnboardingPageContent() {
                     </div>
                   </div>
 
-                  <p className="mt-3 text-center text-[11px] text-slate-900/25 leading-relaxed">
+                  <p className="mt-3 text-center text-[11px] text-slate-400 leading-relaxed">
                     Seus dados ficam preservados mesmo em reentrada (trial expirado, cancelado ou pendência).
                   </p>
                 </div>
@@ -642,7 +642,7 @@ function OnboardingPageContent() {
                   setErrorMessage(null);
                   setStep((current) => (current === 3 ? 2 : 1));
                 }}
-                className="rounded-xl border border-white/[0.10] px-5 h-11 text-[12px] font-bold uppercase tracking-widest text-slate-900/40 hover:bg-slate-50 hover:text-slate-900/60 transition-all"
+                className="rounded-xl border border-slate-200 px-5 h-11 text-[12px] font-bold uppercase tracking-widest text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-all"
               >
                 Voltar
               </button>
