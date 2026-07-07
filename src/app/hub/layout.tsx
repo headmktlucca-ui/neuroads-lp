@@ -13,7 +13,6 @@ import {
   LayoutDashboard,
   Brain,
   BarChart2,
-  FlaskConical,
   Plug2,
   Cpu,
   Layers,
@@ -30,12 +29,10 @@ import {
   LogOut,
   Bot,
   ChevronDown,
-  Wrench,
-  Lightbulb,
   Menu,
   X,
-  MessageSquare,
   Sparkles,
+  Users,
 } from 'lucide-react';
 
 
@@ -285,7 +282,7 @@ function SidebarContent({
           />
         ))}
 
-        {/* Lucca — positioned after Configurações, before Sair */}
+        {/* Agentes Online — positioned after Configurações, before Sair */}
         <div className="pt-1">
           <Link
             href="/hub/assistente-ia"
@@ -301,10 +298,13 @@ function SidebarContent({
               textDecoration: 'none',
             }}
           >
-            <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-emerald-400/40 shadow-[0_0_8px_rgba(16,185,129,0.3)]">
-              <Image src="/images/Avatar_Lucca_Novo.jpeg" alt="Lucca" width={24} height={24} className="w-full h-full object-cover" />
-            </div>
-            <span className="flex-1">Lucca | Online</span>
+            <Users
+              size={16}
+              className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${
+                pathname === '/hub/assistente-ia' ? 'text-emerald-600' : 'text-slate-500'
+              }`}
+            />
+            <span className="flex-1">Agentes Online</span>
             <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)] animate-pulse shrink-0" />
           </Link>
         </div>
@@ -367,7 +367,7 @@ function getMobilePageTitle(pathname: string): string {
   if (pathname.startsWith('/hub/integracoes')) return 'Integrações';
   if (pathname.startsWith('/hub/automacoes')) return 'Automações';
   if (pathname.startsWith('/hub/explorar')) return 'Oportunidades';
-  if (pathname.startsWith('/hub/assistente-ia')) return 'Lucca | Online';
+  if (pathname.startsWith('/hub/assistente-ia')) return 'Agentes Online';
   if (pathname.startsWith('/hub/configuracoes')) return 'Configurações';
   return 'Hub';
 }

@@ -2,6 +2,7 @@
 
 import OpenAI from 'openai';
 import { getAdminDb } from '../../lib/firebase-admin';
+import { getTeamAgentById } from '../../data/team-agents';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
@@ -21,6 +22,7 @@ export type LuccaHubContext = {
   disconnectedSources?: string[]; // e.g. ['TikTok Ads', 'LinkedIn Ads']
   activeAgents?: string[];
   recentMetrics?: Array<{ label: string; value: string; trend?: string }>;
+  agentId?: string;
 };
 
 export type LuccaHubResponse = {
@@ -142,11 +144,35 @@ export async function chatWithLuccaHub(
   const disconnected = context.disconnectedSources ?? [];
   const { block: dataAccessBlock, hasRealData } = buildDataAccessBlock(connected, disconnected);
 
+  const agent = getTeamAgentById(context.agentId || 'ulisses');
+  
+  let agentIdentity = '';
+  if (agent) {
+    agentIdentity = `Você é o **${agent.nome}**, ${agent.funcao} da NeuroAds.
+Identidade e Personalidade: ${agent.descricao} (${agent.personalidade}).
+Sua frase/tagline de ativação: "${agent.tagline}".
+Habilidades chave: ${agent.habilidades.join(', ')}.
+
+Seu tom de voz e comportamento devem refletir a sua personalidade de forma autêntica.
+Responda de forma focada no seu domínio de especialidade e finja ser ele(a) em todas as respostas.
+Como orquestrador principal (Chief of Staff), você conhece as capacidades dos outros agentes ativos:
+- **PAOLA (Tráfego)**: Analista de Tráfego, Simulador de ROAS, Otimizadora de Orçamento.
+- **LAÍS (Conteúdo)**: Gerador de Criativos, Copies de Conversão, Análise Viral.
+- **HEITOR (Processos)**: Rastreador Cirúrgico, Preditor e Diagnóstico de Funil, Testes A/B.
+- **IGOR (Dados & SEO)**: SEO & GEO, Diagnóstico de LP, Análise de Concorrentes.
+
+Quando solicitado a executar uma atividade fora do seu escopo, você deve sugerir delegá-la ao especialista correspondente, coordenando a operação.
+
+${agent.prompt || ''}`;
+  } else {
+    agentIdentity = `Você é o **Lucca**, Agente Consultor de Marketing com IA da NeuroAds.
+Especialista em performance digital: campanhas pagas, ROAS, CPA, criativos, audiências, CRM e atribuição.`;
+  }
+
   // ─── System prompt ────────────────────────────────────────────────────────
   const systemPrompt: ChatMessage = {
     role: 'system',
-    content: `Você é o **Lucca**, Agente Consultor de Marketing com IA da NeuroAds.
-Especialista em performance digital: campanhas pagas, ROAS, CPA, criativos, audiências, CRM e atribuição.
+    content: `${agentIdentity}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 PERFIL DO USUÁRIO:

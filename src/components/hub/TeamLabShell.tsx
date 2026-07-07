@@ -11,7 +11,6 @@ import {
 import { doc, setDoc } from 'firebase/firestore';
 import { TEAM_AGENTS, TeamAgent } from '../../data/team-agents';
 import { agents as allSpecialties } from '../../data/agents';
-import { slugifyAgentTitle } from '../../lib/hub-agents';
 import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../lib/agent-status-cache';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
@@ -20,6 +19,7 @@ import { getFirebaseDb } from '../../lib/firebase';
 
 function SpecialtyRow({
   specialty,
+  agentId,
   agentCor,
   isActive,
   isActivating,
@@ -28,6 +28,7 @@ function SpecialtyRow({
   onDeactivate,
 }: {
   specialty: (typeof allSpecialties)[number];
+  agentId: string;
   agentCor: string;
   isActive: boolean;
   isActivating: boolean;
@@ -70,7 +71,7 @@ function SpecialtyRow({
 
               {/* Acessar Operação */}
               <Link
-                href={`/hub/agente/${slugifyAgentTitle(specialty.title)}`}
+                href={`/hub/assistente-ia?agent=${agentId}&specialty=${encodeURIComponent(specialty.title)}`}
                 onClick={(e) => e.stopPropagation()}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-white hover:brightness-110 transition-all"
                 style={{ background: 'linear-gradient(135deg, #2563EB, #06B6D4)', textDecoration: 'none', boxShadow: '0 2px 6px rgba(37,99,235,0.3)' }}
@@ -315,6 +316,7 @@ function TeamAgentCard({
                 <SpecialtyRow
                   key={specialty.title}
                   specialty={specialty}
+                  agentId={teamAgent.id}
                   agentCor={teamAgent.cor}
                   isActive={statusOverrides[specialty.title] === true}
                   isActivating={activatingTitle === specialty.title}

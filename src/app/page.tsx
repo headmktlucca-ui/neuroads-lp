@@ -215,16 +215,16 @@ export default function TempLandingPage() {
       {/* ========================================================================= */}
       {/* HEADER TEMPLATE 01 */}
       {/* ========================================================================= */}
-      <header className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+      <header className="sticky top-4 z-[999] max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-full py-4 px-8 flex items-center justify-between transition-all duration-300">
           {/* Logo */}
           <Link href="#" className="flex items-center group transition-transform duration-300 hover:scale-[1.01]">
             <Image
               src="/images/Logos/Logo_primario.png"
               alt="NeuroAds Logo"
-              width={132}
-              height={30}
-              className="h-7 w-auto object-contain"
+              width={172}
+              height={39}
+              className="h-9 w-auto object-contain"
               priority
             />
           </Link>
@@ -263,7 +263,7 @@ export default function TempLandingPage() {
       {/* ========================================================================= */}
       {/* HERO SECTION TEMPLATE 01 */}
       {/* ========================================================================= */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 md:pt-20 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 md:pt-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         {/* Left Side Info */}
         <div className="lg:col-span-7 flex flex-col items-start">
           {/* Category Tag */}

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import {
@@ -9,11 +9,13 @@ import {
   FileText, Terminal, Link2, BarChart2, Globe, Database,
   Target, CheckCircle2, AlertTriangle, Sparkles,
   Film, Music, File, X, Copy, Table2, User, RefreshCw,
-  Settings2, ChevronRight, Zap, Hash, ArrowRight,
+  Settings2, Hash, ArrowRight,
 } from 'lucide-react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
 import { chatWithLuccaHub, type LuccaLeftPanelData } from '../../actions/lucca-hub-chat';
 import { saveChatSession, type ChatMessage as StoredChatMessage } from '../../../lib/chat-history';
+import { getTeamAgentById, type TeamAgent } from '../../../data/team-agents';
 
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -25,6 +27,62 @@ type AttachType = 'pdf' | 'audio' | 'video';
 type PanelTab = 'resumir' | 'comparar' | 'top';
 type ViewMode = 'table' | 'chart';
 
+interface CustomField {
+  name: string;
+  label: string;
+  type: 'text' | 'number' | 'url';
+  placeholder: string;
+}
+
+const SPECIALTY_FIELDS: Record<string, CustomField[]> = {
+  'Analista de Tráfego': [
+    { name: 'plataforma', label: 'Plataforma de Anúncios', type: 'text', placeholder: 'Meta Ads, Google Ads ou ambos' },
+    { name: 'cpa_alvo', label: 'CPA Alvo (R$)', type: 'number', placeholder: 'Ex: 50' },
+  ],
+  'Gerador de Criativos': [
+    { name: 'produto', label: 'Nome do Produto/Serviço', type: 'text', placeholder: 'Ex: Curso de Marketing' },
+    { name: 'publico', label: 'Público-Alvo', type: 'text', placeholder: 'Ex: Empreendedores digitais' },
+  ],
+  'Gerador de Copies de Conversão': [
+    { name: 'produto', label: 'Nome do Produto/Serviço', type: 'text', placeholder: 'Ex: Mentoria de Negócios' },
+    { name: 'beneficios', label: 'Principais Benefícios', type: 'text', placeholder: 'Ex: Aumentar vendas em 30%' },
+  ],
+  'Análise Viral': [
+    { name: 'nicho', label: 'Nicho/Setor', type: 'text', placeholder: 'Ex: Moda Feminina, Fitness' },
+    { name: 'canal', label: 'Rede Social Principal', type: 'text', placeholder: 'Ex: Instagram, TikTok' },
+  ],
+  'Rastreador Cirúrgico': [
+    { name: 'site', label: 'URL do Site', type: 'url', placeholder: 'Ex: https://meusite.com.br' },
+    { name: 'pixel_id', label: 'ID do Pixel (opcional)', type: 'text', placeholder: 'Ex: 1234567890' },
+  ],
+  'Preditor de Funil': [
+    { name: 'cpc_medio', label: 'CPC Médio (R$)', type: 'number', placeholder: 'Ex: 1.50' },
+    { name: 'taxa_conversao', label: 'Taxa de Conversão da LP (%)', type: 'number', placeholder: 'Ex: 2.5' },
+    { name: 'ticket_medio', label: 'Ticket Médio (R$)', type: 'number', placeholder: 'Ex: 197' },
+  ],
+  'Diagnóstico de Landing Page': [
+    { name: 'url_lp', label: 'URL da Landing Page', type: 'url', placeholder: 'Ex: https://meusite.com.br/landing' },
+    { name: 'objetivo', label: 'Objetivo de Conversão', type: 'text', placeholder: 'Ex: Venda, Lead, Cadastro' },
+  ],
+  'Simulador de ROAS': [
+    { name: 'meta_faturamento', label: 'Meta de Faturamento (R$)', type: 'number', placeholder: 'Ex: 50000' },
+    { name: 'ticket_medio', label: 'Ticket Médio (R$)', type: 'number', placeholder: 'Ex: 250' },
+  ],
+  'SEO & GEO': [
+    { name: 'url_site', label: 'URL do Site', type: 'url', placeholder: 'Ex: https://meusite.com.br' },
+    { name: 'palavras_chave', label: 'Palavras-Chave Foco', type: 'text', placeholder: 'Ex: neuroads, trafego pago' },
+  ],
+  'Diagnóstico de Funil': [
+    { name: 'visitas', label: 'Visitas Mensais', type: 'number', placeholder: 'Ex: 10000' },
+    { name: 'leads', label: 'Leads Gerados', type: 'number', placeholder: 'Ex: 1500' },
+    { name: 'vendas', label: 'Vendas Realizadas', type: 'number', placeholder: 'Ex: 150' },
+  ],
+  'Gerador de Testes A/B': [
+    { name: 'pagina', label: 'Página do Teste', type: 'url', placeholder: 'Ex: https://meusite.com.br' },
+    { name: 'elemento', label: 'Elemento a Testar', type: 'text', placeholder: 'Ex: Botão de CTA, Headline' },
+  ],
+};
+
 interface Message {
   id: string;
   role: 'user' | 'assistant';
@@ -33,6 +91,8 @@ interface Message {
   partial?: boolean;
   resultId?: string;
   nextSteps?: string[];
+  fields?: CustomField[];
+  specialty?: string;
 }
 
 
@@ -485,7 +545,171 @@ function EmptyLeftPanel() {
   );
 }
 
-function LeftPanel({ result, isLoading }: { result: ResultPanel | null; isLoading: boolean }) {
+function OrchestratorControlPanel({
+  onSelectSuggestion,
+}: {
+  onSelectSuggestion: (agentId: string, specialty: string) => void;
+}) {
+  const agents = [
+    {
+      id: 'paola',
+      nome: 'PAOLA',
+      funcao: 'Gestora de Tráfego Pago',
+      avatarSrc: '/images/Avatar Agentes IA/Avatar_Paola.png',
+      cor: '#FACC15',
+      status: 'Pronta',
+      atividades: [
+        { title: 'Simulador de ROAS', desc: 'Simular retorno sobre investimento' },
+        { title: 'Analista de Tráfego', desc: 'Análise de métricas de anúncios' },
+      ],
+    },
+    {
+      id: 'lais',
+      nome: 'LAÍS',
+      funcao: 'Criativos & Copies',
+      avatarSrc: '/images/Avatar Agentes IA/Avatar_Lais.png',
+      cor: '#FB923C',
+      status: 'Pronta',
+      atividades: [
+        { title: 'Gerador de Copies de Conversão', desc: 'Gerar copies persuasivas' },
+        { title: 'Gerador de Criativos', desc: 'Ideias de criativos e imagens' },
+      ],
+    },
+    {
+      id: 'heitor',
+      nome: 'HEITOR',
+      funcao: 'Orquestrador de Funis',
+      avatarSrc: '/images/Avatar Agentes IA/Avatar_Heitor.png',
+      cor: '#60A5FA',
+      status: 'Pronto',
+      atividades: [
+        { title: 'Diagnóstico de Funil', desc: 'Mapear gargalos de conversão' },
+        { title: 'Preditor de Funil', desc: 'Simular conversão em múltiplos estágios' },
+      ],
+    },
+    {
+      id: 'igor',
+      nome: 'IGOR',
+      funcao: 'Dados, SEO & GEO',
+      avatarSrc: '/images/Avatar Agentes IA/Avatar_Igor.png',
+      cor: '#A78BFA',
+      status: 'Pronto',
+      atividades: [
+        { title: 'SEO & GEO', desc: 'Otimizar site para buscas tradicionais e por IA' },
+        { title: 'Diagnóstico de Landing Page', desc: 'Auditar taxa de conversão da LP' },
+      ],
+    },
+  ];
+
+  return (
+    <div className="flex-1 flex flex-col p-6 overflow-y-auto space-y-6 bg-slate-50/50">
+      {/* Top Banner Status */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-amber-500/10 flex items-center justify-center border border-amber-500/20 text-amber-500">
+              <Sparkles className="w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="text-[14px] font-bold text-slate-800 leading-tight">Orquestração Central</h3>
+              <p className="text-[11px] text-slate-400 font-medium">Ulisses Chief of Staff</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-100">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider">Ativo</span>
+          </div>
+        </div>
+
+        {/* Mini stats row */}
+        <div className="grid grid-cols-3 gap-2.5 pt-1 border-t border-slate-100">
+          <div className="bg-slate-50/50 p-2.5 rounded-xl border border-slate-100/50 text-center">
+            <p className="text-[18px] font-black text-slate-700 leading-tight">4</p>
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">Agentes Ativos</p>
+          </div>
+          <div className="bg-slate-50/50 p-2.5 rounded-xl border border-slate-100/50 text-center">
+            <p className="text-[18px] font-black text-slate-700 leading-tight">11</p>
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">Operações</p>
+          </div>
+          <div className="bg-slate-50/50 p-2.5 rounded-xl border border-slate-100/50 text-center">
+            <p className="text-[18px] font-black text-slate-700 leading-tight">100%</p>
+            <p className="text-[9px] font-bold text-slate-400 uppercase tracking-wide mt-0.5">SLA Operacional</p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Agents workflow pipeline */}
+      <div className="space-y-4">
+        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Selecione uma Atividade para Delegar</p>
+        <div className="space-y-3.5">
+          {agents.map((ag, agIdx) => (
+            <motion.div
+              key={ag.id}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: agIdx * 0.1 }}
+              className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+            >
+              {/* Left accent color bar */}
+              <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: ag.cor }} />
+
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-slate-100 border border-slate-200/60 shadow-sm relative">
+                    <Image src={ag.avatarSrc} alt={ag.nome} width={32} height={32} className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-1.5">
+                      <h4 className="text-[13px] font-extrabold text-slate-800 leading-none">{ag.nome}</h4>
+                      <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-bold border border-slate-200/50 leading-none">{ag.status}</span>
+                    </div>
+                    <p className="text-[10px] text-slate-400 font-medium mt-1">{ag.funcao}</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Suggestions chips grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-4">
+                {ag.atividades.map((act, i) => (
+                  <button
+                    key={i}
+                    onClick={() => onSelectSuggestion(ag.id, act.title)}
+                    className="flex flex-col items-start text-left p-2.5 rounded-xl border border-slate-100 hover:border-slate-200 bg-slate-50/30 hover:bg-slate-50 transition-all group/btn"
+                  >
+                    <div className="flex items-center justify-between w-full">
+                      <span className="text-[11px] font-bold text-slate-700 leading-tight group-hover/btn:text-[#FF6A00] transition-colors">{act.title}</span>
+                      <ArrowRight className="w-3/5 h-3 text-slate-300 group-hover/btn:translate-x-0.5 group-hover/btn:text-[#FF6A00] transition-all" />
+                    </div>
+                    <span className="text-[9px] text-slate-400 font-medium leading-normal mt-0.5 line-clamp-1">{act.desc}</span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LeftPanel({
+  result,
+  isLoading,
+  activeAgent,
+  onSelectSuggestion,
+}: {
+  result: ResultPanel | null;
+  isLoading: boolean;
+  activeAgent?: TeamAgent;
+  onSelectSuggestion: (agentId: string, specialty: string) => void;
+}) {
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [activeTab, setActiveTab] = useState<PanelTab>('resumir');
@@ -520,7 +744,11 @@ function LeftPanel({ result, isLoading }: { result: ResultPanel | null; isLoadin
           </motion.div>
         ) : !result ? (
           <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col overflow-y-auto">
-            <EmptyLeftPanel />
+            {activeAgent?.id === 'ulisses' ? (
+              <OrchestratorControlPanel onSelectSuggestion={onSelectSuggestion} />
+            ) : (
+              <EmptyLeftPanel />
+            )}
           </motion.div>
         ) : (
           <motion.div key={result.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="flex-1 flex flex-col overflow-y-auto">
@@ -572,31 +800,73 @@ function LeftPanel({ result, isLoading }: { result: ResultPanel | null; isLoadin
               </AnimatePresence>
             </div>
 
-            {/* Table */}
-            <div className="border-b border-[#F3F4F6]">
-              <div className="overflow-x-auto">
-                <table className="w-full text-[13px]">
-                  <thead>
-                    <tr className="bg-[#F9FAFB]">
-                      {result.tableHeaders.map(h => (
-                        <th key={h} className="text-left px-4 py-2.5 text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide border-b border-[#E5E7EB]">{h}</th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRows.map((row, i) => (
-                      <tr key={i} className={`border-b border-[#F3F4F6] hover:bg-[#FAFAFA] transition-colors ${row.highlight ? 'bg-[#FFFBF7]' : ''}`}>
-                        {row.cells.map((cell, j) => (
-                          <td key={j} className={`px-4 py-2.5 ${j === 0 ? 'text-blue-600 font-medium' : 'text-[#374151]'} ${row.highlight && j === 0 ? 'text-[#FF6A00] font-semibold' : ''}`}>
-                            {cell}
-                          </td>
+            {/* Table / Dashboard view */}
+            {viewMode === 'table' ? (
+              <div className="border-b border-[#F3F4F6]">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-[13px]">
+                    <thead>
+                      <tr className="bg-[#F9FAFB]">
+                        {result.tableHeaders.map(h => (
+                          <th key={h} className="text-left px-4 py-2.5 text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide border-b border-[#E5E7EB]">{h}</th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {filteredRows.map((row, i) => (
+                        <motion.tr
+                          key={i}
+                          initial={{ opacity: 0, y: 5 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: i * 0.03 }}
+                          className={`border-b border-[#F3F4F6] hover:bg-[#FAFAFA] transition-colors ${row.highlight ? 'bg-[#FFFBF7]' : ''}`}
+                        >
+                          {row.cells.map((cell, j) => (
+                            <td key={j} className={`px-4 py-2.5 ${j === 0 ? 'text-blue-600 font-medium' : 'text-[#374151]'} ${row.highlight && j === 0 ? 'text-[#FF6A00] font-semibold' : ''}`}>
+                              {cell}
+                            </td>
+                          ))}
+                        </motion.tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
+            ) : (
+              <div className="border-b border-[#F3F4F6] p-5 bg-slate-50/30">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {filteredRows.map((row, i) => (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, scale: 0.94, y: 8 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      transition={{ delay: i * 0.05, duration: 0.25 }}
+                      className={`p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all relative overflow-hidden group ${row.highlight ? 'ring-1 ring-[#FF6A00]/30' : ''}`}
+                    >
+                      {row.highlight && (
+                        <div className="absolute top-0 right-0 bg-[#FF6A00] text-white text-[9px] font-black px-2.5 py-0.5 rounded-bl-lg uppercase tracking-wide">
+                          Melhor
+                        </div>
+                      )}
+                      <h4 className="text-[12px] font-extrabold text-slate-800 line-clamp-1 mb-3" style={{ maxWidth: '85%' }}>
+                        {row.cells[0]}
+                      </h4>
+                      <div className="grid grid-cols-2 gap-3">
+                        {row.cells.slice(1).map((cell, j) => {
+                          const header = result.tableHeaders[j + 1] || 'Métrica';
+                          return (
+                            <div key={j} className="flex flex-col gap-0.5">
+                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">{header}</span>
+                              <span className="text-[13px] font-black text-slate-700">{cell}</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Analysis section */}
             <div className="flex-1">
@@ -693,6 +963,8 @@ function ChatMessage({
   userPhoto,
   userName,
   onNextStep,
+  activeAgent,
+  onFormSubmit,
 }: {
   msg: Message;
   isStreaming: boolean;
@@ -700,6 +972,8 @@ function ChatMessage({
   userPhoto?: string | null;
   userName?: string;
   onNextStep?: (step: string) => void;
+  activeAgent?: TeamAgent;
+  onFormSubmit?: (specialty: string, data: Record<string, string>, fields: CustomField[]) => void;
 }) {
   const isUser = msg.role === 'user';
   return (
@@ -721,10 +995,13 @@ function ChatMessage({
           )}
         </div>
       ) : (
-        <div className="w-7 h-7 shrink-0 rounded-full overflow-hidden flex items-center justify-center bg-blue-500 shadow-sm">
+        <div 
+          className="w-7 h-7 shrink-0 rounded-full overflow-hidden flex items-center justify-center shadow-sm"
+          style={{ backgroundColor: activeAgent?.cor || '#3b82f6' }}
+        >
           <Image
-            src="/images/Avatar_Lucca_Novo.jpeg"
-            alt="Lucca"
+            src={activeAgent?.avatarSrc || "/images/Avatar_Lucca_Novo.jpeg"}
+            alt={activeAgent?.nome || "Lucca"}
             width={28}
             height={28}
             className="w-full h-full object-cover"
@@ -749,7 +1026,7 @@ function ChatMessage({
 
         {/* Bubble */}
         {isUser ? (
-          <div className="bg-white border border-[#E5E7EB] rounded-2xl rounded-tr-sm px-4 py-3 text-[13px] text-[#111827] shadow-sm leading-relaxed">
+          <div className="bg-white border border-[#E5E7EB] rounded-2xl rounded-tr-sm px-4 py-3 text-[13px] text-[#111827] shadow-sm leading-relaxed whitespace-pre-wrap">
             {msg.content}
           </div>
         ) : (
@@ -758,6 +1035,42 @@ function ChatMessage({
               ? <StreamText text={msg.content} onDone={onStreamDone} />
               : <span className="whitespace-pre-wrap">{msg.content}</span>
             }
+          </div>
+        )}
+
+        {/* Form fields rendering if they exist */}
+        {!isUser && msg.fields && msg.fields.length > 0 && (
+          <div className="mt-3 w-full bg-white border border-slate-200 rounded-2xl p-4 shadow-sm space-y-3">
+            <p className="text-[12px] font-black text-slate-700 uppercase tracking-wider mb-2">Dados da Operação</p>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.currentTarget);
+              const data: Record<string, string> = {};
+              msg.fields!.forEach(f => {
+                data[f.name] = formData.get(f.name) as string;
+              });
+              onFormSubmit?.(msg.specialty || '', data, msg.fields!);
+            }} className="space-y-3">
+              {msg.fields.map(f => (
+                <div key={f.name} className="flex flex-col gap-1">
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{f.label}</label>
+                  <input
+                    type={f.type === 'number' ? 'text' : f.type}
+                    placeholder={f.placeholder}
+                    required
+                    className="w-full px-3 py-2 rounded-xl border border-slate-200 text-[13px] bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#FF6A00]/15 outline-none transition-all"
+                    name={f.name}
+                  />
+                </div>
+              ))}
+              <button
+                type="submit"
+                className="w-full py-2.5 rounded-xl text-[12px] font-black text-white hover:brightness-110 active:scale-95 transition-all shadow-[0_2px_6px_rgba(255,106,0,0.2)] cursor-pointer"
+                style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)' }}
+              >
+                Executar Operação
+              </button>
+            </form>
           </div>
         )}
 
@@ -790,7 +1103,7 @@ function ChatMessage({
 }
 
 
-function AnalyzingIndicator() {
+function AnalyzingIndicator({ activeAgent }: { activeAgent?: TeamAgent }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 8, x: -8 }}
@@ -805,10 +1118,13 @@ function AnalyzingIndicator() {
           animate={{ scale: [1, 1.45, 1], opacity: [0.6, 0, 0.6] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
         />
-        <div className="w-7 h-7 rounded-full overflow-hidden border border-blue-300 shadow-sm">
+        <div 
+          className="w-7 h-7 rounded-full overflow-hidden border shadow-sm"
+          style={{ borderColor: activeAgent?.cor || '#93c5fd' }}
+        >
           <Image
-            src="/images/Avatar_Lucca_Novo.jpeg"
-            alt="Lucca"
+            src={activeAgent?.avatarSrc || "/images/Avatar_Lucca_Novo.jpeg"}
+            alt={activeAgent?.nome || "Lucca"}
             width={28}
             height={28}
             className="w-full h-full object-cover"
@@ -1084,10 +1400,58 @@ export default function HubAssistentePage() {
     return { connectedSources: connected, disconnectedSources: disconnected };
   }, [profile?.connections]);
 
-  const [messages, setMessages] = useState<Message[]>([
-    {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const agentId = searchParams.get('agent');
+  const specialtyTitle = searchParams.get('specialty');
+
+  const activeAgent = useMemo(() => {
+    return getTeamAgentById(agentId || 'ulisses');
+  }, [agentId]);
+
+  const initialMessage = useMemo(() => {
+    if (activeAgent) {
+      const specFields = specialtyTitle ? SPECIALTY_FIELDS[specialtyTitle] : undefined;
+      
+      let initialContent = specialtyTitle
+        ? `Olá! Sou o **${activeAgent.nome}**, seu especialista em ${activeAgent.funcao}.\n\nPara iniciar a operação **${specialtyTitle}**, preciso que você preencha os seguintes dados:`
+        : `Olá! Sou o **${activeAgent.nome}**, seu especialista em ${activeAgent.funcao}.\n\n"${activeAgent.frase}"\n\nComo posso ajudar você hoje?`;
+
+      if (activeAgent.id === 'ulisses' && !specialtyTitle) {
+        initialContent = `Olá! Sou o **Ulisses**, seu Chief of Staff Virtual da NeuroAds.
+
+Como orquestrador principal da operação, coordeno nosso time de agentes especialistas para maximizar seus resultados. Aqui estão algumas atividades-chave que posso direcionar e acompanhar:
+
+📡 **PAOLA (Tráfego)**: Otimizar orçamento de mídia ou Simular seu ROAS.
+✍️ **LAÍS (Conteúdo)**: Criar copies de alta conversão ou Roteiros de criativos.
+⚙️ **HEITOR (Processos)**: Diagnóstico de funil de vendas ou Previsão de ROI.
+🔭 **IGOR (Dados & SEO)**: Análise de concorrentes ou Auditoria de SEO/GEO.
+
+Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`;
+      }
+
+      const nextSteps = activeAgent.id === 'ulisses' && !specialtyTitle
+        ? [
+            'Simular ROAS de Campanha (com Paola)',
+            'Gerar Copies de Alta Conversão (com Laís)',
+            'Fazer Diagnóstico de Funil de Vendas (com Heitor)',
+            'Análise de SEO & GEO do meu Site (com Igor)',
+          ]
+        : activeAgent.habilidades.map(h => `Executar: ${h}`);
+
+      return {
+        id: 'init',
+        role: 'assistant' as const,
+        content: initialContent,
+        verified: true,
+        nextSteps,
+        fields: specFields,
+        specialty: specialtyTitle || undefined,
+      };
+    }
+    return {
       id: 'init',
-      role: 'assistant',
+      role: 'assistant' as const,
       content: 'Olá! Sou o Lucca, seu consultor de marketing com IA.\n\nPosso analisar campanhas, criativos, métricas e gerar insights em tempo real. Como posso ajudar?',
       verified: true,
       nextSteps: [
@@ -1096,8 +1460,15 @@ export default function HubAssistentePage() {
         'Identificar campanhas abaixo da meta de CPA',
         'Visão geral do investimento por canal',
       ],
-    },
-  ]);
+    };
+  }, [activeAgent, specialtyTitle]);
+
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    setMessages([initialMessage]);
+  }, [initialMessage]);
+
   const [chatState, setChatState] = useState<ChatState>('idle');
   const [currentResult, setCurrentResult] = useState<ResultPanel | null>(null);
   const [leftLoading, setLeftLoading] = useState(false);
@@ -1142,6 +1513,7 @@ export default function HubAssistentePage() {
         connectedSources,
         disconnectedSources,
         activeAgents: ['Agente Performance', 'Agente Criativos', 'Agente Técnico'],
+        agentId: agentId || 'ulisses',
       };
 
       // Call real AI
@@ -1206,14 +1578,23 @@ export default function HubAssistentePage() {
       }]);
       setChatState('idle');
     }
-  }, [messages, userName, profile, persistChat]);
+  }, [messages, userName, profile, persistChat, agentId, connectedSources, disconnectedSources, user]);
+
+  const handleFormSubmit = useCallback((specialty: string, data: Record<string, string>, fields: CustomField[]) => {
+    const lines = [
+      `Executar operação: **${specialty}**`,
+      `Parâmetros enviados:`,
+      ...fields.map(f => `• **${f.label}**: ${data[f.name] || 'N/A'}`)
+    ];
+    handleSend(lines.join('\n'));
+  }, [handleSend]);
 
   const handleStreamDone = useCallback(() => {
     setChatState('idle');
     setStreamingId(null);
   }, []);
 
-  const showSuggestions = messages.length === 1 && chatState === 'idle';
+
 
 
   return (
@@ -1225,7 +1606,14 @@ export default function HubAssistentePage() {
     >
       {/* ── LEFT PANEL ── */}
       <div className="w-[48%] min-w-0 flex flex-col border-r border-[#E0E0E3] overflow-hidden">
-        <LeftPanel result={currentResult} isLoading={leftLoading} />
+        <LeftPanel
+          result={currentResult}
+          isLoading={leftLoading}
+          activeAgent={activeAgent}
+          onSelectSuggestion={(agId, specTitle) => {
+            router.push(`/hub/assistente-ia?agent=${agId}&specialty=${encodeURIComponent(specTitle)}`);
+          }}
+        />
       </div>
 
       {/* ── RIGHT PANEL ── */}
@@ -1263,31 +1651,34 @@ export default function HubAssistentePage() {
                 onStreamDone={handleStreamDone}
                 userPhoto={userPhoto}
                 userName={userName}
-                onNextStep={(step) => chatState === 'idle' && handleSend(step)}
+                onNextStep={(step) => {
+                  if (chatState !== 'idle') return;
+                  if (step.includes('(com Paola)')) {
+                    router.push('/hub/assistente-ia?agent=paola&specialty=Simulador de ROAS');
+                    return;
+                  }
+                  if (step.includes('(com Laís)')) {
+                    router.push('/hub/assistente-ia?agent=lais&specialty=Gerador de Copies de Conversão');
+                    return;
+                  }
+                  if (step.includes('(com Heitor)')) {
+                    router.push('/hub/assistente-ia?agent=heitor&specialty=Diagnóstico de Funil');
+                    return;
+                  }
+                  if (step.includes('(com Igor)')) {
+                    router.push('/hub/assistente-ia?agent=igor&specialty=SEO & GEO');
+                    return;
+                  }
+                  handleSend(step);
+                }}
+                activeAgent={activeAgent}
+                onFormSubmit={handleFormSubmit}
               />
             ))}
-            {chatState === 'thinking' && <AnalyzingIndicator key="analyzing" />}
+            {chatState === 'thinking' && <AnalyzingIndicator key="analyzing" activeAgent={activeAgent} />}
           </AnimatePresence>
 
-          {/* Suggestion chips — initial state */}
-          <AnimatePresence>
-            {showSuggestions && (
-              <motion.div initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ delay: 0.4 }} className="pt-2">
-                <p className="text-[11px] text-[#9CA3AF] uppercase tracking-wider mb-2 font-medium">Sugestões</p>
-                <div className="flex flex-col gap-1.5">
-                  {SUGGESTIONS.map((s, i) => (
-                    <motion.button key={s.label} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.5 + i * 0.07 }}
-                      onClick={() => handleSend(s.prompt)}
-                      className="flex items-center gap-2.5 px-3 py-2.5 bg-white border border-[#E5E7EB] rounded-xl text-[13px] text-[#374151] hover:border-[#D1D5DB] hover:shadow-sm transition-all text-left group">
-                      <span className="text-[#FF6A00]">{s.icon}</span>
-                      <span className="flex-1">{s.label}</span>
-                      <ChevronRight className="w-3.5 h-3.5 text-[#9CA3AF] group-hover:text-[#374151] transition-colors" />
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+
 
           <div ref={endRef} />
         </div>
