@@ -269,12 +269,7 @@ export default function StrategicContentPageShell({ data }: { data: StrategicCon
                 )}
               </AnimatePresence>
             </div>
-            <Link href="/#agentes" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
-              Agentes IA
-            </Link>
-            <Link href="/#campanhas" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
-              Campanhas
-            </Link>
+
             <Link href="/#algoritmo" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
               Além do Algoritmo
             </Link>

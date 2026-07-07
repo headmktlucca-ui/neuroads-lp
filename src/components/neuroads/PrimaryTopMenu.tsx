@@ -30,21 +30,6 @@ function isCategorySubmenuItem(item: HeaderSubmenuItem): item is HeaderMenuCateg
 
 export const PRIMARY_HEADER_MENU_GROUPS: HeaderMenuGroup[] = [
   {
-    label: 'Agentes IA',
-    href: '/agentes-ia',
-    submenu: [
-      { label: 'Visão Geral dos Agentes', href: '/agentes-ia/visao-geral-dos-agentes' },
-      { label: 'Agentes de Aquisição', href: '/agentes-ia/agentes-de-aquisicao' },
-      { label: 'Agentes de Conversão', href: '/agentes-ia/agentes-de-conversao' },
-      { label: 'Agentes de Inteligência de Dados', href: '/agentes-ia/agentes-de-inteligencia-de-dados' },
-    ],
-  },
-  {
-    label: 'Além do Algoritmo',
-    href: '/conteudos/alem-do-algoritmo',
-    submenu: [],
-  },
-  {
     label: 'A NeuroAds',
     href: '/a-neuroads',
     submenu: [

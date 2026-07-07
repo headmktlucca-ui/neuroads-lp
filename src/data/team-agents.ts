@@ -107,6 +107,9 @@ ROAS, CPA/CPL, taxa de desperdício de verba (% do spend sem conversão), tempo 
       'Análise Viral',
       'Agente Editorial',
       'DNA da Marca',
+      'Gerador de Carrossel',
+      'Roteirista de Vídeo',
+      'Redator de Artigos',
     ],
     comingSoonSpecialties: [],
     prompt: `# IDENTIDADE

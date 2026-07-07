@@ -613,87 +613,33 @@ export default function TempLandingPage() {
           </p>
         </motion.div>
 
-        {/* Pricing Grid */}
+        {/* Pricing — Single Plan */}
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          variants={{
-            hidden: {},
-            visible: {
-              transition: {
-                staggerChildren: 0.15
-              }
-            }
-          }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch pt-4"
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}
+          className="flex justify-center pt-4"
         >
-          
-          {/* Plan 1: Tração */}
+          {/* Single Plan Card */}
           <motion.div
             variants={cardVariants}
-            className="bg-[#EDF1F5] shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between relative transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
-          >
-            <div>
-              <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">Tração</div>
-              
-              {/* Pricing row */}
-              <div className="flex items-baseline gap-1 mt-4">
-                <span className="font-head font-extrabold text-3xl text-slate-900">R$ 2.970</span>
-                <span className="text-[10px] font-bold text-slate-500">/mês</span>
-              </div>
-              <p className="text-slate-500 text-[11px] leading-relaxed mt-2 pb-6 border-b border-slate-300/30">
-                Para empresas que precisam de leads previsíveis agora.
-              </p>
-
-              {/* Feature List */}
-              <ul className="space-y-3.5 mt-6 pb-6">
-                {[
-                  'Gestão de campanhas patrocinadas',
-                  'Criativos de alta conversão',
-                  'Dashboard de resultados',
-                  'Reuniões mensais de estratégia'
-                ].map((feature, idx) => (
-                  <li key={idx} className="flex items-center gap-2.5 text-xs text-slate-600 font-medium">
-                    <div className="w-4 h-4 rounded-full bg-[#EDF1F5] shadow-[inset_1px_1px_3px_#c8d0e7,inset_-1px_-1px_3px_#ffffff] border border-white/20 flex items-center justify-center">
-                      <svg className="w-2.5 h-2.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Action */}
-            <Link
-              href="/cadastro"
-              className="inline-flex items-center justify-center font-bold text-xs px-6 py-4 rounded-2xl bg-[#EDF1F5] text-slate-700 shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff] border border-white/60 hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:bg-[#e4ecf5] active:scale-[0.98] transition-all duration-200 mt-4 w-full"
-            >
-              Começar agora
-            </Link>
-          </motion.div>
-
-          {/* Plan 2: Ecossistema IA (Recommended) */}
-          <motion.div
-            variants={cardVariants}
-            className="bg-[#EDF1F5] border-2 border-orange-500/60 shadow-[12px_12px_24px_#c8d0e7,-12px_-12px_24px_#ffffff,0_0_20px_rgba(255,85,0,0.1)] rounded-[28px] p-8 flex flex-col justify-between relative md:scale-[1.03] z-10 transition-all duration-300"
+            className="w-full max-w-md bg-[#EDF1F5] border-2 border-orange-500/60 shadow-[12px_12px_24px_#c8d0e7,-12px_-12px_24px_#ffffff,0_0_20px_rgba(255,85,0,0.1)] rounded-[28px] p-8 flex flex-col justify-between relative transition-all duration-300"
           >
             {/* Recommended Tag */}
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
               <span className="inline-flex items-center px-4 py-1 rounded-full bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white text-[9px] font-extrabold tracking-widest uppercase shadow-[0_4px_10px_rgba(255,85,0,0.3)]">
-                Recomendado
+                Acesso completo
               </span>
             </div>
 
             <div>
-              <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase mt-2">Ecossistema IA</div>
-              
+              <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase mt-2">Plano Único</div>
+
               {/* Pricing row */}
               <div className="flex items-baseline gap-1 mt-4">
-                <span className="font-head font-extrabold text-3xl text-slate-900">R$ 6.970</span>
-                <span className="text-[10px] font-bold text-slate-500">/mês</span>
+                <span className="font-head font-extrabold text-4xl text-slate-900">R$ 79,90</span>
+                <span className="text-[10px] font-bold text-slate-500">/mensal</span>
               </div>
               <p className="text-slate-500 text-[11px] leading-relaxed mt-2 pb-6 border-b border-slate-300/30">
                 A operação completa: tráfego, automação e agentes IA vendendo 24/7.
@@ -725,158 +671,13 @@ export default function TempLandingPage() {
               href="/cadastro"
               className="inline-flex items-center justify-center font-bold text-xs px-6 py-4 rounded-2xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[3px_3px_8px_rgba(255,85,0,0.2),-3px_-3px_8px_#ffffff] hover:shadow-[4px_4px_12px_rgba(255,85,0,0.35),-4px_-4px_12px_#ffffff] hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 border border-orange-400/20 mt-4 w-full"
             >
-              Ativar ecossistema <span className="ml-1 text-xs">→</span>
-            </Link>
-          </motion.div>
-
-          {/* Plan 3: Enterprise */}
-          <motion.div
-            variants={cardVariants}
-            className="bg-[#EDF1F5] shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
-          >
-            <div>
-              <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase">Enterprise</div>
-              
-              {/* Pricing row */}
-              <div className="flex items-baseline gap-1 mt-4">
-                <span className="font-head font-extrabold text-2xl text-slate-900">Sob consulta</span>
-              </div>
-              <p className="text-slate-500 text-[11px] leading-relaxed mt-3.5 pb-6 border-b border-slate-300/30">
-                Para operações complexas e times comerciais em escala.
-              </p>
-
-              {/* Feature List */}
-              <ul className="space-y-3.5 mt-6 pb-6">
-                {[
-                  'Agentes IA sob medida',
-                  'Integrações dedicadas',
-                  'SLA e suporte prioritário',
-                  'Squad exclusivo NeuroAds'
-                ].map((feature, idx) => (
-                  <li key={idx} className="flex items-center gap-2.5 text-xs text-slate-600 font-medium">
-                    <div className="w-4 h-4 rounded-full bg-[#EDF1F5] shadow-[inset_1px_1px_3px_#c8d0e7,inset_-1px_-1px_3px_#ffffff] border border-white/20 flex items-center justify-center">
-                      <svg className="w-2.5 h-2.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Action */}
-            <Link
-              href="/cadastro"
-              className="inline-flex items-center justify-center font-bold text-xs px-6 py-4 rounded-2xl bg-[#EDF1F5] text-slate-700 shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff] border border-white/60 hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:bg-[#e4ecf5] active:scale-[0.98] transition-all duration-200 mt-4 w-full"
-            >
-              Falar com especialista
+              Começar agora <span className="ml-1 text-xs">→</span>
             </Link>
           </motion.div>
 
         </motion.div>
 
-        {/* Testimonial & Grid Metrics Section */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={{
-            hidden: {},
-            visible: {
-              transition: {
-                staggerChildren: 0.15
-              }
-            }
-          }}
-          className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-20 items-stretch"
-        >
-          
-          {/* Testimonial Card */}
-          <motion.div
-            variants={cardVariants}
-            className="lg:col-span-7 bg-[#EDF1F5] shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between gap-8"
-          >
-            <div>
-              {/* Stars */}
-              <div className="flex gap-1 mb-6">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <svg key={star} className="w-4.5 h-4.5 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-              </div>
-              
-              {/* Quote */}
-              <blockquote className="text-slate-800 font-head font-medium text-base md:text-lg leading-relaxed italic">
-                &ldquo;Em 90 dias, o ecossistema da NeuroAds triplicou nossas reuniões qualificadas. Os agentes IA fazem o follow-up que meu time nunca conseguia sustentar.&rdquo;
-              </blockquote>
-            </div>
 
-            {/* Author Profile */}
-            <div className="flex items-center gap-3 border-t border-slate-300/30 pt-6">
-              <div className="w-10 h-10 rounded-full bg-[#EDF1F5] shadow-[2px_2px_5px_#c8d0e7,-2px_-2px_5px_#ffffff] border border-white/60 flex items-center justify-center font-head font-bold text-xs text-[#FF5500]">
-                RM
-              </div>
-              <div>
-                <cite className="font-head font-bold text-xs text-slate-800 not-italic leading-none block">Ricardo M.</cite>
-                <span className="text-[10px] text-slate-500 mt-1 block">Diretor Comercial · Shift Mobilidade</span>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Right Grid Stats (4 elements) */}
-          <motion.div
-            variants={{
-              hidden: {},
-              visible: {
-                transition: {
-                  staggerChildren: 0.08
-                }
-              }
-            }}
-            className="lg:col-span-5 grid grid-cols-2 gap-4"
-          >
-            
-            {/* Stat 1 */}
-            <motion.div
-              variants={cardVariants}
-              className="bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-2xl p-4 flex flex-col justify-between"
-            >
-              <div className="text-[#FF5500] font-head font-extrabold text-2xl">+312%</div>
-              <div className="text-[9px] font-bold text-slate-500 uppercase mt-2 tracking-wider">ROI médio das campanhas gerenciadas</div>
-            </motion.div>
-
-            {/* Stat 2 */}
-            <motion.div
-              variants={cardVariants}
-              className="bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-2xl p-4 flex flex-col justify-between"
-            >
-              <div className="text-slate-800 font-head font-extrabold text-2xl">90 dias</div>
-              <div className="text-[9px] font-bold text-slate-500 uppercase mt-2 tracking-wider">para o ecossistema completo operar</div>
-            </motion.div>
-
-            {/* Stat 3 */}
-            <motion.div
-              variants={cardVariants}
-              className="bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-2xl p-4 flex flex-col justify-between"
-            >
-              <div className="text-slate-800 font-head font-extrabold text-2xl">24/7</div>
-              <div className="text-[9px] font-bold text-slate-500 uppercase mt-2 tracking-wider">de operação comercial ininterrupta</div>
-            </motion.div>
-
-            {/* Stat 4 */}
-            <motion.div
-              variants={cardVariants}
-              className="bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-2xl p-4 flex flex-col justify-between"
-            >
-              <div className="text-[#FF5500] font-head font-extrabold text-2xl">R$ 0</div>
-              <div className="text-[9px] font-bold text-slate-500 uppercase mt-2 tracking-wider">de multa — sem fidelidade contratual</div>
-            </motion.div>
-
-          </motion.div>
-
-        </motion.div>
 
       </section>
 
