@@ -682,22 +682,37 @@ function DemoAndAccessSection() {
   };
 
   return (
-    <section id="demonstracao" className="py-24 px-6 max-w-6xl mx-auto space-y-16">
+    <section id="demonstracao" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12">
       {/* Header section */}
-      <div className="text-center space-y-4 max-w-2xl mx-auto">
-        <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">DEMONSTRAÇÃO & ACESSO</span>
-        <h2 className="font-head text-3xl sm:text-4xl font-black tracking-tight text-black leading-tight">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8 }}
+        className="text-center pb-16"
+      >
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase mb-4">
+          <span className="w-2 h-2 rounded-full bg-orange-500"></span>
+          DEMONSTRAÇÃO & ACESSO
+        </div>
+        <h2 className="font-head font-extrabold text-3xl md:text-4xl text-slate-900 leading-tight tracking-tight max-w-2xl mx-auto">
           Conheça a NeuroAds em ação e <span className="text-[#FF5500]">solicite seu acesso.</span>
         </h2>
-        <p className="text-slate-500 text-xs md:text-sm leading-relaxed">
+        <p className="text-slate-500 text-xs md:text-sm mt-4 max-w-xl mx-auto">
           Assista ao vídeo demonstrativo de 2 minutos para ver os agentes trabalhando ao vivo, e preencha o formulário para garantir sua vaga exclusiva.
         </p>
-      </div>
+      </motion.div>
 
       {/* Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         {/* Left Column: Video Mockup */}
-        <div className="lg:col-span-7">
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+          className="lg:col-span-7"
+        >
           <div className="relative aspect-video rounded-[32px] overflow-hidden border border-[#EAEAEA] bg-slate-950 shadow-sm group cursor-pointer">
             {/* Mockup Dashboard Image background */}
             <Image
@@ -719,10 +734,16 @@ function DemoAndAccessSection() {
               2:14 MIN
             </span>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Column: Request Form */}
-        <div className="lg:col-span-5">
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.8 }}
+          className="lg:col-span-5"
+        >
           <div className="bg-white border border-[#EAEAEA] rounded-[28px] p-8 flex flex-col justify-between relative shadow-sm">
             <h3 className="font-head font-extrabold text-black text-lg mb-2 text-left">
               Solicite seu acesso
@@ -749,7 +770,7 @@ function DemoAndAccessSection() {
                       placeholder="Seu nome"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-[#EAEAEA] bg-white focus:outline-none focus:ring-2 focus:ring-[#FF5500]/25 focus:border-[#FF5500] text-xs font-bold transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-[#EAEAEA] bg-white focus:outline-none focus:ring-2 focus:ring-[#FF5500]/25 focus:border-[#FF5500] text-xs font-bold transition-all shadow-inner"
                     />
                   </div>
                   <div className="space-y-1 text-left">
@@ -760,7 +781,7 @@ function DemoAndAccessSection() {
                       placeholder="voce@empresa.com"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-[#EAEAEA] bg-white focus:outline-none focus:ring-2 focus:ring-[#FF5500]/25 focus:border-[#FF5500] text-xs font-bold transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-[#EAEAEA] bg-white focus:outline-none focus:ring-2 focus:ring-[#FF5500]/25 focus:border-[#FF5500] text-xs font-bold transition-all shadow-inner"
                     />
                   </div>
                   <div className="space-y-1 text-left">
@@ -771,21 +792,23 @@ function DemoAndAccessSection() {
                       placeholder="Nome da sua empresa"
                       value={company}
                       onChange={(e) => setCompany(e.target.value)}
-                      className="w-full px-4 py-3 rounded-xl border border-[#EAEAEA] bg-white focus:outline-none focus:ring-2 focus:ring-[#FF5500]/25 focus:border-[#FF5500] text-xs font-bold transition-all"
+                      className="w-full px-4 py-3 rounded-xl border border-[#EAEAEA] bg-white focus:outline-none focus:ring-2 focus:ring-[#FF5500]/25 focus:border-[#FF5500] text-xs font-bold transition-all shadow-inner"
                     />
                   </div>
 
                   {/* Slide to Verify human challenge */}
-                  <div className="relative w-full h-12 bg-slate-100 rounded-xl border border-slate-200 flex items-center justify-start px-2 overflow-hidden select-none mt-2 shadow-[inset_1px_1px_3px_rgba(0,0,0,0.05)]">
+                  <div className="relative w-full h-12 bg-[#EDF1F5] rounded-xl border border-slate-200/50 flex items-center justify-start px-1.5 overflow-hidden select-none mt-2 shadow-inner">
+                    <span className="absolute inset-0 flex items-center justify-center text-[10px] font-extrabold text-slate-500 uppercase tracking-widest pointer-events-none">
+                      {slideProgress >= 100 ? 'Humano Confirmado' : 'DESLIZE PARA VERIFICAR'}
+                    </span>
                     <div 
-                      className="h-8 rounded-lg bg-gradient-to-r from-[#FF5500] to-[#FF7A00] flex items-center justify-center text-white text-[10px] font-extrabold shadow-sm transition-all duration-75 select-none"
-                      style={{ width: `${Math.max(20, slideProgress)}%` }}
+                      className="h-8 w-20 rounded-lg bg-gradient-to-r from-[#FF5500] to-[#FF7A00] flex items-center justify-center text-white text-base font-bold shadow-md select-none transition-all duration-75"
+                      style={{ 
+                        transform: `translateX(calc((100% - 92px) * ${slideProgress / 100}))`
+                      }}
                     >
                       {slideProgress >= 100 ? '✓' : '→'}
                     </div>
-                    <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-slate-500 pointer-events-none uppercase tracking-wider">
-                      {slideProgress >= 100 ? 'Humano Confirmado' : 'Deslize para verificar'}
-                    </span>
                     <input
                       type="range"
                       min="0"
@@ -799,17 +822,17 @@ function DemoAndAccessSection() {
                         }
                       }}
                       disabled={isHuman}
-                      className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                      className="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={!isHuman}
-                    className={`w-full py-4 rounded-xl font-bold text-xs text-center transition-all shadow-sm mt-4 ${
+                    className={`w-full py-4 rounded-xl font-bold text-xs text-center transition-all shadow-sm mt-4 select-none ${
                       isHuman 
-                        ? 'bg-black hover:bg-neutral-800 text-white cursor-pointer' 
-                        : 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
+                        ? 'bg-black hover:bg-neutral-800 text-white cursor-pointer active:scale-[0.98]' 
+                        : 'bg-[#EDF1F5] text-slate-400 cursor-not-allowed border border-slate-200/50'
                     }`}
                   >
                     Solicitar Acesso Completo
@@ -826,7 +849,7 @@ function DemoAndAccessSection() {
                     <CheckCircle2 size={32} className="stroke-[1.5]" />
                   </div>
                   <div className="space-y-1">
-                    <h4 className="font-head font-extrabold text-black text-base">Solicitação enviada!</h4>
+                    <h4 className="font-head font-extrabold text-slate-900 text-base">Solicitação enviada!</h4>
                     <p className="text-slate-500 text-[11px] leading-relaxed max-w-[240px] mx-auto">
                       Obrigado, {name.split(' ')[0]}. Nossa equipe entrará em contato em seu e-mail ({email}) para configurar seu onboarding.
                     </p>
@@ -835,7 +858,7 @@ function DemoAndAccessSection() {
               )}
             </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );
