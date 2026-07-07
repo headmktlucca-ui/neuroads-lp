@@ -34,7 +34,7 @@ function AgentProfileCard({ agent }: { agent: any }) {
       className="w-full mt-8 flex flex-col md:flex-row items-center gap-6 md:gap-0 relative pl-0 md:pl-4"
     >
       {/* Left Side: Avatar Image */}
-      <div className="w-[120px] h-[120px] md:w-[150px] md:h-[150px] rounded-3xl overflow-hidden border border-white/60 bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] z-10 shrink-0 relative">
+      <div className="w-[120px] h-[120px] md:w-[150px] md:h-[150px] rounded-3xl overflow-hidden border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] z-10 shrink-0 relative">
         <Image
           src={agent.image}
           alt={agent.title}
@@ -46,7 +46,7 @@ function AgentProfileCard({ agent }: { agent: any }) {
       </div>
 
       {/* Right Side: Overlay Details Card */}
-      <div className="w-full md:w-[75%] md:-ml-8 p-6 md:p-6 rounded-3xl border border-white/80 bg-[#EDF1F5] shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] z-20 flex flex-col space-y-3">
+      <div className="w-full md:w-[75%] md:-ml-8 p-6 md:p-6 rounded-3xl border border-white/80 bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] z-20 flex flex-col space-y-3">
         <div className="space-y-0.5">
           <h4 className="font-head font-extrabold text-xl text-slate-900 tracking-tight leading-none">
             {agent.title}
@@ -68,7 +68,7 @@ function AgentProfileCard({ agent }: { agent: any }) {
             {agent.channels?.map((channel: string, idx: number) => (
               <div
                 key={idx}
-                className="w-7 h-7 rounded-full bg-[#EDF1F5] border border-white/60 shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] flex items-center justify-center text-slate-500 hover:text-[#FF5500] hover:scale-[1.05] transition-all duration-200 cursor-pointer"
+                className="w-7 h-7 rounded-full bg-white border border-white/60 shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] flex items-center justify-center text-slate-500 hover:text-[#FF5500] hover:scale-[1.05] transition-all duration-200 cursor-pointer"
                 title={channel}
               >
                 {channel === 'Slack' && <Cpu size={12} className="stroke-[2.5]" />}
@@ -217,7 +217,7 @@ export default function TempLandingPage() {
       {/* HEADER TEMPLATE 01 */}
       {/* ========================================================================= */}
       <header className="sticky top-4 z-[999] max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-full py-4 px-8 flex items-center justify-between transition-all duration-300">
+        <div className="bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-full py-4 px-8 flex items-center justify-between transition-all duration-300">
           {/* Logo */}
           <Link href="#" className="flex items-center group transition-transform duration-300 hover:scale-[1.01]">
             <Image
@@ -232,91 +232,17 @@ export default function TempLandingPage() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <div 
-              className="relative"
-              onMouseEnter={() => setIsSobreOpen(true)}
-              onMouseLeave={() => setIsSobreOpen(false)}
-            >
-              <span 
-                className="flex items-center gap-1 text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200 py-2 focus:outline-none cursor-pointer select-none"
-              >
-                Sobre
-                <motion.span
-                  animate={{ rotate: isSobreOpen ? 180 : 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <ChevronDown size={14} className="text-slate-400" />
-                </motion.span>
-              </span>
-
-              <AnimatePresence>
-                {isSobreOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.15, ease: "easeOut" }}
-                    className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-56 z-50"
-                  >
-                    <div className="bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-2xl p-2.5 flex flex-col gap-1">
-                      <Link 
-                        href="/a-neuroads/sobre#posicionamento" 
-                        onClick={() => setIsSobreOpen(false)}
-                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
-                      >
-                        Posicionamento
-                      </Link>
-                      <Link 
-                        href="/a-neuroads/sobre#pilares" 
-                        onClick={() => setIsSobreOpen(false)}
-                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
-                      >
-                        Nossos pilares
-                      </Link>
-                      <Link 
-                        href="/a-neuroads/sobre" 
-                        onClick={() => setIsSobreOpen(false)}
-                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
-                      >
-                        Quem somos
-                      </Link>
-                      <Link 
-                        href="/a-neuroads/sobre#imprensa" 
-                        onClick={() => setIsSobreOpen(false)}
-                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
-                      >
-                        Imprensa
-                      </Link>
-                      <Link 
-                        href="/privacidade" 
-                        onClick={() => setIsSobreOpen(false)}
-                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
-                      >
-                        Política de Privacidade
-                      </Link>
-                      <Link 
-                        href="/termos" 
-                        onClick={() => setIsSobreOpen(false)}
-                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
-                      >
-                        Termos e DPA
-                      </Link>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            <Link href="#publico-alvo" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
+              Público-Alvo
+            </Link>
             <Link href="#agentes" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
               Agentes IA
             </Link>
-            <Link href="#campanhas" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
-              Campanhas
+            <Link href="#solucoes" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
+              Soluções
             </Link>
-            <Link href="#algoritmo" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
-              Além do Algoritmo
-            </Link>
-            <Link href="#valores" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
-              Valores
+            <Link href="#demonstracao" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
+              Demonstração
             </Link>
           </nav>
 
@@ -324,7 +250,7 @@ export default function TempLandingPage() {
           <div>
             <Link
               href="/login"
-              className="inline-flex items-center justify-center font-bold text-xs px-6 py-2.5 rounded-full bg-[#EDF1F5] text-slate-700 shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff] border border-white/60 hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:bg-[#e4ecf5] active:scale-[0.98] transition-all duration-200"
+              className="inline-flex items-center justify-center font-bold text-xs px-6 py-2.5 rounded-full bg-white text-slate-700 shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff] border border-white/60 hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:bg-[#e4ecf5] active:scale-[0.98] transition-all duration-200"
             >
               Acessar Hub
             </Link>
@@ -339,7 +265,7 @@ export default function TempLandingPage() {
         {/* Left Side Info */}
         <div className="lg:col-span-7 flex flex-col items-start">
           {/* Category Tag */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#EDF1F5] shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase">
             <span className="w-2.5 h-2.5 rounded-full bg-[#FF5500] shadow-[0_0_8px_rgba(255,85,0,0.5)]"></span>
             MARKETING · VENDAS · AUTOMAÇÃO · AGENTES IA
           </div>
@@ -396,9 +322,24 @@ export default function TempLandingPage() {
       <DataTransformationSection />
 
       {/* ========================================================================= */}
-      {/* RECURSOS INTEGRADOS (USE CASES SECTION) */}
+      {/* DEPOIMENTO (TESTIMONIAL SECTION) */}
       {/* ========================================================================= */}
-      <UseCasesSection />
+      <TestimonialSection />
+
+      {/* ========================================================================= */}
+      {/* PÚBLICO-ALVO (TARGET AUDIENCE SECTION) */}
+      {/* ========================================================================= */}
+      <TargetAudienceSection />
+
+      {/* ========================================================================= */}
+      {/* COMPARAÇÃO AGÊNCIAS VS NEUROADS (COMPARISON SECTION) */}
+      {/* ========================================================================= */}
+      <ComparisonSection />
+
+      {/* ========================================================================= */}
+      {/* CAPACIDADES DOS AGENTES IA (AGENTS GRID SECTION) */}
+      {/* ========================================================================= */}
+      <AgentsGridSection />
 
       {/* ========================================================================= */}
       {/* SOLUTIONS SECTION TEMPLATE 02 */}
@@ -415,7 +356,7 @@ export default function TempLandingPage() {
         >
           <div className="md:col-span-2">
             {/* Category tag */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EDF1F5] shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase mb-4">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase mb-4">
               <span className="w-2 h-2 rounded-full bg-orange-500"></span>
               SOLUÇÕES NEUROADS
             </div>
@@ -450,20 +391,24 @@ export default function TempLandingPage() {
           {/* Card 1: Agentes IA */}
           <motion.div
             variants={cardVariants}
-            className="bg-[#EDF1F5] shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between min-h-[380px] relative transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
+            className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between min-h-[380px] relative transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
           >
             {/* Mais procurado badge */}
             <div className="absolute top-6 right-6">
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-[#EDF1F5] shadow-[inset_1px_1px_3px_#c8d0e7,inset_-1px_-1px_3px_#ffffff] border border-white/20 text-[8px] font-extrabold tracking-wider text-orange-600 uppercase">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full bg-white shadow-[inset_1px_1px_3px_#c8d0e7,inset_-1px_-1px_3px_#ffffff] border border-white/20 text-[8px] font-extrabold tracking-wider text-orange-600 uppercase">
                 Mais procurado
               </span>
             </div>
             
             {/* Icon */}
-            <div className="w-12 h-12 rounded-2xl bg-[#EDF1F5] shadow-[inset_3px_3px_6px_#c8d0e7,inset_-3px_-3px_6px_#ffffff] flex items-center justify-center border border-white/40 mb-6">
-              <svg className="w-6 h-6 text-[#FF5500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-              </svg>
+            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative mb-6">
+              <Image
+                src="/images/tools/agentes-visao-geral-hero-ultrarealista-v2.png"
+                alt="Agentes IA"
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
             </div>
 
             {/* Content */}
@@ -478,7 +423,7 @@ export default function TempLandingPage() {
 
             {/* Bottom metric & Action */}
             <div className="flex items-center justify-between mt-auto">
-              <div className="bg-[#EDF1F5] shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] rounded-xl px-4 py-2 flex items-baseline gap-1 border border-white/30">
+              <div className="bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] rounded-xl px-4 py-2 flex items-baseline gap-1 border border-white/30">
                 <span className="text-[#FF5500] font-head font-extrabold text-sm">3,2x</span>
                 <span className="text-[9px] font-bold text-slate-500 leading-none">mais reuniões<br/>agendadas / mês</span>
               </div>
@@ -493,13 +438,17 @@ export default function TempLandingPage() {
           {/* Card 2: Campanhas Patrocinadas */}
           <motion.div
             variants={cardVariants}
-            className="bg-[#EDF1F5] shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between min-h-[380px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
+            className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between min-h-[380px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
           >
             {/* Icon */}
-            <div className="w-12 h-12 rounded-2xl bg-[#EDF1F5] shadow-[inset_3px_3px_6px_#c8d0e7,inset_-3px_-3px_6px_#ffffff] flex items-center justify-center border border-white/40 mb-6">
-              <svg className="w-6 h-6 text-[#FF5500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-              </svg>
+            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative mb-6">
+              <Image
+                src="/images/tools/gestao-trafego-controle-caixa-hero-ultrarealista-v2.png"
+                alt="Campanhas Patrocinadas"
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
             </div>
 
             {/* Content */}
@@ -514,7 +463,7 @@ export default function TempLandingPage() {
 
             {/* Bottom metric & Action */}
             <div className="flex items-center justify-between mt-auto">
-              <div className="bg-[#EDF1F5] shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] rounded-xl px-4 py-2 flex items-baseline gap-1 border border-white/30">
+              <div className="bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] rounded-xl px-4 py-2 flex items-baseline gap-1 border border-white/30">
                 <span className="text-[#FF5500] font-head font-extrabold text-sm">-41%</span>
                 <span className="text-[9px] font-bold text-slate-500 leading-none">de redução média<br/>no custo por lead</span>
               </div>
@@ -529,14 +478,17 @@ export default function TempLandingPage() {
           {/* Card 3: Automação & CRM */}
           <motion.div
             variants={cardVariants}
-            className="bg-[#EDF1F5] shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between min-h-[380px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
+            className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between min-h-[380px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
           >
             {/* Icon */}
-            <div className="w-12 h-12 rounded-2xl bg-[#EDF1F5] shadow-[inset_3px_3px_6px_#c8d0e7,inset_-3px_-3px_6px_#ffffff] flex items-center justify-center border border-white/40 mb-6">
-              <svg className="w-6 h-6 text-[#FF5500]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" />
-              </svg>
+            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative mb-6">
+              <Image
+                src="/images/tools/servico-funil-conversao-hero-ultrarealista-v2.png"
+                alt="Automação & CRM"
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
             </div>
 
             {/* Content */}
@@ -551,7 +503,7 @@ export default function TempLandingPage() {
 
             {/* Bottom metric & Action */}
             <div className="flex items-center justify-between mt-auto">
-              <div className="bg-[#EDF1F5] shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] rounded-xl px-4 py-2 flex items-baseline gap-1 border border-white/30">
+              <div className="bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] rounded-xl px-4 py-2 flex items-baseline gap-1 border border-white/30">
                 <span className="text-[#FF5500] font-head font-extrabold text-sm">+68%</span>
                 <span className="text-[9px] font-bold text-slate-500 leading-none">de aumento na<br/>taxa de conversão</span>
               </div>
@@ -571,7 +523,7 @@ export default function TempLandingPage() {
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ type: "spring", stiffness: 80, damping: 15, delay: 0.2 }}
-          className="bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] rounded-[24px] p-6 border border-white/50 w-full mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 transition-all"
+          className="bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] rounded-[24px] p-6 border border-white/50 w-full mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 transition-all"
         >
           <p className="text-slate-800 font-head font-bold text-sm text-center sm:text-left">
             Não sabe por onde começar? <span className="text-[#FF5500]">Faça o diagnóstico gratuito da sua operação.</span>
@@ -589,140 +541,38 @@ export default function TempLandingPage() {
 
 
       {/* ========================================================================= */}
-      {/* PRICING & SOCIAL PROOF TEMPLATE 03 */}
+      {/* DEMONSTRAÇÃO & FORMULÁRIO DE ACESSO */}
       {/* ========================================================================= */}
-      <section id="valores" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28">
-        
-        {/* Header section */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="text-center pb-16"
-        >
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EDF1F5] shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase mb-4">
-            <span className="w-2 h-2 rounded-full bg-orange-500"></span>
-            VALORES & RECURSOS
-          </div>
-          <h2 className="font-head font-extrabold text-3xl md:text-4xl text-slate-900 leading-tight tracking-tight max-w-2xl mx-auto">
-            Invista em uma operação que <span className="text-[#FF5500]">se paga sozinha.</span>
-          </h2>
-          <p className="text-slate-500 text-xs md:text-sm mt-4 max-w-xl mx-auto">
-            Planos flexíveis para cada estágio do seu comercial B2B. Sem fidelidade, com resultado.
-          </p>
-        </motion.div>
+      <DemoAndAccessSection />
 
-        {/* Pricing — Single Plan */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.15 } } }}
-          className="flex justify-center pt-4"
-        >
-          {/* Single Plan Card */}
-          <motion.div
-            variants={cardVariants}
-            className="w-full max-w-md bg-[#EDF1F5] border-2 border-orange-500/60 shadow-[12px_12px_24px_#c8d0e7,-12px_-12px_24px_#ffffff,0_0_20px_rgba(255,85,0,0.1)] rounded-[28px] p-8 flex flex-col justify-between relative transition-all duration-300"
-          >
-            {/* Recommended Tag */}
-            <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
-              <span className="inline-flex items-center px-4 py-1 rounded-full bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white text-[9px] font-extrabold tracking-widest uppercase shadow-[0_4px_10px_rgba(255,85,0,0.3)]">
-                Acesso completo
-              </span>
-            </div>
-
-            <div>
-              <div className="text-[10px] font-extrabold tracking-wider text-slate-400 uppercase mt-2">Plano Único</div>
-
-              {/* Pricing row */}
-              <div className="flex items-baseline gap-1 mt-4">
-                <span className="font-head font-extrabold text-4xl text-slate-900">R$ 79,90</span>
-                <span className="text-[10px] font-bold text-slate-500">/mensal</span>
-              </div>
-              <p className="text-slate-500 text-[11px] leading-relaxed mt-2 pb-6 border-b border-slate-300/30">
-                A operação completa: tráfego, automação e agentes IA vendendo 24/7.
-              </p>
-
-              {/* Feature List */}
-              <ul className="space-y-3.5 mt-6 pb-6">
-                {[
-                  'Tudo do plano Tração',
-                  '10 Agentes IA especializados',
-                  'Orquestração central + RAG',
-                  'Automação e integração com CRM',
-                  'SDR IA com follow-up ativo'
-                ].map((feature, idx) => (
-                  <li key={idx} className="flex items-center gap-2.5 text-xs text-slate-700 font-bold">
-                    <div className="w-4 h-4 rounded-full bg-[#EDF1F5] shadow-[inset_1px_1px_3px_#c8d0e7,inset_-1px_-1px_3px_#ffffff] border border-white/20 flex items-center justify-center">
-                      <svg className="w-2.5 h-2.5 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={4}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Action */}
-            <Link
-              href="/cadastro"
-              className="inline-flex items-center justify-center font-bold text-xs px-6 py-4 rounded-2xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[3px_3px_8px_rgba(255,85,0,0.2),-3px_-3px_8px_#ffffff] hover:shadow-[4px_4px_12px_rgba(255,85,0,0.35),-4px_-4px_12px_#ffffff] hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 border border-orange-400/20 mt-4 w-full"
-            >
-              Começar agora <span className="ml-1 text-xs">→</span>
-            </Link>
-          </motion.div>
-
-        </motion.div>
-
-
-
-      </section>
-
+      {/* ========================================================================= */}
+      {/* PERGUNTAS FREQUENTES (FAQ SECTION) */}
+      {/* ========================================================================= */}
+      <FaqSection />
       {/* ========================================================================= */}
       {/* FOOTER */}
       {/* ========================================================================= */}
       <footer className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-24">
-        <div className="bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-[32px] p-8 md:p-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-4">
+        <div className="bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-[32px] p-8 md:p-12">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
+            <div className="md:col-span-8 space-y-4">
               <div className="flex items-center">
                 <span className="font-head font-extrabold text-lg text-slate-900">
                   Neuro<span className="text-[#FF5500]">Ads</span>
                 </span>
               </div>
-              <p className="text-slate-500 text-xs leading-relaxed">
+              <p className="text-slate-500 text-xs leading-relaxed max-w-2xl">
                 Operações IA estratégicas para marketing e vendas B2B. Conectando dados em tempo real, automatizando funis e convertendo oportunidades.
               </p>
             </div>
             
-            <div>
-              <h4 className="font-head font-bold text-xs text-slate-800 uppercase tracking-wider mb-4">Plataforma</h4>
-              <ul className="space-y-2 text-xs">
-                <li><Link href="#solucoes" className="text-slate-500 hover:text-[#FF5500] transition">Soluções</Link></li>
-                <li><Link href="#valores" className="text-slate-500 hover:text-[#FF5500] transition">Valores</Link></li>
-                <li><Link href="/cadastro" className="text-slate-500 hover:text-[#FF5500] transition">Começar</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-head font-bold text-xs text-slate-800 uppercase tracking-wider mb-4">Recursos</h4>
-              <ul className="space-y-2 text-xs">
-                <li><Link href="/conteudos" className="text-slate-500 hover:text-[#FF5500] transition">Blog</Link></li>
-                <li><Link href="/whitepaper_ia_vendas" className="text-slate-500 hover:text-[#FF5500] transition">Whitepapers</Link></li>
-                <li><Link href="/conteudos/faq" className="text-slate-500 hover:text-[#FF5500] transition">FAQ</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-head font-bold text-xs text-slate-800 uppercase tracking-wider mb-4">Contato</h4>
+            <div className="md:col-span-4 space-y-4 text-left md:text-right">
+              <h4 className="font-head font-bold text-xs text-slate-800 uppercase tracking-wider mb-2">Contato</h4>
               <ul className="space-y-2 text-xs text-slate-500">
-                <li>contato@neuroads.com.br</li>
+                <li>avante@neuroads.com.br</li>
                 <li>Suporte 24/7</li>
-                <li className="pt-2">
-                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#EDF1F5] shadow-[inset_1.5px_1.5px_3px_#c8d0e7,inset_-1.5px_-1.5px_3px_#ffffff] text-[8px] font-bold text-emerald-600">
+                <li className="pt-2 flex md:justify-end">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white shadow-[inset_1.5px_1.5px_3px_#c8d0e7,inset_-1.5px_-1.5px_3px_#ffffff] text-[8px] font-bold text-emerald-600">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping"></span>
                     Sistemas Online
                   </span>
@@ -822,7 +672,7 @@ function CentralizarMockup() {
 
   return (
     <div className="w-full h-full flex flex-col justify-center items-center relative overflow-hidden p-4 min-h-[300px]">
-      <div className="relative z-20 flex flex-col items-center justify-center p-6 rounded-full bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/80 w-28 h-28 animate-pulse">
+      <div className="relative z-20 flex flex-col items-center justify-center p-6 rounded-full bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/80 w-28 h-28 animate-pulse">
         <Database size={32} className="text-[#ff6a00]" />
         <span className="text-xs font-black text-slate-800 mt-1.5">NeuroAds</span>
         <span className="text-[8px] text-[#ff8f3a] font-bold uppercase tracking-wider">DATABASE</span>
@@ -845,7 +695,7 @@ function CentralizarMockup() {
               }}
             >
               <div
-                className="px-2.5 py-1.5 rounded-lg border text-[9px] font-bold bg-[#EDF1F5] text-slate-700 shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff] border-white/60 transition-all duration-300 hover:scale-105"
+                className="px-2.5 py-1.5 rounded-lg border text-[9px] font-bold bg-white text-slate-700 shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff] border-white/60 transition-all duration-300 hover:scale-105"
                 style={{
                   boxShadow: `3px 3px 6px #c8d0e7, -3px -3px 6px #ffffff, 0 4px 12px ${plat.color}15`,
                 }}
@@ -874,7 +724,7 @@ function CentralizarMockup() {
 
 function SegmentarMockup() {
   return (
-    <div className="w-full rounded-2xl border border-white/60 bg-[#EDF1F5] p-5 shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] text-slate-800">
+    <div className="w-full rounded-2xl border border-white/60 bg-white p-5 shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] text-slate-800">
       <div className="flex items-center gap-1.5 pb-3 border-b border-slate-300/40 mb-3">
         <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
         <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
@@ -885,22 +735,22 @@ function SegmentarMockup() {
       <div className="space-y-3 font-sans text-xs">
         <div className="flex items-center justify-between">
           <span className="text-[10px] uppercase font-bold text-[#ff6a00] tracking-wider">Regras Comerciais</span>
-          <span className="text-[10px] bg-[#EDF1F5] shadow-[inset_1.5px_1.5px_3px_#c8d0e7,inset_-1.5px_-1.5px_3px_#ffffff] text-slate-600 px-2 py-0.5 rounded-full font-semibold">Segmentação Dinâmica</span>
+          <span className="text-[10px] bg-white shadow-[inset_1.5px_1.5px_3px_#c8d0e7,inset_-1.5px_-1.5px_3px_#ffffff] text-slate-600 px-2 py-0.5 rounded-full font-semibold">Segmentação Dinâmica</span>
         </div>
 
-        <div className="p-3 bg-[#EDF1F5] rounded-xl border border-white/80 shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] space-y-2">
+        <div className="p-3 bg-white rounded-xl border border-white/80 shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] space-y-2">
           <div className="flex items-center gap-2 text-[10px] font-bold text-[#ff6a00]">
             <Filter size={10} />
             <span>REGRA DE ENTRADA</span>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
-            <div className="flex-1 p-2 rounded-lg bg-[#EDF1F5] border border-slate-300/30 text-[10px] font-semibold text-slate-700 shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
+            <div className="flex-1 p-2 rounded-lg bg-white border border-slate-300/30 text-[10px] font-semibold text-slate-700 shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
               Evento
             </div>
-            <div className="flex-1 p-2 rounded-lg bg-[#EDF1F5] border border-slate-300/30 text-[10px] font-semibold text-slate-700 shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
+            <div className="flex-1 p-2 rounded-lg bg-white border border-slate-300/30 text-[10px] font-semibold text-slate-700 shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
               Nome do Evento...
             </div>
-            <div className="p-2 rounded-lg bg-[#EDF1F5] border border-slate-300/30 text-[10px] text-slate-500 font-semibold shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
+            <div className="p-2 rounded-lg bg-white border border-slate-300/30 text-[10px] text-slate-500 font-semibold shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
               Igual a
             </div>
             <div className="flex-1 p-2 rounded-lg bg-[#ff6a00]/10 border border-[#ff6a00]/30 text-[10px] font-bold text-[#ff6a00] shadow-[2px_2px_4px_rgba(255,106,0,0.1)]">
@@ -914,19 +764,19 @@ function SegmentarMockup() {
           <div className="flex-1 h-[1px] bg-slate-300/60" />
         </div>
 
-        <div className="p-3 bg-[#EDF1F5] rounded-xl border border-white/80 shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] space-y-2">
+        <div className="p-3 bg-white rounded-xl border border-white/80 shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] space-y-2">
           <div className="flex items-center gap-2 text-[10px] font-bold text-amber-600">
             <Filter size={10} />
             <span>CONDIÇÃO SECUNDÁRIA</span>
           </div>
           <div className="flex flex-col sm:flex-row gap-2">
-            <div className="flex-1 p-2 rounded-lg bg-[#EDF1F5] border border-slate-300/30 text-[10px] font-semibold text-slate-700 shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
+            <div className="flex-1 p-2 rounded-lg bg-white border border-slate-300/30 text-[10px] font-semibold text-slate-700 shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
               Evento
             </div>
-            <div className="flex-1 p-2 rounded-lg bg-[#EDF1F5] border border-slate-300/30 text-[10px] font-semibold text-slate-700 shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
+            <div className="flex-1 p-2 rounded-lg bg-white border border-slate-300/30 text-[10px] font-semibold text-slate-700 shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
               UTM Medium...
             </div>
-            <div className="p-2 rounded-lg bg-[#EDF1F5] border border-slate-300/30 text-[10px] text-slate-500 font-semibold shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
+            <div className="p-2 rounded-lg bg-white border border-slate-300/30 text-[10px] text-slate-500 font-semibold shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
               Igual a
             </div>
             <div className="flex-1 p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-[10px] font-bold text-amber-650 shadow-[2px_2px_4px_rgba(245,158,11,0.1)]">
@@ -941,41 +791,41 @@ function SegmentarMockup() {
 
 function DashboardsMockup() {
   return (
-    <div className="w-full rounded-2xl border border-white/60 bg-[#EDF1F5] p-5 shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] text-slate-700 text-xs font-sans">
+    <div className="w-full rounded-2xl border border-white/60 bg-white p-5 shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] text-slate-700 text-xs font-sans">
       <div className="flex items-center justify-between pb-3 border-b border-slate-300/40 mb-3">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-blue-500" />
           <span className="font-bold text-[10px] uppercase tracking-wider text-slate-500">NeuroAds &gt; Dashboard</span>
         </div>
-        <div className="text-[9px] bg-[#EDF1F5] shadow-[inset_1.5px_1.5px_3px_#c8d0e7,inset_-1.5px_-1.5px_3px_#ffffff] border border-white/60 px-2 py-0.5 rounded text-slate-600">
+        <div className="text-[9px] bg-white shadow-[inset_1.5px_1.5px_3px_#c8d0e7,inset_-1.5px_-1.5px_3px_#ffffff] border border-white/60 px-2 py-0.5 rounded text-slate-600">
           Últimos 30 dias
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-3">
-        <div className="p-3 rounded-xl border border-white/80 bg-[#EDF1F5] shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff]">
+        <div className="p-3 rounded-xl border border-white/80 bg-white shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff]">
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Tempo de Resposta</p>
           <p className="text-lg font-black text-slate-850 mt-1">1m 13s</p>
           <p className="text-[9px] text-emerald-600 font-semibold mt-0.5">▲ -85% vs. humano</p>
         </div>
-        <div className="p-3 rounded-xl border border-white/80 bg-[#EDF1F5] shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff]">
+        <div className="p-3 rounded-xl border border-white/80 bg-white shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff]">
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Investimento Otimizado</p>
           <p className="text-lg font-black text-slate-850 mt-1">R$ 5.000,00</p>
           <p className="text-[9px] text-emerald-600 font-semibold mt-0.5">▼ -12% desperdício</p>
         </div>
-        <div className="p-3 rounded-xl border border-white/80 bg-[#EDF1F5] shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff]">
+        <div className="p-3 rounded-xl border border-white/80 bg-white shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff]">
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Custo por Lead (CPL)</p>
           <p className="text-lg font-black text-slate-850 mt-1">R$ 135,57</p>
           <p className="text-[9px] text-[#ff6a00] font-semibold mt-0.5">▼ -41% redução média</p>
         </div>
-        <div className="p-3 rounded-xl border border-white/80 bg-[#EDF1F5] shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff]">
+        <div className="p-3 rounded-xl border border-white/80 bg-white shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff]">
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Conversões no Funil</p>
           <p className="text-lg font-black text-slate-850 mt-1">37</p>
           <p className="text-[9px] text-emerald-600 font-semibold mt-0.5">▲ +40.2% vs. mês ant.</p>
         </div>
       </div>
 
-      <div className="p-3 rounded-xl border border-white/80 bg-[#EDF1F5] shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] space-y-2">
+      <div className="p-3 rounded-xl border border-white/80 bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] space-y-2">
         <p className="text-[9px] text-slate-500 font-black uppercase tracking-widest">Funil de Aquisição</p>
         <div className="space-y-1.5 pt-1">
           <div className="flex items-center gap-2">
@@ -1007,13 +857,13 @@ function DashboardsMockup() {
 
 function MetricasMockup() {
   return (
-    <div className="w-full rounded-2xl border border-white/60 bg-[#EDF1F5] p-5 shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] space-y-4 text-xs font-sans text-slate-700">
+    <div className="w-full rounded-2xl border border-white/60 bg-white p-5 shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] space-y-4 text-xs font-sans text-slate-700">
       <div className="flex items-center justify-between pb-2 border-b border-slate-300/40">
         <span className="text-[10px] uppercase font-bold text-slate-500 tracking-wider">Métricas Customizadas</span>
         <span className="text-[9px] font-semibold text-[#ff6a00]">Cálculo Ativo</span>
       </div>
 
-      <div className="p-4 rounded-xl border border-white/80 bg-[#EDF1F5] shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff] relative overflow-hidden group">
+      <div className="p-4 rounded-xl border border-white/80 bg-white shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff] relative overflow-hidden group">
         <div className="flex items-center justify-between mb-2">
           <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Pipeline de Vendas (ROI)</p>
           <span className="text-[8px] bg-emerald-500/10 text-emerald-600 border border-emerald-500/30 px-2 py-0.5 rounded-full font-bold">Ver Metas</span>
@@ -1043,7 +893,7 @@ function MetricasMockup() {
         </div>
       </div>
 
-      <div className="p-4 rounded-xl border border-white/80 bg-[#EDF1F5] shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff]">
+      <div className="p-4 rounded-xl border border-white/80 bg-white shadow-[3px_3px_6px_#c8d0e7,-3px_-3px_6px_#ffffff]">
         <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Conversão de Reuniões</p>
         <div className="flex items-baseline gap-2 mt-1">
           <p className="text-xl font-black text-slate-850">24 Agendadas</p>
@@ -1087,7 +937,7 @@ function ProcessamentoMockup() {
   }, []);
 
   return (
-    <div className="w-full rounded-2xl border border-white/60 bg-[#EDF1F5] p-6 shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] flex flex-col items-center justify-center min-h-[260px] relative overflow-hidden">
+    <div className="w-full rounded-2xl border border-white/60 bg-white p-6 shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] flex flex-col items-center justify-center min-h-[260px] relative overflow-hidden">
       <div className="absolute top-0 right-0 w-32 h-32 bg-[#ff6a00]/5 filter blur-2xl rounded-full" />
       <span className="absolute top-4 left-4 text-[9px] uppercase font-bold text-slate-500 tracking-wider">Workflow Integrado</span>
       
@@ -1120,7 +970,7 @@ function ProcessamentoMockup() {
 
 function AnaliseIaMockup() {
   return (
-    <div className="w-full rounded-2xl border border-white/60 bg-[#EDF1F5] p-4 shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] text-slate-700 text-[11px] font-sans">
+    <div className="w-full rounded-2xl border border-white/60 bg-white p-4 shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] text-slate-700 text-[11px] font-sans">
       <div className="flex items-center justify-between pb-2.5 border-b border-slate-300/40 mb-3">
         <div className="flex items-center gap-2">
           <div className="w-5 h-5 rounded-full bg-[#ff6a00]/20 flex items-center justify-center border border-[#ff6a00]/30 animate-pulse">
@@ -1132,7 +982,7 @@ function AnaliseIaMockup() {
       </div>
 
       <div className="space-y-3 max-h-[190px] overflow-y-auto pr-1">
-        <div className="p-3 rounded-xl border border-white/80 bg-[#EDF1F5] shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] space-y-2">
+        <div className="p-3 rounded-xl border border-white/80 bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] space-y-2">
           <p className="font-bold text-slate-800 text-[10px] border-b border-slate-300/30 pb-1">Target de Campanha:</p>
           <ul className="space-y-1 text-slate-600">
             <li className="flex items-center gap-1.5">
@@ -1160,7 +1010,7 @@ function AnaliseIaMockup() {
           type="text"
           placeholder="Pergunte ao Copilot..."
           readOnly
-          className="flex-1 px-3 py-2 rounded-xl bg-[#EDF1F5] border border-slate-300/30 text-[10px] text-slate-800 shadow-[inset_1px_1px_3px_#c8d0e7,inset_-1px_-1px_3px_#ffffff] placeholder:text-slate-400 focus:outline-none"
+          className="flex-1 px-3 py-2 rounded-xl bg-white border border-slate-300/30 text-[10px] text-slate-800 shadow-[inset_1px_1px_3px_#c8d0e7,inset_-1px_-1px_3px_#ffffff] placeholder:text-slate-400 focus:outline-none"
         />
         <div className="w-8 h-8 rounded-xl bg-[#ff6a00]/10 border border-[#ff6a00]/30 flex items-center justify-center cursor-pointer hover:bg-[#ff6a00]/20 shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff]">
           <ArrowRight size={12} className="text-[#ff6a00]" />
@@ -1170,106 +1020,211 @@ function AnaliseIaMockup() {
   );
 }
 
-interface SectorCardProps {
-  i: number;
-  sector: typeof useCasesSectors[number];
-  progress: MotionValue<number>;
-  range: [number, number];
-  targetScale: number;
-}
-
-function SectorCard({ i, sector, progress, range, targetScale }: SectorCardProps) {
-  const container = useRef<HTMLDivElement>(null);
-  const scale = useTransform(progress, range, [1, targetScale]);
-
-  return (
-    <div
-      ref={container}
-      className="h-screen flex items-center justify-center sticky top-0 overflow-hidden"
-    >
-      <motion.div
-        style={{
-          scale,
-          top: `calc(4vh + ${i * 24}px)`,
-        }}
-        className="relative flex flex-col lg:flex-row h-[520px] w-[90%] max-w-[1200px] rounded-[32px] border border-white/80 bg-[#EDF1F5] shadow-[12px_12px_24px_#c8d0e7,-12px_-12px_24px_#ffffff] p-8 lg:p-12 origin-top overflow-hidden"
-      >
-        <div className="absolute top-0 right-0 w-80 h-80 bg-[#ff6a00]/5 rounded-full filter blur-[100px] pointer-events-none" />
-
-        {/* LEFT COLUMN — Text and differentials */}
-        <div className="flex-1 flex flex-col justify-between z-10 lg:pr-8">
-          <div>
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-1.5 h-8 bg-[#ff6a00] rounded-full shadow-[0_0_12px_rgba(255,106,0,0.6)]" />
-              <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{sector.title}</h3>
-            </div>
-            <p className="text-slate-600 text-sm leading-relaxed mb-6">
-              {sector.description}
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-auto">
-            {sector.cards.map((card, cIdx) => (
-              <div
-                key={cIdx}
-                className="rounded-2xl border border-white/80 bg-[#EDF1F5] shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff] p-5 hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] transition-all duration-300 group/card"
-              >
-                <span className="text-[9px] font-black uppercase tracking-widest text-[#ff8f3a]">
-                  Diferencial
-                </span>
-                <h4 className="text-[14px] font-bold text-slate-800 mt-1.5">{card.title}</h4>
-                <p className="text-[11px] text-slate-500 mt-2 leading-relaxed">{card.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* RIGHT COLUMN — Visual mockup */}
-        <div className="hidden lg:flex w-[45%] flex-col justify-center items-center relative pl-8 border-l border-slate-300/30 z-10 min-h-[300px]">
-          {sector.id === 'centralizar-dados' && <CentralizarMockup />}
-          {sector.id === 'segmentar-base' && <SegmentarMockup />}
-          {sector.id === 'dashboards-dinamicos' && <DashboardsMockup />}
-          {sector.id === 'metricas-calculadas' && <MetricasMockup />}
-          {sector.id === 'processamento-dados' && <ProcessamentoMockup />}
-          {sector.id === 'analise-ia' && <AnaliseIaMockup />}
-        </div>
-      </motion.div>
-    </div>
-  );
-}
-
-function UseCasesSection() {
-  const container = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: container,
-    offset: ['start start', 'end end'],
-  });
+function TargetAudienceSection() {
+  const audienceItems = [
+    {
+      title: 'FREELANCERS',
+      description: 'Atraia clientes de alto ticket de forma previsível no piloto automático. Maximize seus ganhos em cada projeto sem taxas de assinatura abusivas.'
+    },
+    {
+      title: 'AGÊNCIAS',
+      description: 'Recupere horas faturáveis e mude o foco do time de relatórios estáticos para o crescimento real dos clientes através da nossa inteligência.'
+    },
+    {
+      title: 'CONSULTORIAS',
+      description: 'Atraia clientes ideais graças à melhoria de fluxo e ofereça propostas comerciais de alto padrão totalmente qualificadas por IA.'
+    },
+    {
+      title: 'ECOMMERCE',
+      description: 'Converta cliques e carrinhos abandonados em vendas recorrentes no caixa sem lidar com o capital congelado em canais de anúncios.'
+    },
+    {
+      title: 'CROSS BORDER',
+      description: 'Alcance novos mercados internacionais e conquiste contratos globais com uma estratégia ágil para capturar conversões de qualquer lugar.'
+    },
+    {
+      title: 'INCORPORADORAS',
+      description: 'Mapeie e qualifique leads de alta renda para empreendimentos de luxo, segmentando com base no score de compra de forma automatizada.'
+    }
+  ];
 
   return (
-    <section ref={container} className="relative min-h-[600vh] bg-transparent w-full pb-20 mt-16 md:mt-24">
-      {/* Scrollable header */}
-      <div className="w-full text-center max-w-[720px] mx-auto mb-10 pt-24 px-5">
-        <span className="text-[13px] font-bold text-[#ff6a00] uppercase tracking-wider">Arquitetura de Dados</span>
-        <h2 className="text-3xl sm:text-4xl font-black mt-2 text-slate-900">Recursos Integrados</h2>
-        <p className="text-slate-600 mt-4 text-sm leading-relaxed">
-          Descubra como a NeuroAds centraliza, segmenta e automatiza a inteligência dos seus dados comerciais em tempo real.
+    <section id="publico-alvo" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 text-center space-y-12">
+      <div className="space-y-4 max-w-xl mx-auto">
+        <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">PÚBLICO-ALVO</span>
+        <h2 className="font-head text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+          Para quem é a NeuroAds?
+        </h2>
+        <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
+          Unifique dados, automatize funis e coloque agentes de inteligência artificial para otimizar suas conversões comerciais todos os dias.
         </p>
       </div>
 
-      <div className="w-full relative z-10">
-        {useCasesSectors.map((sector, idx) => {
-          const targetScale = 1 - (useCasesSectors.length - idx) * 0.025;
-          return (
-            <SectorCard
-              key={sector.id}
-              i={idx}
-              sector={sector}
-              progress={scrollYProgress}
-              range={[idx * (1 / useCasesSectors.length), 1]}
-              targetScale={targetScale}
-            />
-          );
-        })}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {audienceItems.map((item, idx) => (
+          <motion.div
+            key={idx}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, delay: idx * 0.08 }}
+            className="bg-white border border-white/80 shadow-[6px_6px_12px_#c8d0e7] rounded-[28px] p-8 text-left space-y-4 hover:scale-[1.01] transition-transform duration-300"
+          >
+            <h4 className="font-head font-extrabold text-[#FF5500] text-xs uppercase tracking-wider">
+              {item.title}
+            </h4>
+            <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
+              {item.description}
+            </p>
+          </motion.div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AgentsGridSection() {
+  const getAgentTag = (title: string) => {
+    switch (title) {
+      case 'Ulisses': return 'ORQUESTRAÇÃO E BRIEFINGS DIÁRIOS';
+      case 'Vitor': return 'QUALIFICAÇÃO EM WHATSAPP E EMAIL';
+      case 'Manu': return 'ATENDIMENTO E FAQs AUTOMATIZADOS';
+      case 'Igor': return 'AUDITORIA DE CAC E ALERTAS NO SLACK';
+      case 'Tainá': return 'GERAÇÃO DE COPYS E ARTIGOS RÁPIDOS';
+      case 'Breno': return 'PROPOSTAS E FECHAMENTOS DE CONTRATOS';
+      case 'Paola': return 'OTIMIZAÇÃO DE ROAS E CAMPANHAS';
+      case 'Raíssa': return 'REATIVAÇÃO DE LEADS E BASE ATIVA';
+      case 'Heitor': return 'CONEXÃO COM CRM E APIS PÚBLICAS';
+      case 'Laís': return 'OTIMIZAÇÃO PARA BUSCADORES DE IA';
+      default: return 'AGENTE DE INTELIGÊNCIA ARTIFICIAL';
+    }
+  };
+
+  const agents = [
+    {
+      id: 1,
+      title: 'Ulisses',
+      image: '/images/Avatar Agentes IA/Avatar_Ulisses.png',
+      category: 'Orquestrador Central',
+      bio: 'Ulisses é o orquestrador central do ecossistema NeuroAds. Ele distribui os briefings diários para os demais agentes, acompanha o status de cada conversão e consolida relatórios analíticos de alta performance para os gestores, garantindo a integração contínua do funil comercial.',
+    },
+    {
+      id: 2,
+      title: 'Vitor',
+      image: '/images/Avatar Agentes IA/Avatar_Vitor.png',
+      category: 'Agente SDR',
+      bio: 'Vitor atua na linha de frente do comercial. Ele monitora páginas de captura de alta intenção, aciona sequências de qualificação personalizadas em tempo real e realiza o handoff automático de leads quentes para que o time comercial finalize o fechamento.',
+    },
+    {
+      id: 3,
+      title: 'Manu',
+      image: '/images/Avatar Agentes IA/Avatar_Manu.png',
+      category: 'Agente de Suporte',
+      bio: 'Manu soluciona chamados recorrentes de nível 1 instantaneamente. Ela analisa o sentimento do cliente e, quando detecta um padrão de dúvida repetido, alerta o time de conteúdo para a criação imediata de materiais educativos de suporte.',
+    },
+    {
+      id: 4,
+      title: 'Igor',
+      image: '/images/Avatar Agentes IA/Avatar_Igor.png',
+      category: 'Agente de Inteligência de Dados',
+      bio: 'Igor audita funis de vendas, cruzando dados de anúncios com o CRM. Ele calcula o custo de aquisição (CAC), o retorno de investimento (ROI) e envia notificações automáticas ao time de tráfego se detectar desvios de orçamento ou queda de performance.',
+    },
+    {
+      id: 5,
+      title: 'Tainá',
+      image: '/images/Avatar Agentes IA/Avatar_Taina.png',
+      category: 'Agente de Conteúdo',
+      bio: 'Tainá desenvolve textos persuasivos para anúncios pagos, redige newsletters semanais e cria artigos focados em educação de leads, baseando-se nas objeções mapeadas pelo time comercial e nas dúvidas vindas do suporte.',
+    },
+    {
+      id: 6,
+      title: 'Breno',
+      image: '/images/Avatar Agentes IA/Avatar_Breno.png',
+      category: 'Agente Closer',
+      bio: 'Breno gerencia negociações complexas. Ele formula propostas comerciais com base no budget do lead, automatiza follow-ups após o envio e encaminha o contrato assinado diretamente para a fase de onboarding de novos clientes.',
+    },
+    {
+      id: 7,
+      title: 'Paola',
+      image: '/images/Avatar Agentes IA/Avatar_Paola.png',
+      category: 'Agente de Tráfego',
+      bio: 'Paola atua no Google Ads e Meta Ads. Ela analisa o ROAS em tempo real, substitui criativos em fadiga, realiza testes A/B de headlines e descobre novos públicos semelhantes (lookalike) com menor custo por mil impressões (CPM).',
+    },
+    {
+      id: 8,
+      title: 'Raíssa',
+      image: '/images/Avatar Agentes IA/Avatar_Raissa.png',
+      category: 'Agente de Upsell & Reativação',
+      bio: 'Raíssa monitora a satisfação e o uso da plataforma pelos clientes ativos. Ela ativa campanhas automáticas de upsell no momento de maior engajamento e cria fluxos de recuperação para reativar clientes inativos há mais de 30 dias.',
+    },
+    {
+      id: 9,
+      title: 'Heitor',
+      image: '/images/Avatar Agentes IA/Avatar_Heitor.png',
+      category: 'Agente de Processos & Integrações',
+      bio: 'Heitor gerencia a integração técnica de novos leads. Ele conecta o CRM a ferramentas externas, valida chaves de API do cliente e garante que toda a esteira de onboarding de marketing/vendas funcione perfeitamente sem falhas.',
+    },
+    {
+      id: 10,
+      title: 'Laís',
+      image: '/images/Avatar Agentes IA/Avatar_Lais.png',
+      category: 'Agente de SEO & GEO',
+      bio: 'Laís monitora o posicionamento orgânico da marca. Ela otimiza o SEO do blog para novas palavras-chave de baixa concorrência e estrutura dados de forma a posicionar o negócio no topo de buscadores generativos de IA (GEO).',
+    }
+  ];
+
+  return (
+    <section id="agentes" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 text-center space-y-16">
+      <div className="space-y-4 max-w-2xl mx-auto">
+        <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">RECURSOS PRINCIPAIS</span>
+        <h2 className="font-head text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+          Projetamos uma experiência de marketing focada em lucro
+        </h2>
+        <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
+          Nossos Agentes de IA operam integrados ao seu ecossistema comercial, analisando dados, automatizando lances e executando tarefas complexas 24/7.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {agents.map((agent, idx) => (
+          <motion.div
+            key={agent.id}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.5, delay: idx * 0.05 }}
+            className="bg-white border border-white/80 shadow-[6px_6px_12px_#c8d0e7] rounded-[28px] p-8 flex flex-col sm:flex-row gap-6 items-start sm:items-center hover:scale-[1.01] transition-transform duration-300"
+          >
+            {/* Avatar image container */}
+            <div className="w-20 h-20 rounded-2xl overflow-hidden border border-white/80 shrink-0 shadow-sm relative bg-[#FAF9F6] mx-auto sm:mx-0">
+              <Image
+                src={agent.image}
+                alt={agent.title}
+                fill
+                className="object-cover object-center scale-[1.05]"
+                sizes="80px"
+              />
+            </div>
+
+            {/* Details container */}
+            <div className="flex-1 text-center sm:text-left space-y-2">
+              <div className="space-y-0.5">
+                <span className="text-[9px] font-extrabold text-[#FF5500] uppercase tracking-wider block">
+                  {agent.category}
+                </span>
+                <h4 className="font-head font-extrabold text-slate-900 text-base">
+                  {agent.title}
+                </h4>
+              </div>
+              <p className="text-slate-500 text-xs leading-relaxed">
+                {agent.bio}
+              </p>
+              <div className="pt-2 text-[9px] font-black text-[#FF5500] uppercase tracking-widest">
+                {getAgentTag(agent.title)}
+              </div>
+            </div>
+          </motion.div>
+        ))}
       </div>
     </section>
   );
@@ -1329,10 +1284,16 @@ function DataTransformationSection() {
           {/* Feature 1 */}
           <motion.div
             variants={cardVariants}
-            className="p-5 rounded-2xl border border-white/60 bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
+            className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#EDF1F5] shadow-[inset_2.5px_2.5px_5px_#c8d0e7,inset_-2.5px_-2.5px_5px_#ffffff] text-[#FF5500] shrink-0">
-              <LayoutDashboard size={22} className="stroke-[1.5]" />
+            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative">
+              <Image
+                src="/images/tools/diagnostico_lp.png"
+                alt="Crie dashboards"
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
             </div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
@@ -1347,10 +1308,16 @@ function DataTransformationSection() {
           {/* Feature 2 */}
           <motion.div
             variants={cardVariants}
-            className="p-5 rounded-2xl border border-white/60 bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
+            className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#EDF1F5] shadow-[inset_2.5px_2.5px_5px_#c8d0e7,inset_-2.5px_-2.5px_5px_#ffffff] text-[#FF5500] shrink-0">
-              <BarChart3 size={22} className="stroke-[1.5]" />
+            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative">
+              <Image
+                src="/images/tools/analise.png"
+                alt="Visualize indicadores"
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
             </div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
@@ -1365,10 +1332,16 @@ function DataTransformationSection() {
           {/* Feature 3 */}
           <motion.div
             variants={cardVariants}
-            className="p-5 rounded-2xl border border-white/60 bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
+            className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#EDF1F5] shadow-[inset_2.5px_2.5px_5px_#c8d0e7,inset_-2.5px_-2.5px_5px_#ffffff] text-[#FF5500] shrink-0">
-              <Network size={22} className="stroke-[1.5]" />
+            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative">
+              <Image
+                src="/images/tools/automacao.png"
+                alt="Processe dados"
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
             </div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
@@ -1383,10 +1356,16 @@ function DataTransformationSection() {
           {/* Feature 4 */}
           <motion.div
             variants={cardVariants}
-            className="p-5 rounded-2xl border border-white/60 bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
+            className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-[#EDF1F5] shadow-[inset_2.5px_2.5px_5px_#c8d0e7,inset_-2.5px_-2.5px_5px_#ffffff] text-[#FF5500] shrink-0">
-              <UserCheck size={22} className="stroke-[1.5]" />
+            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative">
+              <Image
+                src="/images/tools/rastreador_cirurgico.png"
+                alt="Atribuição de mídia"
+                fill
+                className="object-cover"
+                sizes="48px"
+              />
             </div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
@@ -1398,6 +1377,323 @@ function DataTransformationSection() {
             </div>
           </motion.div>
         </motion.div>
+      </div>
+    </section>
+  );
+}
+
+
+function DemoAndAccessSection() {
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [company, setCompany] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (name && email) {
+      setFormSubmitted(true);
+    }
+  };
+
+  return (
+    <section id="demonstracao" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12">
+      {/* Header section */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "-100px" }}
+        transition={{ duration: 0.8 }}
+        className="text-center pb-16 space-y-4"
+      >
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase">
+          <span className="w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse"></span>
+          DEMONSTRAÇÃO & ACESSO
+        </div>
+        <h2 className="font-head font-extrabold text-3xl sm:text-4xl font-black text-slate-900 tracking-tight max-w-2xl mx-auto leading-tight">
+          Conheça a NeuroAds em ação e <span className="text-[#FF5500]">solicite seu acesso.</span>
+        </h2>
+        <p className="text-slate-500 text-xs md:text-sm max-w-xl mx-auto leading-relaxed">
+          Assista ao vídeo demonstrativo de 2 minutos para ver os agentes trabalhando ao vivo, e preencha o formulário para garantir sua vaga exclusiva.
+        </p>
+      </motion.div>
+
+      {/* Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        {/* Left Column: Video Mockup */}
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.7 }}
+          className="lg:col-span-7"
+        >
+          <div className="relative aspect-video rounded-[32px] overflow-hidden border border-white/80 bg-slate-950 shadow-[12px_12px_24px_#c8d0e7,-12px_-12px_24px_#ffffff] group cursor-pointer">
+            {/* Mockup Dashboard Image background */}
+            <Image
+              src="/images/tools/diagnostico_lp.png"
+              alt="Dashboard Demonstration preview"
+              fill
+              className="object-cover opacity-60 group-hover:scale-[1.02] transition-transform duration-700"
+            />
+            {/* Play Button Overlay */}
+            <div className="absolute inset-0 bg-slate-950/40 flex items-center justify-center">
+              <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-[#FF5500] transition-all duration-300">
+                <svg className="w-8 h-8 text-[#FF5500] group-hover:text-white transition-colors ml-1.5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </div>
+            </div>
+            {/* Video duration tag */}
+            <span className="absolute bottom-6 right-6 bg-black/75 text-white font-extrabold text-[9px] px-3 py-1.5 rounded-full tracking-wider">
+              2:14 MIN
+            </span>
+          </div>
+        </motion.div>
+
+        {/* Right Column: Request Form */}
+        <motion.div
+          initial={{ opacity: 0, x: 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.7 }}
+          className="lg:col-span-5"
+        >
+          <div className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between relative transition-all duration-300">
+            <h3 className="font-head font-extrabold text-slate-800 text-lg mb-2">
+              Solicite seu acesso
+            </h3>
+            <p className="text-slate-500 text-xs leading-relaxed mb-6">
+              Preencha os campos abaixo e entraremos em contato para liberar seu painel NeuroAds.
+            </p>
+
+            <AnimatePresence mode="wait">
+              {!formSubmitted ? (
+                <motion.form
+                  key="form"
+                  onSubmit={handleSubmit}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="space-y-4"
+                >
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-extrabold text-slate-500 uppercase tracking-wider block">Nome Completo</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Seu nome"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/70 focus:outline-none focus:ring-2 focus:ring-[#FF5500]/25 focus:border-[#FF5500] text-xs font-bold transition-all shadow-inner"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-extrabold text-slate-500 uppercase tracking-wider block">E-mail Corporativo</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="voce@empresa.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/70 focus:outline-none focus:ring-2 focus:ring-[#FF5500]/25 focus:border-[#FF5500] text-xs font-bold transition-all shadow-inner"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-[9px] font-extrabold text-slate-500 uppercase tracking-wider block">Empresa</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Nome da sua empresa"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white/70 focus:outline-none focus:ring-2 focus:ring-[#FF5500]/25 focus:border-[#FF5500] text-xs font-bold transition-all shadow-inner"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full py-4 rounded-xl bg-black hover:bg-neutral-800 text-white font-bold text-xs text-center transition-all shadow-sm border border-neutral-900 cursor-pointer mt-4"
+                  >
+                    Solicitar Acesso Completo
+                  </button>
+                </motion.form>
+              ) : (
+                <motion.div
+                  key="success"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="py-12 text-center space-y-4"
+                >
+                  <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center mx-auto text-emerald-500 shadow-sm">
+                    <CheckCircle2 size={32} className="stroke-[1.5]" />
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="font-head font-extrabold text-slate-800 text-base">Solicitação enviada!</h4>
+                    <p className="text-slate-500 text-[11px] leading-relaxed max-w-[240px] mx-auto">
+                      Obrigado, {name.split(' ')[0]}. Nossa equipe entrará em contato em seu e-mail ({email}) para configurar seu onboarding.
+                    </p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+
+function TestimonialSection() {
+  return (
+    <section className="bg-white border-y border-slate-300/40 py-12 px-6 text-center">
+      <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+        <div className="w-24 h-24 rounded-full overflow-hidden border border-slate-300 shrink-0 relative shadow-sm">
+          <Image
+            src="/images/eu.jpeg"
+            alt="Claudio Müller"
+            fill
+            className="object-cover"
+          />
+        </div>
+        <div className="h-6 w-px bg-slate-300 hidden md:block shrink-0"></div>
+        <p className="text-slate-700 text-sm md:text-base font-semibold italic leading-relaxed">
+          &ldquo;A NeuroAds resolveu o que nenhuma outra empresa conseguiu: personalização de IA real com dados de verdade. Conseguimos ver o comportamento, o que funciona e acompanhar o processo comercial completo — tudo isso com atendimento muito próximo.&rdquo;
+        </p>
+        <div className="shrink-0 text-left border-t md:border-t-0 md:border-l border-slate-300/40 pt-3 md:pt-0 md:pl-6">
+          <span className="text-xs font-bold text-black block">Claudio Müller</span>
+          <span className="text-[9px] font-extrabold text-[#FF5500] uppercase tracking-wider block">Analista em Marketing & IA</span>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ComparisonSection() {
+  const cards = [
+    {
+      tag: 'LENTO',
+      title: 'Relatórios Estáticos',
+      desc: 'Você precisa de respostas rápidas para seus lances, mas recebe relatórios estáticos em PDF semanas após o encerramento do mês.'
+    },
+    {
+      tag: 'CARO',
+      title: 'Assinaturas Bloqueadas',
+      desc: 'Paga dezenas de licenças mensais para ferramentas de marketing que não conversam entre si, acumulando custos no final do mês.'
+    },
+    {
+      tag: 'CONFUSO',
+      title: 'Falta de Contexto',
+      desc: 'IAs comuns trabalham sem contexto de vendas e alucinam constantemente ao ler informações desorganizadas em arquivos de prompt.'
+    }
+  ];
+
+  return (
+    <section id="comparacao" className="py-20 bg-white border-y border-slate-300/40 px-6">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        
+        <div className="lg:col-span-5 space-y-6 flex flex-col items-start text-left">
+          <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">O PROBLEMA DAS AGÊNCIAS</span>
+          <h2 className="font-head text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+            A maior parte das agências de tráfego é lenta, cara e confusa.
+          </h2>
+          <p className="text-slate-650 text-xs md:text-sm leading-relaxed">
+            Sua operação comercial precisa de dados integrados de marketing e vendas rodando em tempo real, sem planilhas confusas e sem ter que delegar tarefas manualmente.
+          </p>
+          <Link 
+            href="/cadastro" 
+            className="inline-flex items-center font-bold text-xs bg-black hover:bg-neutral-800 text-white px-6 py-3.5 rounded-xl transition-all shadow-sm"
+          >
+            Conectar Minhas Campanhas
+          </Link>
+        </div>
+
+        <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          {cards.map((card, idx) => (
+            <div 
+              key={idx} 
+              className="border border-white/80 rounded-2xl p-6 bg-white space-y-4 hover:scale-[1.01] transition-transform duration-300 shadow-[4px_4px_10px_#c8d0e7]"
+            >
+              <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest block">{card.tag}</span>
+              <h4 className="font-head font-bold text-slate-800 text-sm">{card.title}</h4>
+              <p className="text-slate-500 text-[11px] leading-relaxed">{card.desc}</p>
+            </div>
+          ))}
+        </div>
+
+      </div>
+    </section>
+  );
+}
+
+function FaqSection() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const faqs = [
+    {
+      question: "O que é a NeuroAds e como funcionam os Agentes de IA?",
+      answer: "A NeuroAds une campanhas patrocinadas, automação e um ecossistema de 10 agentes de inteligência artificial especializados para transformar o marketing e o comercial da sua empresa B2B. Nossos agentes (como Vitor SDR, Paola Tráfego e Igor Dados) realizam tarefas diárias de qualificação de leads, criação de criativos e auditoria de campanhas 24/7."
+    },
+    {
+      question: "Qual o valor do investimento e existe fidelidade?",
+      answer: "Oferecemos um Plano Único de apenas R$ 79,90/mensal que garante acesso completo a todos os 10 agentes especializados, orquestração central, RAG integrado e conexões de automação com seu CRM. E o melhor: você pode experimentar por 14 dias sem custos e cancelar quando quiser, sem qualquer taxa ou fidelidade."
+    },
+    {
+      question: "Como os dados são integrados com meu CRM?",
+      answer: "Nossos workflows dinâmicos conectam o CRM a ferramentas externas via webhooks e APIs públicas. Cada lead qualificado pelo Vitor (SDR) ou fechado pelo Breno (Closer) é enviado automaticamente ao seu funil do CRM, sincronizando contatos, produtos e status de negociação sem a necessidade de digitação manual."
+    },
+    {
+      question: "Como o Igor (Agente de Dados) ajuda a monitorar os resultados?",
+      answer: "O Igor realiza análises preditivas cruzando o investimento de mídia com o faturamento do CRM. Ele monitora métricas como CAC, ROI e taxa de conversão em tempo real. Se detectar desvios de orçamento ou quedas na conversão do funil, ele notifica o time instantaneamente no Slack para ações corretivas."
+    },
+    {
+      question: "Quais as garantias de segurança das credenciais de anúncios?",
+      answer: "Adotamos padrões rígidos de criptografia (AES-256-GCM) para armazenar todas as credenciais de anúncios e tokens de CRM em repouso. O tráfego de dados é efetuado de forma blindada por canais HTTPS/TLS seguros, assegurando total governança e isolamento por usuário."
+    }
+  ];
+
+  return (
+    <section id="faq" className="py-24 px-6 max-w-4xl mx-auto space-y-12">
+      <h2 className="font-head text-3xl font-black text-center text-slate-900 tracking-tight">
+        Perguntas Frequentes
+      </h2>
+
+      <div className="space-y-4">
+        {faqs.map((faq, idx) => {
+          const isOpen = openIndex === idx;
+          return (
+            <div 
+              key={idx}
+              className="bg-white border border-[#EAEAEA] rounded-2xl overflow-hidden transition-all shadow-sm"
+            >
+              <button
+                onClick={() => setOpenIndex(isOpen ? null : idx)}
+                className="w-full text-left px-6 py-5 flex justify-between items-center font-bold text-xs md:text-sm text-black focus:outline-none hover:bg-slate-50 transition-colors"
+              >
+                <span>{faq.question}</span>
+                <ChevronDown 
+                  size={16} 
+                  className={`text-slate-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
+                />
+              </button>
+              
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="px-6 pb-5 text-slate-500 text-xs md:text-sm leading-relaxed border-t border-[#EAEAEA] pt-4 bg-white">
+                      {faq.answer}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
