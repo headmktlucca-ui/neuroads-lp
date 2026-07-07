@@ -106,7 +106,47 @@ export function getConnectorStatusFromConnections(
   const status = { ...DEFAULT_CONNECTOR_STATUS };
   (Object.keys(status) as ConnectorKey[]).forEach((key) => {
     const storageKey = CONNECTOR_CONNECTION_KEYS[key];
-    status[key] = Boolean(connections[storageKey]?.isActive);
+    status[key] = Boolean(connections[storageKey]?.isActive ?? connections[key]?.isActive);
   });
   return status;
+}
+
+/**
+ * Normaliza o mapa cru de `users/{uid}.connections` (chaves de armazenamento
+ * snake_case, com fallback para chaves camelCase legadas) para um mapa
+ * indexado por ConnectorKey. Use sempre este helper ao ler conexões do perfil.
+ */
+export function normalizeConnections(
+  connections: Record<string, ConnectorConnection | null | undefined> | undefined | null
+): Partial<Record<ConnectorKey, ConnectorConnection>> {
+  const result: Partial<Record<ConnectorKey, ConnectorConnection>> = {};
+  if (!connections) return result;
+
+  (Object.entries(CONNECTOR_CONNECTION_KEYS) as [ConnectorKey, string][]).forEach(([key, storageKey]) => {
+    const conn = connections[storageKey] ?? connections[key];
+    if (conn) result[key] = conn;
+  });
+  return result;
+}
+
+/** Nome de exibição de um conector (ex: 'metaAds' → 'Meta Ads API'). */
+export function getConnectorDisplayName(key: ConnectorKey): string {
+  return CONNECTOR_DEFINITIONS.find((d) => d.key === key)?.name ?? key;
+}
+
+/**
+ * Lista canais conectados e não conectados a partir do mapa cru de conexões,
+ * com nomes de exibição prontos para uso em prompts e UI.
+ */
+export function describeConnections(
+  connections: Record<string, ConnectorConnection | null | undefined> | undefined | null
+): { connected: string[]; disconnected: string[] } {
+  const status = getConnectorStatusFromConnections(connections ?? null);
+  const connected: string[] = [];
+  const disconnected: string[] = [];
+  CONNECTOR_DEFINITIONS.forEach((def) => {
+    if (status[def.key]) connected.push(def.name);
+    else disconnected.push(def.name);
+  });
+  return { connected, disconnected };
 }

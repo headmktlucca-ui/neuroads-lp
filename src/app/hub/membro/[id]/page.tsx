@@ -125,7 +125,9 @@ function AgentChat({ agentNome, agentCor, agentFrase, agentAvatarSrc, agentPromp
   }, [agentNome, agentFrase]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messages.length > 1) {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }
   }, [messages, isTyping]);
 
   const sendMessage = async () => {

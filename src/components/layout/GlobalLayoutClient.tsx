@@ -10,8 +10,8 @@ const HUB_PREFIXES = ['/hub', '/login', '/onboarding', '/cadastro', '/verificar-
 // Rotas públicas que já trazem a própria navegação (PrimaryTopMenu) e o próprio
 // rodapé (PrimaryFooter) — não devem receber a PublicTopNav/HubFooter globais,
 // senão a página renderiza duas navbars e dois footers sobrepostos (ruim no mobile).
-const SELF_CHROME_PREFIXES = ['/servicos', '/agentes-ia', '/conteudos/alem-do-algoritmo'];
-const SELF_CHROME_EXACT = ['/conteudos', '/a-neuroads', '/', '/temp-lp'];
+const SELF_CHROME_PREFIXES = ['/servicos', '/agentes-ia', '/conteudos', '/a-neuroads'];
+const SELF_CHROME_EXACT = ['/', '/temp-lp'];
 
 function hasOwnChrome(pathname: string | null): boolean {
   if (!pathname) return false;

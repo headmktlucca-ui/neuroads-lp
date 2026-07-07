@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from 'framer-motion';
-import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2 } from 'lucide-react';
+import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown } from 'lucide-react';
 import RadialOrbitalTimeline from '../../components/ui/radial-orbital-timeline';
 
 const cardVariants = {
@@ -90,6 +90,7 @@ function AgentProfileCard({ agent }: { agent: any }) {
 export default function TempLandingPage() {
   const [pulse, setPulse] = useState(true);
   const [activeAgent, setActiveAgent] = useState<any>(null);
+  const [isSobreOpen, setIsSobreOpen] = useState(false);
 
   // Live indicator pulsing effect
   useEffect(() => {
@@ -231,9 +232,80 @@ export default function TempLandingPage() {
 
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            <Link href="#solucoes" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
-              Soluções
-            </Link>
+            <div 
+              className="relative"
+              onMouseEnter={() => setIsSobreOpen(true)}
+              onMouseLeave={() => setIsSobreOpen(false)}
+            >
+              <span 
+                className="flex items-center gap-1 text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200 py-2 focus:outline-none cursor-pointer select-none"
+              >
+                Sobre
+                <motion.span
+                  animate={{ rotate: isSobreOpen ? 180 : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <ChevronDown size={14} className="text-slate-400" />
+                </motion.span>
+              </span>
+
+              <AnimatePresence>
+                {isSobreOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    transition={{ duration: 0.15, ease: "easeOut" }}
+                    className="absolute left-1/2 -translate-x-1/2 top-full pt-2 w-56 z-50"
+                  >
+                    <div className="bg-[#EDF1F5] shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-2xl p-2.5 flex flex-col gap-1">
+                      <Link 
+                        href="/a-neuroads/sobre#posicionamento" 
+                        onClick={() => setIsSobreOpen(false)}
+                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
+                      >
+                        Posicionamento
+                      </Link>
+                      <Link 
+                        href="/a-neuroads/sobre#pilares" 
+                        onClick={() => setIsSobreOpen(false)}
+                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
+                      >
+                        Nossos pilares
+                      </Link>
+                      <Link 
+                        href="/a-neuroads/sobre" 
+                        onClick={() => setIsSobreOpen(false)}
+                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
+                      >
+                        Quem somos
+                      </Link>
+                      <Link 
+                        href="/a-neuroads/sobre#imprensa" 
+                        onClick={() => setIsSobreOpen(false)}
+                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
+                      >
+                        Imprensa
+                      </Link>
+                      <Link 
+                        href="/privacidade" 
+                        onClick={() => setIsSobreOpen(false)}
+                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
+                      >
+                        Política de Privacidade
+                      </Link>
+                      <Link 
+                        href="/termos" 
+                        onClick={() => setIsSobreOpen(false)}
+                        className="px-4 py-2 text-xs font-semibold text-slate-600 rounded-xl hover:bg-[#e4ecf5] hover:text-[#FF5500] transition-all duration-150"
+                      >
+                        Termos e DPA
+                      </Link>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
             <Link href="#agentes" className="text-slate-600 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
               Agentes IA
             </Link>

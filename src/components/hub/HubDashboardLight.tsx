@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useHub } from '../../context/HubContext';
+import { normalizeConnections } from '../../lib/connectors';
 import { getHubAutomationsFromProfile, formatAutomationDateTime } from '../../lib/hub-automations';
 import HubEmptyState from './HubEmptyState';
 import BentoCard from './v2/BentoCard';
@@ -61,9 +62,15 @@ type TrafficExtractResponse = {
   totals?: { spend: number; impressions: number; clicks: number; conversions: number };
   error?: string;
 };
+type Ga4TrafficSource = { source: string; sessions: number };
+type Ga4TrendPoint = { date: string; newUsers: number; returningUsers: number };
+type Ga4Region = { country: string; value: number; change: string; positive: boolean | null };
 type Ga4MetricsResponse = {
   activeUsers?: string; averageSessionDuration?: string; conversions?: string;
   engagementRate?: string; purchaseRevenue?: string; error?: string;
+  trafficSources?: Ga4TrafficSource[];
+  usersTrend?: Ga4TrendPoint[];
+  regions?: Ga4Region[];
 };
 type SearchConsoleResponse = {
   clicks?: number; impressions?: number; ctr?: string; position?: string; siteUrl?: string; error?: string;
@@ -249,17 +256,56 @@ function KpiHelpPopover({ label, isNa }: { label: string; isNa: boolean }) {
   );
 }
 
-// ─── GA4 Custom Charts ───────────────────────────────────────────────
-function GA4TrafficDonut() {
-  const data = [
-    { name: '(direct) / (none)', value: 216, color: '#FF6A00' },
-    { name: 'linkedin.com / referral', value: 58, color: '#2563eb' },
-    { name: 'accounts.google.com / referral', value: 46, color: '#059669' },
-    { name: 'hpanel.hostinger.com / referral', value: 11, color: '#7c3aed' },
-    { name: 'pay.luccaos.pro / referral', value: 5, color: '#db2777' },
-    { name: 'google / organic', value: 4, color: '#0369a1' },
-    { name: 'bit.ly / referral', value: 1, color: '#b45309' },
-  ];
+// ─── GA4 Custom Charts (dados reais conforme o período selecionado) ──
+const GA4_DONUT_COLORS = ['#FF6A00', '#2563eb', '#059669', '#7c3aed', '#db2777', '#0369a1', '#b45309', '#64748b'];
+
+function Ga4WidgetEmpty({ connected, loading }: { connected: boolean; loading: boolean }) {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-2 py-8 text-center">
+      {loading ? (
+        <>
+          <div className="w-5 h-5 rounded-full border-2 border-[#FF6A00]/30 border-t-[#FF6A00] animate-spin" />
+          <p className="text-[11px] font-bold text-slate-400">Carregando dados do GA4…</p>
+        </>
+      ) : connected ? (
+        <>
+          <Activity size={18} className="text-slate-300" />
+          <p className="text-[11px] font-bold text-slate-400">Sem dados no período selecionado.</p>
+        </>
+      ) : (
+        <>
+          <AlertTriangle size={18} className="text-amber-400" />
+          <p className="text-[11px] font-bold text-slate-400">
+            Conecte o GA4 em{' '}
+            <Link href="/hub/integracoes" className="text-[#FF6A00]">Integrações</Link>
+            {' '}para ver dados reais.
+          </p>
+        </>
+      )}
+    </div>
+  );
+}
+
+function Ga4StatusBadge({ connected }: { connected: boolean }) {
+  return connected ? (
+    <div className="flex items-center gap-1 bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10 text-[9px] font-black text-emerald-600">
+      <CheckCircle2 size={8} />
+      GA4
+    </div>
+  ) : (
+    <div className="flex items-center gap-1 bg-amber-500/5 px-2 py-0.5 rounded border border-amber-500/10 text-[9px] font-black text-amber-600">
+      <AlertTriangle size={8} />
+      GA4 OFF
+    </div>
+  );
+}
+
+function GA4TrafficDonut({ sources, connected, loading }: { sources: Ga4TrafficSource[]; connected: boolean; loading: boolean }) {
+  const data = sources.map((s, i) => ({
+    name: s.source,
+    value: s.sessions,
+    color: GA4_DONUT_COLORS[i % GA4_DONUT_COLORS.length],
+  }));
   return (
     <div className="flex flex-col h-full justify-between">
       <div className="flex items-center justify-between border-b border-white/40 pb-3 mb-3">
@@ -267,117 +313,87 @@ function GA4TrafficDonut() {
           <Activity size={14} className="text-[#FF6A00]" />
           <span className="text-[12px] font-black uppercase tracking-wider text-[#0f172a]">Origens de Tráfego (GA4)</span>
         </div>
-        <div className="flex items-center gap-1 bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10 text-[9px] font-black text-emerald-600">
-          <CheckCircle2 size={8} />
-          GA4
-        </div>
+        <Ga4StatusBadge connected={connected} />
       </div>
-      <div className="flex flex-1 items-center gap-4 py-1">
-        <div className="w-36 h-36 shrink-0 relative flex items-center justify-center">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie data={data} dataKey="value" innerRadius={45} outerRadius={60} paddingAngle={2} stroke="none">
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <RechartsTooltip formatter={(value) => [`${value} Sessões`, 'Total']} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', fontSize: '12px', fontWeight: 'bold' }} />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-        <div className="flex-1 space-y-1 overflow-y-auto max-h-[170px] pr-1">
-          {data.map((item) => (
-            <div key={item.name} className="flex items-center justify-between text-[10.5px] font-semibold px-2 py-0.5 rounded-lg transition-all hover:bg-white hover:shadow-[2px_2px_5px_#d1d9e6]">
-              <div className="flex items-center gap-1.5 min-w-0">
-                <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
-                <span className="text-slate-600 truncate" title={item.name}>{item.name}</span>
+      {data.length === 0 ? (
+        <Ga4WidgetEmpty connected={connected} loading={loading} />
+      ) : (
+        <div className="flex flex-1 items-center gap-4 py-1">
+          <div className="w-36 h-36 shrink-0 relative flex items-center justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie data={data} dataKey="value" innerRadius={45} outerRadius={60} paddingAngle={2} stroke="none">
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <RechartsTooltip formatter={(value) => [`${value} Sessões`, 'Total']} contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', fontSize: '12px', fontWeight: 'bold' }} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex-1 space-y-1 overflow-y-auto max-h-[170px] pr-1">
+            {data.map((item) => (
+              <div key={item.name} className="flex items-center justify-between text-[10.5px] font-semibold px-2 py-0.5 rounded-lg transition-all hover:bg-white hover:shadow-[2px_2px_5px_#d1d9e6]">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                  <span className="text-slate-600 truncate" title={item.name}>{item.name}</span>
+                </div>
+                <span className="font-bold text-slate-800 font-mono shrink-0 ml-2">{item.value}</span>
               </div>
-              <span className="font-bold text-slate-800 font-mono shrink-0 ml-2">{item.value}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
 
-function GA4UserLineChart() {
-  const data = [
-    { date: '07 Jun', newUsers: 0, returningUsers: 0 },
-    { date: '08 Jun', newUsers: 2, returningUsers: 1 },
-    { date: '09 Jun', newUsers: 7, returningUsers: 3 },
-    { date: '10 Jun', newUsers: 2, returningUsers: 4 },
-    { date: '11 Jun', newUsers: 5, returningUsers: 7 },
-    { date: '12 Jun', newUsers: 3, returningUsers: 2 },
-    { date: '13 Jun', newUsers: 1, returningUsers: 0 },
-    { date: '14 Jun', newUsers: 2, returningUsers: 0 },
-    { date: '15 Jun', newUsers: 2, returningUsers: 2 },
-    { date: '16 Jun', newUsers: 2, returningUsers: 5 },
-    { date: '17 Jun', newUsers: 4, returningUsers: 10 },
-    { date: '18 Jun', newUsers: 1, returningUsers: 3 },
-    { date: '19 Jun', newUsers: 2, returningUsers: 2 },
-    { date: '20 Jun', newUsers: 5, returningUsers: 4 },
-    { date: '21 Jun', newUsers: 0, returningUsers: 5 },
-    { date: '22 Jun', newUsers: 2, returningUsers: 5 },
-    { date: '23 Jun', newUsers: 1, returningUsers: 6 },
-    { date: '24 Jun', newUsers: 0, returningUsers: 4 },
-    { date: '25 Jun', newUsers: 1, returningUsers: 1 },
-    { date: '26 Jun', newUsers: 1, returningUsers: 1 },
-    { date: '27 Jun', newUsers: 0, returningUsers: 0 },
-    { date: '28 Jun', newUsers: 1, returningUsers: 2 },
-    { date: '29 Jun', newUsers: 15, returningUsers: 11 },
-  ];
-
+function GA4UserLineChart({ trend, connected, loading }: { trend: Ga4TrendPoint[]; connected: boolean; loading: boolean }) {
   return (
     <div className="flex flex-col h-full justify-between">
       <div className="flex items-center justify-between border-b border-white/40 pb-3 mb-3">
         <span className="text-[12px] font-black uppercase tracking-wider text-[#0f172a]">Usuários novos x recorrentes</span>
-        <div className="flex items-center gap-1.5 text-[9px] font-black text-emerald-600 bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10">
-          <CheckCircle2 size={8} />
-          GA4
-        </div>
+        <Ga4StatusBadge connected={connected} />
       </div>
 
-      <div className="relative flex-1 flex items-center justify-center h-40">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(203,213,225,0.4)" />
-            <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 'bold' }} axisLine={false} tickLine={false} minTickGap={20} />
-            <YAxis tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 'bold' }} axisLine={false} tickLine={false} />
-            <RechartsTooltip
-              contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', fontSize: '10px' }}
-              labelStyle={{ fontWeight: 'bold', color: '#0f172a', marginBottom: '4px' }}
-            />
-            <Line type="monotone" dataKey="returningUsers" name="Recorrentes" stroke="#2563eb" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
-            <Line type="monotone" dataKey="newUsers" name="Novos" stroke="#22c55e" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
+      {trend.length === 0 ? (
+        <Ga4WidgetEmpty connected={connected} loading={loading} />
+      ) : (
+        <>
+          <div className="relative flex-1 flex items-center justify-center h-40">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={trend} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(203,213,225,0.4)" />
+                <XAxis dataKey="date" tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 'bold' }} axisLine={false} tickLine={false} minTickGap={20} />
+                <YAxis tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                <RechartsTooltip
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', fontSize: '10px' }}
+                  labelStyle={{ fontWeight: 'bold', color: '#0f172a', marginBottom: '4px' }}
+                />
+                <Line type="monotone" dataKey="returningUsers" name="Recorrentes" stroke="#2563eb" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
+                <Line type="monotone" dataKey="newUsers" name="Novos" stroke="#22c55e" strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
 
-      <div className="flex items-center justify-center gap-6 text-[10px] font-black uppercase text-slate-500 pt-2 border-t border-slate-200/50 mt-2">
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#2563eb]" />
-          <span>returning</span>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]" />
-          <span>new</span>
-        </div>
-      </div>
+          <div className="flex items-center justify-center gap-6 text-[10px] font-black uppercase text-slate-500 pt-2 border-t border-slate-200/50 mt-2">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#2563eb]" />
+              <span>recorrentes</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]" />
+              <span>novos</span>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
-function GA4ActiveRegions() {
-  const regions = [
-    { country: 'Brazil', value: 17, change: '+6,3%', positive: true },
-    { country: 'United States', value: 8, change: '+166%', positive: true },
-    { country: 'Netherlands', value: 2, change: '0%', positive: null },
-    { country: 'India', value: 1, change: '-50,0%', positive: false },
-    { country: 'Poland', value: 1, change: '0%', positive: null },
-    { country: 'Switzerland', value: 0, change: '-100%', positive: false },
-    { country: 'France', value: 0, change: '-100%', positive: false },
-  ];
+function GA4ActiveRegions({ regions, connected, loading }: { regions: Ga4Region[]; connected: boolean; loading: boolean }) {
+  const maxValue = Math.max(...regions.map(r => r.value), 1);
 
   return (
     <div className="flex flex-col h-full justify-between">
@@ -385,42 +401,43 @@ function GA4ActiveRegions() {
         <div className="flex items-center gap-2">
           <span className="text-[12px] font-black uppercase tracking-wider text-[#0f172a]">Usuários ativos por Região</span>
         </div>
-        <div className="flex items-center gap-1 bg-emerald-500/5 px-2 py-0.5 rounded border border-emerald-500/10 text-[9px] font-black text-emerald-600">
-          <CheckCircle2 size={8} />
-          GA4
-        </div>
+        <Ga4StatusBadge connected={connected} />
       </div>
 
-      <div className="flex-1 overflow-y-auto max-h-[170px] pr-1">
-        <div className="space-y-3">
-          {regions.map(r => (
-            <div key={r.country} className="space-y-1">
-              <div className="flex items-center justify-between text-[11px] font-bold">
-                <span className="text-slate-700 truncate">{r.country}</span>
-                <div className="flex items-center gap-2">
-                  <span className="text-slate-800 font-mono text-[12px]">{r.value}</span>
-                  {r.change !== '0%' && (
-                    <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
-                      r.positive === true ? 'text-emerald-600 bg-emerald-500/5' : r.positive === false ? 'text-rose-600 bg-rose-500/5' : 'text-slate-600 bg-slate-500/5'
-                    }`}>
-                      {r.change}
-                    </span>
-                  )}
+      {regions.length === 0 ? (
+        <Ga4WidgetEmpty connected={connected} loading={loading} />
+      ) : (
+        <div className="flex-1 overflow-y-auto max-h-[170px] pr-1">
+          <div className="space-y-3">
+            {regions.map((r, i) => (
+              <div key={r.country} className="space-y-1">
+                <div className="flex items-center justify-between text-[11px] font-bold">
+                  <span className="text-slate-700 truncate">{r.country}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-slate-800 font-mono text-[12px]">{r.value}</span>
+                    {r.change !== '0%' && (
+                      <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
+                        r.positive === true ? 'text-emerald-700 bg-emerald-500/10' : r.positive === false ? 'text-rose-700 bg-rose-500/10' : 'text-slate-700 bg-slate-500/10'
+                      }`}>
+                        {r.change}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="h-1.5 w-full bg-slate-200/60 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${r.value > 0 ? (r.value / maxValue) * 100 : 0}%`,
+                      backgroundColor: i === 0 ? '#FF6A00' : i === 1 ? '#2563eb' : '#64748b'
+                    }}
+                  />
                 </div>
               </div>
-              <div className="h-1.5 w-full bg-slate-200/60 rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-500"
-                  style={{
-                    width: `${r.value > 0 ? (r.value / 17) * 100 : 0}%`,
-                    backgroundColor: r.country === 'Brazil' ? '#FF6A00' : r.country === 'United States' ? '#2563eb' : '#64748b'
-                  }}
-                />
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -437,7 +454,11 @@ export default function HubDashboardLight() {
   const [ga4Data, setGa4Data] = useState<Ga4MetricsResponse | null>(null);
   const [trafficData, setTrafficData] = useState<TrafficExtractResponse | null>(null);
 
-  const connections = useMemo(() => (profile?.connections || {}) as Record<string, ConnectionItem>, [profile?.connections]);
+  // Conexões normalizadas (chaves snake_case do Firestore → ConnectorKey)
+  const connections = useMemo(
+    () => normalizeConnections(profile?.connections || {}) as Record<string, ConnectionItem>,
+    [profile?.connections]
+  );
   const isGa4Connected = Boolean(connections.ga4?.isActive);
   const isGoogleAdsConnected = Boolean(connections.googleAds?.isActive);
   const isMetaAdsConnected = Boolean(connections.metaAds?.isActive);
@@ -470,6 +491,8 @@ export default function HubDashboardLight() {
               accessToken: connections.ga4.accessToken,
               accountId: connections.ga4.accountId,
               uid: user.uid,
+              dateFrom,
+              dateTo,
             }),
           });
           if (active) setGa4Data(await res.json());
@@ -1367,17 +1390,29 @@ export default function HubDashboardLight() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Card 1: Donut Chart */}
           <BentoCard variant="neumorphic" className="flex flex-col p-6 h-[280px]" glowColor="rgba(255, 106, 0, 0.02)">
-            <GA4TrafficDonut />
+            <GA4TrafficDonut
+              sources={ga4Data?.trafficSources || []}
+              connected={isGa4Connected}
+              loading={loading}
+            />
           </BentoCard>
 
           {/* Card 2: Line Chart */}
           <BentoCard variant="neumorphic" className="flex flex-col p-6 h-[280px]" glowColor="rgba(34, 197, 94, 0.02)">
-            <GA4UserLineChart />
+            <GA4UserLineChart
+              trend={ga4Data?.usersTrend || []}
+              connected={isGa4Connected}
+              loading={loading}
+            />
           </BentoCard>
 
           {/* Card 3: Region/Map list */}
           <BentoCard variant="neumorphic" className="flex flex-col p-6 h-[280px]" glowColor="rgba(37, 99, 235, 0.02)">
-            <GA4ActiveRegions />
+            <GA4ActiveRegions
+              regions={ga4Data?.regions || []}
+              connected={isGa4Connected}
+              loading={loading}
+            />
           </BentoCard>
         </div>
       </div>

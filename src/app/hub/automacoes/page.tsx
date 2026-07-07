@@ -16,6 +16,7 @@ import {
 import { collection, onSnapshot, query, where, updateDoc, doc, addDoc, increment } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { getFirebaseDb } from '../../../lib/firebase';
+import { getHubAutomationsFromProfile, formatAutomationDateTime } from '../../../lib/hub-automations';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -164,13 +165,12 @@ function AutomationCard({
 
     try {
       const db = getFirebaseDb();
-      const autoRef = doc(db, 'users', userId, 'automations', automation.id);
-      const now = new Date();
-      const formattedDate = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const userRef = doc(db, 'users', userId);
+      const now = Date.now();
 
-      await updateDoc(autoRef, {
-        runsTotal: increment(1),
-        lastRunAt: formattedDate,
+      await updateDoc(userRef, {
+        [`automations.${automation.id}.lastUpdateAt`]: now,
+        [`automations.${automation.id}.updatedAt`]: now,
       });
 
       const template = OPPORTUNITY_TEMPLATES[automation.category] ?? {
@@ -325,91 +325,39 @@ function AutomationCard({
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function HubAutomacoesPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
 
   const [automations, setAutomations] = useState<Automation[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterCategory, setFilterCategory] = useState('Todos');
 
-  // Realtime listener from Firestore automations sub-collection
+  // Synchronize automations with user profile (real active automations)
   useEffect(() => {
-    if (!user) {
-      setAutomations([]);
-      setLoading(false);
+    if (!profile) {
+      if (!user) {
+        setAutomations([]);
+        setLoading(false);
+      }
       return;
     }
-    try {
-      const db = getFirebaseDb();
-      const q = query(
-        collection(db, 'users', user.uid, 'automations'),
-        where('isActive', '==', true)
-      );
-      const unsub = onSnapshot(
-        q,
-        async (snap) => {
-          if (snap.empty) {
-            try {
-              const colRef = collection(db, 'users', user.uid, 'automations');
-              const defaults = [
-                {
-                  name: 'Otimização de Lance em Tempo Real (Meta Ads)',
-                  description: 'Ajusta bids de grupos de anúncios a cada 15 minutos com base em CPA dinâmico.',
-                  trigger: 'Alteração de CPA nos últimos 30min',
-                  frequency: 'A cada 15 minutos',
-                  category: 'Performance',
-                  runsTotal: 0,
-                  lastRunAt: null,
-                  createdAt: new Date().toLocaleDateString('pt-BR'),
-                  isActive: true
-                },
-                {
-                  name: 'Geração de Criativos de Conversão',
-                  description: 'Analisa copies vencedores e gera novas variações de anúncios de imagem/vídeo.',
-                  trigger: 'Queda de CTR abaixo de 1.5%',
-                  frequency: 'Semanal',
-                  category: 'Criativos',
-                  runsTotal: 0,
-                  lastRunAt: null,
-                  createdAt: new Date().toLocaleDateString('pt-BR'),
-                  isActive: true
-                },
-                {
-                  name: 'Monitoramento Server-Side de Deduplicação',
-                  description: 'Compara eventos do Pixel vs CAPI e corrige desvios de rastreamento.',
-                  trigger: 'Discrepância de eventos > 10%',
-                  frequency: 'Diário',
-                  category: 'Técnico',
-                  runsTotal: 0,
-                  lastRunAt: null,
-                  createdAt: new Date().toLocaleDateString('pt-BR'),
-                  isActive: true
-                }
-              ];
-              for (const item of defaults) {
-                await addDoc(colRef, item);
-              }
-            } catch (err) {
-              console.error('Error seeding automations:', err);
-            }
-          } else {
-            const docs: Automation[] = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Automation, 'id'>) }));
-            setAutomations(docs);
-          }
-          setLoading(false);
-        },
-        () => {
-          // If collection doesn't exist yet, just show empty
-          setAutomations([]);
-          setLoading(false);
-        }
-      );
-      return () => unsub();
-    } catch {
-      setAutomations([]);
-      setLoading(false);
-    }
-  }, [user]);
+    const realAutos = getHubAutomationsFromProfile(profile)
+      .filter((a) => a.status === 'active')
+      .map((a) => ({
+        id: a.key,
+        name: `${a.agentTitle} (${a.objective})`,
+        description: a.scheduleOptionDetail || `Automação executada com cadência ${a.cadence}.`,
+        trigger: a.scheduleOptionLabel || 'Frequência agendada',
+        frequency: a.cadence || 'Periódico',
+        category: a.agentCategory || 'Performance',
+        runsTotal: a.monthlyExecutions || 0,
+        lastRunAt: a.lastUpdateAt ? formatAutomationDateTime(a.lastUpdateAt) : null,
+        createdAt: a.activatedAt ? new Date(a.activatedAt).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR'),
+        isActive: true,
+      }));
+    setAutomations(realAutos);
+    setLoading(false);
+  }, [profile, user]);
 
   const filtered = useMemo(() =>
     automations.filter((a) => {

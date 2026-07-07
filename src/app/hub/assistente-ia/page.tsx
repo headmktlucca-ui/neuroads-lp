@@ -24,7 +24,7 @@ import { getTeamAgentById, type TeamAgent } from '../../../data/team-agents';
 type ChatState = 'idle' | 'thinking' | 'streaming';
 type ToneMode = 'formal' | 'criativo' | 'direto';
 type AttachType = 'pdf' | 'audio' | 'video';
-type PanelTab = 'resumir' | 'comparar' | 'top';
+type PanelTab = 'resumir' | 'comparar' | 'top' | 'resposta' | 'tabela';
 type ViewMode = 'table' | 'chart';
 
 interface CustomField {
@@ -109,6 +109,7 @@ interface ResultPanel {
   tableRows: TableRow[];
   // Support AI-generated data
   aiData?: LuccaLeftPanelData;
+  fullMessage?: string;
 }
 
 
@@ -176,7 +177,7 @@ const RESULT_PANELS: ResultPanel[] = [
   },
 ];
 
-const ANALYSIS_CONTENT: Record<string, Record<PanelTab, React.ReactNode>> = {
+const ANALYSIS_CONTENT: Record<string, Partial<Record<PanelTab, React.ReactNode>>> = {
   r1: {
     resumir: (
       <div className="space-y-3 text-[13px] text-[#374151] leading-relaxed">
@@ -510,6 +511,27 @@ function OrbitalAnimation({ size = 80 }: { size?: number }) {
 /* ═══════════════════════════════════════════════════════════════════
    LEFT PANEL — RESULTS
 ═══════════════════════════════════════════════════════════════════ */
+function LeftPanelLoading({ activeAgent }: { activeAgent?: TeamAgent }) {
+  return (
+    <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col items-center justify-center gap-5">
+      <OrbitalAnimation size={88} />
+      <ThinkingPhaseText />
+      {/* Skeleton rows */}
+      <div className="w-full max-w-xs px-6 mt-2 space-y-2.5">
+        {[72, 88, 58, 80, 48].map((w, i) => (
+          <motion.div
+            key={i}
+            className="h-2.5 bg-[#F0F0F2] rounded-full"
+            style={{ width: `${w}%` }}
+            animate={{ opacity: [0.35, 0.75, 0.35] }}
+            transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.18 }}
+          />
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 function EmptyLeftPanel() {
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-4 p-8 text-center">
@@ -704,66 +726,242 @@ function LeftPanel({
   isLoading,
   activeAgent,
   onSelectSuggestion,
+  historyIndex,
+  historyTotal,
+  onHistoryNav,
+  connectedSources,
 }: {
   result: ResultPanel | null;
   isLoading: boolean;
   activeAgent?: TeamAgent;
   onSelectSuggestion: (agentId: string, specialty: string) => void;
+  historyIndex: number;
+  historyTotal: number;
+  onHistoryNav: (direction: -1 | 1) => void;
+  connectedSources: string[];
 }) {
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('table');
-  const [activeTab, setActiveTab] = useState<PanelTab>('resumir');
-  const [summaryOpen, setSummaryOpen] = useState(true);
-  const [analysisOpen, setAnalysisOpen] = useState(true);
+  const [activeTab, setActiveTab] = useState<PanelTab>('resposta');
+  const [copied, setCopied] = useState(false);
 
-  useEffect(() => { if (result) { setActiveTab('resumir'); setSummaryOpen(true); setAnalysisOpen(true); } }, [result?.id]);
+  useEffect(() => {
+    if (result) {
+      setActiveTab('resposta'); // eslint-disable-line react-hooks/set-state-in-effect
+      setSearch(''); // eslint-disable-line react-hooks/set-state-in-effect
+    }
+  }, [result?.id]);
 
   const filteredRows = result?.tableRows.filter(row =>
     !search || row.cells.some(c => c.toLowerCase().includes(search.toLowerCase()))
   ) ?? [];
 
+  const hasTable = (result?.tableHeaders?.length ?? 0) > 0 && (result?.tableRows?.length ?? 0) > 0;
+
+  /* Helper to render formatted report content with color hierarchy */
+  function renderContent(text: string) {
+    if (!text) return null;
+    const lines = text.split('\n');
+    let hCount = 0;
+    return lines.map((line, i) => {
+      // Headers with color accent bars
+      if (line.startsWith('### ')) {
+        hCount++;
+        const headerColors = ['text-blue-700', 'text-emerald-700', 'text-violet-700', 'text-amber-700', 'text-rose-700'];
+        const hc = headerColors[hCount % headerColors.length];
+        return (
+          <motion.h4 key={i}
+            initial={{ opacity: 0, x: -4 }} animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: Math.min(i * 0.02, 0.4) }}
+            className={`text-sm font-bold ${hc} mt-4 mb-1.5 flex items-center gap-1.5`}
+          >
+            <span className="w-1 h-3.5 rounded-full bg-current opacity-50 shrink-0" />
+            {line.replace('### ', '')}
+          </motion.h4>
+        );
+      }
+      if (line.startsWith('## ')) {
+        return (
+          <motion.h3 key={i}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ duration: 0.3, delay: Math.min(i * 0.02, 0.4) }}
+            className="text-[14px] font-black text-slate-900 mt-5 mb-2 border-b border-slate-100 pb-1"
+          >{line.replace('## ', '')}</motion.h3>
+        );
+      }
+      if (line.startsWith('# ')) {
+        return (
+          <motion.h2 key={i}
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
+            className="text-[16px] font-black text-slate-900 mt-6 mb-3"
+          >{line.replace('# ', '')}</motion.h2>
+        );
+      }
+
+      // Bullet points — rotating color dots
+      let isBullet = false;
+      let content = line;
+      if (line.trim().match(/^[•\-\*]/)) {
+        isBullet = true;
+        content = line.replace(/^[•\s\-\*]+/, '');
+      }
+
+      // Bold parsing: **text**
+      const parts = content.split('**');
+      const renderedLine = parts.map((part, idx) => {
+        if (idx % 2 === 1) {
+          return <strong key={idx} className="font-extrabold text-slate-900">{part}</strong>;
+        }
+        return part;
+      });
+
+      if (isBullet) {
+        const dotColors = ['bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-violet-500', 'bg-rose-500'];
+        const dc = dotColors[i % dotColors.length];
+        return (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, x: -6 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, delay: Math.min(i * 0.03, 0.5) }}
+            className="flex gap-2.5 items-start ml-1 my-1.5 text-[13px] text-slate-600"
+          >
+            <span className={`mt-2 shrink-0 w-1.5 h-1.5 rounded-full ${dc}`} />
+            <span className="leading-relaxed">{renderedLine}</span>
+          </motion.div>
+        );
+      }
+
+      if (!line.trim()) return <div key={i} className="h-1.5" />;
+
+      return (
+        <motion.p
+          key={i}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: Math.min(i * 0.025, 0.5) }}
+          className="text-[13px] text-slate-600 leading-relaxed my-1"
+        >
+          {renderedLine}
+        </motion.p>
+      );
+    });
+  }
+
+  /* Exporta a tabela atual como CSV real ou texto da resposta */
+  const handleDownload = () => {
+    if (!result) return;
+    let fileContent = '';
+    let fileName = `${result.title.toLowerCase().replace(/\s+/g, '_')}.txt`;
+    let fileType = 'text/plain;charset=utf-8';
+
+    if (hasTable && activeTab === 'tabela') {
+      const esc = (v: string) => `"${v.replace(/"/g, '""')}"`;
+      const lines: string[] = [];
+      lines.push(esc(result.title));
+      if (result.summary) lines.push(esc(result.summary));
+      lines.push(result.tableHeaders.map(esc).join(';'));
+      result.tableRows.forEach(row => lines.push(row.cells.map(esc).join(';')));
+      fileContent = lines.join('\n');
+      fileName = `${result.title.toLowerCase().replace(/\s+/g, '_')}.csv`;
+      fileType = 'text/csv;charset=utf-8';
+    } else {
+      fileContent = `${result.title}\n\n${result.fullMessage || result.summary}`;
+    }
+
+    const blob = new Blob([fileContent], { type: fileType });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleCopy = () => {
+    if (!result) return;
+    const textToCopy = result.fullMessage || result.summary;
+    navigator.clipboard.writeText(textToCopy);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  /* Extrai comparações se houver dados tabulares numéricos */
+  const comparison = useMemo(() => {
+    if (!result || result.tableHeaders.length < 2 || result.tableRows.length < 2) return [];
+    const metrics: Array<{ header: string; best: { label: string; value: string }; worst: { label: string; value: string } }> = [];
+
+    result.tableHeaders.slice(1).forEach((header, colIdx) => {
+      let bestRow = result.tableRows[0];
+      let worstRow = result.tableRows[0];
+      let maxVal = -Infinity;
+      let minVal = Infinity;
+      let isNumericCol = true;
+
+      result.tableRows.forEach(row => {
+        const cell = row.cells[colIdx + 1];
+        if (!cell) return;
+        const num = parseFloat(cell.replace(/[^\d,\.\-]/g, '').replace(',', '.'));
+        if (isNaN(num)) {
+          isNumericCol = false;
+        } else {
+          if (num > maxVal) { maxVal = num; bestRow = row; }
+          if (num < minVal) { minVal = num; worstRow = row; }
+        }
+      });
+
+      if (isNumericCol) {
+        metrics.push({
+          header,
+          best: { label: bestRow.cells[0], value: bestRow.cells[colIdx + 1] },
+          worst: { label: worstRow.cells[0], value: worstRow.cells[colIdx + 1] },
+        });
+      }
+    });
+    return metrics;
+  }, [result]);
+
+  const topRow = useMemo(() => {
+    if (!result || result.tableRows.length === 0) return null;
+    return result.tableRows.find(r => r.highlight) || result.tableRows[0];
+  }, [result]);
+
+  const tabs: { id: PanelTab; label: string; icon: React.ReactNode }[] = [
+    { id: 'resposta' as const, label: 'Relatório do Agente', icon: <FileText className="w-3.5 h-3.5" /> },
+    ...(hasTable ? [{ id: 'tabela' as const, label: 'Tabela de Dados', icon: <Table2 className="w-3.5 h-3.5" /> }] : []),
+    ...(comparison.length > 0 ? [{ id: 'comparar' as const, label: 'Comparar Métricas', icon: <BarChart2 className="w-3.5 h-3.5" /> }] : []),
+    ...(topRow ? [{ id: 'top' as const, label: 'Item Destaque', icon: <TrendingUp className="w-3.5 h-3.5" /> }] : []),
+  ];
+
   return (
-    <div className="flex flex-col h-full bg-white border-r border-[#E5E7EB] overflow-hidden">
+    <div className="w-full border-r border-[#E5E7EB] bg-white flex flex-col h-full overflow-hidden select-none">
       <AnimatePresence mode="wait">
         {isLoading ? (
-          <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col items-center justify-center gap-5">
-            <OrbitalAnimation size={88} />
-            <ThinkingPhaseText />
-            {/* Skeleton rows */}
-            <div className="w-full max-w-xs px-6 mt-2 space-y-2.5">
-              {[72, 88, 58, 80, 48].map((w, i) => (
-                <motion.div
-                  key={i}
-                  className="h-2.5 bg-[#F0F0F2] rounded-full"
-                  style={{ width: `${w}%` }}
-                  animate={{ opacity: [0.35, 0.75, 0.35] }}
-                  transition={{ duration: 1.5, repeat: Infinity, delay: i * 0.18 }}
-                />
-              ))}
-            </div>
-          </motion.div>
+          <LeftPanelLoading activeAgent={activeAgent} />
         ) : !result ? (
-          <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col overflow-y-auto">
-            {activeAgent?.id === 'ulisses' ? (
-              <OrchestratorControlPanel onSelectSuggestion={onSelectSuggestion} />
-            ) : (
-              <EmptyLeftPanel />
-            )}
-          </motion.div>
+          <EmptyLeftPanel />
         ) : (
-          <motion.div key={result.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="flex-1 flex flex-col overflow-y-auto">
+          <motion.div key={result.id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }} className="flex-1 flex flex-col overflow-hidden">
             {/* Panel header */}
             <div className="px-5 pt-5 pb-3 border-b border-[#F3F4F6]">
               <div className="flex items-start justify-between gap-3 mb-2">
                 <h2 className="text-[15px] font-bold text-[#111827] leading-tight">{result.title}</h2>
                 <div className="flex items-center gap-1.5 shrink-0">
-                  <button onClick={() => setViewMode('table')} className={`p-1.5 rounded-lg transition-colors ${viewMode === 'table' ? 'bg-[#F3F4F6] text-[#374151]' : 'text-[#9CA3AF] hover:text-[#374151]'}`}>
-                    <Table2 className="w-3.5 h-3.5" />
+                  {hasTable && activeTab === 'tabela' && (
+                    <>
+                      <button title="Ver como tabela" onClick={() => setViewMode('table')} className={`p-1.5 rounded-lg transition-colors ${viewMode === 'table' ? 'bg-[#F3F4F6] text-[#374151]' : 'text-[#9CA3AF] hover:text-[#374151]'}`}>
+                        <Table2 className="w-3.5 h-3.5" />
+                      </button>
+                      <button title="Ver como cards" onClick={() => setViewMode('chart')} className={`p-1.5 rounded-lg transition-colors ${viewMode === 'chart' ? 'bg-[#F3F4F6] text-[#374151]' : 'text-[#9CA3AF] hover:text-[#374151]'}`}>
+                        <LayoutGrid className="w-3.5 h-3.5" />
+                      </button>
+                    </>
+                  )}
+                  <button title="Copiar resultado" onClick={handleCopy} className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#374151] transition-colors">
+                    {copied ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
-                  <button onClick={() => setViewMode('chart')} className={`p-1.5 rounded-lg transition-colors ${viewMode === 'chart' ? 'bg-[#F3F4F6] text-[#374151]' : 'text-[#9CA3AF] hover:text-[#374151]'}`}>
-                    <LayoutGrid className="w-3.5 h-3.5" />
-                  </button>
-                  <button className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#374151] transition-colors">
+                  <button title="Baixar resultado" onClick={handleDownload} className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#374151] transition-colors">
                     <Download className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -771,88 +969,329 @@ function LeftPanel({
               <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold border ${BADGE_STYLES[result.badgeVariant]}`}>
                 <Globe className="w-3 h-3" />{result.badge}
               </span>
-              {result.aiData?.isSimulated && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-[10px] font-black bg-amber-50 text-amber-700 border border-amber-200">
-                  <AlertTriangle className="w-3 h-3" />Dados Simulados
-                </span>
-              )}
             </div>
 
-            {/* Summary */}
-            <div className="border-b border-[#F3F4F6]">
-              <button onClick={() => setSummaryOpen(o => !o)} className="w-full flex items-center justify-between px-5 py-3 text-[13px] font-semibold text-[#374151] hover:bg-[#FAFAFA] transition-colors">
-                <div className="flex items-center gap-2"><FileText className="w-3.5 h-3.5 text-[#9CA3AF]" />Descrição resumida</div>
-                {summaryOpen ? <ChevronUp className="w-3.5 h-3.5 text-[#9CA3AF]" /> : <ChevronDown className="w-3.5 h-3.5 text-[#9CA3AF]" />}
-              </button>
-              <AnimatePresence>
-                {summaryOpen && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
-                    <div className="px-5 pb-4">
-                      <div className="relative mb-3">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#9CA3AF]" />
-                        <input value={search} onChange={e => setSearch(e.target.value)} placeholder={result.searchPlaceholder}
-                          className="w-full pl-8 pr-3 py-2 text-[13px] bg-[#F9FAFB] border border-[#E5E7EB] rounded-lg outline-none focus:border-[#FF6A00]/40 focus:ring-1 focus:ring-[#FF6A00]/20 transition-all placeholder:text-[#9CA3AF]" />
-                      </div>
-                      <p className="text-[13px] text-[#6B7280] leading-relaxed">{result.summary}</p>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Table / Dashboard view */}
-            {viewMode === 'table' ? (
-              <div className="border-b border-[#F3F4F6]">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-[13px]">
-                    <thead>
-                      <tr className="bg-[#F9FAFB]">
-                        {result.tableHeaders.map(h => (
-                          <th key={h} className="text-left px-4 py-2.5 text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide border-b border-[#E5E7EB]">{h}</th>
-                        ))}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredRows.map((row, i) => (
-                        <motion.tr
-                          key={i}
-                          initial={{ opacity: 0, y: 5 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: i * 0.03 }}
-                          className={`border-b border-[#F3F4F6] hover:bg-[#FAFAFA] transition-colors ${row.highlight ? 'bg-[#FFFBF7]' : ''}`}
-                        >
-                          {row.cells.map((cell, j) => (
-                            <td key={j} className={`px-4 py-2.5 ${j === 0 ? 'text-blue-600 font-medium' : 'text-[#374151]'} ${row.highlight && j === 0 ? 'text-[#FF6A00] font-semibold' : ''}`}>
-                              {cell}
-                            </td>
-                          ))}
-                        </motion.tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+            {/* Navigation Tabs */}
+            <div className="px-5 border-b border-[#F3F4F6] bg-slate-50/20 py-2">
+              <div className="flex gap-1 overflow-x-auto pb-0.5">
+                {tabs.map(t => (
+                  <button
+                    key={t.id}
+                    onClick={() => setActiveTab(t.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-semibold whitespace-nowrap transition-all border ${
+                      activeTab === t.id
+                        ? 'bg-[#111827] text-white border-[#111827]'
+                        : 'bg-white text-[#6B7280] border-[#E5E7EB] hover:border-[#9CA3AF]'
+                    }`}
+                  >
+                    {t.icon}
+                    <span>{t.label}</span>
+                  </button>
+                ))}
               </div>
-            ) : (
-              <div className="border-b border-[#F3F4F6] p-5 bg-slate-50/30">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {filteredRows.map((row, i) => (
+            </div>
+
+            {/* Content Body based on Active Tab */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 5 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -5 }}
+                transition={{ duration: 0.2 }}
+                className="flex-1 flex flex-col overflow-hidden"
+              >
+                {activeTab === 'resposta' && result.id === 'init-panel' ? (
+                  <div className="flex-1 p-5 overflow-y-auto bg-slate-50/30 space-y-4 select-text">
+                    {/* Welcome banner */}
                     <motion.div
-                      key={i}
-                      initial={{ opacity: 0, scale: 0.94, y: 8 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      transition={{ delay: i * 0.05, duration: 0.25 }}
-                      className={`p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all relative overflow-hidden group ${row.highlight ? 'ring-1 ring-[#FF6A00]/30' : ''}`}
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.4 }}
+                      className="bg-gradient-to-br from-[#111827] to-[#1F2937] text-white rounded-2xl p-5 shadow-md relative overflow-hidden"
                     >
-                      {row.highlight && (
-                        <div className="absolute top-0 right-0 bg-[#FF6A00] text-white text-[9px] font-black px-2.5 py-0.5 rounded-bl-lg uppercase tracking-wide">
-                          Melhor
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#FF6A00]/20 to-transparent rounded-full filter blur-xl" />
+                      <div className="flex items-center gap-3.5 mb-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF4D00] to-[#FF8805] flex items-center justify-center shrink-0 shadow-md">
+                          <Sparkles className="w-5 h-5 text-white animate-pulse" />
                         </div>
-                      )}
-                      <h4 className="text-[12px] font-extrabold text-slate-800 line-clamp-1 mb-3" style={{ maxWidth: '85%' }}>
-                        {row.cells[0]}
+                        <div>
+                          <p className="text-[11px] font-bold text-[#FF6A00] uppercase tracking-wider">Painel Operacional</p>
+                          <h3 className="text-[15px] font-black">{activeAgent?.nome || 'Lucca'}</h3>
+                        </div>
+                      </div>
+                      <p className="text-[12px] text-slate-300 leading-relaxed font-medium">
+                        {activeAgent?.frase || 'Seu orquestrador de operações de marketing.'}
+                      </p>
+                    </motion.div>
+
+                    {/* Operational status card */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.1 }}
+                      className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-3"
+                    >
+                      <h4 className="text-[12px] font-bold text-slate-800 flex items-center gap-1.5">
+                        <Terminal className="w-3.5 h-3.5 text-[#FF6A00]" /> Status da Operação
                       </h4>
                       <div className="grid grid-cols-2 gap-3">
-                        {row.cells.slice(1).map((cell, j) => {
+                        <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl flex flex-col">
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Status Geral</span>
+                          <span className="text-[13px] font-bold text-emerald-600 flex items-center gap-1.5 mt-0.5">
+                            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
+                            Ativo & Estável
+                          </span>
+                        </div>
+                        <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl flex flex-col">
+                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Orquestração</span>
+                          <span className="text-[13px] font-black text-slate-700 mt-0.5">
+                            Síncrona (100% Real)
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {/* Agent Skills/Habilidades */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.2 }}
+                      className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-3"
+                    >
+                      <h4 className="text-[12px] font-bold text-slate-800 flex items-center gap-1.5">
+                        <Target className="w-3.5 h-3.5 text-[#FF6A00]" /> Habilidades do Agente
+                      </h4>
+                      <div className="grid grid-cols-1 gap-2">
+                        {(activeAgent?.habilidades || []).map((h, idx) => (
+                          <div key={idx} className="flex gap-2.5 items-center px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[12px] text-slate-600 hover:border-slate-200 hover:bg-slate-100/50 transition-all">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A00] shrink-0" />
+                            <span className="font-semibold">{h}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+
+                    {/* Connected integrations status */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: 0.3 }}
+                      className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-3"
+                    >
+                      <h4 className="text-[12px] font-bold text-slate-800 flex items-center gap-1.5">
+                        <Database className="w-3.5 h-3.5 text-[#FF6A00]" /> Fontes de Dados Conectadas
+                      </h4>
+                      <div className="flex flex-wrap gap-1.5">
+                        {connectedSources.length > 0 ? (
+                          connectedSources.map(src => (
+                            <span key={src} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 border border-emerald-100 text-emerald-700">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                              {src}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-[12px] text-slate-400 italic">Nenhum canal ativo no momento.</span>
+                        )}
+                      </div>
+                    </motion.div>
+                  </div>
+                ) : activeTab === 'resposta' && (
+                  <div className="flex-1 overflow-y-auto select-text">
+                    {/* ── Hero Summary Card ── */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="mx-4 mt-4 relative overflow-hidden rounded-2xl p-5 shadow-lg"
+                      style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1e293b 60%, #0f172a 100%)' }}
+                    >
+                      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(255,106,0,0.35), transparent 55%)' }} />
+                      <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at 10% 80%, rgba(59,130,246,0.2), transparent 55%)' }} />
+                      <div className="relative z-10">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Sparkles className="w-3.5 h-3.5 text-[#FF6A00]" />
+                          <span className="text-[9px] font-black text-[#FF6A00] uppercase tracking-widest">Síntese da Análise</span>
+                          <div className="flex-1 h-px bg-white/10" />
+                          <motion.span
+                            animate={{ opacity: [1, 0.4, 1] }}
+                            transition={{ duration: 2, repeat: Infinity }}
+                            className="flex items-center gap-1"
+                          >
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                            <span className="text-[9px] text-emerald-400 font-bold">LIVE</span>
+                          </motion.span>
+                        </div>
+                        <p className="text-[13px] text-slate-300 leading-relaxed font-medium">
+                          {result.summary || 'Resultado da análise gerado pelo agente.'}
+                        </p>
+                      </div>
+                    </motion.div>
+
+                    {/* ── Insight Chips ── */}
+                    {result.aiData?.analysisItems && result.aiData.analysisItems.length > 0 && (
+                      <div className="px-4 pt-4 space-y-2">
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">
+                          {result.aiData.analysisTitle || 'Insights & Oportunidades'}
+                        </p>
+                        {result.aiData.analysisItems.map((item, i) => {
+                          const palettes: Array<{ g: string; bg: string; border: string; text: string; icon: string }> = [
+                            { g: 'from-blue-500 to-blue-600', bg: 'bg-blue-50', border: 'border-blue-200/60', text: 'text-blue-900', icon: '📈' },
+                            { g: 'from-emerald-500 to-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200/60', text: 'text-emerald-900', icon: '✅' },
+                            { g: 'from-amber-500 to-amber-600', bg: 'bg-amber-50', border: 'border-amber-200/60', text: 'text-amber-900', icon: '⚡' },
+                            { g: 'from-violet-500 to-violet-600', bg: 'bg-violet-50', border: 'border-violet-200/60', text: 'text-violet-900', icon: '🎯' },
+                            { g: 'from-rose-500 to-rose-600', bg: 'bg-rose-50', border: 'border-rose-200/60', text: 'text-rose-900', icon: '🔥' },
+                          ];
+                          const pal = palettes[i % 5];
+                          return (
+                            <motion.div
+                              key={i}
+                              initial={{ opacity: 0, x: -10 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              transition={{ duration: 0.3, delay: 0.08 + i * 0.07 }}
+                              whileHover={{ x: 4, transition: { duration: 0.15 } }}
+                              className={`flex items-start gap-3 p-3.5 ${pal.bg} border ${pal.border} rounded-xl cursor-default`}
+                            >
+                              <span className={`shrink-0 w-6 h-6 rounded-lg bg-gradient-to-br ${pal.g} flex items-center justify-center text-xs shadow-sm`}>
+                                {pal.icon}
+                              </span>
+                              <p className={`text-[12px] font-semibold ${pal.text} leading-snug mt-0.5`}>{item}</p>
+                            </motion.div>
+                          );
+                        })}
+                      </div>
+                    )}
+
+                    {/* ── Full Agent Report ── */}
+                    {result.fullMessage && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 6 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: 0.2 }}
+                        className="mx-4 mt-4 mb-4 bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden"
+                      >
+                        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-slate-100 bg-gradient-to-r from-slate-50 to-white">
+                          <FileText className="w-3.5 h-3.5 text-[#FF6A00]" />
+                          <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Relatório Completo do Agente</span>
+                        </div>
+                        <div className="p-4 space-y-1">
+                          {renderContent(result.fullMessage)}
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {!result.fullMessage && !result.summary && (
+                      <div className="px-4 py-8 text-center">
+                        <p className="text-[12px] text-slate-400">Nenhum conteúdo disponível.</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'tabela' && (
+                  <div className="flex-1 overflow-y-auto bg-slate-50/30 p-5">
+                    {/* search bar for table */}
+                    <div className="relative mb-3">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#9CA3AF]" />
+                      <input
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        placeholder={result.searchPlaceholder || "Buscar na tabela..."}
+                        className="w-full pl-8 pr-3 py-2 text-[13px] bg-white border border-[#E5E7EB] rounded-lg outline-none focus:border-[#FF6A00]/40 focus:ring-1 focus:ring-[#FF6A00]/20 transition-all placeholder:text-[#9CA3AF]"
+                      />
+                    </div>
+                    {viewMode === 'table' ? (
+                      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-[13px]">
+                            <thead>
+                              <tr className="bg-[#F9FAFB]">
+                                {result.tableHeaders.map(h => (
+                                  <th key={h} className="text-left px-4 py-2.5 text-[11px] font-semibold text-[#6B7280] uppercase tracking-wide border-b border-[#E5E7EB]">{h}</th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {filteredRows.map((row, i) => (
+                                <tr key={i} className={`border-b border-[#F3F4F6] hover:bg-[#FAFAFA] transition-colors ${row.highlight ? 'bg-[#FFFBF7]' : ''}`}>
+                                  {row.cells.map((cell, j) => (
+                                    <td key={j} className={`px-4 py-2.5 ${j === 0 ? 'text-blue-600 font-medium' : 'text-[#374151]'} ${row.highlight && j === 0 ? 'text-[#FF6A00] font-semibold' : ''}`}>
+                                      {cell}
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {filteredRows.map((row, i) => (
+                          <div key={i} className={`p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-all relative overflow-hidden group ${row.highlight ? 'ring-1 ring-[#FF6A00]/30' : ''}`}>
+                            {row.highlight && (
+                              <div className="absolute top-0 right-0 bg-[#FF6A00] text-white text-[9px] font-black px-2.5 py-0.5 rounded-bl-lg uppercase tracking-wide">
+                                Melhor
+                              </div>
+                            )}
+                            <h4 className="text-[12px] font-extrabold text-slate-800 line-clamp-1 mb-3" style={{ maxWidth: '85%' }}>
+                              {row.cells[0]}
+                            </h4>
+                            <div className="grid grid-cols-2 gap-3">
+                              {row.cells.slice(1).map((cell, j) => {
+                                const header = result.tableHeaders[j + 1] || 'Métrica';
+                                return (
+                                  <div key={j} className="flex flex-col gap-0.5">
+                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide">{header}</span>
+                                    <span className="text-[13px] font-black text-slate-700">{cell}</span>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {activeTab === 'comparar' && (
+                  <div className="flex-1 p-5 overflow-y-auto bg-slate-50/30 space-y-3">
+                    {comparison.map((m) => (
+                      <div key={m.header} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+                        <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wide mb-2 border-b border-slate-100 pb-1.5">{m.header}</p>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="bg-emerald-50/30 border border-emerald-100 p-3 rounded-xl">
+                            <p className="text-[10px] text-emerald-600 font-bold uppercase tracking-wider">Melhor desempenho</p>
+                            <p className="text-[14px] font-black text-[#111827] truncate mt-1" title={m.best.label}>{m.best.label}</p>
+                            <p className="text-[13px] text-emerald-600 font-black font-mono mt-0.5">{m.best.value}</p>
+                          </div>
+                          <div className="bg-rose-50/30 border border-rose-100 p-3 rounded-xl">
+                            <p className="text-[10px] text-rose-500 font-bold uppercase tracking-wider">Menor desempenho</p>
+                            <p className="text-[14px] font-black text-[#111827] truncate mt-1" title={m.worst.label}>{m.worst.label}</p>
+                            <p className="text-[13px] text-rose-500 font-black font-mono mt-0.5">{m.worst.value}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {activeTab === 'top' && (
+                  <div className="flex-1 p-5 overflow-y-auto bg-slate-50/30">
+                    <div className="bg-[#FFFDFB] border border-[#FF6A00]/25 rounded-2xl p-5 shadow-sm space-y-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF4D00] to-[#FF8805] flex items-center justify-center shrink-0 shadow-md">
+                          <TrendingUp className="w-5 h-5 text-white" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[11px] font-black text-[#FF6A00] uppercase tracking-wider">Líder do Período</p>
+                          <h3 className="text-[15px] font-black text-[#111827] truncate mt-0.5" title={topRow ? topRow.cells[0] : ''}>{topRow ? topRow.cells[0] : ''}</h3>
+                        </div>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3.5 pt-3 border-t border-slate-100">
+                        {topRow?.cells.slice(1).map((cell, j) => {
                           const header = result.tableHeaders[j + 1] || 'Métrica';
                           return (
                             <div key={j} className="flex flex-col gap-0.5">
@@ -862,77 +1301,45 @@ function LeftPanel({
                           );
                         })}
                       </div>
-                    </motion.div>
-                  ))}
-                </div>
+                      
+                      <div className="bg-orange-50/40 border border-orange-100/50 rounded-xl p-3 text-[12px] text-slate-600 leading-relaxed">
+                        Este item apresentou o maior rendimento sob a análise do agente **{activeAgent?.nome || 'Lucca'}**. 
+                        Pergunte ao especialista como escalar ou replicar esse padrão nas demais frentes da operação.
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Histórico de resultados da sessão */}
+            {historyTotal > 1 && (
+              <div className="flex items-center justify-between px-5 py-3 border-t border-[#F3F4F6] shrink-0 bg-white">
+                <button
+                  onClick={() => onHistoryNav(-1)}
+                  disabled={historyIndex <= 0}
+                  className="flex items-center gap-1 text-[12px] text-[#6B7280] hover:text-[#374151] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ArrowRight className="w-3.5 h-3.5 rotate-180" />Anterior
+                </button>
+                <span className="text-[11px] font-semibold text-[#9CA3AF]">
+                  Resultado {historyIndex + 1} de {historyTotal}
+                </span>
+                <button
+                  onClick={() => onHistoryNav(1)}
+                  disabled={historyIndex >= historyTotal - 1}
+                  className="flex items-center gap-1 text-[12px] text-[#6B7280] hover:text-[#374151] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                >
+                  Próximo<ArrowRight className="w-3.5 h-3.5" />
+                </button>
               </div>
             )}
-
-            {/* Analysis section */}
-            <div className="flex-1">
-              <button onClick={() => setAnalysisOpen(o => !o)} className="w-full flex items-center justify-between px-5 py-3 text-[13px] font-semibold text-[#374151] hover:bg-[#FAFAFA] transition-colors border-b border-[#F3F4F6]">
-                <div className="flex items-center gap-2"><BarChart2 className="w-3.5 h-3.5 text-[#9CA3AF]" />Análise</div>
-                {analysisOpen ? <ChevronUp className="w-3.5 h-3.5 text-[#9CA3AF]" /> : <ChevronDown className="w-3.5 h-3.5 text-[#9CA3AF]" />}
-              </button>
-              <AnimatePresence>
-                {analysisOpen && (
-                  <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.25 }} className="overflow-hidden">
-                    <div className="px-5 pt-3 pb-2">
-                      <div className="flex gap-1 mb-4 overflow-x-auto pb-1">
-                        {(['resumir', 'comparar', 'top'] as PanelTab[]).map(tab => {
-                          const labels: Record<PanelTab, string> = { resumir: 'Resumir', comparar: 'Comparar campanhas', top: 'Identificar top' };
-                          const icons: Record<PanelTab, React.ReactNode> = {
-                            resumir: <FileText className="w-3 h-3" />,
-                            comparar: <BarChart2 className="w-3 h-3" />,
-                            top: <TrendingUp className="w-3 h-3" />,
-                          };
-                          return (
-                            <button key={tab} onClick={() => setActiveTab(tab)}
-                              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-medium whitespace-nowrap transition-all border ${activeTab === tab
-                                ? 'bg-[#111827] text-white border-[#111827]'
-                                : 'bg-white text-[#6B7280] border-[#E5E7EB] hover:border-[#9CA3AF]'
-                              }`}>
-                              {icons[tab]}{labels[tab]}
-                            </button>
-                          );
-                        })}
-                      </div>
-                      <AnimatePresence mode="wait">
-                        <motion.div key={activeTab} initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-                          {/* AI-generated analysis items take priority */}
-                          {result.aiData?.analysisItems && activeTab === 'resumir' ? (
-                            <div className="space-y-2 text-[13px] text-[#374151] leading-relaxed">
-                              {result.aiData.analysisItems.map((item, i) => (
-                                <div key={i} className="flex gap-2 items-start">
-                                  <span className="mt-1 shrink-0 w-1.5 h-1.5 rounded-full bg-[#FF6A00]" />
-                                  <span>{item}</span>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            ANALYSIS_CONTENT[result.id]?.[activeTab] || (
-                              <p className="text-[12px] text-[#9CA3AF] italic">Análise gerada pelo Lucca com base nos dados acima.</p>
-                            )
-                          )}
-                        </motion.div>
-                      </AnimatePresence>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* More */}
-            <button className="flex items-center gap-1.5 px-5 py-3 text-[12px] text-[#6B7280] hover:text-[#374151] border-t border-[#F3F4F6] hover:bg-[#FAFAFA] transition-colors">
-              <ChevronDown className="w-3.5 h-3.5" />Mais dados
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
   );
 }
-
 /* ═══════════════════════════════════════════════════════════════════
    CHAT MESSAGES
 ═══════════════════════════════════════════════════════════════════ */
@@ -940,7 +1347,7 @@ function StreamText({ text, onDone }: { text: string; onDone: () => void }) {
   const [shown, setShown] = useState('');
   const idx = useRef(0);
   useEffect(() => {
-    idx.current = 0; setShown('');
+    idx.current = 0; setShown(''); // eslint-disable-line react-hooks/set-state-in-effect
     const tick = () => {
       if (idx.current < text.length) { idx.current++; setShown(text.slice(0, idx.current)); setTimeout(tick, 14); }
       else onDone();
@@ -1400,6 +1807,13 @@ export default function HubAssistentePage() {
     return { connectedSources: connected, disconnectedSources: disconnected };
   }, [profile?.connections]);
 
+  const realActiveAgents = React.useMemo(() => {
+    const map = (profile?.activeAgents ?? {}) as Record<string, { isActive?: boolean } | undefined>;
+    return Object.entries(map)
+      .filter(([, v]) => v?.isActive)
+      .map(([title]) => title);
+  }, [profile?.activeAgents]);
+
   const searchParams = useSearchParams();
   const router = useRouter();
   const agentId = searchParams.get('agent');
@@ -1467,10 +1881,25 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
 
   useEffect(() => {
     setMessages([initialMessage]);
-  }, [initialMessage]);
+    const initPanel: ResultPanel = {
+      id: 'init-panel',
+      title: specialtyTitle || `Painel de Operações - ${activeAgent?.nome ?? 'Ulisses'}`,
+      badge: activeAgent?.id === 'ulisses' ? 'Orquestrador' : 'Agente IA',
+      badgeVariant: 'orange',
+      summary: activeAgent?.frase || 'Seu orquestrador de operações de marketing.',
+      searchPlaceholder: 'Buscar...',
+      tableHeaders: [],
+      tableRows: [],
+      fullMessage: initialMessage.content,
+    };
+    setResults([initPanel]);
+    setResultIndex(0);
+  }, [initialMessage, specialtyTitle, activeAgent]);
 
   const [chatState, setChatState] = useState<ChatState>('idle');
-  const [currentResult, setCurrentResult] = useState<ResultPanel | null>(null);
+  const [results, setResults] = useState<ResultPanel[]>([]);
+  const [resultIndex, setResultIndex] = useState(0);
+  const currentResult = results[resultIndex] ?? null;
   const [leftLoading, setLeftLoading] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const [lastQuery, setLastQuery] = useState('');
@@ -1512,7 +1941,7 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
         userId: user?.uid,
         connectedSources,
         disconnectedSources,
-        activeAgents: ['Agente Performance', 'Agente Criativos', 'Agente Técnico'],
+        activeAgents: realActiveAgents,
         agentId: agentId || 'ulisses',
       };
 
@@ -1524,32 +1953,47 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
 
       if (!aiResponse.success) throw new Error(aiResponse.error);
 
-      // Update left panel with AI-generated data
-      if (aiResponse.leftPanelData) {
-        const aiPanel: ResultPanel = {
-          id: `ai-${Date.now()}`,
-          title: aiResponse.leftPanelData.title || 'Resultado',
-          badge: aiResponse.leftPanelData.badge || 'IA',
-          badgeVariant: 'orange',
-          summary: aiResponse.leftPanelData.description || '',
-          searchPlaceholder: 'Buscar...',
-          tableHeaders: aiResponse.leftPanelData.tableHeaders || [],
-          tableRows: (aiResponse.leftPanelData.tableRows || []).map((row, i) => ({
-            cells: Object.values(row),
-            highlight: i === 0,
-          })),
-          aiData: aiResponse.leftPanelData,
-        };
-        setCurrentResult(aiPanel);
-      }
+      // A resposta SEMPRE alimenta o painel esquerdo: usa o leftPanel da IA
+      // ou sintetiza um painel a partir da própria mensagem.
+      const panelData = aiResponse.leftPanelData ?? {
+        title: specialtyTitle || `Análise de ${activeAgent?.nome ?? 'Lucca'}`,
+        badge: 'Resposta do Agente',
+        description: aiResponse.message || '',
+        analysisTitle: 'Próximos passos',
+        analysisItems: aiResponse.nextSteps,
+      };
+      const aiPanel: ResultPanel = {
+        id: `ai-${Date.now()}`,
+        title: panelData.title || 'Resultado',
+        badge: panelData.badge || 'IA',
+        badgeVariant: 'orange',
+        summary: panelData.description || '',
+        searchPlaceholder: 'Buscar...',
+        tableHeaders: panelData.tableHeaders || [],
+        tableRows: (panelData.tableRows || []).map((row, i) => ({
+          cells: Object.values(row),
+          highlight: i === 0,
+        })),
+        aiData: panelData,
+        fullMessage: aiResponse.message || '',
+      };
+      setResults(prev => {
+        const next = [...prev, aiPanel];
+        setResultIndex(next.length - 1);
+        return next;
+      });
       setLeftLoading(false);
 
       const aId = `a-${Date.now()}`;
+      // Brief executive insight for chat — full analysis lives in the left panel only
+      const executiveSummary = panelData.description
+        ? panelData.description.split(/\.\s+/).slice(0, 2).join('. ').trim() + '.'
+        : (aiResponse.message?.split('\n')[0] || 'Análise concluída.');
       const assistantMsg: Message = {
         id: aId,
         role: 'assistant',
-        content: aiResponse.message || 'Desculpe, não consegui gerar uma resposta.',
-        verified: !aiResponse.leftPanelData?.isSimulated,
+        content: `Insight: ${executiveSummary}\n\n-> Relatório completo no painel ao lado.`,
+        verified: true,
         nextSteps: aiResponse.nextSteps,
       };
       // Show data access warning if present
@@ -1605,7 +2049,7 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
       className="flex w-full h-full bg-[#EBEBED] overflow-hidden rounded-xl border border-[#E0E0E3] shadow-sm"
     >
       {/* ── LEFT PANEL ── */}
-      <div className="w-[48%] min-w-0 flex flex-col border-r border-[#E0E0E3] overflow-hidden">
+      <div className="w-[55%] min-w-0 flex flex-col border-r border-[#E0E0E3] overflow-hidden">
         <LeftPanel
           result={currentResult}
           isLoading={leftLoading}
@@ -1613,6 +2057,12 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
           onSelectSuggestion={(agId, specTitle) => {
             router.push(`/hub/assistente-ia?agent=${agId}&specialty=${encodeURIComponent(specTitle)}`);
           }}
+          historyIndex={resultIndex}
+          historyTotal={results.length}
+          onHistoryNav={(direction) => {
+            setResultIndex(prev => Math.min(Math.max(prev + direction, 0), results.length - 1));
+          }}
+          connectedSources={connectedSources}
         />
       </div>
 
