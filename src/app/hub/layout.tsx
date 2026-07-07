@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState, useRef } from 'react';
+import React, { useEffect, useMemo, useState, useRef, Suspense } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { resolveHubAccessState, getHubLoginRedirect, getHubOnboardingRedirect } from '../../lib/hub-access';
@@ -771,18 +771,22 @@ function HubLayoutInner({
   return (
     <div className="flex h-screen overflow-hidden font-sans antialiased bg-[#eef2f7] text-[#1e293b]">
       {/* Desktop sidebar */}
-      <Sidebar userName={userName} userPhoto={userPhoto} companyName={companyName} pathname={pathname} onSignOut={onSignOut} />
+      <Suspense fallback={<div className="hidden lg:flex w-[230px] shrink-0 border-r border-white/40 bg-[#eef2f7]" />}>
+        <Sidebar userName={userName} userPhoto={userPhoto} companyName={companyName} pathname={pathname} onSignOut={onSignOut} />
+      </Suspense>
 
       {/* Mobile slide-in drawer */}
-      <MobileDrawer
-        isOpen={mobileDrawerOpen}
-        onClose={() => setMobileDrawerOpen(false)}
-        userName={userName}
-        userPhoto={userPhoto}
-        companyName={companyName}
-        pathname={pathname}
-        onSignOut={onSignOut}
-      />
+      <Suspense fallback={null}>
+        <MobileDrawer
+          isOpen={mobileDrawerOpen}
+          onClose={() => setMobileDrawerOpen(false)}
+          userName={userName}
+          userPhoto={userPhoto}
+          companyName={companyName}
+          pathname={pathname}
+          onSignOut={onSignOut}
+        />
+      </Suspense>
 
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden relative">
         {/* Mobile header — hidden on desktop */}

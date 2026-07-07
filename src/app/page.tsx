@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from 'framer-motion';
-import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown } from 'lucide-react';
+import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Bot, Target, Workflow, PieChart, LineChart, GitMerge, Crosshair } from 'lucide-react';
 import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
 
 const cardVariants = {
@@ -401,14 +401,8 @@ export default function TempLandingPage() {
             </div>
             
             {/* Icon */}
-            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative mb-6">
-              <Image
-                src="/images/tools/agentes-visao-geral-hero-ultrarealista-v2.png"
-                alt="Agentes IA"
-                fill
-                className="object-cover"
-                sizes="48px"
-              />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF5500] to-[#FF8C00] shadow-[3px_3px_8px_rgba(255,85,0,0.25)] shrink-0 flex items-center justify-center mb-6">
+              <Bot size={24} className="text-white" strokeWidth={1.8} />
             </div>
 
             {/* Content */}
@@ -441,14 +435,8 @@ export default function TempLandingPage() {
             className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between min-h-[380px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
           >
             {/* Icon */}
-            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative mb-6">
-              <Image
-                src="/images/tools/gestao-trafego-controle-caixa-hero-ultrarealista-v2.png"
-                alt="Campanhas Patrocinadas"
-                fill
-                className="object-cover"
-                sizes="48px"
-              />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#1a73e8] to-[#0052cc] shadow-[3px_3px_8px_rgba(26,115,232,0.25)] shrink-0 flex items-center justify-center mb-6">
+              <Target size={24} className="text-white" strokeWidth={1.8} />
             </div>
 
             {/* Content */}
@@ -481,14 +469,8 @@ export default function TempLandingPage() {
             className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-between min-h-[380px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
           >
             {/* Icon */}
-            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative mb-6">
-              <Image
-                src="/images/tools/servico-funil-conversao-hero-ultrarealista-v2.png"
-                alt="Automação & CRM"
-                fill
-                className="object-cover"
-                sizes="48px"
-              />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#6c3fc5] to-[#4b2fa8] shadow-[3px_3px_8px_rgba(108,63,197,0.25)] shrink-0 flex items-center justify-center mb-6">
+              <Workflow size={24} className="text-white" strokeWidth={1.8} />
             </div>
 
             {/* Content */}
@@ -1084,22 +1066,6 @@ function TargetAudienceSection() {
 }
 
 function AgentsGridSection() {
-  const getAgentTag = (title: string) => {
-    switch (title) {
-      case 'Ulisses': return 'ORQUESTRAÇÃO E BRIEFINGS DIÁRIOS';
-      case 'Vitor': return 'QUALIFICAÇÃO EM WHATSAPP E EMAIL';
-      case 'Manu': return 'ATENDIMENTO E FAQs AUTOMATIZADOS';
-      case 'Igor': return 'AUDITORIA DE CAC E ALERTAS NO SLACK';
-      case 'Tainá': return 'GERAÇÃO DE COPYS E ARTIGOS RÁPIDOS';
-      case 'Breno': return 'PROPOSTAS E FECHAMENTOS DE CONTRATOS';
-      case 'Paola': return 'OTIMIZAÇÃO DE ROAS E CAMPANHAS';
-      case 'Raíssa': return 'REATIVAÇÃO DE LEADS E BASE ATIVA';
-      case 'Heitor': return 'CONEXÃO COM CRM E APIS PÚBLICAS';
-      case 'Laís': return 'OTIMIZAÇÃO PARA BUSCADORES DE IA';
-      default: return 'AGENTE DE INTELIGÊNCIA ARTIFICIAL';
-    }
-  };
-
   const agents = [
     {
       id: 1,
@@ -1107,6 +1073,7 @@ function AgentsGridSection() {
       image: '/images/Avatar Agentes IA/Avatar_Ulisses.png',
       category: 'Orquestrador Central',
       bio: 'Ulisses é o orquestrador central do ecossistema NeuroAds. Ele distribui os briefings diários para os demais agentes, acompanha o status de cada conversão e consolida relatórios analíticos de alta performance para os gestores, garantindo a integração contínua do funil comercial.',
+      tag: 'ORQUESTRAÇÃO E BRIEFINGS DIÁRIOS',
     },
     {
       id: 2,
@@ -1114,6 +1081,7 @@ function AgentsGridSection() {
       image: '/images/Avatar Agentes IA/Avatar_Vitor.png',
       category: 'Agente SDR',
       bio: 'Vitor atua na linha de frente do comercial. Ele monitora páginas de captura de alta intenção, aciona sequências de qualificação personalizadas em tempo real e realiza o handoff automático de leads quentes para que o time comercial finalize o fechamento.',
+      tag: 'QUALIFICAÇÃO EM WHATSAPP E EMAIL',
     },
     {
       id: 3,
@@ -1121,6 +1089,7 @@ function AgentsGridSection() {
       image: '/images/Avatar Agentes IA/Avatar_Manu.png',
       category: 'Agente de Suporte',
       bio: 'Manu soluciona chamados recorrentes de nível 1 instantaneamente. Ela analisa o sentimento do cliente e, quando detecta um padrão de dúvida repetido, alerta o time de conteúdo para a criação imediata de materiais educativos de suporte.',
+      tag: 'ATENDIMENTO E FAQs AUTOMATIZADOS',
     },
     {
       id: 4,
@@ -1128,6 +1097,7 @@ function AgentsGridSection() {
       image: '/images/Avatar Agentes IA/Avatar_Igor.png',
       category: 'Agente de Inteligência de Dados',
       bio: 'Igor audita funis de vendas, cruzando dados de anúncios com o CRM. Ele calcula o custo de aquisição (CAC), o retorno de investimento (ROI) e envia notificações automáticas ao time de tráfego se detectar desvios de orçamento ou queda de performance.',
+      tag: 'AUDITORIA DE CAC E ALERTAS NO SLACK',
     },
     {
       id: 5,
@@ -1135,6 +1105,7 @@ function AgentsGridSection() {
       image: '/images/Avatar Agentes IA/Avatar_Taina.png',
       category: 'Agente de Conteúdo',
       bio: 'Tainá desenvolve textos persuasivos para anúncios pagos, redige newsletters semanais e cria artigos focados em educação de leads, baseando-se nas objeções mapeadas pelo time comercial e nas dúvidas vindas do suporte.',
+      tag: 'GERAÇÃO DE COPYS E ARTIGOS RÁPIDOS',
     },
     {
       id: 6,
@@ -1142,6 +1113,7 @@ function AgentsGridSection() {
       image: '/images/Avatar Agentes IA/Avatar_Breno.png',
       category: 'Agente Closer',
       bio: 'Breno gerencia negociações complexas. Ele formula propostas comerciais com base no budget do lead, automatiza follow-ups após o envio e encaminha o contrato assinado diretamente para a fase de onboarding de novos clientes.',
+      tag: 'PROPOSTAS E FECHAMENTOS DE CONTRATOS',
     },
     {
       id: 7,
@@ -1149,6 +1121,7 @@ function AgentsGridSection() {
       image: '/images/Avatar Agentes IA/Avatar_Paola.png',
       category: 'Agente de Tráfego',
       bio: 'Paola atua no Google Ads e Meta Ads. Ela analisa o ROAS em tempo real, substitui criativos em fadiga, realiza testes A/B de headlines e descobre novos públicos semelhantes (lookalike) com menor custo por mil impressões (CPM).',
+      tag: 'OTIMIZAÇÃO DE ROAS E CAMPANHAS',
     },
     {
       id: 8,
@@ -1156,6 +1129,7 @@ function AgentsGridSection() {
       image: '/images/Avatar Agentes IA/Avatar_Raissa.png',
       category: 'Agente de Upsell & Reativação',
       bio: 'Raíssa monitora a satisfação e o uso da plataforma pelos clientes ativos. Ela ativa campanhas automáticas de upsell no momento de maior engajamento e cria fluxos de recuperação para reativar clientes inativos há mais de 30 dias.',
+      tag: 'REATIVAÇÃO DE LEADS E BASE ATIVA',
     },
     {
       id: 9,
@@ -1163,6 +1137,7 @@ function AgentsGridSection() {
       image: '/images/Avatar Agentes IA/Avatar_Heitor.png',
       category: 'Agente de Processos & Integrações',
       bio: 'Heitor gerencia a integração técnica de novos leads. Ele conecta o CRM a ferramentas externas, valida chaves de API do cliente e garante que toda a esteira de onboarding de marketing/vendas funcione perfeitamente sem falhas.',
+      tag: 'CONEXÃO COM CRM E APIS PÚBLICAS',
     },
     {
       id: 10,
@@ -1170,8 +1145,31 @@ function AgentsGridSection() {
       image: '/images/Avatar Agentes IA/Avatar_Lais.png',
       category: 'Agente de SEO & GEO',
       bio: 'Laís monitora o posicionamento orgânico da marca. Ela otimiza o SEO do blog para novas palavras-chave de baixa concorrência e estrutura dados de forma a posicionar o negócio no topo de buscadores generativos de IA (GEO).',
-    }
+      tag: 'OTIMIZAÇÃO PARA BUSCADORES DE IA',
+    },
   ];
+
+  const [active, setActive] = useState(0);
+
+  const handleNext = React.useCallback(() => {
+    setActive((prev) => (prev + 1) % agents.length);
+  }, [agents.length]);
+
+  const handlePrev = () => {
+    setActive((prev) => (prev - 1 + agents.length) % agents.length);
+  };
+
+  useEffect(() => {
+    const interval = setInterval(handleNext, 5000);
+    return () => clearInterval(interval);
+  }, [handleNext]);
+
+  const isActive = (index: number) => index === active;
+
+  const getRotate = (index: number) => {
+    const offsets = [-6, 4, -3, 7, -5, 3, -4, 6, -2, 5];
+    return `${offsets[index % offsets.length]}deg`;
+  };
 
   return (
     <section id="agentes" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 text-center space-y-16">
@@ -1185,50 +1183,126 @@ function AgentsGridSection() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {agents.map((agent, idx) => (
-          <motion.div
-            key={agent.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-50px" }}
-            transition={{ duration: 0.5, delay: idx * 0.05 }}
-            className="bg-white border border-white/80 shadow-[6px_6px_12px_#c8d0e7] rounded-[28px] p-8 flex flex-col sm:flex-row gap-6 items-start sm:items-center hover:scale-[1.01] transition-transform duration-300"
-          >
-            {/* Avatar image container */}
-            <div className="w-20 h-20 rounded-2xl overflow-hidden border border-white/80 shrink-0 shadow-sm relative bg-[#FAF9F6] mx-auto sm:mx-0">
-              <Image
-                src={agent.image}
-                alt={agent.title}
-                fill
-                className="object-cover object-center scale-[1.05]"
-                sizes="80px"
-              />
-            </div>
+      {/* Animated Carousel */}
+      <div className="relative grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-20 items-center max-w-4xl mx-auto text-left">
 
-            {/* Details container */}
-            <div className="flex-1 text-center sm:text-left space-y-2">
-              <div className="space-y-0.5">
-                <span className="text-[9px] font-extrabold text-[#FF5500] uppercase tracking-wider block">
-                  {agent.category}
+        {/* Left: Stacked Agent Avatars */}
+        <div className="flex items-center justify-center">
+          <div className="relative h-80 w-full max-w-[280px]">
+            <AnimatePresence>
+              {agents.map((agent, index) => (
+                <motion.div
+                  key={agent.id}
+                  initial={{ opacity: 0, scale: 0.9, y: 50, rotate: getRotate(index) }}
+                  animate={{
+                    opacity: isActive(index) ? 1 : 0.45,
+                    scale: isActive(index) ? 1 : 0.92,
+                    y: isActive(index) ? 0 : 16,
+                    zIndex: isActive(index) ? agents.length : agents.length - Math.abs(index - active),
+                    rotate: isActive(index) ? '0deg' : getRotate(index),
+                  }}
+                  exit={{ opacity: 0, scale: 0.9, y: -50 }}
+                  transition={{ duration: 0.5, ease: 'easeInOut' }}
+                  className="absolute inset-0 origin-bottom"
+                >
+                  <div className="h-full w-full rounded-[32px] overflow-hidden border border-white/60 bg-white shadow-[8px_8px_24px_#c8d0e7,-4px_-4px_12px_#ffffff] relative">
+                    <Image
+                      src={agent.image}
+                      alt={agent.title}
+                      fill
+                      className="object-cover object-center scale-[1.04]"
+                      sizes="280px"
+                    />
+                    {/* Gradient overlay at bottom */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                    {/* Name badge */}
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <span className="text-[10px] font-extrabold text-white/70 uppercase tracking-widest block">
+                        {agent.category}
+                      </span>
+                      <span className="text-white font-head font-black text-xl leading-tight">
+                        {agent.title}
+                      </span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Right: Agent Info + Controls */}
+        <div className="flex flex-col justify-center py-4">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.3, ease: 'easeInOut' }}
+              className="flex flex-col gap-4"
+            >
+              <div>
+                <span className="text-[10px] font-extrabold text-[#FF5500] uppercase tracking-widest block mb-1">
+                  {agents[active].category}
                 </span>
-                <h4 className="font-head font-extrabold text-slate-900 text-base">
-                  {agent.title}
-                </h4>
+                <h3 className="font-head text-3xl font-black text-slate-900">
+                  {agents[active].title}
+                </h3>
               </div>
-              <p className="text-slate-500 text-xs leading-relaxed">
-                {agent.bio}
+              <p className="text-slate-500 text-sm leading-relaxed">
+                {agents[active].bio}
               </p>
-              <div className="pt-2 text-[9px] font-black text-[#FF5500] uppercase tracking-widest">
-                {getAgentTag(agent.title)}
+              <div className="inline-flex">
+                <span className="px-3 py-1.5 rounded-full bg-[#FF5500]/10 border border-[#FF5500]/20 text-[9px] font-extrabold text-[#FF5500] uppercase tracking-widest">
+                  {agents[active].tag}
+                </span>
               </div>
-            </div>
-          </motion.div>
-        ))}
+
+              {/* Dot indicators */}
+              <div className="flex gap-1.5 mt-2">
+                {agents.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActive(idx)}
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      idx === active ? 'w-6 bg-[#FF5500]' : 'w-1.5 bg-slate-300 hover:bg-slate-400'
+                    }`}
+                    aria-label={`Agente ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Prev / Next controls */}
+          <div className="flex gap-3 mt-8">
+            <button
+              onClick={handlePrev}
+              aria-label="Agente anterior"
+              className="group w-10 h-10 rounded-full bg-white border border-white/60 shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff] flex items-center justify-center hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] active:scale-95 transition-all duration-200"
+            >
+              <svg className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              onClick={handleNext}
+              aria-label="Próximo agente"
+              className="group w-10 h-10 rounded-full bg-[#FF5500] text-white shadow-[4px_4px_8px_rgba(255,85,0,0.3)] flex items-center justify-center hover:bg-[#FF6A00] active:scale-95 transition-all duration-200"
+            >
+              <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
       </div>
     </section>
   );
 }
+
 
 function DataTransformationSection() {
   return (
@@ -1286,14 +1360,8 @@ function DataTransformationSection() {
             variants={cardVariants}
             className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative">
-              <Image
-                src="/images/tools/diagnostico_lp.png"
-                alt="Crie dashboards"
-                fill
-                className="object-cover"
-                sizes="48px"
-              />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF5500] to-[#FF8C00] shadow-[3px_3px_8px_rgba(255,85,0,0.2)] shrink-0 flex items-center justify-center">
+              <PieChart size={22} className="text-white" strokeWidth={1.8} />
             </div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
@@ -1310,14 +1378,8 @@ function DataTransformationSection() {
             variants={cardVariants}
             className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative">
-              <Image
-                src="/images/tools/analise.png"
-                alt="Visualize indicadores"
-                fill
-                className="object-cover"
-                sizes="48px"
-              />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0ea5e9] to-[#0369a1] shadow-[3px_3px_8px_rgba(14,165,233,0.2)] shrink-0 flex items-center justify-center">
+              <LineChart size={22} className="text-white" strokeWidth={1.8} />
             </div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
@@ -1334,14 +1396,8 @@ function DataTransformationSection() {
             variants={cardVariants}
             className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative">
-              <Image
-                src="/images/tools/automacao.png"
-                alt="Processe dados"
-                fill
-                className="object-cover"
-                sizes="48px"
-              />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#10b981] to-[#047857] shadow-[3px_3px_8px_rgba(16,185,129,0.2)] shrink-0 flex items-center justify-center">
+              <GitMerge size={22} className="text-white" strokeWidth={1.8} />
             </div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
@@ -1358,14 +1414,8 @@ function DataTransformationSection() {
             variants={cardVariants}
             className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl overflow-hidden border border-white/60 bg-white shadow-[2px_2px_4px_#c8d0e7] shrink-0 relative">
-              <Image
-                src="/images/tools/rastreador_cirurgico.png"
-                alt="Atribuição de mídia"
-                fill
-                className="object-cover"
-                sizes="48px"
-              />
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#f59e0b] to-[#b45309] shadow-[3px_3px_8px_rgba(245,158,11,0.2)] shrink-0 flex items-center justify-center">
+              <Crosshair size={22} className="text-white" strokeWidth={1.8} />
             </div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
@@ -1597,7 +1647,7 @@ function TestimonialSection() {
   return (
     <section className="bg-white border-y border-slate-300/40 py-12 px-6 text-center">
       <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
-        <div className="w-24 h-24 rounded-full overflow-hidden border border-slate-300 shrink-0 relative shadow-sm">
+        <div className="w-[134px] h-[134px] rounded-full overflow-hidden border border-slate-300 shrink-0 relative shadow-sm">
           <Image
             src="/images/eu.jpeg"
             alt="Claudio Müller"
