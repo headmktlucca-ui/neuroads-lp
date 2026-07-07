@@ -383,23 +383,20 @@ function OnboardingPageContent() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#EDF1F5]">
+    <div className="h-screen max-h-screen flex bg-transparent relative overflow-hidden">
       {/* Left Panel — identical to login */}
-      <div className="hidden lg:block flex-1 min-w-0">
+      <div className="hidden lg:block lg:flex-1 lg:min-w-0 h-full">
         <AuthLeftPanel />
       </div>
 
       {/* Right Panel */}
-      <div className="flex-1 flex items-start justify-center bg-[#EDF1F5] p-4 sm:p-6 lg:p-8 overflow-y-auto">
-        <div className="w-full max-w-[540px] my-auto py-8">
+      <div className="flex-1 flex items-center justify-center bg-transparent p-4 sm:p-6 lg:p-8 relative z-10 h-full overflow-y-auto">
+        <div className="w-full max-w-[540px] p-6 sm:p-8 rounded-2xl border border-slate-300 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] my-8">
 
           {/* Mobile brand */}
           <div className="lg:hidden mb-8 text-center">
             <span className="text-[11px] font-black uppercase tracking-[0.14em] text-[#FF6A00]">NeuroAds · Ativação</span>
           </div>
-
-          {/* Card */}
-          <div className="w-full p-6 sm:p-8 rounded-2xl border border-slate-300 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff]">
 
             {/* Header */}
             <div className="mb-6">
@@ -454,40 +451,40 @@ function OnboardingPageContent() {
             {step === 1 ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
                     Empresa *
                   </label>
                   <div className="relative">
-                    <Building2 size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <Building2 className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/35 z-10" />
                     <input
                       value={form.companyName}
                       onChange={(e) => setForm((prev) => ({ ...prev, companyName: e.target.value }))}
                       placeholder="Nome da empresa"
-                      className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-[14px] text-slate-950 placeholder:text-slate-400 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 pl-10 pr-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
                     Segmento *
                   </label>
                   <input
                     value={form.segment}
                     onChange={(e) => setForm((prev) => ({ ...prev, segment: e.target.value }))}
                     placeholder="Ex: Serviços profissionais"
-                    className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 px-4 text-[14px] text-slate-950 placeholder:text-slate-400 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                    className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 px-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
                     Faturamento mensal *
                   </label>
                   <select
                     value={form.revenueRange}
                     onChange={(e) => setForm((prev) => ({ ...prev, revenueRange: e.target.value }))}
-                    className="w-full h-11 rounded-xl border border-slate-200 bg-white px-4 text-[14px] text-slate-955 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all [&>option]:bg-white [&>option]:text-slate-955"
+                    className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 px-4 text-[14px] text-slate-900 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all [&>option]:bg-white [&>option]:text-slate-900"
                   >
                     <option value="">Selecione a faixa</option>
                     <option value="R$ 30k - R$ 60k">R$ 30k - R$ 60k</option>
@@ -498,33 +495,33 @@ function OnboardingPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
                     Site *
                   </label>
                   <div className="relative">
-                    <Globe size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <Globe className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/35 z-10" />
                     <input
                       value={form.site}
                       onChange={(e) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))}
                       onBlur={(e) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))}
                       placeholder="https://empresa.com.br"
-                      className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-[14px] text-slate-955 placeholder:text-slate-400 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 pl-10 pr-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
                     WhatsApp *
                   </label>
                   <div className="relative">
-                    <Phone size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <Phone className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/35 z-10" />
                     <input
                       value={form.whatsapp}
                       onChange={(e) => setForm((prev) => ({ ...prev, whatsapp: formatWhatsappInput(e.target.value) }))}
                       maxLength={15}
                       placeholder="(00) 00000-0000"
-                      className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 text-[14px] text-slate-955 placeholder:text-slate-400 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 pl-10 pr-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                     />
                   </div>
                 </div>
@@ -550,7 +547,7 @@ function OnboardingPageContent() {
                       className={`w-full rounded-xl border px-4 py-3 text-left text-[14px] font-semibold transition-all duration-200 ${
                         selected
                           ? 'border-[#08B760]/50 bg-[#08B760]/10 text-[#08B760]'
-                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-[#FF6A00]/40 hover:text-slate-950'
+                          : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-[#FF6A00]/40 hover:text-slate-955'
                       }`}
                     >
                       {objective}
@@ -583,7 +580,7 @@ function OnboardingPageContent() {
                       <div className="flex-1">
                         <h3 className="text-[22px] font-black leading-none text-[#FF6A00]">{plan.name}</h3>
                         <p className="mt-1.5 text-[13px] text-slate-500 leading-snug">
-                          IA avançada e inteligência profunda para escalar sua operation.
+                          IA avançada e inteligência profunda para escalar sua operação.
                         </p>
 
                         <div className="mt-3 flex flex-wrap items-end gap-2 pb-3 border-b border-slate-300">
@@ -693,7 +690,6 @@ function OnboardingPageContent() {
                   </>
                 )}
               </div>
-            </div>
           </div>
         </div>
       </div>
