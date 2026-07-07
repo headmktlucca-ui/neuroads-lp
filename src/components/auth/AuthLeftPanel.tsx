@@ -38,9 +38,9 @@ export function AuthLeftPanel() {
   const slide = SLIDES[current];
 
   return (
-    <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[#000000] p-10 lg:p-12">
-      {/* Background glow */}
-      <div className="pointer-events-none absolute inset-0">
+    <>
+      {/* Background glow - Full screen fixed behind everything */}
+      <div className="pointer-events-none fixed inset-0 z-0 bg-[#EDF1F5] overflow-hidden">
         <div
           className="absolute -top-32 -left-32 w-96 h-96 rounded-full opacity-20 blur-3xl transition-colors duration-1000"
           style={{ backgroundColor: slide.badgeColor }}
@@ -50,18 +50,18 @@ export function AuthLeftPanel() {
         <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="dotgrid" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-              <circle cx="1" cy="1" r="1" fill="white" />
+              <circle cx="1" cy="1" r="1" fill="#000000" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#dotgrid)" />
         </svg>
       </div>
 
-      {/* Logo */}
-      <div className="relative z-10">
+      {/* Left Panel Content - Hidden on mobile, visible on lg */}
+      <div className="relative z-10 hidden lg:flex h-full flex-col justify-between p-10 lg:p-12 w-full max-h-screen">
         <Link href="/">
           <Image
-            src="/images/Logos/LLNeuroAds.png"
+            src="/images/Logos/Logo_primario.png"
             alt="NeuroAds"
             width={320}
             height={80}
@@ -69,37 +69,33 @@ export function AuthLeftPanel() {
             priority
           />
         </Link>
-      </div>
 
-      {/* Slide content */}
-      <div className="relative z-10 flex flex-col gap-6 flex-1 justify-center py-8">
-        <div
-          key={current}
-          className="animate-in fade-in slide-in-from-bottom-4 duration-500"
-        >
-          <span
-            className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] mb-4 px-2.5 py-1 rounded-full border"
-            style={{ color: slide.badgeColor, borderColor: `${slide.badgeColor}40`, backgroundColor: `${slide.badgeColor}12` }}
+        {/* Slide content */}
+        <div className="flex flex-col gap-6 flex-1 justify-center py-8">
+          <div
+            key={current}
+            className="animate-in fade-in slide-in-from-bottom-4 duration-500"
           >
-            <span className="h-1 w-1 rounded-full" style={{ backgroundColor: slide.badgeColor }} />
-            {slide.badge}
-          </span>
+            <span
+              className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.16em] mb-4 px-2.5 py-1 rounded-full border"
+              style={{ color: slide.badgeColor, borderColor: `${slide.badgeColor}40`, backgroundColor: `${slide.badgeColor}12` }}
+            >
+              <span className="h-1 w-1 rounded-full" style={{ backgroundColor: slide.badgeColor }} />
+              {slide.badge}
+            </span>
 
-          <h2 className="text-[28px] lg:text-[32px] font-black text-white leading-[1.1] tracking-tight whitespace-pre-line mb-4">
-            {slide.headline}
-          </h2>
+            <h2 className="text-[28px] lg:text-[32px] font-black text-slate-900 leading-[1.1] tracking-tight whitespace-pre-line mb-4">
+              {slide.headline}
+            </h2>
 
-          <p className="text-[14px] text-white/50 leading-relaxed max-w-sm">
-            {slide.sub}
-          </p>
-
-
+            <p className="text-[14px] text-slate-900/50 leading-relaxed max-w-sm">
+              {slide.sub}
+            </p>
+          </div>
         </div>
-      </div>
 
-      {/* Bottom: stats + dots */}
-      <div className="relative z-10">
-        <div className="border-t border-white/[0.08] pt-5 flex items-center justify-center">
+        {/* Bottom: stats + dots */}
+        <div className="border-t border-slate-300 pt-5 flex items-center justify-center">
           <div className="flex gap-1.5">
             {SLIDES.map((_, i) => (
               <button
@@ -111,6 +107,6 @@ export function AuthLeftPanel() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

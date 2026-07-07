@@ -511,7 +511,7 @@ export default function TempLandingPage() {
             Não sabe por onde começar? <span className="text-[#FF5500]">Faça o diagnóstico gratuito da sua operação.</span>
           </p>
           <Link
-            href="/cadastro"
+            href="#demonstracao"
             className="inline-flex items-center justify-center font-bold text-xs px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[3px_3px_8px_rgba(255,85,0,0.25),-3px_-3px_8px_#ffffff] hover:shadow-[4px_4px_12px_rgba(255,85,0,0.4),-4px_-4px_12px_#ffffff] hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 border border-orange-400/10 cursor-pointer"
           >
             Solicitar diagnóstico <span className="ml-1 text-xs">→</span>
@@ -1577,18 +1577,23 @@ function DemoAndAccessSection() {
                   </div>
 
                   {/* Slide to Verify human challenge */}
-                  <div className="relative w-full h-12 bg-[#EDF1F5] rounded-xl border border-slate-200/50 flex items-center justify-start px-1.5 overflow-hidden select-none mt-2 shadow-inner">
-                    <span className="absolute inset-0 flex items-center justify-center text-[10px] font-extrabold text-slate-500 uppercase tracking-widest pointer-events-none">
+                  <div className="relative w-full h-12 bg-[#EDF1F5] rounded-xl border border-slate-200/50 flex items-center justify-start overflow-hidden select-none mt-2 shadow-inner">
+                    <span className="absolute inset-0 flex items-center justify-center text-[10px] font-extrabold text-slate-500 uppercase tracking-widest pointer-events-none z-0">
                       {slideProgress >= 100 ? 'Humano Confirmado' : 'DESLIZE PARA VERIFICAR'}
                     </span>
-                    <div 
-                      className="h-8 w-20 rounded-lg bg-gradient-to-r from-[#FF5500] to-[#FF7A00] flex items-center justify-center text-white text-base font-bold shadow-md select-none transition-all duration-75"
-                      style={{ 
-                        transform: `translateX(calc((100% - 92px) * ${slideProgress / 100}))`
-                      }}
-                    >
-                      {slideProgress >= 100 ? '✓' : '→'}
+                    
+                    {/* Track area for the thumb (adds 6px padding on left and right) */}
+                    <div className="absolute inset-y-0 left-1.5 right-1.5 flex items-center pointer-events-none z-10">
+                      <div 
+                        className="absolute h-9 w-20 rounded-lg bg-gradient-to-r from-[#FF5500] to-[#FF7A00] flex items-center justify-center text-white text-base font-bold shadow-md transition-all duration-75"
+                        style={{ 
+                          left: `calc(${slideProgress}% - ${slideProgress * 0.8}px)`
+                        }}
+                      >
+                        {slideProgress >= 100 ? '✓' : '→'}
+                      </div>
                     </div>
+
                     <input
                       type="range"
                       min="0"
@@ -1601,8 +1606,18 @@ function DemoAndAccessSection() {
                           setIsHuman(true);
                         }
                       }}
+                      onMouseUp={() => {
+                        if (slideProgress < 100) {
+                          setSlideProgress(0);
+                        }
+                      }}
+                      onTouchEnd={() => {
+                        if (slideProgress < 100) {
+                          setSlideProgress(0);
+                        }
+                      }}
                       disabled={isHuman}
-                      className="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10"
+                      className="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-20"
                     />
                   </div>
 

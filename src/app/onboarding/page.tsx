@@ -366,14 +366,14 @@ function OnboardingPageContent() {
   // ─── Loading state ────────────────────────────────────────────────────────
   if (loading || (user && premiumSyncing)) {
     return (
-      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
+      <div className="min-h-screen bg-[#EDF1F5] flex items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#FF6A00] border-t-transparent" />
       </div>
     );
   }
 
   if (!user) {
-    return <div className="min-h-screen bg-[#000000]" />;
+    return <div className="min-h-screen bg-[#EDF1F5]" />;
   }
 
   const STEP_LABELS: Record<Step, string> = {
@@ -383,14 +383,14 @@ function OnboardingPageContent() {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#000000]">
+    <div className="min-h-screen flex bg-[#EDF1F5]">
       {/* Left Panel — identical to login */}
       <div className="hidden lg:block flex-1 min-w-0">
         <AuthLeftPanel />
       </div>
 
       {/* Right Panel */}
-      <div className="flex-1 flex items-start justify-center bg-[#000000] p-4 sm:p-6 lg:p-8 overflow-y-auto">
+      <div className="flex-1 flex items-start justify-center bg-[#EDF1F5] p-4 sm:p-6 lg:p-8 overflow-y-auto">
         <div className="w-full max-w-[540px] my-auto py-8">
 
           {/* Mobile brand */}
@@ -399,7 +399,7 @@ function OnboardingPageContent() {
           </div>
 
           {/* Card */}
-          <div className="w-full p-6 sm:p-8 rounded-2xl border border-white/[0.08] bg-[#0a0a0a] shadow-[0_12px_40px_rgba(0,0,0,0.6)]">
+          <div className="w-full p-6 sm:p-8 rounded-2xl border border-slate-300 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff]">
 
             {/* Header */}
             <div className="mb-6">
@@ -407,15 +407,15 @@ function OnboardingPageContent() {
                 <p className="text-[11px] font-black uppercase tracking-[0.14em] text-[#FF6A00]">
                   NeuroAds · Ativação
                 </p>
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.10] bg-white/[0.04] px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white/40">
+                <div className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.10] bg-slate-50 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-slate-900/40">
                   <CheckCircle2 size={12} className="text-[#08B760]" />
                   Etapa {step} de 3
                 </div>
               </div>
-              <h1 className="text-[24px] font-black text-white leading-tight">
+              <h1 className="text-[24px] font-black text-slate-900 leading-tight">
                 {STEP_LABELS[step]}
               </h1>
-              <p className="mt-1.5 text-[13px] text-white/40 font-medium">
+              <p className="mt-1.5 text-[13px] text-slate-900/40 font-medium">
                 {step === 1 && 'Preencha os dados do seu negócio para personalizar seu Hub.'}
                 {step === 2 && 'Selecione as dores prioritárias para calibrar seus agentes.'}
                 {step === 3 && 'Comece com trial grátis de 14 dias ou ative diretamente com cartão.'}
@@ -432,7 +432,7 @@ function OnboardingPageContent() {
                       ? 'flex-[2] bg-[#FF6A00]'
                       : s < step
                       ? 'flex-1 bg-[#FF6A00]/40'
-                      : 'flex-1 bg-white/[0.08]'
+                      : 'flex-1 bg-slate-100'
                   }`}
                 />
               ))}
@@ -454,40 +454,40 @@ function OnboardingPageContent() {
             {step === 1 ? (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-white/40 mb-1.5">
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
                     Empresa *
                   </label>
                   <div className="relative">
-                    <Building2 size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/35" />
+                    <Building2 size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-900/35" />
                     <input
                       value={form.companyName}
                       onChange={(e) => setForm((prev) => ({ ...prev, companyName: e.target.value }))}
                       placeholder="Nome da empresa"
-                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.04] pl-10 pr-4 text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 pl-10 pr-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-white/40 mb-1.5">
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
                     Segmento *
                   </label>
                   <input
                     value={form.segment}
                     onChange={(e) => setForm((prev) => ({ ...prev, segment: e.target.value }))}
                     placeholder="Ex: Serviços profissionais"
-                    className="w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.04] px-4 text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                    className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 px-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-white/40 mb-1.5">
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
                     Faturamento mensal *
                   </label>
                   <select
                     value={form.revenueRange}
                     onChange={(e) => setForm((prev) => ({ ...prev, revenueRange: e.target.value }))}
-                    className="w-full h-11 rounded-xl border border-white/[0.10] bg-[#0a0a0a] px-4 text-[14px] text-white focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all [&>option]:bg-[#0a0a0a] [&>option]:text-white"
+                    className="w-full h-11 rounded-xl border border-white/[0.10] bg-white px-4 text-[14px] text-slate-900 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all [&>option]:bg-white [&>option]:text-slate-900"
                   >
                     <option value="">Selecione a faixa</option>
                     <option value="R$ 30k - R$ 60k">R$ 30k - R$ 60k</option>
@@ -498,33 +498,33 @@ function OnboardingPageContent() {
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-white/40 mb-1.5">
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
                     Site *
                   </label>
                   <div className="relative">
-                    <Globe size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/35" />
+                    <Globe size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-900/35" />
                     <input
                       value={form.site}
                       onChange={(e) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))}
                       onBlur={(e) => setForm((prev) => ({ ...prev, site: normalizeHttpsMaskedUrlInput(e.target.value) }))}
                       placeholder="https://empresa.com.br"
-                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.04] pl-10 pr-4 text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 pl-10 pr-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-black uppercase tracking-wider text-white/40 mb-1.5">
+                  <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
                     WhatsApp *
                   </label>
                   <div className="relative">
-                    <Phone size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/35" />
+                    <Phone size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-900/35" />
                     <input
                       value={form.whatsapp}
                       onChange={(e) => setForm((prev) => ({ ...prev, whatsapp: formatWhatsappInput(e.target.value) }))}
                       maxLength={15}
                       placeholder="(00) 00000-0000"
-                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-white/[0.04] pl-10 pr-4 text-[14px] text-white placeholder:text-white/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 pl-10 pr-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
                     />
                   </div>
                 </div>
@@ -550,7 +550,7 @@ function OnboardingPageContent() {
                       className={`w-full rounded-xl border px-4 py-3 text-left text-[14px] font-semibold transition-all duration-200 ${
                         selected
                           ? 'border-[#08B760]/50 bg-[#08B760]/10 text-[#08B760]'
-                          : 'border-white/[0.10] bg-white/[0.04] text-white/70 hover:border-[#FF6A00]/40 hover:text-white'
+                          : 'border-white/[0.10] bg-slate-50 text-slate-900/70 hover:border-[#FF6A00]/40 hover:text-slate-900'
                       }`}
                     >
                       {objective}
@@ -564,7 +564,7 @@ function OnboardingPageContent() {
             {step === 3 ? (
               plan ? (
                 <div>
-                  <div className="relative overflow-hidden rounded-2xl border border-white/[0.10] bg-white/[0.03] p-5">
+                  <div className="relative overflow-hidden rounded-2xl border border-white/[0.10] bg-white p-5">
                     <div className="pointer-events-none absolute -top-16 -right-16 w-48 h-48 rounded-full bg-[#FF6A00]/15 blur-3xl" />
                     <div className="pointer-events-none absolute inset-0 rounded-2xl border border-[#FF6A00]/20" />
 
@@ -582,13 +582,13 @@ function OnboardingPageContent() {
 
                       <div className="flex-1">
                         <h3 className="text-[22px] font-black leading-none text-[#FF6A00]">{plan.name}</h3>
-                        <p className="mt-1.5 text-[13px] text-white/40 leading-snug">
+                        <p className="mt-1.5 text-[13px] text-slate-900/40 leading-snug">
                           IA avançada e inteligência profunda para escalar sua operação.
                         </p>
 
-                        <div className="mt-3 flex flex-wrap items-end gap-2 pb-3 border-b border-white/[0.08]">
+                        <div className="mt-3 flex flex-wrap items-end gap-2 pb-3 border-b border-slate-300">
                           <div className="flex items-end gap-1">
-                            <span className="text-[30px] font-black leading-none text-white">
+                            <span className="text-[30px] font-black leading-none text-slate-900">
                               R$ {formatCurrencyFromCents(plan.amount).replace('R$', '').trim()}
                             </span>
                             <span className="mb-0.5 text-[16px] font-black text-[#FF6A00]">/mês</span>
@@ -602,8 +602,8 @@ function OnboardingPageContent() {
 
                         <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-y-1.5 gap-x-3">
                           {['Insights de IA (acesso total)', 'Fontes de dados ilimitadas', 'Analytics avançado', 'Modelagem preditiva'].map((feature) => (
-                            <li key={feature} className="flex items-start gap-2 text-[12px] leading-snug text-white/60">
-                              <span className="mt-0.5 inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-[#FF6A00] text-white">
+                            <li key={feature} className="flex items-start gap-2 text-[12px] leading-snug text-slate-900/60">
+                              <span className="mt-0.5 inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-[#FF6A00] text-slate-900">
                                 <Check size={9} strokeWidth={3.5} />
                               </span>
                               <span>{feature}</span>
@@ -614,7 +614,7 @@ function OnboardingPageContent() {
                     </div>
                   </div>
 
-                  <p className="mt-3 text-center text-[11px] text-white/25 leading-relaxed">
+                  <p className="mt-3 text-center text-[11px] text-slate-900/25 leading-relaxed">
                     Seus dados ficam preservados mesmo em reentrada (trial expirado, cancelado ou pendência).
                   </p>
                 </div>
@@ -642,7 +642,7 @@ function OnboardingPageContent() {
                   setErrorMessage(null);
                   setStep((current) => (current === 3 ? 2 : 1));
                 }}
-                className="rounded-xl border border-white/[0.10] px-5 h-11 text-[12px] font-bold uppercase tracking-widest text-white/40 hover:bg-white/[0.04] hover:text-white/60 transition-all"
+                className="rounded-xl border border-white/[0.10] px-5 h-11 text-[12px] font-bold uppercase tracking-widest text-slate-900/40 hover:bg-slate-50 hover:text-slate-900/60 transition-all"
               >
                 Voltar
               </button>
@@ -653,7 +653,7 @@ function OnboardingPageContent() {
                     type="button"
                     onClick={handleNextFromBusiness}
                     disabled={isSaving}
-                    className="inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
+                    className="inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
                   >
                     {isSaving ? 'Salvando...' : 'Continuar'}
                     {!isSaving && <ArrowRight size={14} />}
@@ -665,7 +665,7 @@ function OnboardingPageContent() {
                     type="button"
                     onClick={handleNextFromObjectives}
                     disabled={isSaving}
-                    className="inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
+                    className="inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
                   >
                     {isSaving ? 'Salvando...' : 'Ir para plano'}
                     {!isSaving && <ArrowRight size={14} />}
@@ -686,7 +686,7 @@ function OnboardingPageContent() {
                       type="button"
                       onClick={handleGoToStripeCheckout}
                       disabled={isSaving}
-                      className="h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
+                      className="h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
                     >
                       {isSaving ? 'Abrindo checkout...' : 'Ativar com cartão →'}
                     </button>
@@ -705,7 +705,7 @@ export default function OnboardingPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-[#000000] flex items-center justify-center">
+        <div className="min-h-screen bg-[#EDF1F5] flex items-center justify-center">
           <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#FF6A00] border-t-transparent" />
         </div>
       }
