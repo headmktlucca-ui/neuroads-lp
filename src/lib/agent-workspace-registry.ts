@@ -33,11 +33,11 @@ import BudgetOptimizerWorkspace from '../components/agents/BudgetOptimizerWorksp
 import CreativeGeneratorWorkspace from '../components/agents/CreativeGeneratorWorkspace';
 import ConversionCopyWorkspace from '../components/agents/ConversionCopyWorkspace';
 import CreativeAnalysisWorkspace from '../components/agents/CreativeAnalysisWorkspace';
-import CreativeCarouselWorkspace from '../components/agents/CreativeCarouselWorkspace';
-import CreativeVideoWorkspace from '../components/agents/CreativeVideoWorkspace';
+import CarouselWorkspaceWrapper from '../components/agents/CarouselWorkspaceWrapper';
+import VideoWorkspaceWrapper from '../components/agents/VideoWorkspaceWrapper';
 import LandingPageDiagnosisWorkspace from '../components/agents/LandingPageDiagnosisWorkspace';
 import DnaBrandWorkspace from '../components/agents/DnaBrandWorkspace';
-import GenericAgentWorkspace from '../components/agents/GenericAgentWorkspace';
+import GenericWorkspaceWrapper from '../components/agents/GenericWorkspaceWrapper';
 
 
 // ─── Tipagem das props que todos os workspaces recebem ────────────────────────
@@ -75,9 +75,9 @@ export const AGENT_WORKSPACE_REGISTRY: Record<string, ComponentType<WorkspacePro
   'Gerador de Criativos':               CreativeGeneratorWorkspace,
   'Gerador de Copies de Conversão':     ConversionCopyWorkspace,
   'Análise Viral':                      CreativeAnalysisWorkspace,
-  'Gerador de Carrossel':               CreativeCarouselWorkspace as ComponentType<WorkspaceProps>,
-  'Roteirista de Vídeo':                CreativeVideoWorkspace as ComponentType<WorkspaceProps>,
-  'Redator de Artigos':                 GenericAgentWorkspace,
+  'Gerador de Carrossel':               CarouselWorkspaceWrapper,
+  'Roteirista de Vídeo':                VideoWorkspaceWrapper,
+  'Redator de Artigos':                 GenericWorkspaceWrapper,
 
   // ── Inteligência ────────────────────────────────────────────────────────────────
   'SEO & GEO':                    SeoGeoWorkspace,
