@@ -41,7 +41,7 @@ const AVANCADO_AGENTS = new Set([
   'Gerador de Testes A/B'
 ]);
 
-function getAgentTier(title: string): AgentTier {
+export function getAgentTier(title: string): AgentTier {
   if (SIMPLES_AGENTS.has(title)) return 'Simples';
   if (AVANCADO_AGENTS.has(title)) return 'Avançado';
   return 'Intermediário';

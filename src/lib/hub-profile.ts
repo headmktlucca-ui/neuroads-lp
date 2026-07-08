@@ -242,6 +242,11 @@ function matchPlanOffer(
     const byName = offers.find((offer) => normalizeToken(offer.name) === nameCandidate);
     if (byName) return byName;
 
+    if (nameCandidate.includes('hub')) {
+      const match = offers.find((offer) => normalizeToken(offer.slug) === 'neuroads-hub-unico');
+      if (match) return match;
+    }
+
     if (nameCandidate.includes('ia pro') || nameCandidate.includes('neuroads')) {
       const match = offers.find((offer) => normalizeToken(offer.slug) === 'neuroads-ia-pro');
       if (match) return match;
