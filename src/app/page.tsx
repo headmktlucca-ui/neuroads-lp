@@ -1882,7 +1882,7 @@ function FaqSection() {
     },
     {
       question: "Qual o valor do investimento e existe fidelidade?",
-      answer: "Oferecemos um Plano Único de R$ 497/mês (ou R$ 4.970/ano, equivalente a dois meses grátis) com acesso a todos os 26 agentes especializados, 200 créditos mensais, 5 automações ativas e chat do assistente incluído. Você pode testar por 14 dias com 20 créditos inclusos e cancelar quando quiser, sem qualquer taxa ou fidelidade. Precisando de mais volume no meio do ciclo, há boosters avulsos de 50 créditos por R$ 97."
+      answer: "Oferecemos um Plano Único de R$ 497/mês (ou R$ 4.970/ano, equivalente a dois meses grátis) com acesso aos 10 agentes especializados — responsáveis por mais de 30 operações pré-configuradas, além das operações personalizadas via chat —, 200 créditos mensais, 5 automações ativas e chat do assistente incluído. Você pode testar por 14 dias com 20 créditos inclusos e cancelar quando quiser, sem qualquer taxa ou fidelidade. Precisando de mais volume no meio do ciclo, há boosters avulsos de 50 créditos por R$ 97."
     },
     {
       question: "Como os dados são integrados com meu CRM?",

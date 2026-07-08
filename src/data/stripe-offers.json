@@ -8,7 +8,7 @@
       "name": "NeuroAds Hub — Plano Único",
       "amount": 49700,
       "amountAnnual": 497000,
-      "description": "Plano único com os 26 agentes de IA, 200 créditos/mês, 5 automações ativas, 2 contas de anúncio e chat do assistente incluído.",
+      "description": "Plano único com 10 agentes de IA e mais de 30 operações pré-configuradas (além de operações personalizadas via chat), 200 créditos/mês, 5 automações ativas, 2 contas de anúncio e chat do assistente incluído.",
       "productId": "prod_UqUjULDXhGN7cE",
       "priceId": "price_1TqnkLHwQDlUrIjsXgn3lg7t",
       "priceIdAnnual": "price_1TqnkYHwQDlUrIjsH5CXsYjI",
@@ -17,7 +17,8 @@
       "mode": "subscription",
       "trialDays": 14,
       "limits": {
-        "agents": 26,
+        "agents": 10,
+        "preconfiguredOperations": 30,
         "includedExecutions": 200,
         "monthlyCredits": 200,
         "trialCredits": 20,

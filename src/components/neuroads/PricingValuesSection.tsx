@@ -6,6 +6,7 @@ import {
   CalendarClock,
   Gauge,
   Link2,
+  ListChecks,
   MessageSquare,
   Plus,
   ShieldCheck,
@@ -26,9 +27,15 @@ function formatBRLFromCents(cents: number): string {
 const includedResources = [
   {
     icon: Bot,
-    value: '26',
+    value: '10',
     label: 'Agentes de IA especializados',
-    detail: 'Tráfego, criativos, copies, funil, SEO & GEO e inteligência de dados — catálogo completo, sem contratação avulsa.',
+    detail: 'Tráfego, criativos, copies, funil, SEO & GEO e inteligência de dados — o time completo, sem contratação avulsa.',
+  },
+  {
+    icon: ListChecks,
+    value: '30+',
+    label: 'Operações pré-configuradas',
+    detail: 'Executadas pelos agentes com um clique, além de operações personalizadas via chat com o assistente.',
   },
   {
     icon: Gauge,
