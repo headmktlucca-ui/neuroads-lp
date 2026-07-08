@@ -32,6 +32,7 @@ import { useHub } from '../../context/HubContext';
 import { normalizeConnections } from '../../lib/connectors';
 import { getHubAutomationsFromProfile, formatAutomationDateTime } from '../../lib/hub-automations';
 import HubEmptyState from './HubEmptyState';
+import CreditMeter from './CreditMeter';
 import BentoCard from './v2/BentoCard';
 import CountUp from './v2/CountUp';
 import Sparkline from './v2/Sparkline';
@@ -1057,6 +1058,9 @@ export default function HubDashboardLight() {
 
         {/* Right side widgets grid */}
         <div className="space-y-6">
+
+          {/* Plan Credits Meter */}
+          <CreditMeter />
 
           {/* Dynamic Alerts Bento Block */}
           <BentoCard variant="neumorphic" className="flex flex-col" glowColor="rgba(239, 68, 68, 0.03)">

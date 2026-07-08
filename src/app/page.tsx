@@ -8,6 +8,7 @@ import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network,
 import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
 import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
 import FunnelInteractiveShowcase from '@/components/neuroads/FunnelInteractiveShowcase';
+import PricingValuesSection from '@/components/neuroads/PricingValuesSection';
 
 const cardVariants = {
   hidden: { opacity: 0, y: 25, scale: 0.98 },
@@ -271,6 +272,9 @@ export default function TempLandingPage() {
             <Link href="#solucoes" className="text-slate-650 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
               Soluções
             </Link>
+            <Link href="#valores" className="text-slate-650 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
+              Valores
+            </Link>
             <Link href="#demonstracao" className="text-slate-650 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
               Demonstração
             </Link>
@@ -325,6 +329,13 @@ export default function TempLandingPage() {
                 className="text-slate-650 font-bold text-xs uppercase tracking-wider hover:text-[#FF5500] py-2 transition-colors duration-200"
               >
                 Soluções
+              </Link>
+              <Link
+                href="#valores"
+                onClick={() => setIsMenuOpen(false)}
+                className="text-slate-650 font-bold text-xs uppercase tracking-wider hover:text-[#FF5500] py-2 transition-colors duration-200"
+              >
+                Valores
               </Link>
               <Link
                 href="#demonstracao"
@@ -599,6 +610,11 @@ export default function TempLandingPage() {
     </div>
 
 
+
+      {/* ========================================================================= */}
+      {/* VALORES & RECURSOS (PRICING VALUES SECTION) */}
+      {/* ========================================================================= */}
+      <PricingValuesSection />
 
       {/* ========================================================================= */}
       {/* DEMONSTRAÇÃO & FORMULÁRIO DE ACESSO */}
@@ -1845,7 +1861,7 @@ function FaqSection() {
     },
     {
       question: "Qual o valor do investimento e existe fidelidade?",
-      answer: "Oferecemos um Plano Único de apenas R$ 79,90/mensal que garante acesso completo a todos os 10 agentes especializados, orquestração central, RAG integrado e conexões de automação com seu CRM. E o melhor: você pode experimentar por 14 dias sem custos e cancelar quando quiser, sem qualquer taxa ou fidelidade."
+      answer: "Oferecemos um Plano Único de R$ 497/mês (ou R$ 4.970/ano, equivalente a dois meses grátis) com acesso aos 10 agentes especializados — responsáveis por mais de 30 operações pré-configuradas, além das operações personalizadas via chat —, 200 créditos mensais, 5 automações ativas e chat do assistente incluído. Você pode testar por 14 dias com 20 créditos inclusos e cancelar quando quiser, sem qualquer taxa ou fidelidade. Precisando de mais volume no meio do ciclo, há boosters avulsos de 50 créditos por R$ 97."
     },
     {
       question: "Como os dados são integrados com meu CRM?",

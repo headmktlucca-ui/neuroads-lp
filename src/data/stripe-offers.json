@@ -4,6 +4,31 @@
   "stripeApiVersion": "2022-11-15",
   "plans": [
     {
+      "slug": "neuroads-hub-unico",
+      "name": "NeuroAds Hub — Plano Único",
+      "amount": 49700,
+      "amountAnnual": 497000,
+      "description": "Plano único com 10 agentes de IA e mais de 30 operações pré-configuradas (além de operações personalizadas via chat), 200 créditos/mês, 5 automações ativas, 2 contas de anúncio e chat do assistente incluído.",
+      "productId": "prod_UqUjULDXhGN7cE",
+      "priceId": "price_1TqnkLHwQDlUrIjsXgn3lg7t",
+      "priceIdAnnual": "price_1TqnkYHwQDlUrIjsH5CXsYjI",
+      "priceIdFounder": "price_1TqnkOHwQDlUrIjsZ2jXikei",
+      "amountFounder": 29700,
+      "mode": "subscription",
+      "trialDays": 14,
+      "limits": {
+        "agents": 10,
+        "preconfiguredOperations": 30,
+        "includedExecutions": 200,
+        "monthlyCredits": 200,
+        "trialCredits": 20,
+        "activeAutomations": 5,
+        "adAccounts": 2,
+        "hubUsers": 3,
+        "chatMessagesMonthly": 500
+      }
+    },
+    {
       "slug": "neuroads-ia-pro",
       "name": "NeuroAds IA Pro",
       "amount": 7990,
@@ -17,6 +42,19 @@
     }
   ],
   "creditPacks": [
+    {
+      "slug": "booster-50",
+      "name": "Booster +50 Créditos",
+      "amount": 9700,
+      "description": "Pacote avulso de 50 créditos adicionais para o plano NeuroAds Hub. Válido no ciclo vigente.",
+      "limits": {
+        "includedExecutions": 50,
+        "unitPrice": 1.94
+      },
+      "productId": "prod_UqUkud6Zc2Dr7x",
+      "priceId": "price_1TqnklHwQDlUrIjs9VDrInNb",
+      "mode": "payment"
+    },
     {
       "slug": "credit-pack-100",
       "name": "Créditos Avulsos 100 Execuções",
