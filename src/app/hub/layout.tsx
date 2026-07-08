@@ -48,13 +48,9 @@ type NavItem = {
 /* ─── Nav items ────────────────────────────────────────────────────── */
 const NAV_ITEMS: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard',           href: '/hub'                                    },
-  { icon: Bot,             label: 'Agentes IA',          href: '/hub/laboratorio-agentes'                },
-  { icon: Cpu,             label: 'Automações',           href: '/hub/automacoes'                         },
-  { icon: Sparkles,        label: 'Oportunidades',        href: '/hub/explorar'                           },
-  { icon: Plug2,           label: 'Integrações',          href: '/hub/integracoes'                        },
   {
     icon: Brain,
-    label: 'Laboratório IA',
+    label: 'Agentes IA',
     href: '/hub/laboratorio-agentes',
     children: [
       { icon: Sparkles,     label: 'Atração',    href: '/hub/funil/atracao'    },
@@ -63,10 +59,13 @@ const NAV_ITEMS: NavItem[] = [
       { icon: RefreshCw,    label: 'Retenção',   href: '/hub/funil/retencao'   },
     ],
   },
+  { icon: Layers,          label: 'Funil de Vendas',     href: '/hub/funil-vendas'                       },
+  { icon: Cpu,             label: 'Automações',           href: '/hub/automacoes'                         },
+  { icon: Sparkles,        label: 'Oportunidades',        href: '/hub/explorar'                           },
+  { icon: Plug2,           label: 'Integrações',          href: '/hub/integracoes'                        },
   { icon: BookOpen,     label: 'Base de Conhecimento', href: '/hub/configuracoes?tab=conhecimento'         },
   { icon: Settings,     label: 'Configurações',        href: '/hub/configuracoes'                          },
 ];
-
 
 /* ─── Single nav link ───────────────────────────────────────────────── */
 function NavLink({
@@ -359,7 +358,8 @@ function Sidebar({
 function getMobilePageTitle(pathname: string): string {
   if (pathname === '/hub') return 'Dashboard';
   if (pathname.startsWith('/hub/agentes-ativos')) return 'Agentes Ativos';
-  if (pathname.startsWith('/hub/laboratorio-agentes')) return 'Laboratório IA';
+  if (pathname.startsWith('/hub/laboratorio-agentes')) return 'Agentes IA';
+  if (pathname.startsWith('/hub/funil-vendas')) return 'Funil de Vendas';
   if (pathname.startsWith('/hub/performance')) return 'Performance';
   if (pathname.startsWith('/hub/criativos')) return 'Criativos';
   if (pathname.startsWith('/hub/tecnico')) return 'Técnico';

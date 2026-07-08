@@ -287,17 +287,8 @@ Tráfego orgânico qualificado, posição média/CTR no Search Console, citaçõ
       'Agendamento automático',
       'Sequências multicanal',
     ],
-    specialtyTitles: [],
-    comingSoonSpecialties: [
-      {
-        title: 'Prospector Outbound',
-        description: 'Identificação e abordagem automática de leads qualificados no perfil de cliente ideal.',
-      },
-      {
-        title: 'Qualificador de ICP',
-        description: 'Análise e pontuação de leads com base em critérios de fit e sinal de intenção de compra.',
-      },
-    ],
+    specialtyTitles: ['Prospector Outbound', 'Qualificador de ICP'],
+    comingSoonSpecialties: [],
     prompt: `# IDENTIDADE
 Você é VITOR, o SDR (Sales Development Representative) Autônomo da NeuroAds. Você é o primeiro ponto de contato entre a empresa e potenciais clientes. Sua missão é prospectar, qualificar e agendar reuniões — nunca vender diretamente.
 
@@ -360,17 +351,8 @@ Taxa de resposta, taxa de qualificação, reuniões agendadas por semana, taxa d
       'Escalada inteligente',
       'Histórico completo do cliente',
     ],
-    specialtyTitles: [],
-    comingSoonSpecialties: [
-      {
-        title: 'Atendimento 24/7',
-        description: 'Resolução autônoma de tickets e dúvidas frequentes com escalada inteligente para humanos.',
-      },
-      {
-        title: 'Histórico de Cliente',
-        description: 'Consolidação do histórico completo de interações para contexto rico em cada atendimento.',
-      },
-    ],
+    specialtyTitles: ['Atendimento 24/7', 'Histórico de Cliente'],
+    comingSoonSpecialties: [],
     prompt: `# IDENTIDADE
 Você é MANU, a especialista de Atendimento & Suporte Autônomo da NeuroAds. Sua missão é atender com alta empatia, resolver tickets de forma ágil e proativa, e só encaminhar para humanos quando houver falhas críticas do sistema.
 
@@ -411,17 +393,8 @@ Tempo médio de resposta (TMR), taxa de resolução autônoma (FCR), CSAT, redu�
       'Coleta de assinatura digital',
       'Confirmação de pagamento',
     ],
-    specialtyTitles: [],
-    comingSoonSpecialties: [
-      {
-        title: 'Closer por Chat',
-        description: 'Condução autônoma da conversa de vendas com gestão de objeções e envio de proposta.',
-      },
-      {
-        title: 'Contrato & Pagamento',
-        description: 'Automação da coleta de assinatura digital e confirmação de pagamento dentro do fluxo.',
-      },
-    ],
+    specialtyTitles: ['Closer por Chat', 'Contrato & Pagamento'],
+    comingSoonSpecialties: [],
     prompt: `# IDENTIDADE
 Você é BRENO, o Closer por Mensagem Autônomo da NeuroAds. Sua especialidade é conduzir conversas de fechamento comercial de alto nível em canais de chat, contornar objeções de preço ou concorrência com firmeza técnica e guiar o cliente até a assinatura do contrato.
 
@@ -462,17 +435,8 @@ Taxa de conversão de proposta para fechamento, ciclo médio de fechamento comer
       'Ofertas personalizadas',
       'Aumento de LTV',
     ],
-    specialtyTitles: [],
-    comingSoonSpecialties: [
-      {
-        title: 'Reativação de Inativos',
-        description: 'Identificação e abordagem de clientes inativos com ofertas personalizadas no momento certo.',
-      },
-      {
-        title: 'Upsell Inteligente',
-        description: 'Mapeamento de oportunidades de upgrade e expansão de receita na base atual de clientes.',
-      },
-    ],
+    specialtyTitles: ['Reativação de Inativos', 'Upsell Inteligente'],
+    comingSoonSpecialties: [],
     prompt: `# IDENTIDADE
 Você é RAÍSSA, a especialista de Upsell & Reativação Autônoma da NeuroAds. Sua meta é extrair receita incremental da base de clientes ativos através de ofertas oportunas e reativar clientes em churn/inativos usando gatilhos comportamentais.
 
@@ -512,17 +476,8 @@ Lifetime Value (LTV), Net Revenue Retention (NRR), taxa de sucesso em reativaç�
       'Lead scoring automático',
       'Gatilhos de conversão',
     ],
-    specialtyTitles: [],
-    comingSoonSpecialties: [
-      {
-        title: 'Fluxos de Nutrição',
-        description: 'Criação e disparo de sequências de e-mail personalizadas por segmento e comportamento do lead.',
-      },
-      {
-        title: 'Lead Scoring',
-        description: 'Pontuação automática de leads com base em engajamento e sinalização de prontidão para compra.',
-      },
-    ],
+    specialtyTitles: ['Fluxos de Nutrição', 'Lead Scoring'],
+    comingSoonSpecialties: [],
     prompt: `# IDENTIDADE
 Você é TAINÁ, a especialista de Nutrição de Leads Autônoma da NeuroAds. Sua missão é desenhar e orquestrar fluxos de comunicação por e-mail, WhatsApp e canais conectados para qualificar leads frios e movê-los na jornada de compra até estarem quentes para o Vitor (SDR).
 
@@ -563,17 +518,8 @@ Taxa de cliques (CTR) e abertura de e-mails, pontuação média dos leads (Lead 
       'Briefings de reunião',
       'Distribuição de tarefas',
     ],
-    specialtyTitles: [],
-    comingSoonSpecialties: [
-      {
-        title: 'Briefing de Reunião',
-        description: 'Preparação automática de briefings com contexto, pauta e ações anteriores antes de cada reunião.',
-      },
-      {
-        title: 'Gestor de Tarefas',
-        description: 'Distribuição e acompanhamento de tasks com priorização inteligente e alertas de deadline.',
-      },
-    ],
+    specialtyTitles: ['Briefing de Reunião', 'Gestor de Tarefas'],
+    comingSoonSpecialties: [],
     prompt: `# IDENTIDADE
 Você é ULISSES, o Chief of Staff Virtual da NeuroAds. Você é o orquestrador da operação: entende a meta do usuário, traduz em plano e aciona o especialista certo da equipe no momento certo.
 

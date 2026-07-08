@@ -255,6 +255,126 @@ const rawAgents: Agent[] = [
     requiredConnectors: ['ga4', 'crm'],
   },
   {
+    title: 'Prospector Outbound',
+    description: 'Identificação e abordagem automática de leads qualificados no perfil de cliente ideal.',
+    longDescription: 'Busca ativa de leads em canais como e-mail corporativo, LinkedIn e base de dados qualificada. Cria abordagens frias personalizadas (Cold Mail) para decisores, gerenciando as respostas e encaminhando interessados.',
+    icon: '/images/tools/mineracao.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Aquisição',
+    heroDescription: 'prospecta decisores no perfil de cliente ideal, construindo listas qualificadas e iniciando abordagens diretas de vendas automatizadas via múltiplos canais.',
+    requiredConnectors: ['crm', 'ga4']
+  },
+  {
+    title: 'Qualificador de ICP',
+    description: 'Análise e pontuação de leads com base em critérios de fit e sinal de intenção de compra.',
+    longDescription: 'Sistema inteligente de Lead Scoring e qualificação. Ele analisa dados demográficos, comportamento de navegação no site e interações de e-mail para pontuar leads usando o framework BANT/GPCT, identificando oportunidades prontas para abordagem direta.',
+    icon: '/images/tools/publico_ideal.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Aquisição',
+    heroDescription: 'analisa e qualifica leads capturados, classificando a intenção de compra e fit com a empresa para priorizar os contatos de maior potencial comercial.',
+    requiredConnectors: ['crm', 'ga4']
+  },
+  {
+    title: 'Atendimento 24/7',
+    description: 'Resolução autônoma de tickets e dúvidas frequentes com escalada inteligente para humanos.',
+    longDescription: 'Um chatbot inteligente que se conecta à sua FAQ e documentação interna de suporte para responder dúvidas operacionais de clientes 24 horas por dia, 7 dias por semana, com redirecionamento automático para atendentes humanos em casos complexos.',
+    icon: '/images/tools/default.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Retenção',
+    heroDescription: 'presta suporte automatizado e resolve tickets recorrentes usando a Base de Conhecimento, reduzindo o tempo de resposta e melhorando a satisfação do cliente.',
+    requiredConnectors: ['crm']
+  },
+  {
+    title: 'Histórico de Cliente',
+    description: 'Consolidação do histórico completo de interações para contexto rico em cada atendimento.',
+    longDescription: 'Centraliza todas as mensagens, compras, tickets resolvidos e interações anteriores de cada cliente ativo, montando um dossiê completo de contexto que ajuda o atendimento comercial e suporte a personalizar a conversa.',
+    icon: '/images/tools/analise.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Retenção',
+    heroDescription: 'consolida a jornada e histórico do cliente a partir de integrações de CRM e suporte para municiar o atendimento com o melhor contexto possível.',
+    requiredConnectors: ['crm']
+  },
+  {
+    title: 'Closer por Chat',
+    description: 'Condução autônoma da conversa de vendas com gestão de objeções e envio de proposta.',
+    longDescription: 'Focado em etapas finais do funil. O closer por chat responde a objeções complexas de preço, recursos ou contrato, apresenta a proposta de forma persuasiva e guia o lead diretamente para o fechamento comercial.',
+    icon: '/images/tools/gerador_copies.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Conversão',
+    heroDescription: 'assume negociações comerciais ativas via chat para contornar objeções de venda e apresentar propostas personalizadas, acelerando o ciclo comercial.',
+    requiredConnectors: ['crm', 'payments']
+  },
+  {
+    title: 'Contrato & Pagamento',
+    description: 'Automação da coleta de assinatura digital e confirmação de pagamento dentro do fluxo.',
+    longDescription: 'Agiliza a formalização da venda. Gera links de assinatura eletrônica de contratos e emite as ordens de pagamento (pix/cartão) integradas ao gateway do cliente, enviando lembretes de pendências de pagamento e confirmando a venda concluída.',
+    icon: '/images/tools/testes.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Conversão',
+    heroDescription: 'gera e acompanha a assinatura de contratos e links de pagamento para fechar negociações de forma ágil e segura.',
+    requiredConnectors: ['crm', 'payments']
+  },
+  {
+    title: 'Reativação de Inativos',
+    description: 'Identificação e abordagem de clientes inativos com ofertas personalizadas no momento certo.',
+    longDescription: 'Varre a base de dados de clientes inativos (há mais de 30 dias sem compras ou login) e dispara sequências de reengajamento com ofertas altamente direcionadas com base no padrão anterior de consumo e interesse do cliente.',
+    icon: '/images/tools/dna_marca.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Pós-Venda',
+    heroDescription: 'detecta clientes inativos e em risco de churn na base de clientes, acionando campanhas automatizadas de ofertas e valor para trazê-los de volta.',
+    requiredConnectors: ['crm']
+  },
+  {
+    title: 'Upsell Inteligente',
+    description: 'Mapeamento de oportunidades de upgrade e expansão de receita na base atual de clientes.',
+    longDescription: 'Analisa o uso e o engajamento dos clientes ativos nos planos vigentes. Identifica quando o cliente está próximo do limite de uso ou necessita de um serviço complementar, sugerindo upgrades ou cross-sells de valor no momento em que a satisfação está alta.',
+    icon: '/images/tools/alocacao.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Pós-Venda',
+    heroDescription: 'rastreia a base ativa para identificar momentos ideais de satisfação e uso que justificam uma oferta de upgrade de plano ou cross-sell de novos serviços.',
+    requiredConnectors: ['crm', 'payments']
+  },
+  {
+    title: 'Fluxos de Nutrição',
+    description: 'Criação e disparo de sequências de e-mail personalizadas por segmento e comportamento do lead.',
+    longDescription: 'Estrutura réguas de relacionamento automáticas. Cria copys para cada estágio (topo, meio e fundo de funil) e configura gatilhos comportamentais (clique em link, download de material) para aquecer leads e prepará-los para prospecção.',
+    icon: '/images/tools/automacao.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Nutrição',
+    heroDescription: 'desenha e operacionaliza fluxos de e-mail e mensagens de engajamento para educar, nutrir e qualificar sua base de leads.',
+    requiredConnectors: ['crm']
+  },
+  {
+    title: 'Lead Scoring',
+    description: 'Pontuação automática de leads com base em engajamento e sinalização de prontidão para compra.',
+    longDescription: 'Aplica um sistema de pontos a cada interação do lead (abertura de e-mail, visita à página de preços, interação em formulários). Alerta imediatamente o time de SDR (Vitor) quando o score do lead indica alta intenção de compra.',
+    icon: '/images/tools/analista_trafego.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Nutrição',
+    heroDescription: 'pontua o nível de interesse de cada lead com base em ações reais para garantir que o time comercial aborde apenas os contatos mais quentes.',
+    requiredConnectors: ['crm', 'ga4']
+  },
+  {
+    title: 'Briefing de Reunião',
+    description: 'Preparação automática de briefings com contexto, pauta e ações anteriores antes de cada reunião.',
+    longDescription: 'Gera resumos inteligentes de contexto antes de reuniões com leads ou clientes. Compila dados do CRM, interações anteriores, redes sociais profissionais e dores mapeadas em um único briefing pronto para leitura do vendedor.',
+    icon: '/images/tools/default.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Gestão',
+    heroDescription: 'reúne dados de histórico, interações e perfil da empresa antes de reuniões importantes, entregando um resumo de preparação de alto nível.',
+    requiredConnectors: ['crm']
+  },
+  {
+    title: 'Gestor de Tarefas',
+    description: 'Distribuição e acompanhamento de tasks com priorização inteligente e alertas de deadline.',
+    longDescription: 'Orquestra o fluxo de trabalho do time de marketing e vendas. Distribui as atividades geradas a partir de insights dos agentes, define prazos claros e envia alertas de acompanhamento para evitar gargalos operacionais.',
+    icon: '/images/tools/otimizacao.png',
+    color: 'var(--color-brand-orange)',
+    category: 'Gestão',
+    heroDescription: 'centraliza, delega e acompanha as tarefas pendentes na operação, otimizando o fluxo diário e garantindo o cumprimento de metas e prazos.',
+    requiredConnectors: ['crm']
+  },
+  {
     title: 'Nome do Meu Agente',
     description: 'Breve descrição do agente (1 a 2 linhas).',
     longDescription: 'Descrição completa sobre o funcionamento e promessa do agente.',

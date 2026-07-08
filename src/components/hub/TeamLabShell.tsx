@@ -21,20 +21,10 @@ function SpecialtyRow({
   specialty,
   agentId,
   agentCor,
-  isActive,
-  isActivating,
-  isDeactivating,
-  onActivate,
-  onDeactivate,
 }: {
   specialty: (typeof allSpecialties)[number];
   agentId: string;
   agentCor: string;
-  isActive: boolean;
-  isActivating: boolean;
-  isDeactivating: boolean;
-  onActivate: () => void;
-  onDeactivate: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
 
@@ -62,59 +52,30 @@ function SpecialtyRow({
         
         {/* Line 3: Buttons in a row */}
         <div className="flex items-center gap-2 mt-2.5 flex-wrap">
-          {isActive ? (
-            <>
-              {/* Ativo Badge */}
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                <CheckCircle2 size={10} /> Ativo
-              </span>
+          {/* Ativo Badge */}
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 animate-pulse">
+            <CheckCircle2 size={10} /> Ativo
+          </span>
 
-              {/* Acessar Operação */}
-              <Link
-                href={`/hub/assistente-ia?agent=${agentId}&specialty=${encodeURIComponent(specialty.title)}`}
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-white hover:brightness-110 transition-all"
-                style={{ background: 'linear-gradient(135deg, #2563EB, #06B6D4)', textDecoration: 'none', boxShadow: '0 2px 6px rgba(37,99,235,0.3)' }}
-              >
-                <ExternalLink size={10} /> Acessar Operação
-              </Link>
+          {/* Executar Operação */}
+          <Link
+            href={`/hub/assistente-ia?agent=${agentId}&specialty=${encodeURIComponent(specialty.title)}`}
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-white hover:brightness-110 transition-all"
+            style={{ background: 'linear-gradient(135deg, #2563EB, #06B6D4)', textDecoration: 'none', boxShadow: '0 2px 6px rgba(37,99,235,0.3)' }}
+          >
+            <ExternalLink size={10} /> Executar Operação
+          </Link>
 
-              {/* Desativar */}
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); onDeactivate(); }}
-                disabled={isDeactivating}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-600 border border-white/60 bg-[#eef2f7] hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all active:scale-95 cursor-pointer"
-              >
-                {isDeactivating ? <Activity size={10} className="animate-pulse" /> : <X size={10} />}
-                Desativar
-              </button>
-            </>
-          ) : (
-            <>
-              {/* Ativar */}
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); onActivate(); }}
-                disabled={isActivating}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-white hover:brightness-110 active:scale-95 disabled:opacity-50 transition-all cursor-pointer"
-                style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', boxShadow: '0 2px 6px rgba(255,106,0,0.2)' }}
-              >
-                {isActivating ? <Activity size={10} className="animate-pulse" /> : <Wrench size={10} />}
-                Ativar
-              </button>
-
-              {/* Acessar Operação (Disabled style) */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-400 border border-slate-200 bg-slate-100 opacity-60 cursor-not-allowed">
-                <ExternalLink size={10} /> Acessar Operação
-              </span>
-
-              {/* Desativar (Disabled style) */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-400 border border-slate-200 bg-slate-100 opacity-60 cursor-not-allowed">
-                <X size={10} /> Desativar
-              </span>
-            </>
-          )}
+          {/* Programar Automação */}
+          <Link
+            href={`/hub/automacoes`}
+            onClick={(e) => e.stopPropagation()}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-600 border border-white/60 bg-[#eef2f7] hover:bg-slate-100 transition-all active:scale-95"
+            style={{ textDecoration: 'none' }}
+          >
+            <Activity size={10} /> Programar Automação
+          </Link>
         </div>
       </div>
     </div>
@@ -145,24 +106,14 @@ function ComingSoonRow({ title, description }: { title: string; description: str
 function TeamAgentCard({
   teamAgent,
   specialtiesForAgent,
-  statusOverrides,
-  activatingTitle,
-  deactivatingTitle,
-  onActivate,
-  onDeactivate,
 }: {
   teamAgent: TeamAgent;
   specialtiesForAgent: (typeof allSpecialties);
-  statusOverrides: Record<string, boolean>;
-  activatingTitle: string | null;
-  deactivatingTitle: string | null;
-  onActivate: (title: string) => void;
-  onDeactivate: (title: string) => void;
 }) {
   const [expanded, setExpanded] = useState(true);
   const [avatarHovered, setAvatarHovered] = useState(false);
   const hasSpecialties = specialtiesForAgent.length > 0 || teamAgent.comingSoonSpecialties.length > 0;
-  const activeCount = specialtiesForAgent.filter((s) => statusOverrides[s.title] === true).length;
+  const activeCount = specialtiesForAgent.length;
   const totalSpecialties = specialtiesForAgent.length + teamAgent.comingSoonSpecialties.length;
 
   return (
@@ -181,7 +132,7 @@ function TeamAgentCard({
       >
         {/* Avatar image — 192×192 with hover overlay */}
         <Link
-          href={`/hub/membro/${teamAgent.id}`}
+          href={`/hub/assistente-ia?agent=${teamAgent.id}`}
           className="relative shrink-0 rounded-2xl overflow-hidden border-2 border-white/80 cursor-pointer block"
           style={{
             width: 192,
@@ -251,27 +202,15 @@ function TeamAgentCard({
             >
               Enviar Mensagem
             </Link>
-            {activeCount > 0 ? (
-              <span 
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                style={{ 
-                  boxShadow: '0 0 8px rgba(16, 185, 129, 0.4), inset 0 0 4px rgba(16, 185, 129, 0.2)',
-                  textShadow: '0 0 4px rgba(16, 185, 129, 0.6)' 
-                }}
-              >
-                Ativo
-              </span>
-            ) : (
-              <span 
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-rose-500/10 text-rose-400 border border-rose-500/30"
-                style={{ 
-                  boxShadow: '0 0 8px rgba(244, 63, 94, 0.4), inset 0 0 4px rgba(244, 63, 94, 0.2)',
-                  textShadow: '0 0 4px rgba(244, 63, 94, 0.6)' 
-                }}
-              >
-                Inativo
-              </span>
-            )}
+            <span 
+              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
+              style={{ 
+                boxShadow: '0 0 8px rgba(16, 185, 129, 0.4), inset 0 0 4px rgba(16, 185, 129, 0.2)',
+                textShadow: '0 0 4px rgba(16, 185, 129, 0.6)' 
+              }}
+            >
+              Ativo
+            </span>
           </div>
         </div>
 
@@ -279,7 +218,7 @@ function TeamAgentCard({
         <div className="flex flex-col items-end gap-2 shrink-0">
           {hasSpecialties && (
             <span className="text-[10px] font-black text-slate-400">
-              {activeCount}/{totalSpecialties} ativas
+              {activeCount}/{totalSpecialties} Operações
             </span>
           )}
           <ChevronDown
@@ -318,11 +257,6 @@ function TeamAgentCard({
                   specialty={specialty}
                   agentId={teamAgent.id}
                   agentCor={teamAgent.cor}
-                  isActive={statusOverrides[specialty.title] === true}
-                  isActivating={activatingTitle === specialty.title}
-                  isDeactivating={deactivatingTitle === specialty.title}
-                  onActivate={() => onActivate(specialty.title)}
-                  onDeactivate={() => onDeactivate(specialty.title)}
                 />
               ))}
 
@@ -342,64 +276,14 @@ function TeamAgentCard({
 
 export default function TeamLabShell() {
   const [search, setSearch] = useState('');
-  const { user } = useAuth();
-  const [statusOverrides, setStatusOverrides] = useState<Record<string, boolean>>({});
-  const [activatingTitle, setActivatingTitle] = useState<string | null>(null);
-  const [deactivatingTitle, setDeactivatingTitle] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!user) { setStatusOverrides({}); return; }
-    setStatusOverrides(readAgentStatusOverrides(user.uid));
-  }, [user]);
-
-  const activateSpecialty = async (agentTitle: string) => {
-    if (!user) return;
-    setActivatingTitle(agentTitle);
-    const overrides = { ...statusOverrides, [agentTitle]: true };
-    setStatusOverrides(overrides);
-    writeAgentStatusOverrides(user.uid, overrides);
-    try {
-      const db = getFirebaseDb();
-      await setDoc(doc(db, 'users', user.uid), {
-        activeAgents: {
-          [agentTitle]: {
-            isActive: true,
-            planName: 'Growth',
-            monthlyLimit: 15,
-            usageUsed: 0,
-            updatedAt: Date.now()
-          }
-        },
-      }, { merge: true });
-    } catch { /* noop */ } finally { setActivatingTitle(null); }
-  };
-
-  const deactivateSpecialty = async (agentTitle: string) => {
-    if (!user) return;
-    setDeactivatingTitle(agentTitle);
-    const overrides = { ...statusOverrides, [agentTitle]: false };
-    setStatusOverrides(overrides);
-    writeAgentStatusOverrides(user.uid, overrides);
-    try {
-      const db = getFirebaseDb();
-      await setDoc(doc(db, 'users', user.uid), {
-        activeAgents: {
-          [agentTitle]: {
-            isActive: false,
-            updatedAt: Date.now()
-          }
-        },
-      }, { merge: true });
-    } catch { /* noop */ } finally { setDeactivatingTitle(null); }
-  };
-
-  const totalSpecialties = allSpecialties.length;
 
   const totalActive = useMemo(() => {
     return TEAM_AGENTS.reduce((acc, a) => {
-      return acc + a.specialtyTitles.filter((t) => statusOverrides[t] === true).length;
+      return acc + a.specialtyTitles.length;
     }, 0);
-  }, [statusOverrides]);
+  }, []);
+
+  const totalSpecialties = allSpecialties.length;
 
   // Filtered team agents
   const filteredTeam = useMemo(() => {
@@ -425,12 +309,12 @@ export default function TeamLabShell() {
             Equipe IA · NeuroAds
           </span>
         </div>
-        <h1 className="text-[26px] font-black text-[#0f172a] tracking-tight">Equipe de Agentes IA</h1>
+        <h1 className="text-[26px] font-black text-[#0f172a] tracking-tight">Agentes IA</h1>
         <p className="text-[13px] text-slate-500 font-semibold mt-1 max-w-2xl">
-          Seu time de IA que assume o Marketing &amp; Vendas da operação. Cada Agente tem identidade própria e especialidades disponíveis 24h.
+          Seu time de IA que assume o Marketing &amp; Vendas da operação. Cada Agente tem identidade própria e operações disponíveis 24h.
         </p>
         <p className="text-[12px] font-black mt-1.5 text-[#FF6A00]">
-          10 Agentes · {totalActive}/{totalSpecialties} especialidades ativas · Online 24h
+          10 Agentes · {totalActive} Operações Ativas · Online 24h
         </p>
       </div>
 
@@ -438,9 +322,9 @@ export default function TeamLabShell() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
           { label: 'Agentes da Equipe', value: '10',          color: '#FF6A00' },
-          { label: 'Especialidades Ativas', value: `${totalActive}/${totalSpecialties}`, color: '#2563eb' },
+          { label: 'Operações Ativas', value: `${totalActive}`, color: '#2563eb' },
           { label: 'Online Agora', value: '10',              color: '#059669' },
-          { label: 'Em Breve', value: TEAM_AGENTS.reduce((acc, a) => acc + a.comingSoonSpecialties.length, 0), color: '#d97706' },
+          { label: 'SLA de Execução', value: '100%',          color: '#d97706' },
         ].map(({ label, value, color }) => (
           <div key={label} className="rounded-2xl border border-white/60 bg-[#eef2f7] p-4 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff]">
             <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-2">{label}</p>
@@ -456,7 +340,7 @@ export default function TeamLabShell() {
         <Search size={14} className="text-slate-400 shrink-0" />
         <input
           className="flex-1 bg-transparent text-[13px] font-semibold text-slate-600 placeholder:text-slate-400 outline-none"
-          placeholder="Buscar agente ou especialidade…"
+          placeholder="Buscar agente ou operação…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -479,11 +363,6 @@ export default function TeamLabShell() {
                 key={ta.id}
                 teamAgent={ta}
                 specialtiesForAgent={specialtiesForAgent}
-                statusOverrides={statusOverrides}
-                activatingTitle={activatingTitle}
-                deactivatingTitle={deactivatingTitle}
-                onActivate={activateSpecialty}
-                onDeactivate={deactivateSpecialty}
               />
             );
           })}

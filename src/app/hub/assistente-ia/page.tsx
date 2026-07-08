@@ -15,7 +15,8 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
 import { chatWithLuccaHub, type LuccaLeftPanelData } from '../../actions/lucca-hub-chat';
 import { saveChatSession, type ChatMessage as StoredChatMessage } from '../../../lib/chat-history';
-import { getTeamAgentById, type TeamAgent } from '../../../data/team-agents';
+import { getTeamAgentById, type TeamAgent, TEAM_AGENTS } from '../../../data/team-agents';
+import { agents as allSpecialties } from '../../../data/agents';
 
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -80,6 +81,52 @@ const SPECIALTY_FIELDS: Record<string, CustomField[]> = {
   'Gerador de Testes A/B': [
     { name: 'pagina', label: 'Página do Teste', type: 'url', placeholder: 'Ex: https://meusite.com.br' },
     { name: 'elemento', label: 'Elemento a Testar', type: 'text', placeholder: 'Ex: Botão de CTA, Headline' },
+  ],
+  'Prospector Outbound': [
+    { name: 'segmento', label: 'Segmento Alvo', type: 'text', placeholder: 'Ex: Tecnologia, E-commerce, Clínicas' },
+    { name: 'cargo', label: 'Cargo do Decisor', type: 'text', placeholder: 'Ex: CEO, Diretor de Marketing' },
+  ],
+  'Qualificador de ICP': [
+    { name: 'lead_name', label: 'Nome do Lead', type: 'text', placeholder: 'Ex: Carlos Souza' },
+    { name: 'lead_empresa', label: 'Empresa do Lead', type: 'text', placeholder: 'Ex: Logística Express' },
+  ],
+  'Atendimento 24/7': [
+    { name: 'canal', label: 'Canal de Atendimento', type: 'text', placeholder: 'Ex: WhatsApp, Webchat' },
+    { name: 'faq_url', label: 'URL da FAQ/Ajuda', type: 'url', placeholder: 'Ex: https://ajuda.meusite.com' },
+  ],
+  'Histórico de Cliente': [
+    { name: 'email_cliente', label: 'E-mail do Cliente', type: 'text', placeholder: 'Ex: cliente@empresa.com' },
+  ],
+  'Closer por Chat': [
+    { name: 'lead_name', label: 'Nome do Lead', type: 'text', placeholder: 'Ex: Mariana Silva' },
+    { name: 'proposta_valor', label: 'Valor Proposto (R$)', type: 'number', placeholder: 'Ex: 15000' },
+  ],
+  'Contrato & Pagamento': [
+    { name: 'email_cliente', label: 'E-mail para Envio', type: 'text', placeholder: 'Ex: cliente@empresa.com' },
+    { name: 'valor_contrato', label: 'Valor do Contrato (R$)', type: 'number', placeholder: 'Ex: 15000' },
+  ],
+  'Reativação de Inativos': [
+    { name: 'dias_inativo', label: 'Dias de Inatividade', type: 'number', placeholder: 'Ex: 30' },
+    { name: 'oferta', label: 'Oferta de Reativação', type: 'text', placeholder: 'Ex: Desconto de 20% no primeiro mês' },
+  ],
+  'Upsell Inteligente': [
+    { name: 'email_cliente', label: 'E-mail do Cliente', type: 'text', placeholder: 'Ex: joao@empresa.com' },
+    { name: 'plano_atual', label: 'Plano Atual', type: 'text', placeholder: 'Ex: Plano Standard' },
+  ],
+  'Fluxos de Nutrição': [
+    { name: 'segmento', label: 'Segmento de Leads', type: 'text', placeholder: 'Ex: E-books / Leads Frios' },
+    { name: 'plataforma', label: 'Plataforma de E-mail', type: 'text', placeholder: 'Ex: RD Station, ActiveCampaign' },
+  ],
+  'Lead Scoring': [
+    { name: 'pontuacao_minima', label: 'Pontuação Mínima para Abordagem', type: 'number', placeholder: 'Ex: 80' },
+  ],
+  'Briefing de Reunião': [
+    { name: 'nome_reuniao', label: 'Assunto da Reunião', type: 'text', placeholder: 'Ex: Reunião Comercial' },
+    { name: 'participantes', label: 'Participantes Principais', type: 'text', placeholder: 'Ex: CEO e Diretor de Vendas' },
+  ],
+  'Gestor de Tarefas': [
+    { name: 'titulo_tarefa', label: 'Título da Tarefa', type: 'text', placeholder: 'Ex: Revisar criativos da campanha' },
+    { name: 'responsavel', label: 'Responsável', type: 'text', placeholder: 'Ex: Paola' },
   ],
 };
 
@@ -572,56 +619,23 @@ function OrchestratorControlPanel({
 }: {
   onSelectSuggestion: (agentId: string, specialty: string) => void;
 }) {
-  const agents = [
-    {
-      id: 'paola',
-      nome: 'PAOLA',
-      funcao: 'Gestora de Tráfego Pago',
-      avatarSrc: '/images/Avatar Agentes IA/Avatar_Paola.png',
-      cor: '#FACC15',
-      status: 'Pronta',
-      atividades: [
-        { title: 'Simulador de ROAS', desc: 'Simular retorno sobre investimento' },
-        { title: 'Analista de Tráfego', desc: 'Análise de métricas de anúncios' },
-      ],
-    },
-    {
-      id: 'lais',
-      nome: 'LAÍS',
-      funcao: 'Criativos & Copies',
-      avatarSrc: '/images/Avatar Agentes IA/Avatar_Lais.png',
-      cor: '#FB923C',
-      status: 'Pronta',
-      atividades: [
-        { title: 'Gerador de Copies de Conversão', desc: 'Gerar copies persuasivas' },
-        { title: 'Gerador de Criativos', desc: 'Ideias de criativos e imagens' },
-      ],
-    },
-    {
-      id: 'heitor',
-      nome: 'HEITOR',
-      funcao: 'Orquestrador de Funis',
-      avatarSrc: '/images/Avatar Agentes IA/Avatar_Heitor.png',
-      cor: '#60A5FA',
-      status: 'Pronto',
-      atividades: [
-        { title: 'Diagnóstico de Funil', desc: 'Mapear gargalos de conversão' },
-        { title: 'Preditor de Funil', desc: 'Simular conversão em múltiplos estágios' },
-      ],
-    },
-    {
-      id: 'igor',
-      nome: 'IGOR',
-      funcao: 'Dados, SEO & GEO',
-      avatarSrc: '/images/Avatar Agentes IA/Avatar_Igor.png',
-      cor: '#A78BFA',
-      status: 'Pronto',
-      atividades: [
-        { title: 'SEO & GEO', desc: 'Otimizar site para buscas tradicionais e por IA' },
-        { title: 'Diagnóstico de Landing Page', desc: 'Auditar taxa de conversão da LP' },
-      ],
-    },
-  ];
+  const agents = useMemo(() => {
+    return TEAM_AGENTS.filter(ta => ta.id !== 'ulisses').map(ta => {
+      const specialties = allSpecialties.filter(s => ta.specialtyTitles.includes(s.title));
+      return {
+        id: ta.id,
+        nome: ta.nome,
+        funcao: ta.funcao,
+        avatarSrc: ta.avatarSrc,
+        cor: ta.cor,
+        status: ta.genero === 'F' ? 'Pronta' : 'Pronto',
+        atividades: specialties.map(s => ({
+          title: s.title,
+          desc: s.description,
+        })),
+      };
+    });
+  }, []);
 
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto space-y-6 bg-slate-50/50">
@@ -1012,9 +1026,21 @@ function LeftPanel({
                     >
                       <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#FF6A00]/20 to-transparent rounded-full filter blur-xl" />
                       <div className="flex items-center gap-3.5 mb-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF4D00] to-[#FF8805] flex items-center justify-center shrink-0 shadow-md">
-                          <Sparkles className="w-5 h-5 text-white animate-pulse" />
-                        </div>
+                        {activeAgent?.avatarSrc ? (
+                          <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-white/20 shadow-md relative bg-slate-800">
+                            <Image 
+                              src={activeAgent.avatarSrc} 
+                              alt={activeAgent.nome} 
+                              width={40}
+                              height={40}
+                              className="w-full h-full object-cover" 
+                            />
+                          </div>
+                        ) : (
+                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF4D00] to-[#FF8805] flex items-center justify-center shrink-0 shadow-md">
+                            <Sparkles className="w-5 h-5 text-white animate-pulse" />
+                          </div>
+                        )}
                         <div>
                           <p className="text-[11px] font-bold text-[#FF6A00] uppercase tracking-wider">Painel Operacional</p>
                           <h3 className="text-[15px] font-black">{activeAgent?.nome || 'Lucca'}</h3>
