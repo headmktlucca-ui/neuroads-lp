@@ -1545,7 +1545,6 @@ function DemoAndAccessSection() {
   const [company, setCompany] = useState('');
   const [isHuman, setIsHuman] = useState(false);
   const [slideProgress, setSlideProgress] = useState(0);
-  const [isPlayingVideo, setIsPlayingVideo] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -1599,37 +1598,17 @@ function DemoAndAccessSection() {
           transition={{ duration: 0.8 }}
           className="lg:col-span-7"
         >
-          {isPlayingVideo ? (
-            <div className="relative aspect-video rounded-[32px] overflow-hidden border border-[#EAEAEA] bg-slate-950 shadow-sm">
-              <video
-                src="/videos/VD_Boas_Vindas26.mp4"
-                controls
-                autoPlay
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ) : (
-            <div
-              onClick={() => setIsPlayingVideo(true)}
-              className="relative aspect-video rounded-[32px] overflow-hidden border border-[#EAEAEA] bg-slate-950 shadow-sm group cursor-pointer"
-            >
-              {/* Mockup Dashboard Image background */}
-              <Image
-                src="/images/tools/boas_vindas_poster.png"
-                alt="Dashboard Demonstration preview"
-                fill
-                className="object-cover opacity-90 group-hover:scale-[1.02] transition-transform duration-700"
-              />
-              {/* Play Button Overlay */}
-              <div className="absolute inset-0 bg-slate-950/40 flex items-center justify-center">
-                <div className="w-20 h-20 rounded-full bg-white flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:bg-[#FF5500] transition-all duration-300">
-                  <svg className="w-8 h-8 text-[#FF5500] group-hover:text-white transition-colors ml-1.5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z" />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          )}
+          <div className="relative aspect-video rounded-[32px] overflow-hidden border border-[#EAEAEA] bg-slate-950 shadow-sm">
+            <video
+              src="/videos/VD_BV.mp4"
+              controls
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+            />
+          </div>
         </motion.div>
 
         {/* Right Column: Request Form */}
