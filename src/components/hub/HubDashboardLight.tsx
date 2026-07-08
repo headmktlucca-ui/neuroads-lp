@@ -318,11 +318,11 @@ function GA4TrafficDonut({ sources, connected, loading }: { sources: Ga4TrafficS
       {data.length === 0 ? (
         <Ga4WidgetEmpty connected={connected} loading={loading} />
       ) : (
-        <div className="flex flex-1 items-center gap-4 py-1">
-          <div className="w-36 h-36 shrink-0 relative flex items-center justify-center">
+        <div className="flex flex-1 items-center gap-3 sm:gap-4 py-1">
+          <div className="w-28 h-28 sm:w-36 sm:h-36 shrink-0 relative flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie data={data} dataKey="value" innerRadius={45} outerRadius={60} paddingAngle={2} stroke="none">
+                <Pie data={data} dataKey="value" innerRadius="62%" outerRadius="83%" paddingAngle={2} stroke="none">
                   {data.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
@@ -722,15 +722,15 @@ export default function HubDashboardLight() {
   if (!hasAnyConnection && !loading) return <HubEmptyState />;
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 lg:space-y-8">
       {/* Page Header */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="flex items-start justify-between gap-4 flex-wrap"
       >
-        <div>
+        <div className="min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <span
               className="h-1.5 w-1.5 rounded-full bg-[#FF6A00]"
@@ -739,7 +739,7 @@ export default function HubDashboardLight() {
               Hub Estratégico
             </span>
           </div>
-          <h1 className="text-[28px] font-black tracking-tight leading-none text-[#0f172a]">
+          <h1 className="text-[24px] sm:text-[28px] font-black tracking-tight leading-none text-[#0f172a] break-words">
             {profile?.companyName || 'Visão Geral'}
           </h1>
           <p className="text-[13px] text-slate-500 mt-1.5 font-bold">
@@ -748,7 +748,7 @@ export default function HubDashboardLight() {
         </div>
         <Link
           href="/hub/assistente-ia"
-          className="flex items-center gap-2 px-5 h-10 rounded-xl text-white text-[13px] font-bold shadow-[4px_4px_10px_#c2cbd9,_-4px_-4px_10px_#ffffff] hover:shadow-[0_4px_16px_rgba(255,106,0,0.3)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+          className="flex w-full sm:w-auto items-center justify-center gap-2 px-5 h-11 sm:h-10 rounded-xl text-white text-[13px] font-bold shadow-[4px_4px_10px_#c2cbd9,_-4px_-4px_10px_#ffffff] hover:shadow-[0_4px_16px_rgba(255,106,0,0.3)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
           style={{ background: 'linear-gradient(135deg, #FF4D00, #FF7A00)' }}
         >
           <Sparkles size={14} className="animate-pulse" />
@@ -836,14 +836,14 @@ export default function HubDashboardLight() {
         )}
       </AnimatePresence>
 
-        <div className="flex items-center justify-between gap-4 p-3 bg-amber-500/5 rounded-xl border border-amber-500/20 mt-1">
-          <div className="flex items-center gap-2">
-            <Info className="text-amber-600 shrink-0" size={14} />
+        <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4 p-3 bg-amber-500/5 rounded-xl border border-amber-500/20 mt-1">
+          <div className="flex items-start sm:items-center gap-2">
+            <Info className="text-amber-600 shrink-0 mt-0.5 sm:mt-0" size={14} />
             <span className="text-[11px] font-bold text-amber-800">
               Caso um canal retorne valores inesperados ou zerados, certifique-se de que o período selecionado possui campanhas ativas.
             </span>
           </div>
-          <Link href="/hub/integracoes" className="text-[11.5px] font-black text-amber-700 hover:text-amber-800 underline shrink-0 transition-colors">
+          <Link href="/hub/integracoes" className="text-[11.5px] font-black text-amber-700 hover:text-amber-800 underline shrink-0 transition-colors pl-6 sm:pl-0">
             Gerenciar Integrações
           </Link>
         </div>
@@ -861,17 +861,17 @@ export default function HubDashboardLight() {
         }}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4"
+        className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4"
       >
         {KPIS.map((kpi, idx) => {
           const Icon = kpi.icon as React.FC<{ size?: number; style?: React.CSSProperties }>;
           return (
-            <BentoCard 
-              key={kpi.label} 
+            <BentoCard
+              key={kpi.label}
               variant="neumorphic"
-              glowColor={kpi.glow} 
+              glowColor={kpi.glow}
               accentColor={kpi.color}
-              className="p-5 flex flex-col gap-3.5"
+              className="p-4 sm:p-5 flex flex-col gap-3.5"
               delay={idx * 0.04}
             >
               <div className="flex items-center justify-between">
@@ -891,16 +891,16 @@ export default function HubDashboardLight() {
                   <KpiHelpPopover label={kpi.label} isNa={kpi.isNa} />
                 </div>
               </div>
-              <div>
-                <div className="text-[22px] font-black tracking-tight text-[#0f172a] font-mono tabular-nums leading-none">
+              <div className="min-w-0">
+                <div className="text-[18px] sm:text-[22px] font-black tracking-tight text-[#0f172a] font-mono tabular-nums leading-none break-words">
                   {kpi.isNa ? (
                     <span className="text-slate-400">N/A</span>
                   ) : (
-                    <CountUp 
-                      value={kpi.rawValue} 
-                      prefix={kpi.prefix} 
-                      suffix={kpi.suffix} 
-                      decimals={kpi.decimals} 
+                    <CountUp
+                      value={kpi.rawValue}
+                      prefix={kpi.prefix}
+                      suffix={kpi.suffix}
+                      decimals={kpi.decimals}
                     />
                   )}
                 </div>
@@ -920,14 +920,14 @@ export default function HubDashboardLight() {
 
         {/* Interactive Funnel Bento Card */}
         {/* Interactive Funnel Bento Card */}
-        <BentoCard variant="neumorphic" className="lg:col-span-2 flex flex-col p-6" glowColor="rgba(255, 106, 0, 0.04)">
-          <div className="flex items-center justify-between border-b border-white/40 pb-4 mb-6">
+        <BentoCard variant="neumorphic" className="lg:col-span-2 flex flex-col p-4 sm:p-6" glowColor="rgba(255, 106, 0, 0.04)">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-white/40 pb-4 mb-6">
             <div className="flex items-center gap-2">
               <TrendingUp size={16} className="text-[#FF6A00]" />
               <span className="text-[14px] font-black uppercase tracking-wider text-[#0f172a]">Funil de Vendas Interativo</span>
             </div>
-            
-            <div className="flex items-center gap-1 bg-[#eef2f7] p-1 rounded-xl shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border border-white/20">
+
+            <div className="flex items-center gap-1 bg-[#eef2f7] p-1 rounded-xl shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border border-white/20 w-full sm:w-auto">
               {(
                 [
                   { id: 'all', label: 'Todos' },
@@ -939,7 +939,7 @@ export default function HubDashboardLight() {
                 <button
                   key={opt.id}
                   onClick={() => setFunnelFilter(opt.id)}
-                  className="px-3 py-1.5 rounded-lg text-[10px] font-black transition-all cursor-pointer"
+                  className="flex-1 sm:flex-none px-2 sm:px-3 py-2 sm:py-1.5 rounded-lg text-[10px] font-black transition-all cursor-pointer"
                   style={{
                     background: funnelFilter === opt.id ? '#eef2f7' : 'transparent',
                     color: funnelFilter === opt.id ? '#FF6A00' : '#475569',
@@ -959,16 +959,16 @@ export default function HubDashboardLight() {
             <div className="flex flex-col items-center">
               <motion.div
                 layout
-                className="w-full py-4 px-6 rounded-2xl bg-slate-900 border border-slate-700/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(15,23,42,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(250,204,21,0.25)] transition-all duration-300"
+                className="w-full py-3.5 sm:py-4 px-4 sm:px-6 gap-2 rounded-2xl bg-slate-900 border border-slate-700/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(15,23,42,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(250,204,21,0.25)] transition-all duration-300"
                 style={{ originX: 0.5 }}
               >
                 {/* Glow bar */}
                 <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-yellow-400" />
-                <div className="flex items-center gap-2.5 pl-2">
-                  <Users size={16} className="text-yellow-400" />
-                  <span className="text-xs font-black uppercase tracking-wider">Atração (Impressões)</span>
+                <div className="flex items-center gap-2.5 pl-2 min-w-0">
+                  <Users size={16} className="text-yellow-400 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider truncate">Atração (Impressões)</span>
                 </div>
-                <span className="text-sm font-black font-mono tracking-tight text-yellow-400">
+                <span className="text-[13px] sm:text-sm font-black font-mono tracking-tight text-yellow-400 shrink-0">
                   {funnelData.impressions.toLocaleString('pt-BR')}
                 </span>
               </motion.div>
@@ -985,16 +985,16 @@ export default function HubDashboardLight() {
             <div className="flex flex-col items-center">
               <motion.div
                 layout
-                className="w-[85%] py-4 px-6 rounded-2xl bg-blue-950 border border-blue-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(37,99,235,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-300"
+                className="w-[92%] sm:w-[85%] py-3.5 sm:py-4 px-4 sm:px-6 gap-2 rounded-2xl bg-blue-950 border border-blue-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(37,99,235,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-300"
                 style={{ originX: 0.5 }}
               >
                 {/* Glow bar */}
                 <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-blue-500" />
-                <div className="flex items-center gap-2.5 pl-2">
-                  <MousePointerClick size={16} className="text-blue-400" />
-                  <span className="text-xs font-black uppercase tracking-wider">Engajamento (Cliques)</span>
+                <div className="flex items-center gap-2.5 pl-2 min-w-0">
+                  <MousePointerClick size={16} className="text-blue-400 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider truncate">Engajamento (Cliques)</span>
                 </div>
-                <span className="text-sm font-black font-mono tracking-tight text-blue-400">
+                <span className="text-[13px] sm:text-sm font-black font-mono tracking-tight text-blue-400 shrink-0">
                   {funnelData.clicks.toLocaleString('pt-BR')}
                 </span>
               </motion.div>
@@ -1011,16 +1011,16 @@ export default function HubDashboardLight() {
             <div className="flex flex-col items-center">
               <motion.div
                 layout
-                className="w-[70%] py-4 px-6 rounded-2xl bg-orange-950 border border-orange-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(249,115,22,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] transition-all duration-300"
+                className="w-[84%] sm:w-[70%] py-3.5 sm:py-4 px-4 sm:px-6 gap-2 rounded-2xl bg-orange-950 border border-orange-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(249,115,22,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] transition-all duration-300"
                 style={{ originX: 0.5 }}
               >
                 {/* Glow bar */}
                 <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-orange-500" />
-                <div className="flex items-center gap-2.5 pl-2">
-                  <ShoppingCart size={16} className="text-orange-400" />
-                  <span className="text-xs font-black uppercase tracking-wider">Ações (Conversões)</span>
+                <div className="flex items-center gap-2.5 pl-2 min-w-0">
+                  <ShoppingCart size={16} className="text-orange-400 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider truncate">Ações (Conversões)</span>
                 </div>
-                <span className="text-sm font-black font-mono tracking-tight text-orange-400">
+                <span className="text-[13px] sm:text-sm font-black font-mono tracking-tight text-orange-400 shrink-0">
                   {funnelData.conversions.toLocaleString('pt-BR')}
                 </span>
               </motion.div>
@@ -1037,16 +1037,16 @@ export default function HubDashboardLight() {
             <div className="flex flex-col items-center">
               <motion.div
                 layout
-                className="w-[55%] py-4 px-6 rounded-2xl bg-emerald-950 border border-emerald-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(16,185,129,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all duration-300"
+                className="w-[76%] sm:w-[55%] py-3.5 sm:py-4 px-4 sm:px-6 gap-2 rounded-2xl bg-emerald-950 border border-emerald-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(16,185,129,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all duration-300"
                 style={{ originX: 0.5 }}
               >
                 {/* Glow bar */}
                 <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-emerald-500" />
-                <div className="flex items-center gap-2.5 pl-2">
-                  <Wallet size={16} className="text-emerald-400" />
-                  <span className="text-xs font-black uppercase tracking-wider">Receita (Vendas)</span>
+                <div className="flex items-center gap-2.5 pl-2 min-w-0">
+                  <Wallet size={16} className="text-emerald-400 shrink-0" />
+                  <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider truncate">Receita (Vendas)</span>
                 </div>
-                <span className="text-sm font-black font-mono tracking-tight text-emerald-400">
+                <span className="text-[13px] sm:text-sm font-black font-mono tracking-tight text-emerald-400 shrink-0">
                   R$ {funnelData.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
               </motion.div>
@@ -1241,9 +1241,9 @@ export default function HubDashboardLight() {
           <div className="space-y-4 flex-1">
             {/* Google Ads CTR/CPC */}
             <div>
-              <div className="flex justify-between text-[11.5px] font-black text-slate-700">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-[11.5px] font-black text-slate-700">
                 <span>Google Ads (Search & PMax)</span>
-                <span className="font-mono">CTR: {googleAdsCTR} · CPC: {googleAdsCPC}</span>
+                <span className="font-mono whitespace-nowrap">CTR: {googleAdsCTR} · CPC: {googleAdsCPC}</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-slate-200 mt-1.5 overflow-hidden">
                 <div className="h-full bg-orange-500 rounded-full" style={{ width: `${googleAdsBarWidth}%` }} />
@@ -1252,9 +1252,9 @@ export default function HubDashboardLight() {
 
             {/* Meta Ads CTR/CPC */}
             <div>
-              <div className="flex justify-between text-[11.5px] font-black text-slate-700">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-[11.5px] font-black text-slate-700">
                 <span>Meta Ads (Instagram & FB)</span>
-                <span className="font-mono">CTR: {metaAdsCTR} · CPC: {metaAdsCPC}</span>
+                <span className="font-mono whitespace-nowrap">CTR: {metaAdsCTR} · CPC: {metaAdsCPC}</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-slate-200 mt-1.5 overflow-hidden">
                 <div className="h-full bg-blue-500 rounded-full" style={{ width: `${metaAdsBarWidth}%` }} />
@@ -1263,9 +1263,9 @@ export default function HubDashboardLight() {
 
             {/* LinkedIn Ads CTR/CPC */}
             <div>
-              <div className="flex justify-between text-[11.5px] font-black text-slate-700">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 text-[11.5px] font-black text-slate-700">
                 <span>LinkedIn Ads (B2B LeadGen)</span>
-                <span className="font-mono">CTR: {linkedinAdsCTR} · CPC: {linkedinAdsCPC}</span>
+                <span className="font-mono whitespace-nowrap">CTR: {linkedinAdsCTR} · CPC: {linkedinAdsCPC}</span>
               </div>
               <div className="w-full h-1.5 rounded-full bg-slate-200 mt-1.5 overflow-hidden">
                 <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${linkedinAdsBarWidth}%` }} />
