@@ -1250,249 +1250,6 @@ function AnaliseIaMockup() {
   );
 }
 
-function TAFreelancerSVG() {
-  return (
-    <svg viewBox="0 0 210 185" width="210" height="185" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="ta-fl-lid" x1="0" y1="0" x2="100%" y2="100%"><stop stopColor="#E8EAED"/><stop offset="1" stopColor="#BDC1C8"/></linearGradient>
-        <linearGradient id="ta-fl-base" x1="0" y1="0" x2="100%" y2="100%"><stop stopColor="#D4D8DD"/><stop offset="1" stopColor="#AAAFB6"/></linearGradient>
-        <linearGradient id="ta-cup-g" x1="0" y1="0" x2="100%" y2="100%"><stop stopColor="#FFB07A"/><stop offset="1" stopColor="#FF6535"/></linearGradient>
-        <filter id="ta-fl-drop"><feDropShadow dx="2" dy="10" stdDeviation="12" floodColor="#FF5500" floodOpacity="0.2"/></filter>
-      </defs>
-      <ellipse cx="98" cy="178" rx="72" ry="9" fill="#FF5500" fillOpacity="0.11"/>
-      <g filter="url(#ta-fl-drop)">
-        <path d="M28 100 L162 100 L152 14 L38 14 Z" fill="url(#ta-fl-lid)"/>
-        <path d="M38 94 L152 94 L144 21 L46 21 Z" fill="#131822"/>
-        <path d="M44 89 L147 89 L140 27 L51 27 Z" fill="#0C1321"/>
-        <path d="M44 27 L76 27 L71 55 L44 55 Z" fill="white" fillOpacity="0.032"/>
-        <rect x="53" y="31" width="24" height="2.5" rx="1.25" fill="#FF8B4D" fillOpacity="0.75"/>
-        <rect x="53" y="37" width="46" height="1.5" rx="0.75" fill="white" fillOpacity="0.16"/>
-        <rect x="53" y="42" width="34" height="1.5" rx="0.75" fill="white" fillOpacity="0.1"/>
-        <rect x="55" y="66" width="8" height="18" rx="1.5" fill="#FF8B4D" fillOpacity="0.9"/>
-        <rect x="67" y="59" width="8" height="25" rx="1.5" fill="#FF6535"/>
-        <rect x="79" y="63" width="8" height="21" rx="1.5" fill="#FF9F70" fillOpacity="0.85"/>
-        <rect x="91" y="55" width="8" height="29" rx="1.5" fill="#FF4500"/>
-        <rect x="103" y="59" width="8" height="25" rx="1.5" fill="#FF8B4D"/>
-        <rect x="115" y="51" width="8" height="33" rx="1.5" fill="#E03A00"/>
-        <polyline points="59,78 71,72 83,75 95,67 107,70 119,63" fill="none" stroke="white" strokeWidth="1.5" strokeOpacity="0.55" strokeLinejoin="round" strokeLinecap="round"/>
-        <line x1="52" y1="84" x2="129" y2="84" stroke="white" strokeWidth="0.75" strokeOpacity="0.2"/>
-        <path d="M23 100 L167 100 L162 122 L28 122 Z" fill="url(#ta-fl-base)"/>
-        <rect x="32" y="103" width="114" height="1.5" rx="0.75" fill="white" fillOpacity="0.28"/>
-        <rect x="33" y="107" width="112" height="1.5" rx="0.75" fill="white" fillOpacity="0.22"/>
-        <rect x="35" y="111" width="106" height="1.5" rx="0.75" fill="white" fillOpacity="0.16"/>
-        <rect x="75" y="113" width="40" height="8" rx="2.5" fill="#B8BBC0"/>
-      </g>
-      <g transform="translate(128, 72)">
-        <ellipse cx="16" cy="56" rx="14" ry="4" fill="#FF5500" fillOpacity="0.13"/>
-        <path d="M1 3 L31 3 L27 52 L5 52 Z" fill="url(#ta-cup-g)"/>
-        <ellipse cx="16" cy="3" rx="16" ry="4.5" fill="#FFBE95"/>
-        <ellipse cx="16" cy="3" rx="12" ry="3" fill="#2A1004"/>
-        <path d="M31 14 Q46 15 45 30 Q44 43 31 41" fill="none" stroke="#FFB07A" strokeWidth="6.5" strokeLinecap="round"/>
-        <path d="M31 14 Q44 15 43 30 Q42 41 31 39" fill="none" stroke="#FFDEC4" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.45"/>
-        <path d="M2 3 L11 3 L9 23 L2 23 Z" fill="white" fillOpacity="0.18"/>
-        <path d="M8 -9 Q12 -17 8 -26" fill="none" stroke="#FF9F70" strokeWidth="1.8" strokeLinecap="round" strokeOpacity="0.4"/>
-        <path d="M17 -11 Q21 -19 17 -28" fill="none" stroke="#FF9F70" strokeWidth="1.8" strokeLinecap="round" strokeOpacity="0.28"/>
-      </g>
-    </svg>
-  );
-}
-
-function TAAgenciaSVG() {
-  return (
-    <svg viewBox="0 0 210 185" width="210" height="185" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="ta-ag-b1" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#5AAEFF"/><stop offset="1" stopColor="#1248B8"/></linearGradient>
-        <linearGradient id="ta-ag-b2" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#3D8DFF"/><stop offset="1" stopColor="#0044CC"/></linearGradient>
-        <linearGradient id="ta-ag-b3" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#74AAFF"/><stop offset="1" stopColor="#2060E8"/></linearGradient>
-        <filter id="ta-ag-drop"><feDropShadow dx="2" dy="10" stdDeviation="12" floodColor="#1A73E8" floodOpacity="0.22"/></filter>
-      </defs>
-      <ellipse cx="105" cy="178" rx="78" ry="9" fill="#1A73E8" fillOpacity="0.12"/>
-      <g filter="url(#ta-ag-drop)">
-        <path d="M20 150 L190 150 L200 160 L10 160 Z" fill="#D0D8E8" fillOpacity="0.5"/>
-        <path d="M33 82 L72 82 L77 88 L38 88 Z" fill="#6CB5FF"/>
-        <path d="M38 88 L77 88 L77 148 L38 148 Z" fill="url(#ta-ag-b1)"/>
-        <path d="M72 82 L83 88 L83 152 L77 148 L77 88 Z" fill="#0C3E9E" fillOpacity="0.85"/>
-        <rect x="42" y="92" width="7" height="42" rx="2" fill="white" fillOpacity="0.1"/>
-        <path d="M90 42 L129 42 L134 48 L95 48 Z" fill="#7AB8FF"/>
-        <path d="M95 48 L134 48 L134 148 L95 148 Z" fill="url(#ta-ag-b2)"/>
-        <path d="M129 42 L140 48 L140 153 L134 148 L134 48 Z" fill="#003A8C" fillOpacity="0.85"/>
-        <rect x="99" y="52" width="7" height="58" rx="2" fill="white" fillOpacity="0.1"/>
-        <path d="M145 102 L184 102 L189 108 L150 108 Z" fill="#6CB5FF"/>
-        <path d="M150 108 L189 108 L189 148 L150 148 Z" fill="url(#ta-ag-b3)"/>
-        <path d="M184 102 L195 108 L195 152 L189 148 L189 108 Z" fill="#0D3888" fillOpacity="0.85"/>
-        <rect x="154" y="112" width="7" height="24" rx="2" fill="white" fillOpacity="0.1"/>
-        <polyline points="55,84 112,44 167,104" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.8"/>
-        <circle cx="55" cy="84" r="4.5" fill="white" fillOpacity="0.9"/>
-        <circle cx="112" cy="44" r="4.5" fill="white" fillOpacity="0.9"/>
-        <circle cx="167" cy="104" r="4.5" fill="white" fillOpacity="0.9"/>
-        <circle cx="112" cy="24" r="13" fill="#1A73E8"/>
-        <path d="M112 31 L112 17 M108 22 L112 17 L116 22" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-      </g>
-    </svg>
-  );
-}
-
-function TAConsultoriaSVG() {
-  return (
-    <svg viewBox="0 0 210 185" width="210" height="185" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="ta-br-body" x1="0" y1="0" x2="100%" y2="100%"><stop stopColor="#34D98C"/><stop offset="1" stopColor="#047857"/></linearGradient>
-        <linearGradient id="ta-br-top" x1="0" y1="0" x2="100%" y2="0"><stop stopColor="#4EEEA3"/><stop offset="1" stopColor="#0EA873"/></linearGradient>
-        <filter id="ta-br-drop"><feDropShadow dx="2" dy="10" stdDeviation="12" floodColor="#047857" floodOpacity="0.28"/></filter>
-      </defs>
-      <ellipse cx="100" cy="178" rx="72" ry="9" fill="#047857" fillOpacity="0.13"/>
-      <g transform="translate(128, 22) rotate(14)">
-        <rect x="0" y="0" width="58" height="74" rx="5" fill="white" fillOpacity="0.94"/>
-        <rect x="0" y="0" width="58" height="8" rx="5" fill="#059669" fillOpacity="0.15"/>
-        <rect x="7" y="14" width="32" height="2.5" rx="1.25" fill="#047857" fillOpacity="0.5"/>
-        <rect x="7" y="21" width="44" height="1.5" rx="0.75" fill="#64748B" fillOpacity="0.28"/>
-        <rect x="7" y="26" width="38" height="1.5" rx="0.75" fill="#64748B" fillOpacity="0.22"/>
-        <rect x="7" y="31" width="44" height="1.5" rx="0.75" fill="#64748B" fillOpacity="0.18"/>
-        <rect x="7" y="36" width="30" height="1.5" rx="0.75" fill="#64748B" fillOpacity="0.14"/>
-        <circle cx="12" cy="50" r="5.5" fill="#059669" fillOpacity="0.18"/>
-        <path d="M9 50 L11 52.5 L15.5 47.5" fill="none" stroke="#059669" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-        <circle cx="12" cy="63" r="5.5" fill="#059669" fillOpacity="0.18"/>
-        <path d="M9 63 L11 65.5 L15.5 60.5" fill="none" stroke="#059669" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-        <rect x="22" y="48" width="30" height="2.5" rx="1.25" fill="#64748B" fillOpacity="0.18"/>
-        <rect x="22" y="61" width="24" height="2.5" rx="1.25" fill="#64748B" fillOpacity="0.18"/>
-      </g>
-      <g filter="url(#ta-br-drop)">
-        <path d="M76 58 Q76 42 105 42 Q134 42 134 58" fill="none" stroke="url(#ta-br-top)" strokeWidth="11" strokeLinecap="round"/>
-        <path d="M76 58 Q76 45 105 45 Q134 45 134 58" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeOpacity="0.38"/>
-        <rect x="44" y="58" width="120" height="90" rx="11" fill="url(#ta-br-body)"/>
-        <ellipse cx="104" cy="67" rx="46" ry="9" fill="white" fillOpacity="0.18"/>
-        <rect x="88" y="94" width="32" height="17" rx="5" fill="#0A5C40" fillOpacity="0.8"/>
-        <rect x="95" y="98" width="18" height="9" rx="2.5" fill="white" fillOpacity="0.18"/>
-        <circle cx="104" cy="102" r="3" fill="white" fillOpacity="0.38"/>
-        <line x1="44" y1="102" x2="88" y2="102" stroke="white" strokeWidth="0.8" strokeOpacity="0.18"/>
-        <line x1="120" y1="102" x2="164" y2="102" stroke="white" strokeWidth="0.8" strokeOpacity="0.18"/>
-        <rect x="48" y="72" width="7" height="34" rx="3.5" fill="white" fillOpacity="0.08"/>
-        <rect x="152" y="72" width="7" height="34" rx="3.5" fill="white" fillOpacity="0.08"/>
-        <rect x="90" y="87" width="28" height="5" rx="2.5" fill="#0F6B4A" fillOpacity="0.75"/>
-      </g>
-    </svg>
-  );
-}
-
-function TAEcommerceSVG() {
-  return (
-    <svg viewBox="0 0 210 185" width="210" height="185" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="ta-ec-bag1" x1="0" y1="0" x2="100%" y2="100%"><stop stopColor="#A78BFA"/><stop offset="1" stopColor="#5B21B6"/></linearGradient>
-        <linearGradient id="ta-ec-bag2" x1="0" y1="0" x2="100%" y2="100%"><stop stopColor="#C4B5FD"/><stop offset="1" stopColor="#7C3AED"/></linearGradient>
-        <linearGradient id="ta-ec-box" x1="0" y1="0" x2="100%" y2="100%"><stop stopColor="#DDD6FE"/><stop offset="1" stopColor="#A78BFA"/></linearGradient>
-        <filter id="ta-ec-drop"><feDropShadow dx="2" dy="10" stdDeviation="12" floodColor="#7C3AED" floodOpacity="0.25"/></filter>
-      </defs>
-      <ellipse cx="105" cy="178" rx="72" ry="9" fill="#7C3AED" fillOpacity="0.12"/>
-      <g filter="url(#ta-ec-drop)">
-        <g transform="translate(122, 102)">
-          <path d="M0 0 L50 0 L62 -12 L12 -12 Z" fill="#C4B5FD"/>
-          <path d="M0 0 L50 0 L50 50 L0 50 Z" fill="url(#ta-ec-box)"/>
-          <path d="M50 0 L62 -12 L62 38 L50 50 Z" fill="#7C3AED" fillOpacity="0.65"/>
-          <rect x="20" y="-10" width="10" height="54" fill="white" fillOpacity="0.18"/>
-          <ellipse cx="16" cy="12" rx="13" ry="5.5" fill="white" fillOpacity="0.16"/>
-        </g>
-        <path d="M72 68 Q72 44 93 44 Q114 44 114 68" fill="none" stroke="#A78BFA" strokeWidth="8" strokeLinecap="round"/>
-        <path d="M72 68 Q72 46 93 46 Q114 46 114 68" fill="none" stroke="white" strokeWidth="2.2" strokeLinecap="round" strokeOpacity="0.38"/>
-        <path d="M50 68 L158 68 L150 158 L58 158 Z" fill="url(#ta-ec-bag1)"/>
-        <path d="M48 68 L160 68 L160 79 L48 79 Z" fill="#C4B5FD"/>
-        <ellipse cx="104" cy="76" rx="44" ry="8" fill="white" fillOpacity="0.18"/>
-        <circle cx="104" cy="116" r="20" fill="white" fillOpacity="0.1"/>
-        <path d="M104 101 L107.5 111 L119 111 L110 118 L113.5 128 L104 121 L94.5 128 L98 118 L89 111 L100.5 111 Z" fill="white" fillOpacity="0.42"/>
-        <line x1="58" y1="79" x2="62" y2="154" stroke="white" strokeWidth="0.75" strokeOpacity="0.14"/>
-        <line x1="150" y1="79" x2="146" y2="154" stroke="white" strokeWidth="0.75" strokeOpacity="0.14"/>
-        <path d="M28 86 Q28 72 40 72 Q52 72 52 86" fill="none" stroke="#C4B5FD" strokeWidth="5.5" strokeLinecap="round"/>
-        <path d="M16 86 L64 86 L59 138 L21 138 Z" fill="url(#ta-ec-bag2)"/>
-        <ellipse cx="40" cy="93" rx="20" ry="4.5" fill="white" fillOpacity="0.18"/>
-      </g>
-    </svg>
-  );
-}
-
-function TACrossBorderSVG() {
-  return (
-    <svg viewBox="0 0 210 185" width="210" height="185" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="ta-gl-ocean" cx="38%" cy="33%" r="60%"><stop stopColor="#38D4E8"/><stop offset="1" stopColor="#0E7490"/></radialGradient>
-        <radialGradient id="ta-gl-land" cx="50%" cy="50%" r="50%"><stop stopColor="#4ADE80"/><stop offset="1" stopColor="#15803D"/></radialGradient>
-        <filter id="ta-gl-drop"><feDropShadow dx="2" dy="10" stdDeviation="14" floodColor="#0E7490" floodOpacity="0.28"/></filter>
-        <clipPath id="ta-gl-clip"><circle cx="105" cy="95" r="74"/></clipPath>
-        <linearGradient id="ta-pin-g" x1="0" y1="0" x2="100%" y2="100%"><stop stopColor="#22D3EE"/><stop offset="1" stopColor="#0891B2"/></linearGradient>
-      </defs>
-      <ellipse cx="105" cy="178" rx="72" ry="9" fill="#0891B2" fillOpacity="0.13"/>
-      <g filter="url(#ta-gl-drop)">
-        <circle cx="105" cy="95" r="74" fill="url(#ta-gl-ocean)"/>
-        <g clipPath="url(#ta-gl-clip)">
-          <path d="M42 52 Q58 40 72 62 Q86 85 68 100 Q55 115 42 104 Q26 87 32 66 Z" fill="url(#ta-gl-land)" fillOpacity="0.85"/>
-          <path d="M98 48 Q116 44 127 58 Q140 74 132 90 Q124 110 112 120 Q97 123 89 108 Q82 90 89 67 Z" fill="url(#ta-gl-land)" fillOpacity="0.85"/>
-          <path d="M138 42 Q166 36 177 58 Q188 80 176 100 Q164 112 148 106 Q132 94 132 72 Z" fill="url(#ta-gl-land)" fillOpacity="0.7"/>
-          <ellipse cx="105" cy="95" rx="74" ry="22" fill="none" stroke="white" strokeWidth="0.75" strokeOpacity="0.14"/>
-          <ellipse cx="105" cy="95" rx="68" ry="44" fill="none" stroke="white" strokeWidth="0.75" strokeOpacity="0.1"/>
-          <path d="M105 21 Q138 95 105 169" fill="none" stroke="white" strokeWidth="0.75" strokeOpacity="0.1"/>
-          <path d="M105 21 Q72 95 105 169" fill="none" stroke="white" strokeWidth="0.75" strokeOpacity="0.1"/>
-          <line x1="31" y1="95" x2="179" y2="95" stroke="white" strokeWidth="0.75" strokeOpacity="0.1"/>
-          <ellipse cx="79" cy="65" rx="24" ry="19" fill="white" fillOpacity="0.17"/>
-        </g>
-        <circle cx="105" cy="95" r="74" fill="none" stroke="white" strokeWidth="1.5" strokeOpacity="0.14"/>
-      </g>
-      <g transform="translate(152, 22)">
-        <path d="M20 0 C9 0 0 9 0 20 C0 35 20 56 20 56 C20 56 40 35 40 20 C40 9 31 0 20 0 Z" fill="url(#ta-pin-g)"/>
-        <circle cx="20" cy="20" r="8" fill="white" fillOpacity="0.55"/>
-        <circle cx="20" cy="20" r="4.5" fill="white" fillOpacity="0.82"/>
-        <ellipse cx="13" cy="12" rx="5.5" ry="3.5" fill="white" fillOpacity="0.32"/>
-        <ellipse cx="20" cy="58" rx="10" ry="3" fill="#0891B2" fillOpacity="0.18"/>
-      </g>
-    </svg>
-  );
-}
-
-function TAIncorporadoraSVG() {
-  return (
-    <svg viewBox="0 0 210 185" width="210" height="185" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="ta-bd-main" x1="0" y1="0" x2="0" y2="1"><stop stopColor="#FBBF24"/><stop offset="1" stopColor="#92400E"/></linearGradient>
-        <linearGradient id="ta-bd-side" x1="0" y1="0" x2="1" y2="0"><stop stopColor="#F59E0B"/><stop offset="1" stopColor="#78350F"/></linearGradient>
-        <linearGradient id="ta-bd-top" x1="0" y1="0" x2="100%" y2="100%"><stop stopColor="#FDE68A"/><stop offset="1" stopColor="#FBBF24"/></linearGradient>
-        <linearGradient id="ta-key-g" x1="0" y1="0" x2="100%" y2="100%"><stop stopColor="#FCD34D"/><stop offset="1" stopColor="#D97706"/></linearGradient>
-        <filter id="ta-bd-drop"><feDropShadow dx="2" dy="10" stdDeviation="12" floodColor="#92400E" floodOpacity="0.25"/></filter>
-      </defs>
-      <ellipse cx="95" cy="178" rx="72" ry="9" fill="#92400E" fillOpacity="0.12"/>
-      <g filter="url(#ta-bd-drop)">
-        <path d="M138 82 L170 82 L170 152 L138 152 Z" fill="#D97706" fillOpacity="0.85"/>
-        <path d="M170 82 L182 72 L182 142 L170 152 Z" fill="#92400E" fillOpacity="0.68"/>
-        <path d="M138 82 L170 82 L182 72 L150 72 Z" fill="#FDE68A" fillOpacity="0.78"/>
-        {[0,1,2,3,4,5].map((row) => [0,1].map((col) => (
-          <rect key={`sb-${row}-${col}`} x={144 + col*16} y={90 + row*11} width={9} height={7} rx={1} fill="white" fillOpacity={0.22 + row * 0.02}/>
-        )))}
-        <path d="M38 15 L118 15 L118 152 L38 152 Z" fill="url(#ta-bd-main)"/>
-        <path d="M118 15 L134 5 L134 142 L118 152 Z" fill="url(#ta-bd-side)"/>
-        <path d="M38 15 L118 15 L134 5 L54 5 Z" fill="url(#ta-bd-top)"/>
-        <ellipse cx="72" cy="28" rx="24" ry="9" fill="white" fillOpacity="0.18"/>
-        {[0,1,2,3,4,5,6,7,8].map((row) => [0,1,2].map((col) => (
-          <rect key={`bw-${row}-${col}`} x={46 + col*24} y={28 + row*14} width={16} height={10} rx={1.5}
-            fill={row > 5 ? '#FDE68A' : 'white'}
-            fillOpacity={row > 5 ? 0.48 : 0.18 + row * 0.02}
-          />
-        )))}
-        <rect x="74" y="-12" width="6" height="17" rx="3" fill="#D97706"/>
-        <circle cx="77" cy="-14" r="3.5" fill="#FCD34D"/>
-        <rect x="60" y="120" width="36" height="32" rx="4" fill="#7C2D0A" fillOpacity="0.45"/>
-        <rect x="74" y="122" width="6" height="30" fill="#7C2D0A" fillOpacity="0.28"/>
-      </g>
-      <g transform="translate(118, 115) rotate(-28)">
-        <circle cx="16" cy="16" r="14" fill="none" stroke="url(#ta-key-g)" strokeWidth="6.5"/>
-        <circle cx="16" cy="16" r="6" fill="none" stroke="url(#ta-key-g)" strokeWidth="4.5"/>
-        <rect x="28" y="13" width="44" height="7" rx="3.5" fill="url(#ta-key-g)"/>
-        <rect x="58" y="20" width="5.5" height="9" rx="2" fill="url(#ta-key-g)"/>
-        <rect x="47" y="20" width="5" height="7" rx="2" fill="url(#ta-key-g)"/>
-        <circle cx="16" cy="16" r="5.5" fill="white" fillOpacity="0.28"/>
-        <ellipse cx="10" cy="11" rx="4.5" ry="3.2" fill="white" fillOpacity="0.2"/>
-        <ellipse cx="16" cy="34" rx="15" ry="3" fill="#92400E" fillOpacity="0.14"/>
-      </g>
-    </svg>
-  );
-}
-
 function TargetAudienceSection() {
   const cards = [
     {
@@ -1504,7 +1261,7 @@ function TargetAudienceSection() {
       cta: 'Começar agora',
       bg: '#FFF3EC',
       accentColor: '#C53B00',
-      illustration: <TAFreelancerSVG />,
+      image: '/images/publico-alvo/freelancers.jpg',
     },
     {
       id: 'agencias',
@@ -1515,7 +1272,7 @@ function TargetAudienceSection() {
       cta: 'Ver soluções',
       bg: '#EEF4FF',
       accentColor: '#1248A0',
-      illustration: <TAAgenciaSVG />,
+      image: '/images/publico-alvo/agencias.jpg',
     },
     {
       id: 'consultorias',
@@ -1526,7 +1283,7 @@ function TargetAudienceSection() {
       cta: 'Saiba mais',
       bg: '#ECFDF5',
       accentColor: '#065F46',
-      illustration: <TAConsultoriaSVG />,
+      image: '/images/publico-alvo/consultorias.jpg',
     },
     {
       id: 'ecommerce',
@@ -1537,7 +1294,7 @@ function TargetAudienceSection() {
       cta: 'Aumentar vendas',
       bg: '#F5F0FF',
       accentColor: '#5B21B6',
-      illustration: <TAEcommerceSVG />,
+      image: '/images/publico-alvo/ecommerce.jpg',
     },
     {
       id: 'crossborder',
@@ -1548,7 +1305,7 @@ function TargetAudienceSection() {
       cta: 'Expandir agora',
       bg: '#ECFEFF',
       accentColor: '#0E6B86',
-      illustration: <TACrossBorderSVG />,
+      image: '/images/publico-alvo/crossborder.jpg',
     },
     {
       id: 'incorporadoras',
@@ -1559,7 +1316,7 @@ function TargetAudienceSection() {
       cta: 'Qualificar leads',
       bg: '#FFFBEB',
       accentColor: '#92400E',
-      illustration: <TAIncorporadoraSVG />,
+      image: '/images/publico-alvo/incorporadoras.jpg',
     },
   ];
 
@@ -1583,38 +1340,51 @@ function TargetAudienceSection() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: '-40px' }}
             transition={{ duration: 0.5, delay: idx * 0.09 }}
-            className="relative overflow-hidden rounded-[24px] p-8 min-h-[220px] flex flex-col"
+            className="relative overflow-hidden rounded-[24px] min-h-[250px]"
             style={{ backgroundColor: card.bg }}
           >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 self-start bg-white/70 backdrop-blur-sm rounded-full px-3.5 py-1.5 mb-5 shadow-sm">
-              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: card.badgeDot }} />
-              <span className="text-[10px] font-bold text-slate-600 tracking-wide whitespace-nowrap">{card.badge}</span>
+            {/* Photo — right half, blended into the card background */}
+            <div className="absolute inset-y-0 right-0 w-[58%] sm:w-[52%]">
+              <Image
+                src={card.image}
+                alt={card.title}
+                fill
+                sizes="(max-width: 768px) 60vw, 460px"
+                className="object-cover"
+              />
+              <div
+                className="absolute inset-0"
+                style={{ background: `linear-gradient(to right, ${card.bg} 0%, ${card.bg}00 55%)` }}
+              />
             </div>
 
-            {/* Title */}
-            <h3 className="font-head font-black text-[22px] text-slate-900 mb-3 leading-snug max-w-[58%]">
-              {card.title}
-            </h3>
+            {/* Content */}
+            <div className="relative z-10 p-8 flex flex-col h-full min-h-[250px] max-w-[62%] sm:max-w-[55%]">
+              {/* Badge */}
+              <div className="inline-flex items-center gap-2 self-start bg-white/80 backdrop-blur-sm rounded-full px-3.5 py-1.5 mb-5 shadow-sm">
+                <span className="w-2 h-2 rounded-full shrink-0" style={{ background: card.badgeDot }} />
+                <span className="text-[10px] font-bold text-slate-600 tracking-wide whitespace-nowrap">{card.badge}</span>
+              </div>
 
-            {/* Description */}
-            <p className="text-slate-600 text-sm leading-relaxed max-w-[58%] mb-6 flex-1">
-              {card.description}
-            </p>
+              {/* Title */}
+              <h3 className="font-head font-black text-[22px] text-slate-900 mb-3 leading-snug">
+                {card.title}
+              </h3>
 
-            {/* CTA */}
-            <a
-              href="#"
-              className="inline-flex items-center gap-1.5 text-sm font-bold transition-all duration-200 hover:gap-2.5 group"
-              style={{ color: card.accentColor }}
-            >
-              {card.cta}
-              <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
-            </a>
+              {/* Description */}
+              <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-1">
+                {card.description}
+              </p>
 
-            {/* Illustration — overflowing bottom-right */}
-            <div className="absolute -bottom-3 -right-3 pointer-events-none select-none">
-              {card.illustration}
+              {/* CTA */}
+              <a
+                href="#"
+                className="inline-flex items-center gap-1.5 text-sm font-bold transition-all duration-200 hover:gap-2.5 group"
+                style={{ color: card.accentColor }}
+              >
+                {card.cta}
+                <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
+              </a>
             </div>
           </motion.div>
         ))}
