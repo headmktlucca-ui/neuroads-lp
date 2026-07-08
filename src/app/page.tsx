@@ -4,12 +4,164 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from 'framer-motion';
-import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Bot, Target, Workflow, PieChart, LineChart, GitMerge, Crosshair, Menu, X } from 'lucide-react';
+import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Menu, X } from 'lucide-react';
 import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
 import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
 import FunnelInteractiveShowcase from '@/components/neuroads/FunnelInteractiveShowcase';
 import PricingValuesSection from '@/components/neuroads/PricingValuesSection';
 import VideoPlayerPro from '@/components/ui/VideoPlayerPro';
+
+function IconBotAI() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="p-bot-grad" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF8040" /><stop offset="1" stopColor="#E03A00" />
+        </linearGradient>
+        <filter id="p-bot-shadow"><feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#FF4500" floodOpacity="0.3" /></filter>
+      </defs>
+      <rect x="9" y="13" width="30" height="23" rx="7" fill="url(#p-bot-grad)" filter="url(#p-bot-shadow)" />
+      <ellipse cx="19" cy="18" rx="8" ry="4" fill="white" fillOpacity="0.22" />
+      <circle cx="18" cy="24" r="3.5" fill="white" fillOpacity="0.95" />
+      <circle cx="30" cy="24" r="3.5" fill="white" fillOpacity="0.95" />
+      <circle cx="18" cy="24" r="1.8" fill="#CC3300" fillOpacity="0.75" />
+      <circle cx="30" cy="24" r="1.8" fill="#CC3300" fillOpacity="0.75" />
+      <rect x="17" y="30" width="14" height="2" rx="1" fill="white" fillOpacity="0.75" />
+      <rect x="22.5" y="6" width="3" height="7" rx="1.5" fill="#FF7040" />
+      <circle cx="24" cy="6" r="2.5" fill="#FF9060" />
+      <ellipse cx="24" cy="42" rx="11" ry="2.5" fill="#CC3300" fillOpacity="0.15" />
+    </svg>
+  );
+}
+
+function IconBullseye() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="p-bull-grad" x1="5" y1="5" x2="43" y2="43" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#5AAEFF" /><stop offset="1" stopColor="#003EB3" />
+        </linearGradient>
+        <linearGradient id="p-bull-mid" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#3D8DFF" /><stop offset="1" stopColor="#0044CC" />
+        </linearGradient>
+        <filter id="p-bull-shadow"><feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#0044CC" floodOpacity="0.35" /></filter>
+      </defs>
+      <circle cx="24" cy="24" r="17" fill="url(#p-bull-grad)" filter="url(#p-bull-shadow)" />
+      <ellipse cx="17" cy="15" rx="8" ry="5" fill="white" fillOpacity="0.22" />
+      <circle cx="24" cy="24" r="11.5" fill="white" fillOpacity="0.18" />
+      <circle cx="24" cy="24" r="10.5" fill="url(#p-bull-mid)" />
+      <circle cx="24" cy="24" r="5.5" fill="white" fillOpacity="0.25" />
+      <circle cx="24" cy="24" r="4.5" fill="url(#p-bull-grad)" />
+      <circle cx="24" cy="24" r="2" fill="white" fillOpacity="0.9" />
+      <ellipse cx="24" cy="44" rx="13" ry="2.5" fill="#003EB3" fillOpacity="0.15" />
+    </svg>
+  );
+}
+
+function IconGearWorkflow() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="p-gearw-grad" x1="5" y1="5" x2="43" y2="43" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#9B6EE8" /><stop offset="1" stopColor="#4B1FA8" />
+        </linearGradient>
+        <filter id="p-gearw-shadow"><feDropShadow dx="0" dy="3" stdDeviation="3.5" floodColor="#4B1FA8" floodOpacity="0.35" /></filter>
+      </defs>
+      <path d="M24 6 L26.5 9.5 L30.5 8.5 L31.5 12.5 L35.5 13 L35 17 L38.5 19 L37 22.5 L40 25.5 L37.5 28 L38.5 32 L35 32.5 L33.5 36 L30 35 L27 38.5 L24 36.5 L21 38.5 L18 35 L14.5 36 L13 32.5 L9.5 32 L10.5 28 L8 25.5 L11 22.5 L9.5 19 L13 17 L12.5 13 L16.5 12.5 L17.5 8.5 L21.5 9.5 Z" fill="url(#p-gearw-grad)" filter="url(#p-gearw-shadow)" />
+      <ellipse cx="18" cy="14" rx="7" ry="4" fill="white" fillOpacity="0.22" />
+      <circle cx="24" cy="24" r="7" fill="white" fillOpacity="0.2" />
+      <circle cx="24" cy="24" r="6" fill="url(#p-gearw-grad)" />
+      <circle cx="24" cy="24" r="3" fill="white" fillOpacity="0.3" />
+      <ellipse cx="24" cy="43" rx="13" ry="2.5" fill="#4B1FA8" fillOpacity="0.15" />
+    </svg>
+  );
+}
+
+function IconPieChart() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="p-pie-grad" x1="5" y1="5" x2="43" y2="43" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF8040" /><stop offset="1" stopColor="#E03A00" />
+        </linearGradient>
+        <filter id="p-pie-shadow"><feDropShadow dx="0" dy="3" stdDeviation="3.5" floodColor="#E03A00" floodOpacity="0.3" /></filter>
+      </defs>
+      <circle cx="24" cy="24" r="17" fill="url(#p-pie-grad)" filter="url(#p-pie-shadow)" />
+      <ellipse cx="17" cy="15" rx="8" ry="4.5" fill="white" fillOpacity="0.22" />
+      <line x1="24" y1="24" x2="24" y2="7" stroke="white" strokeWidth="2" strokeOpacity="0.7" />
+      <line x1="24" y1="24" x2="39" y2="31" stroke="white" strokeWidth="2" strokeOpacity="0.7" />
+      <line x1="24" y1="24" x2="10" y2="35" stroke="white" strokeWidth="2" strokeOpacity="0.7" />
+      <path d="M24 24 L24 7 A17 17 0 0 1 39 31 Z" fill="white" fillOpacity="0.15" />
+      <ellipse cx="24" cy="44" rx="13" ry="2.5" fill="#E03A00" fillOpacity="0.15" />
+    </svg>
+  );
+}
+
+function IconLineChart() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="p-lc-grad" x1="5" y1="5" x2="43" y2="43" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#38D4C0" /><stop offset="1" stopColor="#0369A1" />
+        </linearGradient>
+        <filter id="p-lc-shadow"><feDropShadow dx="0" dy="3" stdDeviation="3.5" floodColor="#0369A1" floodOpacity="0.35" /></filter>
+      </defs>
+      <rect x="7" y="9" width="34" height="27" rx="7" fill="url(#p-lc-grad)" filter="url(#p-lc-shadow)" />
+      <ellipse cx="18" cy="15" rx="9" ry="4" fill="white" fillOpacity="0.22" />
+      <polyline points="12,30 18,22 24,26 30,16 36,20" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.9" />
+      <circle cx="18" cy="22" r="2" fill="white" fillOpacity="0.9" />
+      <circle cx="30" cy="16" r="2" fill="white" fillOpacity="0.9" />
+      <line x1="11" y1="33" x2="37" y2="33" stroke="white" strokeWidth="1.5" strokeOpacity="0.4" />
+      <ellipse cx="24" cy="42" rx="13" ry="2.5" fill="#0369A1" fillOpacity="0.15" />
+    </svg>
+  );
+}
+
+function IconNodesMerge() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="p-nm-grad" x1="5" y1="5" x2="43" y2="43" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#34D98C" /><stop offset="1" stopColor="#047857" />
+        </linearGradient>
+        <filter id="p-nm-shadow"><feDropShadow dx="0" dy="3" stdDeviation="3.5" floodColor="#047857" floodOpacity="0.35" /></filter>
+      </defs>
+      <circle cx="24" cy="24" r="17" fill="url(#p-nm-grad)" filter="url(#p-nm-shadow)" />
+      <ellipse cx="17" cy="15" rx="8" ry="4.5" fill="white" fillOpacity="0.22" />
+      <line x1="15" y1="13" x2="15" y2="35" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.85" />
+      <line x1="15" y1="21" x2="24" y2="28" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.85" />
+      <line x1="33" y1="13" x2="24" y2="28" stroke="white" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.85" />
+      <circle cx="15" cy="13" r="3" fill="white" fillOpacity="0.95" />
+      <circle cx="33" cy="13" r="3" fill="white" fillOpacity="0.95" />
+      <circle cx="15" cy="35" r="3" fill="white" fillOpacity="0.95" />
+      <circle cx="24" cy="28" r="3.5" fill="white" fillOpacity="0.95" />
+      <ellipse cx="24" cy="44" rx="13" ry="2.5" fill="#047857" fillOpacity="0.15" />
+    </svg>
+  );
+}
+
+function IconCrosshairTarget() {
+  return (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="p-ch-grad" x1="5" y1="5" x2="43" y2="43" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFC040" /><stop offset="1" stopColor="#B45309" />
+        </linearGradient>
+        <filter id="p-ch-shadow"><feDropShadow dx="0" dy="3" stdDeviation="3.5" floodColor="#B45309" floodOpacity="0.35" /></filter>
+      </defs>
+      <circle cx="24" cy="24" r="17" fill="url(#p-ch-grad)" filter="url(#p-ch-shadow)" />
+      <ellipse cx="17" cy="15" rx="8" ry="4.5" fill="white" fillOpacity="0.22" />
+      <circle cx="24" cy="24" r="10" fill="white" fillOpacity="0.18" />
+      <circle cx="24" cy="24" r="9" fill="url(#p-ch-grad)" />
+      <line x1="24" y1="8" x2="24" y2="17" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeOpacity="0.9" />
+      <line x1="24" y1="31" x2="24" y2="40" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeOpacity="0.9" />
+      <line x1="8" y1="24" x2="17" y2="24" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeOpacity="0.9" />
+      <line x1="31" y1="24" x2="40" y2="24" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeOpacity="0.9" />
+      <circle cx="24" cy="24" r="3" fill="white" fillOpacity="0.9" />
+      <ellipse cx="24" cy="44" rx="13" ry="2.5" fill="#B45309" fillOpacity="0.15" />
+    </svg>
+  );
+}
 
 const cardVariants = {
   hidden: { opacity: 0, y: 25, scale: 0.98 },
@@ -526,9 +678,7 @@ export default function TempLandingPage() {
             </div>
             
             {/* Icon */}
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF5500] to-[#FF8C00] shadow-[3px_3px_8px_rgba(255,85,0,0.25)] shrink-0 flex items-center justify-center mb-6">
-              <Bot size={24} className="text-white" strokeWidth={1.8} />
-            </div>
+            <div className="mb-6 shrink-0"><IconBotAI /></div>
 
             {/* Content */}
             <div className="flex-1 flex flex-col justify-start">
@@ -547,9 +697,7 @@ export default function TempLandingPage() {
             className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-start min-h-[260px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
           >
             {/* Icon */}
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#1a73e8] to-[#0052cc] shadow-[3px_3px_8px_rgba(26,115,232,0.25)] shrink-0 flex items-center justify-center mb-6">
-              <Target size={24} className="text-white" strokeWidth={1.8} />
-            </div>
+            <div className="mb-6 shrink-0"><IconBullseye /></div>
 
             {/* Content */}
             <div className="flex-1 flex flex-col justify-start">
@@ -568,9 +716,7 @@ export default function TempLandingPage() {
             className="bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50 rounded-[28px] p-8 flex flex-col justify-start min-h-[260px] transition-all duration-300 hover:shadow-[10px_10px_20px_#c8d0e7,-10px_-10px_20px_#ffffff]"
           >
             {/* Icon */}
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#6c3fc5] to-[#4b2fa8] shadow-[3px_3px_8px_rgba(108,63,197,0.25)] shrink-0 flex items-center justify-center mb-6">
-              <Workflow size={24} className="text-white" strokeWidth={1.8} />
-            </div>
+            <div className="mb-6 shrink-0"><IconGearWorkflow /></div>
 
             {/* Content */}
             <div className="flex-1 flex flex-col justify-start">
@@ -1482,9 +1628,7 @@ function DataTransformationSection() {
             variants={cardVariants}
             className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#FF5500] to-[#FF8C00] shadow-[3px_3px_8px_rgba(255,85,0,0.2)] shrink-0 flex items-center justify-center">
-              <PieChart size={22} className="text-white" strokeWidth={1.8} />
-            </div>
+            <div className="shrink-0"><IconPieChart /></div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
                 Crie dashboards
@@ -1500,9 +1644,7 @@ function DataTransformationSection() {
             variants={cardVariants}
             className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#0ea5e9] to-[#0369a1] shadow-[3px_3px_8px_rgba(14,165,233,0.2)] shrink-0 flex items-center justify-center">
-              <LineChart size={22} className="text-white" strokeWidth={1.8} />
-            </div>
+            <div className="shrink-0"><IconLineChart /></div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
                 Visualize indicadores
@@ -1518,9 +1660,7 @@ function DataTransformationSection() {
             variants={cardVariants}
             className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#10b981] to-[#047857] shadow-[3px_3px_8px_rgba(16,185,129,0.2)] shrink-0 flex items-center justify-center">
-              <GitMerge size={22} className="text-white" strokeWidth={1.8} />
-            </div>
+            <div className="shrink-0"><IconNodesMerge /></div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
                 Processe dados
@@ -1536,9 +1676,7 @@ function DataTransformationSection() {
             variants={cardVariants}
             className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
           >
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#f59e0b] to-[#b45309] shadow-[3px_3px_8px_rgba(245,158,11,0.2)] shrink-0 flex items-center justify-center">
-              <Crosshair size={22} className="text-white" strokeWidth={1.8} />
-            </div>
+            <div className="shrink-0"><IconCrosshairTarget /></div>
             <div className="space-y-1.5">
               <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
                 Atribuição de mídia
