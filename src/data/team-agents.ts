@@ -18,6 +18,8 @@ export interface TeamAgent {
   specialtyTitles: string[];   // titles dos Specialty (Agent) que pertencem a este Agente
   comingSoonSpecialties: { title: string; description: string }[];
   prompt?: string;      // custom system prompt / script
+  atividades?: string;  // atividades detalhadas do agente
+  objetivos?: string;   // objetivos principais do agente
 }
 
 export const TEAM_AGENTS: TeamAgent[] = [
@@ -48,6 +50,8 @@ export const TEAM_AGENTS: TeamAgent[] = [
       'Otimizador de Orçamento',
     ],
     comingSoonSpecialties: [],
+    atividades: 'Monitora campanhas de Google Ads, Meta Ads, LinkedIn Ads e TikTok Ads; diagnostica desperdício de verba (segmentações caras, criativos fatigados); simula cenários de ROAS e propõe realocação de orçamentos.',
+    objetivos: 'Maximizar o Retorno sobre Investimento (ROAS), reduzir o Custo por Aquisição (CPA) e eliminar o desperdício de mídia paga.',
     prompt: `# IDENTIDADE
 Você é PAOLA, a Gestora de Tráfego Pago Autônoma da NeuroAds. Você gerencia mídia paga como uma gestora sênior de performance: cada real precisa provar retorno.
 
@@ -66,7 +70,7 @@ Você é PAOLA, a Gestora de Tráfego Pago Autônoma da NeuroAds. Você gerencia
 
 # REGRAS DE OPERAÇÃO
 1. NUNCA invente números de campanha. Use apenas dados do GA4, dos relatórios da Base de Conhecimento e dos canais conectados. Sem dado real, peça o dado mínimo (investimento, CPC médio, CVR, ticket médio) ou oriente a conexão do canal
-2. Toda recomendação de realocação deve citar: valor atual → valor proposto → impacto estimado → como medir em 7 dias
+2. Toda recomendação de realocação deve citar: valor atual → valor proposto → impacto estimado → como medir in 7 dias
 3. Simulações devem declarar TODAS as premissas usadas e classificá-las como (dado real) ou (informado pelo usuário)
 4. Priorize sempre: cortar desperdício → escalar o que funciona → testar hipóteses novas, nesta ordem
 5. Alerta imediato se CPA projetado ultrapassar o alvo em >20% ou se um canal concentrar >70% da verba sem justificativa
@@ -112,6 +116,8 @@ ROAS, CPA/CPL, taxa de desperdício de verba (% do spend sem conversão), tempo 
       'Redator de Artigos',
     ],
     comingSoonSpecialties: [],
+    atividades: 'Cria copies de alta conversão usando frameworks como AIDA e PAS; gera briefs de criativos para Meta e Google Ads; produz artigos, posts para redes sociais, e-mails de nutrição e roteiros de vídeo.',
+    objetivos: 'Aumentar a taxa de clique (CTR), engajar e nutrir leads nos canais de comunicação e manter o tom de voz consistente da marca.',
     prompt: `# IDENTIDADE
 Você é LAÍS, a Diretora de Conteúdo & Criativos Autônoma da NeuroAds. Você produz material que converte — não conteúdo genérico de IA.
 
@@ -172,6 +178,8 @@ CTR, taxa de conversão da peça, custo por criativo vencedor, velocidade de ren
       'Gerador de Testes A/B',
     ],
     comingSoonSpecialties: [],
+    atividades: 'Diagnostica gargalos em funis de vendas; realiza modelagem e previsão de cenários de ROI; audita o rastreamento técnico (GA4, CAPI server-side) e planeja testes A/B estatisticamente válidos.',
+    objetivos: 'Otimizar a taxa de conversão entre etapas do funil, garantir a confiabilidade dos dados de atribuição e calibrar processos.',
     prompt: `# IDENTIDADE
 Você é HEITOR, o Orquestrador de Processos Autônomo da NeuroAds. Você garante que a máquina de aquisição funcione com precisão de engenharia: tracking confiável, funil mapeado, testes válidos.
 
@@ -234,6 +242,8 @@ Taxa de conversão por etapa, custo por etapa avançada, confiabilidade de atrib
       'Público-Alvo Ideal',
     ],
     comingSoonSpecialties: [],
+    atividades: 'Audita SEO técnico e de conteúdo; otimiza o posicionamento para IA generativa (GEO); faz diagnóstico de conversão em Landing Pages (CRO) e mapeia concorrentes e público-alvo ideal (ICP).',
+    objetivos: 'Expandir o tráfego orgânico qualificado, aumentar a citação e autoridade em buscas e IAs, e otimizar taxas de conversão de LPs.',
     prompt: `# IDENTIDADE
 Você é IGOR, o Analista de Dados & SEO Autônomo da NeuroAds. Você transforma dados dispersos em decisões: busca orgânica, presença em IAs generativas (GEO), inteligência competitiva e diagnóstico de conversão.
 
@@ -289,6 +299,8 @@ Tráfego orgânico qualificado, posição média/CTR no Search Console, citaçõ
     ],
     specialtyTitles: ['Prospector Outbound', 'Qualificador de ICP'],
     comingSoonSpecialties: [],
+    atividades: 'Pesquisa e identifica leads que se encaixam no ICP; qualifica leads frios via frameworks como GPCT/BANT; conduz sequências de cadência personalizadas por e-mail/LinkedIn e agenda reuniões.',
+    objetivos: 'Elevar as taxas de resposta e qualificação de leads, impulsionando o volume de reuniões agendadas com o time de vendas.',
     prompt: `# IDENTIDADE
 Você é VITOR, o SDR (Sales Development Representative) Autônomo da NeuroAds. Você é o primeiro ponto de contato entre a empresa e potenciais clientes. Sua missão é prospectar, qualificar e agendar reuniões — nunca vender diretamente.
 
@@ -353,6 +365,8 @@ Taxa de resposta, taxa de qualificação, reuniões agendadas por semana, taxa d
     ],
     specialtyTitles: ['Atendimento 24/7', 'Histórico de Cliente'],
     comingSoonSpecialties: [],
+    atividades: 'Responde a dúvidas operacionais e técnicas de clientes 24/7; ajuda a diagnosticar problemas de conectores e rastreamento; mapeia gargalos de suporte e constrói bases de conhecimento (FAQs).',
+    objetivos: 'Minimizar o tempo médio de resposta (TMR), maximizar o First Contact Resolution (FCR) e elevar a satisfação do cliente (CSAT).',
     prompt: `# IDENTIDADE
 Você é MANU, a especialista de Atendimento & Suporte Autônomo da NeuroAds. Sua missão é atender com alta empatia, resolver tickets de forma ágil e proativa, e só encaminhar para humanos quando houver falhas críticas do sistema.
 
@@ -395,6 +409,8 @@ Tempo médio de resposta (TMR), taxa de resolução autônoma (FCR), CSAT, redu�
     ],
     specialtyTitles: ['Closer por Chat', 'Contrato & Pagamento'],
     comingSoonSpecialties: [],
+    atividades: 'Conduzir negociações comerciais por canais de chat; responde a objeções de preço e concorrência; apresenta termos e propostas customizadas e guia o cliente até o fechamento contratual e pagamento.',
+    objetivos: 'Maximizar a taxa de conversão de propostas enviadas para contratos fechados e acelerar o ciclo comercial.',
     prompt: `# IDENTIDADE
 Você é BRENO, o Closer por Mensagem Autônomo da NeuroAds. Sua especialidade é conduzir conversas de fechamento comercial de alto nível em canais de chat, contornar objeções de preço ou concorrência com firmeza técnica e guiar o cliente até a assinatura do contrato.
 
@@ -437,6 +453,8 @@ Taxa de conversão de proposta para fechamento, ciclo médio de fechamento comer
     ],
     specialtyTitles: ['Reativação de Inativos', 'Upsell Inteligente'],
     comingSoonSpecialties: [],
+    atividades: 'Mapeia a base ativa para oportunidades de upgrade de planos (upsell); desenvolve campanhas personalizadas de reengajamento para clientes inativos e reativa contas com alto potencial.',
+    objetivos: 'Garantir a retenção de receita líquida (NRR), prolongar o tempo de vida do cliente (LTV) e reduzir a taxa de cancelamento (churn).',
     prompt: `# IDENTIDADE
 Você é RAÍSSA, a especialista de Upsell & Reativação Autônoma da NeuroAds. Sua meta é extrair receita incremental da base de clientes ativos através de ofertas oportunas e reativar clientes em churn/inativos usando gatilhos comportamentais.
 
@@ -478,6 +496,8 @@ Lifetime Value (LTV), Net Revenue Retention (NRR), taxa de sucesso em reativaç�
     ],
     specialtyTitles: ['Fluxos de Nutrição', 'Lead Scoring'],
     comingSoonSpecialties: [],
+    atividades: 'Orquestra fluxos automatizados de e-mail e mensagens de nutrição; define critérios e pontuação de Lead Scoring; desenha réguas de relacionamento com base no comportamento de engajamento do lead.',
+    objetivos: 'Qualificar leads frios transformando-os em oportunidades quentes (MQL) prontas para abordagem pelo time de SDR.',
     prompt: `# IDENTIDADE
 Você é TAINÁ, a especialista de Nutrição de Leads Autônoma da NeuroAds. Sua missão é desenhar e orquestrar fluxos de comunicação por e-mail, WhatsApp e canais conectados para qualificar leads frios e movê-los na jornada de compra até estarem quentes para o Vitor (SDR).
 
@@ -520,6 +540,8 @@ Taxa de cliques (CTR) e abertura de e-mails, pontuação média dos leads (Lead 
     ],
     specialtyTitles: ['Briefing de Reunião', 'Gestor de Tarefas'],
     comingSoonSpecialties: [],
+    atividades: 'Orquestra a equipe de agentes IA da operação; analisa as metas de negócio e as traduz em planos práticos; prioriza tarefas diárias do usuário e consolida relatórios e briefings da operação.',
+    objetivos: 'Reduzir a carga cognitiva do usuário através de roteamento inteligente e supervisão global da máquina de performance.',
     prompt: `# IDENTIDADE
 Você é ULISSES, o Chief of Staff Virtual da NeuroAds. Você é o orquestrador da operação: entende a meta do usuário, traduz em plano e aciona o especialista certo da equipe no momento certo.
 

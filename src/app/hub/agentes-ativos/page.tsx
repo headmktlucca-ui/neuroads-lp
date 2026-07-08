@@ -304,14 +304,14 @@ export default function OperacionalPage() {
       </div>
 
       {/* ── Agents grid ── */}
-      <motion.div layout className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <motion.div layout className="columns-1 md:columns-2 gap-4">
         <AnimatePresence>
           {agentsWithActive.length === 0 ? (
             <motion.div
               key="empty-global"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="col-span-2"
+              style={{ columnSpan: 'all' }}
             >
               <div className="hub-neu-card p-12 text-center flex flex-col items-center gap-4">
                 <div className="w-16 h-16 rounded-2xl bg-orange-500/8 border border-orange-500/15 flex items-center justify-center">
@@ -338,7 +338,8 @@ export default function OperacionalPage() {
               key="empty-filter"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="col-span-2 py-12 text-center"
+              style={{ columnSpan: 'all' }}
+              className="py-12 text-center"
             >
               <Brain size={28} className="mx-auto text-slate-300 mb-3" />
               <p className="text-[14px] font-black text-slate-400">Nenhum agente encontrado.</p>
@@ -351,11 +352,12 @@ export default function OperacionalPage() {
             </motion.div>
           ) : (
             filtered.map(({ teamAgent, activeSpecialties }) => (
-              <OperacionalCard
-                key={teamAgent.id}
-                teamAgent={teamAgent}
-                activeSpecialties={activeSpecialties}
-              />
+              <div key={teamAgent.id} className="mb-4 break-inside-avoid">
+                <OperacionalCard
+                  teamAgent={teamAgent}
+                  activeSpecialties={activeSpecialties}
+                />
+              </div>
             ))
           )}
         </AnimatePresence>

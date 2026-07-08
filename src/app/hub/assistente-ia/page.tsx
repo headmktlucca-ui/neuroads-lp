@@ -7,7 +7,7 @@ import {
   Send, Paperclip, Mic, ChevronDown, ChevronUp,
   Search, Download, LayoutGrid, LineChart, TrendingUp,
   FileText, Terminal, Link2, BarChart2, Globe, Database,
-  Target, CheckCircle2, AlertTriangle, Sparkles,
+  Target, CheckCircle2, AlertTriangle, Sparkles, Cpu,
   Film, Music, File, X, Copy, Table2, User, RefreshCw,
   Settings2, Hash, ArrowRight,
 } from 'lucide-react';
@@ -17,6 +17,8 @@ import { chatWithLuccaHub, type LuccaLeftPanelData } from '../../actions/lucca-h
 import { saveChatSession, type ChatMessage as StoredChatMessage } from '../../../lib/chat-history';
 import { getTeamAgentById, type TeamAgent, TEAM_AGENTS } from '../../../data/team-agents';
 import { agents as allSpecialties } from '../../../data/agents';
+import { getHubAutomationsFromProfile } from '../../../lib/hub-automations';
+
 
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -128,7 +130,56 @@ const SPECIALTY_FIELDS: Record<string, CustomField[]> = {
     { name: 'titulo_tarefa', label: 'Título da Tarefa', type: 'text', placeholder: 'Ex: Revisar criativos da campanha' },
     { name: 'responsavel', label: 'Responsável', type: 'text', placeholder: 'Ex: Paola' },
   ],
+  'Auditor de Desperdício': [
+    { name: 'plataforma', label: 'Plataforma de Anúncios', type: 'text', placeholder: 'Ex: Google Ads, Meta Ads' },
+    { name: 'cpa_limite', label: 'CPA Limite Máximo (R$)', type: 'number', placeholder: 'Ex: 60' },
+  ],
+  'Otimizador de Orçamento': [
+    { name: 'orcamento_mensal', label: 'Orçamento Mensal (R$)', type: 'number', placeholder: 'Ex: 10000' },
+    { name: 'meta_roas', label: 'Meta de ROAS Mínimo', type: 'number', placeholder: 'Ex: 3.5' },
+  ],
+  'Agente Editorial': [
+    { name: 'tema', label: 'Tema / Pauta do Conteúdo', type: 'text', placeholder: 'Ex: Tendências de IA B2B' },
+    { name: 'formato', label: 'Formato Principal', type: 'text', placeholder: 'Ex: Artigo de opinião, Post longo' },
+  ],
+  'DNA da Marca': [
+    { name: 'marca', label: 'Nome da Marca / Empresa', type: 'text', placeholder: 'Ex: NeuroAds' },
+    { name: 'tom_voz', label: 'Tom de Voz Desejado', type: 'text', placeholder: 'Ex: Profissional, ousado, direto' },
+  ],
+  'Gerador de Carrossel': [
+    { name: 'tema', label: 'Tema do Carrossel', type: 'text', placeholder: 'Ex: 5 erros no tráfego pago B2B' },
+    { name: 'quantidade_slides', label: 'Quantidade de Slides', type: 'number', placeholder: 'Ex: 7' },
+  ],
+  'Roteirista de Vídeo': [
+    { name: 'gancho', label: 'Gancho Inicial / Ideia', type: 'text', placeholder: 'Ex: Como dobrar conversões com SDR' },
+    { name: 'plataforma', label: 'Plataforma de Vídeo', type: 'text', placeholder: 'Ex: Meta (Reels), TikTok, YouTube' },
+  ],
+  'Redator de Artigos': [
+    { name: 'titulo_sugerido', label: 'Título Sugerido ou Palavra-Chave', type: 'text', placeholder: 'Ex: Guia Completo de CRO' },
+    { name: 'objetivo', label: 'Objetivo do Artigo', type: 'text', placeholder: 'Ex: Captar Leads, SEO, Autoridade' },
+  ],
+  'Analisador de Público': [
+    { name: 'site_concorrente', label: 'Site do Concorrente (URL)', type: 'url', placeholder: 'Ex: https://concorrente.com' },
+    { name: 'publico_alvo', label: 'Público Atual da Empresa', type: 'text', placeholder: 'Ex: Gestores de Performance B2B' },
+  ],
+  'Avaliador de Oferta': [
+    { name: 'oferta_descricao', label: 'Descrição da Oferta Atual', type: 'text', placeholder: 'Ex: Plano trimestral com 20% OFF' },
+    { name: 'valor_produto', label: 'Preço / Valor (R$)', type: 'number', placeholder: 'Ex: 497' },
+  ],
+  'Radar de Oportunidades': [
+    { name: 'objetivo_negocio', label: 'Principal Objetivo de Negócio', type: 'text', placeholder: 'Ex: Escalar receita com mesmo CAC' },
+    { name: 'canal_foco', label: 'Canal de Foco', type: 'text', placeholder: 'Ex: Meta Ads, Outbound' },
+  ],
+  'Análise de Concorrentes': [
+    { name: 'url_concorrente', label: 'URL do Concorrente', type: 'url', placeholder: 'Ex: https://concorrente.com' },
+    { name: 'itens_analisar', label: 'Itens para Focar', type: 'text', placeholder: 'Ex: Preço, Proposta de valor, Copy' },
+  ],
+  'Público-Alvo Ideal': [
+    { name: 'produto_servico', label: 'Seu Produto/Serviço', type: 'text', placeholder: 'Ex: Software CRM de Vendas' },
+    { name: 'ticket_medio', label: 'Ticket Médio (R$)', type: 'number', placeholder: 'Ex: 1500' },
+  ],
 };
+
 
 interface Message {
   id: string;
@@ -759,6 +810,32 @@ function LeftPanel({
   const [activeTab, setActiveTab] = useState<PanelTab>('resposta');
   const [copied, setCopied] = useState(false);
 
+  const { profile } = useAuth();
+
+  const activeAutomations = useMemo(() => {
+    if (!profile || !activeAgent) return [];
+    
+    // Obter todas as automações do perfil do usuário
+    const allAutos = getHubAutomationsFromProfile(profile);
+    
+    // Filtrar apenas automações que estão ativas ('active')
+    const activeAutos = allAutos.filter(a => a.status === 'active');
+    
+    // Filtrar automações associadas ao agente ativo atual (comparando o nome de forma normalizada ou id)
+    return activeAutos.filter(a => {
+      const autoAgentName = (a.agentTitle || '').trim().toUpperCase();
+      const currentAgentName = (activeAgent.nome || '').trim().toUpperCase();
+      
+      const keyMatches = a.key.toLowerCase().includes(activeAgent.id.toLowerCase());
+      
+      return autoAgentName === currentAgentName || keyMatches;
+    }).map(a => ({
+      name: a.objective || a.cadenceTitle || 'Automação',
+      description: a.scheduleOptionDetail || `Executado com cadência ${a.cadence}.`,
+    }));
+  }, [profile, activeAgent]);
+
+
   useEffect(() => {
     if (result) {
       setActiveTab('resposta'); // eslint-disable-line react-hooks/set-state-in-effect
@@ -1025,32 +1102,48 @@ function LeftPanel({
                       className="bg-gradient-to-br from-[#111827] to-[#1F2937] text-white rounded-2xl p-5 shadow-md relative overflow-hidden"
                     >
                       <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#FF6A00]/20 to-transparent rounded-full filter blur-xl" />
-                      <div className="flex items-center gap-3.5 mb-3">
+                      <div className="flex items-start gap-4 mb-4 relative z-10">
                         {activeAgent?.avatarSrc ? (
-                          <div className="w-10 h-10 rounded-xl overflow-hidden shrink-0 border border-white/20 shadow-md relative bg-slate-800">
+                          <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 border border-white/20 shadow-lg relative bg-slate-800">
                             <Image 
                               src={activeAgent.avatarSrc} 
                               alt={activeAgent.nome} 
-                              width={40}
-                              height={40}
+                              width={80}
+                              height={80}
                               className="w-full h-full object-cover" 
                             />
                           </div>
                         ) : (
-                          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF4D00] to-[#FF8805] flex items-center justify-center shrink-0 shadow-md">
-                            <Sparkles className="w-5 h-5 text-white animate-pulse" />
+                          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#FF4D00] to-[#FF8805] flex items-center justify-center shrink-0 shadow-lg">
+                            <Sparkles className="w-10 h-10 text-white animate-pulse" />
                           </div>
                         )}
-                        <div>
+                        <div className="pt-1">
                           <p className="text-[11px] font-bold text-[#FF6A00] uppercase tracking-wider">Painel Operacional</p>
-                          <h3 className="text-[15px] font-black">{activeAgent?.nome || 'Lucca'}</h3>
+                          <h3 className="text-[20px] font-black leading-tight mb-1.5">{activeAgent?.nome || 'Lucca'}</h3>
+                          <p className="text-[12px] text-emerald-400 font-bold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                            "{activeAgent?.frase || 'Seu orquestrador de operações de marketing.'}"
+                          </p>
                         </div>
                       </div>
-                      <p className="text-[12px] text-slate-300 leading-relaxed font-medium">
-                        {activeAgent?.frase || 'Seu orquestrador de operações de marketing.'}
-                      </p>
-                    </motion.div>
 
+                      {/* Detailed Agent Specs */}
+                      <div className="mt-4 pt-4 border-t border-white/10 space-y-3 text-[12px] relative z-10 leading-relaxed">
+                        <div>
+                          <span className="font-bold text-[#FF6A00] block mb-0.5 uppercase tracking-wider text-[10px]">Função:</span>
+                          <p className="text-slate-200 font-medium">{activeAgent?.funcao || 'Orquestrador Virtual'}</p>
+                        </div>
+                        <div>
+                          <span className="font-bold text-[#FF6A00] block mb-0.5 uppercase tracking-wider text-[10px]">Atividades:</span>
+                          <p className="text-slate-300">{activeAgent?.atividades || activeAgent?.descricao}</p>
+                        </div>
+                        <div>
+                          <span className="font-bold text-[#FF6A00] block mb-0.5 uppercase tracking-wider text-[10px]">Objetivos:</span>
+                          <p className="text-slate-300">{activeAgent?.objetivos || 'Otimizar a operação de marketing e vendas.'}</p>
+                        </div>
+                      </div>
+                    </motion.div>
                     {/* Operational status card */}
                     <motion.div
                       initial={{ opacity: 0, y: 6 }}
@@ -1078,7 +1171,7 @@ function LeftPanel({
                       </div>
                     </motion.div>
 
-                    {/* Agent Skills/Habilidades */}
+                    {/* Automações Ativas */}
                     <motion.div
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -1086,15 +1179,24 @@ function LeftPanel({
                       className="bg-white border border-slate-200/80 rounded-2xl p-5 shadow-sm space-y-3"
                     >
                       <h4 className="text-[12px] font-bold text-slate-800 flex items-center gap-1.5">
-                        <Target className="w-3.5 h-3.5 text-[#FF6A00]" /> Habilidades do Agente
+                        <Cpu className="w-3.5 h-3.5 text-[#FF6A00]" /> Automações Ativas
                       </h4>
                       <div className="grid grid-cols-1 gap-2">
-                        {(activeAgent?.habilidades || []).map((h, idx) => (
-                          <div key={idx} className="flex gap-2.5 items-center px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[12px] text-slate-600 hover:border-slate-200 hover:bg-slate-100/50 transition-all">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A00] shrink-0" />
-                            <span className="font-semibold">{h}</span>
+                        {activeAutomations.length > 0 ? (
+                          activeAutomations.map((auto, idx) => (
+                            <div key={idx} className="flex flex-col px-3 py-2 bg-slate-50 border border-slate-100 rounded-xl text-[12px] hover:border-slate-200 hover:bg-slate-100/50 transition-all">
+                              <div className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0 animate-pulse" />
+                                <span className="font-bold text-slate-800">{auto.name}</span>
+                              </div>
+                              <span className="text-[11px] text-slate-400 font-semibold mt-0.5">{auto.description}</span>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="text-[12px] text-slate-400 italic py-1 px-1">
+                            Nenhuma automação ativa para este agente.
                           </div>
-                        ))}
+                        )}
                       </div>
                     </motion.div>
 
@@ -1877,7 +1979,7 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
             'Fazer Diagnóstico de Funil de Vendas (com Heitor)',
             'Análise de SEO & GEO do meu Site (com Igor)',
           ]
-        : activeAgent.habilidades.map(h => `Executar: ${h}`);
+        : activeAgent.specialtyTitles.map(s => `Executar: ${s}`);
 
       return {
         id: 'init',
@@ -2143,6 +2245,11 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
                   }
                   if (step.includes('(com Igor)')) {
                     router.push('/hub/assistente-ia?agent=igor&specialty=SEO & GEO');
+                    return;
+                  }
+                  if (step.startsWith('Executar: ')) {
+                    const specialtyName = step.replace('Executar: ', '');
+                    router.push(`/hub/assistente-ia?agent=${activeAgent?.id || 'ulisses'}&specialty=${encodeURIComponent(specialtyName)}`);
                     return;
                   }
                   handleSend(step);

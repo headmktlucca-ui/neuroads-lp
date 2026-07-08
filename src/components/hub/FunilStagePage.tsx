@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo, useEffect } from 'react';
-import { ExternalLink, Lock, Sparkles, Users, Wrench, Activity, ChevronDown, CheckCircle2, X } from 'lucide-react';
+import { ExternalLink, Lock, Sparkles, Users, Activity, ChevronDown } from 'lucide-react';
 import { doc, setDoc } from 'firebase/firestore';
 import { TEAM_AGENTS, TeamAgent } from '../../data/team-agents';
 import { agents as allSpecialties } from '../../data/agents';
@@ -64,20 +64,10 @@ function SpecialtyRow({
   specialty,
   agentId,
   agentCor,
-  isActive,
-  isActivating,
-  isDeactivating,
-  onActivate,
-  onDeactivate,
 }: {
   specialty: typeof allSpecialties[number];
   agentId: string;
   agentCor: string;
-  isActive: boolean;
-  isActivating: boolean;
-  isDeactivating: boolean;
-  onActivate: () => void;
-  onDeactivate: () => void;
 }) {
   const [hovered, setHovered] = useState(false);
 
@@ -103,61 +93,27 @@ function SpecialtyRow({
         {/* Line 2: Desc */}
         <p className="text-[11px] text-slate-500 font-semibold leading-snug line-clamp-2 mt-0.5">{specialty.description}</p>
         
-        {/* Line 3: Buttons in a row */}
-        <div className="flex items-center gap-2 mt-2.5 flex-wrap">
-          {isActive ? (
-            <>
-              {/* Ativo Badge */}
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl text-[10px] font-black uppercase bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
-                <CheckCircle2 size={10} /> Ativo
-              </span>
+        {/* Line 3: Action buttons — side by side, equal width */}
+        <div className="grid grid-cols-2 gap-2 mt-3">
+          {/* Executar Operação — primary */}
+          <Link
+            href={`/hub/assistente-ia?agent=${agentId}&specialty=${encodeURIComponent(specialty.title)}`}
+            onClick={(e) => e.stopPropagation()}
+            className="group/exec inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[10.5px] font-black text-white transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98]"
+            style={{ background: 'linear-gradient(135deg, #2563EB, #06B6D4)', textDecoration: 'none', boxShadow: '0 4px 12px rgba(37,99,235,0.28)' }}
+          >
+            <ExternalLink size={11} className="transition-transform duration-200 group-hover/exec:translate-x-0.5" /> Executar Operação
+          </Link>
 
-              {/* Acessar Operação */}
-              <Link
-                href={`/hub/assistente-ia?agent=${agentId}&specialty=${encodeURIComponent(specialty.title)}`}
-                onClick={(e) => e.stopPropagation()}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-white hover:brightness-110 transition-all"
-                style={{ background: 'linear-gradient(135deg, #2563EB, #06B6D4)', textDecoration: 'none', boxShadow: '0 2px 6px rgba(37,99,235,0.3)' }}
-              >
-                <ExternalLink size={10} /> Acessar Operação
-              </Link>
-
-              {/* Desativar */}
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); onDeactivate(); }}
-                disabled={isDeactivating}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-600 border border-white/60 bg-[#eef2f7] hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 transition-all active:scale-95 cursor-pointer"
-              >
-                {isDeactivating ? <Activity size={10} className="animate-pulse" /> : <X size={10} />}
-                Desativar
-              </button>
-            </>
-          ) : (
-            <>
-              {/* Ativar */}
-              <button
-                type="button"
-                onClick={(e) => { e.stopPropagation(); onActivate(); }}
-                disabled={isActivating}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-white hover:brightness-110 active:scale-95 disabled:opacity-50 transition-all cursor-pointer"
-                style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', boxShadow: '0 2px 6px rgba(255,106,0,0.2)' }}
-              >
-                {isActivating ? <Activity size={10} className="animate-pulse" /> : <Wrench size={10} />}
-                Ativar
-              </button>
-
-              {/* Acessar Operação (Disabled style) */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-400 border border-slate-200 bg-slate-100 opacity-60 cursor-not-allowed">
-                <ExternalLink size={10} /> Acessar Operação
-              </span>
-
-              {/* Desativar (Disabled style) */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black text-slate-400 border border-slate-200 bg-slate-100 opacity-60 cursor-not-allowed">
-                <X size={10} /> Desativar
-              </span>
-            </>
-          )}
+          {/* Programar Automação — secondary */}
+          <Link
+            href={`/hub/automacoes`}
+            onClick={(e) => e.stopPropagation()}
+            className="group/prog inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[10.5px] font-black text-slate-600 border border-white/70 bg-[#eef2f7] shadow-[2px_2px_5px_#d1d9e6,_-2px_-2px_5px_#ffffff] transition-all duration-200 hover:-translate-y-0.5 hover:text-[#2563EB] active:translate-y-0 active:scale-[0.98]"
+            style={{ textDecoration: 'none' }}
+          >
+            <Activity size={11} className="transition-transform duration-200 group-hover/prog:rotate-[18deg]" /> Programar Automação
+          </Link>
         </div>
       </div>
     </div>
@@ -204,7 +160,7 @@ function AgentOperationCard({
   const comingSoon = teamAgent.comingSoonSpecialties;
   const activeCount = specialties.filter((s) => statusOverrides[s.title] === true).length;
   const totalCount = specialties.length + comingSoon.length;
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(false);
   const [avatarHovered, setAvatarHovered] = useState(false);
 
   return (
@@ -213,7 +169,7 @@ function AgentOperationCard({
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       className="hub-neu-card overflow-hidden shadow-[3px_3px_8px_#d1d9e6,_-3px_-3px_8px_#ffffff] transition-all duration-300"
-      style={{ borderLeft: `3px solid ${teamAgent.cor}` }}
+      style={{ borderLeft: `3px solid ${teamAgent.cor}`, background: '#ffffff' }}
     >
       {/* ── Card header (clickable to expand/collapse) ── */}
       <button
@@ -278,21 +234,6 @@ function AgentOperationCard({
             >
               {teamAgent.categoria}
             </span>
-          </div>
-          <p className="text-[12px] font-semibold text-slate-500 mt-0.5">{teamAgent.funcao}</p>
-          <p className="text-[11.5px] text-slate-400 font-medium italic mt-1.5 leading-snug">
-            &ldquo;{teamAgent.tagline}&rdquo;
-          </p>
-
-          <div className="mt-3.5 flex flex-col items-start gap-2.5">
-            <Link
-              href={`/hub/assistente-ia?agent=${teamAgent.id}`}
-              className="inline-flex items-center justify-center px-4 py-1.5 rounded-xl text-[11px] font-black text-white hover:brightness-110 active:scale-95 transition-all shadow-[0_2px_8px_rgba(255,106,0,0.25)]"
-              style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', textDecoration: 'none' }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              Enviar Mensagem
-            </Link>
             {activeCount > 0 ? (
               <span 
                 className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
@@ -314,6 +255,35 @@ function AgentOperationCard({
                 Inativo
               </span>
             )}
+          </div>
+          <p className="text-[12px] font-semibold text-slate-500 mt-0.5">{teamAgent.funcao}</p>
+          <p className="text-[11.5px] text-slate-400 font-medium italic mt-1.5 leading-snug">
+            &ldquo;{teamAgent.tagline}&rdquo;
+          </p>
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <Link
+              href={`/hub/assistente-ia?agent=${teamAgent.id}`}
+              className="inline-flex items-center justify-center px-4 py-2 rounded-xl text-[11px] font-black text-white hover:brightness-110 active:scale-95 transition-all shadow-[0_2px_8px_rgba(255,106,0,0.25)]"
+              style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', textDecoration: 'none' }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              Enviar Mensagem
+            </Link>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setExpanded(prev => !prev);
+              }}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-[11px] font-black transition-all border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 shadow-sm"
+            >
+              <span>Operações Estratégicas</span>
+              <ChevronDown
+                size={12}
+                className={`transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
+              />
+            </button>
           </div>
         </div>
 
@@ -357,11 +327,6 @@ function AgentOperationCard({
                   specialty={specialty}
                   agentId={teamAgent.id}
                   agentCor={teamAgent.cor}
-                  isActive={statusOverrides[specialty.title] === true}
-                  isActivating={activatingTitle === specialty.title}
-                  isDeactivating={deactivatingTitle === specialty.title}
-                  onActivate={() => onActivate(specialty.title)}
-                  onDeactivate={() => onDeactivate(specialty.title)}
                 />
               ))}
 
@@ -490,17 +455,18 @@ export default function FunilStagePage({ stage }: { stage: FunilStage }) {
       </div>
 
       {/* ── Agent grid ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="columns-1 md:columns-2 lg:columns-3 gap-5">
         {stageAgents.map((ta) => (
-          <AgentOperationCard
-            key={ta.id}
-            teamAgent={ta}
-            statusOverrides={statusOverrides}
-            activatingTitle={activatingTitle}
-            deactivatingTitle={deactivatingTitle}
-            onActivate={activateSpecialty}
-            onDeactivate={deactivateSpecialty}
-          />
+          <div key={ta.id} className="mb-5 break-inside-avoid">
+            <AgentOperationCard
+              teamAgent={ta}
+              statusOverrides={statusOverrides}
+              activatingTitle={activatingTitle}
+              deactivatingTitle={deactivatingTitle}
+              onActivate={activateSpecialty}
+              onDeactivate={deactivateSpecialty}
+            />
+          </div>
         ))}
       </div>
 
