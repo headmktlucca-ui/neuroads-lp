@@ -79,6 +79,7 @@ function NavLink({
   pathname: string;
   currentTab: string | null;
 }) {
+  const router = useRouter();
   const hasChildren = !!item.children?.length;
   const isConhecimento   = item.href.includes('tab=conhecimento');
   const isSettingsGeneral = item.href === '/hub/configuracoes';
@@ -90,7 +91,7 @@ function NavLink({
   const isActive = (() => {
     if (isConhecimento)    return pathname === '/hub/configuracoes' && currentTab === 'conhecimento';
     if (isSettingsGeneral) return pathname === '/hub/configuracoes' && currentTab !== 'conhecimento';
-    if (hasChildren)       return isChildActive;
+    if (hasChildren)       return isChildActive || pathname === item.href || (item.href !== '/hub' && pathname.startsWith(item.href));
     return pathname === item.href || (item.href !== '/hub' && pathname.startsWith(item.href));
   })();
 
@@ -106,7 +107,12 @@ function NavLink({
         {/* Parent row — clickable to expand/collapse */}
         <button
           type="button"
-          onClick={() => setOpen(o => !o)}
+          onClick={() => {
+            setOpen(o => !o);
+            if (item.href) {
+              router.push(item.href);
+            }
+          }}
           className={`w-full text-left group flex items-center gap-3 ${paddingLeft} pr-3 py-3 rounded-2xl ${textSize} font-bold transition-all duration-200 cursor-pointer ${
             isActive
               ? 'text-[#FF6A00]'
