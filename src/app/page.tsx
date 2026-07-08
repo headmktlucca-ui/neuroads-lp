@@ -9,6 +9,7 @@ import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
 import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
 import FunnelInteractiveShowcase from '@/components/neuroads/FunnelInteractiveShowcase';
 import PricingValuesSection from '@/components/neuroads/PricingValuesSection';
+import VideoPlayerPro from '@/components/ui/VideoPlayerPro';
 
 const cardVariants = {
   hidden: { opacity: 0, y: 25, scale: 0.98 },
@@ -1275,7 +1276,7 @@ function AgentsGridSection() {
   };
 
   return (
-    <section id="agentes" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 text-center space-y-16">
+    <section id="agentes" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-24 text-center space-y-16">
       <div className="space-y-4 max-w-2xl mx-auto">
         <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">RECURSOS PRINCIPAIS</span>
         <h2 className="font-head text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
@@ -1583,7 +1584,8 @@ function DemoAndAccessSection() {
   };
 
   return (
-    <section id="demonstracao" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12">
+    <div className="bg-white w-full">
+      <section id="demonstracao" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12">
       {/* Header section */}
       <motion.div
         initial={{ opacity: 0, y: 30 }}
@@ -1614,16 +1616,8 @@ function DemoAndAccessSection() {
           transition={{ duration: 0.8 }}
           className="lg:col-span-7"
         >
-          <div className="relative aspect-video rounded-[32px] overflow-hidden border border-[#EAEAEA] bg-slate-950 shadow-sm">
-            <video
-              src="/videos/VD_BV.mp4"
-              controls
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover"
-            />
+          <div className="relative aspect-video rounded-[32px] overflow-hidden bg-slate-950 shadow-[0_20px_40px_rgba(255,85,0,0.12),_0_1px_3px_rgba(255,85,0,0.05)]">
+            <VideoPlayerPro src="/videos/VD_BV.mp4" />
           </div>
         </motion.div>
 
@@ -1635,7 +1629,10 @@ function DemoAndAccessSection() {
           transition={{ duration: 0.8 }}
           className="lg:col-span-5"
         >
-          <div className="bg-white border border-[#EAEAEA] rounded-[28px] p-8 flex flex-col justify-between relative shadow-sm">
+          <div 
+            className="bg-white border rounded-[28px] p-8 flex flex-col justify-between relative shadow-[0_20px_40px_rgba(255,85,0,0.12),_0_1px_3px_rgba(255,85,0,0.05)]"
+            style={{ borderColor: 'rgba(255, 85, 0, 0.2)' }}
+          >
             <h3 className="font-head font-extrabold text-black text-lg mb-2 text-left">
               Solicite seu acesso
             </h3>
@@ -1767,6 +1764,7 @@ function DemoAndAccessSection() {
         </motion.div>
       </div>
     </section>
+    </div>
   );
 }
 function TestimonialSection() {
