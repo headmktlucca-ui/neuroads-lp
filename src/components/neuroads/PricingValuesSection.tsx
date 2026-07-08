@@ -383,8 +383,19 @@ export default function PricingValuesSection() {
   });
 
   return (
-    <section id="valores" className="relative w-full py-24 md:py-28">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="valores" className="relative w-full py-24 md:py-28 overflow-hidden">
+      {/* Decorative layered-sheets background — right aligned */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none select-none absolute inset-y-0 right-0 hidden md:block w-[520px] lg:w-[640px] translate-x-[22%] opacity-70"
+        style={{
+          backgroundImage: "url('/images/valores-layers-bg.svg')",
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'right center',
+          backgroundSize: 'contain',
+        }}
+      />
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
           {...reveal()}
@@ -411,55 +422,54 @@ export default function PricingValuesSection() {
           {/* Left: price lockup */}
           <motion.div
             {...reveal(0.1)}
-            className="lg:col-span-5 relative overflow-hidden rounded-[28px] p-8 md:p-10 flex flex-col shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] bg-slate-100/10"
+            className="lg:col-span-5 relative overflow-hidden rounded-[28px] p-[1.5px] flex flex-col shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] bg-slate-200/50"
           >
-            {/* Glassy Background Overlay */}
-            <div className="absolute inset-[5px] bg-white/95 dark:bg-black/70 backdrop-blur-[24px] rounded-[24px] outline outline-2 outline-white dark:outline-gray-700 z-10"></div>
+            {/* Rotating Orange Border Beam */}
+            <div className="absolute top-1/2 left-1/2 w-[200%] h-[200%] -translate-x-1/2 -translate-y-1/2 z-0 animate-border-beam bg-[conic-gradient(from_0deg,transparent_70%,#FF5500_95%,transparent_100%)]"></div>
 
-            {/* Animated Gradient Blob */}
-            <div className="absolute top-1/2 left-1/2 w-[220px] h-[220px] rounded-full opacity-70 filter blur-[20px] z-0 animate-blob bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500"></div>
-
-            {/* Content Wrapper */}
-            <div className="relative z-20 flex flex-col h-full">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
-                {HUB_PLAN.name}
-              </span>
-
-              <div className="mt-6 flex items-end gap-2">
-                <span className="font-head font-extrabold text-slate-900 text-[64px] md:text-[76px] leading-[0.9] tracking-tighter">
-                  <span className="text-[26px] md:text-[30px] align-top font-black text-[#FF5500] mr-1">R$</span>
-                  {formatBRLFromCents(HUB_PLAN.monthlyPriceCents)}
+            {/* Inner Content Card */}
+            <div className="relative z-10 w-full h-full rounded-[26.5px] bg-white dark:bg-slate-900 p-8 md:p-10 flex flex-col flex-1 justify-between">
+              <div>
+                <span className="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">
+                  {HUB_PLAN.name}
                 </span>
-                <span className="text-slate-500 font-bold text-sm mb-1">/mês</span>
-              </div>
 
-              <p className="mt-4 text-slate-500 text-[13px] leading-relaxed">
-                No anual, R$ {formatBRLFromCents(HUB_PLAN.annualPriceCents)}/ano — equivalente a dois
-                meses grátis.
-              </p>
-
-              <div className="mt-8 pt-6 border-t border-slate-300/40 space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 flex items-center justify-center shrink-0">
-                    <IconCalendar />
-                  </div>
-                  <p className="text-[12px] text-slate-600 leading-relaxed">
-                    <span className="font-bold text-slate-800">
-                      {HUB_PLAN.trialDays} dias de teste com {HUB_PLAN.trialCredits} créditos
-                    </span>{' '}
-                    para experimentar os agentes na sua operação real. A assinatura libera os{' '}
-                    {HUB_PLAN.monthlyCredits} créditos mensais completos.
-                  </p>
+                <div className="mt-6 flex items-end gap-2">
+                  <span className="font-head font-extrabold text-slate-900 dark:text-white text-[64px] md:text-[76px] leading-[0.9] tracking-tighter">
+                    <span className="text-[26px] md:text-[30px] align-top font-black text-[#FF5500] mr-1">R$</span>
+                    {formatBRLFromCents(HUB_PLAN.monthlyPriceCents)}
+                  </span>
+                  <span className="text-slate-500 font-bold text-sm mb-1">/mês</span>
                 </div>
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 flex items-center justify-center shrink-0">
-                    <IconShield />
+
+                <p className="mt-4 text-slate-500 text-[13px] leading-relaxed">
+                  No anual, R$ {formatBRLFromCents(HUB_PLAN.annualPriceCents)}/ano — equivalente a dois
+                  meses grátis.
+                </p>
+
+                <div className="mt-8 pt-6 border-t border-slate-300/40 space-y-4">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 flex items-center justify-center shrink-0">
+                      <IconCalendar />
+                    </div>
+                    <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                      <span className="font-bold text-slate-800 dark:text-white">
+                        {HUB_PLAN.trialDays} dias de teste com {HUB_PLAN.trialCredits} créditos
+                      </span>{' '}
+                      para experimentar os agentes na sua operação real. A assinatura libera os{' '}
+                      {HUB_PLAN.monthlyCredits} créditos mensais completos.
+                    </p>
                   </div>
-                  <p className="text-[12px] text-slate-600 leading-relaxed">
-                    <span className="font-bold text-slate-800">Limites verificados antes de cada execução</span>
-                    {' '}— nenhuma análise é interrompida no meio. Alerta de consumo a partir de{' '}
-                    {Math.round(HUB_PLAN.alertThreshold * 100)}%.
-                  </p>
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 flex items-center justify-center shrink-0">
+                      <IconShield />
+                    </div>
+                    <p className="text-[12px] text-slate-600 dark:text-slate-300 leading-relaxed">
+                      <span className="font-bold text-slate-800 dark:text-white">Limites verificados antes de cada execução</span>
+                      {' '}— nenhuma análise é interrompida no meio. Alerta de consumo a partir de{' '}
+                      {Math.round(HUB_PLAN.alertThreshold * 100)}%.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -467,14 +477,18 @@ export default function PricingValuesSection() {
             {/* Inline keyframes animation */}
             <style>
               {`
-                @keyframes blob {
-                  0% { transform: translate(-100%, -100%); }
-                  25% { transform: translate(0%, -100%); }
-                  50% { transform: translate(0%, 0%); }
-                  75% { transform: translate(-100%, 0%); }
-                  100% { transform: translate(-100%, -100%); }
+                @keyframes border-beam {
+                  0% {
+                    transform: translate(-50%, -50%) rotate(0deg);
+                  }
+                  100% {
+                    transform: translate(-50%, -50%) rotate(360deg);
+                  }
                 }
-                .animate-blob { animation: blob 8s linear infinite; }
+
+                .animate-border-beam {
+                  animation: border-beam 4s linear infinite;
+                }
               `}
             </style>
           </motion.div>

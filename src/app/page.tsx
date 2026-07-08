@@ -417,7 +417,7 @@ export default function TempLandingPage() {
           {/* Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             <Link href="#publico-alvo" className="text-slate-650 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
-              Público-Alvo
+              Oportunidades
             </Link>
             <Link href="#agentes" className="text-slate-650 font-medium text-sm hover:text-[#FF5500] transition-colors duration-200">
               Agentes IA
@@ -467,7 +467,7 @@ export default function TempLandingPage() {
                 onClick={() => setIsMenuOpen(false)}
                 className="text-slate-650 font-bold text-xs uppercase tracking-wider hover:text-[#FF5500] py-2 transition-colors duration-200"
               >
-                Público-Alvo
+                Oportunidades
               </Link>
               <Link
                 href="#agentes"
@@ -1323,9 +1323,9 @@ function TargetAudienceSection() {
   return (
     <section id="publico-alvo" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 space-y-12">
       <div className="space-y-4 max-w-xl text-center mx-auto">
-        <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">PÚBLICO-ALVO</span>
+        <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">PARA QUEM É A NEUROADS</span>
         <h2 className="font-head text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-          Para quem é a NeuroAds?
+          Oportunidades
         </h2>
         <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
           Unifique dados, automatize funis e coloque agentes de IA para otimizar suas conversões comerciais todos os dias.
@@ -1336,10 +1336,10 @@ function TargetAudienceSection() {
         {cards.map((card, idx) => (
           <motion.div
             key={card.id}
-            initial={{ opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-40px' }}
-            transition={{ duration: 0.5, delay: idx * 0.09 }}
+            initial={{ opacity: 0, y: 24, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: false, margin: '-60px' }}
+            transition={{ duration: 0.55, delay: idx * 0.09, ease: [0.22, 1, 0.36, 1] }}
             className="relative overflow-hidden rounded-[24px] min-h-[250px]"
             style={{ backgroundColor: card.bg }}
           >
@@ -1378,7 +1378,7 @@ function TargetAudienceSection() {
 
               {/* CTA */}
               <a
-                href="#"
+                href="#demonstracao"
                 className="inline-flex items-center gap-1.5 text-sm font-bold transition-all duration-200 hover:gap-2.5 group"
                 style={{ color: card.accentColor }}
               >
@@ -1506,7 +1506,7 @@ function AgentsGridSection() {
       <div className="space-y-4 max-w-2xl mx-auto">
         <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">RECURSOS PRINCIPAIS</span>
         <h2 className="font-head text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-          Projetamos uma experiência de marketing focada em lucro
+          Agentes IA - Inteligência | Automações | Estratégia
         </h2>
         <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
           Nossos Agentes de IA operam integrados ao seu ecossistema comercial, analisando dados, automatizando lances e executando tarefas complexas 24/7.
@@ -2041,12 +2041,6 @@ function ComparisonSection() {
           <p className="text-slate-650 text-xs md:text-sm leading-relaxed">
             Sua operação comercial precisa de dados integrados de marketing e vendas rodando em tempo real, sem planilhas confusas e sem ter que delegar tarefas manualmente.
           </p>
-          <Link 
-            href="/cadastro" 
-            className="inline-flex items-center font-bold text-xs bg-black hover:bg-neutral-800 text-white px-6 py-3.5 rounded-xl transition-all shadow-sm"
-          >
-            Conectar Minhas Campanhas
-          </Link>
         </div>
 
         <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-3 gap-6">
