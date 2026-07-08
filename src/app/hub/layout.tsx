@@ -390,7 +390,113 @@ function getMobilePageTitle(pathname: string): string {
   return 'Hub';
 }
 
+/* ─── Notifications panel content (shared: desktop popover + mobile sheet) ── */
+function NotificationsPanelContent() {
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useHub();
+
+  return (
+    <>
+      <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[13px] font-black text-[#0f172a] uppercase tracking-wide">Notificações</span>
+          {unreadCount > 0 && (
+            <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-orange-500/10 text-[#FF6A00]">{unreadCount}</span>
+          )}
+        </div>
+        {unreadCount > 0 && (
+          <button
+            onClick={() => markAllAsRead()}
+            className="text-[11px] font-bold text-[#FF6A00] hover:text-[#ff8f3a] flex items-center gap-1 transition-colors"
+          >
+            <CheckCheck size={13} />
+            <span>Lidas</span>
+          </button>
+        )}
+      </div>
+
+      <div className="mt-3 max-h-72 overflow-y-auto space-y-2.5 pr-0.5">
+        {notifications.length === 0 ? (
+          <div className="py-8 text-center text-slate-400">
+            <Info size={20} className="mx-auto text-slate-300 mb-2" />
+            <p className="text-[12px] font-bold">Nenhuma notificação por aqui.</p>
+          </div>
+        ) : (
+          notifications.map((n) => {
+            const NotifIcon = n.type === 'success' ? Check : n.type === 'warning' ? AlertTriangle : Info;
+            const typeColor = n.type === 'success' ? 'text-emerald-600 bg-emerald-500/5' : n.type === 'warning' ? 'text-amber-600 bg-amber-500/5' : 'text-blue-600 bg-blue-500/5';
+            return (
+              <div
+                key={n.id}
+                onClick={() => !n.read && markAsRead(n.id)}
+                className={`flex gap-3 p-2.5 rounded-xl border border-white/50 bg-[#eef2f7] transition-all cursor-pointer ${
+                  n.read
+                    ? 'opacity-70 hover:opacity-100 shadow-[1px_1px_2px_#d1d9e6,_-1px_-1px_2px_#ffffff]'
+                    : 'shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border-orange-500/10'
+                }`}
+              >
+                <div className={`w-7 h-7 rounded-lg shrink-0 flex items-center justify-center border border-white/60 ${typeColor}`}>
+                  <NotifIcon size={13} />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className={`text-[12px] font-black text-slate-800 ${!n.read ? 'text-[#FF6A00]' : ''}`}>{n.title}</p>
+                  <p className="text-[11.5px] font-semibold text-slate-500 leading-snug mt-0.5">{n.message}</p>
+                  <p className="text-[9px] font-bold text-slate-400 mt-1">
+                    {new Date(n.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </>
+  );
+}
+
+/* ─── Mobile Notifications Panel (sheet below the mobile header) ────── */
+function MobileNotificationsPanel() {
+  const { isNotificationsOpen, setIsNotificationsOpen } = useHub();
+
+  return (
+    <AnimatePresence>
+      {isNotificationsOpen && (
+        <>
+          <motion.div
+            key="mobile-notif-backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px] lg:hidden"
+            onClick={() => setIsNotificationsOpen(false)}
+            aria-hidden="true"
+          />
+          <motion.div
+            key="mobile-notif-panel"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.18 }}
+            className="fixed top-16 left-3 right-3 z-50 lg:hidden rounded-[24px] border border-white/80 bg-[#eef2f7] p-4 shadow-[5px_5px_15px_#d1d9e6,_-5px_-5px_15px_#ffffff]"
+            role="dialog"
+            aria-label="Notificações"
+          >
+            <NotificationsPanelContent />
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>
+  );
+}
+
 /* ─── Mobile Header (visible only on mobile) ────────────────────────── */
+const PERIOD_OPTIONS = [
+  { label: 'Últimos 7 dias',  value: '7'  },
+  { label: 'Últimos 15 dias', value: '15' },
+  { label: 'Últimos 30 dias', value: '30' },
+  { label: 'Últimos 90 dias', value: '90' },
+];
+
 function MobileHeader({
   pathname,
   onMenuOpen,
@@ -398,24 +504,89 @@ function MobileHeader({
   pathname: string;
   onMenuOpen: () => void;
 }) {
-  const { unreadCount, isNotificationsOpen, setIsNotificationsOpen } = useHub();
+  const { unreadCount, isNotificationsOpen, setIsNotificationsOpen, selectedPeriod, setSelectedPeriod } = useHub();
   const pageTitle = getMobilePageTitle(pathname);
+  const isDashboard = pathname === '/hub';
+
+  const [isPeriodOpen, setIsPeriodOpen] = useState(false);
+  const periodRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isPeriodOpen) return;
+    const handler = (e: MouseEvent | TouchEvent) => {
+      if (periodRef.current && !periodRef.current.contains(e.target as Node)) {
+        setIsPeriodOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    document.addEventListener('touchstart', handler);
+    return () => {
+      document.removeEventListener('mousedown', handler);
+      document.removeEventListener('touchstart', handler);
+    };
+  }, [isPeriodOpen]);
 
   return (
-    <header className="flex lg:hidden items-center gap-3 px-4 h-14 border-b border-white/40 bg-[#eef2f7] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+    <header className="flex lg:hidden items-center gap-2 px-3 h-14 border-b border-white/40 bg-[#eef2f7] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
       <button
         onClick={onMenuOpen}
-        className="w-11 h-11 rounded-xl flex items-center justify-center text-[#475569] border border-white/40 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
+        className="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center text-[#475569] border border-white/40 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
         aria-label="Abrir menu de navegação"
       >
         <Menu size={18} />
       </button>
 
-      <span className="flex-1 text-[15px] font-black text-[#1e293b] truncate">{pageTitle}</span>
+      <span className="flex-1 min-w-0 text-[15px] font-black text-[#1e293b] truncate">{pageTitle}</span>
+
+      {/* Period selector — only on Dashboard (parity with desktop TopBar) */}
+      {isDashboard && (
+        <div className="relative shrink-0" ref={periodRef}>
+          <button
+            onClick={() => setIsPeriodOpen(prev => !prev)}
+            className={`flex items-center gap-1 px-3 h-11 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-black text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150 ${isPeriodOpen ? 'text-[#FF6A00]' : ''}`}
+            aria-label="Selecionar período"
+            aria-expanded={isPeriodOpen}
+          >
+            <span>{selectedPeriod}d</span>
+            <ChevronDown size={12} className={`text-slate-400 transition-transform duration-200 ${isPeriodOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {isPeriodOpen && (
+            <div className="absolute right-0 top-full mt-2 z-[999] w-52 rounded-2xl border border-white/80 bg-[#eef2f7] p-2.5 shadow-[5px_5px_15px_#d1d9e6,_-5px_-5px_15px_#ffffff]">
+              <div className="space-y-1">
+                {PERIOD_OPTIONS.map((p) => {
+                  const active = p.value === selectedPeriod;
+                  return (
+                    <button
+                      key={p.value}
+                      onClick={() => { setSelectedPeriod(p.value); setIsPeriodOpen(false); }}
+                      className={`flex w-full items-center justify-between px-3 py-2.5 rounded-xl text-[12px] font-bold text-left transition-all ${
+                        active
+                          ? 'text-[#FF6A00] bg-slate-100/60 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                          : 'text-[#475569] hover:bg-slate-200/50'
+                      }`}
+                    >
+                      <span>{p.label}</span>
+                      {active && <Check size={13} />}
+                    </button>
+                  );
+                })}
+                <button
+                  onClick={() => { setIsPeriodOpen(false); window.location.reload(); }}
+                  className="flex w-full items-center gap-2 px-3 py-2.5 rounded-xl text-[12px] font-bold text-left text-[#475569] hover:bg-slate-200/50 border-t border-slate-200/70 mt-1 pt-3 transition-all"
+                >
+                  <RefreshCw size={12} className="text-slate-400" />
+                  <span>Atualizar dados</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <button
         onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-        className="relative w-11 h-11 rounded-xl border border-white/40 bg-[#eef2f7] flex items-center justify-center text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
+        className="relative w-11 h-11 shrink-0 rounded-xl border border-white/40 bg-[#eef2f7] flex items-center justify-center text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
         aria-label="Notificações"
       >
         <Bell size={18} />
@@ -598,12 +769,9 @@ function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: stri
   const {
     selectedPeriod,
     setSelectedPeriod,
-    notifications,
     unreadCount,
     isNotificationsOpen,
     setIsNotificationsOpen,
-    markAsRead,
-    markAllAsRead,
   } = useHub();
 
   const [isPeriodOpen, setIsPeriodOpen] = useState(false);
@@ -618,7 +786,10 @@ function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: stri
       if (periodRef.current && !periodRef.current.contains(e.target as Node)) {
         setIsPeriodOpen(false);
       }
-      if (bellRef.current && !bellRef.current.contains(e.target as Node)) {
+      // On mobile the notifications state is owned by MobileHeader/MobileNotificationsPanel;
+      // this hidden desktop bell must not close it.
+      const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
+      if (isDesktop && bellRef.current && !bellRef.current.contains(e.target as Node)) {
         setIsNotificationsOpen(false);
       }
     };
@@ -626,12 +797,7 @@ function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: stri
     return () => document.removeEventListener('mousedown', handler);
   }, [setIsNotificationsOpen]);
 
-  const periods = [
-    { label: 'Últimos 7 dias',  value: '7'  },
-    { label: 'Últimos 15 dias', value: '15' },
-    { label: 'Últimos 30 dias', value: '30' },
-    { label: 'Últimos 90 dias', value: '90' },
-  ];
+  const periods = PERIOD_OPTIONS;
 
   const activePeriodLabel = periods.find(p => p.value === selectedPeriod)?.label || 'Últimos 30 dias';
 
@@ -707,59 +873,7 @@ function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: stri
 
           {isNotificationsOpen && (
             <div className="absolute right-0 mt-2 z-[999] w-80 rounded-[24px] border border-white/80 bg-[#eef2f7] p-4 shadow-[5px_5px_15px_#d1d9e6,_-5px_-5px_15px_#ffffff] animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[13px] font-black text-[#0f172a] uppercase tracking-wide">Notificações</span>
-                  {unreadCount > 0 && (
-                    <span className="text-[10px] font-black px-1.5 py-0.5 rounded bg-orange-500/10 text-[#FF6A00]">{unreadCount}</span>
-                  )}
-                </div>
-                {unreadCount > 0 && (
-                  <button
-                    onClick={() => markAllAsRead()}
-                    className="text-[11px] font-bold text-[#FF6A00] hover:text-[#ff8f3a] flex items-center gap-1 transition-colors"
-                  >
-                    <CheckCheck size={13} />
-                    <span>Lidas</span>
-                  </button>
-                )}
-              </div>
-
-              <div className="mt-3 max-h-72 overflow-y-auto space-y-2.5 pr-0.5">
-                {notifications.length === 0 ? (
-                  <div className="py-8 text-center text-slate-400">
-                    <Info size={20} className="mx-auto text-slate-300 mb-2" />
-                    <p className="text-[12px] font-bold">Nenhuma notificação por aqui.</p>
-                  </div>
-                ) : (
-                  notifications.map((n) => {
-                    const NotifIcon = n.type === 'success' ? Check : n.type === 'warning' ? AlertTriangle : Info;
-                    const typeColor = n.type === 'success' ? 'text-emerald-600 bg-emerald-500/5' : n.type === 'warning' ? 'text-amber-600 bg-amber-500/5' : 'text-blue-600 bg-blue-500/5';
-                    return (
-                      <div
-                        key={n.id}
-                        onClick={() => !n.read && markAsRead(n.id)}
-                        className={`flex gap-3 p-2.5 rounded-xl border border-white/50 bg-[#eef2f7] transition-all cursor-pointer ${
-                          n.read
-                            ? 'opacity-70 hover:opacity-100 shadow-[1px_1px_2px_#d1d9e6,_-1px_-1px_2px_#ffffff]'
-                            : 'shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border-orange-500/10'
-                        }`}
-                      >
-                        <div className={`w-7 h-7 rounded-lg shrink-0 flex items-center justify-center border border-white/60 ${typeColor}`}>
-                          <NotifIcon size={13} />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className={`text-[12px] font-black text-slate-800 ${!n.read ? 'text-[#FF6A00]' : ''}`}>{n.title}</p>
-                          <p className="text-[11.5px] font-semibold text-slate-500 leading-snug mt-0.5">{n.message}</p>
-                          <p className="text-[9px] font-bold text-slate-400 mt-1">
-                            {new Date(n.createdAt).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                          </p>
-                        </div>
-                      </div>
-                    );
-                  })
-                )}
-              </div>
+              <NotificationsPanelContent />
             </div>
           )}
         </div>
@@ -810,6 +924,9 @@ function HubLayoutInner({
         {/* Mobile header — hidden on desktop */}
         <MobileHeader pathname={pathname} onMenuOpen={() => setMobileDrawerOpen(true)} />
 
+        {/* Mobile notifications sheet — hidden on desktop */}
+        <MobileNotificationsPanel />
+
         {/* Desktop topbar — hidden on mobile */}
         <TopBar onRefresh={() => window.location.reload()} pathname={pathname} />
 
@@ -821,7 +938,7 @@ function HubLayoutInner({
         ) : (
           <div
             id="hub-scroll-container"
-            className="flex-1 overflow-y-auto px-4 py-4 lg:px-8 lg:py-8 lg:pb-8 relative z-10 mobile-content-area"
+            className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 lg:px-8 lg:py-8 lg:pb-8 relative z-10 mobile-content-area"
             style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
           >
             {children}
