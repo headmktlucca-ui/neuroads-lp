@@ -20,6 +20,7 @@
         "agents": 26,
         "includedExecutions": 200,
         "monthlyCredits": 200,
+        "trialCredits": 20,
         "activeAutomations": 5,
         "adAccounts": 2,
         "hubUsers": 3,

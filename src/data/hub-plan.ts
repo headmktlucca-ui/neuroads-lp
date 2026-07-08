@@ -14,6 +14,11 @@ export const HUB_PLAN = {
   annualPriceCents: 497000,
   monthlyCredits: 200,
   trialDays: 14,
+  /**
+   * Créditos disponíveis durante o teste de 14 dias: suficiente para
+   * experimentar alguns recursos e sentir o valor, incentivando a assinatura.
+   */
+  trialCredits: 20,
   limits: {
     activeAutomations: 5,
     adAccounts: 2,
