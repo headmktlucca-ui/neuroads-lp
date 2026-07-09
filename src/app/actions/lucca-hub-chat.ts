@@ -504,69 +504,84 @@ ${kbBlocks ? `━━━━━━━━━━━━━━━━━━━━━━
     .filter((m) => m.role !== 'system')
     .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
 
+  // ─── Motores ──────────────────────────────────────────────────────────────
+  const runClaude = async (): Promise<string> => {
+    const isOperation = Boolean(context.specialty);
+    const model = isOperation ? MODEL_OPERATION : MODEL_LIGHT;
+
+    // Pesquisa profunda: web search nativo apenas em operações (Sonnet 5)
+    const tools = isOperation
+      ? ([
+          { type: 'web_search_20260209', name: 'web_search', max_uses: 5 },
+        ] as unknown as Anthropic.Messages.ToolUnion[])
+      : undefined;
+
+    const baseParams = {
+      model,
+      max_tokens: isOperation ? 8000 : 2000,
+      system: [
+        {
+          type: 'text' as const,
+          text: staticSystem,
+          cache_control: { type: 'ephemeral' as const },
+        },
+        { type: 'text' as const, text: dynamicSystem },
+      ],
+      ...(tools ? { tools } : {}),
+    };
+
+    let convo = [...claudeMessages];
+    let response = await anthropic.messages.create({ ...baseParams, messages: convo });
+
+    // Ferramentas server-side podem pausar o turno — retoma até 3 vezes
+    let continuations = 0;
+    while (response.stop_reason === 'pause_turn' && continuations < 3) {
+      convo = [
+        ...convo,
+        { role: 'assistant', content: response.content as Anthropic.Messages.ContentBlockParam[] },
+      ];
+      response = await anthropic.messages.create({ ...baseParams, messages: convo });
+      continuations++;
+    }
+
+    const text = response.content
+      .filter((block): block is Anthropic.Messages.TextBlock => block.type === 'text')
+      .map((block) => block.text)
+      .join('');
+    const start = text.indexOf('{');
+    const end = text.lastIndexOf('}');
+    return start >= 0 && end > start ? text.slice(start, end + 1) : '{}';
+  };
+
+  const runOpenAI = async (): Promise<string> => {
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: `${staticSystem}\n\n━━━\n${dynamicSystem}` },
+        ...messages,
+      ],
+      temperature: 0.55,
+      max_tokens: 1600,
+      response_format: { type: 'json_object' },
+    });
+    return completion.choices[0]?.message?.content || '{}';
+  };
+
   try {
     let raw = '';
 
     if (process.env.ANTHROPIC_API_KEY) {
-      // ─── Motor principal: Claude, com roteamento por classe ──────────────
-      const isOperation = Boolean(context.specialty);
-      const model = isOperation ? MODEL_OPERATION : MODEL_LIGHT;
-
-      // Pesquisa profunda: web search nativo apenas em operações (Sonnet 5)
-      const tools = isOperation
-        ? ([
-            { type: 'web_search_20260209', name: 'web_search', max_uses: 5 },
-          ] as unknown as Anthropic.Messages.ToolUnion[])
-        : undefined;
-
-      const baseParams = {
-        model,
-        max_tokens: isOperation ? 8000 : 2000,
-        system: [
-          {
-            type: 'text' as const,
-            text: staticSystem,
-            cache_control: { type: 'ephemeral' as const },
-          },
-          { type: 'text' as const, text: dynamicSystem },
-        ],
-        ...(tools ? { tools } : {}),
-      };
-
-      let convo = [...claudeMessages];
-      let response = await anthropic.messages.create({ ...baseParams, messages: convo });
-
-      // Ferramentas server-side podem pausar o turno — retoma até 3 vezes
-      let continuations = 0;
-      while (response.stop_reason === 'pause_turn' && continuations < 3) {
-        convo = [
-          ...convo,
-          { role: 'assistant', content: response.content as Anthropic.Messages.ContentBlockParam[] },
-        ];
-        response = await anthropic.messages.create({ ...baseParams, messages: convo });
-        continuations++;
+      try {
+        raw = await runClaude();
+      } catch (claudeErr) {
+        // Sem créditos, rate limit ou indisponibilidade: não derruba o chat —
+        // cai para o motor legado quando disponível.
+        console.error('[chatWithLuccaHub] Claude indisponível, tentando fallback OpenAI:', claudeErr);
+        if (!process.env.OPENAI_API_KEY) throw claudeErr;
+        raw = await runOpenAI();
       }
-
-      const text = response.content
-        .filter((block): block is Anthropic.Messages.TextBlock => block.type === 'text')
-        .map((block) => block.text)
-        .join('');
-      const start = text.indexOf('{');
-      const end = text.lastIndexOf('}');
-      raw = start >= 0 && end > start ? text.slice(start, end + 1) : '{}';
     } else {
-      // ─── Fallback legado: OpenAI ──────────────────────────────────────────
-      const completion = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: `${staticSystem}\n\n━━━\n${dynamicSystem}` },
-          ...messages,
-        ],
-        temperature: 0.55,
-        max_tokens: 1600,
-        response_format: { type: 'json_object' },
-      });
-      raw = completion.choices[0]?.message?.content || '{}';
+      raw = await runOpenAI();
     }
 
     const parsed = JSON.parse(raw) as {
