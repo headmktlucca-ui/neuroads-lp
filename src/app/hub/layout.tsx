@@ -34,37 +34,52 @@ import {
   Sparkles,
   Users,
 } from 'lucide-react';
+import {
+  IconDashboard3D,
+  IconBrain3D,
+  IconFunnel3D,
+  IconAutomation3D,
+  IconSparkles3D,
+  IconPlug3D,
+  IconBook3D,
+  IconGear3D,
+  IconChart3D,
+  IconTarget3D,
+  IconRefresh3D,
+} from '../../components/hub/HubUiIcons3D';
 
 
 /* ─── Types ────────────────────────────────────────────────────────── */
+type NavIconComponent = React.ComponentType<{ size?: number; className?: string }>;
+
 type NavItem = {
-  icon: LucideIcon;
+  icon: NavIconComponent;
   label: string;
   href: string;
   avatarImage?: string; // optional image to use instead of icon
   children?: NavItem[];
 };
 
-/* ─── Nav items ────────────────────────────────────────────────────── */
+/* ─── Nav items — ícones 3D (HubUiIcons3D) ─────────────────────────── */
 const NAV_ITEMS: NavItem[] = [
-  { icon: LayoutDashboard, label: 'Dashboard',           href: '/hub'                                    },
+  { icon: IconDashboard3D, label: 'Dashboard',           href: '/hub'                                    },
   {
-    icon: Brain,
+    icon: IconBrain3D,
     label: 'Agentes IA',
     href: '/hub/laboratorio-agentes',
     children: [
-      { icon: Sparkles,     label: 'Atração',    href: '/hub/funil/atracao'    },
-      { icon: BarChart2,    label: 'Engajamento', href: '/hub/funil/engajamento' },
-      { icon: ChevronRight, label: 'Conversão',  href: '/hub/funil/conversao'  },
-      { icon: RefreshCw,    label: 'Retenção',   href: '/hub/funil/retencao'   },
+      { icon: IconSparkles3D, label: 'Atração',    href: '/hub/funil/atracao'    },
+      { icon: IconChart3D,    label: 'Engajamento', href: '/hub/funil/engajamento' },
+      { icon: IconTarget3D,   label: 'Conversão',  href: '/hub/funil/conversao'  },
+      { icon: IconRefresh3D,  label: 'Retenção',   href: '/hub/funil/retencao'   },
     ],
   },
-  { icon: Layers,          label: 'Funil de Vendas',     href: '/hub/funil-vendas'                       },
-  { icon: Cpu,             label: 'Automações',           href: '/hub/automacoes'                         },
-  { icon: Sparkles,        label: 'Oportunidades',        href: '/hub/explorar'                           },
-  { icon: Plug2,           label: 'Integrações',          href: '/hub/integracoes'                        },
-  { icon: BookOpen,     label: 'Base de Conhecimento', href: '/hub/configuracoes?tab=conhecimento'         },
-  { icon: Settings,     label: 'Configurações',        href: '/hub/configuracoes'                          },
+  { icon: IconFunnel3D,     label: 'Funil de Vendas',     href: '/hub/funil-vendas'                       },
+  { icon: IconAutomation3D, label: 'Automações',           href: '/hub/automacoes'                         },
+  { icon: IconSparkles3D,   label: 'Oportunidades',        href: '/hub/explorar'                           },
+  { icon: IconPlug3D,       label: 'Integrações',          href: '/hub/integracoes'                        },
+  { icon: IconBook3D,       label: 'Base de Conhecimento', href: '/hub/configuracoes?tab=conhecimento'     },
+  { icon: IconGear3D,       label: 'Configurações',        href: '/hub/configuracoes'                      },
 ];
 
 /* ─── Single nav link ───────────────────────────────────────────────── */
@@ -124,7 +139,7 @@ function NavLink({
             borderLeft:  isActive ? '2px solid #FF6A00' : '2px solid transparent',
           }}
         >
-          <ParentIcon size={16} className={`transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-[#FF6A00]' : 'text-slate-500'}`} />
+          <ParentIcon size={26} className={`transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-[#FF6A00]' : 'text-slate-500'}`} />
           <span className="flex-1">{item.label}</span>
           {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A00]" />}
           <ChevronDown
@@ -190,7 +205,7 @@ function NavLink({
           />
         </div>
       ) : (
-        <LeafIcon size={depth === 1 ? 13 : 16} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-600' : 'text-[#FF6A00]') : 'text-slate-500'}`} />
+        <LeafIcon size={depth === 1 ? 20 : 26} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-600' : 'text-[#FF6A00]') : 'text-slate-500'}`} />
       )}
       <span className="flex-1">{item.label}</span>
       {isLucca && (
@@ -229,50 +244,36 @@ function SidebarContent({
 }) {
   return (
     <>
-      {/* User card — editorial two-zone layout */}
-      <div className="px-4 pt-5 pb-4 border-b border-white/40 shrink-0">
-        <div className="flex items-stretch gap-0 rounded-2xl overflow-hidden border border-white/60 shadow-[3px_3px_8px_#d1d9e6,_-3px_-3px_8px_#ffffff] bg-[#eef2f7]">
-
-          {/* LEFT — photo zone (square crop, ~40% width) */}
-          <div className="relative w-[72px] shrink-0 overflow-hidden" style={{ minHeight: 72 }}>
+      {/* Top profile header: Avatar + Company name, and Greeting below */}
+      <div className="px-6 pt-7 pb-5 border-b border-slate-200/40 shrink-0 flex flex-col gap-3">
+        {/* Top row: Avatar + Company name */}
+        <div className="flex items-center justify-between gap-3">
+          {/* Avatar with subtle white border ring and soft shadow */}
+          <div className="relative w-9 h-9 rounded-full overflow-hidden shrink-0 ring-2 ring-white shadow-[0_4px_10px_rgba(0,0,0,0.06),_0_1px_3px_rgba(0,0,0,0.04)] bg-gradient-to-tr from-[#FF6A00] to-[#FF8805] flex items-center justify-center text-white font-black text-[13px] select-none">
             {userPhoto ? (
-              <Image
-                src={userPhoto}
-                alt=""
-                fill
-                className="object-cover object-center"
-                sizes="72px"
-                priority
-              />
+              <Image src={userPhoto} alt="" fill className="object-cover" sizes="36px" />
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center" style={{ background: 'linear-gradient(160deg, #FF4D00 0%, #FF8805 100%)' }}>
-                <span className="text-white text-[22px] font-black select-none">
-                  {(userName.charAt(0) || 'N').toUpperCase()}
-                </span>
-              </div>
+              (userName.charAt(0) || 'N').toUpperCase()
             )}
-            {/* Warm edge fade into divider */}
-            <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, transparent 55%, rgba(238,242,247,0.7) 85%, #eef2f7 100%)' }} />
           </div>
-
-          {/* Vertical divider — 1px, subtle */}
-          <div className="w-px bg-gradient-to-b from-transparent via-slate-300/60 to-transparent shrink-0 my-3" />
-
-          {/* RIGHT — text zone */}
-          <div className="flex flex-col justify-center px-3.5 py-3 min-w-0 flex-1">
-            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.18em] leading-none mb-1.5">
-              {getGreeting()}
-            </p>
-            <p className="text-[14px] font-black text-[#0f172a] truncate leading-none tracking-tight">
-              {userName}
-            </p>
-            {companyName && (
-              <p className="text-[11px] font-bold text-[#FF6A00] truncate leading-tight mt-1.5 tracking-tight">
+          {companyName && (
+            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/60 border border-slate-200/50 max-w-[120px] truncate shadow-[inset_1px_1px_2px_rgba(0,0,0,0.02)]">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider truncate">
                 {companyName}
-              </p>
-            )}
-          </div>
+              </span>
+            </div>
+          )}
+        </div>
 
+        {/* Bottom row: Greeting + Username with professional typographic scale */}
+        <div className="text-left mt-1.5 pl-0.5">
+          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
+            {getGreeting()}
+          </p>
+          <h4 className="text-[15px] font-black text-slate-800 tracking-tight leading-tight truncate">
+            {userName.split(' ')[0]}!
+          </h4>
         </div>
       </div>
 
@@ -712,7 +713,7 @@ function MobileDrawer({
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-[11px] font-bold text-slate-400 leading-none mb-0.5">{getGreeting()},</p>
-                  <p className="text-[13px] font-black text-[#1e293b] truncate leading-tight">{userName}</p>
+                  <p className="text-[13px] font-black text-[#1e293b] truncate leading-tight">{userName.split(' ')[0]}</p>
                   {companyName && (
                     <p className="text-[11px] font-semibold text-[#FF6A00] truncate leading-tight mt-0.5">{companyName}</p>
                   )}

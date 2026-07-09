@@ -2,9 +2,9 @@
 
 import { useEffect, useState, useCallback } from 'react';
 import {
-  Bot, ChevronRight, Clock, Download, FileText,
-  FolderOpen, MessageSquare, Search, Trash2, X, ChevronDown,
+  ChevronRight, Clock, Download, Search, Trash2, X, ChevronDown,
 } from 'lucide-react';
+import { IconBot3D, IconChatBubble3D, IconFolder3D, IconFileDoc3D } from './HubUiIcons3D';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import { getFirebaseDb } from '../../lib/firebase';
 import {
@@ -41,8 +41,8 @@ function fmtDateShort(ms: number): string {
 function EmptyPane({ label }: { label: string }) {
   return (
     <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-16">
-      <div className="w-12 h-12 rounded-2xl bg-[#eef2f7] border border-white/50 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] flex items-center justify-center">
-        <FolderOpen className="w-5 h-5 text-slate-400" />
+      <div className="w-12 h-12 rounded-2xl bg-white border border-slate-200 shadow-[3px_3px_6px_#dfe5ee,_-3px_-3px_6px_#ffffff] flex items-center justify-center">
+        <IconFolder3D size={26} />
       </div>
       <p className="text-[13px] font-semibold text-slate-500">{label}</p>
     </div>
@@ -250,10 +250,10 @@ export default function KnowledgeExplorer() {
   // ─── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex gap-0 h-[600px] rounded-3xl overflow-hidden border border-white/80 bg-[#eef2f7] shadow-[8px_8px_20px_#c8d0dc,_-8px_-8px_20px_#ffffff]">
+    <div className="flex gap-0 h-[600px] rounded-3xl overflow-hidden border border-slate-200 bg-white shadow-[8px_8px_20px_#dfe5ee,_-8px_-8px_20px_#ffffff]">
 
       {/* ── Left sidebar ── */}
-      <div className="w-64 shrink-0 flex flex-col border-r border-slate-200 bg-[#eef2f7]">
+      <div className="w-64 shrink-0 flex flex-col border-r border-slate-200 bg-white">
 
         {/* Search */}
         <div className="p-3 border-b border-slate-200">
@@ -278,7 +278,7 @@ export default function KnowledgeExplorer() {
                 : 'text-slate-500 hover:text-slate-700'
             }`}
           >
-            <Bot className="w-3.5 h-3.5" />
+            <IconBot3D size={16} />
             Agentes
             {reports.length > 0 && (
               <span className="bg-[#FF6B00]/10 text-[#FF6B00] text-[9px] font-black px-1.5 py-0.5 rounded-full border border-[#FF6B00]/20">{reports.length}</span>
@@ -292,7 +292,7 @@ export default function KnowledgeExplorer() {
                 : 'text-slate-500 hover:text-slate-700'
             }`}
           >
-            <MessageSquare className="w-3.5 h-3.5" />
+            <IconChatBubble3D size={16} />
             Chats
             {chatSessions.length > 0 && (
               <span className="bg-[#FF6B00]/10 text-[#FF6B00] text-[9px] font-black px-1.5 py-0.5 rounded-full border border-[#FF6B00]/20">{chatSessions.length}</span>
@@ -323,7 +323,7 @@ export default function KnowledgeExplorer() {
                         ? <ChevronDown className="w-3.5 h-3.5 text-[#FF6B00] shrink-0" />
                         : <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#FF6B00] shrink-0" />
                       }
-                      <Bot className="w-3.5 h-3.5 text-[#FF6B00]/80 shrink-0" />
+                      <IconBot3D size={15} />
                       <span className="text-[12px] font-bold text-slate-700 truncate flex-1">{agentKey}</span>
                       <span className="text-[10px] font-bold text-slate-400 bg-[#eef2f7] px-1.5 py-0.5 rounded-full shadow-[1px_1px_2px_#d1d9e6,_-1px_-1px_2px_#ffffff]">{agentReports.length}</span>
                     </button>
@@ -338,7 +338,7 @@ export default function KnowledgeExplorer() {
                             isSelected ? 'bg-[#FF6B00]/10 border-l-2 border-[#FF6B00] shadow-[inset_1px_0_3px_rgba(255,107,0,0.1)]' : 'hover:bg-slate-200/40 border-l-2 border-transparent'
                           }`}
                         >
-                          <FileText className={`w-3 h-3 mt-0.5 shrink-0 ${isSelected ? 'text-[#FF6B00]' : 'text-slate-400'}`} />
+                          <span className="mt-0.5 shrink-0"><IconFileDoc3D size={13} /></span>
                           <div className="min-w-0">
                             <p className={`text-[11px] font-semibold truncate ${isSelected ? 'text-[#0f172a]' : 'text-slate-600'}`}>
                               {r.reportTitle}
@@ -366,7 +366,7 @@ export default function KnowledgeExplorer() {
                       isSelected ? 'bg-[#FF6B00]/10 border-l-2 border-[#FF6B00] shadow-[inset_1px_0_3px_rgba(255,107,0,0.1)]' : 'hover:bg-slate-200/40 border-l-2 border-transparent'
                     }`}
                   >
-                    <MessageSquare className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${isSelected ? 'text-[#FF6B00]' : 'text-slate-400'}`} />
+                    <span className="mt-0.5 shrink-0"><IconChatBubble3D size={15} /></span>
                     <div className="min-w-0">
                       <p className={`text-[12px] font-semibold truncate ${isSelected ? 'text-[#0f172a]' : 'text-slate-600'}`}>{s.title}</p>
                       <p className="text-[10px] text-slate-400 font-semibold">{fmtDateShort(s.updatedAtMs)} · {s.messages.length} msgs</p>
@@ -380,11 +380,11 @@ export default function KnowledgeExplorer() {
       </div>
 
       {/* ── Right viewer panel ── */}
-      <div className="flex-1 min-w-0 bg-[#eef2f7]">
+      <div className="flex-1 min-w-0 bg-white">
         {!selected ? (
           <div className="flex flex-col items-center justify-center h-full gap-4 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-[#eef2f7] border border-white/50 shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff] flex items-center justify-center">
-              <FolderOpen className="w-7 h-7 text-[#FF6B00]/50" />
+            <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 shadow-[5px_5px_10px_#dfe5ee,_-5px_-5px_10px_#ffffff] flex items-center justify-center">
+              <IconFolder3D size={36} />
             </div>
             <div>
               <p className="text-[14px] font-black text-slate-600">Selecione um item</p>

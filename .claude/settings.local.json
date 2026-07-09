@@ -72,7 +72,12 @@
       "Bash(ffmpeg -version)",
       "Bash(curl -s -o /dev/null -w \"funil-vendas: %{http_code}\\\\n\" http://localhost:3000/hub/funil-vendas)",
       "Bash(git checkout *)",
-      "Bash(git merge *)"
+      "Bash(git merge *)",
+      "Bash(curl -s -o /dev/null -w \"assistente-ia: %{http_code}\\\\n\" http://localhost:3000/hub/assistente-ia)",
+      "Skill(claude-api)",
+      "Skill(claude-api:*)",
+      "Bash(npm install *)",
+      "Bash(node -e \"console.log\\(require\\('@anthropic-ai/sdk/package.json'\\).version\\)\")"
     ]
   },
   "hooks": {

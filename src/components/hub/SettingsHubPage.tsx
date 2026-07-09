@@ -5,12 +5,14 @@ import { useSearchParams, useRouter } from 'next/navigation';
 
 const KnowledgeExplorer = lazy(() => import('./KnowledgeExplorer'));
 import { doc, setDoc } from 'firebase/firestore';
+import { updateProfile } from 'firebase/auth';
 import { useAuth } from '../../context/AuthContext';
 import {
   User, Mail, Phone, Crown, Activity, Workflow, Fingerprint,
   ShieldAlert, Trash2, Building2, Globe, CreditCard, DollarSign,
   ShieldCheck, Calendar, Gauge
 } from 'lucide-react';
+import { IconUserBadge3D } from './HubUiIcons3D';
 import { getFirebaseDb } from '../../lib/firebase';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getHubProfileSummary } from '../../lib/hub-profile';
@@ -36,7 +38,7 @@ const DEFAULT_COMPANY_FORM = {
 };
 
 const SETTINGS_LABEL = "text-[10px] font-black uppercase tracking-widest text-slate-400";
-const SETTINGS_PANEL = "hub-neu-card p-5";
+const SETTINGS_PANEL = "hub-neu-card p-5 !bg-white";
 const SETTINGS_INPUT = "w-full h-[46px] rounded-xl border border-white/30 bg-[#eef2f7] px-4 text-sm font-semibold text-slate-800 shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-colors focus:border-[#FF6A00] focus:bg-white focus:outline-none focus:ring-4 focus:ring-[#FF6A00]/10 placeholder:text-slate-400 placeholder:font-medium";
 const SETTINGS_PRIMARY_BUTTON = "inline-flex h-[46px] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#FF8805] px-6 text-xs font-black uppercase tracking-widest text-white shadow-[0_4px_12px_rgba(255,106,0,0.25)] transition-all hover:brightness-105 active:scale-95 disabled:pointer-events-none disabled:opacity-50";
 
@@ -49,6 +51,8 @@ export default function SettingsHubPage() {
   const activeTab = searchParams.get('tab') || 'perfil';
 
   // Profile State
+  const [displayName, setDisplayName] = useState('');
+  const [nameSaved, setNameSaved] = useState(false);
   const [whatsApp, setWhatsApp] = useState('');
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
@@ -135,11 +139,36 @@ export default function SettingsHubPage() {
       } catch {}
     }
     setWhatsApp(nextWhatsapp);
+    setDisplayName((current) => current || user.displayName || readString(profileRecord?.displayName ?? profileRecord?.name));
   }, [user, profile]);
 
   // Handlers
   const handleTabChange = (tab: string) => {
     router.replace(`/hub/configuracoes?tab=${tab}`, { scroll: false });
+  };
+
+  const handleSaveName = async () => {
+    if (!user) return;
+    const normalizedName = displayName.trim();
+    if (!normalizedName) {
+      alert('Informe um nome válido.');
+      return;
+    }
+    try {
+      // Atualiza o displayName no Firebase Auth e replica no Firestore.
+      await updateProfile(user, { displayName: normalizedName });
+      const db = getFirebaseDb();
+      await setDoc(doc(db, 'users', user.uid), {
+        displayName: normalizedName,
+        name: normalizedName,
+        updatedAt: Date.now(),
+      }, { merge: true });
+      setNameSaved(true);
+      setTimeout(() => setNameSaved(false), 2200);
+    } catch (error) {
+      console.warn('Falha ao salvar nome:', error);
+      alert('Não foi possível salvar o nome.');
+    }
   };
 
   const handleSaveWhatsApp = async () => {
@@ -258,8 +287,8 @@ export default function SettingsHubPage() {
       {/* Header */}
       <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-slate-500/10 border border-slate-300 text-slate-500">
-            <User className="h-6 w-6" />
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white border border-slate-200">
+            <IconUserBadge3D size={30} />
           </div>
           <div>
             <h1 className="text-xl font-black tracking-tight text-[#0f172a] leading-none">
@@ -302,11 +331,22 @@ export default function SettingsHubPage() {
         {activeTab === 'perfil' && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className={SETTINGS_PANEL}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+              <div className="flex items-center gap-1.5 text-slate-400 mb-1.5">
                 <User size={13} />
                 <span className={SETTINGS_LABEL}>Nome</span>
+                {nameSaved && <span className="text-[10px] font-black text-emerald-600 ml-auto">✓ Salvo</span>}
               </div>
-              <p className="text-sm font-bold text-slate-800">{user.displayName || 'Não informado'}</p>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <input
+                  value={displayName}
+                  onChange={(e) => setDisplayName(e.target.value)}
+                  placeholder="Seu nome completo"
+                  className={SETTINGS_INPUT}
+                />
+                <button type="button" onClick={handleSaveName} className={SETTINGS_PRIMARY_BUTTON}>
+                  Salvar
+                </button>
+              </div>
             </div>
             <div className={SETTINGS_PANEL}>
               <div className="flex items-center gap-1.5 text-slate-400 mb-1">
@@ -380,7 +420,7 @@ export default function SettingsHubPage() {
         )}
 
         {activeTab === 'empresa' && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 p-6 rounded-3xl border border-white/50 bg-[#eef2f7] shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff]">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 p-6 rounded-3xl border border-slate-200 bg-white shadow-[5px_5px_10px_#dfe5ee,_-5px_-5px_10px_#ffffff]">
             <div className="sm:col-span-2">
               <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
                 <Building2 size={13} />
@@ -466,7 +506,7 @@ export default function SettingsHubPage() {
         )}
 
         {activeTab === 'financeiro' && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 p-6 rounded-3xl border border-white/50 bg-[#eef2f7] shadow-[5px_5px_10px_#d1d9e6,_-5px_-5px_10px_#ffffff]">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 p-6 rounded-3xl border border-slate-200 bg-white shadow-[5px_5px_10px_#dfe5ee,_-5px_-5px_10px_#ffffff]">
             <div className={SETTINGS_PANEL}>
               <div className="flex items-center gap-1.5 text-slate-400 mb-1">
                 <Crown size={13} />
