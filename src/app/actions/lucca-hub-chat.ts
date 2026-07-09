@@ -3,8 +3,8 @@
 import OpenAI from 'openai';
 import { getAdminDb } from '../../lib/firebase-admin';
 import { getTeamAgentById, TEAM_AGENTS } from '../../data/team-agents';
-import { agents as allSpecialties } from '../../data/agents';
 import { describeConnections } from '../../lib/connectors';
+import { buildOperationBlock } from '../../lib/operation-prompt';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
@@ -45,6 +45,8 @@ export type LuccaLeftPanelData = {
   tableRows?: Array<Record<string, string>>;
   analysisItems?: string[];
   analysisTitle?: string;
+  /** Fontes efetivamente usadas na geração (rastreabilidade — protocolo de operação) */
+  sources?: string[];
 };
 
 /* ══════════════════════════════════════════════════════════════════
@@ -324,17 +326,6 @@ function buildTeamRoster(excludeId?: string): string {
     .join('\n');
 }
 
-function buildSpecialtyBlock(specialtyTitle: string | undefined, connected: string[]): string {
-  if (!specialtyTitle) return '';
-  const spec = allSpecialties.find((s) => s.title === specialtyTitle);
-  if (!spec) return '';
-
-  return `OPERAÇÃO ATIVA: ${spec.title}
-Escopo da operação: ${spec.longDescription}
-${spec.heroDescription ? `Entrega esperada: ${spec.heroDescription}` : ''}
-Conduza toda a conversa focado em executar esta operação de ponta a ponta, usando os canais conectados (${connected.length > 0 ? connected.join(', ') : 'nenhum — oriente a conexão'}) e a Base de Conhecimento como fontes.`;
-}
-
 function buildAgentIdentity(agentId: string | undefined): string {
   const agent = getTeamAgentById(agentId || 'ulisses');
 
@@ -412,7 +403,11 @@ export async function chatWithLuccaHub(
   const kbBlocks = [reportsContext, chatContext, ga4Context].filter(Boolean).join('\n\n');
   const { block: dataAccessBlock, hasRealData } = buildDataAccessBlock(connected, disconnected);
   const agentIdentity = buildAgentIdentity(context.agentId);
-  const specialtyBlock = buildSpecialtyBlock(context.specialty, connected);
+  const specialtyBlock = buildOperationBlock({
+    specialtyTitle: context.specialty,
+    connected,
+    disconnected,
+  });
 
   // ─── System prompt ────────────────────────────────────────────────────────
   const systemPrompt: ChatMessage = {
@@ -476,7 +471,8 @@ FORMATO DE SAÍDA — JSON OBRIGATÓRIO E VÁLIDO:
     "tableHeaders": ["Col1", "Col2"] ou null,
     "tableRows": [{"Col1": "valor", "Col2": "valor"}] ou null (máx 6 linhas — apenas dados reais ou etapas do plano),
     "analysisTitle": "Análise",
-    "analysisItems": ["insight 1 com o porquê", "insight 2", "oportunidade priorizada"]
+    "analysisItems": ["insight 1 com o porquê", "insight 2", "oportunidade priorizada"],
+    "sources": ["fonte usada 1 (ex: GA4 — últimos 28 dias)", "fonte 2 (ex: Base de Conhecimento — relatório X)", "fonte 3 (ex: benchmark de mercado)"]
   }
 }
 
@@ -485,6 +481,7 @@ REGRAS CRÍTICAS DO JSON:
 - nextSteps DEVE ter EXATAMENTE 4 itens acionáveis e específicos
 - leftPanel é SEMPRE preenchido: se houver dados reais tabuláveis, use tabela; senão, monte um plano de ação/checklist com etapas concretas (tableHeaders ["Etapa","Ação","Status"]) — nunca invente números
 - analysisItems DEVE ter 2 a 5 insights reais e específicos
+- sources lista SOMENTE as fontes efetivamente consultadas nesta resposta — nunca fontes que não foram usadas
 - Responda SOMENTE com o JSON`,
   };
 
@@ -510,6 +507,7 @@ REGRAS CRÍTICAS DO JSON:
         tableRows?: Array<Record<string, string>> | null;
         analysisTitle?: string | null;
         analysisItems?: string[] | null;
+        sources?: string[] | null;
       } | null;
     };
 
@@ -522,6 +520,7 @@ REGRAS CRÍTICAS DO JSON:
           tableRows: parsed.leftPanel.tableRows ?? undefined,
           analysisTitle: parsed.leftPanel.analysisTitle ?? undefined,
           analysisItems: parsed.leftPanel.analysisItems ?? undefined,
+          sources: parsed.leftPanel.sources?.length ? parsed.leftPanel.sources : undefined,
         }
       : null;
 
