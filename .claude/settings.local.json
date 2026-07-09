@@ -69,7 +69,10 @@
       "Bash(cp \"C:/Users/claud/Downloads/Rob.mp4\" \"C:/Users/claud/OneDrive/Documentos/NeuroAds/LP/public/videos/Rob.mp4\" && ls -la \"C:/Users/claud/OneDrive/Documentos/NeuroAds/LP/public/videos/\")",
       "Bash(curl -s -o /dev/null -w \"Rob.mp4: %{http_code} \\(%{size_download} bytes\\)\\\\n\" http://localhost:3000/videos/Rob.mp4)",
       "Bash(where ffmpeg *)",
-      "Bash(ffmpeg -version)"
+      "Bash(ffmpeg -version)",
+      "Bash(curl -s -o /dev/null -w \"funil-vendas: %{http_code}\\\\n\" http://localhost:3000/hub/funil-vendas)",
+      "Bash(git checkout *)",
+      "Bash(git merge *)"
     ]
   },
   "hooks": {

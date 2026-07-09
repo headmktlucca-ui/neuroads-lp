@@ -212,6 +212,47 @@ const CONNECTOR_HELP_BY_KEY: Record<ConnectorKey, { title: string; steps: string
       'Conecte somente após validar dataset e projeto de consolidação de dados.',
     ],
   },
+  googleCalendar: {
+    title: 'Google Calendar',
+    steps: [
+      'Ative a Google Calendar API no mesmo projeto Google Cloud do OAuth.',
+      'Adicione o redirect: https://neuroads.com.br/api/auth/connectors/googleCalendar/callback (e localhost para testes).',
+      'Conecte com a conta Google da agenda e selecione a agenda desejada.',
+    ],
+  },
+  gmail: {
+    title: 'Gmail / E-mail',
+    steps: [
+      'Ative a Gmail API no mesmo projeto Google Cloud do OAuth.',
+      'Adicione o redirect: https://neuroads.com.br/api/auth/connectors/gmail/callback (e localhost para testes).',
+      'Conecte com a conta da caixa de e-mail que os agentes usarão para enviar.',
+    ],
+  },
+  whatsapp: {
+    title: 'WhatsApp Business (Cloud API)',
+    steps: [
+      'No app da Meta, adicione o produto WhatsApp e vincule o portfólio empresarial.',
+      'Adicione o redirect: https://neuroads.com.br/api/auth/connectors/whatsapp/callback (e localhost para testes).',
+      'Garanta as permissões whatsapp_business_management e whatsapp_business_messaging.',
+      'Conecte e selecione o número de telefone comercial verificado.',
+    ],
+  },
+  signature: {
+    title: 'Assinatura Digital',
+    steps: [
+      'Gere um token de API na Clicksign (Configurações > API) ou Autentique.',
+      'No Hub, clique em conectar e cole o token no campo indicado.',
+      'O token fica vinculado ao usuário para envio e acompanhamento de contratos.',
+    ],
+  },
+  helpdesk: {
+    title: 'Helpdesk / Suporte',
+    steps: [
+      'Gere um token de API no Zendesk (Admin > APIs) ou Intercom (Developer Hub).',
+      'No Hub, clique em conectar e cole o token no campo indicado.',
+      'A integração habilita leitura e resolução de tickets pela Manu.',
+    ],
+  },
 };
 
 function ensureOption(value: string, options: readonly string[], fallback: string): string {

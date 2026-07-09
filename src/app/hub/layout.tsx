@@ -347,7 +347,7 @@ function Sidebar({
   const currentTab = searchParams.get('tab');
 
   return (
-    <aside className="hidden lg:flex flex-col w-[230px] shrink-0 border-r border-white/40 bg-[#eef2f7] relative z-20 shadow-[4px_0_12px_rgba(0,0,0,0.015)]">
+    <aside className="hidden lg:flex flex-col w-[230px] shrink-0 border-r border-white/40 bg-white relative z-20 shadow-[4px_0_12px_rgba(0,0,0,0.015)]">
       <SidebarContent
         userName={userName}
         userPhoto={userPhoto}
@@ -931,7 +931,7 @@ function HubLayoutInner({
   return (
     <div className="flex h-screen overflow-hidden font-sans antialiased bg-[#eef2f7] text-[#1e293b]">
       {/* Desktop sidebar */}
-      <Suspense fallback={<div className="hidden lg:flex w-[230px] shrink-0 border-r border-white/40 bg-[#eef2f7]" />}>
+      <Suspense fallback={<div className="hidden lg:flex w-[230px] shrink-0 border-r border-white/40 bg-white" />}>
         <Sidebar userName={userName} userPhoto={userPhoto} companyName={companyName} pathname={pathname} onSignOut={onSignOut} />
       </Suspense>
 

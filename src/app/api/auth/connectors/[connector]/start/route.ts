@@ -22,6 +22,9 @@ const SUPPORTED_CONNECTORS: ConnectorKey[] = [
   'crm',
   'payments',
   'warehouse',
+  'googleCalendar',
+  'gmail',
+  'whatsapp',
 ];
 
 function isSupportedConnector(value: string): value is ConnectorKey {

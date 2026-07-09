@@ -333,6 +333,67 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
       },
     ],
   },
+  googleCalendar: {
+    connector: 'googleCalendar',
+    defaultProvider: 'google',
+    providers: [
+      {
+        provider: 'google',
+        authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+        tokenUrl: 'https://oauth2.googleapis.com/token',
+        scope: 'https://www.googleapis.com/auth/calendar.readonly https://www.googleapis.com/auth/calendar.events openid email profile',
+        clientIdEnvKeys: ['GOOGLE_CALENDAR_CLIENT_ID', 'GOOGLE_ADS_CLIENT_ID', 'GOOGLE_OAUTH_CLIENT_ID'],
+        clientSecretEnvKeys: ['GOOGLE_CALENDAR_CLIENT_SECRET', 'GOOGLE_ADS_CLIENT_SECRET', 'GOOGLE_OAUTH_CLIENT_SECRET'],
+        authExtraParams: {
+          access_type: 'offline',
+          prompt: 'consent select_account',
+          include_granted_scopes: 'true',
+        },
+        tokenExchangeStyle: 'form-post',
+      },
+    ],
+  },
+  gmail: {
+    connector: 'gmail',
+    defaultProvider: 'google',
+    providers: [
+      {
+        provider: 'google',
+        authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+        tokenUrl: 'https://oauth2.googleapis.com/token',
+        scope: 'https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly openid email profile',
+        clientIdEnvKeys: ['GMAIL_CLIENT_ID', 'GOOGLE_ADS_CLIENT_ID', 'GOOGLE_OAUTH_CLIENT_ID'],
+        clientSecretEnvKeys: ['GMAIL_CLIENT_SECRET', 'GOOGLE_ADS_CLIENT_SECRET', 'GOOGLE_OAUTH_CLIENT_SECRET'],
+        authExtraParams: {
+          access_type: 'offline',
+          prompt: 'consent select_account',
+          include_granted_scopes: 'true',
+        },
+        tokenExchangeStyle: 'form-post',
+      },
+    ],
+  },
+  whatsapp: {
+    connector: 'whatsapp',
+    defaultProvider: 'meta',
+    providers: [
+      {
+        provider: 'meta',
+        authUrl: 'https://www.facebook.com/v23.0/dialog/oauth',
+        tokenUrl: 'https://graph.facebook.com/v23.0/oauth/access_token',
+        scope: 'whatsapp_business_management,whatsapp_business_messaging,business_management',
+        scopeEnvKeys: ['WHATSAPP_SCOPE'],
+        clientIdEnvKeys: ['WHATSAPP_APP_ID', 'META_APP_ID'],
+        clientSecretEnvKeys: ['WHATSAPP_APP_SECRET', 'META_APP_SECRET'],
+        authExtraParams: {
+          display: 'popup',
+        },
+        tokenExchangeStyle: 'meta-get',
+      },
+    ],
+  },
+  signature: null,
+  helpdesk: null,
   warehouse: {
     connector: 'warehouse',
     defaultProvider: 'bigquery',

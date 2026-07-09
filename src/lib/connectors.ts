@@ -15,6 +15,11 @@ export type ConnectorStatus = {
   crm: boolean;
   payments: boolean;
   warehouse: boolean;
+  googleCalendar: boolean;
+  gmail: boolean;
+  whatsapp: boolean;
+  signature: boolean;
+  helpdesk: boolean;
 };
 
 export type ConnectorKey = keyof ConnectorStatus;
@@ -58,6 +63,11 @@ export const DEFAULT_CONNECTOR_STATUS: ConnectorStatus = {
   crm: false,
   payments: false,
   warehouse: false,
+  googleCalendar: false,
+  gmail: false,
+  whatsapp: false,
+  signature: false,
+  helpdesk: false,
 };
 
 export const CONNECTOR_DEFINITIONS: ConnectorDefinition[] = [
@@ -77,6 +87,11 @@ export const CONNECTOR_DEFINITIONS: ConnectorDefinition[] = [
   { key: 'crm', name: 'CRM HubSpot', source: 'Vendas', required: true, usedBy: 'MQL, SQL e ganhos reais por estágio' },
   { key: 'payments', name: 'Stripe/Pagamentos', source: 'Receita', required: true, usedBy: 'Receita confirmada e LTV' },
   { key: 'warehouse', name: 'BigQuery/Data Warehouse', source: 'Consolidação', required: true, usedBy: 'Visão unificada e projeções' },
+  { key: 'googleCalendar', name: 'Google Calendar', source: 'Produtividade', required: false, usedBy: 'Agenda, agendamento de reuniões e briefings (Ulisses, Vitor)' },
+  { key: 'gmail', name: 'Gmail / E-mail', source: 'Comunicação', required: false, usedBy: 'Cold mail, nutrição e aprovações por e-mail (Vitor, Tainá, Laís)' },
+  { key: 'whatsapp', name: 'WhatsApp Business', source: 'Atendimento e vendas', required: false, usedBy: 'Prospecção, fechamento e nutrição por chat (Vitor, Breno, Tainá, Manu)' },
+  { key: 'signature', name: 'Assinatura Digital', source: 'Fechamento', required: false, usedBy: 'Contratos e assinatura eletrônica (Breno)' },
+  { key: 'helpdesk', name: 'Helpdesk/Suporte', source: 'Atendimento', required: false, usedBy: 'Tickets, FCR e CSAT (Manu)' },
 ];
 
 export const CONNECTOR_CONNECTION_KEYS: Record<ConnectorKey, string> = {
@@ -96,6 +111,11 @@ export const CONNECTOR_CONNECTION_KEYS: Record<ConnectorKey, string> = {
   crm: 'crm',
   payments: 'stripe',
   warehouse: 'bigquery',
+  googleCalendar: 'google_calendar',
+  gmail: 'gmail',
+  whatsapp: 'whatsapp_business',
+  signature: 'digital_signature',
+  helpdesk: 'helpdesk',
 };
 
 export function getConnectorStatusFromConnections(

@@ -33,14 +33,14 @@ function KpiIconWrapper({
 }) {
   return (
     <div 
-      className="w-[38px] h-[38px] rounded-full flex items-center justify-center text-white relative shrink-0"
+      className="w-[76px] h-[76px] rounded-full flex items-center justify-center text-white relative shrink-0"
       style={{
         background: `linear-gradient(135deg, ${fromColor}, ${toColor})`,
-        boxShadow: `0 2.5px 5px ${shadowColor}`,
+        boxShadow: `0 5px 10px ${shadowColor}`,
       }}
     >
-      <div className="absolute top-[2px] left-[6px] w-[9px] h-[5px] bg-white/30 rounded-full"></div>
-      <div className="absolute inset-[3.5px] rounded-full border border-white/15"></div>
+      <div className="absolute top-[4px] left-[12px] w-[18px] h-[10px] bg-white/30 rounded-full"></div>
+      <div className="absolute inset-[7px] rounded-full border border-white/15"></div>
       <div className="relative z-10 shrink-0">
         {children}
       </div>

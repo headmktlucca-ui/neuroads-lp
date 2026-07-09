@@ -4,9 +4,9 @@ import React, {
   Suspense, useCallback, useEffect, useRef, useState,
 } from 'react';
 import {
-  Link2, ShieldCheck, ArrowRight, CheckCircle2, CreditCard,
+  Link2, ShieldCheck, ArrowRight, CheckCircle2,
   X, Loader2, BarChart3, AlertCircle, MoreVertical, Info,
-  Unlink, Key, ExternalLink, ChevronRight, Database, Server,
+  Unlink, Key, ExternalLink, ChevronRight,
   HelpCircle,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -23,6 +23,16 @@ import {
   type ConnectionsMap,
 } from '../../../lib/connector-save';
 import type { ConnectorKey } from '../../../lib/connectors';
+import {
+  IconStripe3D,
+  IconGoogleCalendar3D,
+  IconGmail3D,
+  IconWhatsapp3D,
+  IconSignature3D,
+  IconHelpdesk3D,
+  IconGtmServer3D,
+  IconBigQuery3D,
+} from '../../../components/hub/ConnectorBrandIcons';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -45,7 +55,7 @@ type IntegrationDef = {
   flow: ConnectFlow;
   icon?: string;
   isComponentIcon?: boolean;
-  componentIconType?: 'stripe' | 'database' | 'server';
+  componentIconType?: 'stripe' | 'database' | 'server' | 'calendar' | 'mail' | 'whatsapp' | 'signature' | 'helpdesk';
   oauthConnector?: string;
   credFields?: CredField[];
   apiKeyLabel?: string;
@@ -144,6 +154,56 @@ const CHANNEL_HELP: Partial<Record<string, HelpContent>> = {
       '4. Clique em "Conectar" para iniciar o fluxo de autorização.',
     ],
     link: { label: 'TikTok Ads API Docs', url: 'https://ads.tiktok.com/marketing_api/docs' },
+  },
+  googleCalendar: {
+    title: 'Como conectar o Google Calendar',
+    steps: [
+      '1. Clique em "Conectar" para iniciar o fluxo OAuth do Google.',
+      '2. Selecione a conta Google da agenda que deseja conectar.',
+      '3. Autorize as permissões de leitura e criação de eventos.',
+      '4. Escolha a agenda desejada na lista exibida.',
+    ],
+    link: { label: 'Documentação Google Calendar API', url: 'https://developers.google.com/calendar' },
+  },
+  gmail: {
+    title: 'Como conectar o Gmail',
+    steps: [
+      '1. Clique em "Conectar" para iniciar o fluxo OAuth do Google.',
+      '2. Selecione a conta Google da caixa de e-mail que deseja usar.',
+      '3. Autorize as permissões de envio e leitura de e-mails.',
+      '4. Confirme a caixa exibida — os agentes usarão este endereço.',
+    ],
+    link: { label: 'Documentação Gmail API', url: 'https://developers.google.com/gmail/api' },
+  },
+  whatsapp: {
+    title: 'Como conectar o WhatsApp Business',
+    steps: [
+      '1. É necessário ter um número WhatsApp Business na Cloud API da Meta (via Meta Business Suite).',
+      '2. Clique em "Conectar" e faça login com a conta que administra o portfólio empresarial.',
+      '3. Autorize as permissões de gestão e mensagens do WhatsApp Business.',
+      '4. Selecione o número de telefone que os agentes usarão para conversar.',
+    ],
+    link: { label: 'WhatsApp Cloud API', url: 'https://developers.facebook.com/docs/whatsapp/cloud-api' },
+  },
+  signature: {
+    title: 'Como obter o token de assinatura digital',
+    steps: [
+      '1. Clicksign: acesse app.clicksign.com > Configurações > API e gere um Access Token.',
+      '2. Autentique: acesse app.autentique.com.br > Configurações > API e copie o token.',
+      '3. Cole o token no campo abaixo.',
+      '4. O Breno usará esta integração para enviar contratos e acompanhar assinaturas.',
+    ],
+    link: { label: 'Documentação Clicksign', url: 'https://developers.clicksign.com' },
+  },
+  helpdesk: {
+    title: 'Como obter o token do helpdesk',
+    steps: [
+      '1. Zendesk: Admin > Apps e integrações > APIs > Tokens de API — crie um token.',
+      '2. Intercom: Settings > Integrations > Developer Hub > sua app > Access Token.',
+      '3. Cole o token no campo abaixo.',
+      '4. A Manu usará esta integração para ler e resolver tickets.',
+    ],
+    link: { label: 'Documentação Zendesk API', url: 'https://developer.zendesk.com/api-reference' },
   },
   warehouse: {
     title: 'Como conectar o BigQuery',
@@ -339,19 +399,56 @@ const INTEGRATIONS: IntegrationDef[] = [
     isComponentIcon: true, componentIconType: 'database',
     flow: 'oauth-select', oauthConnector: 'warehouse',
   },
+  {
+    id: 'googleCalendar', connectorKey: 'googleCalendar', name: 'Google Calendar', category: 'PRODUTIVIDADE',
+    desc: 'Agenda conectada para agendamento de reuniões e briefings automáticos dos agentes.',
+    isComponentIcon: true, componentIconType: 'calendar',
+    flow: 'oauth-select', oauthConnector: 'googleCalendar',
+  },
+  {
+    id: 'gmail', connectorKey: 'gmail', name: 'Gmail / E-mail', category: 'PRODUTIVIDADE',
+    desc: 'Envio de cold mail, fluxos de nutrição e aprovações por e-mail direto da sua caixa.',
+    isComponentIcon: true, componentIconType: 'mail',
+    flow: 'oauth-select', oauthConnector: 'gmail',
+  },
+  {
+    id: 'whatsapp', connectorKey: 'whatsapp', name: 'WhatsApp Business', category: 'ATENDIMENTO',
+    desc: 'Prospecção, fechamento e nutrição por chat via WhatsApp Cloud API oficial da Meta.',
+    isComponentIcon: true, componentIconType: 'whatsapp',
+    flow: 'oauth-select', oauthConnector: 'whatsapp',
+  },
+  {
+    id: 'signature', connectorKey: 'signature', name: 'Assinatura Digital', category: 'VENDAS',
+    desc: 'Contratos com assinatura eletrônica para fechamento comercial (Clicksign / Autentique).',
+    isComponentIcon: true, componentIconType: 'signature',
+    flow: 'api-key',
+    apiKeyLabel: 'Token de API — Clicksign ou Autentique',
+    apiKeyPlaceholder: 'Cole o token de API da sua plataforma de assinatura',
+  },
+  {
+    id: 'helpdesk', connectorKey: 'helpdesk', name: 'Helpdesk / Suporte', category: 'ATENDIMENTO',
+    desc: 'Tickets, histórico e CSAT do seu sistema de suporte (Zendesk / Intercom).',
+    isComponentIcon: true, componentIconType: 'helpdesk',
+    flow: 'api-key',
+    apiKeyLabel: 'Token de API — Zendesk ou Intercom',
+    apiKeyPlaceholder: 'Cole o token de API do seu helpdesk',
+  },
 ];
 
-const FILTERS = ['Todos', 'SOCIAL', 'CRM', 'ADS', 'ANALYTICS', 'SEO', 'FINANCEIRO', 'MARKETING'];
+const FILTERS = ['Todos', 'SOCIAL', 'CRM', 'ADS', 'ANALYTICS', 'SEO', 'FINANCEIRO', 'MARKETING', 'PRODUTIVIDADE', 'ATENDIMENTO', 'VENDAS'];
 
 // Category left-border accent colors
 const CATEGORY_BORDER: Record<string, string> = {
-  SOCIAL:     '#E1306C',
-  CRM:        '#8B5CF6',
-  ADS:        '#FF6A00',
-  ANALYTICS:  '#3B82F6',
-  SEO:        '#10B981',
-  FINANCEIRO: '#059669',
-  MARKETING:  '#7C3AED',
+  SOCIAL:        '#E1306C',
+  CRM:           '#8B5CF6',
+  ADS:           '#FF6A00',
+  ANALYTICS:     '#3B82F6',
+  SEO:           '#10B981',
+  FINANCEIRO:    '#059669',
+  MARKETING:     '#7C3AED',
+  PRODUTIVIDADE: '#0EA5E9',
+  ATENDIMENTO:   '#06B6D4',
+  VENDAS:        '#D97706',
 };
 
 // Map of which connectors use which account endpoint key
@@ -365,6 +462,9 @@ const OAUTH_SELECT_CONNECTORS: Partial<Record<ConnectorKey, { apiPath: string; r
   metaAds: { apiPath: '/api/auth/connectors/metaAds/accounts', resKey: 'accounts' },
   tiktokAds: { apiPath: '/api/auth/connectors/tiktokAds/accounts', resKey: 'accounts' },
   warehouse: { apiPath: '/api/auth/connectors/warehouse/accounts', resKey: 'accounts' },
+  googleCalendar: { apiPath: '/api/auth/connectors/googleCalendar/accounts', resKey: 'accounts' },
+  gmail: { apiPath: '/api/auth/connectors/gmail/accounts', resKey: 'accounts' },
+  whatsapp: { apiPath: '/api/auth/connectors/whatsapp/accounts', resKey: 'accounts' },
 };
 
 // Friendly modal title per connector
@@ -378,6 +478,9 @@ const ACCOUNT_SELECT_TITLES: Partial<Record<ConnectorKey, string>> = {
   metaAds: 'Selecionar conta Meta Ads',
   tiktokAds: 'Selecionar anunciante TikTok Ads',
   warehouse: 'Selecionar projeto BigQuery',
+  googleCalendar: 'Selecionar agenda',
+  gmail: 'Confirmar caixa de e-mail',
+  whatsapp: 'Selecionar número WhatsApp',
 };
 
 // ---------------------------------------------------------------------------
@@ -418,11 +521,18 @@ function IntegIcon({
 }) {
   const iconSize = size === 'sm' ? 'h-5 w-5' : 'h-6 w-6';
   const imgSize = size === 'sm' ? 36 : 40;
+  const brandSize = size === 'sm' ? 32 : 38;
   if (integ.isComponentIcon) {
-    if (integ.componentIconType === 'database') return <Database className={`${iconSize} text-blue-600`} />;
-    if (integ.componentIconType === 'server') return <Server className={`${iconSize} text-teal-600`} />;
-    return <CreditCard className={`${iconSize} text-[#635BFF]`} />;
+    if (integ.componentIconType === 'database') return <IconBigQuery3D size={brandSize} />;
+    if (integ.componentIconType === 'server') return <IconGtmServer3D size={brandSize} />;
+    if (integ.componentIconType === 'calendar') return <IconGoogleCalendar3D size={brandSize} />;
+    if (integ.componentIconType === 'mail') return <IconGmail3D size={brandSize} />;
+    if (integ.componentIconType === 'whatsapp') return <IconWhatsapp3D size={brandSize} />;
+    if (integ.componentIconType === 'signature') return <IconSignature3D size={brandSize} />;
+    if (integ.componentIconType === 'helpdesk') return <IconHelpdesk3D size={brandSize} />;
+    return <IconStripe3D size={brandSize} />;
   }
+  if (!integ.icon) return <Key className={`${iconSize} text-[#FF6A00]`} />;
   return (
     <Image
       src={integ.icon as string}
@@ -757,17 +867,7 @@ function HubIntegracoesContent() {
                   <>
                     <div className="flex items-start justify-between gap-2">
                       <div className="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center border border-white/40 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] overflow-hidden p-1">
-                        {integ.isComponentIcon ? (
-                          integ.componentIconType === 'database' ? (
-                            <Database className="h-5 w-5 text-blue-600" />
-                          ) : integ.componentIconType === 'server' ? (
-                            <Server className="h-5 w-5 text-teal-600" />
-                          ) : (
-                            <CreditCard className="h-5 w-5 text-[#635BFF]" />
-                          )
-                        ) : (
-                          <Image src={integ.icon as string} alt={integ.name} width={36} height={36} className="h-full w-full rounded-lg object-cover" />
-                        )}
+                        <IntegIcon integ={integ} size="sm" />
                       </div>
                       <span
                         className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border"
@@ -999,17 +1099,7 @@ function HubIntegracoesContent() {
             <button type="button" onClick={() => setCredsModal(null)} className="absolute right-4 top-4 h-8 w-8 flex items-center justify-center rounded-full border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-500 transition-all"><X className="h-4 w-4" /></button>
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center overflow-hidden">
-                {credsModal.integ.isComponentIcon ? (
-                  credsModal.integ.componentIconType === 'database' ? (
-                    <Database className="h-5 w-5 text-blue-600" />
-                  ) : credsModal.integ.componentIconType === 'server' ? (
-                    <Server className="h-5 w-5 text-teal-600" />
-                  ) : (
-                    <CreditCard className="h-5 w-5 text-[#635BFF]" />
-                  )
-                ) : (
-                  <Image src={credsModal.integ.icon as string} alt={credsModal.integ.name} width={32} height={32} className="rounded-lg object-cover" />
-                )}
+                <IntegIcon integ={credsModal.integ} size="sm" />
               </div>
               <div className="flex-1">
                 <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#FF6A00]">Configurar</p>
@@ -1048,21 +1138,7 @@ function HubIntegracoesContent() {
             <button type="button" onClick={() => !apiKeyModal.saving && setApiKeyModal(null)} className="absolute right-4 top-4 h-8 w-8 flex items-center justify-center rounded-full border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-500 transition-all"><X className="h-4 w-4" /></button>
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
-                {apiKeyModal.integ.isComponentIcon ? (
-                  apiKeyModal.integ.componentIconType === 'database' ? (
-                    <Database className="h-5 w-5 text-blue-600" />
-                  ) : apiKeyModal.integ.componentIconType === 'server' ? (
-                    <Server className="h-5 w-5 text-teal-600" />
-                  ) : (
-                    <CreditCard className="h-5 w-5 text-[#635BFF]" />
-                  )
-                ) : (
-                  apiKeyModal.integ.icon ? (
-                    <Image src={apiKeyModal.integ.icon} alt={apiKeyModal.integ.name} width={32} height={32} className="rounded-lg object-cover" />
-                  ) : (
-                    <Key className="h-5 w-5 text-[#FF6A00]" />
-                  )
-                )}
+                <IntegIcon integ={apiKeyModal.integ} size="sm" />
               </div>
               <div className="flex-1">
                 <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#FF6A00]">Token de API</p>
@@ -1097,19 +1173,7 @@ function HubIntegracoesContent() {
             <button type="button" onClick={() => setOauthConfirmModal(null)} className="absolute right-4 top-4 h-8 w-8 flex items-center justify-center rounded-full border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-500 transition-all"><X className="h-4 w-4" /></button>
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center overflow-hidden">
-                {oauthConfirmModal.isComponentIcon ? (
-                  oauthConfirmModal.componentIconType === 'database' ? (
-                    <Database className="h-5 w-5 text-blue-600" />
-                  ) : oauthConfirmModal.componentIconType === 'server' ? (
-                    <Server className="h-5 w-5 text-teal-600" />
-                  ) : (
-                    <CreditCard className="h-5 w-5 text-[#635BFF]" />
-                  )
-                ) : oauthConfirmModal.icon ? (
-                  <Image src={oauthConfirmModal.icon} alt={oauthConfirmModal.name} width={32} height={32} className="rounded-lg object-cover" />
-                ) : (
-                  <ExternalLink className="h-5 w-5 text-[#FF6A00]" />
-                )}
+                <IntegIcon integ={oauthConfirmModal} size="sm" />
               </div>
               <div className="flex-1">
                 <p className="text-[11px] font-black uppercase tracking-[0.12em] text-[#FF6A00]">Conectar</p>
