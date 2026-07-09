@@ -730,6 +730,33 @@ function MobileDrawer({
                   currentTab={currentTab}
                 />
               ))}
+
+              {/* Agentes Online — same entry as the desktop sidebar */}
+              <div className="pt-1">
+                <Link
+                  href="/hub/assistente-ia"
+                  className={`group flex items-center gap-3 pl-4 pr-3 py-3 rounded-2xl text-[13px] font-bold transition-all duration-200 ${
+                    pathname === '/hub/assistente-ia'
+                      ? 'text-emerald-600'
+                      : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
+                  }`}
+                  style={{
+                    boxShadow: pathname === '/hub/assistente-ia' ? 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff' : 'none',
+                    background: pathname === '/hub/assistente-ia' ? '#ecfdf5' : 'transparent',
+                    borderLeft: pathname === '/hub/assistente-ia' ? '2px solid #10b981' : '2px solid transparent',
+                    textDecoration: 'none',
+                  }}
+                >
+                  <Users
+                    size={16}
+                    className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${
+                      pathname === '/hub/assistente-ia' ? 'text-emerald-600' : 'text-slate-500'
+                    }`}
+                  />
+                  <span className="flex-1">Agentes Online</span>
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)] animate-pulse shrink-0" />
+                </Link>
+              </div>
             </nav>
 
             {/* Sign out */}

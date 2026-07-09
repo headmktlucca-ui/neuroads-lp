@@ -9,7 +9,7 @@ import {
   FileText, Terminal, Link2, BarChart2, Globe, Database,
   Target, CheckCircle2, AlertTriangle, Sparkles, Cpu,
   Film, Music, File, X, Copy, Table2, User, RefreshCw,
-  Settings2, Hash, ArrowRight,
+  Settings2, Hash, ArrowRight, MessageSquare,
 } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
@@ -2166,18 +2166,57 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
     setStreamingId(null);
   }, []);
 
+  /* Mobile: one pane at a time (panel ⇄ chat); desktop keeps both side by side */
+  const [mobilePane, setMobilePane] = useState<'panel' | 'chat'>('chat');
 
-
+  useEffect(() => {
+    // When a fresh analysis result lands on a small screen, surface the panel
+    if (currentResult && typeof window !== 'undefined' && window.innerWidth < 1024) {
+      setMobilePane('panel');
+    }
+  }, [currentResult]);
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="flex w-full h-full bg-[#EBEBED] overflow-hidden rounded-xl border border-[#E0E0E3] shadow-sm"
+      className="relative flex w-full h-full bg-[#EBEBED] overflow-hidden rounded-xl border border-[#E0E0E3] shadow-sm"
     >
+      {/* ── Mobile pane switcher ── */}
+      <div className="lg:hidden absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-0.5 p-1 rounded-full bg-white/85 backdrop-blur-md border border-[#E0E0E3] shadow-[0_4px_16px_rgba(15,23,42,0.10)]">
+        <button
+          type="button"
+          onClick={() => setMobilePane('panel')}
+          className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-black transition-all duration-200 ${
+            mobilePane === 'panel'
+              ? 'bg-[#111827] text-white shadow-sm'
+              : 'text-slate-500 active:scale-95'
+          }`}
+        >
+          <LayoutGrid size={12} />
+          Painel
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobilePane('chat')}
+          className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-black transition-all duration-200 ${
+            mobilePane === 'chat'
+              ? 'bg-[#FF6A00] text-white shadow-sm'
+              : 'text-slate-500 active:scale-95'
+          }`}
+        >
+          <MessageSquare size={12} />
+          Chat
+        </button>
+      </div>
+
       {/* ── LEFT PANEL ── */}
-      <div className="w-[55%] min-w-0 flex flex-col border-r border-[#E0E0E3] overflow-hidden">
+      <div
+        className={`${
+          mobilePane === 'panel' ? 'flex' : 'hidden'
+        } w-full pt-12 lg:pt-0 lg:flex lg:w-[55%] min-w-0 flex-col lg:border-r border-[#E0E0E3] overflow-hidden`}
+      >
         <LeftPanel
           result={currentResult}
           isLoading={leftLoading}
@@ -2195,7 +2234,11 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
       </div>
 
       {/* ── RIGHT PANEL ── */}
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F5F5F7] overflow-hidden">
+      <div
+        className={`${
+          mobilePane === 'chat' ? 'flex' : 'hidden'
+        } w-full pt-12 lg:pt-0 lg:flex flex-1 flex-col min-w-0 bg-[#F5F5F7] overflow-hidden`}
+      >
         {/* Data access warning banner */}
         <AnimatePresence>
           {dataAccessWarning && (
@@ -2219,7 +2262,7 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
         </AnimatePresence>
 
         {/* Messages area */}
-        <div className="flex-1 overflow-y-auto px-6 py-6 space-y-5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-[#D1D5DB] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-[#D1D5DB] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
           <AnimatePresence initial={false}>
             {messages.map(msg => (
               <ChatMessage

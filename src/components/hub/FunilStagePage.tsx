@@ -27,7 +27,7 @@ const STAGE_META: Record<FunilStage, {
   atracao: {
     label: 'Atração',
     tagline: 'Gere demanda qualificada antes de qualquer conversa.',
-    description: 'Agentes responsáveis por gerar visibilidade, atrair tráfego qualificado e posicionar a marca nos canais certos — via mídia paga, SEO, conteúdo e presença orgânica.',
+    description: 'Ativos responsáveis por gerar visibilidade, atrair tráfego qualificado e posicionar a marca nos canais certos — via mídia paga, SEO, conteúdo e presença orgânica.',
     cor: '#FACC15',
     emoji: '🎯',
     agentIds: ['paola', 'igor', 'lais'],
@@ -35,7 +35,7 @@ const STAGE_META: Record<FunilStage, {
   engajamento: {
     label: 'Engajamento',
     tagline: 'Desperte interesse e construa relacionamento com os leads.',
-    description: 'Agentes que nutrem leads, criam conteúdo relevante e mantêm a marca presente até o lead estar pronto para a conversa de vendas.',
+    description: 'Ativos que nutrem leads, criam conteúdo relevante e mantêm a marca presente até o lead estar pronto para a conversa de vendas.',
     cor: '#FB923C',
     emoji: '💬',
     agentIds: ['lais', 'taina', 'igor'],
@@ -43,7 +43,7 @@ const STAGE_META: Record<FunilStage, {
   conversao: {
     label: 'Conversão',
     tagline: 'Transforme interesse em receita de forma autônoma.',
-    description: 'Agentes que qualificam, abordam e fecham negócios — do primeiro contato ao contrato assinado, sem dependência de equipe humana para cada etapa.',
+    description: 'Ativos que qualificam, abordam e fecham negócios — do primeiro contato ao contrato assinado, sem dependência de equipe humana para cada etapa.',
     cor: '#34D399',
     emoji: '⚡',
     agentIds: ['vitor', 'breno', 'heitor'],
@@ -51,7 +51,7 @@ const STAGE_META: Record<FunilStage, {
   retencao: {
     label: 'Retenção',
     tagline: 'Maximize o valor de cada cliente já conquistado.',
-    description: 'Agentes que garantem a satisfação, o suporte rápido, o upsell no momento certo e a reativação de quem ficou inativo — protegendo e expandindo a receita recorrente.',
+    description: 'Ativos que garantem a satisfação, o suporte rápido, o upsell no momento certo e a reativação de quem ficou inativo — protegendo e expandindo a receita recorrente.',
     cor: '#22D3EE',
     emoji: '🔁',
     agentIds: ['manu', 'raissa', 'ulisses'],
@@ -430,7 +430,7 @@ export default function FunilStagePage({ stage }: { stage: FunilStage }) {
           {meta.description}
         </p>
         <p className="text-[12px] font-black mt-2" style={{ color: meta.cor }}>
-          {stageAgents.length} Agentes · {totalActive}/{totalSpecialties} especialidades ativas
+          {stageAgents.length} Ativos · {totalActive}/{totalSpecialties} especialidades ativas
         </p>
       </div>
 
