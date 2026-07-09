@@ -316,18 +316,7 @@ function SidebarContent({
       </nav>
 
       {/* Sign out */}
-      <div className="px-3 pb-5 shrink-0 border-t border-white/40 pt-3 flex flex-col items-center">
-        {/* Sleek dark viewport widget for the robot video (restoring original colors) */}
-        <div className="w-24 h-24 mb-2 overflow-hidden flex items-center justify-center pointer-events-none select-none bg-slate-950 rounded-2xl border border-slate-800 shadow-inner">
-          <video
-            src="/videos/Rob.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-contain"
-          />
-        </div>
+      <div className="px-3 pb-5 shrink-0 border-t border-white/40 pt-3">
         <button
           onClick={onSignOut}
           className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-[13px] font-bold text-[#475569] hover:text-rose-600 hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] transition-all duration-200 border border-transparent hover:border-rose-500/15"
@@ -858,6 +847,19 @@ function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: stri
             )}
           </div>
         )}
+
+        {/* Robot video — flipped horizontally, white bg blended away via multiply */}
+        <div className="w-14 h-14 overflow-hidden flex items-center justify-center pointer-events-none select-none shrink-0">
+          <video
+            src="/videos/Rob.mp4"
+            autoPlay
+            loop
+            muted
+            playsInline
+            className="w-full h-full object-contain mix-blend-multiply"
+            style={{ transform: 'scaleX(-1)' }}
+          />
+        </div>
 
         {/* Notifications */}
         <div className="relative" ref={bellRef}>
