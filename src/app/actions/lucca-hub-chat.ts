@@ -1,14 +1,26 @@
 'use server';
 
+import Anthropic from '@anthropic-ai/sdk';
 import OpenAI from 'openai';
 import { getAdminDb } from '../../lib/firebase-admin';
 import { getTeamAgentById, TEAM_AGENTS } from '../../data/team-agents';
 import { describeConnections } from '../../lib/connectors';
 import { buildOperationBlock } from '../../lib/operation-prompt';
 
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY || '',
+});
+
+// Fallback legado quando ANTHROPIC_API_KEY não está configurada
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
 });
+
+/* ── Roteamento por classe de operação ──────────────────────────────
+   Leve (chat livre/refino)  → Haiku 4.5  (rápido e barato)
+   Operação ativa            → Sonnet 5   (+ web search nativo)     */
+const MODEL_LIGHT = 'claude-haiku-4-5';
+const MODEL_OPERATION = 'claude-sonnet-5';
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -363,13 +375,13 @@ export async function chatWithLuccaHub(
   messages: ChatMessage[],
   context: LuccaHubContext
 ): Promise<LuccaHubResponse> {
-  // ─── Sem API Key: fallback informativo ───────────────────────────────────
-  if (!process.env.OPENAI_API_KEY) {
+  // ─── Sem nenhuma API Key: fallback informativo ────────────────────────────
+  if (!process.env.ANTHROPIC_API_KEY && !process.env.OPENAI_API_KEY) {
     const hasConnections = (context.connectedSources?.length ?? 0) > 0;
     return {
       success: true,
       message: hasConnections
-        ? `Olá, **${context.userName}**! Identifiquei que você tem **${context.connectedSources?.join(', ')}** conectados.\n\nPorém, meu motor de IA (OpenAI) não está configurado no ambiente. Para ativar análises em tempo real, adicione **OPENAI_API_KEY** ao arquivo \`.env.local\`.`
+        ? `Olá, **${context.userName}**! Identifiquei que você tem **${context.connectedSources?.join(', ')}** conectados.\n\nPorém, meu motor de IA não está configurado no ambiente. Para ativar análises em tempo real, adicione **ANTHROPIC_API_KEY** ao arquivo \`.env.local\`.`
         : `Olá, **${context.userName}**! Ainda não identifiquei canais conectados na sua conta.\n\nPara que eu possa entregar análises com dados reais, conecte pelo menos uma plataforma em **Integrações**.`,
       nextSteps: [
         'Conectar Meta Ads em Integrações',
@@ -377,7 +389,7 @@ export async function chatWithLuccaHub(
         'Conectar GA4 em Integrações',
         'Ativar Agentes no Laboratório de Agentes',
       ],
-      dataAccessWarning: 'Motor de IA offline — OPENAI_API_KEY não configurada.',
+      dataAccessWarning: 'Motor de IA offline — ANTHROPIC_API_KEY não configurada.',
       leftPanelData: null,
     };
   }
@@ -409,30 +421,12 @@ export async function chatWithLuccaHub(
     disconnected,
   });
 
-  // ─── System prompt ────────────────────────────────────────────────────────
-  const systemPrompt: ChatMessage = {
-    role: 'system',
-    content: `${agentIdentity}
+  // ─── System prompt em 2 blocos: estável (cacheável) + volátil ────────────
+  // O bloco estável muda apenas por agente → prompt caching reduz ~90% do
+  // custo de entrada nas chamadas seguintes. O volátil fica depois do cache.
+  const staticSystem = `${agentIdentity}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-PERFIL DO USUÁRIO:
-- Nome: ${context.userName}
-- Empresa: ${context.companyName || 'não informada'}
-- Site: ${context.site || 'não informado'}
-- Perfil Instagram: ${snapshot?.instagram || 'não informado'}
-- Perfil LinkedIn: ${snapshot?.linkedin || 'não informado'}
-- Canal TikTok: ${snapshot?.tiktok || 'não informado'}
-- Blog Institucional: ${snapshot?.blog || 'não informado'}
-- Agentes ativos: ${activeAgents.length > 0 ? activeAgents.join(', ') : 'nenhum ativado'}
-- Automações ativas: ${snapshot?.activeAutomations?.length ? snapshot.activeAutomations.join(', ') : 'nenhuma'}
-${context.recentMetrics?.length ? `- Métricas recentes: ${JSON.stringify(context.recentMetrics)}` : ''}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-${dataAccessBlock}
-
-${specialtyBlock ? `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${specialtyBlock}\n` : ''}
-${kbBlocks ? `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${kbBlocks}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n` : ''}
-
 REGRAS DE DADOS REAIS E CANAIS ATIVOS (INVIOLÁVEIS):
 1. USE APENAS OS DADOS REAIS DOS CANAIS CONECTADOS. Você só tem acesso às ferramentas marcadas como conectadas (✓) no bloco CANAIS CONECTADOS. Se o usuário solicitar uma ação que necessita de um canal indisponível, explique com profissionalismo qual plataforma falta e recomende que ele a integre através da página de Integrações.
 2. NUNCA UTILIZE DADOS FICTÍCIOS OU SIMULADOS PARA MASCARAR A FALTA DE INTEGRAÇÕES. Se o canal estiver desconectado, não invente números de campanha ou tráfego. Declare a ausência dos dados reais e use a Base de Conhecimento (relatórios salvos) para embasar sua resposta com o histórico que o usuário já possui no perfil.
@@ -440,7 +434,7 @@ REGRAS DE DADOS REAIS E CANAIS ATIVOS (INVIOLÁVEIS):
    - 💡 OPORTUNIDADE: Ações de crescimento ou otimização escaláveis de acordo com os dados reais da conta.
    - ⚠️ RISCO IMINENTE: Gargalos no funil, criativos fatigados ou canais que não estão gerando ROI ideal.
    - 🔁 PADRÃO DETECTADO: Comportamentos recorrentes do tráfego ou audiência do site.
-4. Benchmarks externos podem ser citados apenas se explicitamente rotulados como "benchmark de mercado" para efeito comparativo, nunca como dados próprios do usuário.
+4. Benchmarks externos podem ser citados apenas se explicitamente rotulados como "benchmark de mercado" para efeito comparativo, nunca como dados próprios do usuário. Resultados de pesquisa web entram nessa categoria.
 5. Quando não houver dados reais suficientes para executar a operação solicitada, apresente o diagnóstico com o que você já sabe, o que falta coletar, e os passos práticos recomendados.
 
 MÉTODO DE TRABALHO (estruture toda análise assim):
@@ -482,19 +476,99 @@ REGRAS CRÍTICAS DO JSON:
 - leftPanel é SEMPRE preenchido: se houver dados reais tabuláveis, use tabela; senão, monte um plano de ação/checklist com etapas concretas (tableHeaders ["Etapa","Ação","Status"]) — nunca invente números
 - analysisItems DEVE ter 2 a 5 insights reais e específicos
 - sources lista SOMENTE as fontes efetivamente consultadas nesta resposta — nunca fontes que não foram usadas
-- Responda SOMENTE com o JSON`,
-  };
+- A resposta final deve ser SOMENTE o JSON (sem texto antes ou depois, sem cercas de código)`;
+
+  const dynamicSystem = `PERFIL DO USUÁRIO:
+- Nome: ${context.userName}
+- Empresa: ${context.companyName || 'não informada'}
+- Site: ${context.site || 'não informado'}
+- Perfil Instagram: ${snapshot?.instagram || 'não informado'}
+- Perfil LinkedIn: ${snapshot?.linkedin || 'não informado'}
+- Canal TikTok: ${snapshot?.tiktok || 'não informado'}
+- Blog Institucional: ${snapshot?.blog || 'não informado'}
+- Agentes ativos: ${activeAgents.length > 0 ? activeAgents.join(', ') : 'nenhum ativado'}
+- Automações ativas: ${snapshot?.activeAutomations?.length ? snapshot.activeAutomations.join(', ') : 'nenhuma'}
+${context.recentMetrics?.length ? `- Métricas recentes: ${JSON.stringify(context.recentMetrics)}` : ''}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+${dataAccessBlock}
+
+${specialtyBlock ? `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${specialtyBlock}\n` : ''}
+${kbBlocks ? `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${kbBlocks}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━` : ''}`;
+
+  // ─── Conversa no formato Anthropic (primeira mensagem deve ser 'user') ───
+  const firstUserIdx = messages.findIndex((m) => m.role === 'user');
+  const claudeMessages: Anthropic.Messages.MessageParam[] = (
+    firstUserIdx >= 0 ? messages.slice(firstUserIdx) : messages
+  )
+    .filter((m) => m.role !== 'system')
+    .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
-      messages: [systemPrompt, ...messages],
-      temperature: 0.55,
-      max_tokens: 1600,
-      response_format: { type: 'json_object' },
-    });
+    let raw = '';
 
-    const raw = completion.choices[0]?.message?.content || '{}';
+    if (process.env.ANTHROPIC_API_KEY) {
+      // ─── Motor principal: Claude, com roteamento por classe ──────────────
+      const isOperation = Boolean(context.specialty);
+      const model = isOperation ? MODEL_OPERATION : MODEL_LIGHT;
+
+      // Pesquisa profunda: web search nativo apenas em operações (Sonnet 5)
+      const tools = isOperation
+        ? ([
+            { type: 'web_search_20260209', name: 'web_search', max_uses: 5 },
+          ] as unknown as Anthropic.Messages.ToolUnion[])
+        : undefined;
+
+      const baseParams = {
+        model,
+        max_tokens: isOperation ? 8000 : 2000,
+        system: [
+          {
+            type: 'text' as const,
+            text: staticSystem,
+            cache_control: { type: 'ephemeral' as const },
+          },
+          { type: 'text' as const, text: dynamicSystem },
+        ],
+        ...(tools ? { tools } : {}),
+      };
+
+      let convo = [...claudeMessages];
+      let response = await anthropic.messages.create({ ...baseParams, messages: convo });
+
+      // Ferramentas server-side podem pausar o turno — retoma até 3 vezes
+      let continuations = 0;
+      while (response.stop_reason === 'pause_turn' && continuations < 3) {
+        convo = [
+          ...convo,
+          { role: 'assistant', content: response.content as Anthropic.Messages.ContentBlockParam[] },
+        ];
+        response = await anthropic.messages.create({ ...baseParams, messages: convo });
+        continuations++;
+      }
+
+      const text = response.content
+        .filter((block): block is Anthropic.Messages.TextBlock => block.type === 'text')
+        .map((block) => block.text)
+        .join('');
+      const start = text.indexOf('{');
+      const end = text.lastIndexOf('}');
+      raw = start >= 0 && end > start ? text.slice(start, end + 1) : '{}';
+    } else {
+      // ─── Fallback legado: OpenAI ──────────────────────────────────────────
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: `${staticSystem}\n\n━━━\n${dynamicSystem}` },
+          ...messages,
+        ],
+        temperature: 0.55,
+        max_tokens: 1600,
+        response_format: { type: 'json_object' },
+      });
+      raw = completion.choices[0]?.message?.content || '{}';
+    }
+
     const parsed = JSON.parse(raw) as {
       message?: string;
       dataAccessWarning?: string | null;
