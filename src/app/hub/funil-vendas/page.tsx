@@ -3,12 +3,94 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Layers, Users, Plus, Trash2, ArrowRight, CheckCircle2,
-  Clock, DollarSign, Bot, ShieldAlert, Sparkles, Send, Play, Cpu, Trash
+  Layers, Plus, Trash2, ArrowRight, CheckCircle2,
+  Bot, ShieldAlert, Send, Play, Cpu, Trash
 } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { getFirebaseDb } from '../../../lib/firebase';
+
+/* ─── 3D KPI icons (plastic/clay style) ──────────────────────────────────── */
+
+function KpiIconLeads() {
+  return (
+    <svg viewBox="0 0 40 40" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="kpi-leads-g" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF9A55" /><stop offset="1" stopColor="#E63E00" />
+        </linearGradient>
+        <filter id="kpi-leads-s"><feDropShadow dx="0" dy="2.5" stdDeviation="2.5" floodColor="#C93700" floodOpacity="0.4" /></filter>
+      </defs>
+      <ellipse cx="20" cy="37" rx="11" ry="2.5" fill="#C93700" opacity="0.18" />
+      <circle cx="14" cy="14" r="6" fill="url(#kpi-leads-g)" filter="url(#kpi-leads-s)" />
+      <path d="M4 32 C4 25 9 22 14 22 C19 22 24 25 24 32 Z" fill="url(#kpi-leads-g)" filter="url(#kpi-leads-s)" />
+      <circle cx="27" cy="15" r="4.5" fill="#FFB27A" filter="url(#kpi-leads-s)" />
+      <path d="M20.5 31 C21 25.5 24 23.5 27 23.5 C30.5 23.5 35 26 35 31 Z" fill="#FFB27A" filter="url(#kpi-leads-s)" />
+      <ellipse cx="12" cy="11.5" rx="3" ry="1.8" fill="white" opacity="0.35" />
+      <ellipse cx="25.5" cy="13" rx="2" ry="1.2" fill="white" opacity="0.35" />
+    </svg>
+  );
+}
+
+function KpiIconClock() {
+  return (
+    <svg viewBox="0 0 40 40" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="kpi-clock-g" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#5AAEFF" /><stop offset="1" stopColor="#1240B8" />
+        </linearGradient>
+        <filter id="kpi-clock-s"><feDropShadow dx="0" dy="2.5" stdDeviation="2.5" floodColor="#0C2E9E" floodOpacity="0.4" /></filter>
+      </defs>
+      <ellipse cx="20" cy="37" rx="11" ry="2.5" fill="#0C2E9E" opacity="0.18" />
+      <circle cx="20" cy="19" r="14" fill="url(#kpi-clock-g)" filter="url(#kpi-clock-s)" />
+      <circle cx="20" cy="19" r="10.5" fill="white" opacity="0.16" />
+      <circle cx="20" cy="19" r="9.5" fill="url(#kpi-clock-g)" />
+      <line x1="20" y1="19" x2="20" y2="12.5" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
+      <line x1="20" y1="19" x2="25" y2="22" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
+      <circle cx="20" cy="19" r="1.6" fill="white" />
+      <ellipse cx="15" cy="11" rx="4.5" ry="2.5" fill="white" opacity="0.3" />
+    </svg>
+  );
+}
+
+function KpiIconMoney() {
+  return (
+    <svg viewBox="0 0 40 40" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="kpi-money-g" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#3EE59A" /><stop offset="1" stopColor="#036C4A" />
+        </linearGradient>
+        <filter id="kpi-money-s"><feDropShadow dx="0" dy="2.5" stdDeviation="2.5" floodColor="#02523A" floodOpacity="0.4" /></filter>
+      </defs>
+      <ellipse cx="20" cy="37" rx="11" ry="2.5" fill="#02523A" opacity="0.18" />
+      <circle cx="20" cy="19" r="14" fill="url(#kpi-money-g)" filter="url(#kpi-money-s)" />
+      <circle cx="20" cy="19" r="10.5" fill="white" opacity="0.14" />
+      <circle cx="20" cy="19" r="9.5" fill="url(#kpi-money-g)" />
+      <path d="M20 11.5 L20 26.5 M23.5 14.5 C23.5 12.8 21.8 12 20 12 C18 12 16.5 13 16.5 15 C16.5 17 18.2 17.8 20 18.4 C21.8 19 23.5 19.8 23.5 21.8 C23.5 23.8 22 25 20 25 C18.2 25 16.5 24 16.5 22.3"
+        stroke="white" strokeWidth="2" strokeLinecap="round" fill="none" />
+      <ellipse cx="15" cy="11" rx="4.5" ry="2.5" fill="white" opacity="0.3" />
+    </svg>
+  );
+}
+
+function KpiIconTicket() {
+  return (
+    <svg viewBox="0 0 40 40" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="kpi-ticket-g" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#B487F5" /><stop offset="1" stopColor="#54189E" />
+        </linearGradient>
+        <filter id="kpi-ticket-s"><feDropShadow dx="0" dy="2.5" stdDeviation="2.5" floodColor="#3E0E7A" floodOpacity="0.4" /></filter>
+      </defs>
+      <ellipse cx="20" cy="37" rx="11" ry="2.5" fill="#3E0E7A" opacity="0.18" />
+      <path d="M6 14 C6 12.3 7.3 11 9 11 L31 11 C32.7 11 34 12.3 34 14 L34 17 C32.3 17 31 18.3 31 20 C31 21.7 32.3 23 34 23 L34 26 C34 27.7 32.7 29 31 29 L9 29 C7.3 29 6 27.7 6 26 L6 23 C7.7 23 9 21.7 9 20 C9 18.3 7.7 17 6 17 Z"
+        fill="url(#kpi-ticket-g)" filter="url(#kpi-ticket-s)" />
+      <line x1="16" y1="12" x2="16" y2="28" stroke="white" strokeWidth="1.4" strokeDasharray="2.4 2.6" strokeOpacity="0.65" />
+      <path d="M23.5 15.5 L24.7 18.3 L27.7 18.6 L25.4 20.6 L26.1 23.5 L23.5 21.9 L20.9 23.5 L21.6 20.6 L19.3 18.6 L22.3 18.3 Z" fill="white" fillOpacity="0.85" />
+      <ellipse cx="13" cy="13.5" rx="5" ry="2" fill="white" opacity="0.28" />
+    </svg>
+  );
+}
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface LeadLog {
@@ -405,19 +487,17 @@ export default function FunilVendasPage() {
       {/* ── Stats Row ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Leads no Funil', value: stats.totalLeads, color: '#FF6A00', icon: Users },
-          { label: 'Em Negociação', value: `R$ ${stats.valueInNegotiation.toLocaleString('pt-BR')}`, color: '#2563eb', icon: Clock },
-          { label: 'Faturamento Fechado', value: `R$ ${stats.totalWonValue.toLocaleString('pt-BR')}`, color: '#059669', icon: DollarSign },
-          { label: 'Ticket Médio', value: `R$ ${Math.round(stats.averageTicket).toLocaleString('pt-BR')}`, color: '#7c3aed', icon: Sparkles },
-        ].map(({ label, value, color, icon: Icon }) => (
-          <div key={label} className="rounded-2xl border border-white/60 bg-[#eef2f7] p-5 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between">
+          { label: 'Leads no Funil', value: stats.totalLeads, icon: <KpiIconLeads /> },
+          { label: 'Em Negociação', value: `R$ ${stats.valueInNegotiation.toLocaleString('pt-BR')}`, icon: <KpiIconClock /> },
+          { label: 'Faturamento Fechado', value: `R$ ${stats.totalWonValue.toLocaleString('pt-BR')}`, icon: <KpiIconMoney /> },
+          { label: 'Ticket Médio', value: `R$ ${Math.round(stats.averageTicket).toLocaleString('pt-BR')}`, icon: <KpiIconTicket /> },
+        ].map(({ label, value, icon }) => (
+          <div key={label} className="rounded-2xl border border-white/60 bg-white p-5 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">{label}</p>
               <div className="text-[20px] font-black text-slate-800">{value}</div>
             </div>
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-white/80 border border-white/60 shadow-[inset_1px_1px_3px_rgba(0,0,0,0.05)]">
-              <Icon size={18} style={{ color }} />
-            </div>
+            <div className="shrink-0">{icon}</div>
           </div>
         ))}
       </div>

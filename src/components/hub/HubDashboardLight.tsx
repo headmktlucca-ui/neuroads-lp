@@ -32,6 +32,7 @@ import { useHub } from '../../context/HubContext';
 import { normalizeConnections } from '../../lib/connectors';
 import { getHubAutomationsFromProfile, formatAutomationDateTime } from '../../lib/hub-automations';
 import HubEmptyState from './HubEmptyState';
+import HubTrialBanner from './HubTrialBanner';
 import CreditMeter from './CreditMeter';
 import BentoCard from './v2/BentoCard';
 import CountUp from './v2/CountUp';
@@ -756,6 +757,9 @@ export default function HubDashboardLight() {
           Análise Neuromarketing
         </Link>
       </motion.div>
+
+      {/* Trial countdown — visível apenas para usuários em período de teste */}
+      <HubTrialBanner />
 
       {/* Operational Alerts */}
       {(() => {

@@ -64,7 +64,12 @@
       "Read(//mingw64/**)",
       "Bash(rm -rf ~/.gemini/skills/find-skills)",
       "Bash(rm -rf ~/.agents/skills/gemma-dev)",
-      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); \\(Get-Command rg\\).Source; \"--- TESTE GEMINI FINAL ---\"; $env:GEMINI_API_KEY = \"AQ.Ab8RN6JPTPqIjMaSrGInvjieiO5ODsSXcNgrijFL2Ec10PhT4g\"; gemini -p \"Responda apenas: OK\" 2>&1 | Out-String)"
+      "PowerShell($env:Path = [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"Machine\"\\) + \";\" + [System.Environment]::GetEnvironmentVariable\\(\"Path\",\"User\"\\); \\(Get-Command rg\\).Source; \"--- TESTE GEMINI FINAL ---\"; $env:GEMINI_API_KEY = \"AQ.Ab8RN6JPTPqIjMaSrGInvjieiO5ODsSXcNgrijFL2Ec10PhT4g\"; gemini -p \"Responda apenas: OK\" 2>&1 | Out-String)",
+      "Bash(ls -la \"C:/Users/claud/Downloads/Rob.mp4\" && ls \"C:/Users/claud/OneDrive/Documentos/NeuroAds/LP/public/videos/\")",
+      "Bash(cp \"C:/Users/claud/Downloads/Rob.mp4\" \"C:/Users/claud/OneDrive/Documentos/NeuroAds/LP/public/videos/Rob.mp4\" && ls -la \"C:/Users/claud/OneDrive/Documentos/NeuroAds/LP/public/videos/\")",
+      "Bash(curl -s -o /dev/null -w \"Rob.mp4: %{http_code} \\(%{size_download} bytes\\)\\\\n\" http://localhost:3000/videos/Rob.mp4)",
+      "Bash(where ffmpeg *)",
+      "Bash(ffmpeg -version)"
     ]
   },
   "hooks": {

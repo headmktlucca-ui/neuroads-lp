@@ -9,7 +9,6 @@ import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
 import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
 import FunnelInteractiveShowcase from '@/components/neuroads/FunnelInteractiveShowcase';
 import PricingValuesSection from '@/components/neuroads/PricingValuesSection';
-import VideoPlayerPro from '@/components/ui/VideoPlayerPro';
 
 function IconBotAI() {
   return (
@@ -1835,7 +1834,15 @@ function DemoAndAccessSection() {
           className="lg:col-span-7"
         >
           <div className="relative aspect-video rounded-[32px] overflow-hidden bg-slate-950 shadow-[0_20px_40px_rgba(255,85,0,0.12),_0_1px_3px_rgba(255,85,0,0.05)]">
-            <VideoPlayerPro src="/videos/VD_BV.mp4" />
+            <video
+              src="/videos/VD_BV.mp4"
+              controls
+              autoPlay
+              loop
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+            />
           </div>
         </motion.div>
 
@@ -1852,10 +1859,10 @@ function DemoAndAccessSection() {
             style={{ borderColor: 'rgba(255, 85, 0, 0.2)' }}
           >
             <h3 className="font-head font-extrabold text-black text-lg mb-2 text-left">
-              Solicite seu acesso
+              Solicitar Demonstração
             </h3>
             <p className="text-slate-500 text-xs leading-relaxed mb-6 text-left">
-              Preencha os campos abaixo e entraremos em contato para liberar seu painel NeuroAds.
+              Preencha os campos abaixo e vamos elaborar uma demonstração prática das operações, oportunidades e resultados que podemos atingir na sua operação:
             </p>
 
             <AnimatePresence mode="wait">
@@ -1956,7 +1963,7 @@ function DemoAndAccessSection() {
                         : 'bg-[#EDF1F5] text-slate-400 cursor-not-allowed border border-slate-200/50'
                     }`}
                   >
-                    Solicitar Acesso Completo
+                    Solicitar
                   </button>
                 </motion.form>
               ) : (

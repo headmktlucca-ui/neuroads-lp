@@ -68,11 +68,9 @@ export async function GET(
         }
       : undefined;
 
-  if (connector === 'crm') {
-    if (!runtimeHubSpot?.appId || !runtimeHubSpot.clientId || !runtimeHubSpot.clientSecret || !runtimeHubSpot.callbackUrl) {
-      return redirectWithError('missing_hubspot_runtime_credentials');
-    }
-  }
+  // HubSpot: credenciais em runtime são um override opcional — quando ausentes,
+  // buildOAuthAuthorizationUrl usa HUBSPOT_CLIENT_ID / HUBSPOT_CLIENT_SECRET do env.
+  const hasRuntimeHubSpot = Boolean(runtimeHubSpot?.clientId && runtimeHubSpot?.clientSecret);
 
   const built = buildOAuthAuthorizationUrl(
     connector,
@@ -80,7 +78,9 @@ export async function GET(
     next,
     {
       appBaseUrl,
-      runtime: runtimeHubSpot ?? runtimeStripe,
+      runtime: connector === 'crm'
+        ? (hasRuntimeHubSpot ? runtimeHubSpot : undefined)
+        : runtimeStripe,
     }
   );
   if ('error' in built) {

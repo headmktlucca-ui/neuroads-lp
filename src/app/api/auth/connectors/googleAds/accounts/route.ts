@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
-const GADS_BASE = 'https://googleads.googleapis.com/v17';
+// Mesma versão usada em /api/traffic/extract e traffic-sync — mantenha em sincronia.
+const GADS_BASE = 'https://googleads.googleapis.com/v24';
 
 type GoogleAdsCustomer = {
   id: string;
@@ -21,6 +22,13 @@ export async function POST(request: Request) {
 
     const developerToken =
       body.developerToken?.trim() || process.env.GOOGLE_ADS_DEVELOPER_TOKEN || '';
+
+    if (!developerToken) {
+      return NextResponse.json(
+        { error: 'Developer Token do Google Ads não configurado (GOOGLE_ADS_DEVELOPER_TOKEN).' },
+        { status: 400 }
+      );
+    }
 
     const baseHeaders: Record<string, string> = {
       Authorization: `Bearer ${accessToken}`,

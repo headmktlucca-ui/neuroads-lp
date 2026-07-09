@@ -62,6 +62,13 @@ export async function GET(
     return NextResponse.redirect(redirectUrl);
   }
 
+  // Rejeita states antigos (mitiga replay de callbacks OAuth). Janela de 15 min.
+  const STATE_MAX_AGE_MS = 15 * 60 * 1000;
+  if (!state.issuedAt || Date.now() - state.issuedAt > STATE_MAX_AGE_MS) {
+    redirectUrl.searchParams.set('connector_auth_error', 'state_expired');
+    return NextResponse.redirect(redirectUrl);
+  }
+
   try {
     const tokenData = await exchangeOAuthCodeForToken({
       connector,

@@ -46,8 +46,21 @@ export async function POST(request: Request) {
 
     let propertyName = '';
 
-    // Step 1: Find a property for this account
+    // Step 1: Resolver a property.
+    // Novo formato: a seleção de conta salva diretamente o Property ID (GA4 Data
+    // API roda relatórios por property). Valida com uma consulta direta.
     if (accountId) {
+      const directRes = await fetch(`https://analyticsadmin.googleapis.com/v1beta/properties/${accountId}`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        cache: 'no-store'
+      });
+      if (directRes.ok) {
+        propertyName = `properties/${accountId}`;
+      }
+    }
+
+    // Legado: accountId era uma CONTA GA4 — busca a primeira property da conta.
+    if (!propertyName && accountId) {
       const propEndpoint = `https://analyticsadmin.googleapis.com/v1beta/properties?filter=parent:accounts/${accountId}`;
       const propRes = await fetch(propEndpoint, {
         headers: { Authorization: `Bearer ${accessToken}` },

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { AuthLeftPanel } from '../../components/auth/AuthLeftPanel';
-import { normalizeHubNextPath } from '../../lib/hub-access';
+import { normalizeHubNextPath, getHubTrialInfo } from '../../lib/hub-access';
 import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
 
 function resolvePlanState(profile: Record<string, unknown> | null): string {
@@ -57,7 +57,14 @@ function LoginPageContent() {
       return;
     }
     if (!onboardingDone) { router.replace(`/onboarding?next=${encodeURIComponent(nextPath)}`); return; }
-    if (planState === 'trialing' || planState === 'active') { router.replace(nextPath); return; }
+    if (planState === 'trialing') {
+      // Trial só libera o Hub enquanto o período não expirou. Expirado sem
+      // contratação → direciona para a etapa de plano para contratar.
+      const trial = getHubTrialInfo(profileRecord);
+      if (trial.isTrialing) { router.replace(nextPath); return; }
+      router.replace('/onboarding?step=plan&state=trial_expired'); return;
+    }
+    if (planState === 'active') { router.replace(nextPath); return; }
     if (planState === 'trial_expired') { router.replace('/onboarding?step=plan&state=trial_expired'); return; }
     if (planState === 'canceled' || planState === 'cancelled') { router.replace('/onboarding?step=plan&state=canceled'); return; }
     if (planState === 'past_due') { router.replace('/onboarding?step=plan&state=past_due'); return; }
@@ -210,7 +217,7 @@ function LoginPageContent() {
             <button
               type="submit"
               disabled={isSubmitting || !email || !password}
-              className="w-full h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 font-bold text-[15px] transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)] flex items-center justify-center gap-2"
+              className="w-full h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-[15px] transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)] flex items-center justify-center gap-2"
             >
               {isSubmitting ? (
                 <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />

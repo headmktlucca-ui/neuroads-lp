@@ -159,7 +159,9 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
         provider: 'linkedin',
         authUrl: 'https://www.linkedin.com/oauth/v2/authorization',
         tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
-        scope: 'r_liteprofile email r_ads r_ads_reporting',
+        // OIDC (openid profile email) substitui o r_liteprofile descontinuado.
+        scope: 'openid profile email r_ads r_ads_reporting',
+        scopeEnvKeys: ['LINKEDIN_ADS_SCOPE'],
         clientIdEnvKeys: ['LINKEDIN_ADS_CLIENT_ID'],
         clientSecretEnvKeys: ['LINKEDIN_ADS_CLIENT_SECRET'],
         tokenExchangeStyle: 'form-post',
@@ -174,7 +176,8 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
         provider: 'linkedin',
         authUrl: 'https://www.linkedin.com/oauth/v2/authorization',
         tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
-        scope: 'r_liteprofile email rw_organization_admin r_organization_social',
+        // OIDC (openid profile email) substitui o r_liteprofile descontinuado.
+        scope: 'openid profile email rw_organization_admin r_organization_social',
         scopeEnvKeys: ['LINKEDIN_PAGE_SCOPE'],
         clientIdEnvKeys: ['LINKEDIN_PAGE_CLIENT_ID', 'LINKEDIN_ADS_CLIENT_ID', 'LINKEDIN_CLIENT_ID'],
         clientSecretEnvKeys: ['LINKEDIN_PAGE_CLIENT_SECRET', 'LINKEDIN_ADS_CLIENT_SECRET', 'LINKEDIN_CLIENT_SECRET'],
@@ -343,7 +346,7 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
         clientSecretEnvKeys: ['GOOGLE_ADS_CLIENT_SECRET', 'GOOGLE_OAUTH_CLIENT_SECRET'],
         authExtraParams: {
           access_type: 'offline',
-          prompt: 'consent',
+          prompt: 'consent select_account',
           include_granted_scopes: 'true',
         },
         tokenExchangeStyle: 'form-post',
@@ -634,9 +637,32 @@ export async function exchangeOAuthCodeForToken(args: {
     if (!response.ok || !payload.access_token) {
       throw new Error(extractErrorMessage(payload, 'Falha no token OAuth da Meta.'));
     }
+
+    let accessToken = String(payload.access_token);
+    let expiresIn = Number(payload.expires_in || 0) || undefined;
+
+    // Best practice Meta: troca o token de curta duração (~2h) por um
+    // long-lived token (~60 dias), evitando que a conexão expire no mesmo dia.
+    try {
+      const exchangeUrl = new URL(resolvedTokenUrl);
+      exchangeUrl.search = '';
+      exchangeUrl.searchParams.set('grant_type', 'fb_exchange_token');
+      exchangeUrl.searchParams.set('client_id', clientId);
+      exchangeUrl.searchParams.set('client_secret', clientSecret);
+      exchangeUrl.searchParams.set('fb_exchange_token', accessToken);
+      const exchangeRes = await fetch(exchangeUrl.toString(), { method: 'GET' });
+      const exchangePayload = (await exchangeRes.json()) as Record<string, unknown>;
+      if (exchangeRes.ok && typeof exchangePayload.access_token === 'string' && exchangePayload.access_token) {
+        accessToken = exchangePayload.access_token;
+        expiresIn = Number(exchangePayload.expires_in || 0) || 60 * 24 * 60 * 60;
+      }
+    } catch {
+      // Mantém o token de curta duração se a troca falhar — conexão ainda funciona.
+    }
+
     return {
-      accessToken: String(payload.access_token),
-      expiresIn: Number(payload.expires_in || 0) || undefined,
+      accessToken,
+      expiresIn,
       raw: payload,
     };
   }
@@ -691,20 +717,33 @@ export async function exchangeOAuthCodeForToken(args: {
       body: JSON.stringify(jsonPayload),
     });
     const payload = (await response.json()) as Record<string, unknown>;
-    if (!response.ok || !payload.access_token) {
+
+    // APIs como a TikTok Business embrulham o resultado em { code, message, data: {...} }.
+    // Usa o objeto aninhado quando o access_token não está no nível raiz.
+    const nestedData =
+      !payload.access_token && payload.data && typeof payload.data === 'object'
+        ? (payload.data as Record<string, unknown>)
+        : null;
+    const tokenSource = nestedData ?? payload;
+
+    if (!response.ok || !tokenSource.access_token) {
       throw new Error(extractErrorMessage(payload, 'Falha ao trocar código OAuth por token.'));
     }
 
+    const advertiserIds = Array.isArray(tokenSource.advertiser_ids)
+      ? (tokenSource.advertiser_ids as unknown[]).map((v) => String(v)).filter(Boolean)
+      : [];
+
     return {
-      accessToken: String(payload.access_token),
-      refreshToken: typeof payload.refresh_token === 'string' ? payload.refresh_token : undefined,
-      expiresIn: Number(payload.expires_in || 0) || undefined,
+      accessToken: String(tokenSource.access_token),
+      refreshToken: typeof tokenSource.refresh_token === 'string' ? tokenSource.refresh_token : undefined,
+      expiresIn: Number(tokenSource.expires_in || 0) || undefined,
       accountId:
-        typeof payload.account_id === 'string'
-          ? payload.account_id
-          : typeof payload.advertiser_id === 'string'
-            ? payload.advertiser_id
-            : undefined,
+        typeof tokenSource.account_id === 'string'
+          ? tokenSource.account_id
+          : typeof tokenSource.advertiser_id === 'string'
+            ? tokenSource.advertiser_id
+            : advertiserIds[0],
       raw: payload,
     };
   }

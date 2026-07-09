@@ -64,15 +64,15 @@ type HelpContent = {
 
 const CHANNEL_HELP: Partial<Record<string, HelpContent>> = {
   hubspot: {
-    title: 'Como obter credenciais HubSpot',
+    title: 'Como conectar o HubSpot',
     steps: [
-      '1. Acesse sua conta HubSpot e vá em Configurações > Integrações > Apps Privados.',
-      '2. Clique em "Criar app privado" ou acesse um app existente.',
-      '3. Em "Informações básicas", copie o App ID.',
-      '4. Na aba "Auth", copie o Client ID e o Client Secret.',
-      '5. Em Redirect URI, use o valor indicado abaixo do campo.',
+      '1. Clique em "Conectar" para iniciar a autenticação OAuth do HubSpot.',
+      '2. Faça login na sua conta HubSpot, se solicitado.',
+      '3. Selecione o portal (conta) HubSpot que deseja conectar.',
+      '4. Revise as permissões de leitura de contatos e negócios e clique em "Conectar app".',
+      '5. Você retornará automaticamente ao NeuroAds com o canal ativo.',
     ],
-    link: { label: 'Documentação HubSpot Apps', url: 'https://developers.hubspot.com/docs/api/oauth-quickstart-guide' },
+    link: { label: 'Documentação HubSpot OAuth', url: 'https://developers.hubspot.com/docs/api/oauth-quickstart-guide' },
   },
   rdStationConversas: {
     title: 'Como obter o Token do RD Station Conversas',
@@ -116,14 +116,14 @@ const CHANNEL_HELP: Partial<Record<string, HelpContent>> = {
     link: { label: 'Documentação GTM Server-side', url: 'https://developers.google.com/tag-platform/tag-manager/server-side' },
   },
   stripe: {
-    title: 'Como conectar sua conta Stripe',
+    title: 'Como obter a chave de API do Stripe',
     steps: [
-      '1. Clique em "Conectar" para iniciar o fluxo OAuth do Stripe Connect.',
-      '2. Você será redirecionado para o painel Stripe.',
-      '3. Selecione a conta que deseja conectar ou crie uma nova.',
-      '4. Autorize o acesso e retorne automaticamente ao NeuroAds.',
+      '1. Acesse o Dashboard do Stripe (dashboard.stripe.com) e faça login.',
+      '2. Vá em Desenvolvedores > Chaves de API.',
+      '3. Recomendado: crie uma "Chave restrita" apenas com permissões de leitura (Charges, Customers, Balance) — mais segura que a Secret Key completa.',
+      '4. Copie a chave (rk_live_... ou sk_live_...) e cole no campo abaixo.',
     ],
-    link: { label: 'Stripe Connect Docs', url: 'https://stripe.com/docs/connect' },
+    link: { label: 'Documentação de chaves Stripe', url: 'https://docs.stripe.com/keys' },
   },
   tiktok: {
     title: 'Como conectar o TikTok',
@@ -256,13 +256,7 @@ const INTEGRATIONS: IntegrationDef[] = [
     id: 'hubspot', connectorKey: 'crm', name: 'HubSpot', category: 'CRM',
     desc: 'Sincronize leads, empresas e oportunidades para uma visao completa do funil.',
     icon: '/images/connectors/hubspot-photorealistic-icon-hd-v1.png',
-    flow: 'oauth-creds', oauthConnector: 'crm',
-    credFields: [
-      { label: 'HubSpot App ID', placeholder: 'Ex: 12345678', key: 'hubspot_app_id' },
-      { label: 'Client ID', placeholder: 'Cole seu Client ID', key: 'hubspot_client_id' },
-      { label: 'Client Secret', placeholder: 'Cole seu Client Secret', key: 'hubspot_client_secret', secret: true },
-      { label: 'Redirect URI', placeholder: 'https://seusite.com/api/auth/connectors/crm/callback', key: 'hubspot_redirect_uri' },
-    ],
+    flow: 'oauth', oauthConnector: 'crm',
   },
   {
     id: 'instagram', connectorKey: 'instagram', name: 'Instagram', category: 'SOCIAL',
@@ -337,13 +331,13 @@ const INTEGRATIONS: IntegrationDef[] = [
     id: 'tiktokAds', connectorKey: 'tiktokAds', name: 'Tik Tok Ads', category: 'ADS',
     desc: 'Integre performance de midia com custo por aquisicao e receita incremental.',
     icon: '/images/connectors/tiktok-photorealistic-icon-hd-v2.png',
-    flow: 'oauth', oauthConnector: 'tiktokAds',
+    flow: 'oauth-select', oauthConnector: 'tiktokAds',
   },
   {
     id: 'warehouse', connectorKey: 'warehouse', name: 'BigQuery / Data Warehouse', category: 'ANALYTICS',
     desc: 'Visão unificada dos dados e projeções estruturadas através do Google BigQuery.',
     isComponentIcon: true, componentIconType: 'database',
-    flow: 'oauth', oauthConnector: 'warehouse',
+    flow: 'oauth-select', oauthConnector: 'warehouse',
   },
 ];
 
@@ -369,6 +363,8 @@ const OAUTH_SELECT_CONNECTORS: Partial<Record<ConnectorKey, { apiPath: string; r
   linkedinAds: { apiPath: '/api/auth/connectors/linkedinAds/accounts', resKey: 'accounts' },
   linkedinPage: { apiPath: '/api/auth/connectors/linkedinPage/accounts', resKey: 'accounts' },
   metaAds: { apiPath: '/api/auth/connectors/metaAds/accounts', resKey: 'accounts' },
+  tiktokAds: { apiPath: '/api/auth/connectors/tiktokAds/accounts', resKey: 'accounts' },
+  warehouse: { apiPath: '/api/auth/connectors/warehouse/accounts', resKey: 'accounts' },
 };
 
 // Friendly modal title per connector
@@ -380,6 +376,8 @@ const ACCOUNT_SELECT_TITLES: Partial<Record<ConnectorKey, string>> = {
   linkedinAds: 'Selecionar conta LinkedIn Ads',
   linkedinPage: 'Selecionar página LinkedIn',
   metaAds: 'Selecionar conta Meta Ads',
+  tiktokAds: 'Selecionar anunciante TikTok Ads',
+  warehouse: 'Selecionar projeto BigQuery',
 };
 
 // ---------------------------------------------------------------------------
@@ -716,14 +714,25 @@ function HubIntegracoesContent() {
           <h2 className="text-[15px] font-black text-[#0f172a] mb-4">Catalogo de Integracoes</h2>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex flex-wrap gap-2">
-              {FILTERS.map((f) => (
-                <button key={f} onClick={() => setActiveFilter(f)}
-                  className={`px-3.5 py-1.5 rounded-full text-[12px] font-bold tracking-wide transition-all ${activeFilter === f
-                    ? 'bg-[#eef2f7] text-[#FF6A00] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border border-white/20'
-                    : 'bg-[#eef2f7] border border-white/40 text-slate-600 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff]'
-                  }`}>{f}
-                </button>
-              ))}
+              {FILTERS.map((f) => {
+                const tabColor = f === 'Todos' ? '#FF6A00' : CATEGORY_BORDER[f] ?? '#FF6A00';
+                const isActive = activeFilter === f;
+                return (
+                  <button key={f} onClick={() => setActiveFilter(f)}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12px] font-bold tracking-wide transition-all border ${isActive
+                      ? 'shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff]'
+                      : 'shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff]'
+                    }`}
+                    style={{
+                      color: tabColor,
+                      background: isActive ? `${tabColor}14` : '#eef2f7',
+                      borderColor: isActive ? `${tabColor}55` : 'rgba(255,255,255,0.4)',
+                    }}>
+                    <span className="h-1.5 w-1.5 rounded-full" style={{ background: tabColor }} />
+                    {f}
+                  </button>
+                );
+              })}
             </div>
             <div className="flex flex-wrap items-center gap-2 shrink-0">
               <Link href="/hub/api-keys" className="px-4 py-1.5 rounded-full text-[12px] font-bold border border-white/40 bg-[#eef2f7] text-slate-700 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] transition-all" style={{ textDecoration: 'none' }}>API Keys</Link>
@@ -760,7 +769,14 @@ function HubIntegracoesContent() {
                           <Image src={integ.icon as string} alt={integ.name} width={36} height={36} className="h-full w-full rounded-lg object-cover" />
                         )}
                       </div>
-                      <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border border-white/60 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] ${connected ? 'text-[#0d9488]' : 'text-slate-500'}`}>{integ.category}</span>
+                      <span
+                        className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border"
+                        style={{
+                          color: CATEGORY_BORDER[integ.category] ?? '#64748B',
+                          background: `${CATEGORY_BORDER[integ.category] ?? '#64748B'}14`,
+                          borderColor: `${CATEGORY_BORDER[integ.category] ?? '#64748B'}33`,
+                        }}
+                      >{integ.category}</span>
                     </div>
 
                     <div className="flex-1">
@@ -847,7 +863,7 @@ function HubIntegracoesContent() {
                       type="button"
                       onClick={() => openConnect(integ)}
                       className="hub-neu-card group relative flex flex-col gap-4 p-5 text-left w-full cursor-pointer shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[0_0_0_2px_rgba(255,106,0,0.18),_6px_6px_14px_#c2cbd9,_-6px_-6px_14px_#ffffff] hover:scale-[1.015] active:scale-[1.005] transition-all duration-200 overflow-hidden"
-                      style={{ borderLeft: `3px solid ${CATEGORY_BORDER[integ.category] ?? '#E5E7EB'}` }}
+                      style={{ background: '#FFFFFF', borderLeft: `3px solid ${CATEGORY_BORDER[integ.category] ?? '#E5E7EB'}` }}
                     >
                       {cardInner}
                       {statusBar}
@@ -860,7 +876,7 @@ function HubIntegracoesContent() {
                   <div
                     key={integ.id}
                     className="hub-neu-card group relative flex flex-col gap-4 p-5 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] transition-all duration-300 overflow-hidden"
-                    style={{ borderLeft: `3px solid ${CATEGORY_BORDER[integ.category] ?? '#E5E7EB'}` }}
+                    style={{ background: '#FFFFFF', borderLeft: `3px solid ${CATEGORY_BORDER[integ.category] ?? '#E5E7EB'}` }}
                   >
                     {cardInner}
                     {statusBar}

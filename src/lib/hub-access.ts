@@ -5,6 +5,12 @@ export const HUB_ONBOARDING_REDIRECT = HUB_PLAN_REQUIRED_REDIRECT;
 
 export type HubAccessStatus = 'loading' | 'allowed' | 'unauthenticated' | 'unverified' | 'forbidden';
 const INITIAL_TRIAL_WINDOW_MS = 14 * 24 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+// Status que representam uma assinatura efetivamente contratada/paga.
+const PAID_STATUSES = ['active', 'past_due', 'unpaid', 'incomplete', 'ativo', 'contratado', 'paid'];
+// Status que representam apenas um período de teste (sem contratação confirmada).
+const TRIAL_STATUSES = ['trialing', 'trial', 'teste', 'em_teste'];
 
 function normalizePathCandidate(value: string | null | undefined): string | null {
   if (!value || !value.startsWith('/')) return null;
@@ -365,8 +371,16 @@ export function hasActiveHubSubscription(profile: unknown): boolean {
       readString(onboardingRecord?.status)
   );
 
-  if (['trialing', 'trial', 'active', 'past_due', 'unpaid', 'incomplete', 'ativo', 'contratado', 'paid'].includes(normalizedStatus)) {
+  // Assinatura efetivamente contratada/paga: acesso liberado.
+  if (PAID_STATUSES.includes(normalizedStatus)) {
     return true;
+  }
+
+  // Status de trial ("trialing"/"trial"/"teste"): só concede acesso enquanto o
+  // período de teste ainda não expirou. Depois disso, sem contratação, bloqueia.
+  if (TRIAL_STATUSES.includes(normalizedStatus)) {
+    const trialEndsAt = resolveTrialEndsAt(profileRecord, onboardingRecord);
+    return Boolean(trialEndsAt && trialEndsAt > Date.now());
   }
 
   if (hasActiveTrialPeriod(profileRecord, onboardingRecord)) {
@@ -374,6 +388,81 @@ export function hasActiveHubSubscription(profile: unknown): boolean {
   }
 
   return isWithinInitialTrialWindow(profileRecord, onboardingRecord);
+}
+
+export interface HubTrialInfo {
+  /** Está em trial ativo (dentro do prazo, sem contratação paga). */
+  isTrialing: boolean;
+  /** Trial existente porém já expirado (sem contratação). */
+  expired: boolean;
+  /** Timestamp (ms) do fim do trial, se houver. */
+  trialEndsAt: number | null;
+  /** Milissegundos restantes (0 se expirado/sem trial). */
+  msRemaining: number;
+  /** Dias inteiros restantes, arredondados para cima. */
+  daysRemaining: number;
+  /** Horas restantes, arredondadas para cima (para o último dia). */
+  hoursRemaining: number;
+}
+
+const EMPTY_TRIAL_INFO: HubTrialInfo = {
+  isTrialing: false,
+  expired: false,
+  trialEndsAt: null,
+  msRemaining: 0,
+  daysRemaining: 0,
+  hoursRemaining: 0,
+};
+
+/**
+ * Deriva o estado de trial de um profile. Retorna `isTrialing: true` apenas para
+ * usuários que estão de fato no período de teste (sem contratação paga) e cujo
+ * prazo ainda não expirou — usado para exibir o contador de período restante.
+ */
+export function getHubTrialInfo(profile: unknown, nowMs: number = Date.now()): HubTrialInfo {
+  if (!profile || typeof profile !== 'object') return EMPTY_TRIAL_INFO;
+
+  const profileRecord = profile as Record<string, unknown>;
+  const onboardingRecord = readRecord(profileRecord.onboarding);
+
+  // Clientes pagantes nunca estão "em trial".
+  const isPaidCustomer =
+    profileRecord.isPremium === true ||
+    onboardingRecord?.isPremium === true ||
+    Boolean(readString(profileRecord.stripeSubscriptionId) ?? readString(onboardingRecord?.stripeSubscriptionId));
+
+  if (isPaidCustomer) return EMPTY_TRIAL_INFO;
+
+  const normalizedStatus = normalizeStatus(
+    readString(profileRecord.subscriptionStatus) ??
+      readString(profileRecord.stripeSubscriptionStatus) ??
+      readString(profileRecord.status) ??
+      readString(onboardingRecord?.subscriptionStatus) ??
+      readString(onboardingRecord?.stripeSubscriptionStatus) ??
+      readString(onboardingRecord?.status)
+  );
+
+  if (PAID_STATUSES.includes(normalizedStatus)) return EMPTY_TRIAL_INFO;
+
+  const trialEndsAt = resolveTrialEndsAt(profileRecord, onboardingRecord);
+  const hasTrialSignal =
+    TRIAL_STATUSES.includes(normalizedStatus) ||
+    hasActiveTrialPeriod(profileRecord, onboardingRecord) ||
+    isWithinInitialTrialWindow(profileRecord, onboardingRecord);
+
+  if (!hasTrialSignal || !trialEndsAt) return EMPTY_TRIAL_INFO;
+
+  const msRemaining = trialEndsAt - nowMs;
+  const expired = msRemaining <= 0;
+
+  return {
+    isTrialing: !expired,
+    expired,
+    trialEndsAt,
+    msRemaining: Math.max(0, msRemaining),
+    daysRemaining: expired ? 0 : Math.max(1, Math.ceil(msRemaining / DAY_MS)),
+    hoursRemaining: expired ? 0 : Math.max(1, Math.ceil(msRemaining / (60 * 60 * 1000))),
+  };
 }
 
 export function hasHubPlanAccess(profile: unknown): boolean {

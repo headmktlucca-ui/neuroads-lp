@@ -10,16 +10,20 @@ function toStringValue(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-function parseAccountId(resourceName: string): string {
+function parsePropertyId(resourceName: string): string {
   const normalized = toStringValue(resourceName);
-  const match = normalized.match(/^accounts\/(.+)$/i);
+  const match = normalized.match(/^properties\/(.+)$/i);
   return match?.[1]?.trim() ?? normalized;
 }
 
-type Ga4AccountsApiResponse = {
-  accounts?: Array<{
-    name?: string;
+type Ga4AccountSummariesResponse = {
+  accountSummaries?: Array<{
+    account?: string;
     displayName?: string;
+    propertySummaries?: Array<{
+      property?: string;
+      displayName?: string;
+    }>;
   }>;
   nextPageToken?: string;
   error?: {
@@ -27,6 +31,12 @@ type Ga4AccountsApiResponse = {
   };
 };
 
+/**
+ * Lista as PROPERTIES GA4 acessíveis pelo usuário autenticado (via
+ * accountSummaries — conta + properties em uma única chamada). A GA4 Data API
+ * roda relatórios por property, então é a property que o usuário deve
+ * selecionar ao conectar o canal.
+ */
 export async function POST(request: Request) {
   try {
     const body = (await request.json()) as { accessToken?: string };
@@ -37,14 +47,13 @@ export async function POST(request: Request) {
     }
 
     const accounts: Ga4AccountRecord[] = [];
-    const seenAccountIds = new Set<string>();
+    const seenPropertyIds = new Set<string>();
     let nextPageToken = '';
     let pageGuard = 0;
 
     do {
-      const endpoint = new URL('https://analyticsadmin.googleapis.com/v1beta/accounts');
+      const endpoint = new URL('https://analyticsadmin.googleapis.com/v1beta/accountSummaries');
       endpoint.searchParams.set('pageSize', '200');
-      endpoint.searchParams.set('showDeleted', 'false');
       if (nextPageToken) {
         endpoint.searchParams.set('pageToken', nextPageToken);
       }
@@ -57,27 +66,29 @@ export async function POST(request: Request) {
         },
       });
 
-      const payload = (await response.json()) as Ga4AccountsApiResponse;
-      console.log('[GA4 Accounts API] Response payload:', JSON.stringify(payload, null, 2));
+      const payload = (await response.json()) as Ga4AccountSummariesResponse;
 
       if (!response.ok) {
         const message = toStringValue(payload?.error?.message) || 'Falha ao listar contas do GA4.';
-        console.error('[GA4 Accounts API] Error:', message);
         return NextResponse.json({ error: message }, { status: 400 });
       }
 
-      const rows = Array.isArray(payload.accounts) ? payload.accounts : [];
-      for (const row of rows) {
-        const rawName = toStringValue(row.name);
-        const accountId = parseAccountId(rawName);
-        if (!accountId || seenAccountIds.has(accountId)) continue;
+      const summaries = Array.isArray(payload.accountSummaries) ? payload.accountSummaries : [];
+      for (const summary of summaries) {
+        const accountName = toStringValue(summary.displayName);
+        const properties = Array.isArray(summary.propertySummaries) ? summary.propertySummaries : [];
+        for (const property of properties) {
+          const propertyId = parsePropertyId(toStringValue(property.property));
+          if (!propertyId || seenPropertyIds.has(propertyId)) continue;
 
-        seenAccountIds.add(accountId);
-        accounts.push({
-          id: accountId,
-          name: toStringValue(row.displayName) || accountId,
-          accountId,
-        });
+          seenPropertyIds.add(propertyId);
+          const propertyName = toStringValue(property.displayName) || propertyId;
+          accounts.push({
+            id: propertyId,
+            name: accountName ? `${accountName} — ${propertyName}` : propertyName,
+            accountId: propertyId,
+          });
+        }
       }
 
       nextPageToken = toStringValue(payload.nextPageToken);

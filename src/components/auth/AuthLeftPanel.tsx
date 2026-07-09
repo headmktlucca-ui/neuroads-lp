@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
 
 const SLIDES = [
   {
@@ -39,22 +40,9 @@ export function AuthLeftPanel() {
 
   return (
     <>
-      {/* Background glow - Full screen fixed behind everything */}
-      <div className="pointer-events-none fixed inset-0 z-0 bg-[#EDF1F5] overflow-hidden">
-        <div
-          className="absolute -top-32 -left-32 w-96 h-96 rounded-full opacity-20 blur-3xl transition-colors duration-1000"
-          style={{ backgroundColor: slide.badgeColor }}
-        />
-        <div className="absolute bottom-0 right-0 w-64 h-64 rounded-full bg-[#FF6A00]/10 blur-3xl" />
-        {/* Dot grid */}
-        <svg className="absolute inset-0 w-full h-full opacity-[0.04]" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="dotgrid" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
-              <circle cx="1" cy="1" r="1" fill="#000000" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#dotgrid)" />
-        </svg>
+      {/* Background — mesma animação de circuito da seção de abertura da home */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4]">
+        <HeroCircuitBackground id="circuit-auth" />
       </div>
 
       {/* Left Panel Content - Hidden on mobile, visible on lg */}

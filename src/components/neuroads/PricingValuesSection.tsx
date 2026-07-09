@@ -384,17 +384,6 @@ export default function PricingValuesSection() {
 
   return (
     <section id="valores" className="relative w-full py-24 md:py-28 overflow-hidden">
-      {/* Decorative layered-sheets background — right aligned */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none select-none absolute inset-y-0 right-0 hidden md:block w-[520px] lg:w-[640px] translate-x-[22%] opacity-70"
-        style={{
-          backgroundImage: "url('/images/valores-layers-bg.svg')",
-          backgroundRepeat: 'no-repeat',
-          backgroundPosition: 'right center',
-          backgroundSize: 'contain',
-        }}
-      />
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div
