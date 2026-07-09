@@ -22,7 +22,32 @@ type BusinessForm = {
   revenueRange: string;
   site: string;
   whatsapp: string;
+  whatsappDdi: string;
 };
+
+const COUNTRY_DDIS = [
+  { iso: 'BR', flag: '🇧🇷', dial: '+55', name: 'Brasil' },
+  { iso: 'US', flag: '🇺🇸', dial: '+1', name: 'Estados Unidos' },
+  { iso: 'PT', flag: '🇵🇹', dial: '+351', name: 'Portugal' },
+  { iso: 'AR', flag: '🇦🇷', dial: '+54', name: 'Argentina' },
+  { iso: 'MX', flag: '🇲🇽', dial: '+52', name: 'México' },
+  { iso: 'CL', flag: '🇨🇱', dial: '+56', name: 'Chile' },
+  { iso: 'CO', flag: '🇨🇴', dial: '+57', name: 'Colômbia' },
+  { iso: 'PY', flag: '🇵🇾', dial: '+595', name: 'Paraguai' },
+  { iso: 'UY', flag: '🇺🇾', dial: '+598', name: 'Uruguai' },
+  { iso: 'PE', flag: '🇵🇪', dial: '+51', name: 'Peru' },
+  { iso: 'ES', flag: '🇪🇸', dial: '+34', name: 'Espanha' },
+  { iso: 'GB', flag: '🇬🇧', dial: '+44', name: 'Reino Unido' },
+  { iso: 'DE', flag: '🇩🇪', dial: '+49', name: 'Alemanha' },
+  { iso: 'FR', flag: '🇫🇷', dial: '+33', name: 'França' },
+  { iso: 'IT', flag: '🇮🇹', dial: '+39', name: 'Itália' },
+  { iso: 'CA', flag: '🇨🇦', dial: '+1', name: 'Canadá' },
+  { iso: 'AU', flag: '🇦🇺', dial: '+61', name: 'Austrália' },
+  { iso: 'JP', flag: '🇯🇵', dial: '+81', name: 'Japão' },
+  { iso: 'AE', flag: '🇦🇪', dial: '+971', name: 'Emirados Árabes' },
+];
+
+const DEFAULT_DDI = '+55';
 
 type PlanOffer = {
   slug: string;
@@ -40,6 +65,7 @@ const DEFAULT_FORM: BusinessForm = {
   revenueRange: '',
   site: HTTPS_PREFIX,
   whatsapp: '',
+  whatsappDdi: DEFAULT_DDI,
 };
 
 const OBJECTIVES = [
@@ -177,6 +203,9 @@ function OnboardingPageContent() {
         ? current.site
         : normalizeHttpsMaskedUrlInput(readString(record.site ?? onboarding?.site) || HTTPS_PREFIX),
       whatsapp: current.whatsapp || formatWhatsappInput(readString(record.whatsapp ?? onboarding?.whatsapp)),
+      whatsappDdi: current.whatsappDdi !== DEFAULT_DDI
+        ? current.whatsappDdi
+        : readString(record.whatsappDdi ?? onboarding?.whatsappDdi) || DEFAULT_DDI,
     }));
 
     if (selectedObjectives.length === 0) {
@@ -202,6 +231,7 @@ function OnboardingPageContent() {
       revenueRange: payloadForm.revenueRange.trim(),
       site: normalizedSite,
       whatsapp: payloadForm.whatsapp.trim(),
+      whatsappDdi: payloadForm.whatsappDdi,
       onboardingStep: step,
       updatedAt: now,
       ...(authEmail ? { authEmail, email: authEmail } : {}),
@@ -211,6 +241,7 @@ function OnboardingPageContent() {
         revenueRange: payloadForm.revenueRange.trim(),
         site: normalizedSite,
         whatsapp: payloadForm.whatsapp.trim(),
+        whatsappDdi: payloadForm.whatsappDdi,
         objectives: selectedObjectives,
         updatedAt: now,
       },
@@ -299,6 +330,7 @@ function OnboardingPageContent() {
             revenueRange: form.revenueRange.trim(),
             site: normalizeHttpsMaskedUrlInput(form.site),
             whatsapp: form.whatsapp.trim(),
+            whatsappDdi: form.whatsappDdi,
             objectives: selectedObjectives,
             planSlug: selectedPlan.slug,
             planName: selectedPlan.name,
@@ -514,15 +546,37 @@ function OnboardingPageContent() {
                   <label className="block text-[11px] font-black uppercase tracking-wider text-slate-900/40 mb-1.5">
                     WhatsApp *
                   </label>
-                  <div className="relative">
-                    <Phone className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/35 z-10" />
-                    <input
-                      value={form.whatsapp}
-                      onChange={(e) => setForm((prev) => ({ ...prev, whatsapp: formatWhatsappInput(e.target.value) }))}
-                      maxLength={15}
-                      placeholder="(00) 00000-0000"
-                      className="w-full h-11 rounded-xl border border-white/[0.10] bg-slate-50 pl-10 pr-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
-                    />
+                  <div className="flex">
+                    <div className="relative shrink-0">
+                      <select
+                        value={form.whatsappDdi}
+                        onChange={(e) => setForm((prev) => ({ ...prev, whatsappDdi: e.target.value }))}
+                        aria-label="Código do país"
+                        className="h-11 appearance-none rounded-l-xl border border-r-0 border-white/[0.10] bg-slate-100 pl-3 pr-7 text-[13px] font-semibold text-slate-700 cursor-pointer focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                      >
+                        {COUNTRY_DDIS.map((country) => (
+                          <option key={country.iso} value={country.dial}>
+                            {country.flag} {country.dial}
+                          </option>
+                        ))}
+                      </select>
+                      <svg
+                        className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 w-3 h-3 text-slate-500"
+                        viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path d="M2.5 4.5 L6 8 L9.5 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </div>
+                    <div className="relative flex-1">
+                      <Phone className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-900/35 z-10" />
+                      <input
+                        value={form.whatsapp}
+                        onChange={(e) => setForm((prev) => ({ ...prev, whatsapp: formatWhatsappInput(e.target.value) }))}
+                        maxLength={15}
+                        placeholder="(00) 00000-0000"
+                        className="w-full h-11 rounded-r-xl border border-white/[0.10] bg-slate-50 pl-10 pr-4 text-[14px] text-slate-900 placeholder:text-slate-900/20 focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -600,7 +654,7 @@ function OnboardingPageContent() {
                         <ul className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-y-1.5 gap-x-3">
                           {['Insights de IA (acesso total)', 'Fontes de dados ilimitadas', 'Analytics avançado', 'Modelagem preditiva'].map((feature) => (
                             <li key={feature} className="flex items-start gap-2 text-[12px] leading-snug text-slate-600">
-                              <span className="mt-0.5 inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-[#FF6A00] text-slate-900">
+                              <span className="mt-0.5 inline-flex h-[14px] w-[14px] shrink-0 items-center justify-center rounded-full bg-[#FF6A00] text-white">
                                 <Check size={9} strokeWidth={3.5} />
                               </span>
                               <span>{feature}</span>
@@ -650,7 +704,7 @@ function OnboardingPageContent() {
                     type="button"
                     onClick={handleNextFromBusiness}
                     disabled={isSaving}
-                    className="inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
+                    className="inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
                   >
                     {isSaving ? 'Salvando...' : 'Continuar'}
                     {!isSaving && <ArrowRight size={14} />}
@@ -662,7 +716,7 @@ function OnboardingPageContent() {
                     type="button"
                     onClick={handleNextFromObjectives}
                     disabled={isSaving}
-                    className="inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
+                    className="inline-flex items-center justify-center gap-2 h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
                   >
                     {isSaving ? 'Salvando...' : 'Ir para plano'}
                     {!isSaving && <ArrowRight size={14} />}
@@ -683,7 +737,7 @@ function OnboardingPageContent() {
                       type="button"
                       onClick={handleGoToStripeCheckout}
                       disabled={isSaving}
-                      className="h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
+                      className="h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] disabled:opacity-40 disabled:cursor-not-allowed text-white font-bold text-[14px] px-5 transition-all shadow-[0_0_24px_rgba(255,106,0,0.3)] hover:shadow-[0_0_32px_rgba(255,106,0,0.45)]"
                     >
                       {isSaving ? 'Abrindo checkout...' : 'Ativar com cartão →'}
                     </button>
