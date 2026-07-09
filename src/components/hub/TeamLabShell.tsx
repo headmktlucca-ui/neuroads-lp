@@ -150,10 +150,19 @@ function TeamAgentCard({
       style={{ borderLeft: `3px solid ${teamAgent.cor}`, background: '#ffffff' }}
     >
       {/* ── Card header (always visible) ── */}
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
+        aria-expanded={expanded}
         onClick={() => setExpanded(e => !e)}
-        className="w-full flex items-start gap-4 p-5 text-left group"
+        onKeyDown={(e) => {
+          if (e.target !== e.currentTarget) return;
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setExpanded(prev => !prev);
+          }
+        }}
+        className="w-full flex items-start gap-4 p-5 text-left group cursor-pointer"
       >
         {/* Avatar image — 192×192 with hover overlay */}
         <Link
@@ -265,7 +274,7 @@ function TeamAgentCard({
             className={`text-slate-400 transition-transform duration-300 group-hover:text-[#FF6A00] ${expanded ? 'rotate-180' : ''}`}
           />
         </div>
-      </button>
+      </div>
 
       {/* Personality pills */}
       <div className="flex gap-1.5 flex-wrap px-5 pb-3">
