@@ -6,7 +6,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown, ExternalLink, Lock,
-  Search, Sparkles, Users, X, Wrench, Activity
+  Search, Sparkles, Users, X, Wrench, Activity, Zap
 } from 'lucide-react';
 import { doc, setDoc } from 'firebase/firestore';
 import { TEAM_AGENTS, TeamAgent } from '../../data/team-agents';
@@ -14,6 +14,36 @@ import { agents as allSpecialties } from '../../data/agents';
 import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../lib/agent-status-cache';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
+
+// ─── Reusable KPI Icon Wrapper ──────────────────────────────────────────────
+
+function KpiIconWrapper({
+  children,
+  fromColor,
+  toColor,
+  shadowColor
+}: {
+  children: React.ReactNode;
+  fromColor: string;
+  toColor: string;
+  shadowColor: string;
+}) {
+  return (
+    <div 
+      className="w-[38px] h-[38px] rounded-full flex items-center justify-center text-white relative shrink-0"
+      style={{
+        background: `linear-gradient(135deg, ${fromColor}, ${toColor})`,
+        boxShadow: `0 2.5px 5px ${shadowColor}`,
+      }}
+    >
+      <div className="absolute top-[2px] left-[6px] w-[9px] h-[5px] bg-white/30 rounded-full"></div>
+      <div className="absolute inset-[3.5px] rounded-full border border-white/15"></div>
+      <div className="relative z-10 shrink-0">
+        {children}
+      </div>
+    </div>
+  );
+}
 
 // ─── Specialty row — activation states and access action ───────────────────
 
@@ -330,16 +360,49 @@ export default function TeamLabShell() {
       {/* ── Stats ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         {[
-          { label: 'Agentes da Equipe', value: '10',          color: '#FF6A00' },
-          { label: 'Operações Ativas', value: `${totalActive}`, color: '#2563eb' },
-          { label: 'Online Agora', value: '10',              color: '#059669' },
-          { label: 'SLA de Execução', value: '100%',          color: '#d97706' },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="rounded-2xl border border-white/60 bg-[#eef2f7] p-4 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff]">
-            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-2">{label}</p>
-            <div className="text-[22px] font-black" style={{ color }}>
-              {value}
+          { 
+            label: 'Agentes da Equipe', 
+            value: '10', 
+            icon: (
+              <KpiIconWrapper fromColor="#FF9A55" toColor="#E63E00" shadowColor="rgba(201, 55, 0, 0.4)">
+                <Users size={15} />
+              </KpiIconWrapper>
+            )
+          },
+          { 
+            label: 'Operações Ativas', 
+            value: `${totalActive}`, 
+            icon: (
+              <KpiIconWrapper fromColor="#5AAEFF" toColor="#1240B8" shadowColor="rgba(12, 46, 158, 0.4)">
+                <Activity size={15} />
+              </KpiIconWrapper>
+            )
+          },
+          { 
+            label: 'Online Agora', 
+            value: '10', 
+            icon: (
+              <KpiIconWrapper fromColor="#3EE59A" toColor="#036C4A" shadowColor="rgba(2, 82, 58, 0.4)">
+                <Zap size={15} />
+              </KpiIconWrapper>
+            )
+          },
+          { 
+            label: 'SLA de Execução', 
+            value: '100%', 
+            icon: (
+              <KpiIconWrapper fromColor="#B487F5" toColor="#54189E" shadowColor="rgba(62, 14, 122, 0.4)">
+                <Sparkles size={15} />
+              </KpiIconWrapper>
+            )
+          },
+        ].map(({ label, value, icon }) => (
+          <div key={label} className="rounded-2xl border border-white/60 bg-white p-5 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">{label}</p>
+              <div className="text-[20px] font-black text-slate-800">{value}</div>
             </div>
+            <div className="shrink-0">{icon}</div>
           </div>
         ))}
       </div>
