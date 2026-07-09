@@ -317,16 +317,15 @@ function SidebarContent({
 
       {/* Sign out */}
       <div className="px-3 pb-5 shrink-0 border-t border-white/40 pt-3 flex flex-col items-center">
-        {/* Transparent background robot video */}
-        <div className="w-24 h-24 mb-2 overflow-hidden flex items-center justify-center pointer-events-none select-none">
+        {/* Sleek dark viewport widget for the robot video (restoring original colors) */}
+        <div className="w-24 h-24 mb-2 overflow-hidden flex items-center justify-center pointer-events-none select-none bg-slate-950 rounded-2xl border border-slate-800 shadow-inner">
           <video
-            src="/videos/VD_Robo.mp4"
+            src="/videos/Rob.mp4"
             autoPlay
             loop
             muted
             playsInline
             className="w-full h-full object-contain"
-            style={{ mixBlendMode: 'screen' }}
           />
         </div>
         <button
