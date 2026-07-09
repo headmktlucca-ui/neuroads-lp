@@ -14,7 +14,7 @@ import { getFirebaseDb } from '../../../lib/firebase';
 
 function KpiIconLeads() {
   return (
-    <svg viewBox="0 0 40 40" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 40 40" width="76" height="76" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="kpi-leads-g" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
           <stop stopColor="#FF9A55" /><stop offset="1" stopColor="#E63E00" />
@@ -34,7 +34,7 @@ function KpiIconLeads() {
 
 function KpiIconClock() {
   return (
-    <svg viewBox="0 0 40 40" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 40 40" width="76" height="76" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="kpi-clock-g" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
           <stop stopColor="#5AAEFF" /><stop offset="1" stopColor="#1240B8" />
@@ -55,7 +55,7 @@ function KpiIconClock() {
 
 function KpiIconMoney() {
   return (
-    <svg viewBox="0 0 40 40" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 40 40" width="76" height="76" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="kpi-money-g" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
           <stop stopColor="#3EE59A" /><stop offset="1" stopColor="#036C4A" />
@@ -75,7 +75,7 @@ function KpiIconMoney() {
 
 function KpiIconTicket() {
   return (
-    <svg viewBox="0 0 40 40" width="38" height="38" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 40 40" width="76" height="76" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <linearGradient id="kpi-ticket-g" x1="4" y1="4" x2="36" y2="36" gradientUnits="userSpaceOnUse">
           <stop stopColor="#B487F5" /><stop offset="1" stopColor="#54189E" />
