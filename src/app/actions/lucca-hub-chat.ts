@@ -6,6 +6,7 @@ import { getAdminDb } from '../../lib/firebase-admin';
 import { getTeamAgentById, TEAM_AGENTS } from '../../data/team-agents';
 import { describeConnections } from '../../lib/connectors';
 import { buildOperationBlock } from '../../lib/operation-prompt';
+import { retrieveRelevantReports, retrieveRelevantChatSessions } from '../../lib/knowledge-rag';
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || '',
@@ -67,84 +68,30 @@ export type LuccaLeftPanelData = {
    users/{uid}/chat_sessions  → conversas anteriores com os Agentes
 ══════════════════════════════════════════════════════════════════ */
 
-async function loadAgentReports(userId: string): Promise<string> {
-  try {
-    const db = getAdminDb();
-    const snap = await db
-      .collection('users')
-      .doc(userId)
-      .collection('agent_reports')
-      .orderBy('createdAtMs', 'desc')
-      .limit(5)
-      .get();
+async function loadAgentReports(userId: string, queryText: string): Promise<string> {
+  const relevant = await retrieveRelevantReports(userId, queryText, 5);
+  if (relevant.length === 0) return '';
 
-    if (snap.empty) return '';
+  const entries = relevant.map((r) => {
+    const date = r.createdAtMs ? new Date(r.createdAtMs).toLocaleDateString('pt-BR') : 'sem data';
+    return `• [${r.agentTitle}] "${r.reportTitle}" (${date}):\n${r.reportContent.slice(0, 600)}${r.reportContent.length > 600 ? '…' : ''}`;
+  });
 
-    const entries: string[] = [];
-    snap.docs.forEach((docSnap) => {
-      const data = docSnap.data() as {
-        agentTitle?: string;
-        reportTitle?: string;
-        reportContent?: string;
-        createdAtMs?: number;
-      };
-      if (!data.reportContent) return;
-      const date = data.createdAtMs
-        ? new Date(data.createdAtMs).toLocaleDateString('pt-BR')
-        : 'sem data';
-      entries.push(
-        `• [${data.agentTitle || 'Agente'}] "${data.reportTitle || 'Relatório'}" (${date}):\n${data.reportContent.slice(0, 600)}${data.reportContent.length > 600 ? '…' : ''}`
-      );
-    });
-
-    return entries.length > 0
-      ? `RELATÓRIOS REAIS DOS AGENTES (Base de Conhecimento — use como fonte primária):\n${entries.join('\n\n')}`
-      : '';
-  } catch {
-    return '';
-  }
+  return `RELATÓRIOS REAIS DOS AGENTES (Base de Conhecimento — recuperados por relevância ao pedido atual; use como fonte primária):\n${entries.join('\n\n')}`;
 }
 
-async function loadRecentChatHistory(userId: string): Promise<string> {
-  try {
-    const db = getAdminDb();
-    const sessionsSnap = await db
-      .collection('users')
-      .doc(userId)
-      .collection('chat_sessions')
-      .orderBy('updatedAtMs', 'desc')
-      .limit(3)
-      .get();
+async function loadRecentChatHistory(userId: string, queryText: string): Promise<string> {
+  const relevant = await retrieveRelevantChatSessions(userId, queryText, 3);
+  if (relevant.length === 0) return '';
 
-    if (sessionsSnap.empty) return '';
+  const summaries = relevant.map((s) => {
+    const exchanges = s.exchanges.map(
+      (e) => `• Usuário perguntou: "${e.userText.slice(0, 120)}"\n  Resposta dada: "${e.assistantText.slice(0, 200)}"`
+    );
+    return `Sessão "${s.title}":\n${exchanges.join('\n')}`;
+  });
 
-    const summaries: string[] = [];
-    sessionsSnap.docs.forEach((docSnap) => {
-      const data = docSnap.data();
-      const msgs = (data.messages || []) as Array<{ role: string; text: string }>;
-      if (msgs.length < 2) return;
-
-      const exchanges: string[] = [];
-      for (let i = 0; i < msgs.length - 1 && exchanges.length < 3; i++) {
-        const m = msgs[i];
-        const next = msgs[i + 1];
-        if (m.role === 'user' && next.role === 'assistant') {
-          exchanges.push(
-            `• Usuário perguntou: "${m.text.slice(0, 120)}"\n  Resposta dada: "${next.text.slice(0, 200)}"`
-          );
-        }
-      }
-      if (exchanges.length > 0) {
-        summaries.push(`Sessão "${data.title || 'sem título'}":\n${exchanges.join('\n')}`);
-      }
-    });
-
-    return summaries.length > 0
-      ? `HISTÓRICO RECENTE DE CONVERSAS (Base de Conhecimento):\n${summaries.join('\n\n')}`
-      : '';
-  } catch {
-    return '';
-  }
+  return `HISTÓRICO RECENTE DE CONVERSAS (Base de Conhecimento — recuperado por relevância ao pedido atual):\n${summaries.join('\n\n')}`;
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -403,10 +350,15 @@ export async function chatWithLuccaHub(
     ? snapshot.activeAgents
     : context.activeAgents ?? [];
 
-  // ─── Base de Conhecimento + métricas reais (em paralelo) ─────────────────
+  // ─── Base de Conhecimento (RAG por relevância) + métricas reais ──────────
+  // Query de relevância: operação ativa tem prioridade (é o que define o
+  // escopo do pedido); sem operação, usa a última mensagem do usuário.
+  const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
+  const kbQueryText = context.specialty ? `${context.specialty} ${lastUserMessage}` : lastUserMessage;
+
   const [reportsContext, chatContext, ga4Context] = await Promise.all([
-    context.userId ? loadAgentReports(context.userId) : Promise.resolve(''),
-    context.userId ? loadRecentChatHistory(context.userId) : Promise.resolve(''),
+    context.userId ? loadAgentReports(context.userId, kbQueryText) : Promise.resolve(''),
+    context.userId ? loadRecentChatHistory(context.userId, kbQueryText) : Promise.resolve(''),
     context.userId && snapshot?.ga4Connection
       ? fetchGa4Context(context.userId, snapshot.ga4Connection)
       : Promise.resolve(''),
