@@ -88,11 +88,13 @@ function NavLink({
   depth = 0,
   pathname,
   currentTab,
+  isDark = false,
 }: {
   item: NavItem;
   depth?: number;
   pathname: string;
   currentTab: string | null;
+  isDark?: boolean;
 }) {
   const router = useRouter();
   const hasChildren = !!item.children?.length;
@@ -130,21 +132,23 @@ function NavLink({
           }}
           className={`w-full text-left group flex items-center gap-3 ${paddingLeft} pr-3 py-3 rounded-2xl ${textSize} font-bold transition-all duration-200 cursor-pointer ${
             isActive
-              ? 'text-[#FF6A00]'
-              : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
+              ? isDark ? 'text-white' : 'text-[#FF6A00]'
+              : isDark
+                ? 'text-white/70 hover:text-white hover:bg-white/10'
+                : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
           }`}
           style={{
-            boxShadow:   isActive ? 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff' : 'none',
-            background:  isActive ? '#eef2f7' : 'transparent',
-            borderLeft:  isActive ? '2px solid #FF6A00' : '2px solid transparent',
+            boxShadow:   isActive ? (isDark ? 'none' : 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff') : 'none',
+            background:  isActive ? (isDark ? 'rgba(255,255,255,0.18)' : '#eef2f7') : 'transparent',
+            borderLeft:  isActive ? (isDark ? '2px solid rgba(255,255,255,0.7)' : '2px solid #FF6A00') : '2px solid transparent',
           }}
         >
-          <ParentIcon size={26} className={`transition-transform duration-200 group-hover:scale-110 ${isActive ? 'text-[#FF6A00]' : 'text-slate-500'}`} />
+          <ParentIcon size={26} className={`transition-transform duration-200 group-hover:scale-110 ${isActive ? (isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
           <span className="flex-1">{item.label}</span>
-          {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A00]" />}
+          {isActive && <span className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-white' : 'bg-[#FF6A00]'}`} />}
           <ChevronDown
             size={13}
-            className={`text-slate-400 transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
+            className={`transition-transform duration-300 ${open ? 'rotate-180' : ''} ${isDark ? 'text-white/50' : 'text-slate-400'}`}
           />
         </button>
 
@@ -157,7 +161,7 @@ function NavLink({
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.22 }}
-              className="overflow-hidden ml-4 border-l border-slate-200/80 pl-1 mt-0.5 space-y-0.5"
+              className={`overflow-hidden ml-4 pl-1 mt-0.5 space-y-0.5 border-l ${isDark ? 'border-white/20' : 'border-slate-200/80'}`}
             >
               {item.children!.map(child => (
                 <NavLink
@@ -166,6 +170,7 @@ function NavLink({
                   depth={1}
                   pathname={pathname}
                   currentTab={currentTab}
+                  isDark={isDark}
                 />
               ))}
             </motion.div>
@@ -183,13 +188,15 @@ function NavLink({
       href={item.href}
       className={`group flex items-center gap-3 ${paddingLeft} pr-3 py-${depth === 1 ? '2.5' : '3'} rounded-2xl ${textSize} font-bold transition-all duration-200 ${
         isActive
-          ? isLucca ? 'text-emerald-600' : 'text-[#FF6A00]'
-          : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
+          ? isLucca ? 'text-emerald-300' : isDark ? 'text-white' : 'text-[#FF6A00]'
+          : isDark
+            ? 'text-white/70 hover:text-white hover:bg-white/10'
+            : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
       }`}
       style={{
-        boxShadow:   isActive ? 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff' : 'none',
-        background:  isActive ? (isLucca ? '#ecfdf5' : '#eef2f7') : 'transparent',
-        borderLeft:  isActive ? `2px solid ${isLucca ? '#10b981' : '#FF6A00'}` : '2px solid transparent',
+        boxShadow:   isActive ? (isDark ? 'none' : 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff') : 'none',
+        background:  isActive ? (isLucca ? 'rgba(16,185,129,0.12)' : isDark ? 'rgba(255,255,255,0.18)' : '#eef2f7') : 'transparent',
+        borderLeft:  isActive ? `2px solid ${isLucca ? '#10b981' : isDark ? 'rgba(255,255,255,0.7)' : '#FF6A00'}` : '2px solid transparent',
         textDecoration: 'none',
       }}
     >
@@ -205,15 +212,15 @@ function NavLink({
           />
         </div>
       ) : (
-        <LeafIcon size={depth === 1 ? 20 : 26} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-600' : 'text-[#FF6A00]') : 'text-slate-500'}`} />
+        <LeafIcon size={depth === 1 ? 20 : 26} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-300' : isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
       )}
       <span className="flex-1">{item.label}</span>
       {isLucca && (
         <span className="flex items-center gap-1 shrink-0">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)] animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)] animate-pulse" />
         </span>
       )}
-      {isActive && !isLucca && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-[#FF6A00]" />}
+      {isActive && !isLucca && <span className={`ml-auto w-1.5 h-1.5 rounded-full ${isDark ? 'bg-white' : 'bg-[#FF6A00]'}`} />}
     </Link>
   );
 }
@@ -234,6 +241,7 @@ function SidebarContent({
   pathname,
   currentTab,
   onSignOut,
+  isDark = false,
 }: {
   userName: string;
   userPhoto?: string | null;
@@ -241,39 +249,39 @@ function SidebarContent({
   pathname: string;
   currentTab: string | null;
   onSignOut: () => void;
+  isDark?: boolean;
 }) {
   return (
     <>
-      {/* Top profile header: Avatar + Company name, and Greeting below */}
-      <div className="px-6 pt-7 pb-5 border-b border-slate-200/40 shrink-0 flex flex-col gap-3">
-        {/* Top row: Avatar + Company name */}
-        <div className="flex items-center justify-between gap-3">
-          {/* Avatar with subtle white border ring and soft shadow */}
-          <div className="relative w-9 h-9 rounded-full overflow-hidden shrink-0 ring-2 ring-white shadow-[0_4px_10px_rgba(0,0,0,0.06),_0_1px_3px_rgba(0,0,0,0.04)] bg-gradient-to-tr from-[#FF6A00] to-[#FF8805] flex items-center justify-center text-white font-black text-[13px] select-none">
-            {userPhoto ? (
-              <Image src={userPhoto} alt="" fill className="object-cover" sizes="36px" />
-            ) : (
-              (userName.charAt(0) || 'N').toUpperCase()
-            )}
-          </div>
-          {companyName && (
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/60 border border-slate-200/50 max-w-[120px] truncate shadow-[inset_1px_1px_2px_rgba(0,0,0,0.02)]">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-              <span className="text-[10px] font-black text-slate-600 uppercase tracking-wider truncate">
-                {companyName}
-              </span>
-            </div>
+      {/* Top profile header: Avatar + Info column */}
+      <div className={`px-6 pt-3.5 pb-5 shrink-0 flex items-center gap-3 ${isDark ? 'border-b border-white/15' : 'border-b border-slate-200/40'}`}>
+        {/* Avatar with subtle white border ring and soft shadow */}
+        <div className="relative w-[43px] h-[43px] rounded-full overflow-hidden shrink-0 ring-2 ring-white/60 shadow-[0_4px_14px_rgba(0,0,0,0.22)] bg-gradient-to-tr from-[#cc4400] to-[#FF8805] flex items-center justify-center text-white font-black text-[15px] select-none">
+          {userPhoto ? (
+            <Image src={userPhoto} alt="" fill className="object-cover" sizes="43px" />
+          ) : (
+            (userName.charAt(0) || 'N').toUpperCase()
           )}
         </div>
 
-        {/* Bottom row: Greeting + Username with professional typographic scale */}
-        <div className="text-left mt-1.5 pl-0.5">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">
-            {getGreeting()}
-          </p>
-          <h4 className="text-[15px] font-black text-slate-800 tracking-tight leading-tight truncate">
-            {userName.split(' ')[0]}!
-          </h4>
+        {/* Info Column: Company name + Greeting & Username */}
+        <div className="flex flex-col min-w-0">
+          {companyName && (
+            <div className="truncate">
+              <span className={`text-[17px] font-black truncate block leading-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>
+                {companyName.charAt(0).toUpperCase() + companyName.slice(1).toLowerCase()}
+              </span>
+            </div>
+          )}
+          {/* Greeting + Username on a single line */}
+          <div className="flex items-baseline gap-1 mt-0.5 min-w-0">
+            <span className={`text-[10px] font-normal leading-none shrink-0 ${isDark ? 'text-white/60' : 'text-slate-400'}`}>
+              {getGreeting()}
+            </span>
+            <span className={`text-[10px] font-normal truncate leading-none ${isDark ? 'text-white/70' : 'text-slate-500'}`}>
+              {userName.split(' ')[0]}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -285,6 +293,7 @@ function SidebarContent({
             item={item}
             pathname={pathname}
             currentTab={currentTab}
+            isDark={isDark}
           />
         ))}
 
@@ -294,12 +303,14 @@ function SidebarContent({
             href="/hub/assistente-ia"
             className={`group flex items-center gap-3 pl-4 pr-3 py-3 rounded-2xl text-[13px] font-bold transition-all duration-200 ${
               pathname === '/hub/assistente-ia'
-                ? 'text-emerald-600'
-                : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
+                ? isDark ? 'text-emerald-300' : 'text-emerald-600'
+                : isDark
+                  ? 'text-white/70 hover:text-white hover:bg-white/10'
+                  : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
             }`}
             style={{
-              boxShadow: pathname === '/hub/assistente-ia' ? 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff' : 'none',
-              background: pathname === '/hub/assistente-ia' ? '#ecfdf5' : 'transparent',
+              boxShadow: pathname === '/hub/assistente-ia' ? (isDark ? 'none' : 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff') : 'none',
+              background: pathname === '/hub/assistente-ia' ? (isDark ? 'rgba(16,185,129,0.12)' : '#ecfdf5') : 'transparent',
               borderLeft: pathname === '/hub/assistente-ia' ? '2px solid #10b981' : '2px solid transparent',
               textDecoration: 'none',
             }}
@@ -307,22 +318,26 @@ function SidebarContent({
             <Users
               size={16}
               className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${
-                pathname === '/hub/assistente-ia' ? 'text-emerald-600' : 'text-slate-500'
+                pathname === '/hub/assistente-ia' ? (isDark ? 'text-emerald-300' : 'text-emerald-600') : isDark ? 'text-white/60' : 'text-slate-500'
               }`}
             />
             <span className="flex-1">Agentes Online</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)] animate-pulse shrink-0" />
+            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)] animate-pulse shrink-0" />
           </Link>
         </div>
       </nav>
 
       {/* Sign out */}
-      <div className="px-3 pb-5 shrink-0 border-t border-white/40 pt-3">
+      <div className={`px-3 pb-5 shrink-0 pt-3 ${isDark ? 'border-t border-white/15' : 'border-t border-white/40'}`}>
         <button
           onClick={onSignOut}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-[13px] font-bold text-[#475569] hover:text-rose-600 hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] transition-all duration-200 border border-transparent hover:border-rose-500/15"
+          className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-[13px] font-bold transition-all duration-200 border border-transparent ${
+            isDark
+              ? 'text-white/70 hover:text-white hover:bg-white/10 hover:border-white/10'
+              : 'text-[#475569] hover:text-rose-600 hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:border-rose-500/15'
+          }`}
         >
-          <LogOut size={15} className="text-slate-400 group-hover:text-rose-500 transition-colors shrink-0" />
+          <LogOut size={15} className={`transition-colors shrink-0 ${isDark ? 'text-white/50' : 'text-slate-400'}`} />
           <span>Sair</span>
         </button>
       </div>
@@ -348,7 +363,10 @@ function Sidebar({
   const currentTab = searchParams.get('tab');
 
   return (
-    <aside className="hidden lg:flex flex-col w-[230px] shrink-0 border-r border-white/40 bg-white relative z-20 shadow-[4px_0_12px_rgba(0,0,0,0.015)]">
+    <aside
+      className="hidden lg:flex flex-col w-[230px] shrink-0 relative z-20 rounded-r-[28px] overflow-hidden shadow-[4px_0_28px_rgba(0,0,0,0.28)]"
+      style={{ background: 'linear-gradient(180deg, #7a2500 0%, #c24010 40%, #e85f22 80%, #FF8340 100%)' }}
+    >
       <SidebarContent
         userName={userName}
         userPhoto={userPhoto}
@@ -356,6 +374,7 @@ function Sidebar({
         pathname={pathname}
         currentTab={currentTab}
         onSignOut={onSignOut}
+        isDark={true}
       />
     </aside>
   );
@@ -819,7 +838,7 @@ function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: stri
 
 
   return (
-    <header className="hidden lg:flex items-center gap-4 px-8 h-16 border-b border-white/40 bg-[#eef2f7] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+    <header className="hidden lg:flex items-center gap-4 px-8 h-16 border-b border-white/40 bg-[#D9DDE1] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
       <div className="flex items-center gap-2.5 flex-1 max-w-xs px-3.5 h-10 rounded-2xl border border-white/30 bg-[#eef2f7] text-[13px] text-[#475569] shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] focus-within:ring-2 focus-within:ring-[#FF6A00]/25 transition-all">
         <Search size={14} className="text-slate-400" />
         <span className="select-none text-slate-400 font-bold">Buscar no Hub…</span>
@@ -875,19 +894,6 @@ function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: stri
             )}
           </div>
         )}
-
-        {/* Robot video — flipped horizontally, white bg blended away via multiply */}
-        <div className="w-14 h-14 overflow-hidden flex items-center justify-center pointer-events-none select-none shrink-0">
-          <video
-            src="/videos/Rob.mp4"
-            autoPlay
-            loop
-            muted
-            playsInline
-            className="w-full h-full object-contain mix-blend-multiply"
-            style={{ transform: 'scaleX(-1)' }}
-          />
-        </div>
 
         {/* Notifications */}
         <div className="relative" ref={bellRef}>

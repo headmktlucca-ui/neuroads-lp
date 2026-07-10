@@ -391,10 +391,6 @@ export default function PricingValuesSection() {
           className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end pb-12 border-b border-slate-300/40"
         >
           <div className="md:col-span-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase mb-4">
-              <span className="w-2 h-2 rounded-full bg-orange-500"></span>
-              VALORES &amp; RECURSOS
-            </div>
             <h2 className="font-head font-extrabold text-3xl md:text-4xl text-slate-900 leading-[1.15] tracking-tight">
               Um plano único. <span className="text-[#FF5500]">Toda a operação</span> dentro dele.
             </h2>

@@ -77,7 +77,12 @@
       "Skill(claude-api)",
       "Skill(claude-api:*)",
       "Bash(npm install *)",
-      "Bash(node -e \"console.log\\(require\\('@anthropic-ai/sdk/package.json'\\).version\\)\")"
+      "Bash(node -e \"console.log\\(require\\('@anthropic-ai/sdk/package.json'\\).version\\)\")",
+      "Bash(node -p \"JSON.parse\\(require\\('fs'\\).readFileSync\\('node_modules/@anthropic-ai/sdk/package.json','utf8'\\)\\).version\")",
+      "Bash(node \"C:/Users/claud/AppData/Local/Temp/claude/C--Users-claud-OneDrive-Documentos-NeuroAds-LP/b13f091d-6ba1-44ee-9451-c6c341cc2e38/scratchpad/test-claude-engine.mjs\")",
+      "Bash(cp \"C:/Users/claud/AppData/Local/Temp/claude/C--Users-claud-OneDrive-Documentos-NeuroAds-LP/b13f091d-6ba1-44ee-9451-c6c341cc2e38/scratchpad/test-claude-engine.mjs\" ./.tmp-test-claude.mjs)",
+      "Bash(node ./.tmp-test-claude.mjs)",
+      "Bash(rm -f ./.tmp-test-claude.mjs)"
     ]
   },
   "hooks": {

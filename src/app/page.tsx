@@ -528,14 +528,8 @@ export default function TempLandingPage() {
         <section className="relative z-[2] w-full px-4 sm:px-8 lg:px-24 pt-6 md:pt-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           {/* Left Side Info */}
           <div className="lg:col-span-7 flex flex-col items-start">
-            {/* Category Tag */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white shadow-[inset_2px_2px_5px_#c8d0e7,inset_-2px_-2px_5px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#FF5500] shadow-[0_0_8px_rgba(255,85,0,0.5)]"></span>
-              MARKETING · VENDAS · AUTOMAÇÃO · AGENTES IA
-            </div>
-
             {/* Headline */}
-            <h1 className="font-head font-extrabold text-3xl md:text-4xl lg:text-5xl text-slate-900 leading-[1.12] tracking-tight mt-6 max-w-3xl">
+            <h1 className="font-head font-extrabold text-3xl md:text-4xl lg:text-5xl text-slate-900 leading-[1.12] tracking-tight max-w-3xl">
               Operações IA Estratégicas em <span className="text-[#FF5500]">Marketing & Vendas B2B</span>.
             </h1>
 
@@ -631,11 +625,6 @@ export default function TempLandingPage() {
           className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end pb-12 border-b border-slate-300/40"
         >
           <div className="md:col-span-2">
-            {/* Category tag */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase mb-4">
-              <span className="w-2 h-2 rounded-full bg-orange-500"></span>
-              SOLUÇÕES NEUROADS
-            </div>
             {/* Title */}
             <h2 className="font-head font-extrabold text-3xl md:text-4xl text-slate-900 leading-[1.15] tracking-tight">
               Uma operação completa de <span className="text-[#FF5500]">marketing e vendas</span>, orquestrada por IA.
@@ -1135,26 +1124,33 @@ function MetricasMockup() {
 
 function ProcessamentoMockup() {
   const dots = React.useMemo(() => {
-    const list: { x: number; y: number; size: number; color: string; delay: number }[] = [];
+    let seed = 12345;
+    const lcg = () => {
+      seed = (seed * 1664525 + 1013904223) % 4294967296;
+      return seed / 4294967296;
+    };
+
+    const list: { x: number; y: number; size: number; color: string; delay: number; duration: number }[] = [];
     const addEdgeDots = (x1: number, y1: number, x2: number, y2: number, count: number) => {
       for (let i = 0; i <= count; i++) {
         const t = i / count;
         const baseX = x1 + (x2 - x1) * t;
         const baseY = y1 + (y2 - y1) * t;
         
-        const jitterX = (Math.random() - 0.5) * 8;
-        const jitterY = (Math.random() - 0.5) * 8;
-        const size = Math.random() * 2 + 1.5;
+        const jitterX = (lcg() - 0.5) * 8;
+        const jitterY = (lcg() - 0.5) * 8;
+        const size = lcg() * 2 + 1.5;
         
         const colors = ['#8B5CF6', '#3B82F6', '#FF5500', '#A78BFA', '#93C5FD'];
-        const color = colors[Math.floor(Math.random() * colors.length)];
+        const color = colors[Math.floor(lcg() * colors.length)];
         
         list.push({
           x: baseX + jitterX,
           y: baseY + jitterY,
           size,
           color,
-          delay: Math.random() * 2,
+          delay: lcg() * 2,
+          duration: 1.5 + lcg(),
         });
       }
     };
@@ -1180,7 +1176,7 @@ function ProcessamentoMockup() {
             fill={dot.color}
             opacity="0.8"
             style={{
-              animation: `pulse ${1.5 + Math.random()}s infinite alternate`,
+              animation: `pulse ${dot.duration}s infinite alternate`,
               animationDelay: `${dot.delay}s`,
             }}
           />
@@ -1197,6 +1193,7 @@ function ProcessamentoMockup() {
   );
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function AnaliseIaMockup() {
   return (
     <div className="w-full rounded-2xl border border-white/60 bg-white p-4 shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] text-slate-700 text-[11px] font-sans">
@@ -1811,10 +1808,6 @@ function DemoAndAccessSection() {
         transition={{ duration: 0.8 }}
         className="text-center pb-16"
       >
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white shadow-[inset_2px_2px_4px_#c8d0e7,inset_-2px_-2px_4px_#ffffff] border border-white/30 text-[9px] font-bold tracking-widest text-slate-500 uppercase mb-4">
-          <span className="w-2 h-2 rounded-full bg-orange-500"></span>
-          DEMONSTRAÇÃO & ACESSO
-        </div>
         <h2 className="font-head font-extrabold text-3xl md:text-4xl text-slate-900 leading-tight tracking-tight max-w-2xl mx-auto">
           Conheça a NeuroAds em ação e <span className="text-[#FF5500]">solicite seu acesso.</span>
         </h2>
