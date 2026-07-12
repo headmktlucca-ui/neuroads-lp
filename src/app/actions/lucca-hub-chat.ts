@@ -7,6 +7,7 @@ import { getTeamAgentById, TEAM_AGENTS } from '../../data/team-agents';
 import { describeConnections } from '../../lib/connectors';
 import { buildOperationBlock } from '../../lib/operation-prompt';
 import { retrieveRelevantReports, retrieveRelevantChatSessions } from '../../lib/knowledge-rag';
+import { fetchGoogleAdsContext, fetchMetaAdsContext, fetchSearchConsoleContext } from '../../lib/connector-collectors';
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || '',
@@ -104,6 +105,9 @@ type UserSnapshot = {
   activeAgents: string[];
   activeAutomations: string[];
   ga4Connection: { accessToken?: string; accountId?: string } | null;
+  googleAdsConnection: { accessToken?: string; accountId?: string; loginCustomerId?: string } | null;
+  metaAdsConnection: { accessToken?: string; accountId?: string } | null;
+  searchConsoleConnection: { accessToken?: string; accountId?: string } | null;
   instagram?: string;
   linkedin?: string;
   tiktok?: string;
@@ -119,7 +123,7 @@ async function loadUserSnapshot(userId: string): Promise<UserSnapshot | null> {
 
     const rawConnections = (data.connections ?? {}) as Record<
       string,
-      { isActive?: boolean; accessToken?: string; accountId?: string } | undefined
+      { isActive?: boolean; accessToken?: string; accountId?: string; loginCustomerId?: string } | undefined
     >;
     const { connected, disconnected } = describeConnections(rawConnections);
 
@@ -145,6 +149,21 @@ async function loadUserSnapshot(userId: string): Promise<UserSnapshot | null> {
       ? { accessToken: ga4.accessToken, accountId: ga4.accountId }
       : null;
 
+    const googleAds = rawConnections['google_ads'];
+    const googleAdsConnection = googleAds?.isActive
+      ? { accessToken: googleAds.accessToken, accountId: googleAds.accountId, loginCustomerId: googleAds.loginCustomerId }
+      : null;
+
+    const metaAds = rawConnections['meta_ads'];
+    const metaAdsConnection = metaAds?.isActive
+      ? { accessToken: metaAds.accessToken, accountId: metaAds.accountId }
+      : null;
+
+    const searchConsole = rawConnections['search_console'];
+    const searchConsoleConnection = searchConsole?.isActive
+      ? { accessToken: searchConsole.accessToken, accountId: searchConsole.accountId }
+      : null;
+
     const toStringValue = (val: unknown) => typeof val === 'string' ? val.trim() : '';
 
     return {
@@ -153,6 +172,9 @@ async function loadUserSnapshot(userId: string): Promise<UserSnapshot | null> {
       activeAgents,
       activeAutomations,
       ga4Connection,
+      googleAdsConnection,
+      metaAdsConnection,
+      searchConsoleConnection,
       instagram: toStringValue(data.instagram),
       linkedin: toStringValue(data.linkedin),
       tiktok: toStringValue(data.tiktok),
@@ -356,15 +378,27 @@ export async function chatWithLuccaHub(
   const lastUserMessage = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
   const kbQueryText = context.specialty ? `${context.specialty} ${lastUserMessage}` : lastUserMessage;
 
-  const [reportsContext, chatContext, ga4Context] = await Promise.all([
-    context.userId ? loadAgentReports(context.userId, kbQueryText) : Promise.resolve(''),
-    context.userId ? loadRecentChatHistory(context.userId, kbQueryText) : Promise.resolve(''),
-    context.userId && snapshot?.ga4Connection
-      ? fetchGa4Context(context.userId, snapshot.ga4Connection)
-      : Promise.resolve(''),
-  ]);
+  const [reportsContext, chatContext, ga4Context, googleAdsContext, metaAdsContext, searchConsoleContext] =
+    await Promise.all([
+      context.userId ? loadAgentReports(context.userId, kbQueryText) : Promise.resolve(''),
+      context.userId ? loadRecentChatHistory(context.userId, kbQueryText) : Promise.resolve(''),
+      context.userId && snapshot?.ga4Connection
+        ? fetchGa4Context(context.userId, snapshot.ga4Connection)
+        : Promise.resolve(''),
+      context.userId && snapshot?.googleAdsConnection
+        ? fetchGoogleAdsContext(context.userId, snapshot.googleAdsConnection)
+        : Promise.resolve(''),
+      context.userId && snapshot?.metaAdsConnection
+        ? fetchMetaAdsContext(context.userId, snapshot.metaAdsConnection)
+        : Promise.resolve(''),
+      context.userId && snapshot?.searchConsoleConnection
+        ? fetchSearchConsoleContext(context.userId, snapshot.searchConsoleConnection)
+        : Promise.resolve(''),
+    ]);
 
-  const kbBlocks = [reportsContext, chatContext, ga4Context].filter(Boolean).join('\n\n');
+  const kbBlocks = [reportsContext, chatContext, ga4Context, googleAdsContext, metaAdsContext, searchConsoleContext]
+    .filter(Boolean)
+    .join('\n\n');
   const { block: dataAccessBlock, hasRealData } = buildDataAccessBlock(connected, disconnected);
   const agentIdentity = buildAgentIdentity(context.agentId);
   const specialtyBlock = buildOperationBlock({
