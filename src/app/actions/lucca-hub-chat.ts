@@ -8,6 +8,7 @@ import { describeConnections } from '../../lib/connectors';
 import { buildOperationBlock } from '../../lib/operation-prompt';
 import { retrieveRelevantReports, retrieveRelevantChatSessions } from '../../lib/knowledge-rag';
 import { fetchGoogleAdsContext, fetchMetaAdsContext, fetchSearchConsoleContext } from '../../lib/connector-collectors';
+import { auditOperationResult, auditPanelByRules, type AuditablePanel } from '../../lib/ulisses-audit';
 
 const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || '',
@@ -491,8 +492,14 @@ ${kbBlocks ? `━━━━━━━━━━━━━━━━━━━━━━
     .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
 
   // ─── Motores ──────────────────────────────────────────────────────────────
-  const runClaude = async (): Promise<string> => {
-    const isOperation = Boolean(context.specialty);
+  const isOperation = Boolean(context.specialty);
+
+  // runClaudeOnce aceita uma conversa inicial alternativa — usado pela
+  // auditoria do Ulisses para reenviar a mesma chamada com um pedido de
+  // correção anexado, sem duplicar a lógica de tools/pause_turn.
+  const runClaudeOnce = async (
+    initialConvo?: Anthropic.Messages.MessageParam[]
+  ): Promise<{ raw: string; convo: Anthropic.Messages.MessageParam[] }> => {
     const model = isOperation ? MODEL_OPERATION : MODEL_LIGHT;
 
     // Pesquisa profunda: web search nativo apenas em operações (Sonnet 5)
@@ -516,7 +523,7 @@ ${kbBlocks ? `━━━━━━━━━━━━━━━━━━━━━━
       ...(tools ? { tools } : {}),
     };
 
-    let convo = [...claudeMessages];
+    let convo = initialConvo ? [...initialConvo] : [...claudeMessages];
     let response = await anthropic.messages.create({ ...baseParams, messages: convo });
 
     // Ferramentas server-side podem pausar o turno — retoma até 3 vezes
@@ -530,13 +537,22 @@ ${kbBlocks ? `━━━━━━━━━━━━━━━━━━━━━━
       continuations++;
     }
 
+    // Encerra a conversa com o turno final do assistente — permite que o
+    // chamador estenda com um pedido de correção sem recriar o histórico.
+    convo = [
+      ...convo,
+      { role: 'assistant', content: response.content as Anthropic.Messages.ContentBlockParam[] },
+    ];
+
     const text = response.content
       .filter((block): block is Anthropic.Messages.TextBlock => block.type === 'text')
       .map((block) => block.text)
       .join('');
     const start = text.indexOf('{');
     const end = text.lastIndexOf('}');
-    return start >= 0 && end > start ? text.slice(start, end + 1) : '{}';
+    const raw = start >= 0 && end > start ? text.slice(start, end + 1) : '{}';
+
+    return { raw, convo };
   };
 
   const runOpenAI = async (): Promise<string> => {
@@ -553,40 +569,24 @@ ${kbBlocks ? `━━━━━━━━━━━━━━━━━━━━━━
     return completion.choices[0]?.message?.content || '{}';
   };
 
-  try {
-    let raw = '';
+  type ParsedResponse = {
+    message?: string;
+    dataAccessWarning?: string | null;
+    nextSteps?: string[];
+    leftPanel?: {
+      title?: string | null;
+      badge?: string | null;
+      description?: string | null;
+      tableHeaders?: string[] | null;
+      tableRows?: Array<Record<string, string>> | null;
+      analysisTitle?: string | null;
+      analysisItems?: string[] | null;
+      sources?: string[] | null;
+    } | null;
+  };
 
-    if (process.env.ANTHROPIC_API_KEY) {
-      try {
-        raw = await runClaude();
-      } catch (claudeErr) {
-        // Sem créditos, rate limit ou indisponibilidade: não derruba o chat —
-        // cai para o motor legado quando disponível.
-        console.error('[chatWithLuccaHub] Claude indisponível, tentando fallback OpenAI:', claudeErr);
-        if (!process.env.OPENAI_API_KEY) throw claudeErr;
-        raw = await runOpenAI();
-      }
-    } else {
-      raw = await runOpenAI();
-    }
-
-    const parsed = JSON.parse(raw) as {
-      message?: string;
-      dataAccessWarning?: string | null;
-      nextSteps?: string[];
-      leftPanel?: {
-        title?: string | null;
-        badge?: string | null;
-        description?: string | null;
-        tableHeaders?: string[] | null;
-        tableRows?: Array<Record<string, string>> | null;
-        analysisTitle?: string | null;
-        analysisItems?: string[] | null;
-        sources?: string[] | null;
-      } | null;
-    };
-
-    const leftPanelData: LuccaLeftPanelData | null = parsed.leftPanel?.title
+  const toLeftPanelData = (parsed: ParsedResponse): LuccaLeftPanelData | null =>
+    parsed.leftPanel?.title
       ? {
           title: parsed.leftPanel.title,
           badge: parsed.leftPanel.badge ?? undefined,
@@ -598,6 +598,63 @@ ${kbBlocks ? `━━━━━━━━━━━━━━━━━━━━━━
           sources: parsed.leftPanel.sources?.length ? parsed.leftPanel.sources : undefined,
         }
       : null;
+
+  try {
+    let raw = '';
+    let claudeConvo: Anthropic.Messages.MessageParam[] | null = null;
+    let usedClaude = false;
+
+    if (process.env.ANTHROPIC_API_KEY) {
+      try {
+        const result = await runClaudeOnce();
+        raw = result.raw;
+        claudeConvo = result.convo;
+        usedClaude = true;
+      } catch (claudeErr) {
+        // Sem créditos, rate limit ou indisponibilidade: não derruba o chat —
+        // cai para o motor legado quando disponível.
+        console.error('[chatWithLuccaHub] Claude indisponível, tentando fallback OpenAI:', claudeErr);
+        if (!process.env.OPENAI_API_KEY) throw claudeErr;
+        raw = await runOpenAI();
+      }
+    } else {
+      raw = await runOpenAI();
+    }
+
+    let parsed = JSON.parse(raw) as ParsedResponse;
+    let leftPanelData = toLeftPanelData(parsed);
+
+    // ─── Auditoria do Ulisses (Sprint 2 / P0) ──────────────────────────────
+    // Só audita quando o motor foi o Claude (o retry reaproveita a mesma
+    // conversa/tools) — regras sempre rodam; a checagem de coerência via
+    // LLM só entra em operações, e nunca custa mais de 1 retry.
+    if (usedClaude && claudeConvo) {
+      const audit = await auditOperationResult(leftPanelData as AuditablePanel, {
+        isOperation,
+        anthropicApiKey: process.env.ANTHROPIC_API_KEY,
+      });
+
+      if (!audit.approved) {
+        try {
+          const correction = `Ulisses (auditor de qualidade da NeuroAds) revisou seu resultado e encontrou estes problemas: ${audit.issues.join('; ')}. Corrija e responda novamente SOMENTE com o JSON completo e válido, no mesmo formato exigido — sem repetir os mesmos problemas.`;
+          const retry = await runClaudeOnce([
+            ...claudeConvo,
+            { role: 'user', content: correction },
+          ]);
+          const retryParsed = JSON.parse(retry.raw) as ParsedResponse;
+          const retryPanel = toLeftPanelData(retryParsed);
+          // Segunda checagem é só por regras — evita 2ª chamada de LLM e
+          // respeita o limite de 1 retry do protocolo.
+          const retryRuleCheck = auditPanelByRules(retryPanel as AuditablePanel);
+          if (retryRuleCheck.approved || retryPanel) {
+            parsed = retryParsed;
+            leftPanelData = retryPanel;
+          }
+        } catch (auditRetryErr) {
+          console.error('[chatWithLuccaHub] Retry de auditoria do Ulisses falhou, mantendo resultado original:', auditRetryErr);
+        }
+      }
+    }
 
     const fallbackSteps = hasRealData
       ? [
