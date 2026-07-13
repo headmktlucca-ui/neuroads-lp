@@ -15,7 +15,8 @@ import {
   signOut 
 } from 'firebase/auth';
 import { getFirebaseAuth, getFirebaseDb } from '../lib/firebase';
-import { doc, onSnapshot, setDoc, collection, query } from 'firebase/firestore';
+import { doc, onSnapshot, setDoc, collection, query, addDoc } from 'firebase/firestore';
+import type { Company, CompanyFormData } from '../types/company-types';
 import { syncToHostingerReach } from '../app/actions/hostinger';
 import { getPrimaryAuthEmail, isAdminEmail, isSuperAdminEmail } from '../lib/admin-auth';
 
@@ -59,6 +60,13 @@ interface AuthContextType {
   actingUid: string | null;
   setActingUid: (uid: string | null) => void;
   availableCompanies: Array<{ uid: string; companyName: string; email: string }>;
+  // Multi-company
+  userCompanies: Company[];
+  activeCompanyId: string | null;
+  activeCompany: Company | null;
+  setActiveCompany: (companyId: string) => Promise<void>;
+  createCompany: (data: CompanyFormData) => Promise<string>;
+  updateCompany: (companyId: string, data: Partial<CompanyFormData>) => Promise<void>;
   hasPasswordProvider: boolean;
   loginWithGoogle: () => Promise<void>;
   loginWithEmailPassword: (email: string, password: string) => Promise<void>;
@@ -214,9 +222,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [actingUid, setActingUidState] = useState<string | null>(null);
   const [availableCompanies, setAvailableCompanies] = useState<Array<{ uid: string; companyName: string; email: string }>>([]);
 
+  // Multi-company state
+  const [userCompanies, setUserCompanies] = useState<Company[]>([]);
+  const [activeCompanyId, setActiveCompanyIdState] = useState<string | null>(null);
+
   const isSuperAdmin = useMemo(() => isSuperAdminEmail(userEmail), [userEmail]);
 
-  // Load actingUid from localStorage on mount
+  // Load actingUid and activeCompanyId from localStorage on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const stored = window.localStorage.getItem('neuroads_acting_uid');
@@ -235,6 +247,99 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         window.localStorage.removeItem('neuroads_acting_uid');
       }
     }
+  };
+
+  // Subscribe to user's companies subcollection
+  useEffect(() => {
+    if (!user) {
+      setUserCompanies([]);
+      setActiveCompanyIdState(null);
+      return;
+    }
+
+    const db = getFirebaseDb();
+    const targetUid = (isSuperAdmin && actingUid) ? actingUid : user.uid;
+    const companiesRef = collection(db, 'users', targetUid, 'companies');
+
+    const unsubscribe = onSnapshot(
+      companiesRef,
+      (snapshot) => {
+        const companies: Company[] = snapshot.docs.map((d) => ({
+          id: d.id,
+          ...(d.data() as Omit<Company, 'id'>),
+        }));
+        companies.sort((a, b) => a.companyName.localeCompare(b.companyName, 'pt-BR'));
+        setUserCompanies(companies);
+      },
+      (err) => {
+        console.warn('[AuthContext] Failed to subscribe to companies:', err);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [user, actingUid, isSuperAdmin]);
+
+  // Subscribe to activeCompanyId from the profile doc
+  useEffect(() => {
+    if (!user) { setActiveCompanyIdState(null); return; }
+
+    const db = getFirebaseDb();
+    const targetUid = (isSuperAdmin && actingUid) ? actingUid : user.uid;
+    const userRef = doc(db, 'users', targetUid);
+
+    const unsubscribe = onSnapshot(userRef, (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        const storedId = typeof data.activeCompanyId === 'string' ? data.activeCompanyId : null;
+        setActiveCompanyIdState(storedId);
+      }
+    }, () => {});
+
+    return () => unsubscribe();
+  }, [user, actingUid, isSuperAdmin]);
+
+  // Derived: active company object
+  const activeCompany = useMemo(() => {
+    if (!activeCompanyId || userCompanies.length === 0) {
+      return userCompanies[0] ?? null;
+    }
+    return userCompanies.find((c) => c.id === activeCompanyId) ?? userCompanies[0] ?? null;
+  }, [activeCompanyId, userCompanies]);
+
+  const setActiveCompany = async (companyId: string) => {
+    if (!user) return;
+    const db = getFirebaseDb();
+    const targetUid = (isSuperAdmin && actingUid) ? actingUid : user.uid;
+    setActiveCompanyIdState(companyId);
+    await setDoc(doc(db, 'users', targetUid), { activeCompanyId: companyId, updatedAt: Date.now() }, { merge: true });
+  };
+
+  const createCompany = async (data: CompanyFormData): Promise<string> => {
+    if (!user) throw new Error('Usuário não autenticado');
+    const db = getFirebaseDb();
+    const targetUid = (isSuperAdmin && actingUid) ? actingUid : user.uid;
+    const now = Date.now();
+    const companiesRef = collection(db, 'users', targetUid, 'companies');
+    const newDoc = await addDoc(companiesRef, {
+      ...data,
+      connections: {},
+      createdAt: now,
+      updatedAt: now,
+    });
+    // Auto-select the new company
+    await setActiveCompany(newDoc.id);
+    return newDoc.id;
+  };
+
+  const updateCompany = async (companyId: string, data: Partial<CompanyFormData>): Promise<void> => {
+    if (!user) return;
+    const db = getFirebaseDb();
+    const targetUid = (isSuperAdmin && actingUid) ? actingUid : user.uid;
+    await setDoc(
+      doc(db, 'users', targetUid, 'companies', companyId),
+      { ...data, updatedAt: Date.now() },
+      { merge: true }
+    );
   };
 
   // Fetch all companies if the user is Super Admin
@@ -582,6 +687,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         actingUid,
         setActingUid,
         availableCompanies,
+        // Multi-company
+        userCompanies,
+        activeCompanyId,
+        activeCompany,
+        setActiveCompany,
+        createCompany,
+        updateCompany,
         hasPasswordProvider,
         loginWithGoogle,
         loginWithEmailPassword,

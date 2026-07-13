@@ -47,6 +47,8 @@ import {
   IconTarget3D,
   IconRefresh3D,
 } from '../../components/hub/HubUiIcons3D';
+import { CompanySwitcherTrigger } from '../../components/hub/CompanySwitcher';
+import { useCompanyMigration } from '../../hooks/useCompanyMigration';
 
 
 /* ─── Types ────────────────────────────────────────────────────────── */
@@ -279,36 +281,14 @@ function SidebarContent({
 }) {
   return (
     <>
-      {/* Top profile header: Avatar + Info column */}
-      <div className={`px-5 pt-2.5 pb-3.5 shrink-0 flex items-center gap-3 ${isDark ? 'border-b border-white/15' : 'border-b border-slate-200/40'}`}>
-        {/* Avatar with subtle white border ring and soft shadow */}
-        <div className="relative w-[43px] h-[43px] rounded-full overflow-hidden shrink-0 ring-2 ring-white/60 shadow-[0_4px_14px_rgba(0,0,0,0.22)] bg-gradient-to-tr from-[#cc4400] to-[#FF8805] flex items-center justify-center text-white font-black text-[15px] select-none">
-          {userPhoto ? (
-            <Image src={userPhoto} alt="" fill className="object-cover" sizes="43px" />
-          ) : (
-            (userName.charAt(0) || 'N').toUpperCase()
-          )}
-        </div>
-
-        {/* Info Column: Company name + Greeting & Username */}
-        <div className="flex flex-col min-w-0">
-          {companyName && (
-            <div className="truncate">
-              <span className={`text-[17px] font-black truncate block leading-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>
-                {companyName.charAt(0).toUpperCase() + companyName.slice(1).toLowerCase()}
-              </span>
-            </div>
-          )}
-          {/* Greeting + Username on a single line */}
-          <div className="flex items-baseline gap-1 mt-0.5 min-w-0">
-            <span className={`text-[10px] font-normal leading-none shrink-0 ${isDark ? 'text-white/60' : 'text-slate-400'}`}>
-              {getGreeting()}
-            </span>
-            <span className={`text-[10px] font-normal truncate leading-none ${isDark ? 'text-white/70' : 'text-slate-500'}`}>
-              {userName.split(' ')[0]}
-            </span>
-          </div>
-        </div>
+      {/* Top profile header: clickable CompanySwitcherTrigger */}
+      <div className={`px-3 pt-2.5 pb-2 shrink-0 ${isDark ? 'border-b border-white/15' : 'border-b border-slate-200/40'}`}>
+        <CompanySwitcherTrigger
+          companyName={companyName || ''}
+          userName={userName}
+          userPhoto={userPhoto}
+          isDark={isDark}
+        />
       </div>
 
       {/* Nav */}
@@ -723,27 +703,14 @@ function MobileDrawer({
               </button>
             </div>
 
-            {/* User card */}
+            {/* User card — company switcher */}
             <div className="px-4 pt-4 pb-3 border-b border-white/40 shrink-0">
-              <div className="flex items-center gap-3 px-3 py-3 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[3px_3px_8px_#d1d9e6,_-3px_-3px_8px_#ffffff]">
-                <div
-                  className="w-10 h-10 rounded-xl overflow-hidden shrink-0 flex items-center justify-center border border-white/30 shadow-[inset_2px_2px_4px_rgba(0,0,0,0.06)]"
-                  style={{ background: 'linear-gradient(135deg, #FF6A00, #FF8805)' }}
-                >
-                  {userPhoto ? (
-                    <Image src={userPhoto} alt="" width={40} height={40} className="object-cover w-full h-full" />
-                  ) : (
-                    <span className="text-white text-[15px] font-black">{(userName.charAt(0) || 'N').toUpperCase()}</span>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-[11px] font-bold text-slate-400 leading-none mb-0.5">{getGreeting()},</p>
-                  <p className="text-[13px] font-black text-[#1e293b] truncate leading-tight">{userName.split(' ')[0]}</p>
-                  {companyName && (
-                    <p className="text-[11px] font-semibold text-[#FF6A00] truncate leading-tight mt-0.5">{companyName}</p>
-                  )}
-                </div>
-              </div>
+              <CompanySwitcherTrigger
+                companyName={companyName || ''}
+                userName={userName}
+                userPhoto={userPhoto}
+                isDark={false}
+              />
             </div>
 
             {/* Nav — onClick on nav closes drawer on any link tap */}
@@ -978,9 +945,12 @@ function HubLayoutInner({
 
 /* ─── HubLayout ────────────────────────────────────────────────────── */
 export default function HubLayout({ children }: { children: React.ReactNode }) {
-  const { user, profile, loading, premiumSyncing, logout } = useAuth();
+  const { user, profile, loading, premiumSyncing, logout, activeCompany } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+
+  // Migrate legacy single-company data to the companies subcollection
+  useCompanyMigration(user, profile as Parameters<typeof useCompanyMigration>[1]);
 
   const accessState = useMemo(
     () => resolveHubAccessState({ loading, user, profile }),
@@ -1018,8 +988,8 @@ export default function HubLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const userName    = user?.displayName || profile?.companyName || 'Lucca';
-  const companyName = profile?.companyName;
+  const userName    = user?.displayName || activeCompany?.companyName || profile?.companyName || 'Lucca';
+  const companyName = activeCompany?.companyName || profile?.companyName;
   const userPhoto   = user?.photoURL || null;
 
   return (

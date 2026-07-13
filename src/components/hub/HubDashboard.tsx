@@ -53,7 +53,7 @@ const DROPDOWN_ITEMS = [
 ];
 
 export default function HubDashboard() {
-  const { profile, user, logout } = useAuth();
+  const { profile, user, logout, activeCompany } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -868,7 +868,7 @@ export default function HubDashboard() {
           </div>
           <div>
             <h1 className="text-xl font-black tracking-tight text-[#1C1C1E] leading-none">
-              {profile?.companyName || 'Minha Empresa'}
+              {activeCompany?.companyName || profile?.companyName || 'Minha Empresa'}
             </h1>
             <div className="flex flex-col mt-1">
               <p className="text-[12px] font-semibold text-blue-600/80 uppercase tracking-widest">

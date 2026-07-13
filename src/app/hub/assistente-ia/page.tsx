@@ -2135,8 +2135,8 @@ function InputDock({
    MAIN PAGE
 ═══════════════════════════════════════════════════════════════════ */
 export default function HubAssistentePage() {
-  const { user, profile } = useAuth();
-  const userName = user?.displayName || profile?.companyName || 'Você';
+  const { user, profile, activeCompany } = useAuth();
+  const userName = user?.displayName || activeCompany?.companyName || profile?.companyName || 'Você';
   const userPhoto = user?.photoURL || null;
   const sessionIdRef = useRef<string | undefined>(undefined);
   const [dataAccessWarning, setDataAccessWarning] = useState<string | null>(null);
@@ -2315,8 +2315,8 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
 
       const context = {
         userName,
-        companyName: profile?.companyName,
-        site: profile?.site,
+        companyName: activeCompany?.companyName || profile?.companyName,
+        site: activeCompany?.site || profile?.site,
         userId: user?.uid,
         connectedSources,
         disconnectedSources,

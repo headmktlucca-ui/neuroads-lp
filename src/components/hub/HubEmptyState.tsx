@@ -95,8 +95,9 @@ const STEPS = [
 ];
 
 export default function HubEmptyState() {
-  const { user, profile } = useAuth();
+  const { user, profile, activeCompany } = useAuth();
   const firstName = user?.displayName ? user.displayName.split(' ')[0] : 'Bem-vindo';
+  const displayCompanyName = activeCompany?.companyName || profile?.companyName;
 
   return (
     <div className="w-full max-w-3xl mx-auto py-12 space-y-10">
@@ -112,8 +113,8 @@ export default function HubEmptyState() {
           Olá, {firstName} 👋
         </h1>
         <p className="text-[14px] text-slate-500 font-semibold max-w-md mx-auto leading-relaxed">
-          {profile?.companyName
-            ? `Configure os conectores da ${profile.companyName}`
+          {displayCompanyName
+            ? `Configure os conectores da ${displayCompanyName}`
             : 'Configure seus conectores'}{' '}
           para ativar o painel de atribuição em tempo real.
         </p>
