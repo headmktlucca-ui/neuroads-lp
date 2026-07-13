@@ -1142,7 +1142,7 @@ export default function FunilVendasPage() {
                     <select
                       className="w-full bg-white border border-slate-200 rounded-xl px-3 h-10 text-[13px] font-semibold text-slate-700 outline-none focus:border-[#FF6A00] transition"
                       value={editStage}
-                      onChange={e => setEditStage(e.target.value)}
+                      onChange={e => setEditStage(e.target.value as Lead['stage'])}
                     >
                       {STAGES.map(s => (
                         <option key={s.id} value={s.id}>{s.title}</option>

@@ -111,7 +111,7 @@ export default function LegalLayout({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
-    <div className="bg-[#EDF1F5] min-h-screen text-slate-800 font-sans antialiased overflow-x-clip pb-0 selection:bg-[#FF5500]/20 selection:text-[#FF5500]">
+    <div className="bg-[#EDF1F5] min-h-screen text-slate-800 font-sans antialiased pb-0 selection:bg-[#FF5500]/20 selection:text-[#FF5500]">
       
       {/* ========================================================================= */}
       {/* HEADER TEMPLATE 01 (LIGHT NEUMORPHIC) */}
@@ -220,9 +220,9 @@ export default function LegalLayout({
       {/* ========================================================================= */}
       {/* CONTENT WITH PARALLAX BACKGROUND */}
       {/* ========================================================================= */}
-      <div className="relative w-full overflow-hidden pt-28 pb-8">
+      <div className="relative w-full pt-28 pb-8">
         {/* Background Wrapper */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] z-[1]">
+        <div className="absolute inset-0 overflow-hidden bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] z-[1]">
           <HeroCircuitBackground />
         </div>
 
@@ -230,7 +230,7 @@ export default function LegalLayout({
           <div className="h-[20px] md:h-[40px]" />
 
           {/* Two-column layout when sidebar present */}
-          <div className={`flex flex-col lg:flex-row gap-8 lg:gap-14 items-start ${hasSidebar ? '' : 'justify-center'}`}>
+          <div className={`flex flex-col lg:flex-row gap-8 lg:gap-14 items-start lg:items-stretch ${hasSidebar ? '' : 'justify-center'}`}>
             {hasSidebar && (
               <TableOfContents sections={sections} docTitle={docTitle} updatedAt={updatedAt} />
             )}

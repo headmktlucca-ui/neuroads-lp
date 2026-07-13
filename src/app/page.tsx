@@ -1790,6 +1790,16 @@ function DemoAndAccessSection() {
   const [isHuman, setIsHuman] = useState(false);
   const [slideProgress, setSlideProgress] = useState(0);
 
+  const [isDemoMuted, setIsDemoMuted] = useState(true);
+  const demoVideoRef = useRef<HTMLVideoElement>(null);
+
+  const toggleDemoMute = () => {
+    if (demoVideoRef.current) {
+      demoVideoRef.current.muted = !demoVideoRef.current.muted;
+      setIsDemoMuted(demoVideoRef.current.muted);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (name && email && isHuman) {
@@ -1839,16 +1849,24 @@ function DemoAndAccessSection() {
           transition={{ duration: 0.8 }}
           className="lg:col-span-7"
         >
-          <div className="relative aspect-video rounded-[32px] overflow-hidden bg-slate-950 shadow-[0_20px_40px_rgba(255,85,0,0.12),_0_1px_3px_rgba(255,85,0,0.05)]">
+          <div className="relative aspect-video rounded-[32px] overflow-hidden bg-slate-950 shadow-[0_20px_40px_rgba(255,85,0,0.12),_0_1px_3px_rgba(255,85,0,0.05)] group">
             <video
+              ref={demoVideoRef}
               src="/videos/VD_BV.mp4"
-              controls
               autoPlay
               loop
-              muted
+              muted={isDemoMuted}
               playsInline
               className="w-full h-full object-cover"
             />
+            <button
+              type="button"
+              onClick={toggleDemoMute}
+              className="absolute bottom-6 right-6 p-3 rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80 transition-all opacity-0 group-hover:opacity-100 shadow-lg border border-white/20 z-10"
+              title={isDemoMuted ? "Ativar som" : "Desativar som"}
+            >
+              {isDemoMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+            </button>
           </div>
         </motion.div>
 
