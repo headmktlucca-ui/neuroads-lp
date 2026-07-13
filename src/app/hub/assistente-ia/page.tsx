@@ -9,11 +9,12 @@ import {
   FileText, Terminal, Link2, BarChart2, Globe, Database,
   Target, CheckCircle2, AlertTriangle, Sparkles, Cpu,
   Film, Music, File, X, Copy, Table2, User, RefreshCw,
-  Settings2, Hash, ArrowRight, MessageSquare,
+  Settings2, Hash, ArrowRight, MessageSquare, BookmarkPlus,
 } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
 import { chatWithLuccaHub, type LuccaLeftPanelData } from '../../actions/lucca-hub-chat';
+import { saveResultToKnowledge } from '../../actions/save-to-knowledge';
 import { saveChatSession, type ChatMessage as StoredChatMessage } from '../../../lib/chat-history';
 import { getTeamAgentById, type TeamAgent, TEAM_AGENTS } from '../../../data/team-agents';
 import { agents as allSpecialties } from '../../../data/agents';
@@ -786,6 +787,141 @@ function OrchestratorControlPanel({
   );
 }
 
+/* ── Modal: Salvar na Base de Conhecimento (Sprint 3 / P0) ─────────── */
+const SAVE_CATEGORIES = ['Operações', 'Tráfego', 'Conteúdo', 'Vendas', 'Suporte', 'SEO & GEO', 'Outros'];
+
+function SaveToKnowledgeModal({
+  defaultTitle,
+  defaultCategory,
+  onClose,
+  onSave,
+}: {
+  defaultTitle: string;
+  defaultCategory: string;
+  onClose: () => void;
+  onSave: (fields: { title: string; category: string; tags: string[] }) => Promise<{ success: boolean; error?: string }>;
+}) {
+  const [title, setTitle] = useState(defaultTitle);
+  const [category, setCategory] = useState(
+    SAVE_CATEGORIES.includes(defaultCategory) ? defaultCategory : 'Operações'
+  );
+  const [tagsText, setTagsText] = useState('');
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const handleSubmit = async () => {
+    if (status === 'saving' || status === 'saved') return;
+    setStatus('saving');
+    setErrorMsg('');
+    const tags = tagsText.split(',').map((t) => t.trim()).filter(Boolean);
+    const result = await onSave({ title: title.trim(), category, tags });
+    if (result.success) {
+      setStatus('saved');
+      setTimeout(onClose, 1200);
+    } else {
+      setStatus('error');
+      setErrorMsg(result.error || 'Não foi possível salvar. Tente novamente.');
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm p-4"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.96, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        transition={{ duration: 0.2 }}
+        className="bg-white rounded-2xl border border-[#E5E7EB] shadow-xl w-full max-w-md overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between px-5 py-4 border-b border-[#F3F4F6]">
+          <div className="flex items-center gap-2">
+            <BookmarkPlus className="w-4 h-4 text-[#FF6A00]" />
+            <h3 className="text-[14px] font-bold text-[#111827]">Salvar na Base de Conhecimento</h3>
+          </div>
+          <button onClick={onClose} className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#374151] transition-colors">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        <div className="px-5 py-4 space-y-4">
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6B7280] mb-1.5">Título</label>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full h-10 rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-3.5 text-[13px] text-[#111827] focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+              placeholder="Ex: Simulação de ROAS — Janeiro"
+            />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6B7280] mb-1.5">Categoria</label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              className="w-full h-10 rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-3 text-[13px] text-[#111827] focus:outline-none focus:border-[#FF6A00]/50 transition-all cursor-pointer"
+            >
+              {SAVE_CATEGORIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-bold uppercase tracking-wider text-[#6B7280] mb-1.5">
+              Tags <span className="normal-case font-semibold text-[#9CA3AF]">(separadas por vírgula, opcional)</span>
+            </label>
+            <input
+              value={tagsText}
+              onChange={(e) => setTagsText(e.target.value)}
+              className="w-full h-10 rounded-xl border border-[#E5E7EB] bg-[#F9FAFB] px-3.5 text-[13px] text-[#111827] focus:outline-none focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30 transition-all"
+              placeholder="roas, google ads, planejamento"
+            />
+          </div>
+
+          {status === 'error' && (
+            <p className="text-[12px] font-semibold text-red-600">{errorMsg}</p>
+          )}
+          <p className="text-[11px] text-[#6B7280] leading-relaxed">
+            O documento salvo fica disponível na Base de Conhecimento e passa a alimentar as próximas operações dos Agentes.
+          </p>
+        </div>
+
+        <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-[#F3F4F6] bg-[#F9FAFB]">
+          <button
+            onClick={onClose}
+            className="h-9 px-4 rounded-xl text-[12px] font-bold text-[#6B7280] hover:text-[#374151] transition-colors"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={status === 'saving' || status === 'saved' || !title.trim()}
+            className={`inline-flex items-center gap-1.5 h-9 px-4 rounded-xl text-[12px] font-bold text-white transition-all disabled:opacity-60 ${
+              status === 'saved' ? 'bg-emerald-500' : 'bg-[#FF6A00] hover:bg-[#e85f00]'
+            }`}
+          >
+            {status === 'saved' ? (
+              <><CheckCircle2 className="w-3.5 h-3.5" /> Salvo!</>
+            ) : status === 'saving' ? (
+              <><span className="w-3.5 h-3.5 rounded-full border-2 border-white/40 border-t-white animate-spin" /> Salvando…</>
+            ) : (
+              <><BookmarkPlus className="w-3.5 h-3.5" /> Salvar</>
+            )}
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function LeftPanel({
   result,
   isLoading,
@@ -809,8 +945,9 @@ function LeftPanel({
   const [viewMode, setViewMode] = useState<ViewMode>('table');
   const [activeTab, setActiveTab] = useState<PanelTab>('resposta');
   const [copied, setCopied] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
 
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
 
   const activeAutomations = useMemo(() => {
     if (!profile || !activeAgent) return [];
@@ -978,6 +1115,47 @@ function LeftPanel({
     setTimeout(() => setCopied(false), 2000);
   };
 
+  /* Monta o conteúdo markdown completo do resultado para a Base de Conhecimento */
+  const buildSaveContent = (): string => {
+    if (!result) return '';
+    const parts: string[] = [];
+
+    if (result.summary) parts.push(result.summary);
+    if (result.fullMessage && result.fullMessage !== result.summary) parts.push(result.fullMessage);
+
+    if (result.tableHeaders.length > 0 && result.tableRows.length > 0) {
+      const table = [
+        `| ${result.tableHeaders.join(' | ')} |`,
+        `| ${result.tableHeaders.map(() => '---').join(' | ')} |`,
+        ...result.tableRows.map((r) => `| ${r.cells.join(' | ')} |`),
+      ].join('\n');
+      parts.push(`## Tabela de Dados\n${table}`);
+    }
+
+    const ai = result.aiData;
+    if (ai?.analysisItems?.length) {
+      parts.push(`## ${ai.analysisTitle || 'Análise'}\n${ai.analysisItems.map((i) => `- ${i}`).join('\n')}`);
+    }
+    if (ai?.sources?.length) {
+      parts.push(`## Fontes\n${ai.sources.map((s) => `- ${s}`).join('\n')}`);
+    }
+
+    return parts.join('\n\n');
+  };
+
+  const handleSaveToKnowledge = async (fields: { title: string; category: string; tags: string[] }) => {
+    if (!user) return { success: false, error: 'Faça login para salvar na Base de Conhecimento.' };
+    return saveResultToKnowledge({
+      userId: user.uid,
+      title: fields.title,
+      content: buildSaveContent(),
+      agentKey: activeAgent?.id || 'assistente',
+      agentTitle: activeAgent ? `${activeAgent.nome} (${activeAgent.funcao})` : 'Assistente IA',
+      category: fields.category,
+      tags: fields.tags,
+    });
+  };
+
   /* Extrai comparações se houver dados tabulares numéricos */
   const comparison = useMemo(() => {
     if (!result || result.tableHeaders.length < 2 || result.tableRows.length < 2) return [];
@@ -1054,6 +1232,9 @@ function LeftPanel({
                   </button>
                   <button title="Baixar resultado" onClick={handleDownload} className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#374151] transition-colors">
                     <Download className="w-3.5 h-3.5" />
+                  </button>
+                  <button title="Salvar na Base de Conhecimento" onClick={() => setShowSaveModal(true)} className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#FF6A00] transition-colors">
+                    <BookmarkPlus className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>
@@ -1463,6 +1644,26 @@ function LeftPanel({
               </div>
             )}
           </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal: Salvar na Base de Conhecimento */}
+      <AnimatePresence>
+        {showSaveModal && result && (
+          <SaveToKnowledgeModal
+            defaultTitle={result.title}
+            defaultCategory={(() => {
+              const f = (activeAgent?.funcao || '').toLowerCase();
+              if (f.includes('tráfego')) return 'Tráfego';
+              if (f.includes('conteúdo') || f.includes('editorial')) return 'Conteúdo';
+              if (f.includes('sdr') || f.includes('closer') || f.includes('venda')) return 'Vendas';
+              if (f.includes('suporte')) return 'Suporte';
+              if (f.includes('seo')) return 'SEO & GEO';
+              return 'Operações';
+            })()}
+            onClose={() => setShowSaveModal(false)}
+            onSave={handleSaveToKnowledge}
+          />
         )}
       </AnimatePresence>
     </div>

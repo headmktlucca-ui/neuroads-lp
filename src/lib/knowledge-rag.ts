@@ -68,6 +68,60 @@ function cosineSimilarity(a: number[], b: number[]): number {
   return dot / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
+/* ── Salvar na Base de Conhecimento (Sprint 3 / P0) ────────────────── */
+/* Grava um resultado de operação como documento consultável da Base —  */
+/* mesma coleção agent_reports lida pelo KnowledgeExplorer e pelo RAG.  */
+/* O embedding é computado na gravação, então o documento já entra      */
+/* ranqueável por relevância nas próximas operações (fecha o ciclo).    */
+
+export type SaveKnowledgeInput = {
+  userId: string;
+  title: string;
+  content: string;
+  agentKey: string;
+  agentTitle: string;
+  category: string;
+  tags: string[];
+};
+
+export async function saveKnowledgeDocument(
+  input: SaveKnowledgeInput
+): Promise<{ success: boolean; id?: string; error?: string }> {
+  try {
+    const db = getAdminDb();
+    const now = Date.now();
+
+    const embedding = await getEmbedding(`${input.title}\n${input.content}`);
+
+    const payload: Record<string, unknown> = {
+      agentKey: input.agentKey,
+      agentTitle: input.agentTitle,
+      agentCategory: input.category,
+      reportTitle: input.title,
+      reportContent: input.content,
+      reportFormat: 'markdown',
+      generatedAt: new Date(now).toISOString(),
+      createdAtMs: now,
+      metadata: {
+        savedFrom: 'assistente-ia',
+        tags: input.tags,
+      },
+      ...(embedding ? { embedding } : {}),
+    };
+
+    const ref = await db
+      .collection('users')
+      .doc(input.userId)
+      .collection('agent_reports')
+      .add(payload);
+
+    return { success: true, id: ref.id };
+  } catch (err) {
+    console.error('[knowledge-rag] saveKnowledgeDocument falhou:', err);
+    return { success: false, error: 'Não foi possível salvar na Base de Conhecimento.' };
+  }
+}
+
 /* ── Relatórios de Agentes ─────────────────────────────────────────── */
 
 type ReportDoc = {
