@@ -9,7 +9,7 @@ import {
   FileText, Terminal, Link2, BarChart2, Globe, Database,
   Target, CheckCircle2, AlertTriangle, Sparkles, Cpu,
   Film, Music, File, X, Copy, Table2, User, RefreshCw,
-  Settings2, Hash, ArrowRight, MessageSquare, BookmarkPlus,
+  Settings2, Hash, ArrowRight, MessageSquare, BookmarkPlus, FileDown,
 } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
@@ -1143,6 +1143,25 @@ function LeftPanel({
     return parts.join('\n\n');
   };
 
+  /* Exporta o resultado como PDF com identidade NeuroAds — reaproveita o
+     gerador jsPDF da Base de Conhecimento (agent-report-history.ts) */
+  const handleExportPdf = async () => {
+    if (!result) return;
+    const { downloadAgentReport } = await import('../../../lib/agent-report-history');
+    await downloadAgentReport({
+      id: result.id,
+      agentKey: activeAgent?.id || 'assistente',
+      agentTitle: activeAgent ? `${activeAgent.nome} (${activeAgent.funcao})` : 'Assistente IA',
+      agentCategory: 'Operações',
+      reportTitle: result.title,
+      reportContent: buildSaveContent(),
+      reportFormat: 'markdown',
+      generatedAt: new Date().toISOString(),
+      createdAtMs: Date.now(),
+      metadata: result.aiData?.sources?.length ? { fontes: result.aiData.sources } : {},
+    });
+  };
+
   const handleSaveToKnowledge = async (fields: { title: string; category: string; tags: string[] }) => {
     if (!user) return { success: false, error: 'Faça login para salvar na Base de Conhecimento.' };
     return saveResultToKnowledge({
@@ -1230,8 +1249,11 @@ function LeftPanel({
                   <button title="Copiar resultado" onClick={handleCopy} className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#374151] transition-colors">
                     {copied ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
                   </button>
-                  <button title="Baixar resultado" onClick={handleDownload} className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#374151] transition-colors">
+                  <button title="Baixar resultado (CSV/TXT)" onClick={handleDownload} className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#374151] transition-colors">
                     <Download className="w-3.5 h-3.5" />
+                  </button>
+                  <button title="Exportar PDF" onClick={handleExportPdf} className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#374151] transition-colors">
+                    <FileDown className="w-3.5 h-3.5" />
                   </button>
                   <button title="Salvar na Base de Conhecimento" onClick={() => setShowSaveModal(true)} className="p-1.5 rounded-lg text-[#9CA3AF] hover:text-[#FF6A00] transition-colors">
                     <BookmarkPlus className="w-3.5 h-3.5" />
