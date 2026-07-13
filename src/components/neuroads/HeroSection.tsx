@@ -2,8 +2,6 @@
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import RadialOrbitalTimeline from '../ui/radial-orbital-timeline';
-import { agents } from '../../data/agents';
 
 const MotionDiv = motion.div;
 const MotionP = motion.p;
@@ -16,14 +14,6 @@ export default function HeroSection() {
     viewport: { once: true },
     transition: { duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] as const }
   });
-
-  // Build orbital items from the agent catalog
-  const orbitalItems = agents.map((agent, idx) => ({
-    id: idx + 1,
-    title: agent.title,
-    image: agent.icon,
-    category: agent.category,
-  }));
 
   return (
     <section className="relative min-h-[90vh] flex items-center pt-32 pb-20 overflow-hidden">
@@ -55,14 +45,18 @@ export default function HeroSection() {
             </MotionDiv>
           </div>
 
-          {/* RIGHT — Orbital animation with agent avatars */}
+          {/* RIGHT — Video */}
           <MotionDiv
             {...fadeUp(0.5)}
             className="hidden lg:flex items-center justify-center relative"
           >
-            <RadialOrbitalTimeline
-              items={orbitalItems}
-              centerLabel="Agentes IA"
+            <video 
+              src="/videos/VD_Ap_26.mp4" 
+              autoPlay 
+              loop 
+              muted 
+              playsInline 
+              className="w-full h-auto max-w-lg object-contain mix-blend-screen"
             />
           </MotionDiv>
 

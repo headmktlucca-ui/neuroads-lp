@@ -354,6 +354,33 @@ function AutomationCard({
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+const POPULAR_TEMPLATES = [
+  {
+    id: 'tpl-1',
+    name: 'Alerta de ROAS Baixo',
+    desc: 'Monitora quedas repentinas de performance nas campanhas ativas e aciona contramedidas de tráfego.',
+    trigger: 'ROAS < 2.0 por 3h',
+    flow: { trigger: 'Meta Ads', agents: 'Igor ➔ Paola', output: 'Slack & WhatsApp' },
+    category: 'Performance',
+  },
+  {
+    id: 'tpl-2',
+    name: 'Fadiga de Criativos',
+    desc: 'Detecta perda de CTR em anúncios vencedores e solicita automaticamente novos criativos da Tainá.',
+    trigger: 'CTR > 25% queda / 7d',
+    flow: { trigger: 'Campanhas', agents: 'Paola ➔ Tainá', output: 'Handoff Automático' },
+    category: 'Criativos',
+  },
+  {
+    id: 'tpl-3',
+    name: 'Qualificação Outbound',
+    desc: 'Identifica novas respostas no LinkedIn e qualifica o fit de ICP do lead antes de enviar ao Breno.',
+    trigger: 'Nova resposta outbound',
+    flow: { trigger: 'LinkedIn SDR', agents: 'Vitor ➔ Breno', output: 'CRM & WhatsApp' },
+    category: 'Leads',
+  }
+];
+
 export default function HubAutomacoesPage() {
   const { user, profile } = useAuth();
 
@@ -361,6 +388,23 @@ export default function HubAutomacoesPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [filterCategory, setFilterCategory] = useState('Todos');
+
+  const handleActivateTemplate = (tpl: typeof POPULAR_TEMPLATES[number]) => {
+    const newAuto: Automation = {
+      id: `${tpl.id}-${Date.now()}`,
+      name: `${tpl.name} (Template)`,
+      description: tpl.desc,
+      trigger: tpl.trigger,
+      frequency: 'Tempo Real',
+      category: tpl.category,
+      runsTotal: 0,
+      lastRunAt: null,
+      createdAt: new Date().toLocaleDateString('pt-BR'),
+      isActive: true,
+    };
+    setAutomations((prev) => [newAuto, ...prev]);
+    alert(`Fluxo "${tpl.name}" ativado com sucesso! Ele foi adicionado à sua operação.`);
+  };
 
   // Synchronize automations with user profile (real active automations)
   useEffect(() => {
@@ -581,6 +625,63 @@ export default function HubAutomacoesPage() {
           </AnimatePresence>
         </motion.div>
       )}
+      {/* ── Seção de Templates Populares ── */}
+      <div className="space-y-6 mt-12 pt-8 border-t border-slate-200">
+        <div className="flex items-center gap-2">
+          <Brain size={18} className="text-[#FF6A00]" />
+          <h2 className="text-[16px] font-black uppercase tracking-wider text-[#0f172a]">Templates de Fluxos Recomendados</h2>
+        </div>
+        <p className="text-[12px] text-slate-500 font-semibold max-w-xl">
+          Instale fluxos de trabalho pré-configurados e validados pela NeuroAds para acelerar o crescimento do seu negócio.
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {POPULAR_TEMPLATES.map((tpl) => {
+            const color = accentFor(tpl.category);
+            return (
+              <div
+                key={tpl.id}
+                className="hub-neu-card p-5 bg-white shadow-sm border border-slate-200 hover:shadow-md transition-all flex flex-col justify-between gap-4 rounded-3xl"
+                style={{ borderLeft: `3px solid ${color}` }}
+              >
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full border"
+                      style={{ color, background: `${color}12`, borderColor: `${color}30` }}
+                    >
+                      {tpl.category}
+                    </span>
+                    <span className="text-[9px] font-black text-slate-400">Popular</span>
+                  </div>
+                  <h3 className="text-[14px] font-black text-slate-800 leading-tight">{tpl.name}</h3>
+                  <p className="text-[11.5px] text-slate-500 font-semibold leading-snug">{tpl.desc}</p>
+
+                  {/* Flow Diagram */}
+                  <div className="mt-3 pt-3 border-t border-slate-100 space-y-2">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Diagrama de Fluxo</p>
+                    <div className="flex items-center justify-between text-[9.5px] bg-[#eef2f7] p-2.5 rounded-xl border border-white/60 shadow-[inset_1px_1px_2px_#d1d9e6,inset_-1px_-1px_2px_#ffffff] font-mono leading-none">
+                      <span className="bg-white/80 border text-slate-600 px-1 py-0.5 rounded font-bold shadow-sm">{tpl.flow.trigger}</span>
+                      <span className="text-slate-400">➔</span>
+                      <span className="bg-orange-500/10 text-orange-600 px-1 py-0.5 rounded font-bold">{tpl.flow.agents}</span>
+                      <span className="text-slate-400">➔</span>
+                      <span className="bg-emerald-500/10 text-emerald-600 px-1 py-0.5 rounded font-bold">{tpl.flow.output}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => handleActivateTemplate(tpl)}
+                  className="w-full py-2 rounded-xl text-[11px] font-black text-white hover:brightness-110 active:scale-95 transition-all shadow-md cursor-pointer text-center"
+                  style={{ background: 'linear-gradient(135deg, #FF6A00, #FF8805)', border: 'none' }}
+                >
+                  Ativar Fluxo
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }

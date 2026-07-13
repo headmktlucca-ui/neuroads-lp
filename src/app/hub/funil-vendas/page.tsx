@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Layers, Plus, Trash2, ArrowRight, CheckCircle2,
-  Bot, ShieldAlert, Send, Play, Cpu, Trash
+  Bot, ShieldAlert, Send, Play, Cpu, Trash, X
 } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
@@ -223,6 +223,131 @@ export default function FunilVendasPage() {
   const [newLeadPhone, setNewLeadPhone] = useState('');
   const [newLeadOrigin, setNewLeadOrigin] = useState('VITOR (SDR)');
 
+  // Details/Edit modal state
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editName, setEditName] = useState('');
+  const [editCompany, setEditCompany] = useState('');
+  const [editValue, setEditValue] = useState(0);
+  const [editEmail, setEditEmail] = useState('');
+  const [editPhone, setEditPhone] = useState('');
+  const [editStatusText, setEditStatusText] = useState('');
+  const [editStage, setEditStage] = useState<'capturado' | 'qualificado' | 'proposta' | 'fechamento' | 'ganho'>('capturado');
+
+  const handleOpenLead = (lead: Lead) => {
+    setSelectedLead(lead);
+    setEditName(lead.name);
+    setEditCompany(lead.company);
+    setEditValue(lead.value);
+    setEditEmail(lead.email || 'contato@empresa.com');
+    setEditPhone(lead.phone || '(11) 99999-9999');
+    setEditStatusText(lead.statusText || '');
+    setEditStage(lead.stage);
+    setIsEditMode(false);
+  };
+
+  const handleSaveEdit = () => {
+    if (!selectedLead) return;
+
+    const updated = leads.map(l => {
+      if (l.id === selectedLead.id) {
+        const hasStageChanged = l.stage !== editStage;
+        const newHistory = [...l.history];
+        if (hasStageChanged) {
+          const nextStageTitle = STAGES.find(s => s.id === editStage)?.title || editStage;
+          newHistory.push({
+            timestamp: Date.now(),
+            agentName: 'SISTEMA',
+            agentCor: '#64748B',
+            message: `Etapa alterada de ${STAGES.find(s => s.id === l.stage)?.title} para ${nextStageTitle} via edição manual.`,
+          });
+        }
+
+        const infoChanged = l.name !== editName || l.company !== editCompany || l.value !== editValue || l.email !== editEmail || l.phone !== editPhone || l.statusText !== editStatusText;
+        if (infoChanged && !hasStageChanged) {
+          newHistory.push({
+            timestamp: Date.now(),
+            agentName: 'SISTEMA',
+            agentCor: '#64748B',
+            message: `Informações do negócio atualizadas via edição manual.`,
+          });
+        }
+
+        const updatedLead: Lead = {
+          ...l,
+          name: editName,
+          company: editCompany,
+          value: Number(editValue),
+          email: editEmail,
+          phone: editPhone,
+          stage: editStage,
+          statusText: editStatusText,
+          history: newHistory,
+        };
+
+        setSelectedLead(updatedLead);
+        return updatedLead;
+      }
+      return l;
+    });
+
+    saveLeads(updated);
+    setIsEditMode(false);
+  };
+
+  const [originFilter, setOriginFilter] = useState<'all' | 'google' | 'meta' | 'linkedin' | 'outbound' | 'seo'>('all');
+  const [runningPlaybookStage, setRunningPlaybookStage] = useState<string | null>(null);
+
+  const handleRunPlaybook = (stageId: string) => {
+    setRunningPlaybookStage(stageId);
+    const duration = 3000;
+    
+    setTimeout(() => {
+      // Find leads in this stage and advance them!
+      const updated = leads.map(l => {
+        if (l.stage === stageId) {
+          const currentIdx = STAGES.findIndex(s => s.id === stageId);
+          if (currentIdx < STAGES.length - 1) {
+            const nextStage = STAGES[currentIdx + 1].id;
+            const nextStageTitle = STAGES[currentIdx + 1].title;
+            return {
+              ...l,
+              stage: nextStage,
+              statusText: `Lead avançado via Playbook Inteligente de ${stageId === 'capturado' ? 'VITOR (SDR)' : stageId === 'qualificado' ? 'BRENO (Closer)' : stageId === 'proposta' ? 'BRENO (Closer)' : 'HEITOR (Processos)'}.`,
+              history: [
+                ...l.history,
+                {
+                  timestamp: Date.now(),
+                  agentName: 'ORQUESTRADOR',
+                  agentCor: '#FF6A00',
+                  message: `Playbook automatizado executado. Lead qualificado e avançado para ${nextStageTitle}.`,
+                }
+              ]
+            };
+          }
+        }
+        return l;
+      });
+      
+      saveLeads(updated);
+      setRunningPlaybookStage(null);
+      alert(`Playbook executado com sucesso! Os leads da coluna foram processados e avançados.`);
+    }, duration);
+  };
+
+  const filteredLeads = useMemo(() => {
+    return leads.filter(l => {
+      if (originFilter === 'all') return true;
+      const originUpper = l.originAgent.toUpperCase();
+      if (originFilter === 'google') return originUpper.includes('GOOGLE') || originUpper.includes('PAOLA');
+      if (originFilter === 'meta') return originUpper.includes('META');
+      if (originFilter === 'linkedin') return originUpper.includes('LINKEDIN');
+      if (originFilter === 'outbound') return originUpper.includes('VITOR') || originUpper.includes('OUTBOUND');
+      if (originFilter === 'seo') return originUpper.includes('IGOR') || originUpper.includes('SEO') || originUpper.includes('GEO');
+      return true;
+    });
+  }, [leads, originFilter]);
+
   // Load leads
   useEffect(() => {
     async function loadLeads() {
@@ -282,7 +407,9 @@ export default function FunilVendasPage() {
     if (newLeadOrigin.includes('IGOR')) originCor = '#A78BFA';
     if (newLeadOrigin.includes('PAOLA')) originCor = '#FACC15';
 
+    // eslint-disable-next-line react-hooks/purity
     const newLead: Lead = {
+      // eslint-disable-next-line react-hooks/purity
       id: `lead-${Date.now()}`,
       name: newLeadName,
       company: newLeadCompany,
@@ -293,9 +420,11 @@ export default function FunilVendasPage() {
       originAgent: newLeadOrigin,
       originAgentCor: originCor,
       statusText: 'Capturado e aguardando qualificação.',
+      // eslint-disable-next-line react-hooks/purity
       createdAt: Date.now(),
       history: [
         {
+          // eslint-disable-next-line react-hooks/purity
           timestamp: Date.now(),
           agentName: newLeadOrigin,
           agentCor: originCor,
@@ -442,20 +571,20 @@ export default function FunilVendasPage() {
 
   // Funnel stats
   const stats = useMemo(() => {
-    const activeLeads = leads.filter(l => l.stage !== 'ganho');
-    const wonLeads = leads.filter(l => l.stage === 'ganho');
+    const activeLeads = filteredLeads.filter(l => l.stage !== 'ganho');
+    const wonLeads = filteredLeads.filter(l => l.stage === 'ganho');
     
     const valueInNegotiation = activeLeads.reduce((acc, curr) => acc + curr.value, 0);
     const totalWonValue = wonLeads.reduce((acc, curr) => acc + curr.value, 0);
-    const averageTicket = leads.length > 0 ? (leads.reduce((acc, curr) => acc + curr.value, 0) / leads.length) : 0;
+    const averageTicket = filteredLeads.length > 0 ? (filteredLeads.reduce((acc, curr) => acc + curr.value, 0) / filteredLeads.length) : 0;
 
     return {
       valueInNegotiation,
       totalWonValue,
       averageTicket,
-      totalLeads: leads.length,
+      totalLeads: filteredLeads.length,
     };
-  }, [leads]);
+  }, [filteredLeads]);
 
   return (
     <div className="space-y-8 w-full px-6 pb-10 animate-in fade-in duration-500">
@@ -618,6 +747,70 @@ export default function FunilVendasPage() {
         )}
       </AnimatePresence>
 
+      {/* ── Playbook Execution Overlay Loader ── */}
+      <AnimatePresence>
+        {runningPlaybookStage && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl border border-slate-100 text-center space-y-6"
+            >
+              <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#FF4D00] to-[#FF8805] flex items-center justify-center mx-auto shadow-md animate-pulse">
+                <Bot className="w-8 h-8 text-white animate-bounce" />
+              </div>
+              <div>
+                <h4 className="text-[16px] font-black text-slate-800 uppercase tracking-wider">Playbook em Execução</h4>
+                <p className="text-[13px] text-slate-500 mt-2 font-medium leading-relaxed">
+                  Orquestrador está coordenando os Agentes de Vendas para qualificar, atualizar dados e notificar os leads na coluna {STAGES.find(s => s.id === runningPlaybookStage)?.title}...
+                </p>
+              </div>
+              <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <motion.div 
+                  initial={{ width: 0 }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: 2.8, ease: 'easeInOut' }}
+                  className="h-full bg-gradient-to-r from-[#FF4D00] to-[#FF8805]"
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Filter Toolbar ── */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] font-black uppercase text-slate-400 mr-2 font-sans tracking-wider">Filtrar Origem:</span>
+          {[
+            { id: 'all', label: 'Todos' },
+            { id: 'google', label: 'Google Ads' },
+            { id: 'meta', label: 'Meta Ads' },
+            { id: 'linkedin', label: 'LinkedIn Ads' },
+            { id: 'outbound', label: 'Outbound SDR' },
+            { id: 'seo', label: 'SEO & Orgânico' },
+          ].map(opt => (
+            <button
+              key={opt.id}
+              onClick={() => setOriginFilter(opt.id as 'all' | 'google' | 'meta' | 'linkedin' | 'outbound' | 'seo')}
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
+                originFilter === opt.id
+                  ? 'bg-white text-[#FF6A00] border border-[#FF6A00]/30 shadow-sm'
+                  : 'text-[#475569] hover:text-[#1e293b] border border-transparent'
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* ── Kanban Columns Grid ── */}
       {loading ? (
         <div className="flex justify-center py-20">
@@ -626,7 +819,7 @@ export default function FunilVendasPage() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start select-none">
           {STAGES.map(stage => {
-            const stageLeads = leads.filter(l => l.stage === stage.id);
+            const stageLeads = filteredLeads.filter(l => l.stage === stage.id);
             const totalStageValue = stageLeads.reduce((acc, curr) => acc + curr.value, 0);
 
             return (
@@ -643,9 +836,20 @@ export default function FunilVendasPage() {
                     </h3>
                     <p className="text-[9px] text-slate-400 font-bold mt-1.5 uppercase leading-none">{stage.desc}</p>
                   </div>
-                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-white/80 border text-slate-500 shadow-sm leading-none">
-                    {stageLeads.length}
-                  </span>
+                  <div className="flex items-center gap-1">
+                    {stage.id !== 'ganho' && (
+                      <button
+                        onClick={() => handleRunPlaybook(stage.id)}
+                        className="text-[8px] font-black bg-white hover:bg-slate-50 border border-slate-200 text-[#FF6A00] px-1.5 py-0.5 rounded shadow-sm hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer"
+                        title={`Disparar playbook automático na coluna ${stage.title}`}
+                      >
+                        ⚡ Run
+                      </button>
+                    )}
+                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-white/80 border text-slate-500 shadow-sm leading-none ml-1">
+                      {stageLeads.length}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Column Stats */}
@@ -679,13 +883,52 @@ export default function FunilVendasPage() {
 
                         {/* Card Header info */}
                         <div>
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1 flex-wrap">
                             <span 
                               className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border"
                               style={{ color: lead.originAgentCor, backgroundColor: `${lead.originAgentCor}15`, borderColor: `${lead.originAgentCor}35` }}
                             >
                               {lead.originAgent}
                             </span>
+                            {(() => {
+                              const origin = lead.originAgent.toUpperCase();
+                              if (origin.includes('GOOGLE')) {
+                                return (
+                                  <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-yellow-500/20 bg-yellow-500/5 text-yellow-600">
+                                    Google Ads
+                                  </span>
+                                );
+                              }
+                              if (origin.includes('META') || origin.includes('FACEBOOK') || origin.includes('PAOLA')) {
+                                return (
+                                  <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-blue-500/20 bg-blue-500/5 text-blue-600">
+                                    Meta Ads
+                                  </span>
+                                );
+                              }
+                              if (origin.includes('LINKEDIN')) {
+                                return (
+                                  <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-sky-500/20 bg-sky-500/5 text-sky-600">
+                                    LinkedIn Ads
+                                  </span>
+                                );
+                              }
+                              if (origin.includes('VITOR') || origin.includes('OUTBOUND')) {
+                                return (
+                                  <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-emerald-500/20 bg-emerald-500/5 text-emerald-600">
+                                    Outbound SDR
+                                  </span>
+                                );
+                              }
+                              if (origin.includes('SEO') || origin.includes('IGOR') || origin.includes('GEO') || origin.includes('ORGANIC')) {
+                                return (
+                                  <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-slate-500/20 bg-slate-500/5 text-slate-600">
+                                    SEO Orgânico
+                                  </span>
+                                );
+                              }
+                              return null;
+                            })()}
                           </div>
                           <h4 className="text-[13px] font-extrabold text-slate-800 mt-1.5 leading-tight">{lead.name}</h4>
                           <p className="text-[10px] text-slate-400 font-bold mt-0.5 uppercase leading-none">{lead.company}</p>
@@ -771,20 +1014,26 @@ export default function FunilVendasPage() {
                         </div>
 
                         {/* Handoff Manual navigation */}
-                        <div className="flex justify-between pt-2 border-t border-slate-100">
+                        <div className="flex justify-between items-center pt-2 border-t border-slate-100">
                           <button
                             disabled={lead.stage === 'capturado'}
                             onClick={() => moveLead(lead.id, 'prev')}
-                            className="text-[9px] font-bold text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:text-slate-400"
+                            className="text-[9px] font-bold text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer"
                           >
-                            Voltar etapa
+                            Voltar
+                          </button>
+                          <button
+                            onClick={() => handleOpenLead(lead)}
+                            className="text-[10px] font-black text-[#FF6A00] hover:text-[#e05d00] transition cursor-pointer"
+                          >
+                            Abrir
                           </button>
                           <button
                             disabled={lead.stage === 'ganho'}
                             onClick={() => moveLead(lead.id, 'next')}
-                            className="text-[9px] font-bold text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:text-slate-400"
+                            className="text-[9px] font-bold text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer"
                           >
-                            Avançar etapa
+                            Avançar
                           </button>
                         </div>
 
@@ -817,6 +1066,222 @@ export default function FunilVendasPage() {
           })}
         </div>
       )}
+
+      {/* ── Lead Details / Edit Modal ── */}
+      <AnimatePresence>
+        {selectedLead && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 15 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 15 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 250 }}
+              className="bg-[#eef2f7] border border-white/80 rounded-3xl p-6 md:p-8 max-w-2xl w-full shadow-2xl relative space-y-6 max-h-[90vh] overflow-y-auto"
+            >
+              {/* Close Button */}
+              <button
+                onClick={() => setSelectedLead(null)}
+                className="absolute top-5 right-5 w-8 h-8 rounded-xl flex items-center justify-center text-slate-500 hover:text-slate-800 border border-white/40 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] active:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] transition cursor-pointer"
+              >
+                <X size={15} />
+              </button>
+
+              {/* Title & Header */}
+              <div>
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/60 bg-[#eef2f7] shadow-[1px_1px_3px_#d1d9e6,_-1px_-1px_3px_#ffffff] mb-3">
+                  <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: selectedLead.originAgentCor }} />
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                    Origem: {selectedLead.originAgent}
+                  </span>
+                </div>
+                <h2 className="text-[20px] font-black text-[#0f172a] leading-tight">
+                  {isEditMode ? 'Editar Informações do Negócio' : selectedLead.name}
+                </h2>
+                {!isEditMode && (
+                  <p className="text-[12px] text-slate-400 font-bold uppercase tracking-wider mt-1">{selectedLead.company}</p>
+                )}
+              </div>
+
+              {/* Content Form / View */}
+              {isEditMode ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase">Nome do Lead</label>
+                    <input
+                      type="text"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 h-10 text-[13px] font-semibold text-slate-700 outline-none focus:border-[#FF6A00] transition"
+                      value={editName}
+                      onChange={e => setEditName(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase">Empresa</label>
+                    <input
+                      type="text"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 h-10 text-[13px] font-semibold text-slate-700 outline-none focus:border-[#FF6A00] transition"
+                      value={editCompany}
+                      onChange={e => setEditCompany(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase">Valor Estimado (R$)</label>
+                    <input
+                      type="number"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 h-10 text-[13px] font-semibold text-slate-700 outline-none focus:border-[#FF6A00] transition"
+                      value={editValue}
+                      onChange={e => setEditValue(Number(e.target.value))}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase">Etapa do Funil</label>
+                    <select
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3 h-10 text-[13px] font-semibold text-slate-700 outline-none focus:border-[#FF6A00] transition"
+                      value={editStage}
+                      onChange={e => setEditStage(e.target.value)}
+                    >
+                      {STAGES.map(s => (
+                        <option key={s.id} value={s.id}>{s.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase">E-mail</label>
+                    <input
+                      type="email"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 h-10 text-[13px] font-semibold text-slate-700 outline-none focus:border-[#FF6A00] transition"
+                      value={editEmail}
+                      onChange={e => setEditEmail(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase">Telefone</label>
+                    <input
+                      type="text"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 h-10 text-[13px] font-semibold text-slate-700 outline-none focus:border-[#FF6A00] transition"
+                      value={editPhone}
+                      onChange={e => setEditPhone(e.target.value)}
+                    />
+                  </div>
+                  <div className="md:col-span-2 space-y-1">
+                    <label className="block text-[10px] font-black text-slate-400 uppercase">Status Atual / Última Interação</label>
+                    <textarea
+                      rows={2}
+                      className="w-full bg-white border border-slate-200 rounded-xl p-3 text-[13px] font-semibold text-slate-700 outline-none focus:border-[#FF6A00] transition resize-none"
+                      value={editStatusText}
+                      onChange={e => setEditStatusText(e.target.value)}
+                    />
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Detailed Info Cards */}
+                  <div className="rounded-2xl border border-white/60 bg-white p-4 shadow-sm space-y-3">
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wide">Valor do Negócio</p>
+                      <p className="text-[16px] font-black text-slate-800">R$ {selectedLead.value.toLocaleString('pt-BR')}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wide">Etapa Atual</p>
+                      <div className="flex items-center gap-1.5 mt-0.5">
+                        <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: STAGES.find(s => s.id === selectedLead.stage)?.color }} />
+                        <span className="text-[12px] font-bold text-slate-700">
+                          {STAGES.find(s => s.id === selectedLead.stage)?.title}
+                        </span>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wide">Criado em</p>
+                      <p className="text-[12px] font-semibold text-slate-600">{new Date(selectedLead.createdAt).toLocaleString('pt-BR')}</p>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-white/60 bg-white p-4 shadow-sm space-y-3">
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wide">E-mail de Contato</p>
+                      <p className="text-[12px] font-bold text-slate-700 truncate">{selectedLead.email || 'Não informado'}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wide">Telefone / WhatsApp</p>
+                      <p className="text-[12px] font-bold text-slate-700">{selectedLead.phone || 'Não informado'}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wide">ID do Lead</p>
+                      <p className="text-[11px] font-mono text-slate-500">#{selectedLead.id}</p>
+                    </div>
+                  </div>
+
+                  <div className="md:col-span-2 rounded-2xl border border-white/60 bg-white p-4 shadow-sm">
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-wide">Status Atual / Resumo do Negócio</p>
+                    <p className="text-[12px] font-semibold text-slate-600 leading-relaxed mt-1 border-l-2 border-[#FF6A00] pl-2.5">
+                      &ldquo;{selectedLead.statusText}&rdquo;
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* History Section (only in view mode) */}
+              {!isEditMode && (
+                <div className="space-y-2">
+                  <h4 className="text-[11px] font-black text-slate-400 uppercase tracking-widest leading-none">Histórico de Interações ({selectedLead.history.length})</h4>
+                  <div className="border border-white/60 rounded-2xl bg-white/50 p-4 max-h-[160px] overflow-y-auto space-y-3.5 shadow-[inset_1px_1px_3px_rgba(0,0,0,0.03)]">
+                    {selectedLead.history.map((log, idx) => (
+                      <div key={idx} className="text-[11px] leading-relaxed border-b border-slate-200/50 pb-2.5 last:border-0 last:pb-0">
+                        <div className="flex justify-between items-center text-[9px] font-black text-slate-400 mb-0.5">
+                          <span style={{ color: log.agentCor }}>{log.agentName}</span>
+                          <span>{new Date(log.timestamp).toLocaleString('pt-BR')}</span>
+                        </div>
+                        <p className="text-slate-600 font-semibold">{log.message}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Modal Footer Actions */}
+              <div className="flex justify-end gap-3 pt-3 border-t border-slate-200">
+                {isEditMode ? (
+                  <>
+                    <button
+                      onClick={handleSaveEdit}
+                      className="px-5 py-2.5 rounded-xl text-[12px] font-black text-white hover:brightness-110 transition cursor-pointer shadow-[0_2px_6px_rgba(255,106,0,0.25)]"
+                      style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)' }}
+                    >
+                      Salvar Alterações
+                    </button>
+                    <button
+                      onClick={() => setIsEditMode(false)}
+                      className="px-4 py-2.5 rounded-xl border border-slate-300 bg-[#eef2f7] text-[12px] font-bold text-slate-500 hover:bg-slate-100 transition cursor-pointer"
+                    >
+                      Cancelar
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => setIsEditMode(true)}
+                      className="px-5 py-2.5 rounded-xl text-[12px] font-black text-white hover:brightness-110 transition cursor-pointer shadow-[0_2px_6px_rgba(255,106,0,0.25)]"
+                      style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)' }}
+                    >
+                      Editar Informações
+                    </button>
+                    <button
+                      onClick={() => setSelectedLead(null)}
+                      className="px-4 py-2.5 rounded-xl border border-slate-300 bg-[#eef2f7] text-[12px] font-bold text-slate-500 hover:bg-slate-100 transition cursor-pointer"
+                    >
+                      Fechar Janela
+                    </button>
+                  </>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use server';
 
-import Anthropic from '@anthropic-ai/sdk';
+import { GoogleGenAI, type Content } from '@google/genai';
 import OpenAI from 'openai';
 import { getAdminDb } from '../../lib/firebase-admin';
 import { getTeamAgentById, TEAM_AGENTS } from '../../data/team-agents';
@@ -8,22 +8,24 @@ import { describeConnections } from '../../lib/connectors';
 import { buildOperationBlock } from '../../lib/operation-prompt';
 import { retrieveRelevantReports, retrieveRelevantChatSessions } from '../../lib/knowledge-rag';
 import { fetchGoogleAdsContext, fetchMetaAdsContext, fetchSearchConsoleContext } from '../../lib/connector-collectors';
-import { auditOperationResult, auditPanelByRules, type AuditablePanel } from '../../lib/ulisses-audit';
+import { auditPanelByRules, type AuditablePanel } from '../../lib/ulisses-audit';
+import { runProspectorOutbound } from '../../lib/lead-prospector';
+import { runPublicoAlvoIdeal } from '../../lib/publico-alvo-prospector';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY || '',
+const genai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY || '',
 });
 
-// Fallback legado quando ANTHROPIC_API_KEY não está configurada
+// Fallback legado quando GEMINI_API_KEY não está configurada
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY || '',
 });
 
 /* ── Roteamento por classe de operação ──────────────────────────────
-   Leve (chat livre/refino)  → Haiku 4.5  (rápido e barato)
-   Operação ativa            → Sonnet 5   (+ web search nativo)     */
-const MODEL_LIGHT = 'claude-haiku-4-5';
-const MODEL_OPERATION = 'claude-sonnet-5';
+   Leve (chat livre/refino)  → Gemini Flash (rápido e barato)
+   Operação ativa            → Gemini Pro   (+ Google Search nativo) */
+const MODEL_LIGHT = 'gemini-2.5-flash';
+const MODEL_OPERATION = 'gemini-2.5-pro';
 
 interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
@@ -41,6 +43,7 @@ export type LuccaHubContext = {
   recentMetrics?: Array<{ label: string; value: string; trend?: string }>;
   agentId?: string;
   specialty?: string;             // operação/especialidade ativa (Acessar Operação)
+  referenceReportId?: string;     // ID do documento de referência da Base de Conhecimento
 };
 
 export type LuccaHubResponse = {
@@ -346,12 +349,12 @@ export async function chatWithLuccaHub(
   context: LuccaHubContext
 ): Promise<LuccaHubResponse> {
   // ─── Sem nenhuma API Key: fallback informativo ────────────────────────────
-  if (!process.env.ANTHROPIC_API_KEY && !process.env.OPENAI_API_KEY) {
+  if (!process.env.GEMINI_API_KEY && !process.env.OPENAI_API_KEY) {
     const hasConnections = (context.connectedSources?.length ?? 0) > 0;
     return {
       success: true,
       message: hasConnections
-        ? `Olá, **${context.userName}**! Identifiquei que você tem **${context.connectedSources?.join(', ')}** conectados.\n\nPorém, meu motor de IA não está configurado no ambiente. Para ativar análises em tempo real, adicione **ANTHROPIC_API_KEY** ao arquivo \`.env.local\`.`
+        ? `Olá, **${context.userName}**! Identifiquei que você tem **${context.connectedSources?.join(', ')}** conectados.\n\nPorém, meu motor de IA não está configurado no ambiente. Para ativar análises em tempo real, adicione **GEMINI_API_KEY** ao arquivo \`.env.local\`.`
         : `Olá, **${context.userName}**! Ainda não identifiquei canais conectados na sua conta.\n\nPara que eu possa entregar análises com dados reais, conecte pelo menos uma plataforma em **Integrações**.`,
       nextSteps: [
         'Conectar Meta Ads em Integrações',
@@ -359,7 +362,7 @@ export async function chatWithLuccaHub(
         'Conectar GA4 em Integrações',
         'Ativar Agentes no Laboratório de Agentes',
       ],
-      dataAccessWarning: 'Motor de IA offline — ANTHROPIC_API_KEY não configurada.',
+      dataAccessWarning: 'Motor de IA offline — GEMINI_API_KEY não configurada.',
       leftPanelData: null,
     };
   }
@@ -483,76 +486,54 @@ ${dataAccessBlock}
 ${specialtyBlock ? `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${specialtyBlock}\n` : ''}
 ${kbBlocks ? `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n${kbBlocks}\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━` : ''}`;
 
-  // ─── Conversa no formato Anthropic (primeira mensagem deve ser 'user') ───
+  // ─── Conversa no formato Gemini (primeira mensagem deve ser 'user') ──────
   const firstUserIdx = messages.findIndex((m) => m.role === 'user');
-  const claudeMessages: Anthropic.Messages.MessageParam[] = (
+  const geminiHistory: Content[] = (
     firstUserIdx >= 0 ? messages.slice(firstUserIdx) : messages
   )
     .filter((m) => m.role !== 'system')
-    .map((m) => ({ role: m.role as 'user' | 'assistant', content: m.content }));
+    .map((m) => ({
+      role: m.role === 'assistant' ? 'model' : 'user',
+      parts: [{ text: m.content }],
+    }));
 
   // ─── Motores ──────────────────────────────────────────────────────────────
   const isOperation = Boolean(context.specialty);
 
-  // runClaudeOnce aceita uma conversa inicial alternativa — usado pela
+  // runGeminiOnce aceita uma conversa inicial alternativa — usado pela
   // auditoria do Ulisses para reenviar a mesma chamada com um pedido de
-  // correção anexado, sem duplicar a lógica de tools/pause_turn.
-  const runClaudeOnce = async (
-    initialConvo?: Anthropic.Messages.MessageParam[]
-  ): Promise<{ raw: string; convo: Anthropic.Messages.MessageParam[] }> => {
+  // correção anexado, sem duplicar a lógica de tools/configuração.
+  const runGeminiOnce = async (
+    initialConvo?: Content[]
+  ): Promise<{ raw: string; convo: Content[] }> => {
     const model = isOperation ? MODEL_OPERATION : MODEL_LIGHT;
 
-    // Pesquisa profunda: web search nativo apenas em operações (Sonnet 5)
-    const tools = isOperation
-      ? ([
-          { type: 'web_search_20260209', name: 'web_search', max_uses: 5 },
-        ] as unknown as Anthropic.Messages.ToolUnion[])
-      : undefined;
-
-    const baseParams = {
-      model,
-      max_tokens: isOperation ? 8000 : 2000,
-      system: [
-        {
-          type: 'text' as const,
-          text: staticSystem,
-          cache_control: { type: 'ephemeral' as const },
-        },
-        { type: 'text' as const, text: dynamicSystem },
-      ],
-      ...(tools ? { tools } : {}),
+    // Pesquisa profunda: Google Search grounding apenas em operações.
+    // Nota: grounding não é compatível com responseMimeType JSON — em
+    // operações o JSON é garantido por prompt + extração; no chat leve
+    // (sem tools) usamos o modo JSON nativo.
+    const config = {
+      systemInstruction: `${staticSystem}\n\n━━━\n${dynamicSystem}`,
+      maxOutputTokens: isOperation ? 8000 : 2000,
+      ...(isOperation
+        ? { tools: [{ googleSearch: {} }] }
+        : { responseMimeType: 'application/json' }),
     };
 
-    let convo = initialConvo ? [...initialConvo] : [...claudeMessages];
-    let response = await anthropic.messages.create({ ...baseParams, messages: convo });
+    const convo: Content[] = initialConvo ? [...initialConvo] : [...geminiHistory];
+    const response = await genai.models.generateContent({ model, contents: convo, config });
 
-    // Ferramentas server-side podem pausar o turno — retoma até 3 vezes
-    let continuations = 0;
-    while (response.stop_reason === 'pause_turn' && continuations < 3) {
-      convo = [
-        ...convo,
-        { role: 'assistant', content: response.content as Anthropic.Messages.ContentBlockParam[] },
-      ];
-      response = await anthropic.messages.create({ ...baseParams, messages: convo });
-      continuations++;
-    }
+    const text = response.text ?? '';
 
-    // Encerra a conversa com o turno final do assistente — permite que o
+    // Encerra a conversa com o turno final do modelo — permite que o
     // chamador estenda com um pedido de correção sem recriar o histórico.
-    convo = [
-      ...convo,
-      { role: 'assistant', content: response.content as Anthropic.Messages.ContentBlockParam[] },
-    ];
+    const finalConvo: Content[] = [...convo, { role: 'model', parts: [{ text }] }];
 
-    const text = response.content
-      .filter((block): block is Anthropic.Messages.TextBlock => block.type === 'text')
-      .map((block) => block.text)
-      .join('');
     const start = text.indexOf('{');
     const end = text.lastIndexOf('}');
     const raw = start >= 0 && end > start ? text.slice(start, end + 1) : '{}';
 
-    return { raw, convo };
+    return { raw, convo: finalConvo };
   };
 
   const runOpenAI = async (): Promise<string> => {
@@ -599,59 +580,291 @@ ${kbBlocks ? `━━━━━━━━━━━━━━━━━━━━━━
         }
       : null;
 
+  // ══════════════════════════════════════════════════════════════════
+  // INTERCEPTAÇÃO ESPECIAL: VITOR — Prospector Outbound
+  // Executa pesquisa profunda na internet e persiste leads no CRM
+  // ══════════════════════════════════════════════════════════════════
+  if (context.agentId === 'vitor' && context.specialty === 'Prospector Outbound') {
+    if (!context.userId) {
+      return {
+        success: false,
+        error: 'Usuário não autenticado. Faça login para executar a prospecção.',
+      };
+    }
+
+    // Extract params from the last user message (filled form fields)
+    const lastMsg = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
+    // Parse segmento and cargo from message — handleFormSubmit sends: • **Segmento Alvo**: valor
+    const segmentoMatch =
+      lastMsg.match(/\*\*Segmento Alvo\*\*:\s*([^\n]+)/i) ||
+      lastMsg.match(/Segmento Alvo:\s*([^\n]+)/i) ||
+      lastMsg.match(/\*\*Segmento\*\*:\s*([^\n]+)/i) ||
+      lastMsg.match(/[Ss]egmento[^:*]*:\s*([^\n]+)/i);
+    const cargoMatch =
+      lastMsg.match(/\*\*Cargo do Decisor\*\*:\s*([^\n]+)/i) ||
+      lastMsg.match(/Cargo do Decisor:\s*([^\n]+)/i) ||
+      lastMsg.match(/\*\*Cargo\*\*:\s*([^\n]+)/i) ||
+      lastMsg.match(/[Cc]argo[^:*]*:\s*([^\n]+)/i);
+
+    const segmento = (segmentoMatch?.[1]?.replace(/\*\*/g, '').trim()) || 'Não informado';
+    const cargo = (cargoMatch?.[1]?.replace(/\*\*/g, '').trim()) || 'Não informado';
+
+    // Require site from profile
+    const site = context.site || snapshot?.blog || '';
+    if (!site) {
+      return {
+        success: true,
+        message: `**VITOR aqui!** Para realizar a prospecção outbound, preciso do site da sua empresa para identificar o perfil de cliente ideal.\n\n• Acesse **Configurações do Perfil** e cadastre a URL do seu site (campo "Site").\n• Isso me permite analisar seu produto, público-alvo e proposta de valor para encontrar os 50 leads mais relevantes para o seu negócio.`,
+        nextSteps: [
+          'Acessar Configurações do Perfil',
+          'Cadastrar a URL do site da empresa',
+          'Voltar e executar a Prospecção Outbound',
+          'Revisar o ICP definido antes de prospectar',
+        ],
+        dataAccessWarning: 'Site da empresa não cadastrado — necessário para identificar o ICP.',
+        leftPanelData: null,
+      };
+    }
+
+    const hasReference = Boolean(context.referenceReportId);
+
+    if (!hasReference && (segmento === 'Não informado' || cargo === 'Não informado')) {
+      return {
+        success: true,
+        message: `**VITOR aqui!** Para iniciar a prospecção de 50 leads qualificados, preciso que você preencha:\n\n• **Segmento Alvo**: Qual o setor de atuação das empresas que você quer prospectar? (Ex: E-commerce, SaaS B2B, Clínicas de Saúde, Construtoras)\n• **Cargo do Decisor**: Qual o perfil profissional do tomador de decisão? (Ex: Diretor de Marketing, CEO, Gerente Comercial)\n\nAlternativamente, você pode selecionar um **Documento de Referência** da sua Base de Conhecimento para guiar a prospecção.`,
+        nextSteps: [
+          'Preencher o campo Segmento Alvo no formulário',
+          'Preencher o campo Cargo do Decisor',
+          'Ou selecionar um Documento de Referência',
+          'Revisar critérios de ICP na Base de Conhecimento',
+        ],
+        dataAccessWarning: null,
+        leftPanelData: null,
+      };
+    }
+
+    try {
+      let referenceReportContent = undefined;
+      let referenceReportTitle = '';
+      if (context.referenceReportId) {
+        try {
+          const db = getAdminDb();
+          const reportDoc = await db
+            .collection('users')
+            .doc(context.userId)
+            .collection('agent_reports')
+            .doc(context.referenceReportId)
+            .get();
+          if (reportDoc.exists) {
+            const data = reportDoc.data();
+            referenceReportContent = data?.reportContent;
+            referenceReportTitle = data?.reportTitle || 'Documento de Referência';
+          }
+        } catch (dbErr) {
+          console.error('[chatWithLuccaHub] Fetching reference report failed:', dbErr);
+        }
+      }
+
+      const result = await runProspectorOutbound({
+        userId: context.userId,
+        site,
+        companyName: context.companyName || 'sua empresa',
+        segmento: referenceReportTitle ? `Ref: ${referenceReportTitle}` : segmento,
+        cargo: referenceReportTitle ? 'Definido por documento' : cargo,
+        referenceReportContent,
+      });
+
+      const { leads, summary, deduplicated } = result;
+      const total = leads.length;
+
+      const tableHeaders = ['Nome', 'Empresa', 'E-mail', 'WhatsApp'];
+      const tableRows = leads.slice(0, 50).map((l) => ({
+        'Nome': l.name,
+        'Empresa': l.company,
+        'E-mail': l.email || '—',
+        'WhatsApp': l.phone || '—',
+      }));
+
+      const dedupNote = deduplicated > 0
+        ? `\n\n⚠️ **${deduplicated} lead(s) duplicado(s) ignorado(s)** — já existiam no seu CRM.`
+        : '';
+
+      return {
+        success: true,
+        message: `**Prospecção Outbound concluída!** Identifiquei e adicionei **${total} lead(s)** qualificados para o seu CRM na etapa **Capturado**.${dedupNote}\n\n📋 **Critérios aplicados:**\n• Segmento: ${segmento}\n• Cargo do decisor: ${cargo}\n• Site de referência: ${site}\n\n${summary}\n\nAcesse a tela **Funil de Vendas** para visualizar os leads na coluna "Capturado" e iniciar as abordagens.`,
+        nextSteps: [
+          'Acessar Funil de Vendas para ver os leads na coluna Capturado',
+          'Executar Qualificador de ICP para pontuar os leads encontrados',
+          `Iniciar cadência de e-mail/LinkedIn para os leads de ${segmento}`,
+          'Configurar automação de follow-up com o agente BRENO',
+        ],
+        dataAccessWarning: null,
+        leftPanelData: {
+          title: `Prospecção Outbound — ${total} Leads Identificados`,
+          badge: `VITOR SDR · ${segmento} · ${cargo}`,
+          description: `${total} lead(s) adicionados ao CRM na etapa Capturado. ${deduplicated > 0 ? `${deduplicated} duplicado(s) ignorado(s).` : 'Nenhum duplicado encontrado.'}`,
+          tableHeaders,
+          tableRows,
+          analysisTitle: 'Resumo da Prospecção',
+          analysisItems: [
+            `💡 OPORTUNIDADE: ${total} decisores de ${segmento} identificados e prontos para abordagem outbound personalizada.`,
+            `🔁 PADRÃO DETECTADO: Segmento ${segmento} com cargo ${cargo} configurado como ICP primário desta operação.`,
+            `⚠️ PRÓXIMO PASSO: Execute o Qualificador de ICP para pontuar cada lead por fit e priorizar os primeiros contatos.`,
+          ],
+          sources: [`Google Search (Gemini 2.5 Pro)`, `Site: ${site}`, 'Base de Conhecimento NeuroAds'],
+        },
+      };
+    } catch (prospectErr) {
+      console.error('[chatWithLuccaHub] Prospector Outbound error:', prospectErr);
+      return {
+        success: false,
+        error: 'Erro ao executar a prospecção. Tente novamente em instantes.',
+      };
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // INTERCEPTAÇÃO ESPECIAL: IGOR — Público-Alvo Ideal
+  // Executa pesquisa profunda na internet sobre a empresa do usuário e gera o ICP
+  // ══════════════════════════════════════════════════════════════════
+  if (context.agentId === 'igor' && context.specialty === 'Público-Alvo Ideal') {
+    if (!context.userId) {
+      return {
+        success: false,
+        error: 'Usuário não autenticado. Faça login para executar a operação.',
+      };
+    }
+
+    // Require site from profile
+    const site = context.site || snapshot?.blog || '';
+    if (!site) {
+      return {
+        success: true,
+        message: `**IGOR aqui!** Para realizar a análise de Público-Alvo Ideal, preciso do site da sua empresa para mapear seu posicionamento digital.\n\n• Acesse **Configurações do Perfil** e cadastre a URL do seu site (campo "Site").\n• Isso me permite fazer uma análise profunda do seu negócio e encontrar o perfil ideal de cliente mais qualificado.`,
+        nextSteps: [
+          'Acessar Configurações do Perfil',
+          'Cadastrar a URL do site da empresa',
+          'Voltar e executar Público-Alvo Ideal',
+          'Ajustar os critérios de nicho e produto',
+        ],
+        dataAccessWarning: 'Site da empresa não cadastrado — necessário para a análise de público.',
+        leftPanelData: null,
+      };
+    }
+
+    // Extract params from the last user message (filled form fields)
+    const lastMsg = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
+    const produtoMatch =
+      lastMsg.match(/\*\*Seu Produto\/Serviço\*\*:\s*([^\n]+)/i) ||
+      lastMsg.match(/Seu Produto\/Serviço:\s*([^\n]+)/i) ||
+      lastMsg.match(/\*\*Seu Produto\/Servico\*\*:\s*([^\n]+)/i) ||
+      lastMsg.match(/Seu Produto\/Servico:\s*([^\n]+)/i) ||
+      lastMsg.match(/produto_servico:\s*([^\n]+)/i);
+
+    const ticketMatch =
+      lastMsg.match(/\*\*Ticket Médio \(R\$\)\*\*:\s*([^\n]+)/i) ||
+      lastMsg.match(/Ticket Médio \(R\$\):\s*([^\n]+)/i) ||
+      lastMsg.match(/\*\*Ticket Medio\*\*:\s*([^\n]+)/i) ||
+      lastMsg.match(/Ticket Médio:\s*([^\n]+)/i) ||
+      lastMsg.match(/ticket_medio:\s*([^\n]+)/i);
+
+    const produtoServico = (produtoMatch?.[1]?.replace(/\*\*/g, '').trim()) || '';
+    const ticketMedio = (ticketMatch?.[1]?.replace(/\*\*/g, '').trim()) || '';
+
+    try {
+      const result = await runPublicoAlvoIdeal({
+        userId: context.userId,
+        site,
+        companyName: context.companyName || 'sua empresa',
+        produtoServico,
+        ticketMedio,
+      });
+
+      const { markdownReport, summary, clusters, analysisItems } = result;
+
+      const tableHeaders = ['Segmento / Cluster', 'Nível de Fit', 'Dor Principal', 'Canal Recomendado'];
+      const tableRows = clusters.map((c) => ({
+        'Segmento / Cluster': c.segmento,
+        'Nível de Fit': c.fit,
+        'Dor Principal': c.dorPrincipal,
+        'Canal Recomendado': c.canalRecomendado,
+      }));
+
+      return {
+        success: true,
+        message: markdownReport,
+        nextSteps: [
+          'Salvar o relatório de Público-Alvo Ideal na Base de Conhecimento',
+          'Executar a Análise de Concorrentes para mapear seus rivais de mercado',
+          'Acionar o agente VITOR para iniciar prospecção fria focada no ICP',
+          'Solicitar à LAÍS copies de anúncios adaptadas para estes clusters',
+        ],
+        dataAccessWarning: null,
+        leftPanelData: {
+          title: `Público-Alvo Ideal Mapeado — ${context.companyName || 'sua empresa'}`,
+          badge: `IGOR DADOS · ${site}`,
+          description: summary,
+          tableHeaders,
+          tableRows,
+          analysisTitle: 'Insights do ICP',
+          analysisItems: analysisItems.length > 0 ? analysisItems : [
+            '💡 OPORTUNIDADE: Focar anúncios nos canais indicados segmentando por interesses refinados.',
+            '⚠️ RISCO: Evitar gastos excessivos em canais não validados pelo fit demográfico do seu negócio.',
+            '🔁 PADRÃO: Comportamento de compra do ICP indica ciclos de decisão mais rápidos para o ticket médio mapeado.'
+          ],
+          sources: [`Google Search (Gemini 2.5 Pro)`, `Site: ${site}`, 'Análise de Concorrência NeuroAds'],
+        },
+      };
+    } catch (err) {
+      console.error('[chatWithLuccaHub] Público-Alvo Ideal error:', err);
+      return {
+        success: false,
+        error: 'Erro ao executar a análise de público-alvo. Tente novamente em instantes.',
+      };
+    }
+  }
+
   try {
     let raw = '';
-    let claudeConvo: Anthropic.Messages.MessageParam[] | null = null;
-    let usedClaude = false;
 
-    if (process.env.ANTHROPIC_API_KEY) {
+    if (process.env.GEMINI_API_KEY) {
       try {
-        const result = await runClaudeOnce();
-        raw = result.raw;
-        claudeConvo = result.convo;
-        usedClaude = true;
-      } catch (claudeErr) {
-        // Sem créditos, rate limit ou indisponibilidade: não derruba o chat —
-        // cai para o motor legado quando disponível.
-        console.error('[chatWithLuccaHub] Claude indisponível, tentando fallback OpenAI:', claudeErr);
-        if (!process.env.OPENAI_API_KEY) throw claudeErr;
+        const { raw: geminiRaw } = await runGeminiOnce();
+        raw = geminiRaw;
+      } catch (geminiErr) {
+        console.error('[chatWithLuccaHub] Gemini indisponível, tentando fallback OpenAI:', geminiErr);
+        if (!process.env.OPENAI_API_KEY) throw geminiErr;
         raw = await runOpenAI();
       }
-    } else {
+    } else if (process.env.OPENAI_API_KEY) {
       raw = await runOpenAI();
+    } else {
+      raw = '{}';
     }
 
     let parsed = JSON.parse(raw) as ParsedResponse;
     let leftPanelData = toLeftPanelData(parsed);
 
-    // ─── Auditoria do Ulisses (Sprint 2 / P0) ──────────────────────────────
-    // Só audita quando o motor foi o Claude (o retry reaproveita a mesma
-    // conversa/tools) — regras sempre rodam; a checagem de coerência via
-    // LLM só entra em operações, e nunca custa mais de 1 retry.
-    if (usedClaude && claudeConvo) {
-      const audit = await auditOperationResult(leftPanelData as AuditablePanel, {
-        isOperation,
-        anthropicApiKey: process.env.ANTHROPIC_API_KEY,
-      });
-
-      if (!audit.approved) {
+    // ─── Auditoria do Ulisses via regras (sem LLM extra) ──────────────────
+    if (isOperation && leftPanelData) {
+      const ruleCheck = auditPanelByRules(leftPanelData as AuditablePanel);
+      if (!ruleCheck.approved) {
+        // Retry com Gemini para corrigir os problemas detectados
         try {
-          const correction = `Ulisses (auditor de qualidade da NeuroAds) revisou seu resultado e encontrou estes problemas: ${audit.issues.join('; ')}. Corrija e responda novamente SOMENTE com o JSON completo e válido, no mesmo formato exigido — sem repetir os mesmos problemas.`;
-          const retry = await runClaudeOnce([
-            ...claudeConvo,
-            { role: 'user', content: correction },
+          const correctionMsg = `Ulisses revisou o resultado e encontrou: ${ruleCheck.issues.join('; ')}. Corrija e retorne somente o JSON completo e válido.`;
+          const { raw: retryRaw } = await runGeminiOnce([
+            ...geminiHistory,
+            { role: 'model' as const, parts: [{ text: raw }] },
+            { role: 'user' as const, parts: [{ text: correctionMsg }] },
           ]);
-          const retryParsed = JSON.parse(retry.raw) as ParsedResponse;
+          const retryParsed = JSON.parse(retryRaw) as ParsedResponse;
           const retryPanel = toLeftPanelData(retryParsed);
-          // Segunda checagem é só por regras — evita 2ª chamada de LLM e
-          // respeita o limite de 1 retry do protocolo.
-          const retryRuleCheck = auditPanelByRules(retryPanel as AuditablePanel);
-          if (retryRuleCheck.approved || retryPanel) {
+          if (retryPanel) {
             parsed = retryParsed;
             leftPanelData = retryPanel;
           }
-        } catch (auditRetryErr) {
-          console.error('[chatWithLuccaHub] Retry de auditoria do Ulisses falhou, mantendo resultado original:', auditRetryErr);
+        } catch (retryErr) {
+          console.error('[chatWithLuccaHub] Retry de auditoria falhou, mantendo resultado original:', retryErr);
         }
       }
     }

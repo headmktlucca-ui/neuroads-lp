@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from 'framer-motion';
-import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Menu, X } from 'lucide-react';
+import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Menu, X, Volume2, VolumeX } from 'lucide-react';
 import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
 import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
 import FunnelInteractiveShowcase from '@/components/neuroads/FunnelInteractiveShowcase';
@@ -247,6 +247,16 @@ export default function TempLandingPage() {
   const [activeAgent, setActiveAgent] = useState<any>(null);
   const [isSobreOpen, setIsSobreOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    }
+  };
 
   const { scrollY } = useScroll();
   const backgroundY = useTransform(scrollY, [0, 1000], [0, 500]);
@@ -551,24 +561,27 @@ export default function TempLandingPage() {
               </span>
             </div>
 
-            {/* Dynamic Interactive Agent Profile Card (Anexo 03 Style) */}
-            <AgentProfileCard agent={activeAgent} />
+            {/* Dynamic Interactive Agent Profile Card removido a pedido do usuário */}
           </div>
 
-          {/* Right Side - Radial Orbit Animation */}
-          <div className="hidden lg:flex lg:col-span-5 items-center justify-center relative mt-8 lg:mt-0">
-            <RadialOrbitalTimeline
-              items={orbitalItems}
-              centerLabel={centerLogoNode}
-              theme="light"
-              onActiveItemChange={(item) => {
-                if (item) {
-                  const fullAgent = orbitalItems.find((a) => a.id === item.id);
-                  setActiveAgent(fullAgent || item);
-                }
-              }}
-              showTooltip={false}
+          {/* Right Side - Video */}
+          <div className="hidden lg:flex lg:col-span-5 items-center justify-center relative mt-8 lg:mt-0 group">
+            <video 
+              ref={videoRef}
+              src="/videos/VD_Ap_26.mp4" 
+              autoPlay 
+              loop 
+              muted={isMuted}
+              playsInline 
+              className="w-full h-auto object-contain rounded-[32px] shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50"
             />
+            <button
+              onClick={toggleMute}
+              className="absolute bottom-6 right-6 p-3 rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80 transition-all opacity-0 group-hover:opacity-100 shadow-lg border border-white/20"
+              title={isMuted ? "Ativar som" : "Desativar som"}
+            >
+              {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+            </button>
           </div>
         </section>
       </div>

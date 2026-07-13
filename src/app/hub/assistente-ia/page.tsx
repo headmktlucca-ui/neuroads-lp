@@ -13,6 +13,9 @@ import {
 } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
+import { collection, getDocs, orderBy, query as fsQuery } from 'firebase/firestore';
+import { getFirebaseDb } from '../../../lib/firebase';
+import { type AgentReportHistoryEntry } from '../../../lib/agent-report-history';
 import { chatWithLuccaHub, type LuccaLeftPanelData } from '../../actions/lucca-hub-chat';
 import { saveResultToKnowledge } from '../../actions/save-to-knowledge';
 import { saveChatSession, type ChatMessage as StoredChatMessage } from '../../../lib/chat-history';
@@ -2137,6 +2140,8 @@ export default function HubAssistentePage() {
   const userPhoto = user?.photoURL || null;
   const sessionIdRef = useRef<string | undefined>(undefined);
   const [dataAccessWarning, setDataAccessWarning] = useState<string | null>(null);
+  const [agentReports, setAgentReports] = useState<AgentReportHistoryEntry[]>([]);
+  const [selectedReportId, setSelectedReportId] = useState<string>('');
 
   // Build real connector lists from profile
   const { connectedSources, disconnectedSources } = React.useMemo(() => {
@@ -2173,6 +2178,29 @@ export default function HubAssistentePage() {
   const activeAgent = useMemo(() => {
     return getTeamAgentById(agentId || 'ulisses');
   }, [agentId]);
+
+  // Load KB reports whenever user or specialty changes
+  useEffect(() => {
+    if (!user || !user.uid) return;
+    const loadReports = async () => {
+      try {
+        const db = getFirebaseDb();
+        const reportsRef = collection(db, 'users', user.uid, 'agent_reports');
+        const q = fsQuery(reportsRef, orderBy('createdAtMs', 'desc'));
+        const snap = await getDocs(q);
+        const loaded = snap.docs.map(d => ({ id: d.id, ...d.data() })) as AgentReportHistoryEntry[];
+        setAgentReports(loaded);
+      } catch (err) {
+        console.error('Erro ao carregar relatórios da Base de Conhecimento:', err);
+      }
+    };
+    loadReports();
+  }, [user, specialtyTitle]);
+
+  // Reset selected report when navigating to a different operation
+  useEffect(() => {
+    setSelectedReportId('');
+  }, [specialtyTitle]);
 
   const initialMessage = useMemo(() => {
     if (activeAgent) {
@@ -2294,6 +2322,8 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
         disconnectedSources,
         activeAgents: realActiveAgents,
         agentId: agentId || 'ulisses',
+        specialty: specialtyTitle || undefined,
+        referenceReportId: selectedReportId || undefined,
       };
 
       // Call real AI
@@ -2381,8 +2411,14 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
       `Parâmetros enviados:`,
       ...fields.map(f => `• **${f.label}**: ${data[f.name] || 'N/A'}`)
     ];
+    if (selectedReportId) {
+      const refDoc = agentReports.find(r => r.id === selectedReportId);
+      if (refDoc) {
+        lines.push(`• **Documento de Referência ICP**: ${refDoc.reportTitle}`);
+      }
+    }
     handleSend(lines.join('\n'));
-  }, [handleSend]);
+  }, [handleSend, selectedReportId, agentReports]);
 
   const handleStreamDone = useCallback(() => {
     setChatState('idle');
@@ -2484,56 +2520,147 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
           )}
         </AnimatePresence>
 
-        {/* Messages area */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-5 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-[#D1D5DB] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
-          <AnimatePresence initial={false}>
-            {messages.map(msg => (
-              <ChatMessage
-                key={msg.id}
-                msg={msg}
-                isStreaming={streamingId === msg.id}
-                onStreamDone={handleStreamDone}
-                userPhoto={userPhoto}
-                userName={userName}
-                onNextStep={(step) => {
-                  if (chatState !== 'idle') return;
-                  if (step.includes('(com Paola)')) {
-                    router.push('/hub/assistente-ia?agent=paola&specialty=Simulador de ROAS');
-                    return;
-                  }
-                  if (step.includes('(com Laís)')) {
-                    router.push('/hub/assistente-ia?agent=lais&specialty=Gerador de Copies de Conversão');
-                    return;
-                  }
-                  if (step.includes('(com Heitor)')) {
-                    router.push('/hub/assistente-ia?agent=heitor&specialty=Diagnóstico de Funil');
-                    return;
-                  }
-                  if (step.includes('(com Igor)')) {
-                    router.push('/hub/assistente-ia?agent=igor&specialty=SEO & GEO');
-                    return;
-                  }
-                  if (step.startsWith('Executar: ')) {
-                    const specialtyName = step.replace('Executar: ', '');
-                    router.push(`/hub/assistente-ia?agent=${activeAgent?.id || 'ulisses'}&specialty=${encodeURIComponent(specialtyName)}`);
-                    return;
-                  }
-                  handleSend(step);
-                }}
-                activeAgent={activeAgent}
-                onFormSubmit={handleFormSubmit}
-              />
-            ))}
-            {chatState === 'thinking' && <AnalyzingIndicator key="analyzing" activeAgent={activeAgent} />}
-          </AnimatePresence>
+        {/* Operations Cockpit View */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-[#D1D5DB] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
+          {/* Agent Welcome Intro */}
+          {activeAgent && (
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-slate-100 border border-slate-200/60 shadow-sm relative">
+                  <Image src={activeAgent.avatarSrc || "/images/Avatar_Lucca_Novo.jpeg"} alt={activeAgent.nome} width={40} height={40} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <h3 className="text-[14px] font-black text-slate-800 leading-tight">Olá! Sou o **{activeAgent.nome}**</h3>
+                  <p className="text-[11px] text-slate-400 font-medium mt-0.5">{activeAgent.funcao}</p>
+                </div>
+              </div>
+              <p className="text-[12px] text-slate-600 leading-relaxed italic">
+                "{activeAgent.frase}"
+              </p>
+            </div>
+          )}
 
+          {activeAgent && specialtyTitle ? (
+            // Operation Form View
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4"
+            >
+              <div className="border-b border-slate-100 pb-3">
+                <span className="text-[10px] font-black text-[#FF6A00] uppercase tracking-wider">Operação ativa</span>
+                <h4 className="text-[15px] font-black text-slate-800 leading-tight mt-0.5">{specialtyTitle}</h4>
+              </div>
 
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                const formData = new FormData(e.currentTarget);
+                const data: Record<string, string> = {};
+                const specFields = SPECIALTY_FIELDS[specialtyTitle] || [];
+                // Only collect form fields if no reference doc selected
+                if (!selectedReportId) {
+                  specFields.forEach(f => {
+                    data[f.name] = formData.get(f.name) as string;
+                  });
+                }
+                handleFormSubmit(specialtyTitle, data, specFields);
+              }} className="space-y-4">
 
+                {/* Knowledge Base Reference Document Selector */}
+                {agentReports.length > 0 && (
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
+                      <Database className="w-3 h-3 text-[#FF6A00]" />
+                      {specialtyTitle === 'Prospector Outbound'
+                        ? 'ICP da Base de Conhecimento'
+                        : 'Documento de Referência'}
+                      <span className="normal-case font-normal text-slate-300">(opcional)</span>
+                    </label>
+                    <select
+                      value={selectedReportId}
+                      onChange={(e) => setSelectedReportId(e.target.value)}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#FF6A00]/15 outline-none transition-all cursor-pointer text-slate-700"
+                    >
+                      <option value="">— Preencher campos manualmente —</option>
+                      {agentReports.map(r => (
+                        <option key={r.id} value={r.id}>
+                          📄 {r.reportTitle}
+                        </option>
+                      ))}
+                    </select>
+                    {selectedReportId && (
+                      <p className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3" />
+                        Documento selecionado como contexto — campos abaixo são opcionais.
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Regular form fields — hidden when ref doc is selected */}
+                {!selectedReportId && (SPECIALTY_FIELDS[specialtyTitle] || []).map(f => (
+                  <div key={f.name} className="flex flex-col gap-1.5">
+                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{f.label}</label>
+                    <input
+                      type={f.type === 'number' ? 'text' : f.type}
+                      placeholder={f.placeholder}
+                      required={!selectedReportId}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#FF6A00]/15 outline-none transition-all"
+                      name={f.name}
+                    />
+                  </div>
+                ))}
+
+                <button
+                  type="submit"
+                  disabled={chatState !== 'idle'}
+                  className="w-full py-3 rounded-xl text-[12.5px] font-black text-white hover:brightness-110 active:scale-95 transition-all shadow-[0_2px_6px_rgba(255,106,0,0.2)] cursor-pointer disabled:opacity-50"
+                  style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)' }}
+                >
+                  {chatState === 'thinking' ? 'Executando...' : 'Executar Operação'}
+                </button>
+              </form>
+
+              <button
+                onClick={() => router.push(`/hub/assistente-ia?agent=${activeAgent.id}`)}
+                className="w-full py-2.5 rounded-xl text-[12px] font-bold text-slate-500 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all border border-slate-200/60 cursor-pointer"
+              >
+                Voltar para Operações
+              </button>
+            </motion.div>
+          ) : activeAgent ? (
+            // Operations List View
+            <div className="space-y-4">
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Operações Pré-Configuradas</p>
+              <div className="grid grid-cols-1 gap-3">
+                {activeAgent.specialtyTitles.map((specTitle, i) => {
+                  const specObj = allSpecialties.find(s => s.title === specTitle);
+                  return (
+                    <motion.div
+                      key={specTitle}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      onClick={() => router.push(`/hub/assistente-ia?agent=${activeAgent.id}&specialty=${encodeURIComponent(specTitle)}`)}
+                      className="bg-white border border-slate-200 hover:border-[#FF6A00]/40 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between gap-3 relative overflow-hidden"
+                    >
+                      <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: activeAgent.cor }} />
+                      <div className="min-w-0 pl-1">
+                        <h4 className="text-[13px] font-extrabold text-slate-800 group-hover:text-[#FF6A00] transition-colors leading-snug">{specTitle}</h4>
+                        <p className="text-[11px] text-slate-400 font-medium leading-normal mt-1">{specObj?.description || 'Executar rotina inteligente pré-definida.'}</p>
+                      </div>
+                      <div className="flex items-center gap-1 text-[11px] font-black text-[#FF6A00] pl-1 uppercase tracking-wider">
+                        Configurar Operação <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          ) : null}
+          {chatState === 'thinking' && <AnalyzingIndicator key="analyzing" activeAgent={activeAgent} />}
           <div ref={endRef} />
         </div>
-
-        {/* Input dock */}
-        <InputDock onSend={handleSend} chatState={chatState} lastQuery={lastQuery} />
       </div>
     </motion.div>
   );

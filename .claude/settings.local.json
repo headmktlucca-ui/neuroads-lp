@@ -82,7 +82,15 @@
       "Bash(node \"C:/Users/claud/AppData/Local/Temp/claude/C--Users-claud-OneDrive-Documentos-NeuroAds-LP/b13f091d-6ba1-44ee-9451-c6c341cc2e38/scratchpad/test-claude-engine.mjs\")",
       "Bash(cp \"C:/Users/claud/AppData/Local/Temp/claude/C--Users-claud-OneDrive-Documentos-NeuroAds-LP/b13f091d-6ba1-44ee-9451-c6c341cc2e38/scratchpad/test-claude-engine.mjs\" ./.tmp-test-claude.mjs)",
       "Bash(node ./.tmp-test-claude.mjs)",
-      "Bash(rm -f ./.tmp-test-claude.mjs)"
+      "Bash(rm -f ./.tmp-test-claude.mjs)",
+      "Bash(node -e ' *)",
+      "Bash(npx --yes tsx --version)",
+      "Bash(npx tsx *)",
+      "Bash(rm -f .tmp-test-audit.mjs)",
+      "Bash(cd \"C:/Users/claud/OneDrive/Documentos/NeuroAds/LP\" && grep -n \"server-only\" package.json; find / -maxdepth 6 -iname \"server-only\" -type d 2>/dev/null | grep -v \"\\\\.git\")",
+      "Bash(node \"C:/Users/claud/AppData/Local/Temp/claude/C--Users-claud-OneDrive-Documentos-NeuroAds-LP/b13f091d-6ba1-44ee-9451-c6c341cc2e38/scratchpad/test-audit-rules-inline.mjs\")",
+      "Bash(awk 'NR>=1640 && NR<=1690 {printf \"%d\\\\t%s\\\\n\", NR, $0}' src/app/hub/assistente-ia/page.tsx)",
+      "Bash(curl -s -o /dev/null -w \"assistente-ia: %{http_code}\\\\n\" http://localhost:63754/hub/assistente-ia)"
     ]
   },
   "hooks": {

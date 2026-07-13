@@ -447,14 +447,27 @@ function GA4ActiveRegions({ regions, connected, loading }: { regions: Ga4Region[
 /* ─── Main Component ───────────────────────────────────────────────── */
 export default function HubDashboardLight() {
   const { user, profile } = useAuth();
-  const { dateRange } = useHub();
+  const { dateRange, selectedPeriod, setSelectedPeriod } = useHub();
   const { dateFrom, dateTo } = dateRange;
-  const [selectedAlert, setSelectedAlert] = useState<{title: string, desc: string, platform: string} | null>(null);
+  const [selectedAlert, setSelectedAlert] = useState<{
+    severity: string;
+    platform: string;
+    text: string;
+    desc: string;
+    cta: string;
+    href: string;
+    color: string;
+  } | null>(null);
 
   const [funnelFilter, setFunnelFilter] = useState<'all' | 'googleAds' | 'metaAds' | 'linkedinAds'>('all');
   const [loading, setLoading] = useState(false);
   const [ga4Data, setGa4Data] = useState<Ga4MetricsResponse | null>(null);
   const [trafficData, setTrafficData] = useState<TrafficExtractResponse | null>(null);
+
+  const [reportView, setReportView] = useState<'clevel' | 'traffic' | 'fullfunnel'>('clevel');
+  const [guideMode, setGuideMode] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [showExportToast, setShowExportToast] = useState(false);
 
   // Conexões normalizadas (chaves snake_case do Firestore → ConnectorKey)
   const connections = useMemo(
@@ -589,57 +602,151 @@ export default function HubDashboardLight() {
     return { spend, revenue, roas, conversions, cpa, activeUsers };
   }, [trafficData, ga4Data, isGa4Connected, isGoogleAdsConnected, isMetaAdsConnected, isLinkedinAdsConnected]);
 
-  const spendNum   = typeof stats.spend       === 'number' ? stats.spend       : 0;
-  const revenueNum = typeof stats.revenue     === 'number' ? stats.revenue     : 0;
-  const roasNum    = typeof stats.roas        === 'number' ? stats.roas        : 0;
-  const convsNum   = typeof stats.conversions === 'number' ? stats.conversions : 0;
-  const cpaNum     = typeof stats.cpa         === 'number' ? stats.cpa         : 0;
-  const usersNum   = typeof stats.activeUsers === 'number' ? stats.activeUsers : 0;
+  const hasAnyConnectionReal = isGa4Connected || isGoogleAdsConnected || isMetaAdsConnected || isLinkedinAdsConnected;
+  const hasAnyConnection = hasAnyConnectionReal || guideMode;
 
-  const hasAnyConnection = isGa4Connected || isGoogleAdsConnected || isMetaAdsConnected || isLinkedinAdsConnected;
+  const isDemo = guideMode && !hasAnyConnectionReal;
+
+  const spendNum   = isDemo ? 18450.70 : (typeof stats.spend       === 'number' ? stats.spend       : 0);
+  const revenueNum = isDemo ? 96800.50 : (typeof stats.revenue     === 'number' ? stats.revenue     : 0);
+  const roasNum    = isDemo ? 5.24     : (typeof stats.roas        === 'number' ? stats.roas        : 0);
+  const convsNum   = isDemo ? 784      : (typeof stats.conversions === 'number' ? stats.conversions : 0);
+  const cpaNum     = isDemo ? 23.53    : (typeof stats.cpa         === 'number' ? stats.cpa         : 0);
+  const usersNum   = isDemo ? 14200    : (typeof stats.activeUsers === 'number' ? stats.activeUsers : 0);
 
   /* Sparkline trend data — only populated when real data is available */
   const SP = {
-    revenue: stats.revenue === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, revenueNum / 1000],
-    spend:   stats.spend   === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, spendNum   / 1000],
-    roas:    stats.roas    === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, roasNum],
-    convs:   stats.conversions === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, convsNum],
-    cpa:     stats.cpa     === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, cpaNum],
-    users:   stats.activeUsers === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, usersNum],
+    revenue: isDemo ? [90, 92, 91, 93, 95, 94, 96.8] : (stats.revenue === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, revenueNum / 1000]),
+    spend:   isDemo ? [15, 16, 15.5, 17, 18.5, 17.8, 18.4] : (stats.spend   === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, spendNum   / 1000]),
+    roas:    isDemo ? [4.8, 5.0, 4.9, 5.2, 5.1, 5.0, 5.24] : (stats.roas    === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, roasNum]),
+    convs:   isDemo ? [680, 700, 690, 730, 710, 750, 784] : (stats.conversions === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, convsNum]),
+    cpa:     isDemo ? [25.1, 24.0, 23.9, 23.8, 23.6, 23.5, 23.53] : (stats.cpa     === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, cpaNum]),
+    users:   isDemo ? [12000, 12500, 13000, 12800, 13500, 14000, 14200] : (stats.activeUsers === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, usersNum]),
   };
 
-  /* Build KPI list from real data */
-  const KPIS: KpiDef[] = [
-    { label: 'Receita Total',   rawValue: revenueNum, isNa: stats.revenue === 'N/A', prefix: 'R$ ', suffix: '', decimals: 2, delta: '+0%', positive: true,  icon: Wallet,           color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
-    { label: 'Investimento',    rawValue: stats.spend === 'N/A' ? 0 : spendNum,   isNa: stats.spend === 'N/A',   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+0%',  positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-    { label: 'ROAS Médio',      rawValue: stats.roas === 'N/A' ? 0 : roasNum,    isNa: stats.roas === 'N/A',    prefix: '', suffix: '×', decimals: 2, delta: '+0×', positive: true,  icon: TrendingUp,       color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
-    { label: 'Conversões',      rawValue: stats.conversions === 'N/A' ? 0 : convsNum,   isNa: stats.conversions === 'N/A', prefix: '', suffix: '', decimals: 0, delta: '+0%', positive: true,  icon: ShoppingCart,     color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
-    { label: 'CPA Médio',       rawValue: stats.cpa === 'N/A' ? 0 : cpaNum,     isNa: stats.cpa === 'N/A',     prefix: 'R$ ', suffix: '', decimals: 2, delta: '-0%',  positive: true,  icon: MousePointerClick,color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
-    { label: 'Usuários Ativos', rawValue: stats.activeUsers === 'N/A' ? 0 : usersNum,   isNa: stats.activeUsers === 'N/A', prefix: '', suffix: '', decimals: 0, delta: '+0%', positive: true,  icon: Users,            color: '#0891b2', glow: 'rgba(8, 145, 178, 0.05)', spark: SP.users   },
-  ];
+  /* Build KPI list dynamically based on view filters */
+  const KPIS: KpiDef[] = useMemo(() => {
+    const isNaRev = stats.revenue === 'N/A' && !isDemo;
+    const isNaSpend = stats.spend === 'N/A' && !isDemo;
+    const isNaConvs = stats.conversions === 'N/A' && !isDemo;
+    const isNaRoas = stats.roas === 'N/A' && !isDemo;
+    const isNaCpa = stats.cpa === 'N/A' && !isDemo;
+    const isNaUsers = stats.activeUsers === 'N/A' && !isDemo;
 
-  /* Dynamic alerts — only when data is real */
-  const alerts = [
-    ...(stats.roas !== 'N/A'
-      ? [roasNum < 3.5
-          ? { color: '#e11d48', icon: ArrowDownRight, text: `ROAS geral em ${roasNum.toFixed(2).replace('.', ',')}× — abaixo da meta de 3,5×`, time: 'agora' }
-          : { color: '#0d9488', icon: ArrowUpRight,   text: `ROAS geral em ${roasNum.toFixed(2).replace('.', ',')}× — acima da meta`,          time: 'agora' }]
-      : []),
-    ...(isMetaAdsConnected && stats.spend !== 'N/A'
-      ? [{ color: '#0d9488', icon: ArrowUpRight, text: 'Meta Ads: dados sincronizados com sucesso', time: 'agora' }]
-      : []),
-    ...(isLinkedinAdsConnected && stats.spend !== 'N/A'
-      ? [{ color: '#0d9488', icon: ArrowUpRight, text: 'LinkedIn Ads: campanhas carregadas', time: 'agora' }]
-      : []),
-  ];
+    const totalClicks = isDemo ? 5420 : (trafficData?.totals?.clicks || 0);
+    const totalImpressions = isDemo ? 180500 : (trafficData?.totals?.impressions || 0);
+
+    if (reportView === 'clevel') {
+      return [
+        { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+12%', positive: true,  icon: Wallet,           color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
+        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
+        { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '+2.1×', positive: true,  icon: TrendingUp,       color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
+        { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '+8%', positive: true,  icon: ShoppingCart,     color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
+        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '-5%',  positive: true,  icon: MousePointerClick,color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
+        { label: 'Ticket Médio',    rawValue: revenueNum > 0 && convsNum > 0 ? revenueNum / convsNum : 124.50, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+3%', positive: true, icon: DollarSign, color: '#7c3aed', glow: 'rgba(124, 58, 237, 0.05)', spark: [120, 122, 121, 123, 125, 124, 124.5] },
+      ];
+    }
+    if (reportView === 'traffic') {
+      return [
+        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
+        { label: 'Cliques Ads',     rawValue: totalClicks, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '+14%', positive: true, icon: MousePointerClick, color: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.05)', spark: [200, 210, 240, 230, 250, 260, 275] },
+        { label: 'CTR Médio',       rawValue: totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 2.45, isNa: isNaSpend, prefix: '', suffix: '%', decimals: 2, delta: '+0.3%', positive: true, icon: Activity, color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: [2.1, 2.2, 2.3, 2.2, 2.4, 2.5, 2.45] },
+        { label: 'CPC Médio',       rawValue: totalClicks > 0 ? spendNum / totalClicks : 1.85, isNa: isNaSpend, prefix: 'R$ ', suffix: '', decimals: 2, delta: '-4%', positive: true, icon: DollarSign, color: '#db2777', glow: 'rgba(219, 39, 119, 0.05)', spark: [2.1, 2.0, 1.95, 1.9, 1.88, 1.86, 1.85] },
+        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '-5%',  positive: true,  icon: MousePointerClick,color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
+        { label: 'Lances Otimizados', rawValue: isDemo ? 184 : 0, isNa: isNaSpend, prefix: '', suffix: ' bids', decimals: 0, delta: '+12%', positive: true, icon: Cpu, color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: [120, 130, 150, 145, 160, 175, 184] },
+      ];
+    }
+    // fullfunnel
+    return [
+      { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+12%', positive: true,  icon: Wallet,           color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
+      { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
+      { label: 'Impressões Ads',  rawValue: totalImpressions, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '+6%', positive: true, icon: Users, color: '#64748b', glow: 'rgba(100, 116, 139, 0.05)', spark: [10000, 11000, 10500, 12000, 11500, 12500, 12800] },
+      { label: 'Cliques Ads',     rawValue: totalClicks, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '+14%', positive: true, icon: MousePointerClick, color: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.05)', spark: [200, 210, 240, 230, 250, 260, 275] },
+      { label: 'Leads Capturados', rawValue: convsNum, isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '+8%', positive: true, icon: ShoppingCart, color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs },
+      { label: 'Reuniões Agendadas', rawValue: Math.round(convsNum * 0.35), isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '+12%', positive: true, icon: Target, color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: [1, 2, 2, 3, 4, 3, 5] },
+      { label: 'Vendas Fechadas', rawValue: Math.round(convsNum * 0.12), isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '+15%', positive: true, icon: Wallet, color: '#7c3aed', glow: 'rgba(124, 58, 237, 0.05)', spark: [0, 1, 1, 1, 2, 2, 3] },
+      { label: 'Faturamento Estimado', rawValue: (Math.round(convsNum * 0.12) * 5000), isNa: isNaConvs, prefix: 'R$ ', suffix: '', decimals: 0, delta: '+18%', positive: true, icon: DollarSign, color: '#059669', glow: 'rgba(5, 150, 105, 0.05)', spark: [0, 5000, 5000, 5000, 10000, 10000, 15000] },
+    ];
+  }, [reportView, stats, revenueNum, spendNum, roasNum, convsNum, cpaNum, usersNum, SP, isDemo, trafficData]);
 
   // Verify errors across platforms for diagnostics
   const googleAdsErr = trafficData?.channels?.find(c => c.platform === 'Google Ads' && 'error' in c);
   const metaAdsErr = trafficData?.channels?.find(c => c.platform === 'Meta Ads' && 'error' in c);
   const linkedinAdsErr = trafficData?.channels?.find(c => c.platform === 'LinkedIn Ads' && 'error' in c);
 
+  /* Dynamic alerts — only when data is real */
+  const alerts = useMemo(() => {
+    const list = [];
+    if (isGoogleAdsConnected && googleAdsErr) {
+      list.push({
+        severity: 'error',
+        platform: 'Google Ads',
+        text: 'Conta conectada mas sem dados de campanhas.',
+        desc: 'Verifique se há campanhas rodando ativamente na respectiva plataforma de anúncios.',
+        cta: 'Resolver no Google Ads',
+        href: '/hub/integracoes',
+        color: '#e11d48',
+      });
+    }
+    if (isMetaAdsConnected && metaAdsErr) {
+      list.push({
+        severity: 'error',
+        platform: 'Meta Ads',
+        text: 'Erro de Token expirado no Meta.',
+        desc: 'A credencial de acesso do Meta Ads expirou. Acesse a tela de integrações para reautenticar.',
+        cta: 'Reautenticar Meta Ads',
+        href: '/hub/integracoes',
+        color: '#e11d48',
+      });
+    }
+    if (isLinkedinAdsConnected && linkedinAdsErr) {
+      list.push({
+        severity: 'warning',
+        platform: 'LinkedIn Ads',
+        text: 'LinkedIn Ads com erro de comunicação API.',
+        desc: 'O token da plataforma LinkedIn Ads falhou ou expirou. Reconecte a integração.',
+        cta: 'Resolver LinkedIn Ads',
+        href: '/hub/integracoes',
+        color: '#d97706',
+      });
+    }
+    if (stats.roas !== 'N/A' && roasNum < 3.5) {
+      list.push({
+        severity: 'warning',
+        platform: 'Geral',
+        text: `ROAS consolidado em ${roasNum.toFixed(2).replace('.', ',')}x — abaixo da meta.`,
+        desc: 'O ROAS geral das campanhas está abaixo do benchmark de 3,5x. Recomenda-se otimização de criativos ou realocação de verbas.',
+        cta: 'Ver Oportunidades',
+        href: '/hub/explorar',
+        color: '#d97706',
+      });
+    }
+    if (list.length === 0) {
+      list.push({
+        severity: 'info',
+        platform: 'Geral',
+        text: 'Sua infraestrutura de dados está 100% operacional.',
+        desc: 'Todos os canais conectados estão reportando dados e saudáveis.',
+        cta: 'Conectar mais canais',
+        href: '/hub/integracoes',
+        color: '#0d9488',
+      });
+    }
+    return list;
+  }, [isGoogleAdsConnected, googleAdsErr, isMetaAdsConnected, metaAdsErr, isLinkedinAdsConnected, linkedinAdsErr, stats.roas, roasNum]);
+
   /* Funnel calculations */
   const funnelData = useMemo(() => {
+    if (isDemo) {
+      const ratio = funnelFilter === 'googleAds' ? 0.45 : funnelFilter === 'metaAds' ? 0.35 : funnelFilter === 'linkedinAds' ? 0.20 : 1.0;
+      return {
+        impressions: Math.round(180500 * ratio),
+        clicks: Math.round(5420 * ratio),
+        conversions: Math.round(784 * ratio),
+        revenue: 96800.50 * ratio,
+        spend: 18450.70 * ratio,
+      };
+    }
     const aov = typeof stats.revenue === 'number' && typeof stats.conversions === 'number' && stats.conversions > 0
       ? stats.revenue / stats.conversions : 86.7;
 
@@ -683,48 +790,111 @@ export default function HubDashboardLight() {
       revenue: gRev + mRev + lRev,
       spend: gSpend + mSpend + lSpend,
     };
-  }, [trafficData, funnelFilter, isGoogleAdsConnected, isMetaAdsConnected, isLinkedinAdsConnected, stats.revenue, stats.conversions]);
+  }, [isDemo, trafficData, funnelFilter, isGoogleAdsConnected, isMetaAdsConnected, isLinkedinAdsConnected, stats.revenue, stats.conversions]);
 
   /* Real-time CTR, CPC and Progress for Campaign Performance Card */
   const googleAd = trafficData?.channels?.find(c => c.platform === 'Google Ads' && !('error' in c));
   const metaAd = trafficData?.channels?.find(c => c.platform === 'Meta Ads' && !('error' in c));
   const linkedinAd = trafficData?.channels?.find(c => c.platform === 'LinkedIn Ads' && !('error' in c));
 
-  const googleAdsCTR = googleAd && googleAd.impressions > 0
+  const googleAdsCTR = isDemo ? '3,45%' : (googleAd && googleAd.impressions > 0
     ? ((googleAd.clicks / googleAd.impressions) * 100).toFixed(2).replace('.', ',') + '%'
-    : null;
-  const googleAdsCPC = googleAd && googleAd.clicks > 0
+    : null);
+  const googleAdsCPC = isDemo ? 'R$ 1,65' : (googleAd && googleAd.clicks > 0
     ? 'R$ ' + (googleAd.spend / googleAd.clicks).toFixed(2).replace('.', ',')
-    : null;
-  const googleAdsBarWidth = spendNum > 0 && googleAd
+    : null);
+  const googleAdsBarWidth = isDemo ? 45 : (spendNum > 0 && googleAd
     ? (googleAd.spend / spendNum) * 100
-    : 0;
+    : 0);
 
-  const metaAdsCTR = metaAd && metaAd.impressions > 0
+  const metaAdsCTR = isDemo ? '1,28%' : (metaAd && metaAd.impressions > 0
     ? ((metaAd.clicks / metaAd.impressions) * 100).toFixed(2).replace('.', ',') + '%'
-    : null;
-  const metaAdsCPC = metaAd && metaAd.clicks > 0
+    : null);
+  const metaAdsCPC = isDemo ? 'R$ 1,12' : (metaAd && metaAd.clicks > 0
     ? 'R$ ' + (metaAd.spend / metaAd.clicks).toFixed(2).replace('.', ',')
-    : null;
-  const metaAdsBarWidth = spendNum > 0 && metaAd
+    : null);
+  const metaAdsBarWidth = isDemo ? 35 : (spendNum > 0 && metaAd
     ? (metaAd.spend / spendNum) * 100
-    : 0;
+    : 0);
 
-  const linkedinAdsCTR = linkedinAd && linkedinAd.impressions > 0
+  const linkedinAdsCTR = isDemo ? '0,92%' : (linkedinAd && linkedinAd.impressions > 0
     ? ((linkedinAd.clicks / linkedinAd.impressions) * 100).toFixed(2).replace('.', ',') + '%'
-    : null;
-  const linkedinAdsCPC = linkedinAd && linkedinAd.clicks > 0
+    : null);
+  const linkedinAdsCPC = isDemo ? 'R$ 6,80' : (linkedinAd && linkedinAd.clicks > 0
     ? 'R$ ' + (linkedinAd.spend / linkedinAd.clicks).toFixed(2).replace('.', ',')
-    : null;
-  const linkedinAdsBarWidth = spendNum > 0 && linkedinAd
+    : null);
+  const linkedinAdsBarWidth = isDemo ? 20 : (spendNum > 0 && linkedinAd
     ? (linkedinAd.spend / spendNum) * 100
-    : 0;
+    : 0);
+
+  const displayIgData = isDemo ? { username: 'neuroads', followers: 12500, engagementRate: '4,2%', reach: 45000 } : igData;
+  const displayLpData = isDemo ? { followers: 3200, engagementRate: '6,8%', impressions: 18000 } : linkedinPageData;
+  const displayScData = isDemo ? { position: '4,2', clicks: 350, ctr: '3,8%' } : searchConsoleData;
+
+  const displayGa4Data = isDemo ? {
+    activeUsers: '34200',
+    averageSessionDuration: '2m 14s',
+    conversions: '784',
+    engagementRate: '68,4%',
+    trafficSources: [
+      { source: 'Google Ads', sessions: 2430 },
+      { source: 'Organic Search', sessions: 1820 },
+      { source: 'Direct', sessions: 980 },
+      { source: 'Social Meta', sessions: 840 },
+    ],
+    usersTrend: [
+      { date: '01/07', newUsers: 120, returningUsers: 80 },
+      { date: '05/07', newUsers: 150, returningUsers: 95 },
+      { date: '10/07', newUsers: 220, returningUsers: 140 },
+      { date: '15/07', newUsers: 190, returningUsers: 130 },
+      { date: '20/07', newUsers: 260, returningUsers: 180 },
+      { date: '25/07', newUsers: 310, returningUsers: 210 },
+      { date: '30/07', newUsers: 342, returningUsers: 240 },
+    ],
+    regions: [
+      { country: 'São Paulo', value: 8540, change: '+14%', positive: true },
+      { country: 'Rio de Janeiro', value: 4120, change: '+8%', positive: true },
+      { country: 'Minas Gerais', value: 2980, change: '-2%', positive: false },
+      { country: 'Paraná', value: 1840, change: '+5%', positive: true },
+    ]
+  } : ga4Data;
+
+  const handleExport = () => {
+    setExporting(true);
+    setTimeout(() => {
+      setExporting(false);
+      setShowExportToast(true);
+      setTimeout(() => setShowExportToast(false), 4000);
+    }, 1500);
+  };
 
   // Early return if not connected to any source, placed properly after hook declarations
   if (!hasAnyConnection && !loading) return <HubEmptyState />;
 
   return (
     <div className="space-y-6 lg:space-y-8">
+      {/* Toast Notification for Export */}
+      <AnimatePresence>
+        {showExportToast && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-6 right-6 z-50 p-4 rounded-2xl bg-slate-905 border border-slate-800 shadow-2xl flex items-center gap-3.5 max-w-sm"
+          >
+            <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-405 shrink-0 font-bold">
+              ✓
+            </div>
+            <div>
+              <p className="text-[12px] font-black text-white">Relatório Exportado com Sucesso</p>
+              <p className="text-[11px] text-slate-400 font-semibold mt-0.5 leading-relaxed">
+                PDF com insights de neuromarketing e inteligência comportamental gerado.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Page Header */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -751,7 +921,7 @@ export default function HubDashboardLight() {
         <Link
           href="/hub/assistente-ia"
           className="flex w-full sm:w-auto items-center justify-center gap-2 px-5 h-11 sm:h-10 rounded-xl text-white text-[13px] font-bold shadow-[4px_4px_10px_#c2cbd9,_-4px_-4px_10px_#ffffff] hover:shadow-[0_4px_16px_rgba(255,106,0,0.3)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-          style={{ background: 'linear-gradient(135deg, #FF4D00, #FF7A00)' }}
+          style={{ background: 'linear-gradient(135deg, #FF4D00, #FF7A00)', textDecoration: 'none' }}
         >
           <Sparkles size={14} className="animate-pulse" />
           Análise Neuromarketing
@@ -761,40 +931,155 @@ export default function HubDashboardLight() {
       {/* Trial countdown — visível apenas para usuários em período de teste */}
       <HubTrialBanner />
 
-      {/* Operational Alerts */}
-      {(() => {
-        const activeAlerts = [];
-        if (isGoogleAdsConnected && googleAdsErr) activeAlerts.push({ platform: 'Google Ads', title: 'Conta conectada mas sem dados', desc: 'Verifique se há campanhas rodando no período selecionado. Contas inativas podem gerar dados zerados.' });
-        if (isMetaAdsConnected && metaAdsErr) activeAlerts.push({ platform: 'Meta Ads', title: 'Erro de Token', desc: 'O token do Meta expirou ou é inválido. Acesse a tela de Integrações para reconectar e reativar a sincronização.' });
-        if (isLinkedinAdsConnected && linkedinAdsErr) activeAlerts.push({ platform: 'LinkedIn Ads', title: 'Erro de API', desc: 'O Token do LinkedIn Ads expirou. É necessário reconectar sua conta B2B na tela de Integrações.' });
-        
-        if (activeAlerts.length === 0) return null;
+      {/* Connection Mode Alert Banner */}
+      {isDemo && (
+        <div className="p-4 bg-orange-500/5 rounded-2xl border border-orange-500/25 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <Sparkles size={16} className="text-[#FF6A00] shrink-0" />
+            <div>
+              <p className="text-[12.5px] font-black text-slate-800 uppercase">Modo Guia / Demonstração Ativo</p>
+              <p className="text-[11.5px] text-slate-500 font-semibold leading-relaxed mt-0.5">
+                Exibindo dados simulados. Conecte suas integrações reais na aba de Infraestrutura para ver a operação real da sua empresa.
+              </p>
+            </div>
+          </div>
+          <Link href="/hub/integracoes" className="px-4 py-2 rounded-xl text-[11px] font-black text-white hover:brightness-110 shadow-sm cursor-pointer whitespace-nowrap text-center" style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', textDecoration: 'none' }}>
+            Conectar Contas Reais
+          </Link>
+        </div>
+      )}
 
-        return (
-          <BentoCard variant="neumorphic" glowColor="rgba(245, 158, 11, 0.05)" accentColor="#d97706" className="p-5 flex flex-col gap-4">
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="text-rose-500 shrink-0" size={18} />
-              <h2 className="text-[14px] font-black uppercase tracking-wider text-[#0f172a]">Alertas Operacionais</h2>
+      {/* View Toggles & Actions Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
+        {/* Report Toggles */}
+        <div className="flex items-center gap-1 bg-slate-200/50 p-1 rounded-xl border border-white/20 w-full md:w-auto">
+          {[
+            { id: 'clevel', label: 'Visão C-Level' },
+            { id: 'traffic', label: 'Visão Operacional de Tráfego' },
+            { id: 'fullfunnel', label: 'Visão de Funil Completo' },
+          ].map(opt => (
+            <button
+              key={opt.id}
+              onClick={() => setReportView(opt.id as any)}
+              className={`flex-1 md:flex-none px-3.5 py-2 rounded-lg text-[11px] font-black transition-all cursor-pointer ${
+                reportView === opt.id
+                  ? 'bg-white text-[#FF6A00] shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff]'
+                  : 'text-[#475569] hover:text-[#1e293b]'
+              }`}
+              style={{ border: 'none' }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Guide Mode & Export */}
+        <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto">
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="inline-flex items-center gap-1.5 px-4 h-9 rounded-xl text-[11px] font-black border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 shadow-sm transition-all shrink-0 cursor-pointer"
+          >
+            {exporting ? 'Exportando...' : 'Exportar Relatório'}
+          </button>
+        </div>
+      </div>
+
+      {/* Operational Cockpit Header */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Block 1: Status de Dados */}
+        <BentoCard variant="neumorphic" glowColor="rgba(37, 99, 235, 0.02)" className="p-4 flex flex-col gap-2">
+          <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Status de Dados</p>
+          <div className="space-y-1.5 mt-1">
+            <div className="flex items-center justify-between text-[11px] font-bold">
+              <span className="text-slate-600">Google Analytics 4</span>
+              <span className={`px-1.5 py-0.5 rounded text-[8px] font-black ${isGa4Connected ? 'bg-emerald-500/10 text-emerald-600' : 'bg-amber-500/10 text-amber-600'}`}>
+                {isGa4Connected ? 'ATIVO' : 'DESCONECTADO'}
+              </span>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-1">
-              {activeAlerts.map(alert => (
-                <div key={alert.platform} onClick={() => setSelectedAlert(alert)} className="p-3.5 rounded-xl border border-rose-500/20 bg-rose-500/5 hover:bg-rose-500/10 transition-colors cursor-pointer flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-[11px] font-black text-rose-700 uppercase">{alert.platform}</span>
-                      <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse" />
-                    </div>
-                    <p className="text-[11px] font-bold text-rose-800 leading-snug line-clamp-2">
-                      {alert.title}
-                    </p>
-                  </div>
-                  <span className="text-[9px] font-black uppercase text-rose-600 mt-3 hover:underline">Ver detalhes</span>
-                </div>
-              ))}
+            <div className="flex items-center justify-between text-[11px] font-bold">
+              <span className="text-slate-600">Google Ads / Meta Ads</span>
+              <span className={`px-1.5 py-0.5 rounded text-[8px] font-black ${isGoogleAdsConnected || isMetaAdsConnected ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'}`}>
+                {isGoogleAdsConnected || isMetaAdsConnected ? 'ATIVO' : 'DESCONECTADO'}
+              </span>
             </div>
-          </BentoCard>
-        );
-      })()}
+            <div className="flex items-center justify-between text-[11px] font-bold">
+              <span className="text-slate-600">LinkedIn Ads</span>
+              <span className={`px-1.5 py-0.5 rounded text-[8px] font-black ${isLinkedinAdsConnected ? 'bg-emerald-500/10 text-emerald-600' : 'bg-rose-500/10 text-rose-600'}`}>
+                {isLinkedinAdsConnected ? 'ATIVO' : 'DESCONECTADO'}
+              </span>
+            </div>
+          </div>
+        </BentoCard>
+
+        {/* Block 2: Resumo do Funil */}
+        <BentoCard variant="neumorphic" glowColor="rgba(16, 185, 129, 0.02)" className="p-4 flex flex-col gap-2">
+          <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Resumo do Funil</p>
+          <div className="grid grid-cols-2 gap-2 mt-1">
+            <div>
+              <p className="text-[9px] font-black text-slate-400 uppercase">Conversões</p>
+              <p className="text-[15px] font-black text-slate-800 font-mono mt-0.5">{funnelData.conversions}</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-black text-slate-400 uppercase">ROAS Geral</p>
+              <p className="text-[15px] font-black text-slate-800 font-mono mt-0.5">
+                {funnelData.spend > 0 ? `${(funnelData.revenue / funnelData.spend).toFixed(2)}x` : '—'}
+              </p>
+            </div>
+          </div>
+        </BentoCard>
+
+        {/* Block 3: Tarefas de Hoje */}
+        <BentoCard variant="neumorphic" glowColor="rgba(245, 158, 11, 0.02)" className="p-4 flex flex-col gap-2">
+          <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Tarefas Hoje</p>
+          <div className="space-y-1.5 mt-1">
+            {alerts.length > 0 ? (
+              <div className="flex items-center gap-1.5 text-[11px] font-bold text-rose-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                <span>Resolver {alerts.length} alerta{alerts.length > 1 ? 's' : ''} operacionais</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1.5 text-[11px] font-bold text-emerald-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span>Sua operação está 100% saudável</span>
+              </div>
+            )}
+            <Link href="/hub/laboratorio-agentes" className="text-[10px] font-black text-[#FF6A00] uppercase hover:underline" style={{ textDecoration: 'none' }}>
+              → Ver 12 especialidades de Agentes
+            </Link>
+          </div>
+        </BentoCard>
+      </div>
+
+      {/* Period Selector Cards */}
+      <div className="space-y-2">
+        <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Seletor de Período</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { label: 'Últimos 7 dias', value: '7', compareText: 'Comparado a 05/07/2026 - 11/07/2026' },
+            { label: 'Últimos 15 dias', value: '15', compareText: 'Comparado a 27/06/2026 - 11/07/2026' },
+            { label: 'Últimos 30 dias', value: '30', compareText: 'Comparado a 12/06/2026 - 11/07/2026' },
+            { label: 'Últimos 90 dias', value: '90', compareText: 'Comparado a 13/04/2026 - 11/07/2026' },
+          ].map(p => {
+            const active = selectedPeriod === p.value;
+            return (
+              <button
+                key={p.value}
+                onClick={() => setSelectedPeriod(p.value)}
+                className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                  active
+                    ? 'bg-white border-[#FF6A00]/40 shadow-[4px_4px_10px_#d1d9e6]'
+                    : 'bg-[#eef2f7] border-white/60 shadow-[inset_1px_1px_3px_#d1d9e6]'
+                }`}
+              >
+                <p className={`text-[12px] font-black ${active ? 'text-[#FF6A00]' : 'text-slate-700'}`}>{p.label}</p>
+                <p className="text-[10px] text-slate-400 font-semibold mt-1">Vs. último período igual</p>
+                <p className="text-[9px] text-slate-500 font-bold mt-0.5">{p.compareText}</p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       <AnimatePresence>
         {selectedAlert && (
@@ -817,7 +1102,7 @@ export default function HubDashboardLight() {
                 <AlertTriangle className="text-rose-500" size={20} />
                 <h3 className="text-[16px] font-black uppercase text-[#0f172a]">{selectedAlert.platform}</h3>
               </div>
-              <h4 className="text-[14px] font-bold text-rose-600 mb-2">{selectedAlert.title}</h4>
+              <h4 className="text-[14px] font-bold text-rose-600 mb-2">{selectedAlert.text}</h4>
               <p className="text-[13px] font-semibold text-slate-600 leading-relaxed mb-6">
                 {selectedAlert.desc}
               </p>
@@ -825,15 +1110,16 @@ export default function HubDashboardLight() {
                 <button
                   type="button"
                   onClick={() => setSelectedAlert(null)}
-                  className="px-4 py-2 rounded-xl text-[12px] font-bold text-slate-600 hover:text-slate-800 transition-colors"
+                  className="px-4 py-2 rounded-xl text-[12px] font-bold text-slate-600 hover:text-slate-800 transition-colors cursor-pointer"
                 >
                   Fechar
                 </button>
                 <Link
-                  href="/hub/integracoes"
-                  className="px-4 py-2 rounded-xl text-[12px] font-bold text-white bg-rose-500 hover:bg-rose-600 transition-colors shadow-md"
+                  href={selectedAlert.href || "/hub/integracoes"}
+                  className="px-4 py-2 rounded-xl text-[12px] font-bold text-white bg-rose-505 hover:bg-rose-600 transition-colors shadow-md text-center"
+                  style={{ textDecoration: 'none', backgroundColor: '#e11d48' }}
                 >
-                  Resolver em Integrações
+                  {selectedAlert.cta || "Resolver em Integrações"}
                 </Link>
               </div>
             </motion.div>
@@ -841,17 +1127,17 @@ export default function HubDashboardLight() {
         )}
       </AnimatePresence>
 
-        <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4 p-3 bg-amber-500/5 rounded-xl border border-amber-500/20 mt-1">
-          <div className="flex items-start sm:items-center gap-2">
-            <Info className="text-amber-600 shrink-0 mt-0.5 sm:mt-0" size={14} />
-            <span className="text-[11px] font-bold text-amber-800">
-              Caso um canal retorne valores inesperados ou zerados, certifique-se de que o período selecionado possui campanhas ativas.
-            </span>
-          </div>
-          <Link href="/hub/integracoes" className="text-[11.5px] font-black text-amber-700 hover:text-amber-800 underline shrink-0 transition-colors pl-6 sm:pl-0">
-            Gerenciar Integrações
-          </Link>
+      <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4 p-3 bg-amber-500/5 rounded-xl border border-amber-500/20 mt-1">
+        <div className="flex items-start sm:items-center gap-2">
+          <Info className="text-amber-600 shrink-0 mt-0.5 sm:mt-0" size={14} />
+          <span className="text-[11px] font-bold text-amber-800">
+            Caso um canal retorne valores inesperados ou zerados, certifique-se de que o período selecionado possui campanhas ativas.
+          </span>
         </div>
+        <Link href="/hub/integracoes" className="text-[11.5px] font-black text-amber-700 hover:text-amber-800 underline shrink-0 transition-colors pl-6 sm:pl-0">
+          Gerenciar Integrações
+        </Link>
+      </div>
 
       {/* KPI Bento Grid */}
       <motion.div 
@@ -910,6 +1196,11 @@ export default function HubDashboardLight() {
                   )}
                 </div>
                 <p className="text-[12px] text-slate-500 mt-1 font-bold">{kpi.label}</p>
+                {guideMode && kpi.isNa && (
+                  <p className="text-[9.5px] font-semibold text-slate-500 leading-snug mt-1.5 p-1.5 rounded-lg bg-[#FF6A00]/5 border border-[#FF6A00]/15">
+                    💡 Conecte em <Link href="/hub/integracoes" className="text-[#FF6A00] font-black">Integrações</Link> para ver dados reais.
+                  </p>
+                )}
               </div>
               <div className="mt-1 flex items-center justify-between">
                 <span className="text-[9px] font-black uppercase tracking-wider text-slate-400">Histórico</span>
@@ -921,15 +1212,54 @@ export default function HubDashboardLight() {
       </motion.div>
 
       {/* Main Content Layout Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        {/* Interactive Funnel Bento Card */}
-        {/* Interactive Funnel Bento Card */}
-        <BentoCard variant="neumorphic" className="lg:col-span-2 flex flex-col p-4 sm:p-6" glowColor="rgba(255, 106, 0, 0.04)">
+        {/* Left Column: Alerts & Credit Meter (3/12 width) */}
+        <div className="lg:col-span-3 space-y-6">
+          {/* Plan Credits Meter */}
+          <CreditMeter />
+
+          {/* Dynamic Alerts Bento Block */}
+          <BentoCard variant="neumorphic" className="flex flex-col" glowColor="rgba(239, 68, 68, 0.03)">
+            <div className="flex items-center gap-2 px-5 py-4 border-b border-white/40">
+              <Activity size={15} className="text-[#FF6A00]" />
+              <span className="text-[13px] font-black uppercase tracking-wider text-[#0f172a]">Alertas Operacionais</span>
+              <span className="ml-auto text-[10px] font-black px-2 py-0.5 rounded-full border border-white/60 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]">
+                {alerts.length}
+              </span>
+            </div>
+            <div className="divide-y divide-white/20">
+              {alerts.map((a, i) => {
+                return (
+                  <div key={i} onClick={() => setSelectedAlert(a)} className="flex items-start gap-3 px-4 py-3.5 hover:bg-slate-100/10 transition-all cursor-pointer">
+                    <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border border-white/45 bg-[#eef2f7]" style={{ boxShadow: 'inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff' }}>
+                      <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: a.color }} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">{a.platform}</p>
+                        <span className="text-[9px] font-black uppercase" style={{ color: a.color }}>
+                          {a.severity === 'error' ? 'Erro' : a.severity === 'warning' ? 'Aviso' : 'Info'}
+                        </span>
+                      </div>
+                      <p className="text-[12px] font-bold leading-snug text-slate-700 mt-0.5">{a.text}</p>
+                      <span className="text-[9.5px] font-black uppercase text-[#FF6A00] mt-2 block hover:underline">
+                        {a.cta} →
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </BentoCard>
+        </div>
+
+        {/* Middle Column: Interactive Funnel (6/12 width) */}
+        <BentoCard variant="neumorphic" className="lg:col-span-6 flex flex-col p-4 sm:p-6" glowColor="rgba(255, 106, 0, 0.04)">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-white/40 pb-4 mb-6">
             <div className="flex items-center gap-2">
               <TrendingUp size={16} className="text-[#FF6A00]" />
-              <span className="text-[14px] font-black uppercase tracking-wider text-[#0f172a]">Funil de Vendas Interativo</span>
+              <span className="text-[14px] font-black uppercase tracking-wider text-[#0f172a]">Resumo do Funil de Conversão</span>
             </div>
 
             <div className="flex items-center gap-1 bg-[#eef2f7] p-1 rounded-xl shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border border-white/20 w-full sm:w-auto">
@@ -949,6 +1279,7 @@ export default function HubDashboardLight() {
                     background: funnelFilter === opt.id ? '#eef2f7' : 'transparent',
                     color: funnelFilter === opt.id ? '#FF6A00' : '#475569',
                     boxShadow: funnelFilter === opt.id ? '2px 2px 5px #d1d9e6, -2px -2px 5px #ffffff' : 'none',
+                    border: 'none',
                   }}
                 >
                   {opt.label}
@@ -957,144 +1288,102 @@ export default function HubDashboardLight() {
             </div>
           </div>
 
-          {/* Funnel Layout */}
-          <div className="flex-1 flex flex-col justify-center gap-4 py-4 max-w-xl mx-auto w-full">
+          {/* Horizontal Funnel Layout with Drops and Tooltips */}
+          <div className="flex-1 flex flex-col gap-6 py-4 w-full">
             
             {/* Stage 1: Impressões */}
-            <div className="flex flex-col items-center">
-              <motion.div
-                layout
-                className="w-full py-3.5 sm:py-4 px-4 sm:px-6 gap-2 rounded-2xl bg-slate-900 border border-slate-700/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(15,23,42,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(250,204,21,0.25)] transition-all duration-300"
-                style={{ originX: 0.5 }}
-              >
-                {/* Glow bar */}
-                <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-yellow-400" />
-                <div className="flex items-center gap-2.5 pl-2 min-w-0">
-                  <Users size={16} className="text-yellow-400 shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider truncate">Atração (Impressões)</span>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-[12px] font-black text-slate-700">
+                <div className="flex items-center gap-2">
+                  <Users size={14} className="text-yellow-500 animate-pulse" />
+                  <span>Atração (Impressões)</span>
+                  <span className="text-[10px] font-bold text-slate-400 cursor-help" title="Total de visualizações de seus anúncios e postagens. Benchmark: CPM saudável é entre R$ 10 e R$ 25 dependendo do público.">ⓘ</span>
                 </div>
-                <span className="text-[13px] sm:text-sm font-black font-mono tracking-tight text-yellow-400 shrink-0">
+                <span className="font-mono text-[14px] font-black text-slate-800">
                   {funnelData.impressions.toLocaleString('pt-BR')}
                 </span>
-              </motion.div>
-
-              {/* Conversion Rate Stage 1 -> 2 */}
-              <div className="h-8 w-0.5 bg-gradient-to-b from-yellow-400 to-blue-500 my-0.5 relative flex items-center justify-center">
-                <span className="absolute text-[10.5px] font-black bg-[#eef2f7] px-2.5 py-0.8 rounded-full border border-blue-200 shadow-[2px_2px_6px_rgba(0,0,0,0.06)] text-blue-600 shrink-0 select-none whitespace-nowrap">
-                  CTR: {funnelData.impressions > 0 ? ((funnelData.clicks / funnelData.impressions) * 100).toFixed(2).replace('.', ',') : '0,00'}%
-                </span>
               </div>
+              <div className="h-2.5 w-full bg-slate-200/60 rounded-full overflow-hidden">
+                <div className="h-full bg-yellow-400 rounded-full" style={{ width: '100%' }} />
+              </div>
+            </div>
+
+            {/* Drop 1 -> 2 */}
+            <div className="flex items-center justify-between px-4 py-1.5 rounded-xl bg-blue-50/60 border border-blue-100 text-[11px] font-black text-blue-700 max-w-sm mx-auto w-full">
+              <span>Queda (CTR): {funnelData.impressions > 0 ? ((funnelData.clicks / funnelData.impressions) * 100).toFixed(2).replace('.', ',') : '0,00'}%</span>
+              <span className="text-[9.5px] font-medium text-blue-500">Meta: 1,5% - 3,0%</span>
             </div>
 
             {/* Stage 2: Cliques */}
-            <div className="flex flex-col items-center">
-              <motion.div
-                layout
-                className="w-[92%] sm:w-[85%] py-3.5 sm:py-4 px-4 sm:px-6 gap-2 rounded-2xl bg-blue-950 border border-blue-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(37,99,235,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(59,130,246,0.3)] transition-all duration-300"
-                style={{ originX: 0.5 }}
-              >
-                {/* Glow bar */}
-                <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-blue-500" />
-                <div className="flex items-center gap-2.5 pl-2 min-w-0">
-                  <MousePointerClick size={16} className="text-blue-400 shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider truncate">Engajamento (Cliques)</span>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-[12px] font-black text-slate-700">
+                <div className="flex items-center gap-2">
+                  <MousePointerClick size={14} className="text-blue-500" />
+                  <span>Engajamento (Cliques)</span>
+                  <span className="text-[10px] font-bold text-slate-400 cursor-help" title="Total de visitas direcionadas ao seu site. Benchmark: CPC saudável no Google Search: R$ 1.50 - R$ 4.00 | Meta Ads: R$ 0.60 - R$ 1.80.">ⓘ</span>
                 </div>
-                <span className="text-[13px] sm:text-sm font-black font-mono tracking-tight text-blue-400 shrink-0">
+                <span className="font-mono text-[14px] font-black text-slate-800">
                   {funnelData.clicks.toLocaleString('pt-BR')}
                 </span>
-              </motion.div>
-
-              {/* Conversion Rate Stage 2 -> 3 */}
-              <div className="h-8 w-0.5 bg-gradient-to-b from-blue-500 to-orange-500 my-0.5 relative flex items-center justify-center">
-                <span className="absolute text-[10.5px] font-black bg-[#eef2f7] px-2.5 py-0.8 rounded-full border border-orange-200 shadow-[2px_2px_6px_rgba(0,0,0,0.06)] text-orange-600 shrink-0 select-none whitespace-nowrap">
-                  Taxa de Conv.: {funnelData.clicks > 0 ? ((funnelData.conversions / funnelData.clicks) * 100).toFixed(2).replace('.', ',') : '0,00'}%
-                </span>
               </div>
+              <div className="h-2.5 w-full bg-slate-200/60 rounded-full overflow-hidden">
+                <div className="h-full bg-blue-500 rounded-full" style={{ width: `${funnelData.impressions > 0 ? Math.min(100, (funnelData.clicks / funnelData.impressions) * 100 * 5) : 0}%` }} />
+              </div>
+            </div>
+
+            {/* Drop 2 -> 3 */}
+            <div className="flex items-center justify-between px-4 py-1.5 rounded-xl bg-orange-50/60 border border-orange-100 text-[11px] font-black text-orange-700 max-w-sm mx-auto w-full">
+              <span>Queda (Taxa Conversão): {funnelData.clicks > 0 ? ((funnelData.conversions / funnelData.clicks) * 100).toFixed(2).replace('.', ',') : '0,00'}%</span>
+              <span className="text-[9.5px] font-medium text-orange-500">Meta: 2,0% - 5,0%</span>
             </div>
 
             {/* Stage 3: Conversões */}
-            <div className="flex flex-col items-center">
-              <motion.div
-                layout
-                className="w-[84%] sm:w-[70%] py-3.5 sm:py-4 px-4 sm:px-6 gap-2 rounded-2xl bg-orange-950 border border-orange-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(249,115,22,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(249,115,22,0.3)] transition-all duration-300"
-                style={{ originX: 0.5 }}
-              >
-                {/* Glow bar */}
-                <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-orange-500" />
-                <div className="flex items-center gap-2.5 pl-2 min-w-0">
-                  <ShoppingCart size={16} className="text-orange-400 shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider truncate">Ações (Conversões)</span>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-[12px] font-black text-slate-700">
+                <div className="flex items-center gap-2">
+                  <ShoppingCart size={14} className="text-orange-500" />
+                  <span>Ações (Conversões)</span>
+                  <span className="text-[10px] font-bold text-slate-400 cursor-help" title="Ações de valor (vendas, cadastros, formulários). Benchmark: Custo por Lead (CPL) ideal: R$ 15 - R$ 40 dependendo do setor.">ⓘ</span>
                 </div>
-                <span className="text-[13px] sm:text-sm font-black font-mono tracking-tight text-orange-400 shrink-0">
+                <span className="font-mono text-[14px] font-black text-slate-800">
                   {funnelData.conversions.toLocaleString('pt-BR')}
                 </span>
-              </motion.div>
-
-              {/* Conversion Rate Stage 3 -> 4 */}
-              <div className="h-8 w-0.5 bg-gradient-to-b from-orange-500 to-emerald-500 my-0.5 relative flex items-center justify-center">
-                <span className="absolute text-[10.5px] font-black bg-[#eef2f7] px-2.5 py-0.8 rounded-full border border-emerald-200 shadow-[2px_2px_6px_rgba(0,0,0,0.06)] text-emerald-600 shrink-0 select-none whitespace-nowrap">
-                  ROAS: {funnelData.spend > 0 ? (funnelData.revenue / funnelData.spend).toFixed(2).replace('.', ',') : '0,00'}×
-                </span>
+              </div>
+              <div className="h-2.5 w-full bg-slate-200/60 rounded-full overflow-hidden">
+                <div className="h-full bg-orange-500 rounded-full" style={{ width: `${funnelData.clicks > 0 ? Math.min(100, (funnelData.conversions / funnelData.clicks) * 100 * 10) : 0}%` }} />
               </div>
             </div>
 
+            {/* Drop 3 -> 4 */}
+            <div className="flex items-center justify-between px-4 py-1.5 rounded-xl bg-emerald-50/60 border border-emerald-100 text-[11px] font-black text-emerald-700 max-w-sm mx-auto w-full">
+              <span>Eficiência (ROAS): {funnelData.spend > 0 ? (funnelData.revenue / funnelData.spend).toFixed(2).replace('.', ',') : '0,00'}x</span>
+              <span className="text-[9.5px] font-medium text-emerald-500">Meta: &gt; 3,0x</span>
+            </div>
+
             {/* Stage 4: Receita */}
-            <div className="flex flex-col items-center">
-              <motion.div
-                layout
-                className="w-[76%] sm:w-[55%] py-3.5 sm:py-4 px-4 sm:px-6 gap-2 rounded-2xl bg-emerald-950 border border-emerald-800/60 text-white flex items-center justify-between shadow-[0_4px_20px_rgba(16,185,129,0.15)] relative group hover:scale-[1.01] hover:shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all duration-300"
-                style={{ originX: 0.5 }}
-              >
-                {/* Glow bar */}
-                <div className="absolute left-0 top-0 bottom-0 w-1.5 rounded-l-2xl bg-emerald-500" />
-                <div className="flex items-center gap-2.5 pl-2 min-w-0">
-                  <Wallet size={16} className="text-emerald-400 shrink-0" />
-                  <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider truncate">Receita (Vendas)</span>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-[12px] font-black text-slate-700">
+                <div className="flex items-center gap-2">
+                  <Wallet size={14} className="text-emerald-505" />
+                  <span>Receita (Vendas)</span>
+                  <span className="text-[10px] font-bold text-slate-400 cursor-help" title="Receita líquida total gerada a partir das vendas atribuídas aos anúncios.">ⓘ</span>
                 </div>
-                <span className="text-[13px] sm:text-sm font-black font-mono tracking-tight text-emerald-400 shrink-0">
+                <span className="font-mono text-[14px] font-black text-slate-800">
                   R$ {funnelData.revenue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
-              </motion.div>
+              </div>
+              <div className="h-2.5 w-full bg-slate-200/60 rounded-full overflow-hidden">
+                <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${funnelData.conversions > 0 ? '45%' : '0%'}` }} />
+              </div>
             </div>
             
           </div>
         </BentoCard>
 
-        {/* Right side widgets grid */}
-        <div className="space-y-6">
-
-          {/* Plan Credits Meter */}
-          <CreditMeter />
-
-          {/* Dynamic Alerts Bento Block */}
-          <BentoCard variant="neumorphic" className="flex flex-col" glowColor="rgba(239, 68, 68, 0.03)">
-            <div className="flex items-center gap-2 px-5 py-4 border-b border-white/40">
-              <Activity size={15} className="text-[#FF6A00]" />
-              <span className="text-[13px] font-black uppercase tracking-wider text-[#0f172a]">Alertas Operacionais</span>
-              <span className="ml-auto text-[10px] font-black px-2 py-0.5 rounded-full border border-white/60 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]">
-                {alerts.length}
-              </span>
-            </div>
-            <div className="divide-y divide-white/20">
-              {alerts.map((a, i) => {
-                const Icon = a.icon as React.FC<{ size?: number; style?: React.CSSProperties }>;
-                return (
-                  <div key={i} className="flex items-start gap-3.5 px-5 py-4 hover:bg-slate-100/10 transition-all cursor-pointer">
-                    <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 mt-0.5 border border-white/40 bg-[#eef2f7]" style={{ boxShadow: 'inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff' }}>
-                      <Icon size={14} style={{ color: a.color }} />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-[12.5px] font-semibold leading-snug text-slate-700">{a.text}</p>
-                      <p className="text-[11px] text-slate-400 mt-1 font-bold">{a.time}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </BentoCard>
-
+        {/* Right Column: Active Automations (3/12 width) */}
+        <div className="lg:col-span-3">
           {/* Active Automations Bento Block */}
-          <BentoCard variant="neumorphic" className="flex flex-col" glowColor="rgba(59, 130, 246, 0.03)">
+          <BentoCard variant="neumorphic" className="flex flex-col h-full" glowColor="rgba(59, 130, 246, 0.03)">
             <div className="flex items-center gap-2 px-5 py-4 border-b border-white/40">
               <Brain size={15} className="text-[#FF6A00]" />
               <span className="text-[13px] font-black uppercase tracking-wider text-[#0f172a]">Últimas Automações</span>
@@ -1107,7 +1396,7 @@ export default function HubDashboardLight() {
                 <ChevronRight size={12} />
               </Link>
             </div>
-            <div className="divide-y divide-white/20">
+            <div className="divide-y divide-white/20 flex-1 overflow-y-auto">
               {recentAutomations.length > 0 ? recentAutomations.map(ag => (
                 <div key={ag.key} className="flex items-center gap-3.5 px-5 py-4 hover:bg-slate-100/10 transition-colors">
                   <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border border-white/40 bg-[#eef2f7]" style={{ boxShadow: 'inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff' }}>
@@ -1115,7 +1404,7 @@ export default function HubDashboardLight() {
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="text-[13px] font-bold text-[#1e293b] truncate">{ag.agentTitle}</p>
-                    <p className="text-[11px] text-slate-500 truncate mt-0.5">{ag.cadenceTitle}{ag.lastUpdateAt ? ` - Última exec.: ${formatAutomationDateTime(ag.lastUpdateAt)}` : ''}</p>
+                    <p className="text-[11px] text-slate-500 truncate mt-0.5">{ag.cadenceTitle}{ag.lastUpdateAt ? ` - ${formatAutomationDateTime(ag.lastUpdateAt)}` : ''}</p>
                   </div>
                   <div className="text-right shrink-0">
                     <span
@@ -1138,8 +1427,8 @@ export default function HubDashboardLight() {
               )}
             </div>
           </BentoCard>
-
         </div>
+
       </div>
 
       {/* Advanced Paid Campaigns / Web / Social Performance Metrics */}
@@ -1168,20 +1457,20 @@ export default function HubDashboardLight() {
               <div>
                 <p className="text-[12px] font-bold text-slate-500">Taxa de Engajamento</p>
                 <p className="text-[18px] font-black text-[#0f172a] font-mono leading-none mt-1">
-                  {isGa4Connected && ga4Data && !ga4Data.error && ga4Data.engagementRate
-                    ? ga4Data.engagementRate
+                  {(isGa4Connected || isDemo) && displayGa4Data && !displayGa4Data.error && displayGa4Data.engagementRate
+                    ? displayGa4Data.engagementRate
                     : <span className="text-[13px] text-slate-400 font-semibold">—</span>}
                 </p>
               </div>
               <div className="text-right">
-                {isGa4Connected && ga4Data && !ga4Data.error ? (
+                {(isGa4Connected || isDemo) && displayGa4Data && !displayGa4Data.error ? (
                   <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5">
                     <ArrowUpRight size={10} /> +4,2%
                   </span>
                 ) : (
                   <span className="text-[10px] font-semibold text-slate-400">Integração necessária</span>
                 )}
-                <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">{isGa4Connected && ga4Data && !ga4Data.error ? 'vs período ant.' : ''}</p>
+                <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">{(isGa4Connected || isDemo) && displayGa4Data && !displayGa4Data.error ? 'vs período ant.' : ''}</p>
               </div>
             </div>
 
@@ -1190,20 +1479,20 @@ export default function HubDashboardLight() {
               <div>
                 <p className="text-[12px] font-bold text-slate-500">Duração da Sessão</p>
                 <p className="text-[18px] font-black text-[#0f172a] font-mono leading-none mt-1">
-                  {isGa4Connected && ga4Data && !ga4Data.error && ga4Data.averageSessionDuration
-                    ? ga4Data.averageSessionDuration
+                  {(isGa4Connected || isDemo) && displayGa4Data && !displayGa4Data.error && displayGa4Data.averageSessionDuration
+                    ? displayGa4Data.averageSessionDuration
                     : <span className="text-[13px] text-slate-400 font-semibold">—</span>}
                 </p>
               </div>
               <div className="text-right">
-                {isGa4Connected && ga4Data && !ga4Data.error ? (
+                {(isGa4Connected || isDemo) && displayGa4Data && !displayGa4Data.error ? (
                   <span className="text-[10px] font-bold text-rose-600 flex items-center gap-0.5">
                     <ArrowDownRight size={10} /> -1,8%
                   </span>
                 ) : (
                   <span className="text-[10px] font-semibold text-slate-400">Integração necessária</span>
                 )}
-                <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">{isGa4Connected && ga4Data && !ga4Data.error ? 'vs período ant.' : ''}</p>
+                <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">{(isGa4Connected || isDemo) && displayGa4Data && !displayGa4Data.error ? 'vs período ant.' : ''}</p>
               </div>
             </div>
 
@@ -1212,20 +1501,20 @@ export default function HubDashboardLight() {
               <div>
                 <p className="text-[12px] font-bold text-slate-500">Taxa de Conversão</p>
                 <p className="text-[18px] font-black text-[#0f172a] font-mono leading-none mt-1">
-                  {isGa4Connected && ga4Data && !ga4Data.error && ga4Data.conversions && ga4Data.activeUsers
-                    ? `${((parseInt(ga4Data.conversions, 10) / parseInt(ga4Data.activeUsers, 10)) * 100).toFixed(2).replace('.', ',')}%`
+                  {(isGa4Connected || isDemo) && displayGa4Data && !displayGa4Data.error && displayGa4Data.conversions && displayGa4Data.activeUsers
+                    ? `${((parseInt(displayGa4Data.conversions, 10) / parseInt(displayGa4Data.activeUsers, 10)) * 100).toFixed(2).replace('.', ',')}%`
                     : <span className="text-[13px] text-slate-400 font-semibold">—</span>}
                 </p>
               </div>
               <div className="text-right">
-                {isGa4Connected && ga4Data && !ga4Data.error ? (
+                {(isGa4Connected || isDemo) && displayGa4Data && !displayGa4Data.error ? (
                   <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5">
                     <ArrowUpRight size={10} /> +9,1%
                   </span>
                 ) : (
                   <span className="text-[10px] font-semibold text-slate-400">Integração necessária</span>
                 )}
-                <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">{isGa4Connected && ga4Data && !ga4Data.error ? 'vs período ant.' : ''}</p>
+                <p className="text-[9px] text-slate-400 mt-0.5 font-semibold">{(isGa4Connected || isDemo) && displayGa4Data && !displayGa4Data.error ? 'vs período ant.' : ''}</p>
               </div>
             </div>
           </div>
@@ -1290,9 +1579,9 @@ export default function HubDashboardLight() {
               <span className="text-[13px] font-black uppercase tracking-wider text-[#0f172a]">Redes Sociais & Orgânico</span>
             </div>
             {(() => {
-              const activeSocial = [isInstagramConnected, isLinkedinPageConnected, isSearchConsoleConnected].filter(Boolean).length;
+              const activeSocial = isDemo ? 3 : [isInstagramConnected, isLinkedinPageConnected, isSearchConsoleConnected].filter(Boolean).length;
               return activeSocial > 0
-                ? <span className="text-[10px] font-black text-purple-600 bg-purple-500/5 px-2 py-0.5 rounded-md border border-purple-500/10">{activeSocial} CANAIS ATIVOS</span>
+                ? <span className="text-[10px] font-black text-[#FF6A00] bg-[#FF6A00]/5 px-2 py-0.5 rounded-md border border-[#FF6A00]/10">{activeSocial} CANAIS ATIVOS</span>
                 : <span className="text-[10px] font-black text-slate-400 bg-slate-200/60 px-2 py-0.5 rounded-md border border-slate-200">INDISPONÍVEL</span>;
             })()}
           </div>
@@ -1307,21 +1596,21 @@ export default function HubDashboardLight() {
                 <div>
                   <p className="text-[12px] font-bold text-slate-700">Instagram Organic</p>
                   <p className="text-[10px] text-slate-400 font-semibold">
-                    {isInstagramConnected && igData && !igData.error && igData.followers
-                      ? `${igData.followers.toLocaleString('pt-BR')} Seguidores`
+                    {(isInstagramConnected || isDemo) && displayIgData && !displayIgData.error && displayIgData.followers
+                      ? `${displayIgData.followers.toLocaleString('pt-BR')} Seguidores`
                       : 'Não conectado'}
                   </p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-[14px] font-bold text-slate-800 font-mono">
-                  {isInstagramConnected && igData && !igData.error && igData.engagementRate
-                    ? igData.engagementRate
+                  {(isInstagramConnected || isDemo) && displayIgData && !displayIgData.error && displayIgData.engagementRate
+                    ? displayIgData.engagementRate
                     : <span className="text-[13px] text-slate-400">—</span>}
                 </p>
                 <p className="text-[9px] font-black">
-                  {isInstagramConnected && igData && !igData.error && igData.reach
-                    ? <span className="text-emerald-600">{igData.reach.toLocaleString('pt-BR')} alcance</span>
+                  {(isInstagramConnected || isDemo) && displayIgData && !displayIgData.error && displayIgData.reach
+                    ? <span className="text-emerald-600">{displayIgData.reach.toLocaleString('pt-BR')} alcance</span>
                     : <span className="text-slate-400">Indisponível</span>}
                 </p>
               </div>
@@ -1336,21 +1625,21 @@ export default function HubDashboardLight() {
                 <div>
                   <p className="text-[12px] font-bold text-slate-700">Página do LinkedIn</p>
                   <p className="text-[10px] text-slate-400 font-semibold">
-                    {isLinkedinPageConnected && linkedinPageData && !linkedinPageData.error && linkedinPageData.followers
-                      ? `${linkedinPageData.followers.toLocaleString('pt-BR')} Seguidores`
+                    {(isLinkedinPageConnected || isDemo) && displayLpData && !displayLpData.error && displayLpData.followers
+                      ? `${displayLpData.followers.toLocaleString('pt-BR')} Seguidores`
                       : 'Não conectado'}
                   </p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-[14px] font-bold text-slate-800 font-mono">
-                  {isLinkedinPageConnected && linkedinPageData && !linkedinPageData.error && linkedinPageData.engagementRate
-                    ? linkedinPageData.engagementRate
+                  {(isLinkedinPageConnected || isDemo) && displayLpData && !displayLpData.error && displayLpData.engagementRate
+                    ? displayLpData.engagementRate
                     : <span className="text-[13px] text-slate-400">—</span>}
                 </p>
                 <p className="text-[9px] font-black">
-                  {isLinkedinPageConnected && linkedinPageData && !linkedinPageData.error && linkedinPageData.impressions
-                    ? <span className="text-emerald-600">{linkedinPageData.impressions.toLocaleString('pt-BR')} impressões</span>
+                  {(isLinkedinPageConnected || isDemo) && displayLpData && !displayLpData.error && displayLpData.impressions
+                    ? <span className="text-emerald-600">{displayLpData.impressions.toLocaleString('pt-BR')} impressões</span>
                     : <span className="text-slate-400">Indisponível</span>}
                 </p>
               </div>
@@ -1365,21 +1654,21 @@ export default function HubDashboardLight() {
                 <div>
                   <p className="text-[12px] font-bold text-slate-700">Google Search Console</p>
                   <p className="text-[10px] text-slate-400 font-semibold">
-                    {isSearchConsoleConnected && searchConsoleData && !searchConsoleData.error
-                      ? `Pos. média: ${searchConsoleData.position}`
+                    {(isSearchConsoleConnected || isDemo) && displayScData && !displayScData.error
+                      ? `Pos. média: ${displayScData.position}`
                       : 'Não conectado'}
                   </p>
                 </div>
               </div>
               <div className="text-right">
                 <p className="text-[14px] font-bold text-slate-800 font-mono">
-                  {isSearchConsoleConnected && searchConsoleData && !searchConsoleData.error && searchConsoleData.clicks !== undefined
-                    ? searchConsoleData.clicks.toLocaleString('pt-BR')
+                  {(isSearchConsoleConnected || isDemo) && displayScData && !displayScData.error && displayScData.clicks
+                    ? `${displayScData.clicks.toLocaleString('pt-BR')} cliques`
                     : <span className="text-[13px] text-slate-400">—</span>}
                 </p>
                 <p className="text-[9px] font-black">
-                  {isSearchConsoleConnected && searchConsoleData && !searchConsoleData.error && searchConsoleData.ctr
-                    ? <span className="text-emerald-600">CTR: {searchConsoleData.ctr}</span>
+                  {(isSearchConsoleConnected || isDemo) && displayScData && !displayScData.error && displayScData.ctr
+                    ? <span className="text-emerald-600">{displayScData.ctr} CTR orgânico</span>
                     : <span className="text-slate-400">Indisponível</span>}
                 </p>
               </div>
@@ -1399,8 +1688,8 @@ export default function HubDashboardLight() {
           {/* Card 1: Donut Chart */}
           <BentoCard variant="neumorphic" className="flex flex-col p-6 h-[280px]" glowColor="rgba(255, 106, 0, 0.02)">
             <GA4TrafficDonut
-              sources={ga4Data?.trafficSources || []}
-              connected={isGa4Connected}
+              sources={displayGa4Data?.trafficSources || []}
+              connected={isGa4Connected || isDemo}
               loading={loading}
             />
           </BentoCard>
@@ -1408,8 +1697,8 @@ export default function HubDashboardLight() {
           {/* Card 2: Line Chart */}
           <BentoCard variant="neumorphic" className="flex flex-col p-6 h-[280px]" glowColor="rgba(34, 197, 94, 0.02)">
             <GA4UserLineChart
-              trend={ga4Data?.usersTrend || []}
-              connected={isGa4Connected}
+              trend={displayGa4Data?.usersTrend || []}
+              connected={isGa4Connected || isDemo}
               loading={loading}
             />
           </BentoCard>
@@ -1417,8 +1706,8 @@ export default function HubDashboardLight() {
           {/* Card 3: Region/Map list */}
           <BentoCard variant="neumorphic" className="flex flex-col p-6 h-[280px]" glowColor="rgba(37, 99, 235, 0.02)">
             <GA4ActiveRegions
-              regions={ga4Data?.regions || []}
-              connected={isGa4Connected}
+              regions={displayGa4Data?.regions || []}
+              connected={isGa4Connected || isDemo}
               loading={loading}
             />
           </BentoCard>

@@ -60,26 +60,52 @@ type NavItem = {
   children?: NavItem[];
 };
 
-/* ─── Nav items — ícones 3D (HubUiIcons3D) ─────────────────────────── */
-const NAV_ITEMS: NavItem[] = [
-  { icon: IconDashboard3D, label: 'Dashboard',           href: '/hub'                                    },
+type NavGroup = {
+  title: string;
+  items: NavItem[];
+};
+
+/* ─── Nav groups grouped by journey (HubUiIcons3D) ────────────────── */
+const NAV_GROUPS: NavGroup[] = [
   {
-    icon: IconBrain3D,
-    label: 'Agentes IA',
-    href: '/hub/laboratorio-agentes',
-    children: [
-      { icon: IconSparkles3D, label: 'Atração',    href: '/hub/funil/atracao'    },
-      { icon: IconChart3D,    label: 'Engajamento', href: '/hub/funil/engajamento' },
-      { icon: IconTarget3D,   label: 'Conversão',  href: '/hub/funil/conversao'  },
-      { icon: IconRefresh3D,  label: 'Retenção',   href: '/hub/funil/retencao'   },
+    title: 'Visão Geral',
+    items: [
+      { icon: IconDashboard3D, label: 'Dashboard',           href: '/hub' },
+      { icon: IconSparkles3D,   label: 'Oportunidades',        href: '/hub/explorar' },
     ],
   },
-  { icon: IconFunnel3D,     label: 'Funil de Vendas',     href: '/hub/funil-vendas'                       },
-  { icon: IconAutomation3D, label: 'Automações',           href: '/hub/automacoes'                         },
-  { icon: IconSparkles3D,   label: 'Oportunidades',        href: '/hub/explorar'                           },
-  { icon: IconPlug3D,       label: 'Integrações',          href: '/hub/integracoes'                        },
-  { icon: IconBook3D,       label: 'Base de Conhecimento', href: '/hub/configuracoes?tab=conhecimento'     },
-  { icon: IconGear3D,       label: 'Configurações',        href: '/hub/configuracoes'                      },
+  {
+    title: 'Operação',
+    items: [
+      {
+        icon: IconBrain3D,
+        label: 'Funil IA',
+        href: '/hub/laboratorio-agentes',
+        children: [
+          { icon: IconSparkles3D, label: 'Atração',    href: '/hub/funil/atracao'    },
+          { icon: IconChart3D,    label: 'Engajamento', href: '/hub/funil/engajamento' },
+          { icon: IconTarget3D,   label: 'Conversão',  href: '/hub/funil/conversao'  },
+          { icon: IconRefresh3D,  label: 'Retenção',   href: '/hub/funil/retencao'   },
+        ],
+      },
+      { icon: IconFunnel3D,     label: 'Funil de Vendas',     href: '/hub/funil-vendas' },
+      { icon: IconAutomation3D, label: 'Automações',           href: '/hub/automacoes' },
+    ],
+  },
+  {
+    title: 'Infraestrutura',
+    items: [
+      { icon: IconPlug3D,       label: 'Integrações',          href: '/hub/integracoes' },
+      { icon: IconBook3D,       label: 'Base de Conhecimento', href: '/hub/configuracoes?tab=conhecimento' },
+      { icon: IconGear3D,       label: 'Configurações',        href: '/hub/configuracoes' },
+    ],
+  },
+  {
+    title: 'Agentes',
+    items: [
+      { icon: Users,            label: 'Agentes Online',       href: '/hub/assistente-ia' },
+    ],
+  },
 ];
 
 /* ─── Single nav link ───────────────────────────────────────────────── */
@@ -130,7 +156,7 @@ function NavLink({
               router.push(item.href);
             }
           }}
-          className={`w-full text-left group flex items-center gap-3 ${paddingLeft} pr-3 py-3 rounded-2xl ${textSize} font-bold transition-all duration-200 cursor-pointer ${
+          className={`w-full text-left group flex items-center gap-2.5 ${paddingLeft} pr-3 py-2 rounded-2xl ${textSize} font-bold transition-all duration-200 cursor-pointer ${
             isActive
               ? isDark ? 'text-white' : 'text-[#FF6A00]'
               : isDark
@@ -143,7 +169,7 @@ function NavLink({
             borderLeft:  isActive ? (isDark ? '2px solid rgba(255,255,255,0.7)' : '2px solid #FF6A00') : '2px solid transparent',
           }}
         >
-          <ParentIcon size={26} className={`transition-transform duration-200 group-hover:scale-110 ${isActive ? (isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
+          <ParentIcon size={22} className={`transition-transform duration-200 group-hover:scale-110 ${isActive ? (isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
           <span className="flex-1">{item.label}</span>
           {isActive && <span className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-white' : 'bg-[#FF6A00]'}`} />}
           <ChevronDown
@@ -186,7 +212,7 @@ function NavLink({
   return (
     <Link
       href={item.href}
-      className={`group flex items-center gap-3 ${paddingLeft} pr-3 py-${depth === 1 ? '2.5' : '3'} rounded-2xl ${textSize} font-bold transition-all duration-200 ${
+      className={`group flex items-center gap-2.5 ${paddingLeft} pr-3 py-${depth === 1 ? '1.5' : '2'} rounded-2xl ${textSize} font-bold transition-all duration-200 ${
         isActive
           ? isLucca ? 'text-emerald-300' : isDark ? 'text-white' : 'text-[#FF6A00]'
           : isDark
@@ -212,7 +238,7 @@ function NavLink({
           />
         </div>
       ) : (
-        <LeafIcon size={depth === 1 ? 20 : 26} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-300' : isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
+        <LeafIcon size={depth === 1 ? 16 : 22} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-300' : isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
       )}
       <span className="flex-1">{item.label}</span>
       {isLucca && (
@@ -254,7 +280,7 @@ function SidebarContent({
   return (
     <>
       {/* Top profile header: Avatar + Info column */}
-      <div className={`px-6 pt-3.5 pb-5 shrink-0 flex items-center gap-3 ${isDark ? 'border-b border-white/15' : 'border-b border-slate-200/40'}`}>
+      <div className={`px-5 pt-2.5 pb-3.5 shrink-0 flex items-center gap-3 ${isDark ? 'border-b border-white/15' : 'border-b border-slate-200/40'}`}>
         {/* Avatar with subtle white border ring and soft shadow */}
         <div className="relative w-[43px] h-[43px] rounded-full overflow-hidden shrink-0 ring-2 ring-white/60 shadow-[0_4px_14px_rgba(0,0,0,0.22)] bg-gradient-to-tr from-[#cc4400] to-[#FF8805] flex items-center justify-center text-white font-black text-[15px] select-none">
           {userPhoto ? (
@@ -286,52 +312,32 @@ function SidebarContent({
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-5 space-y-1 overflow-y-auto">
-        {NAV_ITEMS.map(item => (
-          <NavLink
-            key={item.href}
-            item={item}
-            pathname={pathname}
-            currentTab={currentTab}
-            isDark={isDark}
-          />
+      <nav className="flex-1 px-3 py-3 space-y-3.5 overflow-y-auto">
+        {NAV_GROUPS.map(group => (
+          <div key={group.title} className="space-y-0.5">
+            <h4 className={`px-4 text-[9px] font-black uppercase tracking-wider ${isDark ? 'text-white/40' : 'text-slate-400'} mb-1`}>
+              {group.title}
+            </h4>
+            <div className="space-y-0.5">
+              {group.items.map(item => (
+                <NavLink
+                  key={item.href}
+                  item={item}
+                  pathname={pathname}
+                  currentTab={currentTab}
+                  isDark={isDark}
+                />
+              ))}
+            </div>
+          </div>
         ))}
-
-        {/* Agentes Online — positioned after Configurações, before Sair */}
-        <div className="pt-1">
-          <Link
-            href="/hub/assistente-ia"
-            className={`group flex items-center gap-3 pl-4 pr-3 py-3 rounded-2xl text-[13px] font-bold transition-all duration-200 ${
-              pathname === '/hub/assistente-ia'
-                ? isDark ? 'text-emerald-300' : 'text-emerald-600'
-                : isDark
-                  ? 'text-white/70 hover:text-white hover:bg-white/10'
-                  : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
-            }`}
-            style={{
-              boxShadow: pathname === '/hub/assistente-ia' ? (isDark ? 'none' : 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff') : 'none',
-              background: pathname === '/hub/assistente-ia' ? (isDark ? 'rgba(16,185,129,0.12)' : '#ecfdf5') : 'transparent',
-              borderLeft: pathname === '/hub/assistente-ia' ? '2px solid #10b981' : '2px solid transparent',
-              textDecoration: 'none',
-            }}
-          >
-            <Users
-              size={16}
-              className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${
-                pathname === '/hub/assistente-ia' ? (isDark ? 'text-emerald-300' : 'text-emerald-600') : isDark ? 'text-white/60' : 'text-slate-500'
-              }`}
-            />
-            <span className="flex-1">Agentes Online</span>
-            <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)] animate-pulse shrink-0" />
-          </Link>
-        </div>
       </nav>
 
       {/* Sign out */}
-      <div className={`px-3 pb-5 shrink-0 pt-3 ${isDark ? 'border-t border-white/15' : 'border-t border-white/40'}`}>
+      <div className={`px-3 pb-3 shrink-0 pt-2 ${isDark ? 'border-t border-white/15' : 'border-t border-white/40'}`}>
         <button
           onClick={onSignOut}
-          className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-[13px] font-bold transition-all duration-200 border border-transparent ${
+          className={`w-full flex items-center gap-2.5 px-4 py-2.5 rounded-2xl text-[13px] font-bold transition-all duration-200 border border-transparent ${
             isDark
               ? 'text-white/70 hover:text-white hover:bg-white/10 hover:border-white/10'
               : 'text-[#475569] hover:text-rose-600 hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:border-rose-500/15'
@@ -741,42 +747,24 @@ function MobileDrawer({
             </div>
 
             {/* Nav — onClick on nav closes drawer on any link tap */}
-            <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto" onClick={onClose}>
-              {NAV_ITEMS.map(item => (
-                <NavLink
-                  key={item.href}
-                  item={item}
-                  pathname={pathname}
-                  currentTab={currentTab}
-                />
+            <nav className="flex-1 px-3 py-4 space-y-4 overflow-y-auto" onClick={onClose}>
+              {NAV_GROUPS.map(group => (
+                <div key={group.title} className="space-y-1.5">
+                  <h4 className="px-4 text-[9px] font-black uppercase tracking-wider text-slate-400">
+                    {group.title}
+                  </h4>
+                  <div className="space-y-0.5">
+                    {group.items.map(item => (
+                      <NavLink
+                        key={item.href}
+                        item={item}
+                        pathname={pathname}
+                        currentTab={currentTab}
+                      />
+                    ))}
+                  </div>
+                </div>
               ))}
-
-              {/* Agentes Online — same entry as the desktop sidebar */}
-              <div className="pt-1">
-                <Link
-                  href="/hub/assistente-ia"
-                  className={`group flex items-center gap-3 pl-4 pr-3 py-3 rounded-2xl text-[13px] font-bold transition-all duration-200 ${
-                    pathname === '/hub/assistente-ia'
-                      ? 'text-emerald-600'
-                      : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
-                  }`}
-                  style={{
-                    boxShadow: pathname === '/hub/assistente-ia' ? 'inset 3px 3px 6px #d1d9e6, inset -3px -3px 6px #ffffff' : 'none',
-                    background: pathname === '/hub/assistente-ia' ? '#ecfdf5' : 'transparent',
-                    borderLeft: pathname === '/hub/assistente-ia' ? '2px solid #10b981' : '2px solid transparent',
-                    textDecoration: 'none',
-                  }}
-                >
-                  <Users
-                    size={16}
-                    className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${
-                      pathname === '/hub/assistente-ia' ? 'text-emerald-600' : 'text-slate-500'
-                    }`}
-                  />
-                  <span className="flex-1">Agentes Online</span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.7)] animate-pulse shrink-0" />
-                </Link>
-              </div>
             </nav>
 
             {/* Sign out */}

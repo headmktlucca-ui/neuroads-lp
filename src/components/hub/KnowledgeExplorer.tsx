@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, ReactNode } from 'react';
 import {
   ChevronRight, Clock, Download, Search, Trash2, X, ChevronDown,
 } from 'lucide-react';
@@ -47,6 +47,161 @@ function EmptyPane({ label }: { label: string }) {
       <p className="text-[13px] font-semibold text-slate-500">{label}</p>
     </div>
   );
+}
+
+function renderInline(text: string): ReactNode {
+  const parts: ReactNode[] = [];
+  const tokenRegex = /(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g;
+  const matches = [...text.matchAll(tokenRegex)];
+  
+  if (matches.length === 0) {
+    return text;
+  }
+  
+  let lastIndex = 0;
+  matches.forEach((match, idx) => {
+    const matchText = match[0];
+    const matchIndex = match.index!;
+    
+    if (matchIndex > lastIndex) {
+      parts.push(text.substring(lastIndex, matchIndex));
+    }
+    
+    if (matchText.startsWith('**') && matchText.endsWith('**')) {
+      const content = matchText.slice(2, -2);
+      parts.push(<strong key={idx} className="font-extrabold text-slate-800">{content}</strong>);
+    } else if (matchText.startsWith('[') && matchText.includes('](')) {
+      const closeBracket = matchText.indexOf('](');
+      const label = matchText.substring(1, closeBracket);
+      const url = matchText.substring(closeBracket + 2, matchText.length - 1);
+      parts.push(
+        <a key={idx} href={url} target="_blank" rel="noopener noreferrer" className="text-orange-600 hover:text-orange-700 underline font-bold break-all">
+          {label}
+        </a>
+      );
+    }
+    
+    lastIndex = matchIndex + matchText.length;
+  });
+  
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+  
+  return <>{parts}</>;
+}
+
+function MarkdownRenderer({ content }: { content: string }) {
+  const lines = content.split('\n');
+  const nodes: ReactNode[] = [];
+  let inCode = false;
+  let codeBuffer: string[] = [];
+  
+  // Find the first paragraph to render as a callout intro (only if it doesn't start with heading/list/code)
+  const introLines: string[] = [];
+  const restLines: string[] = [];
+  let foundFirstBlock = false;
+  
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    if (!foundFirstBlock) {
+      if (!trimmed) continue;
+      if (trimmed.startsWith('#') || trimmed.startsWith('-') || trimmed.startsWith('*') || trimmed.startsWith('```')) {
+        foundFirstBlock = true;
+        restLines.push(lines[i]);
+      } else {
+        introLines.push(lines[i]);
+      }
+    } else {
+      restLines.push(lines[i]);
+    }
+  }
+  
+  // If we collected some intro lines, let's treat them as the premium callout box!
+  const introText = introLines.join('\n').trim();
+  if (introText) {
+    nodes.push(
+      <div key="intro-callout" className="mb-6 p-4 rounded-2xl border border-slate-200/50 bg-[#f8fafc]/90 shadow-[inset_1px_1px_3px_rgba(0,0,0,0.01),_3px_3px_8px_rgba(0,0,0,0.01)] text-[13px] leading-relaxed text-slate-600 font-semibold border-l-4 border-l-[#FF6B00]">
+        {renderInline(introText)}
+      </div>
+    );
+  }
+  
+  const targetLines = introText ? restLines : lines;
+  
+  targetLines.forEach((line, index) => {
+    const trimmed = line.trim();
+    
+    if (trimmed.startsWith('```')) {
+      if (!inCode) {
+        inCode = true;
+        codeBuffer = [];
+      } else {
+        inCode = false;
+        nodes.push(
+          <pre key={`code-${index}`} className="my-3 overflow-x-auto rounded-xl border border-slate-200 bg-[#0f172a] p-4 text-[11px] leading-relaxed text-slate-100 font-mono">
+            <code>{codeBuffer.join('\n')}</code>
+          </pre>
+        );
+      }
+      return;
+    }
+    
+    if (inCode) {
+      codeBuffer.push(line);
+      return;
+    }
+    
+    if (!trimmed) {
+      nodes.push(<div key={`spacer-${index}`} className="h-3" />);
+      return;
+    }
+    
+    if (trimmed.startsWith('# ')) {
+      nodes.push(
+        <h2 key={`h1-${index}`} className="text-[17px] font-black text-slate-900 mt-6 mb-3 pb-1.5 border-b border-slate-200/60 leading-tight">
+          {renderInline(trimmed.substring(2))}
+        </h2>
+      );
+      return;
+    }
+    if (trimmed.startsWith('## ')) {
+      nodes.push(
+        <h3 key={`h2-${index}`} className="text-[15px] font-black text-slate-800 mt-5 mb-2.5 leading-tight">
+          {renderInline(trimmed.substring(3))}
+        </h3>
+      );
+      return;
+    }
+    if (trimmed.startsWith('### ')) {
+      nodes.push(
+        <h4 key={`h3-${index}`} className="text-[13.5px] font-bold text-slate-800 mt-4 mb-2 leading-tight">
+          {renderInline(trimmed.substring(4))}
+        </h4>
+      );
+      return;
+    }
+    
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      nodes.push(
+        <div key={`li-${index}`} className="flex items-start gap-2.5 py-1 pl-1">
+          <span className="mt-2 inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-[#FF6B00]" />
+          <p className="text-[13px] leading-relaxed text-slate-600 font-medium">
+            {renderInline(trimmed.substring(2))}
+          </p>
+        </div>
+      );
+      return;
+    }
+    
+    nodes.push(
+      <p key={`p-${index}`} className="text-[13px] leading-relaxed text-slate-600 font-medium my-1.5">
+        {renderInline(line)}
+      </p>
+    );
+  });
+  
+  return <div className="space-y-1 font-sans">{nodes}</div>;
 }
 
 function ReportViewer({
@@ -103,10 +258,10 @@ function ReportViewer({
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-5">
-        <div className="rounded-2xl border border-white/50 bg-[#eef2f7] p-4 shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff]">
-          <pre className="whitespace-pre-wrap font-sans text-[13px] leading-relaxed text-slate-700 font-medium">
-            {entry.reportContent}
-          </pre>
+        <div className="rounded-3xl border border-white/60 bg-[#eef2f7] p-5 shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] max-h-full">
+          <div className="bg-white rounded-2xl border border-slate-200/50 p-6 shadow-sm">
+            <MarkdownRenderer content={entry.reportContent} />
+          </div>
         </div>
       </div>
     </div>

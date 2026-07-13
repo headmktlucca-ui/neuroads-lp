@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles, TrendingUp, TrendingDown, AlertTriangle, ArrowRight,
@@ -30,6 +30,7 @@ type Opportunity = {
   effort: 'baixo' | 'medio' | 'alto';
   timeframe: string;
   source: string[];
+  createdAt?: number | string | { seconds: number; nanoseconds: number; toMillis?: () => number };
 };
 
 /* ── Config ── */
@@ -50,7 +51,7 @@ const EFFORT_LABEL = { baixo: 'Esforço Baixo', medio: 'Esforço Médio', alto: 
 const FILTERS = ['Todas', 'Receita', 'Eficiência', 'Risco', 'Crescimento', 'Alta Prioridade'];
 
 /* ── Components ── */
-function KpiCard({ label, value, icon: Icon, color, bg }: { label: string; value: string; icon: any; color: string; bg: string }) {
+function KpiCard({ label, value, icon: Icon, color, bg }: { label: string; value: string; icon: React.ComponentType<{ size?: number; className?: string }>; color: string; bg: string }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
@@ -74,6 +75,12 @@ function OpportunityCard({ opp, index }: { opp: Opportunity; index: number }) {
   const category = CATEGORY_CONFIG[opp.category];
   const CatIcon = category.icon;
 
+  const typeLabel = useMemo(() => {
+    if (opp.category === 'risco') return { text: '⚠️ Risco Iminente', color: 'text-rose-600 bg-rose-50 border-rose-200' };
+    if (opp.category === 'eficiencia' || opp.category === 'crescimento') return { text: '🔁 Padrão Detectado', color: 'text-blue-600 bg-blue-50 border-blue-200' };
+    return { text: '💡 Oportunidade', color: 'text-emerald-600 bg-emerald-50 border-emerald-200' };
+  }, [opp.category]);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 16 }}
@@ -93,12 +100,12 @@ function OpportunityCard({ opp, index }: { opp: Opportunity; index: number }) {
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-1.5">
+            <span className={`inline-flex items-center gap-1.5 text-[9.5px] font-black px-2.5 py-0.5 rounded-full border ${typeLabel.color}`}>
+              {typeLabel.text}
+            </span>
             <span className={`inline-flex items-center gap-1 text-[10px] font-black px-2 py-0.5 rounded-full border ${priority.bg} ${priority.color} ${priority.border}`}>
               <span className={`w-1.5 h-1.5 rounded-full ${priority.dot}`} />
               {priority.label}
-            </span>
-            <span className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${category.bg} ${category.color}`}>
-              {category.label}
             </span>
             <span className="text-[10px] font-bold text-slate-400 ml-auto">{opp.agent}</span>
           </div>
@@ -198,6 +205,7 @@ export default function OportunidadesPage() {
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState('Todas');
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [timePeriod, setTimePeriod] = useState<'hoje' | 'ontem' | '7d' | '15d'>('hoje');
 
   useEffect(() => {
     if (!user) {
@@ -235,7 +243,39 @@ export default function OportunidadesPage() {
     }
   }, [user]);
 
-  const filtered = opportunities.filter(opp => {
+  const activeOpportunities = useMemo(() => {
+    return opportunities.filter(opp => {
+      const timestamp = (() => {
+        const cAt = opp.createdAt;
+        if (!cAt) return 0;
+        if (typeof cAt === 'number') return cAt;
+        if (typeof cAt === 'object' && cAt && 'toMillis' in cAt && typeof cAt.toMillis === 'function') return cAt.toMillis();
+        if (typeof cAt === 'object' && cAt && 'seconds' in cAt && typeof cAt.seconds === 'number') return cAt.seconds * 1000;
+        if (typeof cAt === 'string') return new Date(cAt).getTime();
+        return 0;
+      })();
+      
+      if (!timestamp) return false;
+      // eslint-disable-next-line react-hooks/purity
+      const diffMs = Date.now() - timestamp;
+      
+      if (timePeriod === 'hoje') {
+        return diffMs <= 24 * 3600 * 1000;
+      }
+      if (timePeriod === 'ontem') {
+        return diffMs > 24 * 3600 * 1000 && diffMs <= 48 * 3600 * 1000;
+      }
+      if (timePeriod === '7d') {
+        return diffMs <= 7 * 24 * 3600 * 1000;
+      }
+      if (timePeriod === '15d') {
+        return diffMs <= 15 * 24 * 3600 * 1000;
+      }
+      return true;
+    });
+  }, [opportunities, timePeriod]);
+
+  const filtered = activeOpportunities.filter(opp => {
     if (activeFilter === 'Todas') return true;
     if (activeFilter === 'Alta Prioridade') return opp.priority === 'alta';
     const catMap: Record<string, Category> = {
@@ -247,12 +287,28 @@ export default function OportunidadesPage() {
     return opp.category === catMap[activeFilter];
   });
 
-  const kpis = [
-    { label: 'Oportunidades Identificadas', value: String(opportunities.length), icon: Sparkles, color: 'text-[#FF6A00]', bg: 'bg-orange-500/10' },
-    { label: 'Impacto Estimado / mês',       value: opportunities.length > 0 ? '+R$ 54.000' : '—',    icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
-    { label: 'Alta Prioridade',              value: String(opportunities.filter(o => o.priority === 'alta').length), icon: AlertTriangle, color: 'text-rose-600',  bg: 'bg-rose-500/10'   },
-    { label: 'Agentes Envolvidos',           value: String(new Set(opportunities.map(o => o.agent)).size), icon: Bot, color: 'text-blue-600', bg: 'bg-blue-500/10' },
-  ];
+  const kpis = useMemo(() => {
+    let totalImpact = 0;
+    activeOpportunities.forEach(opp => {
+      const valStr = opp.impactValue || '';
+      const cleanVal = valStr.replace(/\./g, '');
+      const match = cleanVal.match(/\d+/);
+      if (match && valStr.includes('R$')) {
+        totalImpact += parseInt(match[0], 10);
+      }
+    });
+
+    const impactLabel = totalImpact > 0 
+      ? `+R$ ${totalImpact.toLocaleString('pt-BR')}` 
+      : (activeOpportunities.length > 0 ? 'Sob Demanda' : '—');
+
+    return [
+      { label: 'Oportunidades Identificadas', value: String(activeOpportunities.length), icon: Sparkles, color: 'text-[#FF6A00]', bg: 'bg-orange-500/10' },
+      { label: 'Impacto Estimado / mês',       value: impactLabel, icon: DollarSign, color: 'text-emerald-600', bg: 'bg-emerald-500/10' },
+      { label: 'Alta Prioridade',              value: String(activeOpportunities.filter(o => o.priority === 'alta').length), icon: AlertTriangle, color: 'text-rose-600',  bg: 'bg-rose-500/10'   },
+      { label: 'Agentes Envolvidos',           value: String(new Set(activeOpportunities.map(o => o.agent)).size), icon: Bot, color: 'text-blue-600', bg: 'bg-blue-500/10' },
+    ];
+  }, [activeOpportunities]);
 
   if (loading) {
     return (
@@ -263,7 +319,7 @@ export default function OportunidadesPage() {
     );
   }
 
-  if (opportunities.length === 0) {
+  if (opportunities.length === 0 && activeOpportunities.length === 0) {
     return (
       <div className="space-y-6 w-full">
         {/* Header */}
@@ -325,6 +381,31 @@ export default function OportunidadesPage() {
           <span>Atualizado {lastUpdated.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
         </div>
       </motion.div>
+
+      {/* Time-Travel Selector */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <span className="text-[10px] font-black uppercase text-slate-400 mr-2 font-sans tracking-wider">Histórico de Análises (Time-Travel):</span>
+          {[
+            { id: 'hoje', label: 'Hoje (Atual)' },
+            { id: 'ontem', label: 'Ontem' },
+            { id: '7d', label: 'Últimos 7 dias' },
+            { id: '15d', label: 'Últimos 15 dias' },
+          ].map(period => (
+            <button
+              key={period.id}
+              onClick={() => setTimePeriod(period.id as 'hoje' | 'ontem' | '7d' | '15d')}
+              className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
+                timePeriod === period.id
+                  ? 'bg-white text-[#FF6A00] border border-[#FF6A00]/30 shadow-sm'
+                  : 'text-[#475569] hover:text-[#1e293b] border border-transparent'
+              }`}
+            >
+              🕒 {period.label}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
