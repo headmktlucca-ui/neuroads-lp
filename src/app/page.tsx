@@ -535,9 +535,9 @@ export default function TempLandingPage() {
         </motion.div>
 
         {/* HERO CONTENT */}
-        <section className="relative z-[2] w-full px-4 sm:px-8 lg:px-24 pt-6 md:pt-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <section className="relative z-[2] w-full px-4 sm:px-8 lg:px-24 pt-6 md:pt-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           {/* Left Side Info */}
-          <div className="lg:col-span-7 flex flex-col items-start">
+          <div className="lg:col-span-7 flex flex-col items-start order-2 lg:order-1">
             {/* Headline */}
             <h1 className="font-head font-extrabold text-3xl md:text-4xl lg:text-5xl text-slate-900 leading-[1.12] tracking-tight max-w-3xl">
               Operações IA Estratégicas em <span className="text-[#FF5500]">Marketing & Vendas B2B</span>.
@@ -564,23 +564,26 @@ export default function TempLandingPage() {
             {/* Dynamic Interactive Agent Profile Card removido a pedido do usuário */}
           </div>
 
-          {/* Right Side - Video */}
-          <div className="hidden lg:flex lg:col-span-5 items-center justify-center relative mt-8 lg:mt-0 group">
-            <video 
+          {/* Right Side - Video (visible on all screens) */}
+          <div className="flex lg:col-span-5 items-center justify-center relative mt-0 lg:mt-0 order-1 lg:order-2 group">
+            <video
               ref={videoRef}
-              src="/videos/VD_Ap_26.mp4" 
-              autoPlay 
-              loop 
+              src="/videos/VD_Ap_26.mp4"
+              autoPlay
+              loop
               muted={isMuted}
-              playsInline 
-              className="w-full h-auto object-contain rounded-[32px] shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50"
+              playsInline
+              webkit-playsinline="true"
+              x5-playsinline="true"
+              className="w-full h-auto max-h-[55vw] lg:max-h-none object-contain rounded-[20px] lg:rounded-[32px] shadow-[4px_4px_10px_#c8d0e7,-4px_-4px_10px_#ffffff] lg:shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50"
             />
+            {/* Mute button: always visible on mobile (no hover), shown on hover on desktop */}
             <button
               onClick={toggleMute}
-              className="absolute bottom-6 right-6 p-3 rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80 transition-all opacity-0 group-hover:opacity-100 shadow-lg border border-white/20"
+              className="absolute bottom-4 right-4 lg:bottom-6 lg:right-6 p-2.5 lg:p-3 rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80 transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100 shadow-lg border border-white/20"
               title={isMuted ? "Ativar som" : "Desativar som"}
             >
-              {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+              {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
             </button>
           </div>
         </section>
