@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { fetchWithRetry, RETRY_PRESETS } from '@/lib/retry-handler';
 
 type ChannelPayload = {
   platform: 'googleAds' | 'metaAds' | 'linkedinAds';
@@ -67,13 +68,14 @@ async function fetchGoogleAdsChannel(
     }
   }
 
-  const response = await fetch(
+  const response = await fetchWithRetry(
     `https://googleads.googleapis.com/v24/customers/${sanitizedCustomerId}/googleAds:search`,
     {
       method: 'POST',
       headers,
       body: JSON.stringify({ query }),
-    }
+    },
+    RETRY_PRESETS.api
   );
 
   if (!response.ok) {
@@ -109,7 +111,11 @@ async function fetchMetaAdsChannel(channel: ChannelPayload, dateFrom: string, da
     access_token: channel.accessToken,
   });
 
-  const response = await fetch(`https://graph.facebook.com/v20.0/${accountId}/insights?${params.toString()}`);
+  const response = await fetchWithRetry(
+    `https://graph.facebook.com/v20.0/${accountId}/insights?${params.toString()}`,
+    undefined,
+    RETRY_PRESETS.api
+  );
   if (!response.ok) {
     const text = await response.text();
     throw new Error(`Meta Ads: ${text}`);
@@ -146,13 +152,17 @@ async function fetchLinkedinAdsChannel(channel: ChannelPayload, dateFrom: string
     fields: 'impressions,clicks,costInLocalCurrency,conversions',
   });
 
-  const response = await fetch(`https://api.linkedin.com/rest/adAnalytics?${q.toString()}`, {
-    headers: {
-      Authorization: `Bearer ${channel.accessToken}`,
-      'LinkedIn-Version': '202501',
-      'X-Restli-Protocol-Version': '2.0.0',
+  const response = await fetchWithRetry(
+    `https://api.linkedin.com/rest/adAnalytics?${q.toString()}`,
+    {
+      headers: {
+        Authorization: `Bearer ${channel.accessToken}`,
+        'LinkedIn-Version': '202501',
+        'X-Restli-Protocol-Version': '2.0.0',
+      },
     },
-  });
+    RETRY_PRESETS.api
+  );
 
   if (!response.ok) {
     const text = await response.text();
@@ -183,7 +193,7 @@ export async function POST(request: Request) {
       body.channels.map(async (channel) => {
         try {
           const resolvedChannel = { ...channel };
-          if (uid && (channel.platform === 'googleAds' || channel.platform === 'linkedinAds')) {
+          if (uid && (channel.platform === 'googleAds' || channel.platform === 'linkedinAds' || channel.platform === 'metaAds')) {
             const { getValidAccessToken } = await import('@/lib/connector-refresh-server');
             const freshToken = await getValidAccessToken(uid, channel.platform);
             if (freshToken) {
@@ -196,7 +206,19 @@ export async function POST(request: Request) {
           if (resolvedChannel.platform === 'linkedinAds') return await fetchLinkedinAdsChannel(resolvedChannel, body.dateFrom, body.dateTo);
           throw new Error(`Canal não suportado: ${channel.platform}`);
         } catch (err) {
-          const errorMsg = err instanceof Error ? err.message : 'Erro na API';
+          let errorMsg = 'Erro desconhecido na API';
+          if (err instanceof Error) {
+            errorMsg = err.message;
+          } else if (typeof err === 'string') {
+            errorMsg = err;
+          }
+          // Parse error message to extract API details if available
+          if (errorMsg.includes('Meta Ads:') || errorMsg.includes('Google Ads:') || errorMsg.includes('LinkedIn Ads:')) {
+            // Already formatted, keep as is
+          } else if (!errorMsg.includes('não')) {
+            // Add user-friendly context if needed
+            errorMsg = `Falha na API: ${errorMsg}`;
+          }
           console.error(`Erro ao carregar dados do canal ${channel.platform}:`, errorMsg);
           return {
             platform: channel.platform === 'googleAds' ? 'Google Ads' : channel.platform === 'metaAds' ? 'Meta Ads' : 'LinkedIn Ads',
@@ -212,6 +234,7 @@ export async function POST(request: Request) {
 
     const totals = results.reduce(
       (acc, item) => {
+        if ('error' in item) return acc; // Pula canais com erro
         acc.spend += item.spend;
         acc.impressions += item.impressions;
         acc.clicks += item.clicks;
@@ -221,7 +244,9 @@ export async function POST(request: Request) {
       { spend: 0, impressions: 0, clicks: 0, conversions: 0 }
     );
 
-    return NextResponse.json({ success: true, channels: results, totals });
+    const hasErrors = results.some(r => 'error' in r);
+
+    return NextResponse.json({ success: true, channels: results, totals, hasErrors });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Falha ao extrair indicadores.';
     return NextResponse.json({ success: false, error: message }, { status: 500 });

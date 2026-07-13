@@ -43,6 +43,12 @@ function getLinkedinCredentials() {
   return { clientId, clientSecret };
 }
 
+function getMetaCredentials() {
+  const appId = process.env.META_APP_ID;
+  const appSecret = process.env.META_APP_SECRET;
+  return { appId, appSecret };
+}
+
 /**
  * Gets a valid access token for a connector, refreshing it if expired.
  */
@@ -125,6 +131,57 @@ export async function getValidAccessToken(uid: string, connectorKey: string): Pr
 
       newAccessToken = payload.access_token;
       newExpiresIn = Number(payload.expires_in || 5183999);
+    }
+    // Refresh Meta Ads token using app access token (regenerates long-lived user token)
+    else if (connectorKey === 'metaAds') {
+      const { appId, appSecret } = getMetaCredentials();
+      if (!appId || !appSecret) {
+        throw new Error('Meta OAuth credentials not configured in environment.');
+      }
+
+      // Step 1: Get app access token
+      const appTokenRes = await fetch('https://graph.facebook.com/oauth/access_token', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      });
+
+      const appTokenParams = new URLSearchParams({
+        client_id: appId,
+        client_secret: appSecret,
+        grant_type: 'client_credentials',
+      });
+
+      const appTokenUrl = new URL('https://graph.facebook.com/oauth/access_token');
+      appTokenUrl.search = appTokenParams.toString();
+
+      const appTokenFetch = await fetch(appTokenUrl.toString(), { method: 'GET' });
+      const appTokenPayload = await appTokenFetch.json();
+      if (!appTokenFetch.ok || !appTokenPayload.access_token) {
+        throw new Error('Meta app token generation failed.');
+      }
+
+      const appAccessToken = appTokenPayload.access_token;
+
+      // Step 2: Extend user token using app access token (gets a 60-day token)
+      const extendParams = new URLSearchParams({
+        grant_type: 'fb_exchange_token',
+        client_id: appId,
+        client_secret: appSecret,
+        fb_exchange_token: conn.accessToken,
+      });
+
+      const extendUrl = new URL('https://graph.facebook.com/oauth/access_token');
+      extendUrl.search = extendParams.toString();
+
+      const extendRes = await fetch(extendUrl.toString(), { method: 'GET' });
+      const extendPayload = await extendRes.json();
+      if (!extendRes.ok || !extendPayload.access_token) {
+        throw new Error(extendPayload.error?.message || 'Meta token extension failed.');
+      }
+
+      newAccessToken = extendPayload.access_token;
+      // Meta long-lived tokens are valid for ~60 days
+      newExpiresIn = Number(extendPayload.expires_in || 5184000); // 60 days default
     } else {
       // Other platforms do not support automatic server-side refresh, return existing
       return conn.accessToken;

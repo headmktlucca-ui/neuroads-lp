@@ -63,6 +63,7 @@ type TrafficExtractResponse = {
   success: boolean; channels?: ChannelResult[];
   totals?: { spend: number; impressions: number; clicks: number; conversions: number };
   error?: string;
+  hasErrors?: boolean;
 };
 type Ga4TrafficSource = { source: string; sessions: number };
 type Ga4TrendPoint = { date: string; newUsers: number; returningUsers: number };
@@ -419,7 +420,7 @@ function GA4ActiveRegions({ regions, connected, loading }: { regions: Ga4Region[
                     <span className="text-slate-800 font-mono text-[12px]">{r.value}</span>
                     {r.change !== '0%' && (
                       <span className={`text-[9px] font-black px-1.5 py-0.5 rounded ${
-                        r.positive === true ? 'text-emerald-700 bg-emerald-500/10' : r.positive === false ? 'text-rose-700 bg-rose-500/10' : 'text-slate-700 bg-slate-500/10'
+                        r.positive === true ? 'text-emerald-700 bg-emerald-500/10' : r.positive === false ? 'text-rose-700 bg-rose-500/10' : 'text-white bg-slate-400/30'
                       }`}>
                         {r.change}
                       </span>
@@ -930,6 +931,45 @@ export default function HubDashboardLight() {
 
       {/* Trial countdown — visível apenas para usuários em período de teste */}
       <HubTrialBanner />
+
+      {/* Critical Error Banner — Ads Channels Failed */}
+      {!isDemo && trafficData?.hasErrors && !loading && (
+        <motion.div
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="p-4 bg-red-500/5 rounded-2xl border border-red-500/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+        >
+          <div className="flex items-start gap-3">
+            <AlertTriangle size={18} className="text-red-600 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-[12.5px] font-black text-red-900 uppercase">Erro ao Carregar Dados de Anúncios</p>
+              <p className="text-[11.5px] text-red-700 font-semibold leading-relaxed mt-0.5">
+                Um ou mais canais de mídia paga falharam na extração de dados. Verifique as credenciais e tente novamente.
+              </p>
+              <div className="mt-2 text-[10px] font-bold text-red-600 space-y-0.5">
+                {trafficData?.channels?.map((ch) => {
+                  if ('error' in ch) {
+                    return (
+                      <div key={ch.platform} className="flex items-center gap-1.5">
+                        <span className="inline-block w-1 h-1 rounded-full bg-red-600" />
+                        <span>{ch.platform}: {ch.error}</span>
+                      </div>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+            </div>
+          </div>
+          <Link
+            href="/hub/integracoes"
+            className="px-4 py-2 rounded-xl text-[11px] font-black text-white hover:brightness-110 shadow-sm cursor-pointer whitespace-nowrap text-center"
+            style={{ background: 'linear-gradient(135deg, #dc2626, #ef4444)', textDecoration: 'none' }}
+          >
+            Resolver Agora
+          </Link>
+        </motion.div>
+      )}
 
       {/* Connection Mode Alert Banner */}
       {isDemo && (
