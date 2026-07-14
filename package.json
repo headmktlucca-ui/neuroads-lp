@@ -31,6 +31,7 @@
     "@remotion/cli": "^4.0.481",
     "@studio-freight/react-lenis": "^0.0.47",
     "ai": "^6.0.208",
+    "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "firebase": "^12.13.0",
     "firebase-admin": "^13.10.0",

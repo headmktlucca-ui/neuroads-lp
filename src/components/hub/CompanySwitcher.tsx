@@ -29,7 +29,7 @@ export function CompanySwitcherTrigger({
     <div className={`w-full flex items-center gap-3 px-2 py-2 ${className}`}>
       {/* Avatar */}
       <div
-        className={`relative w-[43px] h-[43px] rounded-full overflow-hidden shrink-0 ring-2 ring-white/60 shadow-[0_4px_14px_rgba(0,0,0,0.22)] flex items-center justify-center text-white font-black text-[15px] select-none bg-gradient-to-tr from-[#cc4400] to-[#FF8805]`}
+        className={`relative w-[56px] h-[56px] rounded-full overflow-hidden shrink-0 ring-2 ring-white/60 shadow-[0_4px_14px_rgba(0,0,0,0.22)] flex items-center justify-center text-white font-black text-[15px] select-none bg-gradient-to-tr from-[#cc4400] to-[#FF8805]`}
       >
         {userPhoto ? (
           // eslint-disable-next-line @next/next/no-img-element

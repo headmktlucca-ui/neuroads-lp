@@ -9,6 +9,7 @@ import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
 import HeroSilkBackground from '@/components/ui/HeroSilkBackground';
 import FunnelInteractiveShowcase from '@/components/neuroads/FunnelInteractiveShowcase';
 import PricingValuesSection from '@/components/neuroads/PricingValuesSection';
+import { ScreenshotShowcase } from '@/components/ui/screenshot-showcase';
 
 function IconBotAI() {
   return (
@@ -521,7 +522,7 @@ export default function TempLandingPage() {
       {/* ========================================================================= */}
       {/* HERO SECTION WITH NEURAL SILK BACKGROUND */}
       {/* ========================================================================= */}
-      <section className="hero relative min-h-screen overflow-hidden bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] flex items-center">
+      <section className="hero relative min-h-[70vh] overflow-hidden bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] flex items-center">
         <style dangerouslySetInnerHTML={{__html: `
           @keyframes rise {
             from { opacity: 0; transform: translateY(22px); }
@@ -610,7 +611,7 @@ export default function TempLandingPage() {
           </div>
           
           <div className="lg:col-span-5 flex items-center justify-center lg:justify-end relative animate-rise-image group mt-8 lg:mt-0">
-            <div className="relative w-full">
+            <div className="relative w-full max-w-[80%] mx-auto lg:mx-0">
               <video
                 ref={videoRef}
                 src="/videos/VD_Ap_26_1.mp4"
@@ -1712,125 +1713,74 @@ function AgentsGridSection() {
 }
 
 
+
 function DataTransformationSection() {
   return (
-    <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 border-t border-slate-300/30 relative">
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-[#ff6a00]/3 filter blur-3xl rounded-full pointer-events-none" />
-      
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start relative z-10">
-        {/* Left Column - Main Copy */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
-          className="lg:col-span-6 space-y-6"
-        >
-          <h2 className="font-title font-extrabold text-3xl md:text-4xl text-slate-900 leading-tight tracking-tight">
-            Transforme dados em crescimento
-          </h2>
-          
-          <p className="text-slate-650 text-base md:text-lg leading-relaxed font-normal">
-            Se você não confia 100% nos seus dados hoje, podemos presumir que toda decisão tomada é, estatisticamente, uma <strong className="underline decoration-[#FF5500]/40 decoration-2 underline-offset-4 text-slate-800">aposta</strong>.
-          </p>
-          
-          <p className="text-slate-600 text-sm md:text-base leading-relaxed">
-            Acredite, dados soltos, espalhados entre diversas ferramentas, são um grande problema de produtividade e eficiência na empresa.
-          </p>
-          
-          <div className="pt-6 border-t border-slate-300/40 space-y-4">
-            <h3 className="font-title font-bold text-xl md:text-2xl text-slate-900 leading-snug">
-              A NeuroAds te ajuda a organizar os dados e a identificar os gargalos.
-            </h3>
-            <p className="text-slate-600 text-sm md:text-base leading-relaxed">
-              Integre as ferramentas que você já utiliza e organize toda a informação usando a <strong className="text-[#FF5500]">NeuroAds</strong>.
+    <section
+      className="relative border-t border-slate-300/30 overflow-hidden"
+      style={{
+        backgroundImage: 'url(/images/backgrounds/Fund_ss.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      {/* Subtle white overlay so text stays crisp over the textured bg */}
+      <div className="absolute inset-0 bg-white/60 pointer-events-none" />
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative z-10">
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+
+          {/* ── Left Column — Copy ── */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.8 }}
+            className="space-y-6 max-w-lg"
+          >
+            <h2 className="font-title font-extrabold text-3xl md:text-4xl text-slate-900 leading-tight tracking-tight">
+              Transforme dados em faturamento
+            </h2>
+
+            <p className="text-slate-650 text-base md:text-lg leading-relaxed font-normal">
+              Se você não confia 100% nos seus dados hoje, podemos presumir que toda decisão tomada é, estatisticamente, uma{' '}
+              <strong className="underline decoration-[#FF5500]/40 decoration-2 underline-offset-4 text-slate-800">aposta</strong>.
             </p>
-          </div>
-        </motion.div>
 
-        {/* Right Column - Neumorphic Bullet List */}
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={{
-            hidden: {},
-            visible: {
-              transition: {
-                staggerChildren: 0.12
-              }
-            }
-          }}
-          className="lg:col-span-6 space-y-6"
-        >
-          {/* Feature 1 */}
-          <motion.div
-            variants={cardVariants}
-            className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
-          >
-            <div className="shrink-0"><IconPieChart /></div>
-            <div className="space-y-1.5">
-              <h4 className="font-title font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
-                Crie dashboards
-              </h4>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Crie dashboards, funis e relatórios a partir de dados centralizados de marketing e vendas.
+            <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+              Acredite, dados soltos, espalhados entre diversas ferramentas, são um grande problema de produtividade e eficiência na empresa.
+            </p>
+
+            <div className="pt-6 border-t border-slate-300/40 space-y-4">
+              <h3 className="font-title font-bold text-xl md:text-2xl text-slate-900 leading-snug">
+                A NeuroAds te ajuda a organizar os dados e a identificar os gargalos.
+              </h3>
+              <p className="text-slate-600 text-sm md:text-base leading-relaxed">
+                Integre as ferramentas que você já utiliza e organize toda a informação usando a{' '}
+                <strong className="text-[#FF5500]">NeuroAds</strong>.
               </p>
             </div>
           </motion.div>
 
-          {/* Feature 2 */}
+          {/* ── Right Column — Screenshot Showcase (tabs) ── */}
           <motion.div
-            variants={cardVariants}
-            className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.9, delay: 0.15 }}
+            className="pb-8"
           >
-            <div className="shrink-0"><IconLineChart /></div>
-            <div className="space-y-1.5">
-              <h4 className="font-title font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
-                Visualize indicadores
-              </h4>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Acompanhe suas principais métricas e indicadores de crescimento em tempo real.
-              </p>
-            </div>
+            <ScreenshotShowcase />
           </motion.div>
 
-          {/* Feature 3 */}
-          <motion.div
-            variants={cardVariants}
-            className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
-          >
-            <div className="shrink-0"><IconNodesMerge /></div>
-            <div className="space-y-1.5">
-              <h4 className="font-title font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
-                Processe dados
-              </h4>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Construa fluxos de dados para integrar, coletar e mover informação entre as ferramentas que você já utiliza.
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Feature 4 */}
-          <motion.div
-            variants={cardVariants}
-            className="p-5 rounded-2xl border border-white/60 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:scale-[1.01] transition-all duration-300 flex gap-5 group"
-          >
-            <div className="shrink-0"><IconCrosshairTarget /></div>
-            <div className="space-y-1.5">
-              <h4 className="font-title font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
-                Atribuição de mídia
-              </h4>
-              <p className="text-slate-600 text-sm leading-relaxed">
-                Saiba exatamente quais ações e campanhas geram mais resultado e prove o impacto do trabalho.
-              </p>
-            </div>
-          </motion.div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );
 }
+
+
 
 
 function DemoAndAccessSection() {

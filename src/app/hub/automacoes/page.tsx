@@ -1086,7 +1086,7 @@ export default function HubAutomacoesPage() {
         <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-4 py-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setIsEditModalOpen(false)} />
 
-          <div className="relative w-full max-w-[700px] max-h-[96vh] rounded-[32px] bg-[#eef2f7] border border-white/80 shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-slate-800 flex flex-col">
+          <div className="relative w-full max-w-[1080px] max-h-[96vh] rounded-[32px] bg-[#eef2f7] border border-white/80 shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-slate-800 flex flex-col">
             {/* Header */}
             <div className="relative border-b border-slate-200 bg-[#eef2f7] px-6 py-5 flex flex-col gap-1 shrink-0">
               <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold">Editar Programação</p>
@@ -1104,92 +1104,102 @@ export default function HubAutomacoesPage() {
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-5 flex-1 text-left">
-              {/* Custom fields */}
-              {(() => {
-                const fields = SPECIALTY_FIELDS[editingAutomation.rawEntry.agentTitle] || [];
-                if (fields.length === 0) return null;
-                return (
-                  <div className="space-y-3">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
-                      1. Configurações da Operação:
-                    </label>
-                    <div className="grid grid-cols-1 gap-3">
-                      {fields.map((f) => (
-                        <div key={f.name} className="flex flex-col gap-1.5">
-                          <label className="text-xs font-bold text-slate-500">{f.label}</label>
-                          <input
-                            type={f.type === 'number' ? 'text' : f.type}
-                            placeholder={f.placeholder}
-                            value={editCustomFields[f.name] || ''}
-                            onChange={(e) => setEditCustomFields(prev => ({ ...prev, [f.name]: e.target.value }))}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-white outline-none focus:ring-2 focus:ring-[#FF6A00]/15 transition-all text-slate-700"
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {/* Cadence Suggestions */}
-              <div className="space-y-3">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
-                  2. Cadência de Execução:
-                </label>
-                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                  {editSuggestions.map((suggestion) => {
-                    const isSelected = editCadenceId === suggestion.id;
+            <div className="p-6 overflow-y-auto flex-1">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start text-left">
+                
+                {/* Left Column: Configuration */}
+                <div className="space-y-5">
+                  {/* Custom fields */}
+                  {(() => {
+                    const fields = SPECIALTY_FIELDS[editingAutomation.rawEntry.agentTitle] || [];
+                    if (fields.length === 0) return null;
                     return (
-                      <div
-                        key={suggestion.id}
-                        onClick={() => setEditCadenceId(suggestion.id)}
-                        className={`cursor-pointer rounded-2xl border p-3.5 text-left transition-all duration-200 ${
-                          isSelected
-                            ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-[#0f172a]'
-                            : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
-                        }`}
-                      >
-                        <p className="text-xs font-black text-[#0f172a]">{suggestion.title}</p>
-                        <p className="mt-1 text-[10px] text-slate-500 font-semibold">{suggestion.cadence}</p>
+                      <div className="space-y-3">
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
+                          1. Configurações da Operação:
+                        </label>
+                        <div className="grid grid-cols-1 gap-3">
+                          {fields.map((f) => (
+                            <div key={f.name} className="flex flex-col gap-1.5">
+                              <label className="text-xs font-bold text-slate-500">{f.label}</label>
+                              <input
+                                type={f.type === 'number' ? 'text' : f.type}
+                                placeholder={f.placeholder}
+                                value={editCustomFields[f.name] || ''}
+                                onChange={(e) => setEditCustomFields(prev => ({ ...prev, [f.name]: e.target.value }))}
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-white outline-none focus:ring-2 focus:ring-[#FF6A00]/15 transition-all text-slate-700"
+                              />
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     );
-                  })}
+                  })()}
                 </div>
-              </div>
 
-              {/* Schedule options */}
-              {selectedEditSuggestion && (
-                <div className="space-y-2">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">3. Dias e horários recomendados</p>
-                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                    {selectedEditSuggestion.scheduleOptions.map((opt) => {
-                      const isOptSelected = editScheduleOptionId === opt.id;
-                      return (
-                        <button
-                          key={opt.id}
-                          type="button"
-                          onClick={() => setEditScheduleOptionId(opt.id)}
-                          className={`cursor-pointer rounded-xl border p-3 text-left transition-all duration-200 w-full ${
-                            isOptSelected
-                              ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
-                              : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]'
-                          }`}
-                        >
-                          <p className="text-xs font-black text-[#0f172a]">{opt.label}</p>
-                          <p className="mt-0.5 text-[10px] text-slate-500 font-semibold leading-tight">{opt.detail}</p>
-                        </button>
-                      );
-                    })}
+                {/* Right Column: Cadence & Schedule */}
+                <div className="space-y-5">
+                  {/* Cadence Suggestions */}
+                  <div className="space-y-3">
+                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
+                      2. Cadência de Execução:
+                    </label>
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                      {editSuggestions.map((suggestion) => {
+                        const isSelected = editCadenceId === suggestion.id;
+                        return (
+                          <div
+                            key={suggestion.id}
+                            onClick={() => setEditCadenceId(suggestion.id)}
+                            className={`cursor-pointer rounded-2xl border p-3.5 text-left transition-all duration-200 ${
+                              isSelected
+                                ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-[#0f172a]'
+                                : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                            }`}
+                          >
+                            <p className="text-xs font-black text-[#0f172a]">{suggestion.title}</p>
+                            <p className="mt-1 text-[10px] text-slate-500 font-semibold">{suggestion.cadence}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )}
 
-              {editNotice && (
-                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 shadow-sm">
-                  {editNotice}
+                  {/* Schedule options */}
+                  {selectedEditSuggestion && (
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">3. Dias e horários recomendados</p>
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        {selectedEditSuggestion.scheduleOptions.map((opt) => {
+                          const isOptSelected = editScheduleOptionId === opt.id;
+                          return (
+                            <button
+                              key={opt.id}
+                              type="button"
+                              onClick={() => setEditScheduleOptionId(opt.id)}
+                              className={`cursor-pointer rounded-xl border p-3 text-left transition-all duration-200 w-full ${
+                                isOptSelected
+                                  ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                                  : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]'
+                              }`}
+                            >
+                              <p className="text-xs font-black text-[#0f172a]">{opt.label}</p>
+                              <p className="mt-0.5 text-[10px] text-slate-500 font-semibold leading-tight">{opt.detail}</p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {editNotice && (
+                    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 shadow-sm mt-4">
+                      {editNotice}
+                    </div>
+                  )}
                 </div>
-              )}
+
+              </div>
             </div>
 
             {/* Footer */}

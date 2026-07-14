@@ -33,6 +33,8 @@ import {
   X,
   Sparkles,
   Users,
+  Megaphone,
+  Share2,
 } from 'lucide-react';
 import {
   IconDashboard3D,
@@ -90,7 +92,9 @@ const NAV_GROUPS: NavGroup[] = [
           { icon: IconRefresh3D,  label: 'Retenção',   href: '/hub/funil/retencao'   },
         ],
       },
-      { icon: IconFunnel3D,     label: 'Funil de Vendas',     href: '/hub/funil-vendas' },
+      { icon: IconFunnel3D,     label: 'CRM',                  href: '/hub/funil-vendas' },
+      { icon: Megaphone,        label: 'Ads',                  href: '/hub/ads' },
+      { icon: Share2,           label: 'Redes Sociais',        href: '/hub/redes-sociais' },
       { icon: IconAutomation3D, label: 'Automações',           href: '/hub/automacoes' },
     ],
   },
@@ -230,12 +234,12 @@ function NavLink({
     >
       {/* Icon: use avatar image for Lucca, regular icon for others */}
       {item.avatarImage ? (
-        <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-emerald-500/30 shadow-[0_0_6px_rgba(16,185,129,0.25)]">
+        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-emerald-500/30 shadow-[0_0_6px_rgba(16,185,129,0.25)]">
           <Image
             src={item.avatarImage}
             alt={item.label}
-            width={24}
-            height={24}
+            width={32}
+            height={32}
             className="w-full h-full object-cover"
           />
         </div>
@@ -371,7 +375,9 @@ function getMobilePageTitle(pathname: string): string {
   if (pathname === '/hub') return 'Dashboard';
   if (pathname.startsWith('/hub/agentes-ativos')) return 'Agentes Ativos';
   if (pathname.startsWith('/hub/laboratorio-agentes')) return 'Agentes IA';
-  if (pathname.startsWith('/hub/funil-vendas')) return 'Funil de Vendas';
+  if (pathname.startsWith('/hub/funil-vendas')) return 'CRM';
+  if (pathname.startsWith('/hub/ads')) return 'Ads';
+  if (pathname.startsWith('/hub/redes-sociais')) return 'Redes Sociais';
   if (pathname.startsWith('/hub/performance')) return 'Performance';
   if (pathname.startsWith('/hub/criativos')) return 'Criativos';
   if (pathname.startsWith('/hub/tecnico')) return 'Técnico';
@@ -794,10 +800,6 @@ function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: stri
 
   return (
     <header className="hidden lg:flex items-center gap-4 px-8 h-16 border-b border-white/40 bg-[#D9DDE1] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
-      <div className="flex items-center gap-2.5 flex-1 max-w-xs px-3.5 h-10 rounded-2xl border border-white/30 bg-[#eef2f7] text-[13px] text-[#475569] shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] focus-within:ring-2 focus-within:ring-[#FF6A00]/25 transition-all">
-        <Search size={14} className="text-slate-400" />
-        <span className="select-none text-slate-400 font-bold">Buscar no Hub…</span>
-      </div>
 
       <div className="ml-auto flex items-center gap-2 sm:gap-3 relative">
         {/* Refresh — only on Dashboard */}
