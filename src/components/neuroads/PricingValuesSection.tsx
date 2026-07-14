@@ -385,6 +385,11 @@ export default function PricingValuesSection() {
 
   return (
     <section id="valores" className="relative w-full py-24 md:py-28 overflow-hidden">
+      {/* Top transition gradient */}
+      <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-[#EDF1F5] to-transparent pointer-events-none z-10" />
+      
+      {/* Bottom transition gradient */}
+      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#EDF1F5] to-transparent pointer-events-none z-10" />
       
       {/* Background Image - Telas */}
       <div className="absolute bottom-0 left-0 w-[120%] md:w-full h-[60%] md:h-[80%] lg:h-[100%] pointer-events-none z-0">
@@ -405,11 +410,12 @@ export default function PricingValuesSection() {
         >
           <div className="md:col-span-2">
             <h2 className="font-title font-extrabold text-3xl md:text-4xl text-slate-900 leading-[1.15] tracking-tight">
-              Um plano único. <span className="text-[#FF5500]">Toda a operação</span> dentro dele.
+              Um plano simples.<br />
+              <span className="text-[#FF5500]">Potência MÁXIMA</span> na sua operação.
             </h2>
           </div>
           <div className="md:col-span-1">
-            <p className="text-slate-500 text-sm leading-relaxed md:pl-6 border-l-2 border-orange-500/20">
+            <p className="text-slate-900 text-sm leading-relaxed md:pl-6 border-l-2 border-orange-500/20">
               Sem tabela de planos para decifrar: um valor mensal, todos os agentes, limites publicados e créditos como única unidade de consumo.
             </p>
           </div>

@@ -65,7 +65,7 @@ export function ScreenshotShowcase() {
       <div className="relative w-full mx-auto max-w-4xl">
         {/* Laptop Body mockup image */}
         <img
-          src="/images/note.jpeg"
+          src="/images/note.png"
           alt="Laptop Mockup"
           className="w-full h-auto block select-none pointer-events-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
           draggable={false}

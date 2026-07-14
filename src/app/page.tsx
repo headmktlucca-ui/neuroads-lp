@@ -667,6 +667,9 @@ export default function TempLandingPage() {
       {/* SOLUTIONS SECTION TEMPLATE 02 */}
       {/* ========================================================================= */}
       <div ref={solutionsSectionRef} className="relative w-full overflow-hidden py-24 md:py-28">
+        {/* Top transition mask to blend with previous section (#EDF1F5) */}
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#EDF1F5] to-transparent z-[5] pointer-events-none" />
+
         {/* Parallax Background Wrapper */}
         <motion.div
           style={{ y: solutionsBackgroundY }}
@@ -1382,73 +1385,81 @@ function TargetAudienceSection() {
   ];
 
   return (
-    <section id="publico-alvo" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 space-y-12">
-      <div className="space-y-4 max-w-xl text-center mx-auto">
-        <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">PARA QUEM É A NEUROADS</span>
-        <h2 className="font-title text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Oportunidades
-        </h2>
-        <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
-          Unifique dados, automatize funis e coloque agentes de IA para otimizar suas conversões comerciais todos os dias.
-        </p>
-      </div>
+    <section id="publico-alvo" className="relative w-full bg-[#EDF1F5] py-24 overflow-hidden">
+      {/* Top transition gradient */}
+      <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
+      
+      {/* Bottom transition gradient */}
+      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {cards.map((card, idx) => (
-          <motion.div
-            key={card.id}
-            initial={{ opacity: 0, y: 24, scale: 0.97 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: false, margin: '-60px' }}
-            transition={{ duration: 0.55, delay: idx * 0.09, ease: [0.22, 1, 0.36, 1] }}
-            className="relative overflow-hidden rounded-[24px] min-h-[250px]"
-            style={{ backgroundColor: card.bg }}
-          >
-            {/* Photo — right half, blended into the card background */}
-            <div className="absolute inset-y-0 right-0 w-[58%] sm:w-[52%]">
-              <Image
-                src={card.image}
-                alt={card.title}
-                fill
-                sizes="(max-width: 768px) 60vw, 460px"
-                className="object-cover"
-              />
-              <div
-                className="absolute inset-0"
-                style={{ background: `linear-gradient(to right, ${card.bg} 0%, ${card.bg}00 55%)` }}
-              />
-            </div>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="space-y-4 max-w-xl text-center mx-auto">
+          <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">PARA QUEM É A NEUROADS</span>
+          <h2 className="font-title text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Oportunidades
+          </h2>
+          <p className="text-slate-650 text-xs md:text-sm leading-relaxed">
+            Unifique dados, automatize funis e coloque agentes de IA para otimizar suas conversões comerciais todos os dias.
+          </p>
+        </div>
 
-            {/* Content */}
-            <div className="relative z-10 p-8 flex flex-col h-full min-h-[250px] max-w-[62%] sm:max-w-[55%]">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 self-start bg-white/80 backdrop-blur-sm rounded-full px-3.5 py-1.5 mb-5 shadow-sm">
-                <span className="w-2 h-2 rounded-full shrink-0" style={{ background: card.badgeDot }} />
-                <span className="text-[10px] font-bold text-slate-600 tracking-wide whitespace-nowrap">{card.badge}</span>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {cards.map((card, idx) => (
+            <motion.div
+              key={card.id}
+              initial={{ opacity: 0, y: 24, scale: 0.97 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: false, margin: '-60px' }}
+              transition={{ duration: 0.55, delay: idx * 0.09, ease: [0.22, 1, 0.36, 1] }}
+              className="relative overflow-hidden rounded-[24px] min-h-[250px]"
+              style={{ backgroundColor: card.bg }}
+            >
+              {/* Photo — right half, blended into the card background */}
+              <div className="absolute inset-y-0 right-0 w-[58%] sm:w-[52%]">
+                <Image
+                  src={card.image}
+                  alt={card.title}
+                  fill
+                  sizes="(max-width: 768px) 60vw, 460px"
+                  className="object-cover"
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{ background: `linear-gradient(to right, ${card.bg} 0%, ${card.bg}00 55%)` }}
+                />
               </div>
 
-              {/* Title */}
-              <h3 className="font-title font-extrabold text-[22px] text-slate-900 mb-3 leading-snug">
-                {card.title}
-              </h3>
+              {/* Content */}
+              <div className="relative z-10 p-8 flex flex-col h-full min-h-[250px] max-w-[62%] sm:max-w-[55%]">
+                {/* Badge */}
+                <div className="inline-flex items-center gap-2 self-start bg-white/80 backdrop-blur-sm rounded-full px-3.5 py-1.5 mb-5 shadow-sm">
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ background: card.badgeDot }} />
+                  <span className="text-[10px] font-bold text-slate-600 tracking-wide whitespace-nowrap">{card.badge}</span>
+                </div>
 
-              {/* Description */}
-              <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-1">
-                {card.description}
-              </p>
+                {/* Title */}
+                <h3 className="font-title font-extrabold text-[22px] text-slate-900 mb-3 leading-snug">
+                  {card.title}
+                </h3>
 
-              {/* CTA */}
-              <a
-                href="#demonstracao"
-                className="inline-flex items-center gap-1.5 text-sm font-bold transition-all duration-200 hover:gap-2.5 group"
-                style={{ color: card.accentColor }}
-              >
-                {card.cta}
-                <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
-              </a>
-            </div>
-          </motion.div>
-        ))}
+                {/* Description */}
+                <p className="text-slate-600 text-sm leading-relaxed mb-6 flex-1">
+                  {card.description}
+                </p>
+
+                {/* CTA */}
+                <a
+                  href="#demonstracao"
+                  className="inline-flex items-center gap-1.5 text-sm font-bold transition-all duration-200 hover:gap-2.5 group"
+                  style={{ color: card.accentColor }}
+                >
+                  {card.cta}
+                  <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
+                </a>
+              </div>
+            </motion.div>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -1563,12 +1574,19 @@ function AgentsGridSection() {
   };
 
   return (
-    <section id="agentes" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-24 text-center space-y-16">
-      <div className="space-y-4 max-w-2xl mx-auto">
-        <span className="text-[10px] font-black text-[#FF5500] tracking-widest block">Inteligência | Automações | Estratégia</span>
-        <h2 className="font-title text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-          Um time de Agentes IA
-        </h2>
+    <section id="agentes" className="relative w-full bg-[#EDF1F5] py-24 overflow-hidden text-center">
+      {/* Top transition gradient */}
+      <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
+      
+      {/* Bottom transition gradient */}
+      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#EDF1F5] to-transparent pointer-events-none z-10" />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 relative z-10">
+        <div className="space-y-4 max-w-2xl mx-auto">
+          <span className="text-[10px] font-black text-[#FF5500] tracking-widest block">Inteligência | Automações | Estratégia</span>
+          <h2 className="font-title text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+            Um time de Agentes IA
+          </h2>
         <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
           Nossos Agentes de IA operam integrados ao seu ecossistema comercial, analisando dados, automatizando lances e executando tarefas complexas 24/7.
         </p>
@@ -1708,6 +1726,7 @@ function AgentsGridSection() {
         </div>
 
       </div>
+      </div>
     </section>
   );
 }
@@ -1717,7 +1736,7 @@ function AgentsGridSection() {
 function DataTransformationSection() {
   return (
     <section
-      className="relative border-t border-slate-300/30 overflow-hidden"
+      className="relative overflow-hidden"
       style={{
         backgroundImage: 'url(/images/backgrounds/Fund_ss.png)',
         backgroundSize: 'cover',
@@ -1725,6 +1744,12 @@ function DataTransformationSection() {
         backgroundRepeat: 'no-repeat',
       }}
     >
+      {/* Top transition gradient */}
+      <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-[#EDF1F5] to-transparent pointer-events-none z-10" />
+      
+      {/* Bottom transition gradient */}
+      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
+
       {/* Subtle white overlay so text stays crisp over the textured bg */}
       <div className="absolute inset-0 bg-white/60 pointer-events-none" />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28 relative z-10">
@@ -1823,10 +1848,16 @@ function DemoAndAccessSection() {
 
   return (
     <div className="bg-white w-full">
-      <section id="demonstracao" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-12">
-      {/* Header section */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
+    <section id="demonstracao" className="relative w-full bg-white py-24 overflow-hidden">
+      {/* Top transition gradient */}
+      <div className="absolute top-0 inset-x-0 h-24 bg-gradient-to-b from-[#EDF1F5] to-transparent pointer-events-none z-10" />
+      
+      {/* Bottom transition gradient */}
+      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#EDF1F5] to-transparent pointer-events-none z-10" />
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: "-100px" }}
         transition={{ duration: 0.8 }}
@@ -2012,6 +2043,7 @@ function DemoAndAccessSection() {
             </AnimatePresence>
           </div>
         </motion.div>
+      </div>
       </div>
     </section>
     </div>
