@@ -38,8 +38,8 @@ Identificar hooks, estruturas de vídeo e ângulos criativos que estão gerando 
 - Compara performance de vídeo nativo vs. anúncio criativo com mesmo formato
 
 ### 3. Mapeamento de Tendências por Plataforma
-- **Instagram/Reels**: hooks de identificação, antes/depois, bastidores, série de episódios
-- **TikTok**: duetos, trending sounds, desafios adaptáveis à marca
+- **Instagram/Reels**: hooks de identificação, antes/depois, bastidores, série de episódios. Desde 2026 o algoritmo prioriza **watch time total e taxa de replay** (não mais só a contagem de views em 3s) — um Reel curto e "rewatchable" pode superar um longo assistido uma única vez. Também penaliza fortemente conteúdo repostado sem edição de outras plataformas (watermark do TikTok/CapCut é suprimido); priorizar sempre criativo nativo/editado para o Instagram
+- **TikTok**: duetos, trending sounds, desafios adaptáveis à marca. Algoritmo 2026 é mais orientado a retenção e "watch behavior" real do que métricas de vaidade; postagem fora do nicho do perfil é penalizada (~-45% de alcance) — manter consistência temática por conta
 - **YouTube Shorts**: tutoriais rápidos, revelações, listas ("3 coisas que...")
 - **Facebook Feed**: conteúdo de prova social, depoimentos, educacional longo
 
@@ -49,6 +49,8 @@ Calcula score 0-100 para ideias de conteúdo com base em:
 - Novidade vs. familiaridade no nicho (0-25 pts)
 - Emoção primária ativada (0-25 pts)
 - Facilidade de compartilhamento/repost (0-20 pts)
+
+> **Ajuste 2026**: ao avaliar formato, considerar que o Instagram Reels passou a suportar vídeos de até 20 minutos — para conteúdo educacional/autoridade, formatos mais longos (que antes só faziam sentido no YouTube) agora também competem por distribuição no Reels. Isso não altera a pontuação acima, mas amplia as opções de formato a recomendar no plano de conteúdo.
 
 ---
 
@@ -88,3 +90,11 @@ Calcula score 0-100 para ideias de conteúdo com base em:
 ---
 
 > **Princípio Viral**: Nenhuma tendência dura para sempre — mas todas deixam rastros que ensinam o próximo padrão. Sua função é identificar o padrão antes da saturação.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Atualizado critério do Instagram Reels: algoritmo 2026 prioriza watch time total e taxa de replay em vez de contagem de views em 3s, e penaliza reposts sem edição de outras plataformas (watermark suprimido)
+- Adicionado alerta sobre a penalização de -45% de alcance no TikTok para postagem fora do nicho do perfil (algoritmo 2026 mais orientado a retenção/watch behavior)
+- Adicionada nota sobre o novo limite de duração do Instagram Reels (até 20 minutos), ampliando opções de formato para conteúdo educacional/autoridade

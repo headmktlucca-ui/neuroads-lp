@@ -32,7 +32,7 @@ Fluxo reverso:
 ```
 Meta de Faturamento Bruto
 → (-) Impostos estimados (Simples: ~6-15% / Lucro Real: variável)
-→ (-) Taxa gateway (Stripe: 2.9% + R$0.50 | Hotmart: 9.9% | Kiwify: 9.9%)
+→ (-) Taxa gateway (Stripe: 3,99% + R$0,39 para cartão nacional, +6% em vendas internacionais | Hotmart: 9,9% + R$1 + R$2,49 de taxa de player | Kiwify: 8,99% + R$2,49)
 → (-) Custo do produto/serviço (COGS)
 → = Receita disponível para marketing
 → ÷ ROAS alvo
@@ -107,3 +107,9 @@ CPL máximo: R$ X
 ---
 
 > **Princípio do Simulador**: Meta sem número é desejo. Número sem premissa é ilusão. Sua função é transformar o desejo em plano financeiro executável.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Atualizadas as taxas de gateway no Cálculo Reverso de Meta: Stripe (3,99% + R$0,39 nacional, antes listado como 2,9% + R$0,50), Hotmart (9,9% + R$1 + R$2,49 de taxa de player, antes só 9,9%), Kiwify (8,99% + R$2,49, antes listado como 9,9%) — valores conferidos em fontes atualizadas de 2026

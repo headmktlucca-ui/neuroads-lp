@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { HUB_BOOSTER, HUB_PLAN } from '../../data/hub-plan';
@@ -376,14 +377,26 @@ export default function PricingValuesSection() {
   const prefersReducedMotion = useReducedMotion();
 
   const reveal = (delay = 0) => ({
-    initial: prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 28 },
-    whileInView: prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0 },
-    viewport: { once: true, margin: '-80px' },
-    transition: { duration: 0.7, delay },
+    initial: prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.95 },
+    whileInView: prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 },
+    viewport: { once: false, margin: '-50px' },
+    transition: { type: 'spring', stiffness: 80, damping: 20, delay },
   });
 
   return (
     <section id="valores" className="relative w-full py-24 md:py-28 overflow-hidden">
+      
+      {/* Background Image - Telas */}
+      <div className="absolute bottom-0 left-0 w-[120%] md:w-full h-[60%] md:h-[80%] lg:h-[100%] pointer-events-none z-0">
+        <Image
+          src="/images/telas.png"
+          alt="Telas NeuroAds"
+          fill
+          className="object-contain object-left-bottom opacity-20 md:opacity-40"
+          sizes="(max-width: 768px) 100vw, 80vw"
+        />
+      </div>
+
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <motion.div

@@ -28,9 +28,10 @@ Realizar auditoria completa de landing pages analisando: velocidade técnica, hi
 ## 🛠️ Capacidades Principais
 
 ### 1. Auditoria Técnica
-- Mede Core Web Vitals: LCP (< 2.5s), FID/INP (< 100ms), CLS (< 0.1)
+- Mede Core Web Vitals: LCP (< 2.5s), INP (< 200ms — meta interna recomendada: < 150ms para páginas com alta concorrência de ranqueamento), CLS (< 0.1). FID foi descontinuado como métrica oficial e substituído por INP, que hoje tem peso de ranqueamento equivalente a LCP e CLS
+- Considera que o Google avalia Core Web Vitals de forma agregada por domínio: páginas com bons indicadores podem ser prejudicadas por outras páginas com performance ruim no mesmo domínio
 - Verifica responsividade mobile (viewport, font size, button tap targets ≥ 44px)
-- Identifica recursos bloqueadores de renderização (scripts síncronos no head)
+- Identifica recursos bloqueadores de renderização (scripts síncronos no head), com atenção especial a JavaScript pesado no thread principal (causa mais comum de falha em INP)
 - Verifica HTTPS, certificado SSL, tempo de resposta do servidor
 
 ### 2. Análise de Hierarquia de Informação
@@ -78,6 +79,7 @@ Realizar auditoria completa de landing pages analisando: velocidade técnica, hi
 | Métrica | Valor | Status | Benchmark |
 |---------|-------|--------|-----------|
 | LCP | Xs | ✅/⚠️/❌ | < 2.5s |
+| INP | Xms | ✅/⚠️/❌ | < 200ms (ideal < 150ms) |
 | CLS | X | ✅/⚠️/❌ | < 0.1 |
 | Mobile Score | X/100 | ✅/⚠️/❌ | > 80 |
 
@@ -100,3 +102,11 @@ Impacto em receita (projeção): +R$ X/mês
 ---
 
 > **Princípio do CRO**: A landing page não é o lugar de impressionar. É o lugar de converter. Cada elemento que não contribui para a decisão de compra está atrapalhando.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Corrigido benchmark de Core Web Vitals: threshold de INP era listado incorretamente como < 100ms (valor antigo do FID, métrica descontinuada). Threshold oficial correto é < 200ms, com recomendação de < 150ms para sites competitivos
+- Adicionada nota sobre avaliação agregada de Core Web Vitals por domínio (mudança de metodologia do Google em 2026): páginas boas podem ser prejudicadas por páginas ruins no mesmo domínio
+- Adicionado INP à tabela de Análise Técnica do formato de relatório (antes só constava LCP e CLS)

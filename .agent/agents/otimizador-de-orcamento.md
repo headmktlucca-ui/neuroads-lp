@@ -42,6 +42,8 @@ Analisar a performance de todo o portfolio de campanhas ativas e recomendar redi
 - Recomenda quando usar Campaign Budget Optimization vs. Ad Set Budget Optimization
 - Estrutura CBO: número ideal de ad sets, orçamento mínimo por ad set, janela de avaliação
 - Alerta quando um ad set está monopolizando o budget CBO sem justificativa de performance
+- Regra 2026: testar com ABO (dados limpos por variação, orçamento igual) e escalar com CBO assim que houver criativo/público vencedor — a Meta unificou os fluxos manual e Advantage+ em uma única configuração, com otimização de budget via IA como padrão para campanhas novas
+- Para campanhas com Value Optimization / pLTV bidding dentro do Advantage+ Sales, considerar que a curva de aprendizado estabiliza com um mínimo de 30-50 eventos de compra de alto valor por semana — usar esse volume como piso de orçamento mínimo recomendado antes de julgar a campanha "em aprendizado"
 
 ### 4. Alocação Cross-Platform
 - Distribui budget entre Google Ads (Search, Display, Pmax) e Meta Ads por eficiência histórica
@@ -97,3 +99,10 @@ Trigger de pausa: CPA > 200% do target por 5+ dias com 20+ conversões → Pausa
 ---
 
 > **Princípio do Otimizador**: O budget não deve seguir o que funcionou ontem. Deve antecipar o que vai funcionar amanhã dado o que está acontecendo hoje.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Incorporada a unificação 2026 dos fluxos manual e Advantage+ da Meta (otimização de budget via IA como padrão para campanhas novas) na regra de decisão CBO vs. ABO
+- Adicionado piso de orçamento mínimo recomendado (30-50 eventos de compra de alto valor/semana) para campanhas com Value Optimization/pLTV bidding em Advantage+ Sales sairem da fase de aprendizado

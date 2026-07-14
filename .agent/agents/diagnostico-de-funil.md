@@ -34,6 +34,8 @@ Etapas padrão analisadas:
 ```
 Para cada etapa: taxa de conversão, volume absoluto, custo por usuário nessa etapa.
 
+Ao usar o GA4, aproveita o suporte a **funis abertos e fechados** na exploração de funil: funis fechados (padrão) exigem que o usuário passe por todas as etapas em sequência; funis abertos permitem entrada em qualquer etapa, o que é mais realista para jornadas não-lineares (ex: usuário que chega direto na página de checkout via retargeting, pulando etapas anteriores). Usar funil aberto quando a hipótese é de jornada não-sequencial evita subestimar conversão real.
+
 ### 2. Análise de Drop-off por Etapa
 - Calcula % de perda entre cada etapa consecutiva
 - Identifica a etapa com maior perda absoluta (não percentual) como gargalo principal
@@ -117,3 +119,9 @@ Conversões: 468 | CPL: R$ X | Receita: R$ X
 ---
 
 > **Princípio do Diagnóstico**: O gargalo mais caro raramente é onde a perda percentual é maior. É onde o volume perdido multiplica pelo ticket. Meça em reais, não em porcentagens.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Adicionado suporte a funis abertos e fechados do GA4 (recurso de 2026) no Mapeamento de Etapas do Funil, para jornadas não-lineares onde o usuário pode entrar em qualquer etapa (ex: retargeting direto para checkout)

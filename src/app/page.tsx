@@ -7,6 +7,7 @@ import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from 'f
 import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Menu, X, Volume2, VolumeX } from 'lucide-react';
 import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
 import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
+import HeroSilkBackground from '@/components/ui/HeroSilkBackground';
 import FunnelInteractiveShowcase from '@/components/neuroads/FunnelInteractiveShowcase';
 import PricingValuesSection from '@/components/neuroads/PricingValuesSection';
 
@@ -163,15 +164,15 @@ function IconCrosshairTarget() {
 }
 
 const cardVariants = {
-  hidden: { opacity: 0, y: 25, scale: 0.98 },
+  hidden: { opacity: 0, y: 40, scale: 0.95 },
   visible: {
     opacity: 1,
     y: 0,
     scale: 1,
     transition: {
       type: 'spring' as const,
-      stiffness: 90,
-      damping: 14
+      stiffness: 80,
+      damping: 20
     }
   }
 };
@@ -530,7 +531,7 @@ export default function TempLandingPage() {
           className="absolute -top-80 -bottom-80 inset-x-0 overflow-hidden bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] z-[1]"
         >
           <div className="absolute top-80 bottom-80 inset-x-0">
-            <HeroCircuitBackground />
+            <HeroCircuitBackground id="circuit-hero" />
           </div>
         </motion.div>
 
@@ -568,7 +569,7 @@ export default function TempLandingPage() {
           <div className="flex lg:col-span-5 items-center justify-center relative mt-0 lg:mt-0 order-1 lg:order-2 group">
             <video
               ref={videoRef}
-              src="/videos/VD_Ap_26.mp4"
+              src="/videos/VD_Ap_26_1.mp4"
               autoPlay
               loop
               muted={isMuted}
@@ -634,10 +635,10 @@ export default function TempLandingPage() {
         
         {/* Header grid */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, y: 30, scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: false, margin: "-50px" }}
+          transition={{ type: "spring", stiffness: 80, damping: 20 }}
           className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end pb-12 border-b border-slate-300/40"
         >
           <div className="md:col-span-2">
@@ -657,7 +658,7 @@ export default function TempLandingPage() {
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: false, margin: "-50px" }}
           variants={{
             hidden: {},
             visible: {
@@ -668,7 +669,7 @@ export default function TempLandingPage() {
           }}
           className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12"
         >
-          
+
           {/* Card 1: Agentes IA */}
           <motion.div
             variants={cardVariants}
@@ -680,7 +681,7 @@ export default function TempLandingPage() {
                 Mais procurado
               </span>
             </div>
-            
+
             {/* Icon */}
             <div className="mb-6 shrink-0"><IconBotAI /></div>
 
@@ -740,11 +741,11 @@ export default function TempLandingPage() {
 
         {/* Bottom CTA Bar */}
         <motion.div
-          initial={{ opacity: 0, y: 25, scale: 0.98 }}
+          initial={{ opacity: 0, y: 30, scale: 0.95 }}
           whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ type: "spring", stiffness: 80, damping: 15, delay: 0.2 }}
-          className="bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] rounded-[24px] p-6 border border-white/50 w-full mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 transition-all"
+          viewport={{ once: false, margin: "-50px" }}
+          transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.2 }}
+          className="bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] rounded-[24px] p-6 border border-white/50 w-full mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 transition-all relative z-10"
         >
           <p className="text-slate-800 font-head font-bold text-sm text-center sm:text-left">
             Não sabe por onde começar? <span className="text-[#FF5500]">Faça o diagnóstico gratuito da sua operação.</span>
@@ -757,6 +758,8 @@ export default function TempLandingPage() {
           </Link>
         </motion.div>
 
+        {/* Mask para remover a linha dura (borda) do fim do background parallax e suavizar com o resto da página */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#EDF1F5] to-transparent z-[5] pointer-events-none" />
       </section>
     </div>
 

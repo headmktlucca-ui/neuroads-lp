@@ -33,6 +33,8 @@ Três camadas de público para qualquer nicho:
 - **Adjacent**: públicos com correlação forte com o Core, menor competição
 - **Hidden**: comportamentos e interesses indiretos que predizem intenção de compra
 
+> **Atenção (Meta Ads, 2026)**: o Meta consolidou categorias de Detailed Targeting (muitos interesses específicos foram absorvidos em categorias mais amplas ou removidos) e, para a maioria dos objetivos de campanha, os inputs de Detailed Targeting e Lookalike passaram a funcionar como **sugestões para o algoritmo**, não mais como filtros rígidos — o sistema pode entregar anúncios fora dos parâmetros informados se identificar maior probabilidade de conversão. Isso reforça a lógica das três camadas (Core/Adjacent/Hidden) como *sinais de partida* para o Advantage+ Audience, não como segmentação estanque.
+
 ### 2. Segmentação por Intent Comportamental
 - **High Intent**: retargeting de visitantes de LP, visualizadores de vídeo 75%+, engajados com página
 - **Mid Intent**: segmentação por interesses + comportamentos de compra recente
@@ -42,11 +44,13 @@ Três camadas de público para qualquer nicho:
 - Identifica públicos que drenam orçamento sem converter (clicadores sem compra)
 - Sugere exclusões de interesse por padrão de CPL histórico
 - Configura exclusões de compradores existentes para não desperdiçar verba
+- **Nota de plataforma (Meta, desde 31/03/2026)**: exclusões de Detailed Targeting foram removidas de campanhas existentes. As exclusões estratégicas hoje devem ser operacionalizadas via públicos personalizados de exclusão (custom audiences — compradores, leads já convertidos) em vez de exclusão de interesses/comportamentos no Detailed Targeting
 
 ### 4. Audiences Cross-Platform
 - Correlaciona públicos de alta performance do Meta com equivalentes no Google (Customer Match)
 - Sugere públicos de intenção no Google Search (keywords + behaviour)
 - Identifica oportunidades em Display/YouTube onde a atenção do público-alvo é mais barata
+- No Google Ads, considera os controles de expansão de audiência do Performance Max atualizados em 2026 (refinamento de lookalike/segmentos semelhantes e sinais preditivos de audiência que identificam usuários com potencial de conversão antes de sinais explícitos de intenção), além do relatório de desempenho por idade/gênero para validar se o público sugerido está de fato performando
 
 ---
 
@@ -97,3 +101,11 @@ Três camadas de público para qualquer nicho:
 ---
 
 > **Princípio do Analisador**: Seu concorrente está disputando os mesmos públicos óbvios. Sua vantagem está nos comportamentos que ele ainda não encontrou.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Adicionada nota sobre a consolidação de categorias do Detailed Targeting no Meta Ads em 2026 e a mudança de comportamento: inputs de targeting e lookalike agora funcionam como sugestões para o algoritmo (Advantage+), não mais como filtros rígidos
+- Adicionada nota de política crítica: exclusões de Detailed Targeting foram removidas de campanhas existentes no Meta a partir de 31/03/2026 — exclusões estratégicas agora devem usar custom audiences de exclusão
+- Adicionada referência aos controles de expansão de audiência e sinais preditivos do Performance Max (Google Ads) atualizados em 2026, e ao relatório de desempenho por idade/gênero

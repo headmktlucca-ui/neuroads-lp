@@ -146,10 +146,6 @@ const SPECIALTY_FIELDS: Record<string, CustomField[]> = {
     { name: 'tema', label: 'Tema / Pauta do Conteúdo', type: 'text', placeholder: 'Ex: Tendências de IA B2B' },
     { name: 'formato', label: 'Formato Principal', type: 'text', placeholder: 'Ex: Artigo de opinião, Post longo' },
   ],
-  'DNA da Marca': [
-    { name: 'marca', label: 'Nome da Marca / Empresa', type: 'text', placeholder: 'Ex: NeuroAds' },
-    { name: 'tom_voz', label: 'Tom de Voz Desejado', type: 'text', placeholder: 'Ex: Profissional, ousado, direto' },
-  ],
   'Gerador de Carrossel': [
     { name: 'tema', label: 'Tema do Carrossel', type: 'text', placeholder: 'Ex: 5 erros no tráfego pago B2B' },
     { name: 'quantidade_slides', label: 'Quantidade de Slides', type: 'number', placeholder: 'Ex: 7' },
@@ -2206,7 +2202,9 @@ export default function HubAssistentePage() {
     if (activeAgent) {
       const specFields = specialtyTitle ? SPECIALTY_FIELDS[specialtyTitle] : undefined;
       
-      let initialContent = specialtyTitle
+      let initialContent = specialtyTitle === 'DNA da Marca'
+        ? `Olá! Sou a **${activeAgent.nome}**, sua especialista em ${activeAgent.funcao}.\n\nVou usar o site cadastrado da sua empresa para gerar o DNA completo da marca — posicionamento, arquétipo, paleta de cores, tom de voz e plano de ação. Iniciando a análise automaticamente...`
+        : specialtyTitle
         ? `Olá! Sou o **${activeAgent.nome}**, seu especialista em ${activeAgent.funcao}.\n\nPara iniciar a operação **${specialtyTitle}**, preciso que você preencha os seguintes dados:`
         : `Olá! Sou o **${activeAgent.nome}**, seu especialista em ${activeAgent.funcao}.\n\n"${activeAgent.frase}"\n\nComo posso ajudar você hoje?`;
 
@@ -2404,6 +2402,17 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
       setChatState('idle');
     }
   }, [messages, userName, profile, persistChat, agentId, connectedSources, disconnectedSources, user]);
+
+  // DNA da Marca não pede formulário — dispara a operação automaticamente
+  // assim que o usuário clica na operação, usando o site já cadastrado.
+  const dnaAutoRunRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!activeAgent || !user || specialtyTitle !== 'DNA da Marca') return;
+    const runKey = `${activeAgent.id}:${specialtyTitle}`;
+    if (dnaAutoRunRef.current === runKey) return;
+    dnaAutoRunRef.current = runKey;
+    handleSend('Executar operação: **DNA da Marca**\n\nUtilize o site cadastrado da minha empresa para realizar a análise completa e profunda do DNA da marca.');
+  }, [activeAgent, user, specialtyTitle, handleSend]);
 
   const handleFormSubmit = useCallback((specialty: string, data: Record<string, string>, fields: CustomField[]) => {
     const lines = [

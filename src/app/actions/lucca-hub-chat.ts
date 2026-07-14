@@ -11,6 +11,7 @@ import { fetchGoogleAdsContext, fetchMetaAdsContext, fetchSearchConsoleContext }
 import { auditPanelByRules, type AuditablePanel } from '../../lib/ulisses-audit';
 import { runProspectorOutbound } from '../../lib/lead-prospector';
 import { runPublicoAlvoIdeal } from '../../lib/publico-alvo-prospector';
+import { runDnaBrandDeepAnalysis } from '../../lib/dna-brand-deep-analysis';
 
 const genai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY || '',
@@ -820,6 +821,90 @@ ${kbBlocks ? `━━━━━━━━━━━━━━━━━━━━━━
       return {
         success: false,
         error: 'Erro ao executar a análise de público-alvo. Tente novamente em instantes.',
+      };
+    }
+  }
+
+  // ══════════════════════════════════════════════════════════════════
+  // INTERCEPTAÇÃO ESPECIAL: LAÍS — DNA da Marca
+  // Executa pesquisa profunda no site cadastrado (setup → review → copywriter)
+  // e entrega o DNA completo da marca, sem exigir preenchimento manual.
+  // ══════════════════════════════════════════════════════════════════
+  if (context.agentId === 'lais' && context.specialty === 'DNA da Marca') {
+    if (!context.userId) {
+      return {
+        success: false,
+        error: 'Usuário não autenticado. Faça login para executar a operação.',
+      };
+    }
+
+    // Usa o site cadastrado pelo usuário — nunca pergunta, nunca bloqueia por
+    // falta de Instagram/LinkedIn (opcionais, apenas enriquecem a análise).
+    const site = context.site || snapshot?.blog || '';
+    if (!site) {
+      return {
+        success: true,
+        message: `**LAÍS aqui!** Para gerar o DNA completo da marca, preciso do site da sua empresa cadastrado.\n\n• Acesse **Configurações do Perfil** e cadastre a URL do seu site (campo "Site").\n• Assim que estiver cadastrado, volte aqui e a operação roda automaticamente — sem formulário para preencher.`,
+        nextSteps: [
+          'Acessar Configurações do Perfil',
+          'Cadastrar a URL do site da empresa',
+          'Voltar e executar DNA da Marca',
+          'Revisar redes sociais cadastradas para enriquecer a análise',
+        ],
+        dataAccessWarning: 'Site da empresa não cadastrado — necessário para gerar o DNA da Marca.',
+        leftPanelData: null,
+      };
+    }
+
+    try {
+      const result = await runDnaBrandDeepAnalysis({
+        userId: context.userId,
+        site,
+        companyName: context.companyName || 'sua empresa',
+        instagram: snapshot?.instagram || undefined,
+        linkedin: snapshot?.linkedin || undefined,
+      });
+
+      const { markdownReport, summary, colorPalette, analysisItems } = result;
+
+      const tableHeaders = ['Cor', 'Hex', 'Tipo', 'Uso'];
+      const tableRows = colorPalette.map((c) => ({
+        'Cor': c.nome,
+        'Hex': c.hex,
+        'Tipo': c.tipo,
+        'Uso': c.uso,
+      }));
+
+      return {
+        success: true,
+        message: markdownReport,
+        nextSteps: [
+          'Salvar o DNA da Marca na Base de Conhecimento para uso pelos demais agentes',
+          'Solicitar à LAÍS copies de anúncios alinhadas a este DNA',
+          'Executar Público-Alvo Ideal com o IGOR para cruzar com o ICP mapeado',
+          'Revisar o plano de ação de 30 dias e priorizar a primeira ação',
+        ],
+        dataAccessWarning: null,
+        leftPanelData: {
+          title: `DNA da Marca — ${context.companyName || 'sua empresa'}`,
+          badge: `LAÍS · ${site}`,
+          description: summary,
+          tableHeaders,
+          tableRows,
+          analysisTitle: 'Insights do DNA da Marca',
+          analysisItems: analysisItems.length > 0 ? analysisItems : [
+            '💡 OPORTUNIDADE: Padronizar o tom de voz entre todos os canais para reforçar reconhecimento de marca.',
+            '⚠️ RISCO: Mensagens genéricas reduzem a percepção de autoridade no nicho.',
+            '🔁 PADRÃO: Consistência visual e verbal aumenta a confiança do público ao longo da jornada.',
+          ],
+          sources: [`Google Search (Gemini 2.5 Pro)`, `Site: ${site}`, 'Base de Conhecimento NeuroAds'],
+        },
+      };
+    } catch (err) {
+      console.error('[chatWithLuccaHub] DNA da Marca error:', err);
+      return {
+        success: false,
+        error: 'Erro ao gerar o DNA da Marca. Tente novamente em instantes.',
       };
     }
   }

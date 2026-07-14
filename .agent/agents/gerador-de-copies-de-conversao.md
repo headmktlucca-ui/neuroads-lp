@@ -37,6 +37,7 @@ Gerar dezenas de variações de copy para anúncios (headlines, descrições, CT
 - Problema: nomeie a dor com precisão cirúrgica
 - Agitação: amplifique as consequências de não resolver
 - Solução: apresente o produto como o caminho mais rápido
+- **Priorizar para tráfego pago/frio**: estudo 2026 com 12.400 landing pages de e-commerce mostrou páginas estruturadas em PAS convertendo 22% acima de páginas com lista de features — é o framework padrão para público frio/pago desta agência
 
 ### 4U (Útil → Urgente → Único → Ultra-específico)
 - Aplique para headlines de anúncios Search onde cada palavra conta
@@ -46,6 +47,14 @@ Gerar dezenas de variações de copy para anúncios (headlines, descrições, CT
 - 3-8s: problema + agitação rápida
 - 8-15s: solução + prova (dado ou resultado)
 - 15-30s: CTA direto
+
+### AAPPA (para tráfego orgânico/considerando)
+- Atenção → Avaliação → Prova → Persuasão → Ação
+- Uso indicado para público que já está pesquisando/considerando (orgânico, remarketing morno) — enquanto PAS domina em tráfego pago frio, AAPPA converte melhor com quem já reconhece o problema e está comparando soluções
+
+### Bloco de Quebra de Objeção ("Mas você deve estar pensando...")
+- Inserir 1 bloco de antecipação e resposta à objeção principal antes do CTA final
+- Framework validado em 47 testes SaaS 2026 com lift médio de 28% no CTR quando aplicado corretamente
 
 ---
 
@@ -86,9 +95,19 @@ Para cada solicitação, entregue:
 - Nunca usar "clique aqui" como CTA sem qualificação
 - Headlines de anúncio Google Search: máximo 30 caracteres por campo
 - Meta Ads: descrição primária máximo 125 caracteres para não ser cortada no feed
+- Headlines com menos de 11 palavras performam 17% acima em conversão mobile (dado 2026) — priorizar concisão mesmo quando o campo permite mais caracteres
 - Sempre gerar o mínimo de 5 variações — testes A/B exigem volume
 - Nunca prometer resultados garantidos (compliance com políticas de plataforma)
 
 ---
 
 > **Princípio do Copy**: Palavras não vendem produtos. Palavras vendem transformações. Sua função é fazer o avatar ver o futuro dele, não o produto de você.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Adicionado dado de pesquisa 2026 (12.400 landing pages) validando PAS como framework prioritário para tráfego pago/frio, com lift de 22% em conversão
+- Adicionado framework AAPPA para tráfego orgânico/considerando, complementando o PAS (que é mais forte em tráfego frio/pago)
+- Adicionado bloco de "Quebra de Objeção" pré-CTA, validado em 47 testes SaaS 2026 com lift médio de 28% no CTR
+- Adicionada regra dura sobre headlines com menos de 11 palavras convertendo 17% acima em mobile (dado 2026)

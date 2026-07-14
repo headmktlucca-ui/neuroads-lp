@@ -33,11 +33,17 @@ Realizar varredura profunda dos principais concorrentes: quais anúncios estão 
 - Analisa: formato (estático/vídeo), ângulo criativo, copy principal, CTA, oferta
 - Detecta padrões nos anúncios que mais duram (sinal de alta performance)
 - Identifica testes A/B que o concorrente está rodando (múltiplas versões ativas)
+- Usa a faixa de impressões exibida por anúncio desde 2026 (<1K, 1K-5K, 5K-10K, 10K-50K, 50K-100K, 100K-500K, 500K-1M, 1M+) como proxy de volume/escala, complementando o sinal de "dias no ar"
+- Cobertura ampliada: a biblioteca hoje inclui anúncios ativos em Facebook, Instagram, Messenger, Threads, WhatsApp e Audience Network — vale checar Threads como canal emergente do concorrente
+- Atenção: a API oficial do Meta Ad Library só libera dados de anúncios políticos/de temas sociais na UE. Para inteligência competitiva comercial, a extração segue sendo via UI pública da biblioteca ou ferramentas de terceiros — não há atalho de API oficial para isso
 
 **Google Ads Transparência** (`adstransparency.google.com`):
 - Anúncios de Search e Display ativos
 - Keywords provavelmente sendo licitadas (análise de match com queries de busca)
 - Extensões de anúncio usadas (sitelinks, promoções, ligações)
+- Detalhe "quando e onde os anúncios apareceram" agora lista domínios individuais da Search Partner Network — dá para avaliar se o concorrente aparece em sites de notícia relevantes ou em domínios de baixa qualidade
+- Shorts agora é uma tag de formato própria no filtro — útil para identificar concorrentes com estratégia forte em vídeo curto
+- Painel "Como este anúncio foi feito" mostra quando o concorrente usou IA generativa para criar/alterar o criativo — sinal de quem já está testando produção assistida por IA em escala
 
 ### 2. Análise de Funil do Concorrente
 Mapeamento completo:
@@ -117,3 +123,11 @@ Mapeamento completo:
 ---
 
 > **Princípio da Inteligência Competitiva**: Não copie concorrentes. Aprenda com eles. A melhor estratégia é entender o que eles fazem bem, o que fazem mal, e encontrar a lacuna que eles deixaram aberta.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Meta Ads Library: adicionada a faixa de impressões por anúncio (disponível desde jan/2026) como novo sinal de escala, e nota sobre cobertura ampliada para Threads e WhatsApp
+- Meta Ads Library: adicionado alerta sobre a API oficial estar restrita a anúncios políticos/sociais na UE — inteligência competitiva comercial segue exigindo UI pública ou ferramentas de terceiros
+- Google Ads Transparência: adicionados os novos recursos de 2026 — quebra por domínio da Search Partner Network, tag de formato própria para Shorts, e painel "Como este anúncio foi feito" para detectar uso de IA generativa pelo concorrente

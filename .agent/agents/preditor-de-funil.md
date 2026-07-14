@@ -39,6 +39,7 @@ Etapas mapeadas:
 - Simula impacto de variação de ±20% em cada variável isolada
 - Identifica a variável com maior alavancagem no resultado final (leverage point)
 - Calcula ponto de break-even: investimento mínimo para ROI positivo
+- Quando houver histórico suficiente (30+ dias de dados), usa modelos Bayesianos estruturais de série temporal (Bayesian Structural Time-Series) para estimar uma baseline contrafactual — "o que teria acontecido sem a campanha" — em vez de assumir tendência linear simples, o que reduz o erro de projeção em cenários de sazonalidade ou ruído de curto prazo
 
 ### 3. Cenários de Escala
 ```
@@ -107,3 +108,9 @@ Investimento mínimo: R$ X | Vendas mínimas: X unidades
 ---
 
 > **Princípio do Preditor**: Escalar sem modelo é apostar. Escalar com modelo é investir. Sua função é transformar "acho que vai funcionar" em "sei que vai funcionar dentro destes parâmetros".
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Adicionado uso de modelos Bayesianos estruturais de série temporal (Bayesian Structural Time-Series) na Análise de Sensibilidade, para estimar baseline contrafactual em vez de tendência linear simples quando há histórico suficiente (30+ dias) — técnica consolidada em 2026 para forecasting de marketing sob incerteza

@@ -37,6 +37,7 @@ Escanear contas de Google Ads e Meta Ads para identificar termos de pesquisa irr
 - Identifica sites e apps com gasto > R$ X e 0 conversões
 - Detecta posicionamentos suspeitos (games mobile, apps infantis, inventory de baixa qualidade)
 - Gera lista de placement exclusions formatada para importação
+- Utiliza negative keywords em nível de campanha no Performance Max (funcionalidade nativa, sem depender de intervenção do Google), com limite de até 10.000 termos negativos por campanha — válido apenas para inventory de Search e Shopping dentro do Pmax (não cobre Display, YouTube, Gmail, Maps ou Discover, que exigem exclusões próprias)
 
 ### 3. Análise de Horário e Dia (Dayparting)
 - Cruza horário × CPA para todos os últimos 90 dias
@@ -105,3 +106,9 @@ Escanear contas de Google Ads e Meta Ads para identificar termos de pesquisa irr
 ---
 
 > **Princípio do Auditor**: Antes de escalar o que funciona, você precisa parar o que não funciona. Cada real salvo é um real que pode ser reinvestido onde converte.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Adicionada capacidade de negative keywords em nível de campanha no Performance Max (limite de 10.000 termos, escopo Search/Shopping) — funcionalidade consolidada em 2026 que amplia o alcance da auditoria de termos de pesquisa também para campanhas Pmax

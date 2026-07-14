@@ -56,6 +56,9 @@ Exemplo: CR baseline 2%, MDE 20% → n ≈ 3.842 por variação
 - **Volume mínimo**: n calculado conforme significância desejada
 - **Parada antecipada**: Apenas se resultado adverso severo (perda > 30% em métrica primária)
 - **Nunca parar cedo por resultado positivo** (evitar false positives)
+- **Checagem de Sample Ratio Mismatch (SRM)**: antes de interpretar qualquer resultado, validar se a divisão real de tráfego entre A e B corresponde ao split configurado (ex: 50/50). Divergência relevante (via qui-quadrado) invalida o teste — corrigir a causa (bug de randomização, caching, bot traffic) antes de reanalisar
+- **Teste sequencial como complemento (não substituto)**: quando for necessário monitorar o teste em andamento, usar métodos de teste sequencial (com ajuste dinâmico de intervalo de confiança) para identificar vencedores/perdedores óbvios cedo, sem viés de "peeking" — mas resultados nuançados ainda exigem o horizonte fixo completo antes da decisão final
+- **Múltiplas variantes/métricas**: ao testar mais de uma variação ou monitorar múltiplas métricas simultaneamente, aplicar correção de Bonferroni (ou método equivalente) ao nível de significância para não inflar falsos positivos
 
 ### 4. Estrutura de Hipótese
 ```
@@ -122,3 +125,11 @@ porque [razão baseada em princípio psicológico/dado histórico]"
 ---
 
 > **Princípio do Teste**: Intuição é o ponto de partida do experimento. Dados são o ponto de chegada. Nunca o contrário.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Adicionada checagem de Sample Ratio Mismatch (SRM) como validação obrigatória antes da interpretação de resultados
+- Incorporado teste sequencial como ferramenta complementar de monitoramento (não substitui o horizonte fixo mínimo de 14 dias)
+- Adicionada recomendação de correção de Bonferroni para testes com múltiplas variantes ou múltiplas métricas monitoradas simultaneamente

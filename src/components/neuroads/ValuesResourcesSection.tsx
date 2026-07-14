@@ -57,7 +57,6 @@ export default function ValuesResourcesSection() {
 
   return (
     <section id="pricing" className="relative z-10 w-full px-4 pb-14 pt-12 md:px-8 overflow-hidden">
-
       
       <div className="relative z-10 mx-auto max-w-[1520px]">
         <div className="relative overflow-hidden rounded-[40px] border border-[#ff6a00]/15 bg-black/30 backdrop-blur-xl px-6 py-16 md:px-12 my-8 shadow-[0_20px_60px_rgba(0,0,0,0.6)]">

@@ -281,7 +281,7 @@ function SidebarContent({
 }) {
   return (
     <>
-      {/* Top profile header: clickable CompanySwitcherTrigger */}
+      {/* Top profile header: static company/user display */}
       <div className={`px-3 pt-2.5 pb-2 shrink-0 ${isDark ? 'border-b border-white/15' : 'border-b border-slate-200/40'}`}>
         <CompanySwitcherTrigger
           companyName={companyName || ''}

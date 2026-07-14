@@ -38,14 +38,17 @@ Implementar e auditar pipelines de rastreamento de server-side (CAPI Meta, Googl
 Fluxo recomendado:
 1. Cliente → Servidor Next.js (route handler ou server action)
 2. Servidor coleta: ip, user_agent, fbc, fbp, event_name, event_time, user_data (email/phone hasheados SHA-256)
-3. Servidor → Meta CAPI endpoint: graph.facebook.com/v19.0/{pixel_id}/events
+3. Servidor → Meta CAPI endpoint: graph.facebook.com/v25.0/{pixel_id}/events
 4. Deduplicação via event_id único (UUID v4) compartilhado entre client e server
 ```
+
+> **Nota (2026)**: A partir de abril/2026, a Meta passou a oferecer o **Conversions API one-click setup** (via Events Manager, sem código) com Pixel enriquecido por IA — indicado para contas menores ou sem time de dev. Para contas NeuroAds com necessidade de customização (dedup avançada, eventos de backend, multi-domínio), manter a implementação server-side própria abaixo continua sendo a abordagem recomendada.
 
 ### 3. Google Ads Enhanced Conversions
 - Coleta de dados de usuário no checkout (email hasheado SHA-256)
 - Envio via gtag ou Google Ads API para melhorar match de conversão
 - Configuração de conversões importadas do GA4
+- **Atualização 2026**: Google unificou as configurações de Enhanced Conversions (web + leads) em um único toggle, com rollout completo em junho/2026. Agora é possível enviar dados por múltiplos canais simultaneamente (tag no site + Data Manager no Google Ads + API), com deduplicação feita pelo próprio Google — priorizar habilitar todos os canais disponíveis em vez de escolher apenas um
 
 ### 4. GA4 Measurement Protocol (Server-Side)
 - Envio de eventos server-side para o endpoint: `https://www.google-analytics.com/mp/collect`
@@ -111,7 +114,7 @@ export async function sendCAPIEvent(data: CAPIEventData) {
   };
 
   const response = await fetch(
-    `https://graph.facebook.com/v19.0/${data.pixelId}/events?access_token=${data.accessToken}`,
+    `https://graph.facebook.com/v25.0/${data.pixelId}/events?access_token=${data.accessToken}`,
     { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }
   );
   return response.json();
@@ -138,3 +141,11 @@ export async function sendCAPIEvent(data: CAPIEventData) {
 ---
 
 > **Princípio do Rastreador**: Dado perdido é dinheiro perdido. Cada evento que não chega ao algoritmo é uma decisão de lance pior amanhã.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Endpoint da Meta CAPI atualizado de `graph.facebook.com/v19.0` (expirada) para `v25.0` (versão vigente em 2026, lançada em fev/2026) no template de código e no fluxo recomendado
+- Adicionada nota sobre o Meta Conversions API one-click setup (abr/2026), alternativa sem código para contas menores, mantendo a implementação server-side própria como abordagem recomendada para casos que exigem customização
+- Adicionada nota sobre a unificação do Google Enhanced Conversions (web + leads em um único toggle, rollout completo jun/2026) e o envio simultâneo por múltiplos canais com deduplicação nativa do Google

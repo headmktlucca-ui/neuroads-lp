@@ -90,7 +90,16 @@
       "Bash(cd \"C:/Users/claud/OneDrive/Documentos/NeuroAds/LP\" && grep -n \"server-only\" package.json; find / -maxdepth 6 -iname \"server-only\" -type d 2>/dev/null | grep -v \"\\\\.git\")",
       "Bash(node \"C:/Users/claud/AppData/Local/Temp/claude/C--Users-claud-OneDrive-Documentos-NeuroAds-LP/b13f091d-6ba1-44ee-9451-c6c341cc2e38/scratchpad/test-audit-rules-inline.mjs\")",
       "Bash(awk 'NR>=1640 && NR<=1690 {printf \"%d\\\\t%s\\\\n\", NR, $0}' src/app/hub/assistente-ia/page.tsx)",
-      "Bash(curl -s -o /dev/null -w \"assistente-ia: %{http_code}\\\\n\" http://localhost:63754/hub/assistente-ia)"
+      "Bash(curl -s -o /dev/null -w \"assistente-ia: %{http_code}\\\\n\" http://localhost:63754/hub/assistente-ia)",
+      "Bash(git rm *)",
+      "Bash(git commit -m 'P1/P2: Improve resilience, add tests, and document token refresh *)",
+      "WebSearch",
+      "Bash(printenv)",
+      "Bash(git -C \"C:\\\\Users\\\\claud\\\\OneDrive\\\\Documentos\\\\NeuroAds\\\\LP\" status --porcelain -- .agent/agents/)",
+      "Bash(taskkill /PID 24196 /F)",
+      "PowerShell(Stop-Process -Id 24196 -Force -ErrorAction SilentlyContinue)",
+      "Bash(find \"C:/Users/claud/AppData/Local/Temp\" -maxdepth 3 -iname \"*.png\" -newermt \"-10 minutes\" 2>/dev/null | head -20)",
+      "Bash(find \"C:/Users/claud\" -maxdepth 3 -iname \"*.png\" -o -maxdepth 3 -iname \"*.jpg\" 2>/dev/null | grep -iE \"clipboard|paste|screenshot\" | head -20)"
     ]
   },
   "hooks": {

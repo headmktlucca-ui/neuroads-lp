@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Sparkles, Terminal, CheckCircle2, ChevronRight, Zap, ArrowDown } from 'lucide-react';
 
@@ -15,6 +16,9 @@ interface FunnelStep {
   ioType: 'input' | 'output';
   ioTitle: string;
   ioData: string | React.ReactNode;
+  ioImage?: string;
+  ioImageWidth?: number;
+  ioImageHeight?: number;
 }
 
 const FUNNEL_STEPS: FunnelStep[] = [
@@ -28,14 +32,10 @@ const FUNNEL_STEPS: FunnelStep[] = [
     agent: 'Laís (SEO & GEO) + Brand Voice',
     ioType: 'input',
     ioTitle: 'GEO_ENGINE_OPTIMIZATION',
-    ioData: `{
-  "canal": "ChatGPT / Perplexity Search",
-  "query": "Melhor ferramenta de tráfego pago IA B2B",
-  "lais_action": "inject_brand_citation",
-  "target_brand": "NeuroAds",
-  "cpl_impact": "-41% de redução média",
-  "status": "rank_position_01"
-}`
+    ioData: '',
+    ioImage: '/images/111.png',
+    ioImageWidth: 1309,
+    ioImageHeight: 736,
   },
   {
     id: 2,
@@ -47,17 +47,10 @@ const FUNNEL_STEPS: FunnelStep[] = [
     agent: 'Vitor (SDR) + Manu (Suporte)',
     ioType: 'output',
     ioTitle: 'CHAT_SDR_QUALIFICATION',
-    ioData: (
-      <div className="space-y-3 font-sans">
-        <div className="bg-slate-950/80 p-2.5 rounded-lg border border-slate-800 text-[10px] leading-relaxed text-slate-300 font-mono">
-          <strong className="text-[#FF5500] block text-[9px] uppercase tracking-wider mb-1">Vitor (SDR) &lt;-&gt; Lead</strong>
-          "Identifiquei seu investimento de 15k/mês no Google Ads. Nosso agente Vitor otimiza esse cenário diminuindo o CPL. Vamos agendar?"
-        </div>
-        <div className="bg-orange-500/10 p-2.5 rounded-lg border border-orange-500/20 text-[10px] leading-relaxed text-orange-200 self-end font-mono">
-          "Sim, quinta às 15h funciona."
-        </div>
-      </div>
-    )
+    ioData: '',
+    ioImage: '/images/222.png',
+    ioImageWidth: 1420,
+    ioImageHeight: 799,
   },
   {
     id: 3,
@@ -69,14 +62,10 @@ const FUNNEL_STEPS: FunnelStep[] = [
     agent: 'Heitor (Processos) + Breno (Closer)',
     ioType: 'input',
     ioTitle: 'HEITOR_WEBHOOK_ONBOARDING',
-    ioData: `{
-  "event": "deal.closed_won",
-  "crm": "HubSpot Sync Active",
-  "client": "Enterprise Plan B2B",
-  "onboarding_status": "active",
-  "alerts": ["Slack", "E-mail", "Partner Portal"],
-  "process_status": "synced_100_percent"
-}`
+    ioData: '',
+    ioImage: '/images/333.png',
+    ioImageWidth: 1426,
+    ioImageHeight: 802,
   }
 ];
 
@@ -174,43 +163,62 @@ export default function FunnelInteractiveShowcase() {
 
                 {/* Right Side: Transparent Code / Dialogue Simulation Box */}
                 <div className="w-full md:w-1/2 flex items-center">
-                  <motion.div 
-                    animate={{ 
-                      borderColor: isHovered ? 'rgba(255, 85, 0, 0.25)' : 'rgba(255, 255, 255, 0.1)',
-                      boxShadow: isHovered ? '0 10px 25px rgba(255, 85, 0, 0.05)' : '0 4px 6px rgba(0, 0, 0, 0.02)'
-                    }}
-                    transition={{ duration: 0.3 }}
-                    className="w-full bg-[#0E131F]/90 backdrop-blur-md border border-white/10 rounded-2xl p-5 font-mono text-[11px] text-slate-350 shadow-md relative overflow-hidden"
-                  >
-                    {/* Visual Grid Lines inside Code Box */}
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293708_1px,transparent_1px),linear-gradient(to_bottom,#1f293708_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
+                  {step.ioImage ? (
+                    <motion.div
+                      animate={{
+                        borderColor: isHovered ? 'rgba(255, 85, 0, 0.25)' : 'rgba(255, 255, 255, 0.5)',
+                        boxShadow: isHovered ? '0 10px 25px rgba(255, 85, 0, 0.08)' : '0 4px 6px rgba(0, 0, 0, 0.04)'
+                      }}
+                      transition={{ duration: 0.3 }}
+                      className="w-full rounded-2xl border overflow-hidden shadow-md relative"
+                    >
+                      <Image
+                        src={step.ioImage}
+                        alt={step.ioTitle}
+                        width={step.ioImageWidth || 1309}
+                        height={step.ioImageHeight || 736}
+                        className="w-full h-auto object-cover"
+                      />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      animate={{
+                        borderColor: isHovered ? 'rgba(255, 85, 0, 0.25)' : 'rgba(255, 255, 255, 0.1)',
+                        boxShadow: isHovered ? '0 10px 25px rgba(255, 85, 0, 0.05)' : '0 4px 6px rgba(0, 0, 0, 0.02)'
+                      }}
+                      transition={{ duration: 0.3 }}
+                      className="w-full bg-[#0E131F]/90 backdrop-blur-md border border-white/10 rounded-2xl p-5 font-mono text-[11px] text-slate-350 shadow-md relative overflow-hidden"
+                    >
+                      {/* Visual Grid Lines inside Code Box */}
+                      <div className="absolute inset-0 bg-[linear-gradient(to_right,#1f293708_1px,transparent_1px),linear-gradient(to_bottom,#1f293708_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
 
-                    {/* Console Header */}
-                    <div className="flex items-center justify-between border-b border-slate-800 pb-2.5 mb-3.5 relative z-10">
-                      <div className="flex items-center gap-1.5">
-                        <Terminal size={11} className="text-[#FF5500]" />
-                        <span className="text-[9px] font-bold tracking-wider text-slate-400 uppercase">
-                          {step.ioTitle}
-                        </span>
+                      {/* Console Header */}
+                      <div className="flex items-center justify-between border-b border-slate-800 pb-2.5 mb-3.5 relative z-10">
+                        <div className="flex items-center gap-1.5">
+                          <Terminal size={11} className="text-[#FF5500]" />
+                          <span className="text-[9px] font-bold tracking-wider text-slate-400 uppercase">
+                            {step.ioTitle}
+                          </span>
+                        </div>
+                        <div className="flex gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
+                        </div>
                       </div>
-                      <div className="flex gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
-                        <span className="w-1.5 h-1.5 rounded-full bg-slate-700" />
-                      </div>
-                    </div>
 
-                    {/* Code Data Content */}
-                    <div className="relative z-10">
-                      {typeof step.ioData === 'string' ? (
-                        <pre className="overflow-x-auto text-slate-300 font-mono whitespace-pre leading-relaxed scrollbar-thin">
-                          <code>{step.ioData}</code>
-                        </pre>
-                      ) : (
-                        step.ioData
-                      )}
-                    </div>
-                  </motion.div>
+                      {/* Code Data Content */}
+                      <div className="relative z-10">
+                        {typeof step.ioData === 'string' ? (
+                          <pre className="overflow-x-auto text-slate-300 font-mono whitespace-pre leading-relaxed scrollbar-thin">
+                            <code>{step.ioData}</code>
+                          </pre>
+                        ) : (
+                          step.ioData
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
                 </div>
 
               </div>

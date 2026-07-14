@@ -61,6 +61,7 @@ Camada 5 — Gatilhos de Compra (o que faz decidir agora)
 - Identifica interesses não óbvios que predizem interesse no produto
 - Ex: pessoas que compram curso de tráfego pago também têm interesse em "produtividade", "finanças pessoais", "empreendedorismo"
 - Mapeia esses clusters para uso direto em segmentação de Meta Ads
+- **Atualização de plataforma (2026)**: desde jan/2026 a Meta descontinuou interesses sensíveis (saúde, religião, política) e migrou o padrão de campanha para Advantage+ Audience — o "Detailed Targeting" manual agora funciona como *sugestão/sinal*, não como filtro rígido. Na prática, os clusters de interesse mapeados aqui devem ser entregues como: (1) sementes de público para alimentar o Advantage+ Audience, e (2) insumo direto para copy e criativo (o cluster vira ângulo de comunicação, já que a segmentação manual perde peso). A qualidade do sinal de conversão (Pixel/CAPI) passa a importar mais do que o empilhamento de interesses para a performance da campanha
 
 ---
 
@@ -121,3 +122,9 @@ Camada 5 — Gatilhos de Compra (o que faz decidir agora)
 ---
 
 > **Princípio do Avatar**: Você não vende para "todos". Você vende para uma pessoa específica com uma dor específica em um momento específico. Quanto mais específico for o avatar, mais cirúrgica — e lucrativa — será a comunicação.
+
+---
+## 📅 Última Atualização Automática
+**Data**: 2026-07-13
+**Melhorias aplicadas**:
+- Seção 5 (Clusters de Interesses Correlacionados) atualizada com a mudança de política da Meta em 2026: descontinuação de interesses sensíveis e migração do padrão de campanha para Advantage+ Audience, onde o Detailed Targeting manual vira sinal/sugestão em vez de filtro. Reorientada a entrega dos clusters para servirem como sementes de público e ângulos de copy/criativo, com nota sobre a maior importância da qualidade do sinal de conversão (Pixel/CAPI)

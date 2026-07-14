@@ -57,7 +57,7 @@ const LinkedinIcon = ({ size = 16, className = "" }: { size?: number; className?
 
 /* ─── Types ────────────────────────────────────────────────────────── */
 type ChannelResult = {
-  platform: string; spend: number; impressions: number; clicks: number; conversions: number;
+  platform: string; spend: number; impressions: number; clicks: number; conversions: number; error?: string;
 };
 type TrafficExtractResponse = {
   success: boolean; channels?: ChannelResult[];
@@ -487,12 +487,25 @@ export default function HubDashboardLight() {
   const [linkedinPageData, setLinkedinPageData] = useState<LinkedinPageResponse | null>(null);
   const [searchConsoleData, setSearchConsoleData] = useState<SearchConsoleResponse | null>(null);
 
+  const hasAnyConnectionReal = isGa4Connected || isGoogleAdsConnected || isMetaAdsConnected || isLinkedinAdsConnected;
+  const hasAnyConnection = hasAnyConnectionReal || guideMode;
+  const isDemo = true;
+
+  const demoAutomations = [
+    { key: 'demo-1', agentTitle: 'Copy Persuasivo', cadenceTitle: 'Diariamente às 8:00', status: 'active' as const, monthlyExecutions: 124, lastUpdateAt: null as number | null },
+    { key: 'demo-2', agentTitle: 'Análise ROAS', cadenceTitle: 'A cada 6 horas', status: 'active' as const, monthlyExecutions: 87, lastUpdateAt: null as number | null },
+    { key: 'demo-3', agentTitle: 'Brief Criativo', cadenceTitle: 'Semanalmente', status: 'active' as const, monthlyExecutions: 42, lastUpdateAt: null as number | null },
+    { key: 'demo-4', agentTitle: 'Otimizador de Orçamento', cadenceTitle: 'Diariamente às 9:00', status: 'active' as const, monthlyExecutions: 156, lastUpdateAt: null as number | null },
+    { key: 'demo-5', agentTitle: 'Detector de Anomalias', cadenceTitle: 'A cada 2 horas', status: 'active' as const, monthlyExecutions: 203, lastUpdateAt: null as number | null },
+  ];
+
   const recentAutomations = useMemo(() => {
-    return getHubAutomationsFromProfile(profile)
+    const real = getHubAutomationsFromProfile(profile)
       .filter(a => a.status === 'active' || a.lastUpdateAt != null)
       .sort((a, b) => (b.lastUpdateAt || 0) - (a.lastUpdateAt || 0))
       .slice(0, 5);
-  }, [profile]);
+    return isDemo ? demoAutomations : real;
+  }, [profile, isDemo]);
 
   useEffect(() => {
     let active = true;
@@ -603,10 +616,6 @@ export default function HubDashboardLight() {
     return { spend, revenue, roas, conversions, cpa, activeUsers };
   }, [trafficData, ga4Data, isGa4Connected, isGoogleAdsConnected, isMetaAdsConnected, isLinkedinAdsConnected]);
 
-  const hasAnyConnectionReal = isGa4Connected || isGoogleAdsConnected || isMetaAdsConnected || isLinkedinAdsConnected;
-  const hasAnyConnection = hasAnyConnectionReal || guideMode;
-
-  const isDemo = guideMode && !hasAnyConnectionReal;
 
   const spendNum   = isDemo ? 18450.70 : (typeof stats.spend       === 'number' ? stats.spend       : 0);
   const revenueNum = isDemo ? 96800.50 : (typeof stats.revenue     === 'number' ? stats.revenue     : 0);
@@ -930,7 +939,7 @@ export default function HubDashboardLight() {
       </motion.div>
 
       {/* Trial countdown — visível apenas para usuários em período de teste */}
-      <HubTrialBanner />
+      {/* <HubTrialBanner /> */}
 
       {/* Critical Error Banner — Ads Channels Failed */}
       {!isDemo && trafficData?.hasErrors && !loading && (
@@ -972,7 +981,7 @@ export default function HubDashboardLight() {
       )}
 
       {/* Connection Mode Alert Banner */}
-      {isDemo && (
+      {/* {isDemo && (
         <div className="p-4 bg-orange-500/5 rounded-2xl border border-orange-500/25 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-center gap-2.5">
             <Sparkles size={16} className="text-[#FF6A00] shrink-0" />
@@ -987,7 +996,7 @@ export default function HubDashboardLight() {
             Conectar Contas Reais
           </Link>
         </div>
-      )}
+      )} */}
 
       {/* View Toggles & Actions Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
