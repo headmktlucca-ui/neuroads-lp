@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Layers, Plus, Trash2, ArrowRight, CheckCircle2,
-  Bot, ShieldAlert, Send, Play, Cpu, Trash, X
+  Bot, ShieldAlert, Send, Play, Cpu, Trash, X, XOctagon, HeartPulse, TrendingUp, Search, RotateCcw
 } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
@@ -100,6 +100,8 @@ interface LeadLog {
   message: string;
 }
 
+type LeadStage = 'capturado' | 'qualificado' | 'proposta' | 'fechamento' | 'ganho' | 'ativo' | 'perdido';
+
 interface Lead {
   id: string;
   name: string;
@@ -107,14 +109,16 @@ interface Lead {
   value: number;
   email: string;
   phone: string;
-  stage: 'capturado' | 'qualificado' | 'proposta' | 'fechamento' | 'ganho';
+  stage: LeadStage;
   originAgent: string;
   originAgentCor: string;
   statusText: string;
+  lossReason?: string;
   history: LeadLog[];
   createdAt: number;
 }
 
+// Pipeline principal — colunas com fluxo Avançar/Voltar e Playbook automatizado
 const STAGES = [
   { id: 'capturado' as const, title: 'Capturado', color: '#60A5FA', desc: 'Identificado por Vitor/Igor' },
   { id: 'qualificado' as const, title: 'Qualificado', color: '#34D399', desc: 'Fit de ICP validado' },
@@ -122,6 +126,17 @@ const STAGES = [
   { id: 'fechamento' as const, title: 'Em Fechamento', color: '#FB923C', desc: 'Contrato e pagamento' },
   { id: 'ganho' as const, title: 'Ganho / Fechado', color: '#10B981', desc: 'Onboarding iniciado' },
 ];
+
+// Etapas complementares — pós-venda (Manu/Raíssa) e perda (encerramento sem fictício "voltar ao topo")
+const POST_STAGES = [
+  { id: 'ativo' as const, title: 'Cliente Ativo', color: '#22D3EE', desc: 'Gestão de conta pós-venda' },
+  { id: 'perdido' as const, title: 'Perdido', color: '#94A3B8', desc: 'Oportunidade não convertida' },
+];
+
+const isPipelineStage = (stage: LeadStage): stage is typeof STAGES[number]['id'] =>
+  STAGES.some(s => s.id === stage);
+
+const ALL_STAGES: { id: LeadStage; title: string; color: string; desc: string }[] = [...STAGES, ...POST_STAGES];
 
 const INITIAL_LEADS: Lead[] = [
   {
@@ -232,7 +247,8 @@ export default function FunilVendasPage() {
   const [editEmail, setEditEmail] = useState('');
   const [editPhone, setEditPhone] = useState('');
   const [editStatusText, setEditStatusText] = useState('');
-  const [editStage, setEditStage] = useState<'capturado' | 'qualificado' | 'proposta' | 'fechamento' | 'ganho'>('capturado');
+  const [editStage, setEditStage] = useState<LeadStage>('capturado');
+  const [showDiagnosis, setShowDiagnosis] = useState(false);
 
   const handleOpenLead = (lead: Lead) => {
     setSelectedLead(lead);
@@ -254,12 +270,12 @@ export default function FunilVendasPage() {
         const hasStageChanged = l.stage !== editStage;
         const newHistory = [...l.history];
         if (hasStageChanged) {
-          const nextStageTitle = STAGES.find(s => s.id === editStage)?.title || editStage;
+          const nextStageTitle = ALL_STAGES.find(s => s.id === editStage)?.title || editStage;
           newHistory.push({
             timestamp: Date.now(),
             agentName: 'SISTEMA',
             agentCor: '#64748B',
-            message: `Etapa alterada de ${STAGES.find(s => s.id === l.stage)?.title} para ${nextStageTitle} via edição manual.`,
+            message: `Etapa alterada de ${ALL_STAGES.find(s => s.id === l.stage)?.title} para ${nextStageTitle} via edição manual.`,
           });
         }
 
@@ -450,6 +466,60 @@ export default function FunilVendasPage() {
     saveLeads(filtered);
   };
 
+  // Mark lead as lost (disqualified or dropped out) — terminal state outside the linear pipeline
+  const handleMarkAsLost = (leadId: string) => {
+    const lead = leads.find(l => l.id === leadId);
+    if (!lead) return;
+    const reason = (typeof window !== 'undefined' ? window.prompt('Motivo da perda (ex: sem orçamento, sem resposta, foi de concorrente):') : '') || 'Não informado';
+
+    const updated = leads.map(l => {
+      if (l.id === leadId) {
+        return {
+          ...l,
+          stage: 'perdido' as const,
+          lossReason: reason,
+          statusText: `Oportunidade perdida: ${reason}.`,
+          history: [
+            ...l.history,
+            {
+              timestamp: Date.now(),
+              agentName: 'SISTEMA',
+              agentCor: '#64748B',
+              message: `Lead marcado como perdido. Motivo registrado: ${reason}.`,
+            }
+          ]
+        };
+      }
+      return l;
+    });
+    saveLeads(updated);
+  };
+
+  // Reopen a lost lead back into the top of the pipeline
+  const handleReopenLead = (leadId: string) => {
+    const updated = leads.map(l => {
+      if (l.id === leadId) {
+        return {
+          ...l,
+          stage: 'capturado' as const,
+          lossReason: undefined,
+          statusText: 'Oportunidade reaberta manualmente. Aguardando nova qualificação.',
+          history: [
+            ...l.history,
+            {
+              timestamp: Date.now(),
+              agentName: 'SISTEMA',
+              agentCor: '#64748B',
+              message: 'Lead reaberto manualmente e devolvido para a etapa Capturado.',
+            }
+          ]
+        };
+      }
+      return l;
+    });
+    saveLeads(updated);
+  };
+
   // Move lead stage
   const moveLead = (leadId: string, direction: 'next' | 'prev') => {
     const updated = leads.map(lead => {
@@ -514,6 +584,18 @@ export default function FunilVendasPage() {
       simulatedText = 'Tainá (Nutrição) está ativando fluxo de réguas personalizadas para engajamento...';
       agentName = 'TAINÁ (Nutrição)';
       agentCor = '#F472B6';
+    } else if (operationType === 'ativar_conta') {
+      simulatedText = 'Ulisses (Chief of Staff) está roteando a conta para a equipe de Retenção (Manu e Raíssa)...';
+      agentName = 'ULISSES (Gestão)';
+      agentCor = '#FBBF24';
+    } else if (operationType === 'health_check') {
+      simulatedText = 'Manu (Suporte) está verificando uso do produto, tickets abertos e satisfação recente...';
+      agentName = 'MANU (Suporte)';
+      agentCor = '#22D3EE';
+    } else if (operationType === 'upsell') {
+      simulatedText = 'Raíssa (Upsell & Reativação) está mapeando limites de plano e potencial de expansão...';
+      agentName = 'RAÍSSA (Upsell)';
+      agentCor = '#22D3EE';
     }
 
     setActionText(simulatedText);
@@ -543,6 +625,16 @@ export default function FunilVendasPage() {
           } else if (operationType === 'nutrir') {
             logMessage = `Régua de e-mail disparada: Artigo sobre 'ROI em IA' enviado. Taxa de clique registrada de 48%.`;
             newStatusText = 'Engajamento reaquecido. Tainá enviou sequências educativas.';
+          } else if (operationType === 'ativar_conta') {
+            nextStage = 'ativo';
+            logMessage = `Handoff de conta concluído: Manu (Suporte) e Raíssa (Upsell) assumiram o relacionamento pós-venda.`;
+            newStatusText = 'Conta em gestão ativa. Acompanhamento de saúde e expansão iniciado.';
+          } else if (operationType === 'health_check') {
+            logMessage = `Health-check executado: uso do produto dentro do esperado, sem tickets críticos em aberto.`;
+            newStatusText = 'Saúde do cliente verificada por Manu. Sem riscos de churn identificados.';
+          } else if (operationType === 'upsell') {
+            logMessage = `Oportunidade de upsell identificada: uso próximo do limite do plano atual. Oferta de upgrade preparada.`;
+            newStatusText = 'Oportunidade de upsell mapeada por Raíssa. Aguardando abordagem.';
           }
 
           return {
@@ -571,20 +663,349 @@ export default function FunilVendasPage() {
 
   // Funnel stats
   const stats = useMemo(() => {
-    const activeLeads = filteredLeads.filter(l => l.stage !== 'ganho');
-    const wonLeads = filteredLeads.filter(l => l.stage === 'ganho');
-    
-    const valueInNegotiation = activeLeads.reduce((acc, curr) => acc + curr.value, 0);
+    const funnelLeads = filteredLeads.filter(l => l.stage !== 'perdido');
+    const negotiatingLeads = filteredLeads.filter(l => isPipelineStage(l.stage) && l.stage !== 'ganho');
+    const wonLeads = filteredLeads.filter(l => l.stage === 'ganho' || l.stage === 'ativo');
+    const lostLeads = filteredLeads.filter(l => l.stage === 'perdido');
+    const activeAccounts = filteredLeads.filter(l => l.stage === 'ativo');
+
+    const valueInNegotiation = negotiatingLeads.reduce((acc, curr) => acc + curr.value, 0);
     const totalWonValue = wonLeads.reduce((acc, curr) => acc + curr.value, 0);
-    const averageTicket = filteredLeads.length > 0 ? (filteredLeads.reduce((acc, curr) => acc + curr.value, 0) / filteredLeads.length) : 0;
+    const averageTicket = funnelLeads.length > 0 ? (funnelLeads.reduce((acc, curr) => acc + curr.value, 0) / funnelLeads.length) : 0;
+    const lossRate = (funnelLeads.length + lostLeads.length) > 0
+      ? (lostLeads.length / (funnelLeads.length + lostLeads.length)) * 100
+      : 0;
 
     return {
       valueInNegotiation,
       totalWonValue,
       averageTicket,
-      totalLeads: filteredLeads.length,
+      totalLeads: funnelLeads.length,
+      lostCount: lostLeads.length,
+      activeAccountsCount: activeAccounts.length,
+      lossRate,
     };
   }, [filteredLeads]);
+
+  // Heitor's funnel diagnosis — computed strictly from real Kanban state, no fictional figures
+  const funnelDiagnosis = useMemo(() => {
+    const perStage = STAGES.map(s => ({
+      ...s,
+      count: leads.filter(l => l.stage === s.id).length,
+      value: leads.filter(l => l.stage === s.id).reduce((acc, curr) => acc + curr.value, 0),
+    }));
+    const negotiationStages = perStage.filter(s => s.id !== 'ganho');
+    const bottleneck = negotiationStages.reduce(
+      (max, s) => (s.count > max.count ? s : max),
+      negotiationStages[0] ?? perStage[0]
+    );
+    const lostCount = leads.filter(l => l.stage === 'perdido').length;
+    const wonCount = leads.filter(l => l.stage === 'ganho' || l.stage === 'ativo').length;
+    const closedCount = lostCount + wonCount;
+    const winRate = closedCount > 0 ? (wonCount / closedCount) * 100 : 0;
+
+    return { perStage, bottleneck, lostCount, wonCount, winRate };
+  }, [leads]);
+
+  // Renders one Kanban column — shared by the main pipeline grid and the post-sale/lost grid below it
+  const renderStageColumn = (stage: typeof ALL_STAGES[number]) => {
+    const stageLeads = filteredLeads.filter(l => l.stage === stage.id);
+    const totalStageValue = stageLeads.reduce((acc, curr) => acc + curr.value, 0);
+
+    return (
+      <div
+        key={stage.id}
+        className="bg-[#eef2f7] border border-white/60 rounded-3xl p-4 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] space-y-4"
+      >
+        {/* Column Header */}
+        <div className="flex items-start justify-between border-b border-slate-200/60 pb-3">
+          <div>
+            <h3 className="text-[13px] font-black text-[#0f172a] leading-none flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: stage.color }} />
+              {stage.title}
+            </h3>
+            <p className="text-[9px] text-slate-400 font-bold mt-1.5 uppercase leading-none">{stage.desc}</p>
+          </div>
+          <div className="flex items-center gap-1">
+            {isPipelineStage(stage.id) && stage.id !== 'ganho' && (
+              <button
+                onClick={() => handleRunPlaybook(stage.id)}
+                className="text-[8px] font-black bg-white hover:bg-slate-50 border border-slate-200 text-[#FF6A00] px-1.5 py-0.5 rounded shadow-sm hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer"
+                title={`Disparar playbook automático na coluna ${stage.title}`}
+              >
+                ⚡ Run
+              </button>
+            )}
+            <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-white/80 border text-slate-500 shadow-sm leading-none ml-1">
+              {stageLeads.length}
+            </span>
+          </div>
+        </div>
+
+        {/* Column Stats */}
+        <div className="text-[11px] font-extrabold text-slate-500 bg-white/40 px-3 py-1.5 rounded-xl border border-white/60">
+          Total: <span className="text-slate-700">R$ {totalStageValue.toLocaleString('pt-BR')}</span>
+        </div>
+
+        {/* Leads List */}
+        <div className="space-y-3 min-h-[400px] overflow-y-auto max-h-[600px] pr-0.5">
+          {stageLeads.length === 0 ? (
+            <div className="border-2 border-dashed border-slate-300/40 rounded-2xl py-8 text-center text-[11px] text-slate-400 font-bold uppercase">
+              Sem leads
+            </div>
+          ) : (
+            stageLeads.map(lead => (
+              <motion.div
+                key={lead.id}
+                layout
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all space-y-3.5 relative group/card"
+              >
+                {/* Action buttons (manual delete) */}
+                <button
+                  onClick={() => handleDeleteLead(lead.id)}
+                  className="absolute top-3 right-3 text-slate-300 hover:text-rose-500 transition opacity-0 group-hover/card:opacity-100"
+                  title="Remover Lead"
+                >
+                  <Trash size={12} />
+                </button>
+
+                {/* Card Header info */}
+                <div>
+                  <div className="flex items-center gap-1 flex-wrap">
+                    <span
+                      className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border"
+                      style={{ color: lead.originAgentCor, backgroundColor: `${lead.originAgentCor}15`, borderColor: `${lead.originAgentCor}35` }}
+                    >
+                      {lead.originAgent}
+                    </span>
+                    {(() => {
+                      const origin = lead.originAgent.toUpperCase();
+                      if (origin.includes('GOOGLE')) {
+                        return (
+                          <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-yellow-500/20 bg-yellow-500/5 text-yellow-600">
+                            Google Ads
+                          </span>
+                        );
+                      }
+                      if (origin.includes('META') || origin.includes('FACEBOOK') || origin.includes('PAOLA')) {
+                        return (
+                          <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-blue-500/20 bg-blue-500/5 text-blue-600">
+                            Meta Ads
+                          </span>
+                        );
+                      }
+                      if (origin.includes('LINKEDIN')) {
+                        return (
+                          <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-sky-500/20 bg-sky-500/5 text-sky-600">
+                            LinkedIn Ads
+                          </span>
+                        );
+                      }
+                      if (origin.includes('VITOR') || origin.includes('OUTBOUND')) {
+                        return (
+                          <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-emerald-500/20 bg-emerald-500/5 text-emerald-600">
+                            Outbound SDR
+                          </span>
+                        );
+                      }
+                      if (origin.includes('SEO') || origin.includes('IGOR') || origin.includes('GEO') || origin.includes('ORGANIC')) {
+                        return (
+                          <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-slate-500/20 bg-slate-500/5 text-slate-600">
+                            SEO Orgânico
+                          </span>
+                        );
+                      }
+                      return null;
+                    })()}
+                  </div>
+                  <h4 className="text-[13px] font-extrabold text-slate-800 mt-1.5 leading-tight">{lead.name}</h4>
+                  <p className="text-[10px] text-slate-400 font-bold mt-0.5 uppercase leading-none">{lead.company}</p>
+                </div>
+
+                {/* Value & Info */}
+                <div className="flex justify-between items-center text-[12px] font-bold text-slate-700 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-100">
+                  <span>R$ {lead.value.toLocaleString('pt-BR')}</span>
+                  <span className="text-[9px] font-medium text-slate-400">#{lead.id.split('-')[1]}</span>
+                </div>
+
+                {/* Current Status Message */}
+                <p className="text-[10.5px] text-slate-500 font-medium leading-relaxed italic border-l-2 border-[#FF6A00]/80 pl-2">
+                  &ldquo;{lead.statusText}&rdquo;
+                </p>
+
+                {/* Interactive Handoff/Agent Actions */}
+                <div className="pt-2 border-t border-slate-100 space-y-2">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Ações do Agente</p>
+                  <div className="flex gap-1.5 flex-wrap">
+                    {lead.stage === 'capturado' && (
+                      <>
+                        <button
+                          onClick={() => handleExecuteAgentOperation(lead.id, 'qualificar')}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-white hover:brightness-110 transition cursor-pointer"
+                          style={{ background: 'linear-gradient(135deg, #34D399, #10B981)' }}
+                        >
+                          <Play size={8} /> Qualificar ICP
+                        </button>
+                        <button
+                          onClick={() => handleExecuteAgentOperation(lead.id, 'nutrir')}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-slate-600 bg-slate-100 hover:bg-slate-200 transition cursor-pointer border border-slate-200"
+                        >
+                          <Send size={8} /> Nutrir Leads
+                        </button>
+                      </>
+                    )}
+
+                    {lead.stage === 'qualificado' && (
+                      <>
+                        <button
+                          onClick={() => handleExecuteAgentOperation(lead.id, 'proposta')}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-white hover:brightness-110 transition cursor-pointer"
+                          style={{ background: 'linear-gradient(135deg, #FF6A00, #FF8805)' }}
+                        >
+                          <Play size={8} /> Enviar Proposta
+                        </button>
+                        <button
+                          onClick={() => handleExecuteAgentOperation(lead.id, 'nutrir')}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-slate-600 bg-slate-100 hover:bg-slate-200 transition cursor-pointer border border-slate-200"
+                        >
+                          <Send size={8} /> Nutrir
+                        </button>
+                      </>
+                    )}
+
+                    {lead.stage === 'proposta' && (
+                      <button
+                        onClick={() => handleExecuteAgentOperation(lead.id, 'fechar')}
+                        className="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-white hover:brightness-110 transition cursor-pointer"
+                        style={{ background: 'linear-gradient(135deg, #2563EB, #06B6D4)' }}
+                      >
+                        <Play size={8} /> Fechar Contrato (Closer)
+                      </button>
+                    )}
+
+                    {lead.stage === 'fechamento' && (
+                      <button
+                        onClick={() => handleExecuteAgentOperation(lead.id, 'onboarding')}
+                        className="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-white hover:brightness-110 transition cursor-pointer"
+                        style={{ background: 'linear-gradient(135deg, #10B981, #059669)' }}
+                      >
+                        <CheckCircle2 size={8} /> Concluir & Onboarding
+                      </button>
+                    )}
+
+                    {lead.stage === 'ganho' && (
+                      <button
+                        onClick={() => handleExecuteAgentOperation(lead.id, 'ativar_conta')}
+                        className="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-white hover:brightness-110 transition cursor-pointer"
+                        style={{ background: 'linear-gradient(135deg, #FBBF24, #22D3EE)' }}
+                      >
+                        <TrendingUp size={8} /> Ativar Gestão de Conta
+                      </button>
+                    )}
+
+                    {lead.stage === 'ativo' && (
+                      <>
+                        <button
+                          onClick={() => handleExecuteAgentOperation(lead.id, 'health_check')}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-white hover:brightness-110 transition cursor-pointer"
+                          style={{ background: 'linear-gradient(135deg, #22D3EE, #0891B2)' }}
+                        >
+                          <HeartPulse size={8} /> Verificar Saúde (Manu)
+                        </button>
+                        <button
+                          onClick={() => handleExecuteAgentOperation(lead.id, 'upsell')}
+                          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-slate-600 bg-slate-100 hover:bg-slate-200 transition cursor-pointer border border-slate-200"
+                        >
+                          <TrendingUp size={8} /> Identificar Upsell (Raíssa)
+                        </button>
+                      </>
+                    )}
+
+                    {lead.stage === 'perdido' && (
+                      <button
+                        onClick={() => handleReopenLead(lead.id)}
+                        className="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-slate-600 bg-slate-100 hover:bg-slate-200 transition cursor-pointer border border-slate-200"
+                      >
+                        <RotateCcw size={8} /> Reabrir Oportunidade
+                      </button>
+                    )}
+
+                    {isPipelineStage(lead.stage) && lead.stage !== 'ganho' && (
+                      <button
+                        onClick={() => handleMarkAsLost(lead.id)}
+                        className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-slate-400 hover:text-rose-500 bg-white hover:bg-rose-50 transition cursor-pointer border border-slate-200 hover:border-rose-200"
+                        title="Marcar oportunidade como perdida"
+                      >
+                        <XOctagon size={8} /> Perdido
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Handoff Manual navigation */}
+                <div className="flex justify-between items-center pt-2 border-t border-slate-100">
+                  {isPipelineStage(lead.stage) ? (
+                    <>
+                      <button
+                        disabled={lead.stage === 'capturado'}
+                        onClick={() => moveLead(lead.id, 'prev')}
+                        className="text-[9px] font-bold text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer"
+                      >
+                        Voltar
+                      </button>
+                      <button
+                        onClick={() => handleOpenLead(lead)}
+                        className="text-[10px] font-black text-[#FF6A00] hover:text-[#e05d00] transition cursor-pointer"
+                      >
+                        Abrir
+                      </button>
+                      <button
+                        disabled={lead.stage === 'ganho'}
+                        onClick={() => moveLead(lead.id, 'next')}
+                        className="text-[9px] font-bold text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer"
+                      >
+                        Avançar
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => handleOpenLead(lead)}
+                      className="w-full text-center text-[10px] font-black text-[#FF6A00] hover:text-[#e05d00] transition cursor-pointer"
+                    >
+                      Abrir
+                    </button>
+                  )}
+                </div>
+
+                {/* Logs list accordion-style or just last log summary */}
+                <div className="pt-2 border-t border-slate-100">
+                  <details className="outline-none cursor-pointer">
+                    <summary className="text-[9px] font-bold text-slate-400 hover:text-slate-600 select-none">
+                      Ver histórico ({lead.history.length})
+                    </summary>
+                    <div className="mt-2 space-y-2 max-h-[120px] overflow-y-auto pl-1 pr-0.5">
+                      {lead.history.map((log, logIdx) => (
+                        <div key={logIdx} className="text-[9.5px] leading-snug border-b border-slate-100 pb-1.5 last:border-0 last:pb-0">
+                          <div className="flex justify-between items-center text-[8px] font-bold text-slate-400 mb-0.5">
+                            <span style={{ color: log.agentCor }}>{log.agentName}</span>
+                            <span>{new Date(log.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+                          </div>
+                          <p className="text-slate-600 font-medium">{log.message}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                </div>
+
+              </motion.div>
+            ))
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-8 w-full px-6 pb-10 animate-in fade-in duration-500">
@@ -604,22 +1025,33 @@ export default function FunilVendasPage() {
           </p>
         </div>
 
-        <button
-          onClick={() => setShowAddForm(!showAddForm)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[12px] font-black text-white hover:brightness-110 active:scale-95 transition-all shadow-[0_2px_8px_rgba(255,106,0,0.25)] cursor-pointer"
-          style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)' }}
-        >
-          <Plus size={14} /> Novo Lead
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowDiagnosis(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[12px] font-black text-[#60A5FA] border border-[#60A5FA]/30 bg-[#60A5FA]/10 hover:bg-[#60A5FA]/15 active:scale-95 transition-all cursor-pointer"
+            title="Heitor analisa o gargalo do funil com dados reais das colunas"
+          >
+            <Search size={14} /> Diagnosticar Funil
+          </button>
+          <button
+            onClick={() => setShowAddForm(!showAddForm)}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[12px] font-black text-white hover:brightness-110 active:scale-95 transition-all shadow-[0_2px_8px_rgba(255,106,0,0.25)] cursor-pointer"
+            style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)' }}
+          >
+            <Plus size={14} /> Novo Lead
+          </button>
+        </div>
       </div>
 
       {/* ── Stats Row ── */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
         {[
           { label: 'Leads no Funil', value: stats.totalLeads, icon: <KpiIconLeads /> },
           { label: 'Em Negociação', value: `R$ ${stats.valueInNegotiation.toLocaleString('pt-BR')}`, icon: <KpiIconClock /> },
           { label: 'Faturamento Fechado', value: `R$ ${stats.totalWonValue.toLocaleString('pt-BR')}`, icon: <KpiIconMoney /> },
           { label: 'Ticket Médio', value: `R$ ${Math.round(stats.averageTicket).toLocaleString('pt-BR')}`, icon: <KpiIconTicket /> },
+          { label: 'Clientes Ativos', value: stats.activeAccountsCount, icon: <HeartPulse size={32} className="text-[#22D3EE]" /> },
+          { label: 'Taxa de Perda', value: `${stats.lossRate.toFixed(0)}%`, icon: <XOctagon size={32} className="text-slate-400" /> },
         ].map(({ label, value, icon }) => (
           <div key={label} className="rounded-2xl border border-white/60 bg-white p-5 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between">
             <div>
@@ -784,6 +1216,81 @@ export default function FunilVendasPage() {
         )}
       </AnimatePresence>
 
+      {/* ── Heitor's Funnel Diagnosis Modal (real Kanban data, no fictional figures) ── */}
+      <AnimatePresence>
+        {showDiagnosis && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4"
+          >
+            <motion.div
+              initial={{ scale: 0.95, y: 10 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.95, y: 10 }}
+              className="bg-white rounded-3xl p-7 max-w-lg w-full shadow-2xl border border-slate-100 space-y-5 max-h-[85vh] overflow-y-auto"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-11 h-11 shrink-0 rounded-2xl bg-[#60A5FA]/15 flex items-center justify-center">
+                  <Search size={18} className="text-[#60A5FA]" />
+                </div>
+                <div>
+                  <h4 className="text-[15px] font-black text-slate-800 uppercase tracking-wide">Diagnóstico de Funil · Heitor</h4>
+                  <p className="text-[11.5px] text-slate-500 font-semibold mt-0.5">Calculado a partir dos leads reais nas colunas do Kanban.</p>
+                </div>
+                <button onClick={() => setShowDiagnosis(false)} className="ml-auto text-slate-300 hover:text-slate-600 cursor-pointer">
+                  <X size={16} />
+                </button>
+              </div>
+
+              <div className="rounded-2xl border border-[#60A5FA]/20 bg-[#60A5FA]/5 p-4">
+                <p className="text-[9px] font-black text-[#60A5FA] uppercase tracking-widest">Gargalo Dominante</p>
+                <p className="text-[14px] font-black text-slate-800 mt-1">
+                  {funnelDiagnosis.bottleneck?.title} — {funnelDiagnosis.bottleneck?.count} lead(s) parado(s), R$ {(funnelDiagnosis.bottleneck?.value ?? 0).toLocaleString('pt-BR')} represados.
+                </p>
+                <p className="text-[11px] text-slate-500 font-medium mt-1">
+                  É a etapa com maior concentração de leads em aberto — priorize o playbook desta coluna primeiro.
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Leads por etapa</p>
+                {funnelDiagnosis.perStage.map(s => (
+                  <div key={s.id} className="flex items-center justify-between text-[12px] font-bold text-slate-600 bg-slate-50 rounded-xl px-3 py-1.5">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: s.color }} /> {s.title}
+                    </span>
+                    <span>{s.count} · R$ {s.value.toLocaleString('pt-BR')}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3.5">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Taxa de Ganho</p>
+                  <p className="text-[18px] font-black text-emerald-500 mt-0.5">{funnelDiagnosis.winRate.toFixed(0)}%</p>
+                  <p className="text-[10px] text-slate-400 font-semibold">{funnelDiagnosis.wonCount} ganhos vs {funnelDiagnosis.lostCount} perdidos</p>
+                </div>
+                <div className="rounded-2xl border border-slate-100 bg-slate-50 p-3.5">
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Leads Perdidos</p>
+                  <p className="text-[18px] font-black text-slate-500 mt-0.5">{funnelDiagnosis.lostCount}</p>
+                  <p className="text-[10px] text-slate-400 font-semibold">Motivos registrados no histórico de cada card</p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setShowDiagnosis(false)}
+                className="w-full py-2.5 rounded-xl text-[12px] font-black text-white hover:brightness-110 transition cursor-pointer"
+                style={{ background: 'linear-gradient(135deg, #60A5FA, #2563EB)' }}
+              >
+                Fechar Diagnóstico
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* ── Filter Toolbar ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
         <div className="flex items-center gap-1.5 flex-wrap">
@@ -817,254 +1324,18 @@ export default function FunilVendasPage() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF6A00]" />
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start select-none">
-          {STAGES.map(stage => {
-            const stageLeads = filteredLeads.filter(l => l.stage === stage.id);
-            const totalStageValue = stageLeads.reduce((acc, curr) => acc + curr.value, 0);
+        <>
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 items-start select-none">
+            {STAGES.map(stage => renderStageColumn(stage))}
+          </div>
 
-            return (
-              <div 
-                key={stage.id} 
-                className="bg-[#eef2f7] border border-white/60 rounded-3xl p-4 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] space-y-4"
-              >
-                {/* Column Header */}
-                <div className="flex items-start justify-between border-b border-slate-200/60 pb-3">
-                  <div>
-                    <h3 className="text-[13px] font-black text-[#0f172a] leading-none flex items-center gap-1.5">
-                      <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: stage.color }} />
-                      {stage.title}
-                    </h3>
-                    <p className="text-[9px] text-slate-400 font-bold mt-1.5 uppercase leading-none">{stage.desc}</p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    {stage.id !== 'ganho' && (
-                      <button
-                        onClick={() => handleRunPlaybook(stage.id)}
-                        className="text-[8px] font-black bg-white hover:bg-slate-50 border border-slate-200 text-[#FF6A00] px-1.5 py-0.5 rounded shadow-sm hover:scale-[1.02] active:scale-[0.98] transition cursor-pointer"
-                        title={`Disparar playbook automático na coluna ${stage.title}`}
-                      >
-                        ⚡ Run
-                      </button>
-                    )}
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-white/80 border text-slate-500 shadow-sm leading-none ml-1">
-                      {stageLeads.length}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Column Stats */}
-                <div className="text-[11px] font-extrabold text-slate-500 bg-white/40 px-3 py-1.5 rounded-xl border border-white/60">
-                  Total: <span className="text-slate-700">R$ {totalStageValue.toLocaleString('pt-BR')}</span>
-                </div>
-
-                {/* Leads List */}
-                <div className="space-y-3 min-h-[400px] overflow-y-auto max-h-[600px] pr-0.5">
-                  {stageLeads.length === 0 ? (
-                    <div className="border-2 border-dashed border-slate-300/40 rounded-2xl py-8 text-center text-[11px] text-slate-400 font-bold uppercase">
-                      Sem leads
-                    </div>
-                  ) : (
-                    stageLeads.map(lead => (
-                      <motion.div
-                        key={lead.id}
-                        layout
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all space-y-3.5 relative group/card"
-                      >
-                        {/* Action buttons (manual delete) */}
-                        <button
-                          onClick={() => handleDeleteLead(lead.id)}
-                          className="absolute top-3 right-3 text-slate-300 hover:text-rose-500 transition opacity-0 group-hover/card:opacity-100"
-                          title="Remover Lead"
-                        >
-                          <Trash size={12} />
-                        </button>
-
-                        {/* Card Header info */}
-                        <div>
-                          <div className="flex items-center gap-1 flex-wrap">
-                            <span 
-                              className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border"
-                              style={{ color: lead.originAgentCor, backgroundColor: `${lead.originAgentCor}15`, borderColor: `${lead.originAgentCor}35` }}
-                            >
-                              {lead.originAgent}
-                            </span>
-                            {(() => {
-                              const origin = lead.originAgent.toUpperCase();
-                              if (origin.includes('GOOGLE')) {
-                                return (
-                                  <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-yellow-500/20 bg-yellow-500/5 text-yellow-600">
-                                    Google Ads
-                                  </span>
-                                );
-                              }
-                              if (origin.includes('META') || origin.includes('FACEBOOK') || origin.includes('PAOLA')) {
-                                return (
-                                  <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-blue-500/20 bg-blue-500/5 text-blue-600">
-                                    Meta Ads
-                                  </span>
-                                );
-                              }
-                              if (origin.includes('LINKEDIN')) {
-                                return (
-                                  <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-sky-500/20 bg-sky-500/5 text-sky-600">
-                                    LinkedIn Ads
-                                  </span>
-                                );
-                              }
-                              if (origin.includes('VITOR') || origin.includes('OUTBOUND')) {
-                                return (
-                                  <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-emerald-500/20 bg-emerald-500/5 text-emerald-600">
-                                    Outbound SDR
-                                  </span>
-                                );
-                              }
-                              if (origin.includes('SEO') || origin.includes('IGOR') || origin.includes('GEO') || origin.includes('ORGANIC')) {
-                                return (
-                                  <span className="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border border-slate-500/20 bg-slate-500/5 text-slate-600">
-                                    SEO Orgânico
-                                  </span>
-                                );
-                              }
-                              return null;
-                            })()}
-                          </div>
-                          <h4 className="text-[13px] font-extrabold text-slate-800 mt-1.5 leading-tight">{lead.name}</h4>
-                          <p className="text-[10px] text-slate-400 font-bold mt-0.5 uppercase leading-none">{lead.company}</p>
-                        </div>
-
-                        {/* Value & Info */}
-                        <div className="flex justify-between items-center text-[12px] font-bold text-slate-700 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-100">
-                          <span>R$ {lead.value.toLocaleString('pt-BR')}</span>
-                          <span className="text-[9px] font-medium text-slate-400">#{lead.id.split('-')[1]}</span>
-                        </div>
-
-                        {/* Current Status Message */}
-                        <p className="text-[10.5px] text-slate-500 font-medium leading-relaxed italic border-l-2 border-[#FF6A00]/80 pl-2">
-                          &ldquo;{lead.statusText}&rdquo;
-                        </p>
-
-                        {/* Interactive Handoff/Agent Actions */}
-                        <div className="pt-2 border-t border-slate-100 space-y-2">
-                          <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">Ações do Agente</p>
-                          <div className="flex gap-1.5 flex-wrap">
-                            {lead.stage === 'capturado' && (
-                              <>
-                                <button
-                                  onClick={() => handleExecuteAgentOperation(lead.id, 'qualificar')}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-white hover:brightness-110 transition cursor-pointer"
-                                  style={{ background: 'linear-gradient(135deg, #34D399, #10B981)' }}
-                                >
-                                  <Play size={8} /> Qualificar ICP
-                                </button>
-                                <button
-                                  onClick={() => handleExecuteAgentOperation(lead.id, 'nutrir')}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-slate-600 bg-slate-100 hover:bg-slate-200 transition cursor-pointer border border-slate-200"
-                                >
-                                  <Send size={8} /> Nutrir Leads
-                                </button>
-                              </>
-                            )}
-
-                            {lead.stage === 'qualificado' && (
-                              <>
-                                <button
-                                  onClick={() => handleExecuteAgentOperation(lead.id, 'proposta')}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-white hover:brightness-110 transition cursor-pointer"
-                                  style={{ background: 'linear-gradient(135deg, #FF6A00, #FF8805)' }}
-                                >
-                                  <Play size={8} /> Enviar Proposta
-                                </button>
-                                <button
-                                  onClick={() => handleExecuteAgentOperation(lead.id, 'nutrir')}
-                                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-slate-600 bg-slate-100 hover:bg-slate-200 transition cursor-pointer border border-slate-200"
-                                >
-                                  <Send size={8} /> Nutrir
-                                </button>
-                              </>
-                            )}
-
-                            {lead.stage === 'proposta' && (
-                              <button
-                                onClick={() => handleExecuteAgentOperation(lead.id, 'fechar')}
-                                className="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-white hover:brightness-110 transition cursor-pointer"
-                                style={{ background: 'linear-gradient(135deg, #2563EB, #06B6D4)' }}
-                              >
-                                <Play size={8} /> Fechar Contrato (Closer)
-                              </button>
-                            )}
-
-                            {lead.stage === 'fechamento' && (
-                              <button
-                                onClick={() => handleExecuteAgentOperation(lead.id, 'onboarding')}
-                                className="w-full inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-xl text-[9px] font-black text-white hover:brightness-110 transition cursor-pointer"
-                                style={{ background: 'linear-gradient(135deg, #10B981, #059669)' }}
-                              >
-                                <CheckCircle2 size={8} /> Concluir & Onboarding
-                              </button>
-                            )}
-
-                            {lead.stage === 'ganho' && (
-                              <div className="w-full text-center py-1 text-[9px] font-black text-emerald-600 bg-emerald-50 rounded-xl border border-emerald-100 uppercase tracking-widest">
-                                Fechamento Concluído!
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        {/* Handoff Manual navigation */}
-                        <div className="flex justify-between items-center pt-2 border-t border-slate-100">
-                          <button
-                            disabled={lead.stage === 'capturado'}
-                            onClick={() => moveLead(lead.id, 'prev')}
-                            className="text-[9px] font-bold text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer"
-                          >
-                            Voltar
-                          </button>
-                          <button
-                            onClick={() => handleOpenLead(lead)}
-                            className="text-[10px] font-black text-[#FF6A00] hover:text-[#e05d00] transition cursor-pointer"
-                          >
-                            Abrir
-                          </button>
-                          <button
-                            disabled={lead.stage === 'ganho'}
-                            onClick={() => moveLead(lead.id, 'next')}
-                            className="text-[9px] font-bold text-slate-400 hover:text-slate-600 disabled:opacity-30 disabled:hover:text-slate-400 cursor-pointer"
-                          >
-                            Avançar
-                          </button>
-                        </div>
-
-                        {/* Logs list accordion-style or just last log summary */}
-                        <div className="pt-2 border-t border-slate-100">
-                          <details className="outline-none cursor-pointer">
-                            <summary className="text-[9px] font-bold text-slate-400 hover:text-slate-600 select-none">
-                              Ver histórico ({lead.history.length})
-                            </summary>
-                            <div className="mt-2 space-y-2 max-h-[120px] overflow-y-auto pl-1 pr-0.5">
-                              {lead.history.map((log, logIdx) => (
-                                <div key={logIdx} className="text-[9.5px] leading-snug border-b border-slate-100 pb-1.5 last:border-0 last:pb-0">
-                                  <div className="flex justify-between items-center text-[8px] font-bold text-slate-400 mb-0.5">
-                                    <span style={{ color: log.agentCor }}>{log.agentName}</span>
-                                    <span>{new Date(log.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
-                                  </div>
-                                  <p className="text-slate-600 font-medium">{log.message}</p>
-                                </div>
-                              ))}
-                            </div>
-                          </details>
-                        </div>
-
-                      </motion.div>
-                    ))
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+          <div className="pt-2">
+            <p className="text-[11px] font-black uppercase tracking-widest text-slate-400 mb-3">Pós-Venda &amp; Perdas</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start select-none">
+              {POST_STAGES.map(stage => renderStageColumn(stage))}
+            </div>
+          </div>
+        </>
       )}
 
       {/* ── Lead Details / Edit Modal ── */}
@@ -1144,7 +1415,7 @@ export default function FunilVendasPage() {
                       value={editStage}
                       onChange={e => setEditStage(e.target.value as Lead['stage'])}
                     >
-                      {STAGES.map(s => (
+                      {ALL_STAGES.map(s => (
                         <option key={s.id} value={s.id}>{s.title}</option>
                       ))}
                     </select>
@@ -1188,9 +1459,9 @@ export default function FunilVendasPage() {
                     <div>
                       <p className="text-[9px] font-black text-slate-400 uppercase tracking-wide">Etapa Atual</p>
                       <div className="flex items-center gap-1.5 mt-0.5">
-                        <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: STAGES.find(s => s.id === selectedLead.stage)?.color }} />
+                        <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: ALL_STAGES.find(s => s.id === selectedLead.stage)?.color }} />
                         <span className="text-[12px] font-bold text-slate-700">
-                          {STAGES.find(s => s.id === selectedLead.stage)?.title}
+                          {ALL_STAGES.find(s => s.id === selectedLead.stage)?.title}
                         </span>
                       </div>
                     </div>
@@ -1221,6 +1492,13 @@ export default function FunilVendasPage() {
                       &ldquo;{selectedLead.statusText}&rdquo;
                     </p>
                   </div>
+
+                  {selectedLead.stage === 'perdido' && selectedLead.lossReason && (
+                    <div className="md:col-span-2 rounded-2xl border border-rose-200/60 bg-rose-50 p-4">
+                      <p className="text-[9px] font-black text-rose-400 uppercase tracking-wide">Motivo da Perda</p>
+                      <p className="text-[12px] font-semibold text-rose-600 leading-relaxed mt-1">{selectedLead.lossReason}</p>
+                    </div>
+                  )}
                 </div>
               )}
 
