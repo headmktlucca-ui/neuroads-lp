@@ -10,7 +10,13 @@ import {
   Target, CheckCircle2, AlertTriangle, Sparkles, Cpu,
   Film, Music, File, X, Copy, Table2, User, RefreshCw,
   Settings2, Hash, ArrowRight, MessageSquare, BookmarkPlus, FileDown,
+  Wallet, Eye, Percent, ShoppingCart,
 } from 'lucide-react';
+import {
+  BarChart, Bar, XAxis, YAxis, ResponsiveContainer,
+  Tooltip as RechartsTooltip, Cell,
+} from 'recharts';
+import CountUp from '../../../components/hub/v2/CountUp';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
 import { collection, getDocs, orderBy, query as fsQuery, doc, setDoc } from 'firebase/firestore';
@@ -23,6 +29,7 @@ import { getTeamAgentById, type TeamAgent, TEAM_AGENTS } from '../../../data/tea
 import { agents as allSpecialties } from '../../../data/agents';
 import { getHubAutomationsFromProfile, buildAutomationTimestamps } from '../../../lib/hub-automations';
 import { slugifyAgentTitle } from '../../../lib/hub-agents';
+import HeroCircuitBackground from '../../../components/ui/HeroCircuitBackground';
 
 
 
@@ -42,144 +49,10 @@ interface CustomField {
   placeholder: string;
 }
 
-const SPECIALTY_FIELDS: Record<string, CustomField[]> = {
-  'Analista de Tráfego': [
-    { name: 'plataforma', label: 'Plataforma de Anúncios', type: 'text', placeholder: 'Meta Ads, Google Ads ou ambos' },
-    { name: 'cpa_alvo', label: 'CPA Alvo (R$)', type: 'number', placeholder: 'Ex: 50' },
-  ],
-  'Gerador de Criativos': [
-    { name: 'produto', label: 'Nome do Produto/Serviço', type: 'text', placeholder: 'Ex: Curso de Marketing' },
-    { name: 'publico', label: 'Público-Alvo', type: 'text', placeholder: 'Ex: Empreendedores digitais' },
-  ],
-  'Gerador de Copies de Conversão': [
-    { name: 'produto', label: 'Nome do Produto/Serviço', type: 'text', placeholder: 'Ex: Mentoria de Negócios' },
-    { name: 'beneficios', label: 'Principais Benefícios', type: 'text', placeholder: 'Ex: Aumentar vendas em 30%' },
-  ],
-  'Análise Viral': [
-    { name: 'nicho', label: 'Nicho/Setor', type: 'text', placeholder: 'Ex: Moda Feminina, Fitness' },
-    { name: 'canal', label: 'Rede Social Principal', type: 'text', placeholder: 'Ex: Instagram, TikTok' },
-  ],
-  'Rastreador Cirúrgico': [
-    { name: 'site', label: 'URL do Site', type: 'url', placeholder: 'Ex: https://meusite.com.br' },
-    { name: 'pixel_id', label: 'ID do Pixel (opcional)', type: 'text', placeholder: 'Ex: 1234567890' },
-  ],
-  'Preditor de Funil': [
-    { name: 'cpc_medio', label: 'CPC Médio (R$)', type: 'number', placeholder: 'Ex: 1.50' },
-    { name: 'taxa_conversao', label: 'Taxa de Conversão da LP (%)', type: 'number', placeholder: 'Ex: 2.5' },
-    { name: 'ticket_medio', label: 'Ticket Médio (R$)', type: 'number', placeholder: 'Ex: 197' },
-  ],
-  'Diagnóstico de Landing Page': [
-    { name: 'url_lp', label: 'URL da Landing Page', type: 'url', placeholder: 'Ex: https://meusite.com.br/landing' },
-    { name: 'objetivo', label: 'Objetivo de Conversão', type: 'text', placeholder: 'Ex: Venda, Lead, Cadastro' },
-  ],
-  'Simulador de ROAS': [
-    { name: 'meta_faturamento', label: 'Meta de Faturamento (R$)', type: 'number', placeholder: 'Ex: 50000' },
-    { name: 'ticket_medio', label: 'Ticket Médio (R$)', type: 'number', placeholder: 'Ex: 250' },
-  ],
-  'SEO & GEO': [
-    { name: 'url_site', label: 'URL do Site', type: 'url', placeholder: 'Ex: https://meusite.com.br' },
-    { name: 'palavras_chave', label: 'Palavras-Chave Foco', type: 'text', placeholder: 'Ex: neuroads, trafego pago' },
-  ],
-  'Diagnóstico de Funil': [
-    { name: 'visitas', label: 'Visitas Mensais', type: 'number', placeholder: 'Ex: 10000' },
-    { name: 'leads', label: 'Leads Gerados', type: 'number', placeholder: 'Ex: 1500' },
-    { name: 'vendas', label: 'Vendas Realizadas', type: 'number', placeholder: 'Ex: 150' },
-  ],
-  'Gerador de Testes A/B': [
-    { name: 'pagina', label: 'Página do Teste', type: 'url', placeholder: 'Ex: https://meusite.com.br' },
-    { name: 'elemento', label: 'Elemento a Testar', type: 'text', placeholder: 'Ex: Botão de CTA, Headline' },
-  ],
-  'Prospector Outbound': [
-    { name: 'segmento', label: 'Segmento Alvo', type: 'text', placeholder: 'Ex: Tecnologia, E-commerce, Clínicas' },
-    { name: 'cargo', label: 'Cargo do Decisor', type: 'text', placeholder: 'Ex: CEO, Diretor de Marketing' },
-  ],
-  'Qualificador de ICP': [
-    { name: 'lead_name', label: 'Nome do Lead', type: 'text', placeholder: 'Ex: Carlos Souza' },
-    { name: 'lead_empresa', label: 'Empresa do Lead', type: 'text', placeholder: 'Ex: Logística Express' },
-  ],
-  'Atendimento 24/7': [
-    { name: 'canal', label: 'Canal de Atendimento', type: 'text', placeholder: 'Ex: WhatsApp, Webchat' },
-    { name: 'faq_url', label: 'URL da FAQ/Ajuda', type: 'url', placeholder: 'Ex: https://ajuda.meusite.com' },
-  ],
-  'Histórico de Cliente': [
-    { name: 'email_cliente', label: 'E-mail do Cliente', type: 'text', placeholder: 'Ex: cliente@empresa.com' },
-  ],
-  'Closer por Chat': [
-    { name: 'lead_name', label: 'Nome do Lead', type: 'text', placeholder: 'Ex: Mariana Silva' },
-    { name: 'proposta_valor', label: 'Valor Proposto (R$)', type: 'number', placeholder: 'Ex: 15000' },
-  ],
-  'Contrato & Pagamento': [
-    { name: 'email_cliente', label: 'E-mail para Envio', type: 'text', placeholder: 'Ex: cliente@empresa.com' },
-    { name: 'valor_contrato', label: 'Valor do Contrato (R$)', type: 'number', placeholder: 'Ex: 15000' },
-  ],
-  'Reativação de Inativos': [
-    { name: 'dias_inativo', label: 'Dias de Inatividade', type: 'number', placeholder: 'Ex: 30' },
-    { name: 'oferta', label: 'Oferta de Reativação', type: 'text', placeholder: 'Ex: Desconto de 20% no primeiro mês' },
-  ],
-  'Upsell Inteligente': [
-    { name: 'email_cliente', label: 'E-mail do Cliente', type: 'text', placeholder: 'Ex: joao@empresa.com' },
-    { name: 'plano_atual', label: 'Plano Atual', type: 'text', placeholder: 'Ex: Plano Standard' },
-  ],
-  'Fluxos de Nutrição': [
-    { name: 'segmento', label: 'Segmento de Leads', type: 'text', placeholder: 'Ex: E-books / Leads Frios' },
-    { name: 'plataforma', label: 'Plataforma de E-mail', type: 'text', placeholder: 'Ex: RD Station, ActiveCampaign' },
-  ],
-  'Lead Scoring': [
-    { name: 'pontuacao_minima', label: 'Pontuação Mínima para Abordagem', type: 'number', placeholder: 'Ex: 80' },
-  ],
-  'Briefing de Reunião': [
-    { name: 'nome_reuniao', label: 'Assunto da Reunião', type: 'text', placeholder: 'Ex: Reunião Comercial' },
-    { name: 'participantes', label: 'Participantes Principais', type: 'text', placeholder: 'Ex: CEO e Diretor de Vendas' },
-  ],
-  'Gestor de Tarefas': [
-    { name: 'titulo_tarefa', label: 'Título da Tarefa', type: 'text', placeholder: 'Ex: Revisar criativos da campanha' },
-    { name: 'responsavel', label: 'Responsável', type: 'text', placeholder: 'Ex: Paola' },
-  ],
-  'Auditor de Desperdício': [
-    { name: 'plataforma', label: 'Plataforma de Anúncios', type: 'text', placeholder: 'Ex: Google Ads, Meta Ads' },
-    { name: 'cpa_limite', label: 'CPA Limite Máximo (R$)', type: 'number', placeholder: 'Ex: 60' },
-  ],
-  'Otimizador de Orçamento': [
-    { name: 'orcamento_mensal', label: 'Orçamento Mensal (R$)', type: 'number', placeholder: 'Ex: 10000' },
-    { name: 'meta_roas', label: 'Meta de ROAS Mínimo', type: 'number', placeholder: 'Ex: 3.5' },
-  ],
-  'Agente Editorial': [
-    { name: 'tema', label: 'Tema / Pauta do Conteúdo', type: 'text', placeholder: 'Ex: Tendências de IA B2B' },
-    { name: 'formato', label: 'Formato Principal', type: 'text', placeholder: 'Ex: Artigo de opinião, Post longo' },
-  ],
-  'Gerador de Carrossel': [
-    { name: 'tema', label: 'Tema do Carrossel', type: 'text', placeholder: 'Ex: 5 erros no tráfego pago B2B' },
-    { name: 'quantidade_slides', label: 'Quantidade de Slides', type: 'number', placeholder: 'Ex: 7' },
-  ],
-  'Roteirista de Vídeo': [
-    { name: 'gancho', label: 'Gancho Inicial / Ideia', type: 'text', placeholder: 'Ex: Como dobrar conversões com SDR' },
-    { name: 'plataforma', label: 'Plataforma de Vídeo', type: 'text', placeholder: 'Ex: Meta (Reels), TikTok, YouTube' },
-  ],
-  'Redator de Artigos': [
-    { name: 'titulo_sugerido', label: 'Título Sugerido ou Palavra-Chave', type: 'text', placeholder: 'Ex: Guia Completo de CRO' },
-    { name: 'objetivo', label: 'Objetivo do Artigo', type: 'text', placeholder: 'Ex: Captar Leads, SEO, Autoridade' },
-  ],
-  'Analisador de Público': [
-    { name: 'site_concorrente', label: 'Site do Concorrente (URL)', type: 'url', placeholder: 'Ex: https://concorrente.com' },
-    { name: 'publico_alvo', label: 'Público Atual da Empresa', type: 'text', placeholder: 'Ex: Gestores de Performance B2B' },
-  ],
-  'Avaliador de Oferta': [
-    { name: 'oferta_descricao', label: 'Descrição da Oferta Atual', type: 'text', placeholder: 'Ex: Plano trimestral com 20% OFF' },
-    { name: 'valor_produto', label: 'Preço / Valor (R$)', type: 'number', placeholder: 'Ex: 497' },
-  ],
-  'Radar de Oportunidades': [
-    { name: 'objetivo_negocio', label: 'Principal Objetivo de Negócio', type: 'text', placeholder: 'Ex: Escalar receita com mesmo CAC' },
-    { name: 'canal_foco', label: 'Canal de Foco', type: 'text', placeholder: 'Ex: Meta Ads, Outbound' },
-  ],
-  'Análise de Concorrentes': [
-    { name: 'url_concorrente', label: 'URL do Concorrente', type: 'url', placeholder: 'Ex: https://concorrente.com' },
-    { name: 'itens_analisar', label: 'Itens para Focar', type: 'text', placeholder: 'Ex: Preço, Proposta de valor, Copy' },
-  ],
-  'Público-Alvo Ideal': [
-    { name: 'produto_servico', label: 'Seu Produto/Serviço', type: 'text', placeholder: 'Ex: Software CRM de Vendas' },
-    { name: 'ticket_medio', label: 'Ticket Médio (R$)', type: 'number', placeholder: 'Ex: 1500' },
-  ],
-};
+// Todos os campos foram removidos para que todas as operações disparem automaticamente.
+// O agente usa os conectores ativos e a Base de Conhecimento para executar sem formulários prévios.
+// Caso necessite de alguma informação adicional, o agente pergunta ao usuário no chat após o resultado inicial.
+const SPECIALTY_FIELDS: Record<string, CustomField[]> = {};
 
 
 interface Message {
@@ -221,6 +94,267 @@ interface SourceTag {
   label: string;
   type: string;
   icon: React.ReactNode;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   AGENT REPORT PARSING & RENDERING
+   Converte o texto bruto do relatório do agente (bullets em markdown)
+   em blocos estruturados: cabeçalhos, parágrafos, bullets soltos,
+   e blocos de "canal" (ex.: "Meta Ads:" seguido de métricas
+   "Label: valor" e, opcionalmente, um ranking "chave = número")
+   para renderizar como tabelas de métricas animadas e gráficos.
+═══════════════════════════════════════════════════════════════════ */
+type AgentReportBlock =
+  | { kind: 'blank' }
+  | { kind: 'h1' | 'h2' | 'h3'; text: string }
+  | { kind: 'paragraph'; text: string }
+  | { kind: 'bullet'; text: string }
+  | {
+      kind: 'channel';
+      title: string;
+      metrics: { label: string; value: string }[];
+      ranked?: { title: string; items: { label: string; value: number }[] };
+    };
+
+function stripBulletMarker(line: string): string {
+  const m = line.match(/^\s*[•\-\*]\s*(.+)$/);
+  return m ? m[1].trim() : line.trim();
+}
+
+function stripBoldMarkers(text: string): string {
+  return text.replace(/\*\*/g, '').trim();
+}
+
+function parseAgentReportBlocks(text: string): AgentReportBlock[] {
+  const lines = text.split('\n');
+  const blocks: AgentReportBlock[] = [];
+  let i = 0;
+
+  while (i < lines.length) {
+    const raw = lines[i];
+    const trimmed = raw.trim();
+
+    if (!trimmed) { blocks.push({ kind: 'blank' }); i++; continue; }
+    if (trimmed.startsWith('### ')) { blocks.push({ kind: 'h3', text: trimmed.slice(4) }); i++; continue; }
+    if (trimmed.startsWith('## ')) { blocks.push({ kind: 'h2', text: trimmed.slice(3) }); i++; continue; }
+    if (trimmed.startsWith('# ')) { blocks.push({ kind: 'h1', text: trimmed.slice(2) }); i++; continue; }
+
+    const isBulletLine = /^[•\-\*]/.test(trimmed);
+    const content = isBulletLine ? stripBulletMarker(trimmed) : trimmed;
+    const clean = stripBoldMarkers(content);
+
+    const metricMatch = clean.match(/^([^:=]+):\s*(.+)$/);
+    const rankedMatch = clean.match(/^(.+?)\s*=\s*([\d.,]+)\s*$/);
+
+    // Channel/section header candidate: pure label ending with ':'
+    if (isBulletLine && !metricMatch && !rankedMatch && /:$/.test(clean)) {
+      const title = clean.replace(/:$/, '').trim();
+      let j = i + 1;
+      const metrics: { label: string; value: string }[] = [];
+      let ranked: { title: string; items: { label: string; value: number }[] } | undefined;
+
+      while (j < lines.length) {
+        const t2 = lines[j].trim();
+        if (!t2 || !/^[•\-\*]/.test(t2)) break;
+        const c2 = stripBoldMarkers(stripBulletMarker(t2));
+        const m2 = c2.match(/^([^:=]+):\s*(.+)$/);
+        const r2 = c2.match(/^(.+?)\s*=\s*([\d.,]+)\s*$/);
+
+        if (m2) {
+          metrics.push({ label: m2[1].trim(), value: m2[2].trim() });
+          j++;
+          continue;
+        }
+        if (r2 && !ranked) {
+          ranked = { title: '', items: [{ label: r2[1].trim(), value: parseFloat(r2[2].replace(/\./g, '').replace(',', '.')) }] };
+          j++;
+          continue;
+        }
+        // Nested sub-header (e.g. "Top termos de busca (cliques):") followed by "key = number" lines
+        if (/:$/.test(c2)) {
+          const subTitle = c2.replace(/:$/, '').trim();
+          let k = j + 1;
+          const items: { label: string; value: number }[] = [];
+          while (k < lines.length) {
+            const t3 = lines[k].trim();
+            if (!t3 || !/^[•\-\*]/.test(t3)) break;
+            const c3 = stripBoldMarkers(stripBulletMarker(t3));
+            const r3 = c3.match(/^(.+?)\s*=\s*([\d.,]+)\s*$/);
+            if (!r3) break;
+            items.push({ label: r3[1].trim(), value: parseFloat(r3[2].replace(/\./g, '').replace(',', '.')) });
+            k++;
+          }
+          if (items.length > 0) {
+            ranked = { title: subTitle, items };
+            j = k;
+            continue;
+          }
+        }
+        break;
+      }
+
+      if (metrics.length > 0 || ranked) {
+        blocks.push({ kind: 'channel', title, metrics, ranked });
+        i = j;
+        continue;
+      }
+      blocks.push({ kind: 'bullet', text: content });
+      i++;
+      continue;
+    }
+
+    if (isBulletLine) { blocks.push({ kind: 'bullet', text: content }); i++; continue; }
+    blocks.push({ kind: 'paragraph', text: trimmed });
+    i++;
+  }
+
+  return blocks;
+}
+
+function renderInlineBold(content: string, keyPrefix: string): React.ReactNode {
+  const parts = content.split('**');
+  return parts.map((part, idx) =>
+    idx % 2 === 1
+      ? <strong key={`${keyPrefix}-${idx}`} className="font-extrabold text-slate-900">{part}</strong>
+      : <React.Fragment key={`${keyPrefix}-${idx}`}>{part}</React.Fragment>
+  );
+}
+
+/** Extrai um valor numérico de strings como "R$ 2241,05", "246.564", "1,90%", "0,00x". Retorna null quando não é numérico (ex.: "N/D"). */
+function parseMetricValue(raw: string): { num: number; prefix: string; suffix: string; decimals: number } | null {
+  const v = raw.trim();
+  const m = v.match(/^(R\$\s*)?(-?[\d.,]+)\s*(%|x)?$/i);
+  if (!m) return null;
+  const prefix = m[1] ? 'R$ ' : '';
+  const suffix = m[3] || '';
+  let numStr = m[2];
+  const hasComma = numStr.includes(',');
+  let decimals = 0;
+  if (hasComma) {
+    const decPart = numStr.split(',')[1] || '';
+    decimals = decPart.length;
+    numStr = numStr.replace(/\./g, '').replace(',', '.');
+  } else {
+    numStr = numStr.replace(/\./g, '');
+  }
+  const num = parseFloat(numStr);
+  if (!isFinite(num)) return null;
+  return { num, prefix, suffix, decimals };
+}
+
+function getMetricVisual(label: string) {
+  const l = label.toLowerCase();
+  if (l.includes('invest')) return { icon: Wallet, color: 'text-blue-700' };
+  if (l.includes('impress')) return { icon: Eye, color: 'text-slate-600' };
+  if (l.includes('cliqu')) return { icon: Target, color: 'text-sky-700' };
+  if (l.includes('ctr')) return { icon: Percent, color: 'text-emerald-700' };
+  if (l.includes('compra') || l.includes('convers')) return { icon: ShoppingCart, color: 'text-violet-700' };
+  if (l.includes('cpa')) return { icon: Target, color: 'text-amber-700' };
+  if (l.includes('roas')) return { icon: TrendingUp, color: 'text-rose-700' };
+  if (l.includes('posi')) return { icon: Hash, color: 'text-indigo-700' };
+  return { icon: BarChart2, color: 'text-slate-600' };
+}
+
+function getChannelVisual(title: string) {
+  const l = title.toLowerCase();
+  if (l.includes('meta')) return { icon: Globe, grad: 'from-blue-600 to-blue-800' };
+  if (l.includes('google ads')) return { icon: Target, grad: 'from-amber-500 to-orange-600' };
+  if (l.includes('search console')) return { icon: Search, grad: 'from-emerald-600 to-teal-700' };
+  if (l.includes('linkedin')) return { icon: Link2, grad: 'from-sky-600 to-sky-800' };
+  if (l.includes('analytics') || l.includes('ga4')) return { icon: BarChart2, grad: 'from-orange-500 to-[#FF6A00]' };
+  return { icon: Database, grad: 'from-slate-600 to-slate-800' };
+}
+
+/* ── Animated channel report card: metric grid + optional ranked bar chart ── */
+function ChannelReportCard({
+  title,
+  metrics,
+  ranked,
+  index,
+}: {
+  title: string;
+  metrics: { label: string; value: string }[];
+  ranked?: { title: string; items: { label: string; value: number }[] };
+  index: number;
+}) {
+  const visual = getChannelVisual(title);
+  const Icon = visual.icon;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, delay: Math.min(index * 0.06, 0.3) }}
+      className="my-3 rounded-2xl border border-slate-200/80 bg-white shadow-sm overflow-hidden"
+    >
+      <div className={`flex items-center gap-2.5 px-4 py-3 bg-gradient-to-r ${visual.grad}`}>
+        <span className="w-7 h-7 rounded-lg bg-white/15 flex items-center justify-center shrink-0">
+          <Icon className="w-4 h-4 text-white" />
+        </span>
+        <span className="text-[12px] font-black text-white uppercase tracking-wide">{title}</span>
+        <span className="ml-auto text-[9px] font-bold text-white uppercase tracking-widest opacity-90">Dados Reais</span>
+      </div>
+
+      {metrics.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-px bg-slate-100">
+          {metrics.map((m, i) => {
+            const mv = getMetricVisual(m.label);
+            const parsed = parseMetricValue(m.value);
+            const MIcon = mv.icon;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0.94 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.3, delay: 0.05 + i * 0.04 }}
+                className="bg-white p-3 flex flex-col gap-1"
+              >
+                <div className="flex items-center gap-1.5">
+                  <MIcon className={`w-3 h-3 shrink-0 ${mv.color}`} />
+                  <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wide truncate">{m.label}</span>
+                </div>
+                {parsed ? (
+                  <span className={`text-[15px] font-black ${mv.color}`}>
+                    <CountUp value={parsed.num} prefix={parsed.prefix} suffix={parsed.suffix} decimals={parsed.decimals} duration={1.1} />
+                  </span>
+                ) : (
+                  <span className="text-[13px] font-bold text-slate-400 italic">{m.value}</span>
+                )}
+              </motion.div>
+            );
+          })}
+        </div>
+      )}
+
+      {ranked && ranked.items.length > 0 && (
+        <div className="px-4 py-3.5 border-t border-slate-100">
+          <p className="text-[10px] font-black text-slate-500 uppercase tracking-wide mb-2">{ranked.title || 'Ranking'}</p>
+          <ResponsiveContainer width="100%" height={Math.max(90, ranked.items.length * 32)}>
+            <BarChart data={ranked.items} layout="vertical" margin={{ top: 0, right: 20, left: 0, bottom: 0 }}>
+              <XAxis type="number" hide />
+              <YAxis
+                type="category"
+                dataKey="label"
+                width={150}
+                tick={{ fontSize: 10, fill: '#475569', fontWeight: 600 }}
+                axisLine={false}
+                tickLine={false}
+              />
+              <RechartsTooltip
+                cursor={{ fill: 'rgba(255,106,0,0.06)' }}
+                contentStyle={{ borderRadius: 10, border: '1px solid #eee', fontSize: 11, fontWeight: 600 }}
+              />
+              <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={14}>
+                {ranked.items.map((_, i) => (
+                  <Cell key={i} fill={i === 0 ? '#FF6A00' : '#94a3b8'} />
+                ))}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+    </motion.div>
+  );
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -750,8 +884,8 @@ function OrchestratorControlPanel({
 
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-slate-100 border border-slate-200/60 shadow-sm relative">
-                    <Image src={ag.avatarSrc} alt={ag.nome} width={32} height={32} className="w-full h-full object-cover" />
+                  <div className="w-[42px] h-[42px] rounded-full overflow-hidden shrink-0 bg-slate-100 border border-slate-200/60 shadow-sm relative">
+                    <Image src={ag.avatarSrc} alt={ag.nome} width={42} height={42} className="w-full h-full object-cover" />
                   </div>
                   <div>
                     <div className="flex items-center gap-1.5">
@@ -986,14 +1120,20 @@ function LeftPanel({
 
   const hasTable = (result?.tableHeaders?.length ?? 0) > 0 && (result?.tableRows?.length ?? 0) > 0;
 
-  /* Helper to render formatted report content with color hierarchy */
+  /* Helper to render formatted report content with color hierarchy,
+     detecting channel metric blocks and ranked lists to render as
+     animated stat tables and interactive charts instead of plain bullets. */
   function renderContent(text: string) {
     if (!text) return null;
-    const lines = text.split('\n');
+    const blocks = parseAgentReportBlocks(text);
     let hCount = 0;
-    return lines.map((line, i) => {
-      // Headers with color accent bars
-      if (line.startsWith('### ')) {
+    let bulletCount = 0;
+    let channelCount = 0;
+
+    return blocks.map((block, i) => {
+      if (block.kind === 'blank') return <div key={i} className="h-1.5" />;
+
+      if (block.kind === 'h3') {
         hCount++;
         const headerColors = ['text-blue-700', 'text-emerald-700', 'text-violet-700', 'text-amber-700', 'text-rose-700'];
         const hc = headerColors[hCount % headerColors.length];
@@ -1004,64 +1144,73 @@ function LeftPanel({
             className={`text-sm font-bold ${hc} mt-4 mb-1.5 flex items-center gap-1.5`}
           >
             <span className="w-1 h-3.5 rounded-full bg-current opacity-50 shrink-0" />
-            {line.replace('### ', '')}
+            {block.text}
           </motion.h4>
         );
       }
-      if (line.startsWith('## ')) {
+      if (block.kind === 'h2') {
         return (
           <motion.h3 key={i}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             transition={{ duration: 0.3, delay: Math.min(i * 0.02, 0.4) }}
             className="text-[14px] font-black text-slate-900 mt-5 mb-2 border-b border-slate-100 pb-1"
-          >{line.replace('## ', '')}</motion.h3>
+          >{block.text}</motion.h3>
         );
       }
-      if (line.startsWith('# ')) {
+      if (block.kind === 'h1') {
         return (
           <motion.h2 key={i}
             initial={{ opacity: 0 }} animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
             className="text-[16px] font-black text-slate-900 mt-6 mb-3"
-          >{line.replace('# ', '')}</motion.h2>
+          >{block.text}</motion.h2>
         );
       }
 
-      // Bullet points — rotating color dots
-      let isBullet = false;
-      let content = line;
-      if (line.trim().match(/^[•\-\*]/)) {
-        isBullet = true;
-        content = line.replace(/^[•\s\-\*]+/, '');
+      if (block.kind === 'channel') {
+        channelCount++;
+        return <ChannelReportCard key={i} title={block.title} metrics={block.metrics} ranked={block.ranked} index={channelCount} />;
       }
 
-      // Bold parsing: **text**
-      const parts = content.split('**');
-      const renderedLine = parts.map((part, idx) => {
-        if (idx % 2 === 1) {
-          return <strong key={idx} className="font-extrabold text-slate-900">{part}</strong>;
-        }
-        return part;
-      });
-
-      if (isBullet) {
+      if (block.kind === 'bullet') {
+        bulletCount++;
         const dotColors = ['bg-blue-500', 'bg-emerald-500', 'bg-amber-500', 'bg-violet-500', 'bg-rose-500'];
-        const dc = dotColors[i % dotColors.length];
+        const dc = dotColors[bulletCount % dotColors.length];
         return (
           <motion.div
             key={i}
             initial={{ opacity: 0, x: -6 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: Math.min(i * 0.03, 0.5) }}
+            transition={{ duration: 0.3, delay: Math.min(bulletCount * 0.03, 0.5) }}
             className="flex gap-2.5 items-start ml-1 my-1.5 text-[13px] text-slate-600"
           >
             <span className={`mt-2 shrink-0 w-1.5 h-1.5 rounded-full ${dc}`} />
-            <span className="leading-relaxed">{renderedLine}</span>
+            <span className="leading-relaxed">{renderInlineBold(block.text, `b-${i}`)}</span>
           </motion.div>
         );
       }
 
-      if (!line.trim()) return <div key={i} className="h-1.5" />;
+      // paragraph — highlight executive-summary style callouts
+      const cleanText = block.text;
+      const isExecSummary = /^\*{0,2}resumo\s+executivo/i.test(cleanText.trim());
+      if (isExecSummary) {
+        const body = cleanText.replace(/^\*{0,2}resumo\s+executivo\*{0,2}:?\s*/i, '');
+        return (
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 6 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+            className="my-3 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 flex gap-3"
+          >
+            <AlertTriangle className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-[9px] font-black text-amber-800 uppercase tracking-widest mb-1">Resumo Executivo</p>
+              <p className="text-[12.5px] text-amber-900 leading-relaxed font-semibold">{renderInlineBold(body, `p-${i}`)}</p>
+            </div>
+          </motion.div>
+        );
+      }
 
       return (
         <motion.p
@@ -1071,7 +1220,7 @@ function LeftPanel({
           transition={{ duration: 0.3, delay: Math.min(i * 0.025, 0.5) }}
           className="text-[13px] text-slate-600 leading-relaxed my-1"
         >
-          {renderedLine}
+          {renderInlineBold(cleanText, `p-${i}`)}
         </motion.p>
       );
     });
@@ -1302,48 +1451,48 @@ function LeftPanel({
                       initial={{ opacity: 0, scale: 0.98 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.4 }}
-                      className="bg-gradient-to-br from-[#111827] to-[#1F2937] text-white rounded-2xl p-5 shadow-md relative overflow-hidden"
+                      className="bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] border border-white/60 text-slate-800 rounded-2xl p-5 shadow-md relative overflow-hidden"
                     >
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-[#FF6A00]/20 to-transparent rounded-full filter blur-xl" />
+                      <HeroCircuitBackground id="circuit-welcome-banner" />
                       <div className="flex items-start gap-4 mb-4 relative z-10">
                         {activeAgent?.avatarSrc ? (
-                          <div className="w-20 h-20 rounded-2xl overflow-hidden shrink-0 border border-white/20 shadow-lg relative bg-slate-800">
+                          <div className="w-[104px] h-[104px] rounded-2xl overflow-hidden shrink-0 border border-slate-200 shadow-lg relative bg-slate-800">
                             <Image 
                               src={activeAgent.avatarSrc} 
                               alt={activeAgent.nome} 
-                              width={80}
-                              height={80}
+                              width={104}
+                              height={104}
                               className="w-full h-full object-cover" 
                             />
                           </div>
                         ) : (
-                          <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#FF4D00] to-[#FF8805] flex items-center justify-center shrink-0 shadow-lg">
-                            <Sparkles className="w-10 h-10 text-white animate-pulse" />
+                          <div className="w-[104px] h-[104px] rounded-2xl bg-gradient-to-br from-[#FF4D00] to-[#FF8805] flex items-center justify-center shrink-0 shadow-lg">
+                            <Sparkles className="w-12 h-12 text-white animate-pulse" />
                           </div>
                         )}
                         <div className="pt-1">
                           <p className="text-[11px] font-bold text-[#FF6A00] uppercase tracking-wider">Painel Operacional</p>
-                          <h3 className="text-[20px] font-black leading-tight mb-1.5">{activeAgent?.nome || 'Lucca'}</h3>
-                          <p className="text-[12px] text-emerald-400 font-bold flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                            "{activeAgent?.frase || 'Seu orquestrador de operações de marketing.'}"
+                          <h3 className="text-[20px] font-black text-slate-900 leading-tight mb-1.5">{activeAgent?.nome || 'Lucca'}</h3>
+                          <p className="text-[12px] text-emerald-700 font-bold flex items-center gap-1.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                            &quot;{activeAgent?.frase || 'Seu orquestrador de operações de marketing.'}&quot;
                           </p>
                         </div>
                       </div>
 
                       {/* Detailed Agent Specs */}
-                      <div className="mt-4 pt-4 border-t border-white/10 space-y-3 text-[12px] relative z-10 leading-relaxed">
+                      <div className="mt-4 pt-4 border-t border-slate-200/60 space-y-3 text-[12px] relative z-10 leading-relaxed text-slate-700">
                         <div>
                           <span className="font-bold text-[#FF6A00] block mb-0.5 uppercase tracking-wider text-[10px]">Função:</span>
-                          <p className="text-slate-200 font-medium">{activeAgent?.funcao || 'Orquestrador Virtual'}</p>
+                          <p className="text-slate-900 font-bold">{activeAgent?.funcao || 'Orquestrador Virtual'}</p>
                         </div>
                         <div>
                           <span className="font-bold text-[#FF6A00] block mb-0.5 uppercase tracking-wider text-[10px]">Atividades:</span>
-                          <p className="text-slate-300">{activeAgent?.atividades || activeAgent?.descricao}</p>
+                          <p className="text-slate-600 font-semibold">{activeAgent?.atividades || activeAgent?.descricao}</p>
                         </div>
                         <div>
                           <span className="font-bold text-[#FF6A00] block mb-0.5 uppercase tracking-wider text-[10px]">Objetivos:</span>
-                          <p className="text-slate-300">{activeAgent?.objetivos || 'Otimizar a operação de marketing e vendas.'}</p>
+                          <p className="text-slate-650 font-semibold text-slate-600">{activeAgent?.objetivos || 'Otimizar a operação de marketing e vendas.'}</p>
                         </div>
                       </div>
                     </motion.div>
@@ -1745,23 +1894,23 @@ function ChatMessage({
     >
       {/* Avatar */}
       {isUser ? (
-        <div className="w-7 h-7 shrink-0 rounded-full overflow-hidden flex items-center justify-center border border-[#E5E7EB] bg-gradient-to-br from-[#FF6A00] to-[#FF8805]">
+        <div className="w-9 h-9 shrink-0 rounded-full overflow-hidden flex items-center justify-center border border-[#E5E7EB] bg-gradient-to-br from-[#FF6A00] to-[#FF8805]">
           {userPhoto ? (
-            <Image src={userPhoto} alt={userName || 'User'} width={28} height={28} className="w-full h-full object-cover" />
+            <Image src={userPhoto} alt={userName || 'User'} width={36} height={36} className="w-full h-full object-cover" />
           ) : (
             <span className="text-white text-[11px] font-black">{(userName?.charAt(0) || 'U').toUpperCase()}</span>
           )}
         </div>
       ) : (
         <div 
-          className="w-7 h-7 shrink-0 rounded-full overflow-hidden flex items-center justify-center shadow-sm"
+          className="w-9 h-9 shrink-0 rounded-full overflow-hidden flex items-center justify-center shadow-sm"
           style={{ backgroundColor: activeAgent?.cor || '#3b82f6' }}
         >
           <Image
             src={activeAgent?.avatarSrc || "/images/Avatar_Lucca_Novo.jpeg"}
             alt={activeAgent?.nome || "Lucca"}
-            width={28}
-            height={28}
+            width={36}
+            height={36}
             className="w-full h-full object-cover"
             onError={(e) => {
               const el = e.currentTarget;
@@ -1840,7 +1989,7 @@ function ChatMessage({
             transition={{ delay: 0.4 }}
             className="flex flex-col gap-1.5 w-full mt-1"
           >
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-wide">Próximos passos</p>
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-wide">Sugestões:</p>
             <div className="flex flex-col gap-1.5">
               {msg.nextSteps.map((step, i) => (
                 <button
@@ -1870,21 +2019,21 @@ function AnalyzingIndicator({ activeAgent }: { activeAgent?: TeamAgent }) {
       className="flex items-start gap-3"
     >
       {/* Lucca avatar with pulsing ring while thinking */}
-      <div className="relative w-7 h-7 shrink-0">
+      <div className="relative w-9 h-9 shrink-0">
         <motion.div
           className="absolute inset-0 rounded-full bg-blue-400/30"
           animate={{ scale: [1, 1.45, 1], opacity: [0.6, 0, 0.6] }}
           transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
         />
         <div 
-          className="w-7 h-7 rounded-full overflow-hidden border shadow-sm"
+          className="w-9 h-9 rounded-full overflow-hidden border shadow-sm"
           style={{ borderColor: activeAgent?.cor || '#93c5fd' }}
         >
           <Image
             src={activeAgent?.avatarSrc || "/images/Avatar_Lucca_Novo.jpeg"}
             alt={activeAgent?.nome || "Lucca"}
-            width={28}
-            height={28}
+            width={36}
+            height={36}
             className="w-full h-full object-cover"
             onError={(e) => { e.currentTarget.style.display = 'none'; }}
           />
@@ -2247,6 +2396,7 @@ function buildAutomationSuggestions(entry: { title: string; category: string; pl
 export default function HubAssistentePage() {
   const { user, profile, activeCompany } = useAuth();
   const userName = user?.displayName || activeCompany?.companyName || profile?.companyName || 'Você';
+  const userFirstName = userName && userName !== 'Você' ? userName.split(' ')[0] : 'Parceiro';
   const userPhoto = user?.photoURL || null;
   const sessionIdRef = useRef<string | undefined>(undefined);
   const [dataAccessWarning, setDataAccessWarning] = useState<string | null>(null);
@@ -2317,13 +2467,13 @@ export default function HubAssistentePage() {
       const specFields = specialtyTitle ? SPECIALTY_FIELDS[specialtyTitle] : undefined;
       
       let initialContent = specialtyTitle === 'DNA da Marca'
-        ? `Olá! Sou a **${activeAgent.nome}**, sua especialista em ${activeAgent.funcao}.\n\nVou usar o site cadastrado da sua empresa para gerar o DNA completo da marca — posicionamento, arquétipo, paleta de cores, tom de voz e plano de ação. Iniciando a análise automaticamente...`
+        ? `Olá, ${userFirstName}! Sou a **${activeAgent.nome}**, sua especialista em ${activeAgent.funcao}.\n\nVou usar o site cadastrado da sua empresa para gerar o DNA completo da marca — posicionamento, arquétipo, paleta de cores, tom de voz e plano de ação. Iniciando a análise automaticamente...`
         : specialtyTitle
-        ? `Olá! Sou o **${activeAgent.nome}**, seu especialista em ${activeAgent.funcao}.\n\nPara iniciar a operação **${specialtyTitle}**, preciso que você preencha os seguintes dados:`
-        : `Olá! Sou o **${activeAgent.nome}**, seu especialista em ${activeAgent.funcao}.\n\n"${activeAgent.frase}"\n\nComo posso ajudar você hoje?`;
+        ? `Olá, ${userFirstName}! Sou o **${activeAgent.nome}**, seu especialista em ${activeAgent.funcao}.\n\nPara iniciar a operação **${specialtyTitle}**, preciso que você preencha os seguintes dados:`
+        : `Olá, ${userFirstName}! Sou o **${activeAgent.nome}**, seu especialista em ${activeAgent.funcao}.\n\n"${activeAgent.frase}"\n\nComo posso ajudar você hoje?`;
 
       if (activeAgent.id === 'ulisses' && !specialtyTitle) {
-        initialContent = `Olá! Sou o **Ulisses**, seu Chief of Staff Virtual da NeuroAds.
+        initialContent = `Olá, ${userFirstName}! Sou o **Ulisses**, seu Chief of Staff Virtual da NeuroAds.
 
 Como orquestrador principal da operação, coordeno nosso time de agentes especialistas para maximizar seus resultados. Aqui estão algumas atividades-chave que posso direcionar e acompanhar:
 
@@ -2531,7 +2681,7 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
         title: specialtyTitle || `Análise de ${activeAgent?.nome ?? 'Lucca'}`,
         badge: 'Resposta do Agente',
         description: aiResponse.message || '',
-        analysisTitle: 'Próximos passos',
+        analysisTitle: 'Sugestões:',
         analysisItems: aiResponse.nextSteps,
       };
       const aiPanel: ResultPanel = {
@@ -2596,15 +2746,42 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
     }
   }, [messages, userName, profile, persistChat, agentId, connectedSources, disconnectedSources, user]);
 
-  // DNA da Marca não pede formulário — dispara a operação automaticamente
-  // assim que o usuário clica na operação, usando o site já cadastrado.
-  const dnaAutoRunRef = useRef<string | null>(null);
+  const handleTransferAgent = useCallback((newAgentId: string) => {
+    const newAgent = TEAM_AGENTS.find(a => a.id === newAgentId);
+    if (!newAgent) return;
+    
+    const transferMsg: Message = {
+      id: `transfer-${Date.now()}`,
+      role: 'assistant',
+      content: `🔄 Conversa transferida de **${activeAgent?.nome || 'Lucca'}** para **${newAgent.nome}** (${newAgent.funcao}).`,
+      verified: true,
+    };
+    
+    setMessages(prev => [...prev, transferMsg]);
+    router.push(`/hub/assistente-ia?agent=${newAgentId}`);
+  }, [activeAgent, router]);
+
+  // Auto-executa qualquer operação que não exige formulário prévio do usuário
+  // (ex: "Analista de Tráfego", "DNA da Marca", "Análise Viral", etc.)
+  // Operações com campos obrigatórios (SPECIALTY_FIELDS) aguardam input do usuário.
+  const autoRunRef = useRef<string | null>(null);
   useEffect(() => {
-    if (!activeAgent || !user || specialtyTitle !== 'DNA da Marca') return;
+    if (!activeAgent || !user || !specialtyTitle) return;
+
+    // Verifica se esta operação tem campos obrigatórios que o usuário deve preencher
+    const hasRequiredFields = !!(SPECIALTY_FIELDS[specialtyTitle]?.length);
+    if (hasRequiredFields) return; // espera o formulário ser submetido
+
     const runKey = `${activeAgent.id}:${specialtyTitle}`;
-    if (dnaAutoRunRef.current === runKey) return;
-    dnaAutoRunRef.current = runKey;
-    handleSend('Executar operação: **DNA da Marca**\n\nUtilize o site cadastrado da minha empresa para realizar a análise completa e profunda do DNA da marca.');
+    if (autoRunRef.current === runKey) return;
+    autoRunRef.current = runKey;
+
+    // Monta o prompt de execução automática com instrução de usar canais conectados
+    const prompt = specialtyTitle === 'DNA da Marca'
+      ? 'Executar operação: **DNA da Marca**\n\nUtilize o site cadastrado da minha empresa para realizar a análise completa e profunda do DNA da marca.'
+      : `Executar operação: **${specialtyTitle}**\n\nExecute automaticamente a operação usando os canais integrados e conectados disponíveis. Apresente os dados reais dos últimos 30 dias de cada canal autenticado com um resumo executivo inicial. Após o resultado, identifique os principais pontos de atenção e pergunte quais detalhes adicionais o usuário deseja explorar.`;
+
+    handleSend(prompt);
   }, [activeAgent, user, specialtyTitle, handleSend]);
 
   const handleFormSubmit = useCallback((specialty: string, data: Record<string, string>, fields: CustomField[]) => {
@@ -2722,161 +2899,95 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
           )}
         </AnimatePresence>
 
-        {/* Operations Cockpit View */}
+        {/* Scrollable Chat Area */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6 space-y-6 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-thumb]:bg-[#D1D5DB] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-track]:bg-transparent">
-          {/* Agent Welcome Intro */}
+          {/* Agent Welcome Intro & Transfer UI */}
           {activeAgent && (
-            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-slate-100 border border-slate-200/60 shadow-sm relative">
-                  <Image src={activeAgent.avatarSrc || "/images/Avatar_Lucca_Novo.jpeg"} alt={activeAgent.nome} width={40} height={40} className="w-full h-full object-cover" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-3 relative z-10">
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <div className="flex items-center gap-3">
+                  <div className="w-[52px] h-[52px] rounded-full overflow-hidden shrink-0 bg-slate-100 border border-slate-200/60 shadow-sm relative">
+                    <Image src={activeAgent.avatarSrc || "/images/Avatar_Lucca_Novo.jpeg"} alt={activeAgent.nome} width={52} height={52} className="w-full h-full object-cover" />
+                  </div>
+                  <div>
+                    <h3 className="text-[14px] font-black text-slate-800 leading-tight">{activeAgent.nome} • {userFirstName}</h3>
+                    <p className="text-[11px] text-slate-400 font-medium mt-0.5">{activeAgent.funcao}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-[14px] font-black text-slate-800 leading-tight">Olá! Sou o **{activeAgent.nome}**</h3>
-                  <p className="text-[11px] text-slate-400 font-medium mt-0.5">{activeAgent.funcao}</p>
+                
+                {/* Transfer Agent Selector */}
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-bold text-slate-400">Transferir:</span>
+                  <select
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        handleTransferAgent(e.target.value);
+                        e.target.value = '';
+                      }
+                    }}
+                    className="px-2.5 py-1.5 rounded-xl border border-slate-200 text-[11px] font-bold bg-[#eef2f7] outline-none cursor-pointer text-slate-600 focus:ring-2 focus:ring-[#FF6A00]/15"
+                  >
+                    <option value="">Selecione...</option>
+                    {TEAM_AGENTS.filter(a => a.id !== activeAgent.id).map(a => (
+                      <option key={a.id} value={a.id}>
+                        👤 {a.nome} ({a.funcao})
+                      </option>
+                    ))}
+                  </select>
                 </div>
               </div>
               <p className="text-[12px] text-slate-600 leading-relaxed italic">
-                "{activeAgent.frase}"
+                &quot;{activeAgent.frase}&quot;
               </p>
             </div>
           )}
 
-          {activeAgent && specialtyTitle ? (
-            // Operation Form View
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4"
-            >
-              <div className="border-b border-slate-100 pb-3">
-                <span className="text-[10px] font-black text-[#FF6A00] uppercase tracking-wider">Operação ativa</span>
-                <h4 className="text-[15px] font-black text-slate-800 leading-tight mt-0.5">{specialtyTitle}</h4>
-              </div>
-
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                const formData = new FormData(e.currentTarget);
-                const data: Record<string, string> = {};
-                const specFields = SPECIALTY_FIELDS[specialtyTitle] || [];
-                // Only collect form fields if no reference doc selected
-                if (!selectedReportId) {
-                  specFields.forEach(f => {
-                    data[f.name] = formData.get(f.name) as string;
-                  });
-                }
-                handleFormSubmit(specialtyTitle, data, specFields);
-              }} className="space-y-4">
-
-                {/* Knowledge Base Reference Document Selector */}
-                {agentReports.length > 0 && (
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide flex items-center gap-1.5">
-                      <Database className="w-3 h-3 text-[#FF6A00]" />
-                      {specialtyTitle === 'Prospector Outbound'
-                        ? 'ICP da Base de Conhecimento'
-                        : 'Documento de Referência'}
-                      <span className="normal-case font-normal text-slate-300">(opcional)</span>
-                    </label>
-                    <select
-                      value={selectedReportId}
-                      onChange={(e) => setSelectedReportId(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#FF6A00]/15 outline-none transition-all cursor-pointer text-slate-700"
-                    >
-                      <option value="">— Preencher campos manualmente —</option>
-                      {agentReports.map(r => (
-                        <option key={r.id} value={r.id}>
-                          📄 {r.reportTitle}
-                        </option>
-                      ))}
-                    </select>
-                    {selectedReportId && (
-                      <p className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" />
-                        Documento selecionado como contexto — campos abaixo são opcionais.
-                      </p>
-                    )}
-                  </div>
-                )}
-
-                {/* Regular form fields — hidden when ref doc is selected */}
-                {!selectedReportId && (SPECIALTY_FIELDS[specialtyTitle] || []).map(f => (
-                  <div key={f.name} className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">{f.label}</label>
-                    <input
-                      type={f.type === 'number' ? 'text' : f.type}
-                      placeholder={f.placeholder}
-                      required={!selectedReportId}
-                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-slate-50/50 focus:bg-white focus:ring-2 focus:ring-[#FF6A00]/15 outline-none transition-all"
-                      name={f.name}
-                    />
-                  </div>
-                ))}
-
-                <button
-                  type="submit"
-                  disabled={chatState !== 'idle'}
-                  className="w-full py-3 rounded-xl text-[12.5px] font-black text-white hover:brightness-110 active:scale-95 transition-all shadow-[0_2px_6px_rgba(255,106,0,0.2)] cursor-pointer disabled:opacity-50"
-                  style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)' }}
-                >
-                  {chatState === 'thinking' ? 'Executando...' : 'Executar Operação'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsCustomAutomationModalOpen(true)}
-                  className="w-full py-3 rounded-xl text-[12.5px] font-black text-slate-700 bg-white hover:bg-slate-50 active:scale-95 transition-all border border-slate-200 shadow-sm cursor-pointer mt-2"
-                >
-                  Programar Automação
-                </button>
-              </form>
-
-              <button
-                onClick={() => router.push(`/hub/assistente-ia?agent=${activeAgent.id}`)}
-                className="w-full py-2.5 rounded-xl text-[12px] font-bold text-slate-500 hover:text-slate-700 bg-slate-50 hover:bg-slate-100 transition-all border border-slate-200/60 cursor-pointer"
-              >
-                Voltar para Operações
-              </button>
-            </motion.div>
-          ) : activeAgent ? (
-            // Operations List View
-            <div className="space-y-4">
-              <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">Operações Pré-Configuradas</p>
-              <div className="grid grid-cols-1 gap-3">
-                {activeAgent.specialtyTitles.map((specTitle, i) => {
-                  const specObj = allSpecialties.find(s => s.title === specTitle);
-                  return (
-                    <motion.div
-                      key={specTitle}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      onClick={() => router.push(`/hub/assistente-ia?agent=${activeAgent.id}&specialty=${encodeURIComponent(specTitle)}`)}
-                      className="bg-white border border-slate-200 hover:border-[#FF6A00]/40 rounded-2xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group flex flex-col justify-between gap-3 relative overflow-hidden"
-                    >
-                      <div className="absolute left-0 top-0 bottom-0 w-1" style={{ backgroundColor: activeAgent.cor }} />
-                      <div className="min-w-0 pl-1">
-                        <h4 className="text-[13px] font-extrabold text-slate-800 group-hover:text-[#FF6A00] transition-colors leading-snug">{specTitle}</h4>
-                        <p className="text-[11px] text-slate-400 font-medium leading-normal mt-1">{specObj?.description || 'Executar rotina inteligente pré-definida.'}</p>
-                      </div>
-                      <div className="flex items-center gap-1 text-[11px] font-black text-[#FF6A00] pl-1 uppercase tracking-wider">
-                        Configurar Operação <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
-                      </div>
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </div>
-          ) : null}
-          {chatState === 'thinking' && <AnalyzingIndicator key="analyzing" activeAgent={activeAgent} />}
-          <div ref={endRef} />
+          {/* Messages History List */}
+          <div className="space-y-4">
+            {messages.map((msg) => (
+              <ChatMessage
+                key={msg.id}
+                msg={msg}
+                isStreaming={streamingId === msg.id}
+                onStreamDone={handleStreamDone}
+                userPhoto={userPhoto}
+                userName={userName}
+                onNextStep={(step) => {
+                  if (step.startsWith('Executar: ')) {
+                    const spec = step.replace('Executar: ', '');
+                    router.push(`/hub/assistente-ia?agent=${activeAgent?.id}&specialty=${encodeURIComponent(spec)}`);
+                  } else {
+                    handleSend(step);
+                  }
+                }}
+                activeAgent={activeAgent}
+                onFormSubmit={handleFormSubmit}
+              />
+            ))}
+            {chatState === 'thinking' && <AnalyzingIndicator key="analyzing" activeAgent={activeAgent} />}
+            <div ref={endRef} />
+          </div>
         </div>
+
+        {/* Input Dock at the bottom */}
+        <InputDock
+          onSend={(prompt, tone, attachedFile) => {
+            let finalPrompt = prompt;
+            if (attachedFile) {
+              finalPrompt = `[Arquivo Anexado: ${attachedFile.name} (${attachedFile.type})]\n\n${prompt}`;
+            }
+            handleSend(finalPrompt);
+          }}
+          chatState={chatState}
+          lastQuery={lastQuery}
+        />
       </div>
 
       {isCustomAutomationModalOpen && activeAgent && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-4 py-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setIsCustomAutomationModalOpen(false)} />
 
-          <div className="relative w-full max-w-[700px] max-h-[96vh] rounded-[32px] bg-[#eef2f7] border border-white/80 shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-slate-800 flex flex-col">
+          <div className="relative w-full max-w-[1080px] max-h-[96vh] rounded-[32px] bg-[#eef2f7] border border-white/80 shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-slate-800 flex flex-col">
             {/* Header */}
             <div className="relative border-b border-slate-200 bg-[#eef2f7] px-6 py-5 flex flex-col gap-1 shrink-0">
               <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold">Programação Automática</p>
@@ -2894,152 +3005,163 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
             </div>
 
             {/* Modal Body */}
-            <div className="p-6 overflow-y-auto space-y-5 flex-1">
-              {/* Step 1: Select Operation */}
-              <div className="flex flex-col gap-2">
-                <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
-                  1. Selecione a Operação do Agente:
-                </label>
-                <select
-                  value={selectedOperationTitle}
-                  onChange={(e) => {
-                    setSelectedOperationTitle(e.target.value);
-                    setCustomFieldsValues({});
-                  }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-white shadow-sm outline-none focus:ring-2 focus:ring-[#FF6A00]/15 transition-all cursor-pointer text-slate-700"
-                >
-                  <option value="">— Selecione uma Operação —</option>
-                  {activeAgent.specialtyTitles.map((title) => (
-                    <option key={title} value={title}>
-                      ⚡ {title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {selectedOperationTitle && (
-                <>
-                  {/* Step 2: Connected Channels */}
-                  <div className="space-y-2">
+            <div className="p-6 overflow-y-auto flex-1">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start text-left">
+                
+                {/* Left Column: Configuration */}
+                <div className="space-y-5">
+                  {/* Step 1: Select Operation */}
+                  <div className="flex flex-col gap-2">
                     <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
-                      2. Canais Necessários para esta Operação:
+                      1. Selecione a Operação do Agente:
                     </label>
-                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                      {(() => {
-                        const specObj = allSpecialties.find(s => s.title === selectedOperationTitle);
-                        const requiredKeys = specObj?.requiredConnectors || [];
-                        if (requiredKeys.length === 0) {
-                          return <p className="text-xs text-slate-500 italic">Nenhum canal obrigatório para esta operação.</p>;
-                        }
-                        return requiredKeys.map((key) => {
-                          const isConnected = connectorStatus[key];
-                          return (
-                            <div
-                              key={key}
-                              className={`rounded-full border px-4 py-2 flex items-center justify-between text-xs font-semibold ${
-                                isConnected
-                                  ? 'border-emerald-500/20 bg-emerald-500/5 text-emerald-700'
-                                  : 'border-red-500/20 bg-red-500/5 text-red-700'
-                              }`}
-                            >
-                              <span>{key}</span>
-                              <span className="text-[10px] font-black">{isConnected ? 'CONECTADO' : 'DESCONECTADO'}</span>
-                            </div>
-                          );
-                        });
-                      })()}
-                    </div>
+                    <select
+                      value={selectedOperationTitle}
+                      onChange={(e) => {
+                        setSelectedOperationTitle(e.target.value);
+                        setCustomFieldsValues({});
+                      }}
+                      className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-white shadow-sm outline-none focus:ring-2 focus:ring-[#FF6A00]/15 transition-all cursor-pointer text-slate-700"
+                    >
+                      <option value="">— Selecione uma Operação —</option>
+                      {activeAgent.specialtyTitles.map((title) => (
+                        <option key={title} value={title}>
+                          ⚡ {title}
+                        </option>
+                      ))}
+                    </select>
                   </div>
 
-                  {/* Step 3: Custom Fields for Specialty */}
-                  {(() => {
-                    const fields = SPECIALTY_FIELDS[selectedOperationTitle] || [];
-                    if (fields.length === 0) return null;
-                    return (
-                      <div className="space-y-3">
+                  {selectedOperationTitle && (
+                    <>
+                      {/* Step 2: Connected Channels */}
+                      <div className="space-y-2">
                         <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
-                          3. Configurações da Operação (Campos Necessários):
+                          2. Canais Necessários para esta Operação:
                         </label>
-                        <div className="grid grid-cols-1 gap-3">
-                          {fields.map((f) => (
-                            <div key={f.name} className="flex flex-col gap-1.5">
-                              <label className="text-xs font-bold text-slate-500">{f.label}</label>
-                              <input
-                                type={f.type === 'number' ? 'text' : f.type}
-                                placeholder={f.placeholder}
-                                value={customFieldsValues[f.name] || ''}
-                                onChange={(e) => setCustomFieldsValues(prev => ({ ...prev, [f.name]: e.target.value }))}
-                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-white outline-none focus:ring-2 focus:ring-[#FF6A00]/15 transition-all text-slate-700"
-                              />
-                            </div>
-                          ))}
+                        <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                          {(() => {
+                            const specObj = allSpecialties.find(s => s.title === selectedOperationTitle);
+                            const requiredKeys = specObj?.requiredConnectors || [];
+                            if (requiredKeys.length === 0) {
+                              return <p className="text-xs text-slate-500 italic">Nenhum canal obrigatório para esta operação.</p>;
+                            }
+                            return requiredKeys.map((key) => {
+                              const isConnected = connectorStatus[key];
+                              return (
+                                <div
+                                  key={key}
+                                  className={`rounded-full border px-4 py-2 flex items-center justify-between text-xs font-semibold ${
+                                    isConnected
+                                      ? 'border-emerald-500/20 bg-emerald-500/5 text-emerald-700'
+                                      : 'border-red-500/20 bg-red-500/5 text-red-700'
+                                  }`}
+                                >
+                                  <span>{key}</span>
+                                  <span className="text-[10px] font-black">{isConnected ? 'CONECTADO' : 'DESCONECTADO'}</span>
+                                </div>
+                              );
+                            });
+                          })()}
                         </div>
                       </div>
-                    );
-                  })()}
 
-                  {/* Step 4: Cadence & Schedule Selection */}
-                  <div className="space-y-3">
-                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
-                      4. Cadência e Cronograma de Execução:
-                    </label>
-                    
-                    {/* Cadences */}
-                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
-                      {automationSuggestions.map((suggestion) => {
-                        const isSelected = selectedAutomationId === suggestion.id;
+                      {/* Step 3: Custom Fields for Specialty */}
+                      {(() => {
+                        const fields = SPECIALTY_FIELDS[selectedOperationTitle] || [];
+                        if (fields.length === 0) return null;
                         return (
-                          <div
-                            key={suggestion.id}
-                            onClick={() => setSelectedAutomationId(suggestion.id)}
-                            className={`cursor-pointer rounded-2xl border p-3.5 text-left transition-all duration-200 ${
-                              isSelected
-                                ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-[#0f172a]'
-                                : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
-                            }`}
-                          >
-                            <p className="text-xs font-black text-[#0f172a]">{suggestion.title}</p>
-                            <p className="mt-1 text-[10px] text-slate-500 font-semibold">{suggestion.cadence}</p>
+                          <div className="space-y-3">
+                            <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
+                              3. Configurações da Operação (Campos Necessários):
+                            </label>
+                            <div className="grid grid-cols-1 gap-3">
+                              {fields.map((f) => (
+                                <div key={f.name} className="flex flex-col gap-1.5">
+                                  <label className="text-xs font-bold text-slate-500">{f.label}</label>
+                                  <input
+                                    type={f.type === 'number' ? 'text' : f.type}
+                                    placeholder={f.placeholder}
+                                    value={customFieldsValues[f.name] || ''}
+                                    onChange={(e) => setCustomFieldsValues(prev => ({ ...prev, [f.name]: e.target.value }))}
+                                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-white outline-none focus:ring-2 focus:ring-[#FF6A00]/15 transition-all text-slate-700"
+                                  />
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         );
-                      })}
-                    </div>
-
-                    {/* Schedule Options */}
-                    {selectedSuggestion && (
-                      <div className="mt-2 space-y-2">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">Dias e horários recomendados</p>
-                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                          {selectedSuggestion.scheduleOptions.map((opt) => {
-                            const isOptSelected = selectedScheduleOptionId === opt.id;
-                            return (
-                              <button
-                                key={opt.id}
-                                type="button"
-                                onClick={() => setSelectedScheduleOptionId(opt.id)}
-                                className={`cursor-pointer rounded-xl border p-3 text-left transition-all duration-200 w-full ${
-                                  isOptSelected
-                                    ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
-                                    : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]'
-                                }`}
-                              >
-                                <p className="text-xs font-black text-[#0f172a]">{opt.label}</p>
-                                <p className="mt-0.5 text-[10px] text-slate-500 font-semibold leading-tight">{opt.detail}</p>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </>
-              )}
-
-              {automationNotice && (
-                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 shadow-sm">
-                  {automationNotice}
+                      })()}
+                    </>
+                  )}
                 </div>
-              )}
+
+                {/* Right Column: Cadence & Schedule */}
+                <div className="space-y-5">
+                  {selectedOperationTitle && (
+                    <div className="space-y-4">
+                      <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
+                        4. Cadência e Cronograma de Execução:
+                      </label>
+                      
+                      {/* Cadences */}
+                      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        {automationSuggestions.map((suggestion) => {
+                          const isSelected = selectedAutomationId === suggestion.id;
+                          return (
+                            <div
+                              key={suggestion.id}
+                              onClick={() => setSelectedAutomationId(suggestion.id)}
+                              className={`cursor-pointer rounded-2xl border p-3.5 text-left transition-all duration-200 ${
+                                isSelected
+                                  ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-[#0f172a]'
+                                  : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                              }`}
+                            >
+                              <p className="text-xs font-black text-[#0f172a]">{suggestion.title}</p>
+                              <p className="mt-1 text-[10px] text-slate-500 font-semibold">{suggestion.cadence}</p>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Schedule Options */}
+                      {selectedSuggestion && (
+                        <div className="mt-2 space-y-2">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">Dias e horários recomendados</p>
+                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                            {selectedSuggestion.scheduleOptions.map((opt) => {
+                              const isOptSelected = selectedScheduleOptionId === opt.id;
+                              return (
+                                <button
+                                  key={opt.id}
+                                  type="button"
+                                  onClick={() => setSelectedScheduleOptionId(opt.id)}
+                                  className={`cursor-pointer rounded-xl border p-3 text-left transition-all duration-200 w-full ${
+                                    isOptSelected
+                                      ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                                      : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]'
+                                  }`}
+                                >
+                                  <p className="text-xs font-black text-[#0f172a]">{opt.label}</p>
+                                  <p className="mt-0.5 text-[10px] text-slate-500 font-semibold leading-tight">{opt.detail}</p>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {automationNotice && (
+                    <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 shadow-sm mt-4">
+                      {automationNotice}
+                    </div>
+                  )}
+                </div>
+
+              </div>
             </div>
 
             {/* Footer */}
