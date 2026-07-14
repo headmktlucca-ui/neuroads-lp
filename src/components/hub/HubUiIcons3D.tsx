@@ -310,3 +310,140 @@ export function IconFileDoc3D(p: IconProps) {
     </Svg>
   );
 }
+
+/* ─── Ads — megafone laranja-vermelho ────────────────────────────────── */
+export function IconAds3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-ads" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF9040" /><stop offset="1" stopColor="#C83200" />
+        </linearGradient>
+        <linearGradient id="hui-ads-bell" x1="30" y1="28" x2="44" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFB870" /><stop offset="1" stopColor="#E04A00" />
+        </linearGradient>
+      </defs>
+      {/* Megafone corpo principal */}
+      <path d="M10 18 h6 l18-10 v28 L16 26 h-6 a4 4 0 0 1-4-4 v-0 a4 4 0 0 1 4-4z" fill="url(#hui-ads)" />
+      {/* Bocal */}
+      <path d="M34 36 a10 10 0 0 0 0-20" stroke="url(#hui-ads)" strokeWidth="4.5" strokeLinecap="round" fill="none" opacity="0.75" />
+      <path d="M34 30 a4 4 0 0 0 0-8" stroke="url(#hui-ads)" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+      {/* Cabo */}
+      <rect x="12" y="26" width="6" height="9" rx="2" fill="url(#hui-ads)" opacity="0.85" />
+      {/* Brilho de vidro */}
+      <ellipse cx="18" cy="14" rx="7" ry="2.8" fill="white" fillOpacity="0.32" />
+      {/* Sombra base */}
+      <ellipse cx="24" cy="45" rx="13" ry="2" fill="#C83200" fillOpacity="0.15" />
+    </Svg>
+  );
+}
+
+/* ─── Redes Sociais — nós conectados índigo-violeta ─────────────────── */
+export function IconSocial3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-social" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#A78BFA" /><stop offset="1" stopColor="#4F46E5" />
+        </linearGradient>
+      </defs>
+      {/* Linhas de conexão */}
+      <line x1="24" y1="24" x2="10" y2="12" stroke="url(#hui-social)" strokeWidth="3.5" strokeLinecap="round" opacity="0.7" />
+      <line x1="24" y1="24" x2="38" y2="12" stroke="url(#hui-social)" strokeWidth="3.5" strokeLinecap="round" opacity="0.7" />
+      <line x1="24" y1="24" x2="10" y2="38" stroke="url(#hui-social)" strokeWidth="3.5" strokeLinecap="round" opacity="0.55" />
+      <line x1="24" y1="24" x2="38" y2="38" stroke="url(#hui-social)" strokeWidth="3.5" strokeLinecap="round" opacity="0.55" />
+      <line x1="10" y1="12" x2="38" y2="12" stroke="url(#hui-social)" strokeWidth="2.5" strokeLinecap="round" opacity="0.35" />
+      <line x1="10" y1="38" x2="38" y2="38" stroke="url(#hui-social)" strokeWidth="2.5" strokeLinecap="round" opacity="0.35" />
+      {/* Nó central */}
+      <circle cx="24" cy="24" r="6.5" fill="url(#hui-social)" />
+      <circle cx="24" cy="24" r="3.5" fill="white" fillOpacity="0.9" />
+      {/* Nós satélites */}
+      <circle cx="10" cy="12" r="4.5" fill="url(#hui-social)" opacity="0.9" />
+      <circle cx="38" cy="12" r="4.5" fill="url(#hui-social)" />
+      <circle cx="10" cy="38" r="3.5" fill="url(#hui-social)" opacity="0.7" />
+      <circle cx="38" cy="38" r="3.5" fill="url(#hui-social)" opacity="0.8" />
+      {/* Brilho de vidro no nó principal */}
+      <ellipse cx="20" cy="20" rx="5" ry="2.4" fill="white" fillOpacity="0.32" />
+      {/* Sombra base */}
+      <ellipse cx="24" cy="45" rx="13" ry="2" fill="#4F46E5" fillOpacity="0.15" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: Seguidores Totais (Pessoas) ─────────────────────────── */
+export function IconFollowers3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-followers" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF9A55" /><stop offset="1" stopColor="#E63E00" />
+        </linearGradient>
+      </defs>
+      <circle cx="24" cy="14" r="7" fill="url(#hui-followers)" />
+      <path d="M12 36C12 29.3726 17.3726 24 24 24C30.6274 24 36 29.3726 36 36V38H12V36Z" fill="url(#hui-followers)" />
+      <circle cx="12" cy="18" r="5" fill="url(#hui-followers)" opacity="0.6" />
+      <path d="M5 36C5 31.5817 8.58172 28 13 28H15V38H5V36Z" fill="url(#hui-followers)" opacity="0.6" />
+      <circle cx="36" cy="18" r="5" fill="url(#hui-followers)" opacity="0.6" />
+      <path d="M43 36C43 31.5817 39.4183 28 35 28H33V38H43V36Z" fill="url(#hui-followers)" opacity="0.6" />
+      <ellipse cx="21" cy="11" rx="4" ry="2" fill="white" fillOpacity="0.3" />
+      <ellipse cx="20" cy="27" rx="6" ry="2" fill="white" fillOpacity="0.2" />
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#E63E00" fillOpacity="0.15" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: Alcance Médio (Olho) ─────────────────────────── */
+export function IconReach3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-reach" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#5AAEFF" /><stop offset="1" stopColor="#1240B8" />
+        </linearGradient>
+      </defs>
+      <path d="M24 10C14 10 6 24 6 24C6 24 14 38 24 38C34 38 42 24 42 24C42 24 34 10 24 10Z" fill="url(#hui-reach)" />
+      <circle cx="24" cy="24" r="9" fill="white" fillOpacity="0.95" />
+      <circle cx="24" cy="24" r="5" fill="url(#hui-reach)" />
+      <ellipse cx="22" cy="22" rx="2" ry="1" fill="white" />
+      <ellipse cx="18" cy="15" rx="8" ry="3" fill="white" fillOpacity="0.3" transform="rotate(-15 18 15)" />
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#1240B8" fillOpacity="0.15" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: Curtidas / Reações (Coração) ─────────────────────────── */
+export function IconLikes3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-likes" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F472B6" /><stop offset="1" stopColor="#BE185D" />
+        </linearGradient>
+      </defs>
+      <path d="M24 41.5L21.1 38.8C10.8 29.5 4 23.3 4 15.5C4 9.2 8.9 4.2 15 4.2C18.5 4.2 21.8 5.8 24 8.3C26.2 5.8 29.5 4.2 33 4.2C39.1 4.2 44 9.2 44 15.5C44 23.3 37.2 29.5 26.9 38.9L24 41.5Z" fill="url(#hui-likes)" />
+      <ellipse cx="15" cy="10" rx="6" ry="3" fill="white" fillOpacity="0.35" transform="rotate(-25 15 10)" />
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#BE185D" fillOpacity="0.15" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: Engajamento (Gráfico com seta) ─────────────────────────── */
+export function IconEngagement3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-engagement" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#3EE59A" /><stop offset="1" stopColor="#036C4A" />
+        </linearGradient>
+      </defs>
+      <rect x="6" y="26" width="8" height="14" rx="2" fill="url(#hui-engagement)" opacity="0.6" />
+      <rect x="18" y="16" width="8" height="24" rx="2" fill="url(#hui-engagement)" opacity="0.8" />
+      <rect x="30" y="8" width="8" height="32" rx="2" fill="url(#hui-engagement)" />
+      <path d="M42 6 L32 6 L32 16 L35.5 12.5 L24 24 L16 16 L4 28" stroke="url(#hui-engagement)" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <polygon points="42,6 32,6 42,16" fill="url(#hui-engagement)" />
+      <ellipse cx="34" cy="12" rx="3" ry="1.5" fill="white" fillOpacity="0.4" />
+      <ellipse cx="22" cy="18" rx="3" ry="1.5" fill="white" fillOpacity="0.3" />
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#036C4A" fillOpacity="0.15" />
+    </Svg>
+  );
+}

@@ -39,7 +39,7 @@ export function ScreenshotShowcase() {
     <Tabs
       value={String(activeIndex)}
       onValueChange={v => setActiveIndex(Number(v))}
-      className="w-full items-center gap-5"
+      className="w-full flex flex-col gap-6"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -61,53 +61,49 @@ export function ScreenshotShowcase() {
         </TabsList>
       </div>
 
-      {/* Screenshot area — browser mockup */}
-      <div className="relative w-full">
-        {/* Browser frame */}
-        <div className="rounded-2xl overflow-hidden border border-slate-200/80 shadow-[0_24px_64px_rgba(0,0,0,0.13),0_4px_16px_rgba(0,0,0,0.07)] bg-white">
-          {/* macOS-style title bar */}
-          <div className="flex items-center gap-2 px-4 py-3 bg-[#f0f0f2] border-b border-slate-200/70">
-            <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
-            <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
-            <span className="w-3 h-3 rounded-full bg-[#28c840]" />
-            <div className="flex-1 mx-3 bg-white/80 rounded-md px-3 py-1 text-[10px] text-slate-400 border border-slate-200/60 font-mono">
-              app.neuroads.com.br/hub
-            </div>
-          </div>
-
-          {/* Screenshot with cross-fade */}
-          <div className="relative overflow-hidden" style={{ aspectRatio: '16/9' }}>
-            {items.map((item, index) => (
-              <div
-                key={item.label}
-                className={cn(
-                  'absolute inset-0 transition-opacity duration-500',
-                  index === activeIndex ? 'opacity-100' : 'opacity-0',
-                )}
-              >
-                <img
-                  src={item.src}
-                  alt={item.label}
-                  loading={index === 0 ? 'eager' : 'lazy'}
-                  decoding="async"
-                  className="absolute inset-0 size-full object-cover object-top"
-                  draggable={false}
-                />
-              </div>
-            ))}
-
-            {/* Gradient vignette bottom */}
-            <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-white/20 to-transparent pointer-events-none" />
-          </div>
-        </div>
-
-        {/* Orange left accent stripe */}
-        <div
-          className="absolute left-0 top-[44px] bottom-0 w-[3px] rounded-bl-2xl z-10"
-          style={{ background: 'linear-gradient(180deg, #FF6A00 0%, #FF9A56 100%)' }}
+      {/* Screenshot area — laptop mockup */}
+      <div className="relative w-full mx-auto max-w-4xl">
+        {/* Laptop Body mockup image */}
+        <img
+          src="/images/note.jpeg"
+          alt="Laptop Mockup"
+          className="w-full h-auto block select-none pointer-events-none drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
+          draggable={false}
         />
 
-        {/* Progress dots */}
+        {/* Laptop Screen - overlaying the black screen area in the photo */}
+        <div 
+          className="absolute overflow-hidden rounded-[0.8%] bg-slate-950 shadow-[inset_0_4px_12px_rgba(0,0,0,0.8)]"
+          style={{
+            top: '6.0%',
+            left: '10.8%',
+            width: '78.4%',
+            height: '72.6%'
+          }}
+        >
+          {items.map((item, index) => (
+            <div
+              key={item.label}
+              className={cn(
+                'absolute inset-0 transition-opacity duration-500',
+                index === activeIndex ? 'opacity-100 animate-in fade-in-50 duration-500' : 'opacity-0',
+              )}
+            >
+              <img
+                src={item.src}
+                alt={item.label}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                className="absolute inset-0 size-full object-cover object-top"
+                draggable={false}
+              />
+            </div>
+          ))}
+          {/* Subtle screen reflection layer */}
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-white/10 pointer-events-none" />
+        </div>
+
+        {/* Progress dots - positioned elegantly under the laptop */}
         <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
           {items.map((_, i) => (
             <button
@@ -120,11 +116,6 @@ export function ScreenshotShowcase() {
               )}
             />
           ))}
-        </div>
-
-        {/* NeuroAds watermark */}
-        <div className="absolute bottom-3 left-5 z-20">
-          <span className="text-[10px] font-semibold text-slate-400 tracking-widest uppercase">NeuroAds</span>
         </div>
       </div>
     </Tabs>

@@ -342,7 +342,7 @@ export default function TeamLabShell() {
             value: '10', 
             icon: (
               <KpiIconWrapper fromColor="#FF9A55" toColor="#E63E00" shadowColor="rgba(201, 55, 0, 0.4)">
-                <Users size={15} />
+                <Users size={22} />
               </KpiIconWrapper>
             )
           },
@@ -351,7 +351,7 @@ export default function TeamLabShell() {
             value: `${totalActive}`, 
             icon: (
               <KpiIconWrapper fromColor="#5AAEFF" toColor="#1240B8" shadowColor="rgba(12, 46, 158, 0.4)">
-                <Activity size={15} />
+                <Activity size={22} />
               </KpiIconWrapper>
             )
           },
@@ -360,7 +360,7 @@ export default function TeamLabShell() {
             value: '10', 
             icon: (
               <KpiIconWrapper fromColor="#3EE59A" toColor="#036C4A" shadowColor="rgba(2, 82, 58, 0.4)">
-                <Zap size={15} />
+                <Zap size={22} />
               </KpiIconWrapper>
             )
           },
@@ -369,7 +369,7 @@ export default function TeamLabShell() {
             value: '100%', 
             icon: (
               <KpiIconWrapper fromColor="#B487F5" toColor="#54189E" shadowColor="rgba(62, 14, 122, 0.4)">
-                <Sparkles size={15} />
+                <Sparkles size={22} />
               </KpiIconWrapper>
             )
           },

@@ -20,6 +20,12 @@ import {
 import { useAuth } from '../../../context/AuthContext';
 import { loadUserConnections, type ConnectionsMap } from '../../../lib/connector-save';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+import { 
+  IconFollowers3D, 
+  IconReach3D, 
+  IconLikes3D, 
+  IconEngagement3D 
+} from '../../../components/hub/HubUiIcons3D';
 
 // Mock publications for demo
 const MOCK_POSTS = [
@@ -72,18 +78,18 @@ export default function RedesSociaisDashboardPage() {
   const kpis = useMemo(() => {
     if (!hasConnected) {
       return [
-        { label: 'Seguidores Totais', value: '0', sub: 'Sem canais conectados', icon: Users, isNa: true },
-        { label: 'Alcance Médio', value: '0', sub: 'Sem tráfego ativo', icon: Eye, isNa: true },
-        { label: 'Reações / Curtidas', value: '0', sub: 'Sem interações', icon: Heart, isNa: true },
-        { label: 'Taxa de Engajamento', value: '0.0%', sub: 'Sem engajamento', icon: TrendingUp, isNa: true }
+        { label: 'Seguidores Totais', value: '0', sub: 'Sem canais conectados', icon: IconFollowers3D, isNa: true },
+        { label: 'Alcance Médio', value: '0', sub: 'Sem tráfego ativo', icon: IconReach3D, isNa: true },
+        { label: 'Reações / Curtidas', value: '0', sub: 'Sem interações', icon: IconLikes3D, isNa: true },
+        { label: 'Taxa de Engajamento', value: '0.0%', sub: 'Sem engajamento', icon: IconEngagement3D, isNa: true }
       ];
     }
 
     return [
-      { label: 'Seguidores Totais', value: '25.380', sub: '+3.2% esta semana', icon: Users, isNa: false },
-      { label: 'Alcance Médio', value: '38.500', sub: 'Pessoas alcançadas', icon: Eye, isNa: false },
-      { label: 'Reações / Curtidas', value: '15.230', sub: 'Interações no período', icon: Heart, isNa: false },
-      { label: 'Taxa de Engajamento', value: '7.1%', sub: 'Média de interações', icon: TrendingUp, isNa: false }
+      { label: 'Seguidores Totais', value: '25.380', sub: '+3.2% esta semana', icon: IconFollowers3D, isNa: false },
+      { label: 'Alcance Médio', value: '38.500', sub: 'Pessoas alcançadas', icon: IconReach3D, isNa: false },
+      { label: 'Reações / Curtidas', value: '15.230', sub: 'Interações no período', icon: IconLikes3D, isNa: false },
+      { label: 'Taxa de Engajamento', value: '7.1%', sub: 'Média de interações', icon: IconEngagement3D, isNa: false }
     ];
   }, [hasConnected]);
 
@@ -206,9 +212,9 @@ export default function RedesSociaisDashboardPage() {
                   className="rounded-2xl border border-white/80 bg-[#eef2f7] p-5 shadow-[6px_6px_18px_#c2cbd9,_-6px_-6px_18px_#ffffff]"
                 >
                   <div className="flex justify-between items-start gap-2 mb-3">
-                    <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">{kpi.label}</span>
-                    <div className="w-7 h-7 rounded-xl border border-white/60 bg-white flex items-center justify-center text-slate-500 shadow-sm">
-                      <KpiIcon size={14} className={kpi.isNa ? 'text-slate-300' : 'text-[#FF6A00]'} />
+                    <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider mt-1">{kpi.label}</span>
+                    <div className="shrink-0 flex items-center justify-center">
+                      <KpiIcon size={34} className={kpi.isNa ? 'opacity-40 grayscale' : ''} />
                     </div>
                   </div>
 

@@ -33,8 +33,6 @@ import {
   X,
   Sparkles,
   Users,
-  Megaphone,
-  Share2,
 } from 'lucide-react';
 import {
   IconDashboard3D,
@@ -48,6 +46,8 @@ import {
   IconChart3D,
   IconTarget3D,
   IconRefresh3D,
+  IconAds3D,
+  IconSocial3D,
 } from '../../components/hub/HubUiIcons3D';
 import { CompanySwitcherTrigger } from '../../components/hub/CompanySwitcher';
 import { useCompanyMigration } from '../../hooks/useCompanyMigration';
@@ -93,8 +93,8 @@ const NAV_GROUPS: NavGroup[] = [
         ],
       },
       { icon: IconFunnel3D,     label: 'CRM',                  href: '/hub/funil-vendas' },
-      { icon: Megaphone,        label: 'Ads',                  href: '/hub/ads' },
-      { icon: Share2,           label: 'Redes Sociais',        href: '/hub/redes-sociais' },
+      { icon: IconAds3D,        label: 'Ads',                  href: '/hub/ads' },
+      { icon: IconSocial3D,     label: 'Redes Sociais',        href: '/hub/redes-sociais' },
       { icon: IconAutomation3D, label: 'Automações',           href: '/hub/automacoes' },
     ],
   },
