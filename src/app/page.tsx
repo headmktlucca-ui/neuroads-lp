@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Menu, X, Volume2, VolumeX } from 'lucide-react';
-import RadialOrbitalTimeline from '../components/ui/radial-orbital-timeline';
 import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
 import HeroSilkBackground from '@/components/ui/HeroSilkBackground';
 import FunnelInteractiveShowcase from '@/components/neuroads/FunnelInteractiveShowcase';
@@ -204,7 +203,7 @@ function AgentProfileCard({ agent }: { agent: any }) {
       {/* Right Side: Overlay Details Card */}
       <div className="w-full md:w-[75%] md:-ml-8 p-6 md:p-6 rounded-3xl border border-white/80 bg-white shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] z-20 flex flex-col space-y-3">
         <div className="space-y-0.5">
-          <h4 className="font-head font-extrabold text-xl text-slate-900 tracking-tight leading-none">
+          <h4 className="font-title font-extrabold text-xl text-slate-900 tracking-tight leading-none">
             {agent.title}
           </h4>
           <p className="text-[10px] font-extrabold text-[#FF5500] uppercase tracking-wider">
@@ -248,7 +247,7 @@ export default function TempLandingPage() {
   const [activeAgent, setActiveAgent] = useState<any>(null);
   const [isSobreOpen, setIsSobreOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
+
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -258,9 +257,6 @@ export default function TempLandingPage() {
       setIsMuted(videoRef.current.muted);
     }
   };
-
-  const { scrollY } = useScroll();
-  const backgroundY = useTransform(scrollY, [0, 1000], [0, 500]);
 
   const solutionsSectionRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress: solutionsScrollYProgress } = useScroll({
@@ -522,35 +518,85 @@ export default function TempLandingPage() {
       </header>
 
       {/* ========================================================================= */}
-      {/* HERO SECTION WITH PARALLAX BACKGROUND */}
       {/* ========================================================================= */}
-      <div className="relative w-full overflow-hidden pt-28 pb-8 md:pb-16">
-        {/* Parallax Background Wrapper */}
-        <motion.div
-          style={{ y: backgroundY }}
-          className="absolute -top-80 -bottom-80 inset-x-0 overflow-hidden bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] z-[1]"
-        >
-          <div className="absolute top-80 bottom-80 inset-x-0">
-            <HeroCircuitBackground id="circuit-hero" />
-          </div>
-        </motion.div>
-
-        {/* HERO CONTENT */}
-        <section className="relative z-[2] w-full px-4 sm:px-8 lg:px-24 pt-6 md:pt-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
-          {/* Left Side Info */}
-          <div className="lg:col-span-7 flex flex-col items-start order-2 lg:order-1">
-            {/* Headline */}
-            <h1 className="font-head font-extrabold text-3xl md:text-4xl lg:text-5xl text-slate-900 leading-[1.12] tracking-tight max-w-3xl">
-              Operações IA Estratégicas em <span className="text-[#FF5500]">Marketing & Vendas B2B</span>.
+      {/* HERO SECTION WITH NEURAL SILK BACKGROUND */}
+      {/* ========================================================================= */}
+      <section className="hero relative min-h-screen overflow-hidden bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] flex items-center">
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes rise {
+            from { opacity: 0; transform: translateY(22px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          .animate-rise-eyebrow {
+            opacity: 0;
+            animation: rise .9s .15s cubic-bezier(.22,1,.36,1) forwards;
+          }
+          .animate-rise-title {
+            opacity: 0;
+            animation: rise .9s .3s cubic-bezier(.22,1,.36,1) forwards;
+          }
+          .animate-rise-sub {
+            opacity: 0;
+            animation: rise .9s .45s cubic-bezier(.22,1,.36,1) forwards;
+          }
+          .animate-rise-actions {
+            opacity: 0;
+            animation: rise .9s .6s cubic-bezier(.22,1,.36,1) forwards;
+          }
+          .animate-rise-image {
+            opacity: 0;
+            animation: rise .9s .75s cubic-bezier(.22,1,.36,1) forwards;
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .animate-rise-eyebrow, .animate-rise-title, .animate-rise-sub, .animate-rise-actions, .animate-rise-image {
+              animation: none !important;
+              opacity: 1 !important;
+              transform: none !important;
+            }
+          }
+          .hero-btn {
+            font-size: 15px;
+            font-weight: 500;
+            padding: 15px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s, background-color .25s;
+          }
+          .hero-btn-primary {
+            background: #FF6A00;
+            color: #fff;
+            border: none;
+            box-shadow: 0 8px 28px rgba(255,106,0,.28);
+          }
+          .hero-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 36px rgba(255,106,0,.36);
+          }
+          .hero-btn-ghost {
+            background: rgba(255,255,255,.55);
+            color: #1A2230;
+            border: 1px solid rgba(26,34,48,.12);
+            backdrop-filter: blur(10px);
+          }
+          .hero-btn-ghost:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,.8);
+          }
+        `}} />
+        
+        {/* Animated Background (Circuit) */}
+        <HeroCircuitBackground id="circuit-hero" />
+        <div className="relative z-[2] w-full px-6 md:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[calc(100vh-120px)] pt-20 lg:pt-0">
+          <div className="lg:col-span-7 flex flex-col items-start text-left">
+            <h1 className="font-title font-light text-[32px] md:text-[48px] leading-[1.14] text-slate-900 tracking-tight max-w-3xl mt-[26px] mb-[22px] animate-rise-title">
+              Operações IA Estratégicas em <br /> <span className="font-semibold text-[#FF5500]">Marketing &amp; Vendas B2B</span>.
             </h1>
-
-            {/* Subtitle */}
-            <p className="text-slate-600 text-base md:text-lg leading-relaxed mt-6 max-w-xl">
+            <p className="font-sans text-[clamp(1rem,1.4vw,1.15rem)] leading-[1.65] text-[#5A6678] max-w-[46ch] animate-rise-sub">
               A NeuroAds une campanhas patrocinadas, automação e um ecossistema de agentes inteligentes para transformar o marketing e o comercial da sua empresa B2B em uma máquina previsível de receita.
             </p>
-
-            {/* Call to Actions */}
-            <div className="flex flex-col items-start mt-8 w-full">
+            <div className="flex flex-col items-start mt-8 w-full animate-rise-actions">
               <Link
                 href="/cadastro"
                 className="inline-flex items-center justify-center font-bold text-sm px-8 py-4 rounded-2xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[4px_4px_12px_rgba(255,85,0,0.3),-4px_-4px_12px_#ffffff] hover:shadow-[6px_6px_16px_rgba(255,85,0,0.45),-6px_-6px_16px_#ffffff] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 gap-2 border border-orange-400/20"
@@ -561,34 +607,33 @@ export default function TempLandingPage() {
                 Experimente por 14 dias sem custos.
               </span>
             </div>
-
-            {/* Dynamic Interactive Agent Profile Card removido a pedido do usuário */}
           </div>
-
-          {/* Right Side - Video (visible on all screens) */}
-          <div className="flex lg:col-span-5 items-center justify-center relative mt-0 lg:mt-0 order-1 lg:order-2 group">
-            <video
-              ref={videoRef}
-              src="/videos/VD_Ap_26_1.mp4"
-              autoPlay
-              loop
-              muted={isMuted}
-              playsInline
-              webkit-playsinline="true"
-              x5-playsinline="true"
-              className="w-full h-auto max-h-[55vw] lg:max-h-none object-contain rounded-[20px] lg:rounded-[32px] shadow-[4px_4px_10px_#c8d0e7,-4px_-4px_10px_#ffffff] lg:shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50"
-            />
-            {/* Mute button: always visible on mobile (no hover), shown on hover on desktop */}
-            <button
-              onClick={toggleMute}
-              className="absolute bottom-4 right-4 lg:bottom-6 lg:right-6 p-2.5 lg:p-3 rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80 transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100 shadow-lg border border-white/20"
-              title={isMuted ? "Ativar som" : "Desativar som"}
-            >
-              {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
-            </button>
+          
+          <div className="lg:col-span-5 flex items-center justify-center lg:justify-end relative animate-rise-image group mt-8 lg:mt-0">
+            <div className="relative w-full">
+              <video
+                ref={videoRef}
+                src="/videos/VD_Ap_26_1.mp4"
+                autoPlay
+                loop
+                muted={isMuted}
+                playsInline
+                webkit-playsinline="true"
+                x5-playsinline="true"
+                className="w-full h-auto max-h-[55vw] lg:max-h-none object-contain rounded-[20px] lg:rounded-[32px] shadow-[4px_4px_10px_#c8d0e7,-4px_-4px_10px_#ffffff] lg:shadow-[8px_8px_16px_#c8d0e7,-8px_-8px_16px_#ffffff] border border-white/50"
+              />
+              {/* Mute button */}
+              <button
+                onClick={toggleMute}
+                className="absolute bottom-4 right-4 lg:bottom-6 lg:right-6 p-2.5 lg:p-3 rounded-full bg-black/60 text-white backdrop-blur-md hover:bg-black/80 transition-all opacity-100 lg:opacity-0 lg:group-hover:opacity-100 shadow-lg border border-white/20"
+                title={isMuted ? "Ativar som" : "Desativar som"}
+              >
+                {isMuted ? <VolumeX size={18} /> : <Volume2 size={18} />}
+              </button>
+            </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
 
 
 
@@ -643,7 +688,7 @@ export default function TempLandingPage() {
         >
           <div className="md:col-span-2">
             {/* Title */}
-            <h2 className="font-head font-extrabold text-3xl md:text-4xl text-slate-900 leading-[1.15] tracking-tight">
+            <h2 className="font-title font-extrabold text-3xl md:text-4xl text-slate-900 leading-[1.15] tracking-tight">
               Uma operação completa de <span className="text-[#FF5500]">marketing e vendas</span>, orquestrada por IA.
             </h2>
           </div>
@@ -687,7 +732,7 @@ export default function TempLandingPage() {
 
             {/* Content */}
             <div className="flex-1 flex flex-col justify-start">
-              <h3 className="font-head font-bold text-slate-800 text-lg tracking-tight mb-3">
+              <h3 className="font-title font-bold text-slate-800 text-lg tracking-tight mb-3">
                 Agentes IA Comerciais
               </h3>
               <p className="text-slate-500 text-xs leading-relaxed">
@@ -706,7 +751,7 @@ export default function TempLandingPage() {
 
             {/* Content */}
             <div className="flex-1 flex flex-col justify-start">
-              <h3 className="font-head font-bold text-slate-800 text-lg tracking-tight mb-3">
+              <h3 className="font-title font-bold text-slate-800 text-lg tracking-tight mb-3">
                 Posicionamento & Autoridade
               </h3>
               <p className="text-slate-500 text-xs leading-relaxed">
@@ -725,7 +770,7 @@ export default function TempLandingPage() {
 
             {/* Content */}
             <div className="flex-1 flex flex-col justify-start">
-              <h3 className="font-head font-bold text-slate-800 text-lg tracking-tight mb-3">
+              <h3 className="font-title font-bold text-slate-800 text-lg tracking-tight mb-3">
                 Automação & CRM
               </h3>
               <p className="text-slate-500 text-xs leading-relaxed">
@@ -747,7 +792,7 @@ export default function TempLandingPage() {
           transition={{ type: "spring", stiffness: 80, damping: 20, delay: 0.2 }}
           className="bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] rounded-[24px] p-6 border border-white/50 w-full mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 transition-all relative z-10"
         >
-          <p className="text-slate-800 font-head font-bold text-sm text-center sm:text-left">
+          <p className="text-slate-800 font-title font-bold text-sm text-center sm:text-left">
             Não sabe por onde começar? <span className="text-[#FF5500]">Faça o diagnóstico gratuito da sua operação.</span>
           </p>
           <Link
@@ -793,7 +838,7 @@ export default function TempLandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             <div className="md:col-span-8 space-y-4">
               <div className="flex items-center">
-                <span className="font-head font-extrabold text-lg text-slate-900">
+                <span className="font-title font-extrabold text-lg text-slate-900">
                   Neuro<span className="text-[#FF5500]">Ads</span>
                 </span>
               </div>
@@ -803,7 +848,7 @@ export default function TempLandingPage() {
             </div>
             
             <div className="md:col-span-4 space-y-4 text-left md:text-right">
-              <h4 className="font-head font-bold text-xs text-slate-800 uppercase tracking-wider mb-2">Contato</h4>
+              <h4 className="font-title font-bold text-xs text-slate-800 uppercase tracking-wider mb-2">Contato</h4>
               <ul className="space-y-2 text-xs text-slate-500">
                 <li>avante@neuroads.com.br</li>
                 <li>Suporte 24/7</li>
@@ -1339,7 +1384,7 @@ function TargetAudienceSection() {
     <section id="publico-alvo" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 space-y-12">
       <div className="space-y-4 max-w-xl text-center mx-auto">
         <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">PARA QUEM É A NEUROADS</span>
-        <h2 className="font-head text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
+        <h2 className="font-title text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
           Oportunidades
         </h2>
         <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
@@ -1382,7 +1427,7 @@ function TargetAudienceSection() {
               </div>
 
               {/* Title */}
-              <h3 className="font-head font-black text-[22px] text-slate-900 mb-3 leading-snug">
+              <h3 className="font-title font-extrabold text-[22px] text-slate-900 mb-3 leading-snug">
                 {card.title}
               </h3>
 
@@ -1519,9 +1564,9 @@ function AgentsGridSection() {
   return (
     <section id="agentes" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-24 text-center space-y-16">
       <div className="space-y-4 max-w-2xl mx-auto">
-        <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">RECURSOS PRINCIPAIS</span>
-        <h2 className="font-head text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-          Agentes IA - Inteligência | Automações | Estratégia
+        <span className="text-[10px] font-black text-[#FF5500] tracking-widest block">Inteligência | Automações | Estratégia</span>
+        <h2 className="font-title text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          Um time de Agentes IA
         </h2>
         <p className="text-slate-600 text-xs md:text-sm leading-relaxed">
           Nossos Agentes de IA operam integrados ao seu ecossistema comercial, analisando dados, automatizando lances e executando tarefas complexas 24/7.
@@ -1565,7 +1610,7 @@ function AgentsGridSection() {
                       <span className="text-[10px] font-extrabold text-white/70 uppercase tracking-widest block">
                         {agent.category}
                       </span>
-                      <span className="text-white font-head font-black text-xl leading-tight">
+                      <span className="text-white font-title font-extrabold text-xl leading-tight">
                         {agent.title}
                       </span>
                     </div>
@@ -1591,7 +1636,7 @@ function AgentsGridSection() {
                 <span className="text-[10px] font-extrabold text-[#FF5500] uppercase tracking-widest block mb-1">
                   {agents[active].category}
                 </span>
-                <h3 className="font-head text-3xl font-black text-slate-900">
+                <h3 className="font-title text-3xl font-extrabold text-slate-900">
                   {agents[active].title}
                 </h3>
               </div>
@@ -1681,7 +1726,7 @@ function DataTransformationSection() {
           transition={{ duration: 0.8 }}
           className="lg:col-span-6 space-y-6"
         >
-          <h2 className="font-head font-extrabold text-3xl md:text-4xl text-slate-900 leading-tight tracking-tight">
+          <h2 className="font-title font-extrabold text-3xl md:text-4xl text-slate-900 leading-tight tracking-tight">
             Transforme dados em crescimento
           </h2>
           
@@ -1694,7 +1739,7 @@ function DataTransformationSection() {
           </p>
           
           <div className="pt-6 border-t border-slate-300/40 space-y-4">
-            <h3 className="font-head font-bold text-xl md:text-2xl text-slate-900 leading-snug">
+            <h3 className="font-title font-bold text-xl md:text-2xl text-slate-900 leading-snug">
               A NeuroAds te ajuda a organizar os dados e a identificar os gargalos.
             </h3>
             <p className="text-slate-600 text-sm md:text-base leading-relaxed">
@@ -1725,7 +1770,7 @@ function DataTransformationSection() {
           >
             <div className="shrink-0"><IconPieChart /></div>
             <div className="space-y-1.5">
-              <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
+              <h4 className="font-title font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
                 Crie dashboards
               </h4>
               <p className="text-slate-600 text-sm leading-relaxed">
@@ -1741,7 +1786,7 @@ function DataTransformationSection() {
           >
             <div className="shrink-0"><IconLineChart /></div>
             <div className="space-y-1.5">
-              <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
+              <h4 className="font-title font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
                 Visualize indicadores
               </h4>
               <p className="text-slate-600 text-sm leading-relaxed">
@@ -1757,7 +1802,7 @@ function DataTransformationSection() {
           >
             <div className="shrink-0"><IconNodesMerge /></div>
             <div className="space-y-1.5">
-              <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
+              <h4 className="font-title font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
                 Processe dados
               </h4>
               <p className="text-slate-600 text-sm leading-relaxed">
@@ -1773,7 +1818,7 @@ function DataTransformationSection() {
           >
             <div className="shrink-0"><IconCrosshairTarget /></div>
             <div className="space-y-1.5">
-              <h4 className="font-head font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
+              <h4 className="font-title font-bold text-base text-slate-850 group-hover:text-[#FF5500] transition-colors duration-200">
                 Atribuição de mídia
               </h4>
               <p className="text-slate-600 text-sm leading-relaxed">
@@ -1837,7 +1882,7 @@ function DemoAndAccessSection() {
         transition={{ duration: 0.8 }}
         className="text-center pb-16"
       >
-        <h2 className="font-head font-extrabold text-3xl md:text-4xl text-slate-900 leading-tight tracking-tight max-w-2xl mx-auto">
+        <h2 className="font-title font-extrabold text-3xl md:text-4xl text-slate-900 leading-tight tracking-tight max-w-2xl mx-auto">
           Conheça a NeuroAds em ação e <span className="text-[#FF5500]">solicite seu acesso.</span>
         </h2>
         <p className="text-slate-500 text-xs md:text-sm mt-4 max-w-xl mx-auto">
@@ -1888,7 +1933,7 @@ function DemoAndAccessSection() {
             className="bg-white border rounded-[28px] p-8 flex flex-col justify-between relative shadow-[0_20px_40px_rgba(255,85,0,0.12),_0_1px_3px_rgba(255,85,0,0.05)]"
             style={{ borderColor: 'rgba(255, 85, 0, 0.2)' }}
           >
-            <h3 className="font-head font-extrabold text-black text-lg mb-2 text-left">
+            <h3 className="font-title font-extrabold text-black text-lg mb-2 text-left">
               Solicitar Demonstração
             </h3>
             <p className="text-slate-500 text-xs leading-relaxed mb-6 text-left">
@@ -2007,7 +2052,7 @@ function DemoAndAccessSection() {
                     <CheckCircle2 size={32} className="stroke-[1.5]" />
                   </div>
                   <div className="space-y-1">
-                    <h4 className="font-head font-extrabold text-slate-900 text-base">Solicitação enviada!</h4>
+                    <h4 className="font-title font-extrabold text-slate-900 text-base">Solicitação enviada!</h4>
                     <p className="text-slate-500 text-[11px] leading-relaxed max-w-[240px] mx-auto">
                       Obrigado, {name.split(' ')[0]}. Nossa equipe entrará em contato em seu e-mail ({email}) para configurar seu onboarding.
                     </p>
@@ -2024,7 +2069,8 @@ function DemoAndAccessSection() {
 }
 function TestimonialSection() {
   return (
-    <section className="bg-white border-y border-slate-300/40 py-12 px-6 text-center">
+    <section className="border-y border-slate-300/40 py-12 px-6 text-center bg-white">
+
       <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
         <div className="w-[134px] h-[134px] rounded-full overflow-hidden border border-slate-300 shrink-0 relative shadow-sm">
           <Image
@@ -2035,12 +2081,12 @@ function TestimonialSection() {
           />
         </div>
         <div className="h-6 w-px bg-slate-300 hidden md:block shrink-0"></div>
-        <p className="text-slate-700 text-sm md:text-base font-semibold italic leading-relaxed">
+        <p className="font-sans text-slate-700 text-sm md:text-base font-semibold italic leading-relaxed">
           &ldquo;A NeuroAds resolveu o que nenhuma outra empresa conseguiu: personalização de IA real com dados de verdade. Conseguimos ver o comportamento, o que funciona e acompanhar o processo comercial completo — tudo isso com atendimento muito próximo.&rdquo;
         </p>
         <div className="shrink-0 text-left border-t md:border-t-0 md:border-l border-slate-300/40 pt-3 md:pt-0 md:pl-6">
-          <span className="text-xs font-bold text-black block">Claudio Müller</span>
-          <span className="text-[9px] font-extrabold text-[#FF5500] uppercase tracking-wider block">Analista em Marketing & IA</span>
+          <span className="font-title font-semibold text-xs text-black block">Claudio Müller</span>
+          <span className="font-sans text-[9px] font-extrabold text-[#FF5500] uppercase tracking-wider block">Analista em Marketing & IA</span>
         </div>
       </div>
     </section>
@@ -2072,7 +2118,7 @@ function ComparisonSection() {
         
         <div className="lg:col-span-5 space-y-6 flex flex-col items-start text-left">
           <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block">O PROBLEMA DAS AGÊNCIAS</span>
-          <h2 className="font-head text-3xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+          <h2 className="font-title text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
             A maior parte das agências de tráfego é lenta, cara e confusa.
           </h2>
           <p className="text-slate-650 text-xs md:text-sm leading-relaxed">
@@ -2087,7 +2133,7 @@ function ComparisonSection() {
               className="border border-white/80 rounded-2xl p-6 bg-white space-y-4 hover:scale-[1.01] transition-transform duration-300 shadow-[4px_4px_10px_#c8d0e7]"
             >
               <span className="text-[9px] font-black text-rose-500 uppercase tracking-widest block">{card.tag}</span>
-              <h4 className="font-head font-bold text-slate-800 text-sm">{card.title}</h4>
+              <h4 className="font-title font-bold text-slate-800 text-sm">{card.title}</h4>
               <p className="text-slate-500 text-[11px] leading-relaxed">{card.desc}</p>
             </div>
           ))}
@@ -2126,7 +2172,7 @@ function FaqSection() {
 
   return (
     <section id="faq" className="py-24 px-6 max-w-4xl mx-auto space-y-12">
-      <h2 className="font-head text-3xl font-black text-center text-slate-900 tracking-tight">
+      <h2 className="font-title text-3xl font-extrabold text-center text-slate-900 tracking-tight">
         Perguntas Frequentes
       </h2>
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from 'next/script';
-import { Inter, Manrope } from "next/font/google";
+import { Inter, Manrope, Sora } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "../context/AuthContext";
 import GlobalLayoutClient from "../components/layout/GlobalLayoutClient";
@@ -32,6 +32,14 @@ const inter = Inter({
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-head",
+  display: "swap",
+  preload: false,
+});
+
+const sora = Sora({
+  subsets: ["latin"],
+  weight: ["300", "600", "700", "800"],
+  variable: "--font-sora",
   display: "swap",
   preload: false,
 });
@@ -82,7 +90,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${inter.variable} ${manrope.variable} min-h-full flex flex-col font-sans bg-[var(--background)] text-[var(--foreground)]`}>
+      <body className={`${inter.variable} ${manrope.variable} ${sora.variable} min-h-full flex flex-col font-sans bg-[var(--background)] text-[var(--foreground)]`}>
         {/* HubSpot tracking script - loads after the page is interactive */}
         <Script
           id="hs-script-loader"

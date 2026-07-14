@@ -27,6 +27,7 @@
 
   --font-ui: 'Inter', sans-serif;
   --font-head: 'Manrope', sans-serif;
+  --font-sora: 'Sora', sans-serif;
 
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -66,6 +67,7 @@
 
   --font-sans: var(--font-ui);
   --font-head: var(--font-head);
+  --font-title: var(--font-sora);
 
   --radius-sm: var(--radius-sm);
   --radius-md: var(--radius-md);

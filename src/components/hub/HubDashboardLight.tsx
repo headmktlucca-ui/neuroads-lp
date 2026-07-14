@@ -488,6 +488,7 @@ export default function HubDashboardLight() {
 
   const hasAnyConnectionReal = isGa4Connected || isGoogleAdsConnected || isMetaAdsConnected || isLinkedinAdsConnected;
   const hasAnyConnection = hasAnyConnectionReal;
+  const isDemo = true;
 
   const recentAutomations = useMemo(() => {
     return getHubAutomationsFromProfile(profile)
@@ -1167,7 +1168,7 @@ export default function HubDashboardLight() {
                   )}
                 </div>
                 <p className="text-[12px] text-slate-500 mt-1 font-bold">{kpi.label}</p>
-                {guideMode && kpi.isNa && (
+                {isDemo && kpi.isNa && (
                   <p className="text-[9.5px] font-semibold text-slate-500 leading-snug mt-1.5 p-1.5 rounded-lg bg-[#FF6A00]/5 border border-[#FF6A00]/15">
                     💡 Conecte em <Link href="/hub/integracoes" className="text-[#FF6A00] font-black">Integrações</Link> para ver dados reais.
                   </p>

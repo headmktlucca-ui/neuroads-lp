@@ -99,7 +99,14 @@
       "Bash(taskkill /PID 24196 /F)",
       "PowerShell(Stop-Process -Id 24196 -Force -ErrorAction SilentlyContinue)",
       "Bash(find \"C:/Users/claud/AppData/Local/Temp\" -maxdepth 3 -iname \"*.png\" -newermt \"-10 minutes\" 2>/dev/null | head -20)",
-      "Bash(find \"C:/Users/claud\" -maxdepth 3 -iname \"*.png\" -o -maxdepth 3 -iname \"*.jpg\" 2>/dev/null | grep -iE \"clipboard|paste|screenshot\" | head -20)"
+      "Bash(find \"C:/Users/claud\" -maxdepth 3 -iname \"*.png\" -o -maxdepth 3 -iname \"*.jpg\" 2>/dev/null | grep -iE \"clipboard|paste|screenshot\" | head -20)",
+      "Bash(netstat -ano)",
+      "Bash(tasklist)",
+      "Bash(npx impeccable *)",
+      "Bash(git commit -m 'Remove all fictional data and demo mode from Hub dashboard *)",
+      "Bash(cd \"C:/Users/claud/OneDrive/Documentos/NeuroAds/LP\" && find / -iname \"font-data.json\" 2>/dev/null | grep -i google | head -5)",
+      "Bash(node \"/c/Users/claud/AppData/Local/Temp/claude/C--Users-claud-OneDrive-Documentos-NeuroAds-LP/b8c1ab6a-fa28-4ba1-995f-e861bf90d7a8/scratchpad/apply-fonts.js\")",
+      "PowerShell($proc = Get-NetTCPConnection -LocalPort 3000 -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1; if \\($proc\\) { $p = Get-Process -Id $proc.OwningProcess -ErrorAction SilentlyContinue; \"Processo: $\\($p.ProcessName\\) \\(PID $\\($proc.OwningProcess\\)\\)\"; Stop-Process -Id $proc.OwningProcess -Force -Confirm:$false -ErrorAction SilentlyContinue; \"Encerrado.\" } else { \"Porta 3000 já livre.\" })"
     ]
   },
   "hooks": {

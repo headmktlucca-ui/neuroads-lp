@@ -60,7 +60,7 @@ export default function HeroSilkBackground() {
       ctx!.clearRect(0, 0, W, H);
       ctx!.lineCap = 'round';
 
-      const startX = W * 0.3;
+      const startX = W * 0.25;
       const steps = 90;
 
       for (const rb of ribbons) {

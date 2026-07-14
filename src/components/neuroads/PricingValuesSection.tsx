@@ -380,7 +380,7 @@ export default function PricingValuesSection() {
     initial: prefersReducedMotion ? { opacity: 0 } : { opacity: 0, y: 40, scale: 0.95 },
     whileInView: prefersReducedMotion ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 },
     viewport: { once: false, margin: '-50px' },
-    transition: { type: 'spring', stiffness: 80, damping: 20, delay },
+    transition: { type: 'spring' as const, stiffness: 80, damping: 20, delay },
   });
 
   return (
@@ -404,7 +404,7 @@ export default function PricingValuesSection() {
           className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end pb-12 border-b border-slate-300/40"
         >
           <div className="md:col-span-2">
-            <h2 className="font-head font-extrabold text-3xl md:text-4xl text-slate-900 leading-[1.15] tracking-tight">
+            <h2 className="font-title font-extrabold text-3xl md:text-4xl text-slate-900 leading-[1.15] tracking-tight">
               Um plano único. <span className="text-[#FF5500]">Toda a operação</span> dentro dele.
             </h2>
           </div>
@@ -433,7 +433,7 @@ export default function PricingValuesSection() {
                 </span>
 
                 <div className="mt-6 flex items-end gap-2">
-                  <span className="font-head font-extrabold text-slate-900 dark:text-white text-[64px] md:text-[76px] leading-[0.9] tracking-tighter">
+                  <span className="font-title font-extrabold text-slate-900 dark:text-white text-[64px] md:text-[76px] leading-[0.9] tracking-tighter">
                     <span className="text-[26px] md:text-[30px] align-top font-black text-[#FF5500] mr-1">R$</span>
                     {formatBRLFromCents(HUB_PLAN.monthlyPriceCents)}
                   </span>
@@ -516,7 +516,7 @@ export default function PricingValuesSection() {
                       <Icon3D />
                     </div>
                     <div className="min-w-0">
-                      <p className="font-head font-extrabold text-slate-900 text-xl leading-none">
+                      <p className="font-title font-extrabold text-slate-900 text-xl leading-none">
                         {resource.value}
                         <span className="text-[12px] font-bold text-slate-600 ml-1.5 align-middle">
                           {resource.label}
@@ -540,7 +540,7 @@ export default function PricingValuesSection() {
             <IconZapOrange />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="font-head font-bold text-slate-900 text-sm tracking-tight">
+            <p className="font-title font-bold text-slate-900 text-sm tracking-tight">
               Precisou de mais no meio do ciclo? {HUB_BOOSTER.name} por R${' '}
               {formatBRLFromCents(HUB_BOOSTER.priceCents)}.
             </p>

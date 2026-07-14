@@ -79,7 +79,7 @@ export default function FunnelInteractiveShowcase() {
         <span className="text-[10px] font-black text-[#FF5500] uppercase tracking-widest block mb-2">
           Fluxo de Operação
         </span>
-        <h3 className="font-head text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+        <h3 className="font-title text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
           Como os Agentes Operam seu Funil na Prática
         </h3>
         <p className="text-slate-500 text-xs md:text-sm mt-3 leading-relaxed max-w-xl">
@@ -130,7 +130,7 @@ export default function FunnelInteractiveShowcase() {
                         {step.badge}
                       </span>
                     </div>
-                    <h4 className="font-head text-lg md:text-xl font-black text-slate-900">
+                    <h4 className="font-title text-lg md:text-xl font-extrabold text-slate-900">
                       {step.phase}
                     </h4>
                   </div>
