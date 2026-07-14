@@ -470,7 +470,10 @@ export default function FunilVendasPage() {
   const handleMarkAsLost = (leadId: string) => {
     const lead = leads.find(l => l.id === leadId);
     if (!lead) return;
-    const reason = (typeof window !== 'undefined' ? window.prompt('Motivo da perda (ex: sem orçamento, sem resposta, foi de concorrente):') : '') || 'Não informado';
+    if (typeof window === 'undefined') return;
+    const promptResult = window.prompt('Motivo da perda (ex: sem orçamento, sem resposta, foi de concorrente):');
+    if (promptResult === null) return; // usuário cancelou — não muda o estado do lead
+    const reason = promptResult || 'Não informado';
 
     const updated = leads.map(l => {
       if (l.id === leadId) {
@@ -691,21 +694,21 @@ export default function FunilVendasPage() {
   const funnelDiagnosis = useMemo(() => {
     const perStage = STAGES.map(s => ({
       ...s,
-      count: leads.filter(l => l.stage === s.id).length,
-      value: leads.filter(l => l.stage === s.id).reduce((acc, curr) => acc + curr.value, 0),
+      count: filteredLeads.filter(l => l.stage === s.id).length,
+      value: filteredLeads.filter(l => l.stage === s.id).reduce((acc, curr) => acc + curr.value, 0),
     }));
     const negotiationStages = perStage.filter(s => s.id !== 'ganho');
     const bottleneck = negotiationStages.reduce(
       (max, s) => (s.count > max.count ? s : max),
       negotiationStages[0] ?? perStage[0]
     );
-    const lostCount = leads.filter(l => l.stage === 'perdido').length;
-    const wonCount = leads.filter(l => l.stage === 'ganho' || l.stage === 'ativo').length;
+    const lostCount = filteredLeads.filter(l => l.stage === 'perdido').length;
+    const wonCount = filteredLeads.filter(l => l.stage === 'ganho' || l.stage === 'ativo').length;
     const closedCount = lostCount + wonCount;
     const winRate = closedCount > 0 ? (wonCount / closedCount) * 100 : 0;
 
     return { perStage, bottleneck, lostCount, wonCount, winRate };
-  }, [leads]);
+  }, [filteredLeads]);
 
   // Renders one Kanban column — shared by the main pipeline grid and the post-sale/lost grid below it
   const renderStageColumn = (stage: typeof ALL_STAGES[number]) => {
