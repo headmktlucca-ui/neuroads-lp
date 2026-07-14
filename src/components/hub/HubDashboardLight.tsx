@@ -466,7 +466,6 @@ export default function HubDashboardLight() {
   const [trafficData, setTrafficData] = useState<TrafficExtractResponse | null>(null);
 
   const [reportView, setReportView] = useState<'clevel' | 'traffic' | 'fullfunnel'>('clevel');
-  const [guideMode, setGuideMode] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [showExportToast, setShowExportToast] = useState(false);
 
@@ -488,24 +487,14 @@ export default function HubDashboardLight() {
   const [searchConsoleData, setSearchConsoleData] = useState<SearchConsoleResponse | null>(null);
 
   const hasAnyConnectionReal = isGa4Connected || isGoogleAdsConnected || isMetaAdsConnected || isLinkedinAdsConnected;
-  const hasAnyConnection = hasAnyConnectionReal || guideMode;
-  const isDemo = true;
-
-  const demoAutomations = [
-    { key: 'demo-1', agentTitle: 'Copy Persuasivo', cadenceTitle: 'Diariamente às 8:00', status: 'active' as const, monthlyExecutions: 124, lastUpdateAt: null as number | null },
-    { key: 'demo-2', agentTitle: 'Análise ROAS', cadenceTitle: 'A cada 6 horas', status: 'active' as const, monthlyExecutions: 87, lastUpdateAt: null as number | null },
-    { key: 'demo-3', agentTitle: 'Brief Criativo', cadenceTitle: 'Semanalmente', status: 'active' as const, monthlyExecutions: 42, lastUpdateAt: null as number | null },
-    { key: 'demo-4', agentTitle: 'Otimizador de Orçamento', cadenceTitle: 'Diariamente às 9:00', status: 'active' as const, monthlyExecutions: 156, lastUpdateAt: null as number | null },
-    { key: 'demo-5', agentTitle: 'Detector de Anomalias', cadenceTitle: 'A cada 2 horas', status: 'active' as const, monthlyExecutions: 203, lastUpdateAt: null as number | null },
-  ];
+  const hasAnyConnection = hasAnyConnectionReal;
 
   const recentAutomations = useMemo(() => {
-    const real = getHubAutomationsFromProfile(profile)
+    return getHubAutomationsFromProfile(profile)
       .filter(a => a.status === 'active' || a.lastUpdateAt != null)
       .sort((a, b) => (b.lastUpdateAt || 0) - (a.lastUpdateAt || 0))
       .slice(0, 5);
-    return isDemo ? demoAutomations : real;
-  }, [profile, isDemo]);
+  }, [profile]);
 
   useEffect(() => {
     let active = true;
@@ -617,65 +606,60 @@ export default function HubDashboardLight() {
   }, [trafficData, ga4Data, isGa4Connected, isGoogleAdsConnected, isMetaAdsConnected, isLinkedinAdsConnected]);
 
 
-  const spendNum   = isDemo ? 18450.70 : (typeof stats.spend       === 'number' ? stats.spend       : 0);
-  const revenueNum = isDemo ? 96800.50 : (typeof stats.revenue     === 'number' ? stats.revenue     : 0);
-  const roasNum    = isDemo ? 5.24     : (typeof stats.roas        === 'number' ? stats.roas        : 0);
-  const convsNum   = isDemo ? 784      : (typeof stats.conversions === 'number' ? stats.conversions : 0);
-  const cpaNum     = isDemo ? 23.53    : (typeof stats.cpa         === 'number' ? stats.cpa         : 0);
-  const usersNum   = isDemo ? 14200    : (typeof stats.activeUsers === 'number' ? stats.activeUsers : 0);
+  const spendNum   = (typeof stats.spend       === 'number' ? stats.spend       : 0);
+  const revenueNum = (typeof stats.revenue     === 'number' ? stats.revenue     : 0);
+  const roasNum    = (typeof stats.roas        === 'number' ? stats.roas        : 0);
+  const convsNum   = (typeof stats.conversions === 'number' ? stats.conversions : 0);
+  const cpaNum     = (typeof stats.cpa         === 'number' ? stats.cpa         : 0);
+  const usersNum   = (typeof stats.activeUsers === 'number' ? stats.activeUsers : 0);
 
-  /* Sparkline trend data — only populated when real data is available */
+  /* Sparkline trend data — only real data or empty */
   const SP = {
-    revenue: isDemo ? [90, 92, 91, 93, 95, 94, 96.8] : (stats.revenue === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, revenueNum / 1000]),
-    spend:   isDemo ? [15, 16, 15.5, 17, 18.5, 17.8, 18.4] : (stats.spend   === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, spendNum   / 1000]),
-    roas:    isDemo ? [4.8, 5.0, 4.9, 5.2, 5.1, 5.0, 5.24] : (stats.roas    === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, roasNum]),
-    convs:   isDemo ? [680, 700, 690, 730, 710, 750, 784] : (stats.conversions === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, convsNum]),
-    cpa:     isDemo ? [25.1, 24.0, 23.9, 23.8, 23.6, 23.5, 23.53] : (stats.cpa     === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, cpaNum]),
-    users:   isDemo ? [12000, 12500, 13000, 12800, 13500, 14000, 14200] : (stats.activeUsers === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, usersNum]),
+    revenue: stats.revenue === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, revenueNum / 1000],
+    spend:   stats.spend   === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, spendNum   / 1000],
+    roas:    stats.roas    === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, roasNum],
+    convs:   stats.conversions === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, convsNum],
+    cpa:     stats.cpa     === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, cpaNum],
+    users:   stats.activeUsers === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, usersNum],
   };
 
   /* Build KPI list dynamically based on view filters */
   const KPIS: KpiDef[] = useMemo(() => {
-    const isNaRev = stats.revenue === 'N/A' && !isDemo;
-    const isNaSpend = stats.spend === 'N/A' && !isDemo;
-    const isNaConvs = stats.conversions === 'N/A' && !isDemo;
-    const isNaRoas = stats.roas === 'N/A' && !isDemo;
-    const isNaCpa = stats.cpa === 'N/A' && !isDemo;
-    const isNaUsers = stats.activeUsers === 'N/A' && !isDemo;
+    const isNaRev = stats.revenue === 'N/A';
+    const isNaSpend = stats.spend === 'N/A';
+    const isNaConvs = stats.conversions === 'N/A';
+    const isNaRoas = stats.roas === 'N/A';
+    const isNaCpa = stats.cpa === 'N/A';
+    const isNaUsers = stats.activeUsers === 'N/A';
 
-    const totalClicks = isDemo ? 5420 : (trafficData?.totals?.clicks || 0);
-    const totalImpressions = isDemo ? 180500 : (trafficData?.totals?.impressions || 0);
+    const totalClicks = trafficData?.totals?.clicks || 0;
+    const totalImpressions = trafficData?.totals?.impressions || 0;
 
     if (reportView === 'clevel') {
       return [
         { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+12%', positive: true,  icon: Wallet,           color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
         { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-        { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '+2.1×', positive: true,  icon: TrendingUp,       color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
-        { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '+8%', positive: true,  icon: ShoppingCart,     color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
-        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '-5%',  positive: true,  icon: MousePointerClick,color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
-        { label: 'Ticket Médio',    rawValue: revenueNum > 0 && convsNum > 0 ? revenueNum / convsNum : 124.50, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+3%', positive: true, icon: DollarSign, color: '#7c3aed', glow: 'rgba(124, 58, 237, 0.05)', spark: [120, 122, 121, 123, 125, 124, 124.5] },
+        { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: TrendingUp,       color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
+        { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: ShoppingCart,     color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
+        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick,color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
       ];
     }
     if (reportView === 'traffic') {
       return [
-        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-        { label: 'Cliques Ads',     rawValue: totalClicks, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '+14%', positive: true, icon: MousePointerClick, color: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.05)', spark: [200, 210, 240, 230, 250, 260, 275] },
-        { label: 'CTR Médio',       rawValue: totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 2.45, isNa: isNaSpend, prefix: '', suffix: '%', decimals: 2, delta: '+0.3%', positive: true, icon: Activity, color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: [2.1, 2.2, 2.3, 2.2, 2.4, 2.5, 2.45] },
-        { label: 'CPC Médio',       rawValue: totalClicks > 0 ? spendNum / totalClicks : 1.85, isNa: isNaSpend, prefix: 'R$ ', suffix: '', decimals: 2, delta: '-4%', positive: true, icon: DollarSign, color: '#db2777', glow: 'rgba(219, 39, 119, 0.05)', spark: [2.1, 2.0, 1.95, 1.9, 1.88, 1.86, 1.85] },
-        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '-5%',  positive: true,  icon: MousePointerClick,color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
-        { label: 'Lances Otimizados', rawValue: isDemo ? 184 : 0, isNa: isNaSpend, prefix: '', suffix: ' bids', decimals: 0, delta: '+12%', positive: true, icon: Cpu, color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: [120, 130, 150, 145, 160, 175, 184] },
+        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
+        { label: 'Cliques Ads',     rawValue: totalClicks, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '', positive: true, icon: MousePointerClick, color: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.05)', spark: Array(10).fill(0) },
+        { label: 'CTR Médio',       rawValue: totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0, isNa: isNaSpend, prefix: '', suffix: '%', decimals: 2, delta: '', positive: true, icon: Activity, color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: Array(10).fill(0) },
+        { label: 'CPC Médio',       rawValue: totalClicks > 0 ? spendNum / totalClicks : 0, isNa: isNaSpend, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true, icon: DollarSign, color: '#db2777', glow: 'rgba(219, 39, 119, 0.05)', spark: Array(10).fill(0) },
+        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick,color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
       ];
     }
-    // fullfunnel
+    // clevel - mostrar apenas dados reais
     return [
-      { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+12%', positive: true,  icon: Wallet,           color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
-      { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-      { label: 'Impressões Ads',  rawValue: totalImpressions, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '+6%', positive: true, icon: Users, color: '#64748b', glow: 'rgba(100, 116, 139, 0.05)', spark: [10000, 11000, 10500, 12000, 11500, 12500, 12800] },
-      { label: 'Cliques Ads',     rawValue: totalClicks, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '+14%', positive: true, icon: MousePointerClick, color: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.05)', spark: [200, 210, 240, 230, 250, 260, 275] },
-      { label: 'Leads Capturados', rawValue: convsNum, isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '+8%', positive: true, icon: ShoppingCart, color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs },
-      { label: 'Reuniões Agendadas', rawValue: Math.round(convsNum * 0.35), isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '+12%', positive: true, icon: Target, color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: [1, 2, 2, 3, 4, 3, 5] },
-      { label: 'Vendas Fechadas', rawValue: Math.round(convsNum * 0.12), isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '+15%', positive: true, icon: Wallet, color: '#7c3aed', glow: 'rgba(124, 58, 237, 0.05)', spark: [0, 1, 1, 1, 2, 2, 3] },
-      { label: 'Faturamento Estimado', rawValue: (Math.round(convsNum * 0.12) * 5000), isNa: isNaConvs, prefix: 'R$ ', suffix: '', decimals: 0, delta: '+18%', positive: true, icon: DollarSign, color: '#059669', glow: 'rgba(5, 150, 105, 0.05)', spark: [0, 5000, 5000, 5000, 10000, 10000, 15000] },
+      { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true,  icon: Wallet,           color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
+      { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
+      { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: TrendingUp,       color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
+      { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: ShoppingCart,     color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
+      { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick,color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
     ];
   }, [reportView, stats, revenueNum, spendNum, roasNum, convsNum, cpaNum, usersNum, SP, isDemo, trafficData]);
 
@@ -747,18 +731,8 @@ export default function HubDashboardLight() {
 
   /* Funnel calculations */
   const funnelData = useMemo(() => {
-    if (isDemo) {
-      const ratio = funnelFilter === 'googleAds' ? 0.45 : funnelFilter === 'metaAds' ? 0.35 : funnelFilter === 'linkedinAds' ? 0.20 : 1.0;
-      return {
-        impressions: Math.round(180500 * ratio),
-        clicks: Math.round(5420 * ratio),
-        conversions: Math.round(784 * ratio),
-        revenue: 96800.50 * ratio,
-        spend: 18450.70 * ratio,
-      };
-    }
     const aov = typeof stats.revenue === 'number' && typeof stats.conversions === 'number' && stats.conversions > 0
-      ? stats.revenue / stats.conversions : 86.7;
+      ? stats.revenue / stats.conversions : 0;
 
     const google = trafficData?.channels?.find(c => c.platform === 'Google Ads' && !('error' in c));
     const meta = trafficData?.channels?.find(c => c.platform === 'Meta Ads' && !('error' in c));
@@ -813,61 +787,34 @@ export default function HubDashboardLight() {
   const googleAdsCPC = isDemo ? 'R$ 1,65' : (googleAd && googleAd.clicks > 0
     ? 'R$ ' + (googleAd.spend / googleAd.clicks).toFixed(2).replace('.', ',')
     : null);
-  const googleAdsBarWidth = isDemo ? 45 : (spendNum > 0 && googleAd
+  const googleAdsBarWidth = (spendNum > 0 && googleAd
     ? (googleAd.spend / spendNum) * 100
     : 0);
 
-  const metaAdsCTR = isDemo ? '1,28%' : (metaAd && metaAd.impressions > 0
+  const metaAdsCTR = (metaAd && metaAd.impressions > 0
     ? ((metaAd.clicks / metaAd.impressions) * 100).toFixed(2).replace('.', ',') + '%'
     : null);
-  const metaAdsCPC = isDemo ? 'R$ 1,12' : (metaAd && metaAd.clicks > 0
+  const metaAdsCPC = (metaAd && metaAd.clicks > 0
     ? 'R$ ' + (metaAd.spend / metaAd.clicks).toFixed(2).replace('.', ',')
     : null);
-  const metaAdsBarWidth = isDemo ? 35 : (spendNum > 0 && metaAd
+  const metaAdsBarWidth = (spendNum > 0 && metaAd
     ? (metaAd.spend / spendNum) * 100
     : 0);
 
-  const linkedinAdsCTR = isDemo ? '0,92%' : (linkedinAd && linkedinAd.impressions > 0
+  const linkedinAdsCTR = (linkedinAd && linkedinAd.impressions > 0
     ? ((linkedinAd.clicks / linkedinAd.impressions) * 100).toFixed(2).replace('.', ',') + '%'
     : null);
-  const linkedinAdsCPC = isDemo ? 'R$ 6,80' : (linkedinAd && linkedinAd.clicks > 0
+  const linkedinAdsCPC = (linkedinAd && linkedinAd.clicks > 0
     ? 'R$ ' + (linkedinAd.spend / linkedinAd.clicks).toFixed(2).replace('.', ',')
     : null);
-  const linkedinAdsBarWidth = isDemo ? 20 : (spendNum > 0 && linkedinAd
+  const linkedinAdsBarWidth = (spendNum > 0 && linkedinAd
     ? (linkedinAd.spend / spendNum) * 100
     : 0);
 
-  const displayIgData = isDemo ? { username: 'neuroads', followers: 12500, engagementRate: '4,2%', reach: 45000 } : igData;
-  const displayLpData = isDemo ? { followers: 3200, engagementRate: '6,8%', impressions: 18000 } : linkedinPageData;
-  const displayScData = isDemo ? { position: '4,2', clicks: 350, ctr: '3,8%' } : searchConsoleData;
-
-  const displayGa4Data = isDemo ? {
-    activeUsers: '34200',
-    averageSessionDuration: '2m 14s',
-    conversions: '784',
-    engagementRate: '68,4%',
-    trafficSources: [
-      { source: 'Google Ads', sessions: 2430 },
-      { source: 'Organic Search', sessions: 1820 },
-      { source: 'Direct', sessions: 980 },
-      { source: 'Social Meta', sessions: 840 },
-    ],
-    usersTrend: [
-      { date: '01/07', newUsers: 120, returningUsers: 80 },
-      { date: '05/07', newUsers: 150, returningUsers: 95 },
-      { date: '10/07', newUsers: 220, returningUsers: 140 },
-      { date: '15/07', newUsers: 190, returningUsers: 130 },
-      { date: '20/07', newUsers: 260, returningUsers: 180 },
-      { date: '25/07', newUsers: 310, returningUsers: 210 },
-      { date: '30/07', newUsers: 342, returningUsers: 240 },
-    ],
-    regions: [
-      { country: 'São Paulo', value: 8540, change: '+14%', positive: true },
-      { country: 'Rio de Janeiro', value: 4120, change: '+8%', positive: true },
-      { country: 'Minas Gerais', value: 2980, change: '-2%', positive: false },
-      { country: 'Paraná', value: 1840, change: '+5%', positive: true },
-    ]
-  } : ga4Data;
+  const displayIgData = igData;
+  const displayLpData = linkedinPageData;
+  const displayScData = searchConsoleData;
+  const displayGa4Data = ga4Data;
 
   const handleExport = () => {
     setExporting(true);
@@ -980,23 +927,6 @@ export default function HubDashboardLight() {
         </motion.div>
       )}
 
-      {/* Connection Mode Alert Banner */}
-      {/* {isDemo && (
-        <div className="p-4 bg-orange-500/5 rounded-2xl border border-orange-500/25 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <Sparkles size={16} className="text-[#FF6A00] shrink-0" />
-            <div>
-              <p className="text-[12.5px] font-black text-slate-800 uppercase">Modo Guia / Demonstração Ativo</p>
-              <p className="text-[11.5px] text-slate-500 font-semibold leading-relaxed mt-0.5">
-                Exibindo dados simulados. Conecte suas integrações reais na aba de Infraestrutura para ver a operação real da sua empresa.
-              </p>
-            </div>
-          </div>
-          <Link href="/hub/integracoes" className="px-4 py-2 rounded-xl text-[11px] font-black text-white hover:brightness-110 shadow-sm cursor-pointer whitespace-nowrap text-center" style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', textDecoration: 'none' }}>
-            Conectar Contas Reais
-          </Link>
-        </div>
-      )} */}
 
       {/* View Toggles & Actions Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
