@@ -79,29 +79,6 @@ function SpecialtyRow({
         <p className="text-[13px] font-black text-[#0f172a] leading-tight truncate">{specialty.title}</p>
         {/* Line 2: Desc */}
         <p className="text-[11px] text-slate-500 font-semibold leading-snug line-clamp-2 mt-0.5">{specialty.description}</p>
-        
-        {/* Line 3: Action buttons — side by side, equal width */}
-        <div className="grid grid-cols-2 gap-2 mt-3">
-          {/* Executar Operação — primary */}
-          <Link
-            href={`/hub/assistente-ia?agent=${agentId}&specialty=${encodeURIComponent(specialty.title)}`}
-            onClick={(e) => e.stopPropagation()}
-            className="group/exec inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[10.5px] font-black text-white transition-all duration-200 hover:-translate-y-0.5 hover:brightness-110 active:translate-y-0 active:scale-[0.98]"
-            style={{ background: 'linear-gradient(135deg, #2563EB, #06B6D4)', textDecoration: 'none', boxShadow: '0 4px 12px rgba(37,99,235,0.28)' }}
-          >
-            <ExternalLink size={11} className="transition-transform duration-200 group-hover/exec:translate-x-0.5" /> Executar Operação
-          </Link>
-
-          {/* Programar Automação — secondary */}
-          <Link
-            href={`/hub/automacoes`}
-            onClick={(e) => e.stopPropagation()}
-            className="group/prog inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[10.5px] font-black text-slate-600 border border-white/70 bg-[#eef2f7] shadow-[2px_2px_5px_#d1d9e6,_-2px_-2px_5px_#ffffff] transition-all duration-200 hover:-translate-y-0.5 hover:text-[#2563EB] active:translate-y-0 active:scale-[0.98]"
-            style={{ textDecoration: 'none' }}
-          >
-            <Activity size={11} className="transition-transform duration-200 group-hover/prog:rotate-[18deg]" /> Programar Automação
-          </Link>
-        </div>
       </div>
     </div>
   );
@@ -221,15 +198,6 @@ function TeamAgentCard({
             >
               {teamAgent.categoria}
             </span>
-            <span 
-              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-              style={{ 
-                boxShadow: '0 0 8px rgba(16, 185, 129, 0.4), inset 0 0 4px rgba(16, 185, 129, 0.2)',
-                textShadow: '0 0 4px rgba(16, 185, 129, 0.6)' 
-              }}
-            >
-              Ativo
-            </span>
           </div>
           <p className="text-[12px] font-semibold text-slate-500 mt-0.5">{teamAgent.funcao}</p>
           <p className="text-[11.5px] text-slate-400 font-medium italic mt-1.5 leading-snug">
@@ -243,7 +211,7 @@ function TeamAgentCard({
               style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)', textDecoration: 'none' }}
               onClick={(e) => e.stopPropagation()}
             >
-              Enviar Mensagem
+              Conversar com Agente
             </Link>
             <button
               type="button"
@@ -253,7 +221,7 @@ function TeamAgentCard({
               }}
               className="inline-flex shrink-0 items-center gap-1.5 px-3.5 py-2 rounded-xl text-[11px] font-black transition-all border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 shadow-sm whitespace-nowrap"
             >
-              <span className="whitespace-nowrap">Operações Estratégicas</span>
+              <span className="whitespace-nowrap">Lista de Operações</span>
               <ChevronDown
                 size={12}
                 className={`transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}

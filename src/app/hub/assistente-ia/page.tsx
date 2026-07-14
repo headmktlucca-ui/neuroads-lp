@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
-import { collection, getDocs, orderBy, query as fsQuery } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query as fsQuery, doc, setDoc } from 'firebase/firestore';
 import { getFirebaseDb } from '../../../lib/firebase';
 import { type AgentReportHistoryEntry } from '../../../lib/agent-report-history';
 import { chatWithLuccaHub, type LuccaLeftPanelData } from '../../actions/lucca-hub-chat';
@@ -21,7 +21,8 @@ import { saveResultToKnowledge } from '../../actions/save-to-knowledge';
 import { saveChatSession, type ChatMessage as StoredChatMessage } from '../../../lib/chat-history';
 import { getTeamAgentById, type TeamAgent, TEAM_AGENTS } from '../../../data/team-agents';
 import { agents as allSpecialties } from '../../../data/agents';
-import { getHubAutomationsFromProfile } from '../../../lib/hub-automations';
+import { getHubAutomationsFromProfile, buildAutomationTimestamps } from '../../../lib/hub-automations';
+import { slugifyAgentTitle } from '../../../lib/hub-agents';
 
 
 
@@ -2127,6 +2128,119 @@ function InputDock({
   );
 }
 
+type AutomationSuggestion = {
+  id: string;
+  title: string;
+  objective: string;
+  cadence: string;
+  monthlyExecutions: number;
+  distribution: string;
+  scheduleOptions: Array<{
+    id: string;
+    label: string;
+    detail: string;
+  }>;
+};
+
+function getCadenceContext(category: string, title: string) {
+  const byCategory: Record<string, { objective: string; distribution: string }> = {
+    Performance: {
+      objective: 'Ajustes rápidos em campanhas, orçamento e segmentações para sustentar ROI.',
+      distribution: 'Seg: diagnóstico | Qua: otimização | Sex: validação de performance',
+    },
+    Inteligência: {
+      objective: 'Análises estratégicas e decisões orientadas por sinais de mercado e comportamento.',
+      distribution: 'Ter: pesquisa e insights | Qui: refinamento de direcionamento | Sex: plano de ação',
+    },
+    Criativos: {
+      objective: 'Ciclos contínuos de ideação, variações e melhoria de mensagens criativas.',
+      distribution: 'Seg: briefing | Qua: variações | Sex: revisão de conversão',
+    },
+    Técnico: {
+      objective: 'Estabilidade de tracking, testes técnicos e evolução da infraestrutura de marketing.',
+      distribution: 'Ter: auditoria técnica | Qui: implementação | Sex: validação e monitoramento',
+    },
+  };
+
+  const fallback = {
+    objective: 'Rotina estratégica para evolução contínua da operação com foco em previsibilidade.',
+    distribution: 'Seg: planejamento | Qua: execução | Sex: revisão',
+  };
+
+  if (title === 'SEO & GEO') {
+    return {
+      objective: 'Evolução contínua de autoridade orgânica e presença em respostas de IAs generativas.',
+      distribution: 'Seg: auditoria e keywords | Qua: otimização on-page/schema | Sex: GEO e menções externas',
+    };
+  }
+
+  return byCategory[category] ?? fallback;
+}
+
+function buildAutomationSuggestions(entry: { title: string; category: string; planSummary?: { monthlyLimit?: number } }): AutomationSuggestion[] {
+  const limit = Math.max(6, entry.planSummary?.monthlyLimit ?? 12);
+  const context = getCadenceContext(entry.category, entry.title);
+
+  const conservative = Math.max(4, Math.round(limit * 0.45));
+  const balanced = Math.max(conservative + 1, Math.round(limit * 0.75));
+  const scale = limit;
+
+  const toCadence = (executions: number) => {
+    const weekly = Math.max(1, Math.round(executions / 4));
+    const days =
+      weekly <= 2
+        ? '2x por semana'
+        : weekly <= 4
+          ? '4x por semana'
+          : weekly <= 6
+            ? '6x por semana'
+            : 'execução diária';
+    return `${days} (${weekly} rotinas/semana)`;
+  };
+
+  return [
+    {
+      id: 'conservative',
+      title: 'Cadência Essencial',
+      objective: `${context.objective} Com foco em consistência e baixo esforço operacional.`,
+      cadence: toCadence(conservative),
+      monthlyExecutions: conservative,
+      distribution: context.distribution,
+      scheduleOptions: [
+        { id: 'conservative_mon_thu_0900', label: 'Seg e Qui • 09:00', detail: 'Revisão no início da manhã para ajustes rápidos antes do pico.' },
+        { id: 'conservative_tue_fri_1430', label: 'Ter e Sex • 14:30', detail: 'Acompanhamento no meio da tarde com janela para correções no mesmo dia.' },
+      ],
+    },
+    {
+      id: 'balanced',
+      title: 'Cadência Estratégica',
+      objective: `${context.objective} Equilíbrio ideal entre aprendizado, execução e estabilidade.`,
+      cadence: toCadence(balanced),
+      monthlyExecutions: balanced,
+      distribution: context.distribution,
+      scheduleOptions: [
+        { id: 'balanced_mon_wed_fri_0830', label: 'Seg, Qua e Sex • 08:30', detail: 'Ritmo clássico para abrir, ajustar e consolidar a semana.' },
+        { id: 'balanced_tue_thu_sat_1000', label: 'Ter, Qui e Sáb • 10:00', detail: 'Distribuição equilibrada com revisão extra no sábado.' },
+        { id: 'balanced_mon_wed_fri_1700', label: 'Seg, Qua e Sex • 17:00', detail: 'Leitura de fechamento diário para replanejar o dia seguinte.' },
+      ],
+    },
+    {
+      id: 'scale',
+      title: 'Cadência Máxima do Plano',
+      objective: `${context.objective} Uso total do limite contratado para acelerar resultados.`,
+      cadence: toCadence(scale),
+      monthlyExecutions: scale,
+      distribution: context.distribution,
+      scheduleOptions: [
+        { id: 'scale_weekdays_0800', label: 'Seg a Sex • 08:00', detail: 'Ajustes agressivos na abertura de cada dia útil.' },
+        { id: 'scale_weekdays_1230', label: 'Seg a Sex • 12:30', detail: 'Correções no meio do dia, após sinais iniciais de performance.' },
+        { id: 'scale_weekdays_1800', label: 'Seg a Sex • 18:00', detail: 'Fechamento de rotina para rebalanceamento noturno.' },
+        { id: 'scale_daily_0900', label: 'Seg a Dom • 09:00', detail: 'Operação contínua inclusive fim de semana para contas com alto giro.' },
+      ],
+    },
+  ];
+}
+
 /* ═══════════════════════════════════════════════════════════════════
    MAIN PAGE
 ═══════════════════════════════════════════════════════════════════ */
@@ -2255,6 +2369,85 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
   }, [activeAgent, specialtyTitle]);
 
   const [messages, setMessages] = useState<Message[]>([]);
+
+  const [isCustomAutomationModalOpen, setIsCustomAutomationModalOpen] = useState(false);
+  const [selectedOperationTitle, setSelectedOperationTitle] = useState('');
+  const [customFieldsValues, setCustomFieldsValues] = useState<Record<string, string>>({});
+  const [selectedAutomationId, setSelectedAutomationId] = useState<string | null>(null);
+  const [selectedScheduleOptionId, setSelectedScheduleOptionId] = useState<string | null>(null);
+  const [isSavingAutomation, setIsSavingAutomation] = useState(false);
+  const [automationNotice, setAutomationNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (specialtyTitle) {
+      setSelectedOperationTitle(specialtyTitle);
+    } else if (activeAgent && activeAgent.specialtyTitles.length > 0) {
+      setSelectedOperationTitle(activeAgent.specialtyTitles[0]);
+    }
+  }, [specialtyTitle, activeAgent]);
+
+  useEffect(() => {
+    if (activeAgent) {
+      setSelectedAutomationId(null);
+      setSelectedScheduleOptionId(null);
+    }
+  }, [activeAgent]);
+
+  const tempEntry = useMemo(() => {
+    return {
+      title: selectedOperationTitle,
+      category: activeAgent?.categoria || 'Performance',
+      planSummary: { monthlyLimit: 12 }
+    };
+  }, [selectedOperationTitle, activeAgent]);
+
+  const automationSuggestions = useMemo(() => {
+    if (!selectedOperationTitle) return [];
+    return buildAutomationSuggestions(tempEntry);
+  }, [tempEntry, selectedOperationTitle]);
+
+  const selectedSuggestion = useMemo(
+    () => automationSuggestions.find((item) => item.id === selectedAutomationId) ?? null,
+    [automationSuggestions, selectedAutomationId]
+  );
+
+  const selectedScheduleOption = useMemo(() => {
+    if (!selectedSuggestion) return null;
+    return selectedSuggestion.scheduleOptions.find((item) => item.id === selectedScheduleOptionId) ?? null;
+  }, [selectedScheduleOptionId, selectedSuggestion]);
+
+  useEffect(() => {
+    if (!automationSuggestions.length) return;
+    setSelectedAutomationId((current) => current ?? automationSuggestions[1]?.id ?? automationSuggestions[0].id);
+  }, [automationSuggestions]);
+
+  useEffect(() => {
+    if (!selectedSuggestion) return;
+    setSelectedScheduleOptionId((current) => {
+      const exists = selectedSuggestion.scheduleOptions.some((option) => option.id === current);
+      if (exists) return current;
+      return selectedSuggestion.scheduleOptions[0]?.id ?? null;
+    });
+  }, [selectedSuggestion]);
+
+  const connectorStatus = useMemo(() => {
+    const status: Record<string, boolean> = {};
+    const map: Record<string, string> = {
+      metaAds: 'Meta Ads',
+      googleAds: 'Google Ads',
+      ga4: 'GA4',
+      linkedinAds: 'LinkedIn Ads',
+      tiktokAds: 'TikTok Ads',
+      crm: 'CRM HubSpot',
+      payments: 'Stripe / Pagamentos',
+      warehouse: 'BigQuery',
+      serverTracking: 'GTM Server CAPI'
+    };
+    Object.entries(map).forEach(([key, label]) => {
+      status[key] = connectedSources.includes(label);
+    });
+    return status;
+  }, [connectedSources]);
 
   useEffect(() => {
     setMessages([initialMessage]);
@@ -2628,6 +2821,13 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
                 >
                   {chatState === 'thinking' ? 'Executando...' : 'Executar Operação'}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setIsCustomAutomationModalOpen(true)}
+                  className="w-full py-3 rounded-xl text-[12.5px] font-black text-slate-700 bg-white hover:bg-slate-50 active:scale-95 transition-all border border-slate-200 shadow-sm cursor-pointer mt-2"
+                >
+                  Programar Automação
+                </button>
               </form>
 
               <button
@@ -2671,6 +2871,253 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
           <div ref={endRef} />
         </div>
       </div>
+
+      {isCustomAutomationModalOpen && activeAgent && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-4 py-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setIsCustomAutomationModalOpen(false)} />
+
+          <div className="relative w-full max-w-[700px] max-h-[96vh] rounded-[32px] bg-[#eef2f7] border border-white/80 shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-slate-800 flex flex-col">
+            {/* Header */}
+            <div className="relative border-b border-slate-200 bg-[#eef2f7] px-6 py-5 flex flex-col gap-1 shrink-0">
+              <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold">Programação Automática</p>
+              <h3 className="text-2xl font-black text-[#0f172a]">Programar Automação</h3>
+              <p className="text-xs font-semibold text-slate-500 mt-1">
+                Configure a rotina automática para o agente <strong>{activeAgent.nome}</strong>.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsCustomAutomationModalOpen(false)}
+                className="absolute right-5 top-5 rounded-full border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-500 p-2 transition-all hover:scale-105 active:scale-95 z-50 animate-all cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-5 flex-1">
+              {/* Step 1: Select Operation */}
+              <div className="flex flex-col gap-2">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
+                  1. Selecione a Operação do Agente:
+                </label>
+                <select
+                  value={selectedOperationTitle}
+                  onChange={(e) => {
+                    setSelectedOperationTitle(e.target.value);
+                    setCustomFieldsValues({});
+                  }}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-white shadow-sm outline-none focus:ring-2 focus:ring-[#FF6A00]/15 transition-all cursor-pointer text-slate-700"
+                >
+                  <option value="">— Selecione uma Operação —</option>
+                  {activeAgent.specialtyTitles.map((title) => (
+                    <option key={title} value={title}>
+                      ⚡ {title}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {selectedOperationTitle && (
+                <>
+                  {/* Step 2: Connected Channels */}
+                  <div className="space-y-2">
+                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
+                      2. Canais Necessários para esta Operação:
+                    </label>
+                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                      {(() => {
+                        const specObj = allSpecialties.find(s => s.title === selectedOperationTitle);
+                        const requiredKeys = specObj?.requiredConnectors || [];
+                        if (requiredKeys.length === 0) {
+                          return <p className="text-xs text-slate-500 italic">Nenhum canal obrigatório para esta operação.</p>;
+                        }
+                        return requiredKeys.map((key) => {
+                          const isConnected = connectorStatus[key];
+                          return (
+                            <div
+                              key={key}
+                              className={`rounded-full border px-4 py-2 flex items-center justify-between text-xs font-semibold ${
+                                isConnected
+                                  ? 'border-emerald-500/20 bg-emerald-500/5 text-emerald-700'
+                                  : 'border-red-500/20 bg-red-500/5 text-red-700'
+                              }`}
+                            >
+                              <span>{key}</span>
+                              <span className="text-[10px] font-black">{isConnected ? 'CONECTADO' : 'DESCONECTADO'}</span>
+                            </div>
+                          );
+                        });
+                      })()}
+                    </div>
+                  </div>
+
+                  {/* Step 3: Custom Fields for Specialty */}
+                  {(() => {
+                    const fields = SPECIALTY_FIELDS[selectedOperationTitle] || [];
+                    if (fields.length === 0) return null;
+                    return (
+                      <div className="space-y-3">
+                        <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
+                          3. Configurações da Operação (Campos Necessários):
+                        </label>
+                        <div className="grid grid-cols-1 gap-3">
+                          {fields.map((f) => (
+                            <div key={f.name} className="flex flex-col gap-1.5">
+                              <label className="text-xs font-bold text-slate-500">{f.label}</label>
+                              <input
+                                type={f.type === 'number' ? 'text' : f.type}
+                                placeholder={f.placeholder}
+                                value={customFieldsValues[f.name] || ''}
+                                onChange={(e) => setCustomFieldsValues(prev => ({ ...prev, [f.name]: e.target.value }))}
+                                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-white outline-none focus:ring-2 focus:ring-[#FF6A00]/15 transition-all text-slate-700"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
+
+                  {/* Step 4: Cadence & Schedule Selection */}
+                  <div className="space-y-3">
+                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
+                      4. Cadência e Cronograma de Execução:
+                    </label>
+                    
+                    {/* Cadences */}
+                    <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                      {automationSuggestions.map((suggestion) => {
+                        const isSelected = selectedAutomationId === suggestion.id;
+                        return (
+                          <div
+                            key={suggestion.id}
+                            onClick={() => setSelectedAutomationId(suggestion.id)}
+                            className={`cursor-pointer rounded-2xl border p-3.5 text-left transition-all duration-200 ${
+                              isSelected
+                                ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-[#0f172a]'
+                                : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                            }`}
+                          >
+                            <p className="text-xs font-black text-[#0f172a]">{suggestion.title}</p>
+                            <p className="mt-1 text-[10px] text-slate-500 font-semibold">{suggestion.cadence}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Schedule Options */}
+                    {selectedSuggestion && (
+                      <div className="mt-2 space-y-2">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">Dias e horários recomendados</p>
+                        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                          {selectedSuggestion.scheduleOptions.map((opt) => {
+                            const isOptSelected = selectedScheduleOptionId === opt.id;
+                            return (
+                              <button
+                                key={opt.id}
+                                type="button"
+                                onClick={() => setSelectedScheduleOptionId(opt.id)}
+                                className={`cursor-pointer rounded-xl border p-3 text-left transition-all duration-200 w-full ${
+                                  isOptSelected
+                                    ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                                    : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]'
+                                }`}
+                              >
+                                <p className="text-xs font-black text-[#0f172a]">{opt.label}</p>
+                                <p className="mt-0.5 text-[10px] text-slate-500 font-semibold leading-tight">{opt.detail}</p>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {automationNotice && (
+                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 shadow-sm">
+                  {automationNotice}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-slate-200 bg-[#eef2f7] flex items-center justify-between shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsCustomAutomationModalOpen(false)}
+                className="rounded-xl border border-white/50 bg-[#eef2f7] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-700 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] transition-all active:scale-95 cursor-pointer"
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="button"
+                disabled={isSavingAutomation || !selectedOperationTitle || !selectedSuggestion || !selectedScheduleOption}
+                onClick={async () => {
+                  if (!user || !activeAgent || !selectedOperationTitle || !selectedSuggestion || !selectedScheduleOption) return;
+                  setIsSavingAutomation(true);
+                  setAutomationNotice(null);
+                  try {
+                    const timestamps = buildAutomationTimestamps({
+                      cadence: selectedSuggestion.cadence,
+                      monthlyExecutions: selectedSuggestion.monthlyExecutions,
+                      scheduleOptionLabel: selectedScheduleOption.label,
+                    });
+                    const db = getFirebaseDb();
+                    const userRef = doc(db, 'users', user.uid);
+                    
+                    const automationKey = `${slugifyAgentTitle(activeAgent.nome)}-${slugifyAgentTitle(selectedOperationTitle)}`;
+                    const payload = {
+                      [`automations.${automationKey}`]: {
+                        status: 'active',
+                        agentTitle: selectedOperationTitle,
+                        agentCategory: activeAgent.categoria,
+                        cadenceId: selectedSuggestion.id,
+                        cadenceTitle: selectedSuggestion.title,
+                        cadence: selectedSuggestion.cadence,
+                        monthlyExecutions: selectedSuggestion.monthlyExecutions,
+                        distribution: selectedSuggestion.distribution,
+                        objective: selectedSuggestion.objective,
+                        scheduleOptionId: selectedScheduleOption.id,
+                        scheduleOptionLabel: selectedScheduleOption.label,
+                        scheduleOptionDetail: selectedScheduleOption.detail,
+                        planName: 'Growth',
+                        monthlyLimit: 12,
+                        activatedAt: Date.now(),
+                        updatedAt: Date.now(),
+                        lastUpdateAt: timestamps.lastUpdateAt,
+                        nextUpdateAt: timestamps.nextUpdateAt,
+                        customFieldsData: customFieldsValues,
+                      },
+                    };
+
+                    await setDoc(userRef, payload, { merge: true });
+                    setAutomationNotice('Automação programada com sucesso!');
+                    setTimeout(() => {
+                      setIsCustomAutomationModalOpen(false);
+                      setAutomationNotice(null);
+                    }, 1500);
+                  } catch (error) {
+                    console.error('Erro ao programar automação:', error);
+                    setAutomationNotice('Erro ao salvar programação de automação.');
+                  } finally {
+                    setIsSavingAutomation(false);
+                  }
+                }}
+                className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  selectedOperationTitle && selectedSuggestion && selectedScheduleOption && !isSavingAutomation
+                    ? 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] text-white shadow-[3px_3px_6px_rgba(8,183,96,0.2),_-3px_-3px_6px_#ffffff] hover:brightness-105 active:scale-98'
+                    : 'bg-[#eef2f7] text-slate-400 border border-white/20 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] cursor-not-allowed'
+                }`}
+              >
+                {isSavingAutomation ? 'Programando...' : 'Programar Automação'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </motion.div>
   );
 }

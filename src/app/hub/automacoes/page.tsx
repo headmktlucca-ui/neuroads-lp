@@ -11,12 +11,273 @@ import { useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Activity, ArrowRight, Brain, CheckCircle2, ChevronRight,
-  Clock, Cpu, ExternalLink, Power, Search, Sparkles, X, Zap,
+  Clock, Cpu, ExternalLink, Power, Search, Sparkles, X, Zap, Edit, Trash2, Play, Pause, Database, Settings
 } from 'lucide-react';
-import { collection, onSnapshot, query, where, updateDoc, doc, addDoc, increment } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, updateDoc, doc, addDoc, increment, deleteField } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { getFirebaseDb } from '../../../lib/firebase';
-import { getHubAutomationsFromProfile, formatAutomationDateTime } from '../../../lib/hub-automations';
+import { getHubAutomationsFromProfile, formatAutomationDateTime, buildAutomationTimestamps, type HubAutomationEntry } from '../../../lib/hub-automations';
+
+import { agents as allSpecialties } from '../../../data/agents';
+
+interface CustomField {
+  name: string;
+  label: string;
+  type: 'text' | 'number' | 'url';
+  placeholder: string;
+}
+
+const SPECIALTY_FIELDS: Record<string, CustomField[]> = {
+  'Analista de Tráfego': [
+    { name: 'plataforma', label: 'Plataforma de Anúncios', type: 'text', placeholder: 'Meta Ads, Google Ads ou ambos' },
+    { name: 'cpa_alvo', label: 'CPA Alvo (R$)', type: 'number', placeholder: 'Ex: 50' },
+  ],
+  'Gerador de Criativos': [
+    { name: 'produto', label: 'Nome do Produto/Serviço', type: 'text', placeholder: 'Ex: Curso de Marketing' },
+    { name: 'publico', label: 'Público-Alvo', type: 'text', placeholder: 'Ex: Empreendedores digitais' },
+  ],
+  'Gerador de Copies de Conversão': [
+    { name: 'produto', label: 'Nome do Produto/Serviço', type: 'text', placeholder: 'Ex: Mentoria de Negócios' },
+    { name: 'beneficios', label: 'Principais Benefícios', type: 'text', placeholder: 'Ex: Aumentar vendas em 30%' },
+  ],
+  'Análise Viral': [
+    { name: 'nicho', label: 'Nicho/Setor', type: 'text', placeholder: 'Ex: Moda Feminina, Fitness' },
+    { name: 'canal', label: 'Rede Social Principal', type: 'text', placeholder: 'Ex: Instagram, TikTok' },
+  ],
+  'Rastreador Cirúrgico': [
+    { name: 'site', label: 'URL do Site', type: 'url', placeholder: 'Ex: https://meusite.com.br' },
+    { name: 'pixel_id', label: 'ID do Pixel (opcional)', type: 'text', placeholder: 'Ex: 1234567890' },
+  ],
+  'Preditor de Funil': [
+    { name: 'cpc_medio', label: 'CPC Médio (R$)', type: 'number', placeholder: 'Ex: 1.50' },
+    { name: 'taxa_conversao', label: 'Taxa de Conversão da LP (%)', type: 'number', placeholder: 'Ex: 2.5' },
+    { name: 'ticket_medio', label: 'Ticket Médio (R$)', type: 'number', placeholder: 'Ex: 197' },
+  ],
+  'Diagnóstico de Landing Page': [
+    { name: 'url_lp', label: 'URL da Landing Page', type: 'url', placeholder: 'Ex: https://meusite.com.br/landing' },
+    { name: 'objetivo', label: 'Objetivo de Conversão', type: 'text', placeholder: 'Ex: Venda, Lead, Cadastro' },
+  ],
+  'Simulador de ROAS': [
+    { name: 'meta_faturamento', label: 'Meta de Faturamento (R$)', type: 'number', placeholder: 'Ex: 50000' },
+    { name: 'ticket_medio', label: 'Ticket Médio (R$)', type: 'number', placeholder: 'Ex: 250' },
+  ],
+  'SEO & GEO': [
+    { name: 'url_site', label: 'URL do Site', type: 'url', placeholder: 'Ex: https://meusite.com.br' },
+    { name: 'palavras_chave', label: 'Palavras-Chave Foco', type: 'text', placeholder: 'Ex: neuroads, trafego pago' },
+  ],
+  'Diagnóstico de Funil': [
+    { name: 'visitas', label: 'Visitas Mensais', type: 'number', placeholder: 'Ex: 10000' },
+    { name: 'leads', label: 'Leads Gerados', type: 'number', placeholder: 'Ex: 1500' },
+    { name: 'vendas', label: 'Vendas Realizadas', type: 'number', placeholder: 'Ex: 150' },
+  ],
+  'Gerador de Testes A/B': [
+    { name: 'pagina', label: 'Página do Teste', type: 'url', placeholder: 'Ex: https://meusite.com.br' },
+    { name: 'elemento', label: 'Elemento a Testar', type: 'text', placeholder: 'Ex: Botão de CTA, Headline' },
+  ],
+  'Prospector Outbound': [
+    { name: 'segmento', label: 'Segmento Alvo', type: 'text', placeholder: 'Ex: Tecnologia, E-commerce, Clínicas' },
+    { name: 'cargo', label: 'Cargo do Decisor', type: 'text', placeholder: 'Ex: CEO, Diretor de Marketing' },
+  ],
+  'Qualificador de ICP': [
+    { name: 'lead_name', label: 'Nome do Lead', type: 'text', placeholder: 'Ex: Carlos Souza' },
+    { name: 'lead_empresa', label: 'Empresa do Lead', type: 'text', placeholder: 'Ex: Logística Express' },
+  ],
+  'Atendimento 24/7': [
+    { name: 'canal', label: 'Canal de Atendimento', type: 'text', placeholder: 'Ex: WhatsApp, Webchat' },
+    { name: 'faq_url', label: 'URL da FAQ/Ajuda', type: 'url', placeholder: 'Ex: https://ajuda.meusite.com' },
+  ],
+  'Histórico de Cliente': [
+    { name: 'email_cliente', label: 'E-mail do Cliente', type: 'text', placeholder: 'Ex: cliente@empresa.com' },
+  ],
+  'Closer por Chat': [
+    { name: 'lead_name', label: 'Nome do Lead', type: 'text', placeholder: 'Ex: Mariana Silva' },
+    { name: 'proposta_valor', label: 'Valor Proposto (R$)', type: 'number', placeholder: 'Ex: 15000' },
+  ],
+  'Contrato & Pagamento': [
+    { name: 'email_cliente', label: 'E-mail para Envio', type: 'text', placeholder: 'Ex: cliente@empresa.com' },
+    { name: 'valor_contrato', label: 'Valor do Contrato (R$)', type: 'number', placeholder: 'Ex: 15000' },
+  ],
+  'Reativação de Inativos': [
+    { name: 'dias_inativo', label: 'Dias de Inatividade', type: 'number', placeholder: 'Ex: 30' },
+    { name: 'oferta', label: 'Oferta de Reativação', type: 'text', placeholder: 'Ex: Desconto de 20% no primeiro mês' },
+  ],
+  'Upsell Inteligente': [
+    { name: 'email_cliente', label: 'E-mail do Cliente', type: 'text', placeholder: 'Ex: joao@empresa.com' },
+    { name: 'plano_atual', label: 'Plano Atual', type: 'text', placeholder: 'Ex: Plano Standard' },
+  ],
+  'Fluxos de Nutrição': [
+    { name: 'segmento', label: 'Segmento de Leads', type: 'text', placeholder: 'Ex: E-books / Leads Frios' },
+    { name: 'plataforma', label: 'Plataforma de E-mail', type: 'text', placeholder: 'Ex: RD Station, ActiveCampaign' },
+  ],
+  'Lead Scoring': [
+    { name: 'pontuacao_minima', label: 'Pontuação Mínima para Abordagem', type: 'number', placeholder: 'Ex: 80' },
+  ],
+  'Briefing de Reunião': [
+    { name: 'nome_reuniao', label: 'Assunto da Reunião', type: 'text', placeholder: 'Ex: Reunião Comercial' },
+    { name: 'participantes', label: 'Participantes Principais', type: 'text', placeholder: 'Ex: CEO e Diretor de Vendas' },
+  ],
+  'Gestor de Tarefas': [
+    { name: 'titulo_tarefa', label: 'Título da Tarefa', type: 'text', placeholder: 'Ex: Revisar criativos da campanha' },
+    { name: 'responsavel', label: 'Responsável', type: 'text', placeholder: 'Ex: Paola' },
+  ],
+  'Auditor de Desperdício': [
+    { name: 'plataforma', label: 'Plataforma de Anúncios', type: 'text', placeholder: 'Ex: Google Ads, Meta Ads' },
+    { name: 'cpa_limite', label: 'CPA Limite Máximo (R$)', type: 'number', placeholder: 'Ex: 60' },
+  ],
+  'Otimizador de Orçamento': [
+    { name: 'orcamento_mensal', label: 'Orçamento Mensal (R$)', type: 'number', placeholder: 'Ex: 10000' },
+    { name: 'meta_roas', label: 'Meta de ROAS Mínimo', type: 'number', placeholder: 'Ex: 3.5' },
+  ],
+  'Agente Editorial': [
+    { name: 'tema', label: 'Tema / Pauta do Conteúdo', type: 'text', placeholder: 'Ex: Tendências de IA B2B' },
+    { name: 'formato', label: 'Formato Principal', type: 'text', placeholder: 'Ex: Artigo de opinião, Post longo' },
+  ],
+  'Gerador de Carrossel': [
+    { name: 'tema', label: 'Tema do Carrossel', type: 'text', placeholder: 'Ex: 5 erros no tráfego pago B2B' },
+    { name: 'quantidade_slides', label: 'Quantidade de Slides', type: 'number', placeholder: 'Ex: 7' },
+  ],
+  'Roteirista de Vídeo': [
+    { name: 'gancho', label: 'Gancho Inicial / Ideia', type: 'text', placeholder: 'Ex: Como dobrar conversões com SDR' },
+    { name: 'plataforma', label: 'Plataforma de Vídeo', type: 'text', placeholder: 'Ex: Meta (Reels), TikTok, YouTube' },
+  ],
+  'Redator de Artigos': [
+    { name: 'titulo_sugerido', label: 'Título Sugerido ou Palavra-Chave', type: 'text', placeholder: 'Ex: Guia Completo de CRO' },
+    { name: 'objetivo', label: 'Objetivo do Artigo', type: 'text', placeholder: 'Ex: Captar Leads, SEO, Autoridade' },
+  ],
+  'Analisador de Público': [
+    { name: 'site_concorrente', label: 'Site do Concorrente (URL)', type: 'url', placeholder: 'Ex: https://concorrente.com' },
+    { name: 'publico_alvo', label: 'Público Atual da Empresa', type: 'text', placeholder: 'Ex: Gestores de Performance B2B' },
+  ],
+  'Avaliador de Oferta': [
+    { name: 'oferta_descricao', label: 'Descrição da Oferta Atual', type: 'text', placeholder: 'Ex: Plano trimestral com 20% OFF' },
+    { name: 'valor_produto', label: 'Preço / Valor (R$)', type: 'number', placeholder: 'Ex: 497' },
+  ],
+  'Radar de Oportunidades': [
+    { name: 'objetivo_negocio', label: 'Principal Objetivo de Negócio', type: 'text', placeholder: 'Ex: Escalar receita com mesmo CAC' },
+    { name: 'canal_foco', label: 'Canal de Foco', type: 'text', placeholder: 'Ex: Meta Ads, Outbound' },
+  ],
+  'Análise de Concorrentes': [
+    { name: 'url_concorrente', label: 'URL do Concorrente', type: 'url', placeholder: 'Ex: https://concorrente.com' },
+    { name: 'itens_analisar', label: 'Itens para Focar', type: 'text', placeholder: 'Ex: Preço, Proposta de valor, Copy' },
+  ],
+  'Público-Alvo Ideal': [
+    { name: 'produto_servico', label: 'Seu Produto/Serviço', type: 'text', placeholder: 'Ex: Software CRM de Vendas' },
+    { name: 'ticket_medio', label: 'Ticket Médio (R$)', type: 'number', placeholder: 'Ex: 1500' },
+  ],
+};
+
+type AutomationSuggestion = {
+  id: string;
+  title: string;
+  objective: string;
+  cadence: string;
+  monthlyExecutions: number;
+  distribution: string;
+  scheduleOptions: Array<{
+    id: string;
+    label: string;
+    detail: string;
+  }>;
+};
+
+function getCadenceContext(category: string, title: string) {
+  const byCategory: Record<string, { objective: string; distribution: string }> = {
+    Performance: {
+      objective: 'Ajustes rápidos em campanhas, orçamento e segmentações para sustentar ROI.',
+      distribution: 'Seg: diagnóstico | Qua: otimização | Sex: validação de performance',
+    },
+    Inteligência: {
+      objective: 'Análises estratégicas e decisões orientadas por sinais de mercado e comportamento.',
+      distribution: 'Ter: pesquisa e insights | Qui: refinamento de direcionamento | Sex: plano de ação',
+    },
+    Criativos: {
+      objective: 'Ciclos contínuos de ideação, variações e melhoria de mensagens criativas.',
+      distribution: 'Seg: briefing | Qua: variações | Sex: revisão de conversão',
+    },
+    Técnico: {
+      objective: 'Estabilidade de tracking, testes técnicos e evolução da infraestrutura de marketing.',
+      distribution: 'Ter: auditoria técnica | Qui: implementação | Sex: validação e monitoramento',
+    },
+  };
+
+  const fallback = {
+    objective: 'Rotina estratégica para evolução contínua da operação com foco em previsibilidade.',
+    distribution: 'Seg: planejamento | Qua: execução | Sex: revisão',
+  };
+
+  if (title === 'SEO & GEO') {
+    return {
+      objective: 'Evolução contínua de autoridade orgânica e presença em respostas de IAs generativas.',
+      distribution: 'Seg: auditoria e keywords | Qua: otimização on-page/schema | Sex: GEO e menções externas',
+    };
+  }
+
+  return byCategory[category] ?? fallback;
+}
+
+function buildAutomationSuggestions(entry: { title: string; category: string; planSummary?: { monthlyLimit?: number } }): AutomationSuggestion[] {
+  const limit = Math.max(6, entry.planSummary?.monthlyLimit ?? 12);
+  const context = getCadenceContext(entry.category, entry.title);
+
+  const conservative = Math.max(4, Math.round(limit * 0.45));
+  const balanced = Math.max(conservative + 1, Math.round(limit * 0.75));
+  const scale = limit;
+
+  const toCadence = (executions: number) => {
+    const weekly = Math.max(1, Math.round(executions / 4));
+    const days =
+      weekly <= 2
+        ? '2x por semana'
+        : weekly <= 4
+          ? '4x por semana'
+          : weekly <= 6
+            ? '6x por semana'
+            : 'execução diária';
+    return `${days} (${weekly} rotinas/semana)`;
+  };
+
+  return [
+    {
+      id: 'conservative',
+      title: 'Cadência Essencial',
+      objective: `${context.objective} Com foco em consistência e baixo esforço operacional.`,
+      cadence: toCadence(conservative),
+      monthlyExecutions: conservative,
+      distribution: context.distribution,
+      scheduleOptions: [
+        { id: 'conservative_mon_thu_0900', label: 'Seg e Qui • 09:00', detail: 'Revisão no início da manhã para ajustes rápidos antes do pico.' },
+        { id: 'conservative_tue_fri_1430', label: 'Ter e Sex • 14:30', detail: 'Acompanhamento no meio da tarde com janela para correções no mesmo dia.' },
+      ],
+    },
+    {
+      id: 'balanced',
+      title: 'Cadência Estratégica',
+      objective: `${context.objective} Equilíbrio ideal entre aprendizado, execução e estabilidade.`,
+      cadence: toCadence(balanced),
+      monthlyExecutions: balanced,
+      distribution: context.distribution,
+      scheduleOptions: [
+        { id: 'balanced_mon_wed_fri_0830', label: 'Seg, Qua e Sex • 08:30', detail: 'Ritmo clássico para abrir, ajustar e consolidar a semana.' },
+        { id: 'balanced_tue_thu_sat_1000', label: 'Ter, Qui e Sáb • 10:00', detail: 'Distribuição equilibrada com revisão extra no sábado.' },
+        { id: 'balanced_mon_wed_fri_1700', label: 'Seg, Qua e Sex • 17:00', detail: 'Leitura de fechamento diário para replanejar o dia seguinte.' },
+      ],
+    },
+    {
+      id: 'scale',
+      title: 'Cadência Máxima do Plano',
+      objective: `${context.objective} Uso total do limite contratado para acelerar resultados.`,
+      cadence: toCadence(scale),
+      monthlyExecutions: scale,
+      distribution: context.distribution,
+      scheduleOptions: [
+        { id: 'scale_weekdays_0800', label: 'Seg a Sex • 08:00', detail: 'Ajustes agressivos na abertura de cada dia útil.' },
+        { id: 'scale_weekdays_1230', label: 'Seg a Sex • 12:30', detail: 'Correções no meio do dia, após sinais iniciais de performance.' },
+        { id: 'scale_weekdays_1800', label: 'Seg a Sex • 18:00', detail: 'Fechamento de rotina para rebalanceamento noturno.' },
+        { id: 'scale_daily_0900', label: 'Seg a Dom • 09:00', detail: 'Operação contínua inclusive fim de semana para contas com alto giro.' },
+      ],
+    },
+  ];
+}
 
 // ─── Reusable KPI Icon Wrapper ──────────────────────────────────────────────
 
@@ -61,6 +322,7 @@ interface Automation {
   lastRunAt: string | null;
   createdAt: string;
   isActive: boolean;
+  rawEntry?: HubAutomationEntry;
 }
 
 // ─── Category accent colors ───────────────────────────────────────────────────
@@ -178,9 +440,11 @@ const OPPORTUNITY_TEMPLATES: Record<string, any> = {
 function AutomationCard({
   automation,
   userId,
+  onEdit,
 }: {
   automation: Automation;
   userId?: string;
+  onEdit?: () => void;
 }) {
   const [expanded, setExpanded] = useState(false);
   const [running, setRunning] = useState(false);
@@ -211,7 +475,7 @@ function AutomationCard({
         impactValue: '480+ termos identificados',
         rationale: 'O Search Console ainda não está conectado. Com 480 palavras-chave captadas na última análise pública do domínio, você está perdendo dados cruciais de intenção de compra para alimentar campanhas de DSA.',
         actions: [
-          'Conectar Google Search Console em Integrações',
+          'Conectar Google Search Console in Integrações',
           'Identificar termos de alta conversão',
         ],
         agent: 'Agente SEO',
@@ -257,10 +521,17 @@ function AutomationCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
             <h3 className="text-[14px] font-black text-[#0f172a] truncate">{automation.name}</h3>
-            <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full border bg-emerald-500/10 border-emerald-500/20 text-emerald-700">
-              <CheckCircle2 size={9} />
-              Ativa
-            </span>
+            {automation.isActive ? (
+              <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full border bg-emerald-500/10 border-emerald-500/20 text-emerald-700">
+                <CheckCircle2 size={9} />
+                Ativa
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide px-2 py-0.5 rounded-full border bg-amber-500/10 border-amber-500/20 text-amber-700">
+                <Pause size={9} />
+                Pausada
+              </span>
+            )}
             <span
               className="text-[10px] font-bold px-2 py-0.5 rounded-full border"
               style={{ color, background: `${color}12`, borderColor: `${color}30` }}
@@ -297,38 +568,93 @@ function AutomationCard({
         )}
       </div>
 
-      {/* Trigger & Run Now Row */}
-      <div className="mt-4 pt-3 border-t border-slate-200/50 flex items-center justify-between">
-        <span className="text-[10.5px] text-slate-400 font-bold truncate max-w-[60%]">
+      {/* Trigger & Action Row */}
+      <div className="mt-4 pt-3 border-t border-slate-200/50 flex items-center justify-between gap-3">
+        <span className="text-[10.5px] text-slate-400 font-bold truncate max-w-[45%]">
           Gatilho: {automation.trigger}
         </span>
-        <button
-          type="button"
-          onClick={handleRun}
-          disabled={running}
-          className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
-            runSuccess
-              ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-600'
-              : 'bg-[#FF6A00] text-white hover:bg-[#e05d00] shadow-[2px_2px_6px_rgba(255,106,0,0.25)]'
-          }`}
-        >
-          {running ? (
-            <>
-              <span className="w-3 h-3 rounded-full border border-current border-t-transparent animate-spin shrink-0" />
-              Executando...
-            </>
-          ) : runSuccess ? (
-            <>
-              <CheckCircle2 size={12} />
-              Sucesso!
-            </>
-          ) : (
-            <>
-              <Cpu size={12} />
-              Executar Agora
-            </>
-          )}
-        </button>
+        
+        <div className="flex items-center gap-1.5 shrink-0">
+          {/* Pause Toggle Button */}
+          <button
+            type="button"
+            onClick={async (e) => {
+              e.stopPropagation();
+              if (!userId) return;
+              const db = getFirebaseDb();
+              const userRef = doc(db, 'users', userId);
+              await updateDoc(userRef, {
+                [`automations.${automation.id}.status`]: automation.isActive ? 'paused' : 'active',
+                [`automations.${automation.id}.updatedAt`]: Date.now(),
+              });
+            }}
+            className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 shrink-0"
+            title={automation.isActive ? 'Pausar Automação' : 'Ativar Automação'}
+          >
+            <Power size={13} className={automation.isActive ? 'text-emerald-500 animate-pulse' : 'text-slate-400'} />
+          </button>
+
+          {/* Edit Button */}
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit?.();
+            }}
+            className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 shrink-0"
+            title="Editar Automação"
+          >
+            <Edit size={13} />
+          </button>
+
+          {/* Exclude Button */}
+          <button
+            type="button"
+            onClick={async (e) => {
+              e.stopPropagation();
+              if (!userId) return;
+              if (!window.confirm('Tem certeza que deseja excluir esta automação?')) return;
+              const db = getFirebaseDb();
+              const userRef = doc(db, 'users', userId);
+              await updateDoc(userRef, {
+                [`automations.${automation.id}`]: deleteField()
+              });
+            }}
+            className="p-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-rose-500 hover:text-rose-600 transition-all flex items-center justify-center cursor-pointer shadow-sm active:scale-95 shrink-0"
+            title="Excluir Automação"
+          >
+            <Trash2 size={13} />
+          </button>
+
+          {/* Run Now Button */}
+          <button
+            type="button"
+            onClick={handleRun}
+            disabled={running}
+            className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all flex items-center gap-1.5 cursor-pointer shrink-0 ${
+              runSuccess
+                ? 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-600'
+                : 'bg-[#FF6A00] text-white hover:bg-[#e05d00] shadow-[2px_2px_6px_rgba(255,106,0,0.25)]'
+            }`}
+          >
+            {running ? (
+              <>
+                <span className="w-3 h-3 rounded-full border border-current border-t-transparent animate-spin shrink-0" />
+                Executando...
+              </>
+            ) : runSuccess ? (
+              <>
+                <CheckCircle2 size={12} />
+                Sucesso!
+              </>
+            ) : (
+              <>
+                <Cpu size={12} />
+                Executar Agora
+              </>
+            )}
+          </button>
+        </div>
       </div>
 
       {/* Expanded */}
@@ -340,10 +666,24 @@ function AutomationCard({
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
-            <div className="mt-4 pt-4 border-t border-slate-200/60 space-y-2">
+            <div className="mt-4 pt-4 border-t border-slate-200/60 space-y-3">
               <p className="text-[11px] text-slate-400 font-semibold">
                 <span className="font-black text-slate-600">Criada em:</span> {automation.createdAt}
               </p>
+              
+              {automation.rawEntry?.customFieldsData && Object.keys(automation.rawEntry.customFieldsData).length > 0 && (
+                <div className="space-y-1 bg-slate-50 rounded-xl p-3 border border-slate-100">
+                  <p className="text-[10.5px] font-black text-slate-500 uppercase tracking-wide">Configurações salvas:</p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-1.5">
+                    {Object.entries(automation.rawEntry.customFieldsData).map(([key, val]) => (
+                      <div key={key} className="flex flex-col">
+                        <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">{key}</span>
+                        <span className="text-[11.5px] font-bold text-slate-700 break-all">{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         )}
@@ -389,6 +729,56 @@ export default function HubAutomacoesPage() {
   const [search, setSearch] = useState('');
   const [filterCategory, setFilterCategory] = useState('Todos');
 
+  const [editingAutomation, setEditingAutomation] = useState<Automation | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editCustomFields, setEditCustomFields] = useState<Record<string, string>>({});
+  const [editCadenceId, setEditCadenceId] = useState('');
+  const [editScheduleOptionId, setEditScheduleOptionId] = useState('');
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
+  const [editNotice, setEditNotice] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (editingAutomation && editingAutomation.rawEntry) {
+      setEditCustomFields(editingAutomation.rawEntry.customFieldsData || {});
+      setEditCadenceId(editingAutomation.rawEntry.cadenceId);
+      setEditScheduleOptionId(editingAutomation.rawEntry.scheduleOptionId);
+      setEditNotice(null);
+    }
+  }, [editingAutomation]);
+
+  const editSuggestions = useMemo(() => {
+    if (!editingAutomation || !editingAutomation.rawEntry) return [];
+    return buildAutomationSuggestions({
+      title: editingAutomation.rawEntry.agentTitle,
+      category: editingAutomation.rawEntry.agentCategory,
+      planSummary: { monthlyLimit: editingAutomation.rawEntry.monthlyLimit || 12 }
+    });
+  }, [editingAutomation]);
+
+  const selectedEditSuggestion = useMemo(
+    () => editSuggestions.find((item) => item.id === editCadenceId) ?? null,
+    [editSuggestions, editCadenceId]
+  );
+
+  const selectedEditScheduleOption = useMemo(() => {
+    if (!selectedEditSuggestion) return null;
+    return selectedEditSuggestion.scheduleOptions.find((item) => item.id === editScheduleOptionId) ?? null;
+  }, [editScheduleOptionId, selectedEditSuggestion]);
+
+  useEffect(() => {
+    if (!editSuggestions.length) return;
+    setEditCadenceId((current) => current || editSuggestions[1]?.id || editSuggestions[0].id);
+  }, [editSuggestions]);
+
+  useEffect(() => {
+    if (!selectedEditSuggestion) return;
+    setEditScheduleOptionId((current) => {
+      const exists = selectedEditSuggestion.scheduleOptions.some((option) => option.id === current);
+      if (exists) return current;
+      return selectedEditSuggestion.scheduleOptions[0]?.id ?? null;
+    });
+  }, [selectedEditSuggestion]);
+
   const handleActivateTemplate = (tpl: typeof POPULAR_TEMPLATES[number]) => {
     const newAuto: Automation = {
       id: `${tpl.id}-${Date.now()}`,
@@ -416,7 +806,7 @@ export default function HubAutomacoesPage() {
       return;
     }
     const realAutos = getHubAutomationsFromProfile(profile)
-      .filter((a) => a.status === 'active')
+      .filter((a) => a.status === 'active' || a.status === 'paused')
       .map((a) => ({
         id: a.key,
         name: `${a.agentTitle} (${a.objective})`,
@@ -427,7 +817,8 @@ export default function HubAutomacoesPage() {
         runsTotal: a.monthlyExecutions || 0,
         lastRunAt: a.lastUpdateAt ? formatAutomationDateTime(a.lastUpdateAt) : null,
         createdAt: a.activatedAt ? new Date(a.activatedAt).toLocaleDateString('pt-BR') : new Date().toLocaleDateString('pt-BR'),
-        isActive: true,
+        isActive: a.status === 'active',
+        rawEntry: a,
       }));
     setAutomations(realAutos);
     setLoading(false);
@@ -619,7 +1010,15 @@ export default function HubAutomacoesPage() {
               </motion.div>
             ) : (
               filtered.map((automation) => (
-                <AutomationCard key={automation.id} automation={automation} userId={user?.uid} />
+                <AutomationCard
+                  key={automation.id}
+                  automation={automation}
+                  userId={user?.uid}
+                  onEdit={() => {
+                    setEditingAutomation(automation);
+                    setIsEditModalOpen(true);
+                  }}
+                />
               ))
             )}
           </AnimatePresence>
@@ -682,6 +1081,184 @@ export default function HubAutomacoesPage() {
           })}
         </div>
       </div>
+
+      {isEditModalOpen && editingAutomation && editingAutomation.rawEntry && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center overflow-hidden px-4 py-4">
+          <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-md" onClick={() => setIsEditModalOpen(false)} />
+
+          <div className="relative w-full max-w-[700px] max-h-[96vh] rounded-[32px] bg-[#eef2f7] border border-white/80 shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] overflow-hidden animate-in fade-in zoom-in-95 duration-250 text-slate-800 flex flex-col">
+            {/* Header */}
+            <div className="relative border-b border-slate-200 bg-[#eef2f7] px-6 py-5 flex flex-col gap-1 shrink-0">
+              <p className="text-xs uppercase tracking-widest text-[#FF6B00] font-bold">Editar Programação</p>
+              <h3 className="text-2xl font-black text-[#0f172a]">Editar Automação</h3>
+              <p className="text-xs font-semibold text-slate-500 mt-1">
+                Ajuste as configurações e cadência de <strong>{editingAutomation.rawEntry.agentTitle}</strong>.
+              </p>
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                className="absolute right-5 top-5 rounded-full border border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-slate-500 p-2 transition-all hover:scale-105 active:scale-95 z-50 animate-all cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 overflow-y-auto space-y-5 flex-1 text-left">
+              {/* Custom fields */}
+              {(() => {
+                const fields = SPECIALTY_FIELDS[editingAutomation.rawEntry.agentTitle] || [];
+                if (fields.length === 0) return null;
+                return (
+                  <div className="space-y-3">
+                    <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
+                      1. Configurações da Operação:
+                    </label>
+                    <div className="grid grid-cols-1 gap-3">
+                      {fields.map((f) => (
+                        <div key={f.name} className="flex flex-col gap-1.5">
+                          <label className="text-xs font-bold text-slate-500">{f.label}</label>
+                          <input
+                            type={f.type === 'number' ? 'text' : f.type}
+                            placeholder={f.placeholder}
+                            value={editCustomFields[f.name] || ''}
+                            onChange={(e) => setEditCustomFields(prev => ({ ...prev, [f.name]: e.target.value }))}
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-[13px] bg-white outline-none focus:ring-2 focus:ring-[#FF6A00]/15 transition-all text-slate-700"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {/* Cadence Suggestions */}
+              <div className="space-y-3">
+                <label className="text-[11px] font-black text-slate-400 uppercase tracking-wide">
+                  2. Cadência de Execução:
+                </label>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+                  {editSuggestions.map((suggestion) => {
+                    const isSelected = editCadenceId === suggestion.id;
+                    return (
+                      <div
+                        key={suggestion.id}
+                        onClick={() => setEditCadenceId(suggestion.id)}
+                        className={`cursor-pointer rounded-2xl border p-3.5 text-left transition-all duration-200 ${
+                          isSelected
+                            ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] text-[#0f172a]'
+                            : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                        }`}
+                      >
+                        <p className="text-xs font-black text-[#0f172a]">{suggestion.title}</p>
+                        <p className="mt-1 text-[10px] text-slate-500 font-semibold">{suggestion.cadence}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Schedule options */}
+              {selectedEditSuggestion && (
+                <div className="space-y-2">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-[#FF6B00]">3. Dias e horários recomendados</p>
+                  <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                    {selectedEditSuggestion.scheduleOptions.map((opt) => {
+                      const isOptSelected = editScheduleOptionId === opt.id;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => setEditScheduleOptionId(opt.id)}
+                          className={`cursor-pointer rounded-xl border p-3 text-left transition-all duration-200 w-full ${
+                            isOptSelected
+                              ? 'border-[#FF6B00]/40 bg-[#FF6B00]/5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
+                              : 'border-white/50 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]'
+                          }`}
+                        >
+                          <p className="text-xs font-black text-[#0f172a]">{opt.label}</p>
+                          <p className="mt-0.5 text-[10px] text-slate-500 font-semibold leading-tight">{opt.detail}</p>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {editNotice && (
+                <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-700 shadow-sm">
+                  {editNotice}
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-4 border-t border-slate-200 bg-[#eef2f7] flex items-center justify-between shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsEditModalOpen(false)}
+                className="rounded-xl border border-white/50 bg-[#eef2f7] px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-slate-700 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] transition-all active:scale-95 cursor-pointer"
+              >
+                Cancelar
+              </button>
+
+              <button
+                type="button"
+                disabled={isSavingEdit || !selectedEditSuggestion || !selectedEditScheduleOption}
+                onClick={async () => {
+                  if (!user || !editingAutomation || !editingAutomation.rawEntry || !selectedEditSuggestion || !selectedEditScheduleOption) return;
+                  setIsSavingEdit(true);
+                  setEditNotice(null);
+                  try {
+                    const timestamps = buildAutomationTimestamps({
+                      cadence: selectedEditSuggestion.cadence,
+                      monthlyExecutions: selectedEditSuggestion.monthlyExecutions,
+                      scheduleOptionLabel: selectedEditScheduleOption.label,
+                    });
+                    const db = getFirebaseDb();
+                    const userRef = doc(db, 'users', user.uid);
+                    
+                    const payload = {
+                      [`automations.${editingAutomation.id}.cadenceId`]: selectedEditSuggestion.id,
+                      [`automations.${editingAutomation.id}.cadenceTitle`]: selectedEditSuggestion.title,
+                      [`automations.${editingAutomation.id}.cadence`]: selectedEditSuggestion.cadence,
+                      [`automations.${editingAutomation.id}.monthlyExecutions`]: selectedEditSuggestion.monthlyExecutions,
+                      [`automations.${editingAutomation.id}.distribution`]: selectedEditSuggestion.distribution,
+                      [`automations.${editingAutomation.id}.objective`]: selectedEditSuggestion.objective,
+                      [`automations.${editingAutomation.id}.scheduleOptionId`]: selectedEditScheduleOption.id,
+                      [`automations.${editingAutomation.id}.scheduleOptionLabel`]: selectedEditScheduleOption.label,
+                      [`automations.${editingAutomation.id}.scheduleOptionDetail`]: selectedEditScheduleOption.detail,
+                      [`automations.${editingAutomation.id}.customFieldsData`]: editCustomFields,
+                      [`automations.${editingAutomation.id}.lastUpdateAt`]: timestamps.lastUpdateAt,
+                      [`automations.${editingAutomation.id}.nextUpdateAt`]: timestamps.nextUpdateAt,
+                      [`automations.${editingAutomation.id}.updatedAt`]: Date.now(),
+                    };
+
+                    await updateDoc(userRef, payload);
+                    setEditNotice('Automação atualizada com sucesso!');
+                    setTimeout(() => {
+                      setIsEditModalOpen(false);
+                      setEditNotice(null);
+                    }, 1500);
+                  } catch (error) {
+                    console.error('Erro ao atualizar automação:', error);
+                    setEditNotice('Erro ao salvar alterações.');
+                  } finally {
+                    setIsSavingEdit(false);
+                  }
+                }}
+                className={`inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
+                  selectedEditSuggestion && selectedEditScheduleOption && !isSavingEdit
+                    ? 'bg-gradient-to-br from-[#08B760] to-[#0A9D57] text-white shadow-[3px_3px_6px_rgba(8,183,96,0.2),_-3px_-3px_6px_#ffffff] hover:brightness-105 active:scale-98'
+                    : 'bg-[#eef2f7] text-slate-400 border border-white/20 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] cursor-not-allowed'
+                }`}
+              >
+                {isSavingEdit ? 'Salvando...' : 'Salvar Alterações'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

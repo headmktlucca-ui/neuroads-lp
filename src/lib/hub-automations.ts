@@ -20,6 +20,7 @@ export type HubAutomationEntry = {
   updatedAt: number | null;
   lastUpdateAt: number | null;
   nextUpdateAt: number | null;
+  customFieldsData?: Record<string, string> | null;
 };
 
 const MINUTE_MS = 60 * 1000;
@@ -240,6 +241,7 @@ export function getHubAutomationsFromProfile(profile: unknown): HubAutomationEnt
       updatedAt,
       lastUpdateAt,
       nextUpdateAt,
+      customFieldsData: isRecord(rawValue.customFieldsData) ? (rawValue.customFieldsData as Record<string, string>) : null,
     });
   }
 
