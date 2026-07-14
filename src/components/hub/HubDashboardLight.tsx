@@ -875,14 +875,6 @@ export default function HubDashboardLight() {
             Consolidado dos canais de tração · Autorreferenciado · Período selecionado
           </p>
         </div>
-        <Link
-          href="/hub/assistente-ia"
-          className="flex w-full sm:w-auto items-center justify-center gap-2 px-5 h-11 sm:h-10 rounded-xl text-white text-[13px] font-bold shadow-[4px_4px_10px_#c2cbd9,_-4px_-4px_10px_#ffffff] hover:shadow-[0_4px_16px_rgba(255,106,0,0.3)] transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
-          style={{ background: 'linear-gradient(135deg, #FF4D00, #FF7A00)', textDecoration: 'none' }}
-        >
-          <Sparkles size={14} className="animate-pulse" />
-          Análise Neuromarketing
-        </Link>
       </motion.div>
 
       {/* Trial countdown — visível apenas para usuários em período de teste */}

@@ -81,7 +81,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       {
         icon: IconBrain3D,
-        label: 'Funil IA',
+        label: 'Agentes IA',
         href: '/hub/laboratorio-agentes',
         children: [
           { icon: IconSparkles3D, label: 'Atração',    href: '/hub/funil/atracao'    },
