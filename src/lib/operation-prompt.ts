@@ -319,31 +319,40 @@ ${opSpec.essentialInputs.map((e) => `   • ${e.label} — ${e.reason}`).join('\
     : '';
 
   return `OPERAÇÃO ATIVA: ${spec.title}
+ 
+ OBJETIVO: ${spec.longDescription}
+ ${spec.heroDescription ? `ENTREGA ESPERADA: ${spec.heroDescription}` : ''}
+ ${outputHint}
+ 
+ TAREFA 1: DIAGNÓSTICO DE CONECTORES (OBRIGATÓRIO E IMEDIATO)
+ Antes de processar a solicitação ou gerar resultados, você deve identificar quais canais de integração listados abaixo são necessários para esta tarefa. Confirme o status de cada um e informe o usuário explicitamente:
+ - Canais Requeridos para esta Operação: ${primary.length > 0 ? primary.join(', ') : 'Nenhum conector obrigatório.'}
+ - Canais Conectados no Perfil do Usuário: ${connectorsLine}
+ - Ação: Faça um relato rápido informando se os acessos e canais necessários estão disponíveis. Caso algum canal crítico esteja offline (desconectado), notifique o usuário e pergunte se ele deseja prosseguir em modo de simulação com dados da Base de Conhecimento.
+ 
+ TAREFA 2: FORMULÁRIO DE FILTROS E PERGUNTAS-CHAVE (SE CONEXÃO OK)
+ Se as conexões necessárias estiverem disponíveis (ou o usuário aceitar o modo de simulação), apresente de forma interativa um formulário com sugestões de filtros ou realize até 3 perguntas-chave para que o usuário refine os indicadores e o escopo da análise que ele busca.
+ ${essentialsBlock ? `Sugestões e dados chave baseados na operação:\n${essentialsBlock}` : ''}
 
-OBJETIVO: ${spec.longDescription}
-${spec.heroDescription ? `ENTREGA ESPERADA: ${spec.heroDescription}` : ''}
-${outputHint}
-
-PROTOCOLO DE FONTES (ordem obrigatória de consulta):
-1. CANAIS CONECTADOS (Integrações): ${connectorsLine}.
-${primaryBlock}
-2. BASE DE CONHECIMENTO: relatórios dos Agentes e histórico já carregados neste contexto — trate como memória oficial da operação do usuário.
-3. PESQUISA DE MERCADO (web/redes sociais): use apenas para lacunas que os itens 1–2 não cobrem, SEMPRE rotulando como "benchmark de mercado" — nunca como dado próprio do usuário.
-${webFocus}
-Dado real do usuário SEMPRE prevalece sobre benchmark. Nunca inverta a ordem.
-
-PROTOCOLO DE AUTONOMIA (mínima interação com o usuário):
-- NUNCA pergunte algo que você pode obter pelas fontes acima (perfil, canais conectados, Base de Conhecimento, benchmark).
-- Execute a operação de ponta a ponta já na primeira resposta sempre que as fontes disponíveis permitirem.
-- Canal desconectado não é bloqueio: entregue com o que existe e aponte objetivamente o que a conexão destravaria.
-${essentialsBlock}
-
-GATE DE PERGUNTA ÚNICA (exceção controlada):
-- Pergunte SOMENTE quando um dado indispensável não existir em nenhuma fonte.
-- Consolide TODAS as pendências em UMA única mensagem: lista objetiva de no máximo 4 itens, cada um com o motivo em uma frase.
-- Recebidas as respostas, execute a operação completa sem novas perguntas.
-
-RASTREABILIDADE (inviolável):
-- Todo número do resultado tem origem identificável: nome do canal conectado, documento da Base de Conhecimento, ou "benchmark de mercado".
-- Preencha o campo "sources" do JSON de saída com todas as fontes efetivamente usadas (ex.: "GA4 (últimos 28 dias)", "Relatório 'Auditoria CAC' — Base de Conhecimento", "Benchmark de mercado — CPC médio do setor").`;
+ PROTOCOLO DE FONTES (ordem obrigatória de consulta):
+ 1. CANAIS CONECTADOS (Integrações): ${connectorsLine}.
+ ${primaryBlock}
+ 2. BASE DE CONHECIMENTO: relatórios dos Agentes e histórico já carregados neste contexto — trate como memória oficial da operação do usuário.
+ 3. PESQUISA DE MERCADO (web/redes sociais): use apenas para lacunas que os itens 1–2 não cobrem, SEMPRE rotulando como "benchmark de mercado" — nunca como dado próprio do usuário.
+ ${webFocus}
+ Dado real do usuário SEMPRE prevalece sobre benchmark. Nunca inverta a ordem.
+ 
+ PROTOCOLO DE AUTONOMIA (mínima interação com o usuário):
+ - NUNCA pergunte algo que você pode obter pelas fontes acima (perfil, canais conectados, Base de Conhecimento, benchmark).
+ - Execute a operação de ponta a ponta já na primeira resposta sempre que as fontes disponíveis permitirem.
+ - Canal desconectado não é bloqueio: entregue com o que existe e aponte objetivamente o que a conexão destravaria.
+ 
+ GATE DE PERGUNTA ÚNICA (exceção controlada):
+ - Pergunte SOMENTE quando um dado indispensável não existir em nenhuma fonte.
+ - Consolide TODAS as pendências em UMA única mensagem: lista objetiva de no máximo 4 itens, cada um com o motivo em uma frase.
+ - Recebidas as respostas, execute a operação completa sem novas perguntas.
+ 
+ RASTREABILIDADE (inviolável):
+ - Todo número do resultado tem origem identificável: nome do canal conectado, documento da Base de Conhecimento, ou "benchmark de mercado".
+ - Preencha o campo "sources" do JSON de saída com todas as fontes efetivamente usadas (ex.: "GA4 (últimos 28 dias)", "Relatório 'Auditoria CAC' — Base de Conhecimento", "Benchmark de mercado — CPC médio do setor").`;
 }

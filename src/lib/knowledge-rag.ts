@@ -116,9 +116,9 @@ export async function saveKnowledgeDocument(
       .add(payload);
 
     return { success: true, id: ref.id };
-  } catch (err) {
+  } catch (err: any) {
     console.error('[knowledge-rag] saveKnowledgeDocument falhou:', err);
-    return { success: false, error: 'Não foi possível salvar na Base de Conhecimento.' };
+    return { success: false, error: `Não foi possível salvar na Base de Conhecimento: ${err?.message || err || 'Erro desconhecido'}` };
   }
 }
 
