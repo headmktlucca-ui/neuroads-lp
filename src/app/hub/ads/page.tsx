@@ -331,7 +331,7 @@ export default function AdsDashboardPage() {
               <span className="text-xs font-bold text-slate-400">{campaigns.length} campanhas identificadas</span>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase tracking-wider">
@@ -393,6 +393,63 @@ export default function AdsDashboardPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card List */}
+            <div className="block md:hidden space-y-4">
+              {campaigns.map((camp) => (
+                <div key={camp.id} className="p-4 rounded-2xl border border-white/80 bg-white shadow-sm flex flex-col gap-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
+                        camp.platform === 'Google Ads' ? 'bg-blue-100 text-blue-800' :
+                        camp.platform === 'LinkedIn Ads' ? 'bg-sky-100 text-sky-800' :
+                        camp.platform === 'TikTok Ads' ? 'bg-stone-800 text-white' :
+                        'bg-pink-100 text-pink-800'
+                      }`}>
+                        {camp.platform}
+                      </span>
+                      <h4 className="text-[13px] font-extrabold text-[#0f172a] mt-1.5 leading-snug break-words">{camp.name}</h4>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => toggleCampaignStatus(camp.id)}
+                      className={`h-8 w-8 rounded-lg border border-slate-200 bg-white flex items-center justify-center shadow-sm transition-all active:scale-90 cursor-pointer shrink-0 ${
+                        camp.status === 'active'
+                          ? 'bg-rose-500/5 text-rose-600'
+                          : 'bg-emerald-500/5 text-emerald-600'
+                      }`}
+                    >
+                      {camp.status === 'active' ? <Pause size={12} /> : <Play size={12} />}
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Orçamento</p>
+                      <p className="text-[11.5px] font-bold text-slate-700 mt-0.5 font-mono truncate">R$ {camp.budget.toLocaleString('pt-BR')}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Gasto</p>
+                      <p className="text-[11.5px] font-bold text-slate-700 mt-0.5 font-mono truncate">R$ {camp.spend.toLocaleString('pt-BR')}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">ROAS</p>
+                      <p className="text-[11.5px] font-extrabold text-[#FF6A00] mt-0.5 font-mono">{camp.roas}x</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500 border-t border-slate-100 pt-2 font-mono">
+                    <span className="flex items-center gap-1.5">
+                      <span className={`w-1.5 h-1.5 rounded-full ${camp.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                      {camp.status === 'active' ? 'Ativa' : 'Pausada'}
+                    </span>
+                    <span className="text-[10px] text-slate-400">
+                      Cliques: <strong className="text-slate-600">{camp.clicks.toLocaleString('pt-BR')}</strong> · Conv: <strong className="text-slate-600">{camp.conversions.toLocaleString('pt-BR')}</strong>
+                    </span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </>

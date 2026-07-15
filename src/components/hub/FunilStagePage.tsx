@@ -157,10 +157,8 @@ function AgentOperationCard({
         {/* Avatar image — 192×192 with hover overlay */}
         <Link
           href={`/hub/membro/${teamAgent.id}`}
-          className="relative shrink-0 rounded-2xl overflow-hidden border-2 border-white/80 cursor-pointer block"
+          className="relative shrink-0 rounded-2xl overflow-hidden border-2 border-white/80 cursor-pointer block w-20 h-20 sm:w-48 sm:h-48"
           style={{
-            width: 192,
-            height: 192,
             background: `${teamAgent.cor}18`,
             boxShadow: avatarHovered
               ? `0 0 0 4px ${teamAgent.cor}55, 4px 4px 14px #d1d9e6, -4px -4px 14px #ffffff`

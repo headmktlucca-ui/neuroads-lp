@@ -569,12 +569,12 @@ function AutomationCard({
       </div>
 
       {/* Trigger & Action Row */}
-      <div className="mt-4 pt-3 border-t border-slate-200/50 flex items-center justify-between gap-3">
-        <span className="text-[10.5px] text-slate-400 font-bold truncate max-w-[45%]">
+      <div className="mt-4 pt-3 border-t border-slate-200/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <span className="text-[10.5px] text-slate-400 font-bold truncate sm:max-w-[45%]">
           Gatilho: {automation.trigger}
         </span>
         
-        <div className="flex items-center gap-1.5 shrink-0">
+        <div className="flex items-center gap-1.5 w-full sm:w-auto justify-end sm:justify-start shrink-0">
           {/* Pause Toggle Button */}
           <button
             type="button"

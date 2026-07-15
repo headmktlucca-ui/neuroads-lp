@@ -112,7 +112,7 @@ function OpportunityCard({ opp, index }: { opp: Opportunity; index: number }) {
 
           <h3 className="text-[14px] font-black text-[#1e293b] leading-snug">{opp.title}</h3>
 
-          <div className="flex items-center gap-3 mt-2">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2">
             <div className="flex items-center gap-1.5">
               <TrendingUp size={13} className="text-emerald-500" />
               <span className="text-[12px] text-slate-600 font-semibold">{opp.impact}:</span>

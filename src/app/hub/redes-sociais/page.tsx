@@ -321,7 +321,7 @@ export default function RedesSociaisDashboardPage() {
               <span className="text-xs font-bold text-slate-400">{MOCK_POSTS.length} posts identificados</span>
             </div>
 
-            <div className="overflow-x-auto">
+            <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase tracking-wider">
@@ -360,6 +360,44 @@ export default function RedesSociaisDashboardPage() {
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card List */}
+            <div className="block md:hidden space-y-4">
+              {MOCK_POSTS.map((post) => (
+                <div key={post.id} className="p-4 rounded-2xl border border-white/80 bg-white shadow-sm flex flex-col gap-3">
+                  <div>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
+                        post.platform === 'LinkedIn Page' ? 'bg-sky-100 text-sky-800' :
+                        post.platform === 'TikTok' ? 'bg-stone-800 text-white' :
+                        'bg-pink-100 text-pink-800'
+                      }`}>
+                        {post.platform}
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-semibold">{post.date}</span>
+                    </div>
+                    <h4 className="text-[13px] font-extrabold text-[#0f172a] mt-1.5 leading-snug break-words">{post.title}</h4>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Alcance</p>
+                      <p className="text-[11.5px] font-bold text-slate-700 mt-0.5 font-mono">{post.reach.toLocaleString('pt-BR')}</p>
+                    </div>
+                    <div>
+                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Engajamento</p>
+                      <p className="text-[11.5px] font-extrabold text-[#FF6A00] mt-0.5 font-mono">{post.engagementRate}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500 border-t border-slate-100 pt-2 font-mono">
+                    <span>Curtidas: <strong className="text-slate-600">{post.likes.toLocaleString('pt-BR')}</strong></span>
+                    <span>Comments: <strong className="text-slate-600">{post.comments.toLocaleString('pt-BR')}</strong></span>
+                    <span>Shares: <strong className="text-slate-600">{post.shares.toLocaleString('pt-BR')}</strong></span>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </>

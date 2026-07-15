@@ -922,9 +922,8 @@ function HubLayoutInner({
         {/* Desktop topbar — hidden on mobile */}
         <TopBar onRefresh={() => window.location.reload()} pathname={pathname} />
 
-        {/* Main content area — full height for chat page, padded for others */}
         {pathname === '/hub/assistente-ia' ? (
-          <div className="flex-1 overflow-hidden relative z-10 p-4">
+          <div className="flex-1 overflow-hidden relative z-10 p-4 pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-4">
             {children}
           </div>
         ) : (
