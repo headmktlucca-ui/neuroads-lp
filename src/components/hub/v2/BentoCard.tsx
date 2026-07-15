@@ -53,7 +53,7 @@ export default function BentoCard({
       transition={{ duration: 0.6, delay, ease: [0.22, 1, 0.36, 1] }}
       className={`group relative overflow-hidden rounded-3xl ${
         isNeumorphic
-          ? 'bg-[#eef2f7] border border-white/50'
+          ? 'bg-white border border-slate-200/50'
           : 'border border-white/[0.07] bg-gradient-to-b from-white/[0.04] to-white/[0.01] backdrop-blur-xl'
       } ${className}`}
       style={{

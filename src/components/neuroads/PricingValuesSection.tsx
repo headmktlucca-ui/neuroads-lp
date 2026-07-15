@@ -297,17 +297,60 @@ function IconShield() {
   );
 }
 
-function IconZapOrange() {
+function IconRocket() {
   return (
-    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+    <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="36" height="36">
       <defs>
-        <linearGradient id="g-zap-o" x1="8" y1="2" x2="32" y2="38" gradientUnits="userSpaceOnUse">
-          <stop offset="0%" stopColor="#FFE53B" />
-          <stop offset="100%" stopColor="#FF6D00" />
+        <linearGradient id="g-rocket-body" x1="10" y1="10" x2="30" y2="30" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FFFFFF" />
+          <stop offset="50%" stopColor="#E2E8F0" />
+          <stop offset="100%" stopColor="#94A3B8" />
         </linearGradient>
+        <linearGradient id="g-rocket-nose" x1="20" y1="6" x2="30" y2="16" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FF9100" />
+          <stop offset="100%" stopColor="#FF3D00" />
+        </linearGradient>
+        <linearGradient id="g-rocket-fins" x1="8" y1="20" x2="22" y2="34" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FF6D00" />
+          <stop offset="100%" stopColor="#D84315" />
+        </linearGradient>
+        <linearGradient id="g-rocket-window" x1="16" y1="14" x2="24" y2="22" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#38BDF8" />
+          <stop offset="100%" stopColor="#0284C7" />
+        </linearGradient>
+        <linearGradient id="g-rocket-flame" x1="6" y1="26" x2="16" y2="36" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stopColor="#FACC15" />
+          <stop offset="50%" stopColor="#FB923C" />
+          <stop offset="100%" stopColor="#EF4444" />
+        </linearGradient>
+        <filter id="shadow-rocket">
+          <feDropShadow dx="1" dy="3.5" stdDeviation="2" floodColor="#0F172A" floodOpacity="0.3" />
+        </filter>
       </defs>
-      <polygon points="23,2 10,22 19,22 17,38 30,18 21,18" fill="url(#g-zap-o)" />
-      <polygon points="23,2 17,14 21,14" fill="white" opacity="0.3" />
+      {/* Ground shadow for 3D depth */}
+      <ellipse cx="14" cy="36" rx="9" ry="2.2" fill="#0F172A" opacity="0.18" />
+      
+      {/* Flames */}
+      <path d="M 12 28 Q 7 32 8 36 Q 12 35 16 30 Q 15 28 12 28 Z" fill="url(#g-rocket-flame)" filter="url(#shadow-rocket)" />
+      <path d="M 10 30 C 5 36 9 38 12 35" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" />
+      
+      {/* Lateral Fins */}
+      <path d="M 10 24 L 6 32 C 6 33 8 33 11 30 Z" fill="url(#g-rocket-fins)" />
+      <path d="M 24 10 L 32 6 C 33 6 33 8 30 11 Z" fill="url(#g-rocket-fins)" />
+      <path d="M 11 25 L 15 29 L 8 33 Z" fill="url(#g-rocket-fins)" filter="url(#shadow-rocket)" />
+      
+      {/* Main Body */}
+      <path d="M 28 8 C 31 11 31 15 28 20 L 16 28 C 12 30 10 28 12 24 L 20 12 C 25 9 26 7 28 8 Z" fill="url(#g-rocket-body)" filter="url(#shadow-rocket)" />
+      
+      {/* Nose Cone */}
+      <path d="M 26 6 C 29 9 32 12 34 12 Q 35 7 33 5 C 31 3 26 6 26 6 Z" fill="url(#g-rocket-nose)" />
+      
+      {/* Cockpit Window */}
+      <circle cx="21" cy="19" r="4.5" fill="url(#g-rocket-window)" stroke="#F8FAFC" strokeWidth="1.5" />
+      <circle cx="19.5" cy="17.5" r="1.2" fill="white" opacity="0.7" />
+      
+      {/* Gloss overlay */}
+      <path d="M 26 8 C 24 10 18 16 16 22" stroke="white" strokeWidth="1" strokeLinecap="round" opacity="0.4" />
     </svg>
   );
 }
@@ -542,8 +585,8 @@ export default function PricingValuesSection() {
           {...reveal(0.16)}
           className="mt-8 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border border-white/50 rounded-[24px] p-6 md:p-7 flex flex-col sm:flex-row items-start sm:items-center gap-5"
         >
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#FF5500] to-[#FF8C00] shadow-[3px_3px_8px_rgba(255,85,0,0.25)] flex items-center justify-center shrink-0">
-            <IconZapOrange />
+          <div className="w-12 h-12 flex items-center justify-center shrink-0">
+            <IconRocket />
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-title font-bold text-slate-900 text-sm tracking-tight">

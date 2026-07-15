@@ -222,7 +222,7 @@ function KpiHelpPopover({ label, isNa }: { label: string; isNa: boolean }) {
             width: POPOVER_WIDTH,
             zIndex: 99999,
           }}
-          className="rounded-2xl border border-white/95 bg-[#eef2f7] p-4 shadow-[5px_5px_15px_#d1d9e6,_-5px_-5px_15px_#ffffff] text-left"
+          className="rounded-2xl border border-slate-200/60 bg-white p-4 shadow-[5px_5px_15px_rgba(209,217,230,0.5)] text-left"
         >
           <p className="text-[12px] font-black text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-1.5 mb-2 flex items-center gap-1.5">
             <Info size={13} className="text-[#FF6A00]" />
@@ -922,7 +922,7 @@ export default function HubDashboardLight() {
 
 
       {/* View Toggles & Actions Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-slate-200/50 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
         {/* Report Toggles */}
         <div className="flex items-center gap-1 bg-slate-200/50 p-1 rounded-xl border border-white/20 w-full md:w-auto">
           {[
@@ -1040,13 +1040,13 @@ export default function HubDashboardLight() {
                 onClick={() => setSelectedPeriod(p.value)}
                 className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
                   active
-                    ? 'bg-white border-[#FF6A00]/40 shadow-[4px_4px_10px_#d1d9e6]'
-                    : 'bg-[#eef2f7] border-white/60 shadow-[inset_1px_1px_3px_#d1d9e6]'
+                    ? 'bg-gradient-to-br from-[#FF6A00] to-[#FF8805] border-[#FF6A00] shadow-[0_4px_12px_rgba(255,106,0,0.2)]'
+                    : 'bg-white border-slate-200 shadow-sm hover:bg-slate-50/60'
                 }`}
               >
-                <p className={`text-[12px] font-black ${active ? 'text-[#FF6A00]' : 'text-slate-700'}`}>{p.label}</p>
-                <p className="text-[10px] text-slate-400 font-semibold mt-1">Vs. último período igual</p>
-                <p className="text-[9px] text-slate-500 font-bold mt-0.5">{p.compareText}</p>
+                <p className={`text-[12px] font-black ${active ? 'text-white' : 'text-slate-700'}`}>{p.label}</p>
+                <p className={`text-[10px] font-semibold mt-1 ${active ? 'text-white/80' : 'text-slate-400'}`}>Vs. último período igual</p>
+                <p className={`text-[9px] font-bold mt-0.5 ${active ? 'text-white/90' : 'text-slate-500'}`}>{p.compareText}</p>
               </button>
             );
           })}
@@ -1061,12 +1061,12 @@ export default function HubDashboardLight() {
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
               onClick={e => e.stopPropagation()}
-              className="w-full max-w-md rounded-2xl border border-white/95 bg-[#eef2f7] p-6 shadow-2xl relative"
+              className="w-full max-w-md rounded-2xl border border-slate-200/50 bg-white p-6 shadow-2xl relative"
             >
               <button
                 type="button"
                 onClick={() => setSelectedAlert(null)}
-                className="absolute top-4 right-4 w-7 h-7 rounded-full flex items-center justify-center border border-white/60 bg-[#eef2f7] text-slate-500 hover:text-slate-700 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]"
+                className="absolute top-4 right-4 w-7 h-7 rounded-full flex items-center justify-center border border-slate-200/50 bg-white text-slate-500 hover:text-slate-700 shadow-sm"
               >
                 X
               </button>

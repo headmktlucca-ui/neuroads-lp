@@ -12,7 +12,7 @@ import {
   ShieldAlert, Trash2, Building2, Globe, CreditCard, DollarSign,
   ShieldCheck, Calendar, Gauge
 } from 'lucide-react';
-import { IconUserBadge3D } from './HubUiIcons3D';
+import { IconUserBadge3D, IconGear3D } from './HubUiIcons3D';
 import { getFirebaseDb } from '../../lib/firebase';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getHubProfileSummary } from '../../lib/hub-profile';
@@ -53,6 +53,7 @@ export default function SettingsHubPage() {
   // Profile State
   const [displayName, setDisplayName] = useState('');
   const [nameSaved, setNameSaved] = useState(false);
+  const [profileSaved, setProfileSaved] = useState(false);
   const [whatsApp, setWhatsApp] = useState('');
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
   const [deleteAccountError, setDeleteAccountError] = useState<string | null>(null);
@@ -193,6 +194,40 @@ export default function SettingsHubPage() {
     }
   };
 
+  const handleSaveProfile = async () => {
+    if (!user) return;
+    const normalizedName = displayName.trim();
+    if (!normalizedName) {
+      alert('Informe um nome válido.');
+      return;
+    }
+    const normalizedWhatsapp = whatsApp.trim();
+    const authenticatedEmail = userEmail;
+    try {
+      // 1. Save Name
+      await updateProfile(user, { displayName: normalizedName });
+      const db = getFirebaseDb();
+      const userRef = doc(db, 'users', user.uid);
+      await setDoc(userRef, {
+        displayName: normalizedName,
+        name: normalizedName,
+        whatsapp: normalizedWhatsapp,
+        updatedAt: Date.now(),
+        ...(authenticatedEmail ? { authEmail: authenticatedEmail, email: authenticatedEmail } : {}),
+        onboarding: { whatsapp: normalizedWhatsapp },
+      }, { merge: true });
+
+      const contactKey = `neuroads_profile_contact_${user.uid}`;
+      window.localStorage.setItem(contactKey, JSON.stringify({ whatsapp: normalizedWhatsapp }));
+
+      setProfileSaved(true);
+      setTimeout(() => setProfileSaved(false), 2200);
+    } catch (error) {
+      console.warn('Falha ao salvar perfil:', error);
+      alert('Não foi possível salvar os dados do perfil.');
+    }
+  };
+
   const handleSaveCompany = async () => {
     if (!user) return;
     const normalizedSite = normalizeHttpsMaskedUrlInput(companyForm.site);
@@ -288,7 +323,7 @@ export default function SettingsHubPage() {
       <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white border border-slate-200">
-            <IconUserBadge3D size={30} />
+            <IconGear3D size={30} />
           </div>
           <div>
             <h1 className="text-xl font-black tracking-tight text-[#0f172a] leading-none">
@@ -329,88 +364,122 @@ export default function SettingsHubPage() {
       {/* Content */}
       <div className="mt-6">
         {activeTab === 'perfil' && (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className={SETTINGS_PANEL}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1.5">
-                <User size={13} />
-                <span className={SETTINGS_LABEL}>Nome</span>
-                {nameSaved && <span className="text-[10px] font-black text-emerald-600 ml-auto">✓ Salvo</span>}
-              </div>
-              <div className="flex flex-col gap-2 sm:flex-row">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 p-6 rounded-3xl border border-slate-200 bg-white shadow-[5px_5px_10px_#dfe5ee,_-5px_-5px_10px_#ffffff]">
+              {/* Nome */}
+              <div className="sm:col-span-2">
+                <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                  <User size={13} />
+                  <span className={SETTINGS_LABEL}>Nome Completo</span>
+                </label>
                 <input
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Seu nome completo"
                   className={SETTINGS_INPUT}
                 />
-                <button type="button" onClick={handleSaveName} className={SETTINGS_PRIMARY_BUTTON}>
-                  Salvar
-                </button>
               </div>
-            </div>
-            <div className={SETTINGS_PANEL}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                <Mail size={13} />
-                <span className={SETTINGS_LABEL}>E-mail</span>
-              </div>
-              <p className="text-sm font-bold text-slate-800 truncate">{user.email || 'Não informado'}</p>
-            </div>
-            <div className={`${SETTINGS_PANEL} sm:col-span-2`}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1.5">
-                <Phone size={13} />
-                <span className={SETTINGS_LABEL}>WhatsApp</span>
-              </div>
-              <div className="flex flex-col gap-2 sm:flex-row relative">
+
+              {/* WhatsApp */}
+              <div className="sm:col-span-2">
+                <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                  <Phone size={13} />
+                  <span className={SETTINGS_LABEL}>WhatsApp</span>
+                </label>
                 <input
                   value={whatsApp}
                   onChange={(e) => setWhatsApp(e.target.value)}
                   placeholder="(51) 98175-8382"
                   className={SETTINGS_INPUT}
                 />
-                <button type="button" onClick={handleSaveWhatsApp} className={SETTINGS_PRIMARY_BUTTON}>
+              </div>
+
+              {/* E-mail */}
+              <div>
+                <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                  <Mail size={13} />
+                  <span className={SETTINGS_LABEL}>E-mail</span>
+                </label>
+                <input
+                  disabled
+                  value={user?.email || ''}
+                  className={`${SETTINGS_INPUT} opacity-60 cursor-not-allowed`}
+                />
+              </div>
+
+              {/* Plano */}
+              <div>
+                <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                  <Crown size={13} />
+                  <span className={SETTINGS_LABEL}>Plano</span>
+                </label>
+                <input
+                  disabled
+                  value={planDisplayLabel}
+                  className={`${SETTINGS_INPUT} opacity-60 cursor-not-allowed font-black text-[#FF6B00]`}
+                />
+              </div>
+
+              {/* Plataformas Conectadas */}
+              <div>
+                <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                  <Activity size={13} />
+                  <span className={SETTINGS_LABEL}>Plataformas conectadas</span>
+                </label>
+                <input
+                  disabled
+                  value={connectedPlatforms}
+                  className={`${SETTINGS_INPUT} opacity-60 cursor-not-allowed`}
+                />
+              </div>
+
+              {/* Aplicações em Uso */}
+              <div>
+                <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                  <Workflow size={13} />
+                  <span className={SETTINGS_LABEL}>Aplicações em uso</span>
+                </label>
+                <input
+                  disabled
+                  value={usageCount}
+                  className={`${SETTINGS_INPUT} opacity-60 cursor-not-allowed`}
+                />
+              </div>
+
+              {/* ID do Usuário */}
+              <div className="sm:col-span-2">
+                <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
+                  <Fingerprint size={13} />
+                  <span className={SETTINGS_LABEL}>ID do usuário</span>
+                </label>
+                <input
+                  disabled
+                  value={user?.uid || ''}
+                  className={`${SETTINGS_INPUT} opacity-60 cursor-not-allowed font-mono`}
+                />
+              </div>
+
+              {/* Save Bar */}
+              <div className="sm:col-span-2 pt-4 flex items-center justify-between border-t border-slate-200 mt-2">
+                <p className={`text-xs font-bold ${profileSaved ? 'text-emerald-600' : 'text-slate-500'}`}>
+                  {profileSaved ? '✓ Dados salvos com sucesso.' : 'Preencha os dados do perfil.'}
+                </p>
+                <button type="button" onClick={handleSaveProfile} className={SETTINGS_PRIMARY_BUTTON}>
                   Salvar
                 </button>
               </div>
             </div>
-            <div className={SETTINGS_PANEL}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                <Crown size={13} />
-                <span className={SETTINGS_LABEL}>Plano</span>
-              </div>
-              <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-black uppercase tracking-wider ${hubProfile.isSubscriptionActive ? 'bg-emerald-50 text-emerald-700 border border-emerald-100' : 'bg-orange-50 text-[#FF6B00] border border-orange-100'}`}>
-                {planDisplayLabel}
-              </span>
-            </div>
-            <div className={SETTINGS_PANEL}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                <Activity size={13} />
-                <span className={SETTINGS_LABEL}>Plataformas conectadas</span>
-              </div>
-              <p className="text-sm font-bold text-slate-800">{connectedPlatforms}</p>
-            </div>
-            <div className={SETTINGS_PANEL}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                <Workflow size={13} />
-                <span className={SETTINGS_LABEL}>Aplicações em uso</span>
-              </div>
-              <p className="text-sm font-bold text-slate-800">{usageCount}</p>
-            </div>
-            <div className={SETTINGS_PANEL}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1">
-                <Fingerprint size={13} />
-                <span className={SETTINGS_LABEL}>ID do usuário</span>
-              </div>
-              <p className="text-xs font-semibold text-slate-600 break-all bg-[#eef2f7] px-2 py-1 rounded border border-white/20 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">{user.uid}</p>
-            </div>
-            <div className="rounded-2xl border border-rose-500/20 bg-rose-500/5 p-5 space-y-3 sm:col-span-2 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]">
+
+            {/* Zona de Risco */}
+            <div className="rounded-3xl border border-rose-200 bg-white p-6 space-y-3 shadow-[5px_5px_10px_#dfe5ee,_-5px_-5px_10px_#ffffff]">
               <div className="flex items-center gap-1.5 text-rose-600">
                 <ShieldAlert size={16} />
                 <span className="text-xs uppercase tracking-wider font-black">Zona de risco</span>
               </div>
-              <p className="text-xs text-rose-700/80 font-medium leading-relaxed">
+              <p className="text-xs text-rose-700/80 font-semibold leading-relaxed">
                 Ao excluir a conta, seu plano será cancelado imediatamente e o cadastro será removido do banco de dados de forma definitiva.
               </p>
-              <button onClick={handleDeleteAccount} disabled={isDeletingAccount} className="inline-flex items-center justify-center gap-2 px-5 h-[42px] rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold uppercase transition-all shadow-[0_4px_12px_rgba(225,29,72,0.25)] hover:scale-[1.02] active:scale-95 disabled:opacity-60 cursor-pointer">
+              <button onClick={handleDeleteAccount} disabled={isDeletingAccount} className="inline-flex items-center justify-center gap-2 px-5 h-[42px] rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold uppercase transition-all shadow-[0_4px_12_rgba(225,29,72,0.25)] hover:scale-[1.02] active:scale-95 disabled:opacity-60 cursor-pointer">
                 <Trash2 size={13} />
                 {isDeletingAccount ? 'Excluindo...' : 'Excluir conta'}
               </button>
@@ -507,66 +576,97 @@ export default function SettingsHubPage() {
 
         {activeTab === 'financeiro' && (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 p-6 rounded-3xl border border-slate-200 bg-white shadow-[5px_5px_10px_#dfe5ee,_-5px_-5px_10px_#ffffff]">
-            <div className={SETTINGS_PANEL}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+            {/* Plano Atual */}
+            <div>
+              <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
                 <Crown size={13} />
-                <span className={SETTINGS_LABEL}>Plano atual</span>
-              </div>
-              <p className="text-sm font-black text-[#0f172a]">{financialPlanName}</p>
+                <span className={SETTINGS_LABEL}>Plano Atual</span>
+              </label>
+              <input
+                disabled
+                value={financialPlanName}
+                className={`${SETTINGS_INPUT} opacity-60 cursor-not-allowed font-black text-[#FF6B00]`}
+              />
             </div>
-            <div className={SETTINGS_PANEL}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+
+            {/* Valor Mensal */}
+            <div>
+              <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
                 <DollarSign size={13} />
-                <span className={SETTINGS_LABEL}>Valor mensal</span>
-              </div>
-              <p className="text-sm font-black text-[#0f172a]">{financialPlanAmount}</p>
+                <span className={SETTINGS_LABEL}>Valor Mensal</span>
+              </label>
+              <input
+                disabled
+                value={financialPlanAmount}
+                className={`${SETTINGS_INPUT} opacity-60 cursor-not-allowed`}
+              />
             </div>
-            <div className={SETTINGS_PANEL}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+
+            {/* Status da Assinatura */}
+            <div>
+              <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
                 <Activity size={13} />
-                <span className={SETTINGS_LABEL}>Status da assinatura</span>
-              </div>
-              <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-black uppercase tracking-wider shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] ${hubProfile.isSubscriptionActive ? 'bg-emerald-500/10 text-emerald-700 border border-emerald-500/20' : 'bg-orange-50 text-[#FF6B00] border border-orange-100'}`}>
-                {hubProfile.statusLabel}
-              </span>
+                <span className={SETTINGS_LABEL}>Status da Assinatura</span>
+              </label>
+              <input
+                disabled
+                value={hubProfile.statusLabel}
+                className={`${SETTINGS_INPUT} opacity-60 cursor-not-allowed`}
+              />
             </div>
-            <div className={SETTINGS_PANEL}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+
+            {/* Acesso Operacional */}
+            <div>
+              <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
                 <ShieldCheck size={13} />
-                <span className={SETTINGS_LABEL}>Acesso operacional</span>
-              </div>
-              <p className="text-sm font-bold text-slate-700">{hubProfile.accessLabel}</p>
+                <span className={SETTINGS_LABEL}>Acesso Operacional</span>
+              </label>
+              <input
+                disabled
+                value={hubProfile.accessLabel}
+                className={`${SETTINGS_INPUT} opacity-60 cursor-not-allowed`}
+              />
             </div>
-            <div className={`${SETTINGS_PANEL} sm:col-span-2`}>
-              <div className="flex items-center gap-1.5 text-slate-400 mb-1">
+
+            {/* Recursos Incluídos */}
+            <div className="sm:col-span-2">
+              <label className="flex items-center gap-1.5 text-slate-400 mb-1.5">
                 <Workflow size={13} />
-                <span className={SETTINGS_LABEL}>Recursos incluídos</span>
-              </div>
-              <p className="text-sm font-bold text-slate-700">{hubProfile.operationLabel}</p>
+                <span className={SETTINGS_LABEL}>Recursos Incluídos</span>
+              </label>
+              <input
+                disabled
+                value={hubProfile.operationLabel}
+                className={`${SETTINGS_INPUT} opacity-60 cursor-not-allowed`}
+              />
               {hubProfile.includedExecutions != null && (
-                <div className="mt-3 flex items-center gap-2 bg-[#eef2f7] border border-white/20 rounded-lg p-2.5 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
-                  <Gauge size={14} className="text-slate-400" />
-                  <p className="text-xs font-semibold text-slate-600">
-                    Execuções inclusas por mês: <span className="font-bold text-[#0f172a]">{hubProfile.includedExecutions.toLocaleString('pt-BR')}</span>
-                  </p>
-                </div>
+                <p className="text-[11px] text-slate-500 font-semibold mt-1.5 ml-1">
+                  Execuções inclusas por mês: <span className="font-bold text-slate-700">{hubProfile.includedExecutions.toLocaleString('pt-BR')}</span>
+                </p>
               )}
             </div>
+
+            {/* Trial Info */}
             {hubProfile.isTrialing && (hubProfile.trialRemainingMs ?? 0) > 0 ? (
-              <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-5 space-y-2.5 sm:col-span-2 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]">
+              <div className="rounded-3xl border border-orange-200 bg-orange-50/50 p-5 space-y-2 sm:col-span-2 shadow-sm">
                 <div className="flex items-center gap-1.5 text-[#FF6B00]">
                   <Calendar size={16} />
                   <span className="text-xs uppercase tracking-wider font-black">Período gratuito ativo</span>
                 </div>
                 <p className="text-base font-black text-slate-800">{trialRemainingLabel}</p>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                  Sua primeira cobrança no valor de <span className="font-bold text-slate-800">{financialPlanAmount}</span> está prevista para: <span className="font-bold text-slate-700 bg-[#eef2f7] px-2 py-0.5 rounded border border-white/20 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">{trialEndsAtLabel}</span>.
+                <p className="text-xs text-slate-500 font-semibold leading-relaxed">
+                  Sua primeira cobrança no valor de <span className="font-bold text-slate-800">{financialPlanAmount}</span> está prevista para: <span className="font-bold text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200 shadow-sm">{trialEndsAtLabel}</span>.
                 </p>
               </div>
             ) : null}
-            <div className="sm:col-span-2 pt-2">
-              <button onClick={handleManagePlan} disabled={isManagingPlan} className={SETTINGS_PRIMARY_BUTTON}>
-                <CreditCard size={14} />
+
+            {/* Action Footer */}
+            <div className="sm:col-span-2 pt-4 flex items-center justify-between border-t border-slate-200 mt-2">
+              <p className="text-xs font-semibold text-slate-500">
+                Acesse a área de faturamento do Stripe para baixar notas fiscais ou gerenciar pagamentos.
+              </p>
+              <button type="button" onClick={handleManagePlan} disabled={isManagingPlan} className={SETTINGS_PRIMARY_BUTTON}>
+                <CreditCard size={14} className="mr-1" />
                 {isManagingPlan ? 'Abrindo...' : 'Gerenciar Plano'}
               </button>
             </div>
