@@ -589,12 +589,12 @@ export default function TempLandingPage() {
         
         {/* Animated Background (Circuit) */}
         <HeroCircuitBackground id="circuit-hero" />
-        <div className="relative z-[2] w-full px-6 md:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[calc(100vh-120px)] pt-20 lg:pt-0">
+        <div className="relative z-[2] w-full px-6 md:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center min-h-[calc(100vh-120px)] pt-20 lg:pt-0">
           <div className="lg:col-span-7 flex flex-col items-start text-left">
-            <h1 className="font-title font-light text-[32px] md:text-[48px] leading-[1.14] text-slate-900 tracking-tight max-w-3xl mt-[26px] mb-[22px] animate-rise-title">
-              Operações IA Estratégicas em <br /> <span className="font-semibold text-[#FF5500]">Marketing &amp; Vendas B2B</span>.
+            <h1 className="font-title font-semibold text-[32px] md:text-[48px] leading-[1.14] text-slate-900 tracking-tight max-w-3xl mt-[26px] mb-[22px] animate-rise-title">
+              Operações IA Estratégicas em <br /> <span className="font-extrabold text-[#FF5500]">Marketing &amp; Vendas B2B</span>.
             </h1>
-            <p className="font-sans text-[clamp(1rem,1.4vw,1.15rem)] leading-[1.65] text-[#5A6678] max-w-[46ch] animate-rise-sub">
+            <p className="font-sans text-[clamp(1rem,1.4vw,1.15rem)] leading-[1.65] text-[#5A6678] max-w-[54ch] animate-rise-sub">
               A NeuroAds une campanhas patrocinadas, automação e um ecossistema de agentes inteligentes para transformar o marketing e o comercial da sua empresa B2B em uma máquina previsível de receita.
             </p>
             <div className="flex flex-col items-start mt-8 w-full animate-rise-actions">
@@ -610,8 +610,8 @@ export default function TempLandingPage() {
             </div>
           </div>
           
-          <div className="lg:col-span-5 flex items-center justify-center lg:justify-end relative animate-rise-image group mt-8 lg:mt-0">
-            <div className="relative w-full max-w-[80%] mx-auto lg:mx-0">
+          <div className="lg:col-span-5 flex items-center justify-center lg:justify-end relative animate-rise-image group mt-8 lg:mt-0 w-full">
+            <div className="relative w-full mx-auto lg:mx-0">
               <video
                 ref={videoRef}
                 src="/videos/VD_Ap_26_1.mp4"
@@ -2051,7 +2051,7 @@ function DemoAndAccessSection() {
 }
 function TestimonialSection() {
   return (
-    <section className="border-y border-slate-300/40 py-12 px-6 text-center bg-white">
+    <section className="py-12 px-6 text-center bg-white">
 
       <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
         <div className="w-[134px] h-[134px] rounded-full overflow-hidden border border-slate-300 shrink-0 relative shadow-sm">
@@ -2095,7 +2095,7 @@ function ComparisonSection() {
   ];
 
   return (
-    <section id="comparacao" className="py-20 bg-white border-y border-slate-300/40 px-6">
+    <section id="comparacao" className="py-20 bg-white px-6">
       <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
         
         <div className="lg:col-span-5 space-y-6 flex flex-col items-start text-left">
