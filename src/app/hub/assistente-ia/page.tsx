@@ -10,7 +10,7 @@ import {
   Target, CheckCircle2, AlertTriangle, Sparkles, Cpu,
   Film, Music, File, X, Copy, Table2, User, RefreshCw,
   Settings2, Hash, ArrowRight, MessageSquare, BookmarkPlus, FileDown,
-  Wallet, Eye, Percent, ShoppingCart,
+  Wallet, Eye, Percent, ShoppingCart, CalendarPlus,
 } from 'lucide-react';
 import {
   BarChart, Bar, XAxis, YAxis, ResponsiveContainer,
@@ -1065,6 +1065,7 @@ function LeftPanel({
   historyTotal,
   onHistoryNav,
   connectedSources,
+  onOpenSchedule,
 }: {
   result: ResultPanel | null;
   isLoading: boolean;
@@ -1074,6 +1075,7 @@ function LeftPanel({
   historyTotal: number;
   onHistoryNav: (direction: -1 | 1) => void;
   connectedSources: string[];
+  onOpenSchedule: () => void;
 }) {
   const [search, setSearch] = useState('');
   const [viewMode, setViewMode] = useState<ViewMode>('table');
@@ -1415,8 +1417,8 @@ function LeftPanel({
             </div>
 
             {/* Navigation Tabs */}
-            <div className="px-5 border-b border-[#F3F4F6] bg-slate-50/20 py-2">
-              <div className="flex gap-1 overflow-x-auto pb-0.5">
+            <div className="px-5 border-b border-[#F3F4F6] bg-slate-50/20 py-2 flex items-center justify-between gap-4">
+              <div className="flex gap-1 overflow-x-auto pb-0.5 [&::-webkit-scrollbar]:h-1 [&::-webkit-scrollbar-thumb]:bg-slate-200 [&::-webkit-scrollbar-track]:bg-transparent">
                 {tabs.map(t => (
                   <button
                     key={t.id}
@@ -1432,6 +1434,15 @@ function LeftPanel({
                   </button>
                 ))}
               </div>
+
+              <button
+                type="button"
+                onClick={onOpenSchedule}
+                className="px-3 py-1.5 rounded-lg text-[12px] font-black text-white bg-gradient-to-br from-[#FF6A00] to-[#FF8805] hover:brightness-105 transition-all shadow-[0_2px_6px_rgba(255,106,0,0.15)] hover:scale-[1.02] active:scale-98 flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer"
+              >
+                <CalendarPlus className="w-3.5 h-3.5" />
+                <span>Programar Automação</span>
+              </button>
             </div>
 
             {/* Content Body based on Active Tab */}
@@ -2868,6 +2879,7 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
             setResultIndex(prev => Math.min(Math.max(prev + direction, 0), results.length - 1));
           }}
           connectedSources={connectedSources}
+          onOpenSchedule={() => setIsCustomAutomationModalOpen(true)}
         />
       </div>
 
@@ -3205,8 +3217,8 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
                         scheduleOptionId: selectedScheduleOption.id,
                         scheduleOptionLabel: selectedScheduleOption.label,
                         scheduleOptionDetail: selectedScheduleOption.detail,
-                        planName: 'Growth',
-                        monthlyLimit: 12,
+                        planName: profile?.planName || 'Growth',
+                        monthlyLimit: profile?.monthlyLimit || 12,
                         activatedAt: Date.now(),
                         updatedAt: Date.now(),
                         lastUpdateAt: timestamps.lastUpdateAt,
@@ -3234,7 +3246,7 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
                     : 'bg-[#eef2f7] text-slate-400 border border-white/20 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff] cursor-not-allowed'
                 }`}
               >
-                {isSavingAutomation ? 'Programando...' : 'Programar Automação'}
+                {isSavingAutomation ? 'Criando...' : 'Criar'}
               </button>
             </div>
           </div>
