@@ -504,27 +504,8 @@ function MobileHeader({
   pathname: string;
   onMenuOpen: () => void;
 }) {
-  const { unreadCount, isNotificationsOpen, setIsNotificationsOpen, selectedPeriod, setSelectedPeriod } = useHub();
+  const { unreadCount, isNotificationsOpen, setIsNotificationsOpen } = useHub();
   const pageTitle = getMobilePageTitle(pathname);
-  const isDashboard = pathname === '/hub';
-
-  const [isPeriodOpen, setIsPeriodOpen] = useState(false);
-  const periodRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isPeriodOpen) return;
-    const handler = (e: MouseEvent | TouchEvent) => {
-      if (periodRef.current && !periodRef.current.contains(e.target as Node)) {
-        setIsPeriodOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    document.addEventListener('touchstart', handler);
-    return () => {
-      document.removeEventListener('mousedown', handler);
-      document.removeEventListener('touchstart', handler);
-    };
-  }, [isPeriodOpen]);
 
   return (
     <header className="flex lg:hidden items-center gap-2 px-3 h-14 border-b border-white/40 bg-[#eef2f7] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
@@ -537,52 +518,6 @@ function MobileHeader({
       </button>
 
       <span className="flex-1 min-w-0 text-[15px] font-black text-[#1e293b] truncate">{pageTitle}</span>
-
-      {/* Period selector — only on Dashboard (parity with desktop TopBar) */}
-      {isDashboard && (
-        <div className="relative shrink-0" ref={periodRef}>
-          <button
-            onClick={() => setIsPeriodOpen(prev => !prev)}
-            className={`flex items-center gap-1 px-3 h-11 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-black text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150 ${isPeriodOpen ? 'text-[#FF6A00]' : ''}`}
-            aria-label="Selecionar período"
-            aria-expanded={isPeriodOpen}
-          >
-            <span>{selectedPeriod}d</span>
-            <ChevronDown size={12} className={`text-slate-400 transition-transform duration-200 ${isPeriodOpen ? 'rotate-180' : ''}`} />
-          </button>
-
-          {isPeriodOpen && (
-            <div className="absolute right-0 top-full mt-2 z-[999] w-52 rounded-2xl border border-white/80 bg-[#eef2f7] p-2.5 shadow-[5px_5px_15px_#d1d9e6,_-5px_-5px_15px_#ffffff]">
-              <div className="space-y-1">
-                {PERIOD_OPTIONS.map((p) => {
-                  const active = p.value === selectedPeriod;
-                  return (
-                    <button
-                      key={p.value}
-                      onClick={() => { setSelectedPeriod(p.value); setIsPeriodOpen(false); }}
-                      className={`flex w-full items-center justify-between px-3 py-2.5 rounded-xl text-[12px] font-bold text-left transition-all ${
-                        active
-                          ? 'text-[#FF6A00] bg-slate-100/60 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
-                          : 'text-[#475569] hover:bg-slate-200/50'
-                      }`}
-                    >
-                      <span>{p.label}</span>
-                      {active && <Check size={13} />}
-                    </button>
-                  );
-                })}
-                <button
-                  onClick={() => { setIsPeriodOpen(false); window.location.reload(); }}
-                  className="flex w-full items-center gap-2 px-3 py-2.5 rounded-xl text-[12px] font-bold text-left text-[#475569] hover:bg-slate-200/50 border-t border-slate-200/70 mt-1 pt-3 transition-all"
-                >
-                  <RefreshCw size={12} className="text-slate-400" />
-                  <span>Atualizar dados</span>
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       <button
         onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
@@ -763,25 +698,15 @@ function MobileDrawer({
 /* ─── TopBar Component ─────────────────────────────────────────────── */
 function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: string }) {
   const {
-    selectedPeriod,
-    setSelectedPeriod,
     unreadCount,
     isNotificationsOpen,
     setIsNotificationsOpen,
   } = useHub();
 
-  const [isPeriodOpen, setIsPeriodOpen] = useState(false);
-  const periodRef = useRef<HTMLDivElement>(null);
   const bellRef = useRef<HTMLDivElement>(null);
-
-  // Only show refresh/period on the main Dashboard page
-  const isDashboard = pathname === '/hub';
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (periodRef.current && !periodRef.current.contains(e.target as Node)) {
-        setIsPeriodOpen(false);
-      }
       // On mobile the notifications state is owned by MobileHeader/MobileNotificationsPanel;
       // this hidden desktop bell must not close it.
       const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
@@ -793,65 +718,10 @@ function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: stri
     return () => document.removeEventListener('mousedown', handler);
   }, [setIsNotificationsOpen]);
 
-  const periods = PERIOD_OPTIONS;
-
-  const activePeriodLabel = periods.find(p => p.value === selectedPeriod)?.label || 'Últimos 30 dias';
-
-
   return (
     <header className="hidden lg:flex items-center gap-4 px-8 h-16 border-b border-white/40 bg-[#D9DDE1] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
 
       <div className="ml-auto flex items-center gap-2 sm:gap-3 relative">
-        {/* Refresh — only on Dashboard */}
-        {isDashboard && (
-          <button
-            onClick={onRefresh}
-            aria-label="Atualizar"
-            className="flex items-center gap-2 px-2.5 sm:px-4 h-9 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-bold text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
-          >
-            <RefreshCw size={13} />
-            <span className="hidden sm:inline">Atualizar</span>
-          </button>
-        )}
-
-        {/* Period Selector — only on Dashboard */}
-        {isDashboard && (
-          <div className="relative" ref={periodRef}>
-            <button
-              onClick={() => setIsPeriodOpen(prev => !prev)}
-              className="flex items-center gap-1.5 px-2.5 sm:px-4 h-9 rounded-xl border border-white/40 bg-[#eef2f7] text-[12px] font-bold text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
-            >
-              <span className="hidden sm:inline">{activePeriodLabel}</span>
-              <span className="sm:hidden">{selectedPeriod}d</span>
-              <ChevronRight size={13} className={`transition-transform duration-200 text-slate-400 ${isPeriodOpen ? 'rotate-90' : '-rotate-90'}`} />
-            </button>
-
-            {isPeriodOpen && (
-              <div className="absolute right-0 mt-2 z-[999] w-48 rounded-2xl border border-white/80 bg-[#eef2f7] p-2.5 shadow-[5px_5px_15px_#d1d9e6,_-5px_-5px_15px_#ffffff]">
-                <div className="space-y-1">
-                  {periods.map((p) => {
-                    const active = p.value === selectedPeriod;
-                    return (
-                      <button
-                        key={p.value}
-                        onClick={() => { setSelectedPeriod(p.value); setIsPeriodOpen(false); }}
-                        className={`flex w-full items-center justify-between px-3 py-2 rounded-xl text-[12px] font-bold text-left transition-all ${
-                          active
-                            ? 'text-[#FF6A00] bg-slate-100/60 shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
-                            : 'text-[#475569] hover:bg-slate-200/50'
-                        }`}
-                      >
-                        <span>{p.label}</span>
-                        {active && <Check size={13} />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Notifications */}
         <div className="relative" ref={bellRef}>
           <button
