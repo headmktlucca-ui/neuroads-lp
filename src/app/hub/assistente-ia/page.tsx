@@ -633,109 +633,22 @@ function ThinkingPhaseText() {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   ORBITAL THINKING ANIMATION
+   ROBOT THINKING VIDEO ANIMATION
 ═══════════════════════════════════════════════════════════════════ */
-function OrbitalAnimation({ size = 80 }: { size?: number }) {
+function OrbitalAnimation({ size = 140 }: { size?: number }) {
   const s = size;
   return (
     <div
       className="relative flex items-center justify-center"
-      style={{ width: s, height: s, perspective: s * 5 }}
+      style={{ width: s, height: s }}
     >
-      {/* Ambient glow */}
-      <div
-        className="absolute rounded-full"
-        style={{
-          width: s * 0.55,
-          height: s * 0.55,
-          background: 'radial-gradient(circle, rgba(255,106,0,0.12) 0%, transparent 70%)',
-          filter: `blur(${s * 0.1}px)`,
-        }}
-      />
-      {/* Ring 1 — orange, rotates Y */}
-      <motion.div
-        className="absolute rounded-full"
-        style={{
-          width: s, height: s,
-          border: `${Math.max(1.5, s * 0.02)}px solid rgba(255,106,0,0.6)`,
-          boxShadow: '0 0 8px rgba(255,106,0,0.25)',
-        }}
-        animate={{ rotateY: 360 }}
-        transition={{ duration: 2.2, repeat: Infinity, ease: 'linear' }}
-      />
-      {/* Ring 2 — blue, tilted 60deg rotates Z */}
-      <motion.div
-        className="absolute rounded-full"
-        style={{
-          width: s * 0.78, height: s * 0.78,
-          border: `${Math.max(1.5, s * 0.018)}px solid rgba(59,130,246,0.55)`,
-          rotateX: '60deg',
-          boxShadow: '0 0 6px rgba(59,130,246,0.2)',
-        }}
-        animate={{ rotateZ: 360 }}
-        transition={{ duration: 3.1, repeat: Infinity, ease: 'linear' }}
-      />
-      {/* Ring 3 — teal, tilted -60deg rotates Z */}
-      <motion.div
-        className="absolute rounded-full"
-        style={{
-          width: s * 0.58, height: s * 0.58,
-          border: `${Math.max(1, s * 0.016)}px solid rgba(16,185,129,0.5)`,
-          rotateX: '-60deg',
-        }}
-        animate={{ rotateZ: -360 }}
-        transition={{ duration: 1.8, repeat: Infinity, ease: 'linear' }}
-      />
-      {/* Ring 4 — outer, slow, orange faint */}
-      <motion.div
-        className="absolute rounded-full"
-        style={{
-          width: s * 0.95, height: s * 0.95,
-          border: `1px solid rgba(255,106,0,0.18)`,
-          rotateX: '30deg',
-        }}
-        animate={{ rotateY: -360 }}
-        transition={{ duration: 5, repeat: Infinity, ease: 'linear' }}
-      />
-      {/* Orbiting dot — orange, fast */}
-      <motion.div
-        className="absolute"
-        style={{ width: s * 0.11, height: s * 0.11, transformOrigin: `${s * 0.475}px 0px` }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 2.2, repeat: Infinity, ease: 'linear' }}
-      >
-        <div
-          className="rounded-full bg-[#FF6A00]"
-          style={{
-            width: '100%', height: '100%',
-            boxShadow: `0 0 ${s * 0.1}px rgba(255,106,0,0.9), 0 0 ${s * 0.06}px rgba(255,106,0,0.5)`,
-          }}
-        />
-      </motion.div>
-      {/* Orbiting dot — blue, slow */}
-      <motion.div
-        className="absolute"
-        style={{ width: s * 0.085, height: s * 0.085, transformOrigin: `${-s * 0.36}px 0px` }}
-        animate={{ rotate: -360 }}
-        transition={{ duration: 3.1, repeat: Infinity, ease: 'linear' }}
-      >
-        <div
-          className="rounded-full bg-blue-400"
-          style={{
-            width: '100%', height: '100%',
-            boxShadow: `0 0 ${s * 0.08}px rgba(59,130,246,0.8)`,
-          }}
-        />
-      </motion.div>
-      {/* Core */}
-      <motion.div
-        className="rounded-full bg-white border-2 border-[#FF6A00]"
-        style={{
-          width: s * 0.18, height: s * 0.18,
-          boxShadow: `0 0 ${s * 0.12}px rgba(255,106,0,0.6), 0 0 ${s * 0.06}px rgba(255,106,0,0.4)`,
-        }}
-        animate={{ scale: [1, 1.25, 1] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+      <video
+        src="/videos/Rob.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="w-full h-full object-contain mix-blend-multiply"
       />
     </div>
   );
@@ -747,7 +660,7 @@ function OrbitalAnimation({ size = 80 }: { size?: number }) {
 function LeftPanelLoading({ activeAgent }: { activeAgent?: TeamAgent }) {
   return (
     <motion.div key="loading" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex-1 flex flex-col items-center justify-center gap-5">
-      <OrbitalAnimation size={88} />
+      <OrbitalAnimation size={130} />
       <ThinkingPhaseText />
       {/* Skeleton rows */}
       <div className="w-full max-w-xs px-6 mt-2 space-y-2.5">
