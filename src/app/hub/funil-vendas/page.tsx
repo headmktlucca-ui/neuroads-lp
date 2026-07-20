@@ -9,6 +9,7 @@ import {
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { getFirebaseDb } from '../../../lib/firebase';
+import { subscribeToCRMLeads } from '../../../lib/crm-sync';
 
 /* ─── 3D KPI icons (plastic/clay style) ──────────────────────────────────── */
 
@@ -348,7 +349,7 @@ export default function FunilVendasPage() {
     });
   }, [leads, originFilter]);
 
-  // Load leads
+  // Load leads & subscribe to real-time CRM updates
   useEffect(() => {
     async function loadLeads() {
       if (user) {
@@ -381,6 +382,14 @@ export default function FunilVendasPage() {
       setLoading(false);
     }
     loadLeads();
+
+    const unsubscribe = subscribeToCRMLeads(user?.uid, (remoteLeads) => {
+      if (Array.isArray(remoteLeads) && remoteLeads.length > 0) {
+        setLeads(remoteLeads);
+      }
+    });
+
+    return () => unsubscribe();
   }, [user]);
 
   // Persist leads

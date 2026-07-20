@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import PublicTopNav from './PublicTopNav';
 import HubFooter from '../hub/HubFooter';
+import WhatsAppFloatingWidget from '../neuroads/WhatsAppFloatingWidget';
 
 // Rotas privadas (Hub/auth) renderizam seu próprio chrome.
 const HUB_PREFIXES = ['/hub', '/login', '/onboarding', '/cadastro', '/verificar-email', '/preview-chat'];
@@ -21,14 +22,24 @@ function hasOwnChrome(pathname: string | null): boolean {
 
 export default function GlobalLayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isPrivateRoute = HUB_PREFIXES.some((prefix) => pathname?.startsWith(prefix));
+  const isHubRoute = pathname?.startsWith('/hub');
 
-  if (isPrivateRoute || hasOwnChrome(pathname)) return <>{children}</>;
+  if (isHubRoute) return <>{children}</>;
+
+  if (hasOwnChrome(pathname)) {
+    return (
+      <>
+        {children}
+        <WhatsAppFloatingWidget />
+      </>
+    );
+  }
 
   return (
     <>
       <PublicTopNav />
       {children}
+      <WhatsAppFloatingWidget />
       <HubFooter />
     </>
   );

@@ -43,6 +43,9 @@ import {
   loadWhatsAppChats,
   saveWhatsAppChats,
   fetchFirestoreWhatsAppChats,
+  subscribeToWhatsAppChats,
+  isMasterWhatsAppOwner,
+  MASTER_WHATSAPP_EMAIL,
   type WhatsAppChatThread,
   type WhatsAppMessage,
   type WhatsAppChatStatus,
@@ -77,7 +80,7 @@ export default function WhatsAppHubPage() {
 
   // Chat State
   const [chats, setChats] = useState<WhatsAppChatThread[]>([]);
-  const [activeChatId, setActiveChatId] = useState<string>('wa-chat-1');
+  const [activeChatId, setActiveChatId] = useState<string>('');
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<'all' | 'human_pending' | 'ai_active' | 'human_active' | 'resolved'>('all');
   const [inputText, setInputText] = useState('');
@@ -87,6 +90,10 @@ export default function WhatsAppHubPage() {
   const [showSidebar, setShowSidebar] = useState(true);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const isMasterOwner = useMemo(() => {
+    return isMasterWhatsAppOwner(user?.email);
+  }, [user]);
 
   // Load WhatsApp connection state
   useEffect(() => {
@@ -106,24 +113,61 @@ export default function WhatsAppHubPage() {
     fetchConn();
   }, [user]);
 
-  // Load Chats (localStorage + Firestore async sync)
+  // Load Chats & Real-time Subscription (Multi-channel: Firestore, BroadcastChannel, Custom & Storage events)
   useEffect(() => {
     const localData = loadWhatsAppChats(user?.uid);
     setChats(localData);
 
-    if (user?.uid) {
-      fetchFirestoreWhatsAppChats(user.uid).then((remoteChats) => {
-        if (remoteChats && remoteChats.length > 0) {
-          setChats(remoteChats);
+    const handleChatsUpdate = (remoteChats: WhatsAppChatThread[]) => {
+      if (Array.isArray(remoteChats)) {
+        setChats(remoteChats);
+      }
+    };
+
+    // 1. Real-time Firestore subscription
+    const unsubscribeFirestore = subscribeToWhatsAppChats(user?.uid, user?.email, handleChatsUpdate);
+
+    // 2. BroadcastChannel for instant cross-tab sync (0ms latency)
+    let bc: BroadcastChannel | null = null;
+    if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+      bc = new BroadcastChannel('neuroads_wa_sync');
+      bc.onmessage = (event) => {
+        if (event.data?.chats && Array.isArray(event.data.chats)) {
+          handleChatsUpdate(event.data.chats);
         }
-      });
+      };
     }
+
+    // 3. Custom Event for local window updates
+    const handleCustomEvent = (e: Event) => {
+      const customEvent = e as CustomEvent<WhatsAppChatThread[]>;
+      if (Array.isArray(customEvent.detail)) {
+        handleChatsUpdate(customEvent.detail);
+      }
+    };
+    window.addEventListener('neuroads_wa_local_update', handleCustomEvent);
+
+    // 4. Storage event for cross-tab updates
+    const handleStorage = (e: StorageEvent) => {
+      if (e.key && e.key.includes('neuroads_whatsapp_chats')) {
+        const currentChats = loadWhatsAppChats(user?.uid);
+        handleChatsUpdate(currentChats);
+      }
+    };
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      unsubscribeFirestore();
+      if (bc) bc.close();
+      window.removeEventListener('neuroads_wa_local_update', handleCustomEvent);
+      window.removeEventListener('storage', handleStorage);
+    };
   }, [user]);
 
   // Sync back to storage on updates
   const updateAndSaveChats = (newChats: WhatsAppChatThread[]) => {
     setChats(newChats);
-    saveWhatsAppChats(newChats, user?.uid);
+    saveWhatsAppChats(newChats, user?.uid, user?.email);
   };
 
   const activeChat = useMemo(() => {
@@ -161,15 +205,14 @@ export default function WhatsAppHubPage() {
   }, [chats]);
 
   const isConnected = useMemo(() => {
-    if (connections.whatsapp && connections.whatsapp.connected) return true;
+    if (connections.whatsapp && (connections.whatsapp.isActive || connections.whatsapp.accessToken)) return true;
     // Also true if env or mock mode is active
     return true;
   }, [connections]);
 
   const connectedPhoneNumber = useMemo(() => {
-    if (connections.whatsapp && connections.whatsapp.config?.phoneNumber) {
-      return connections.whatsapp.config.phoneNumber;
-    }
+    const phone = connections.whatsapp?.metadata?.phoneNumber as string | undefined;
+    if (phone) return phone;
     return '+55 (11) 99887-6655';
   }, [connections]);
 
@@ -302,14 +345,23 @@ export default function WhatsAppHubPage() {
             <IconWhatsapp3D size={38} />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-2xl font-black text-slate-900 tracking-tight">WhatsApp Live &amp; Agentes IA</h1>
               <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200">
                 Atendimento Ao Vivo
               </span>
+              {isMasterOwner ? (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-600 text-white shadow-xs">
+                  👑 Canal Mestre do Site (avante@neuroads.com.br)
+                </span>
+              ) : (
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-800 border border-purple-200">
+                  🔒 Canal Privado ({user?.email || 'Conta'})
+                </span>
+              )}
             </div>
             <p className="text-xs font-semibold text-slate-500 mt-0.5">
-              Supervisione as conversas em tempo real entre seus leads e os Agentes IA. Assuma o chat quando houver transição para atendimento humano.
+              Supervisione as conversas em tempo real entre seus leads e os Agentes IA. {isMasterOwner ? 'Você está gerenciando o canal central do Widget da página inicial do site.' : 'Você está visualizando seu ambiente de atendimento privado.'}
             </p>
           </div>
         </div>
@@ -807,9 +859,16 @@ export default function WhatsAppHubPage() {
               </div>
             </>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-400">
-              <MessageSquare size={48} className="mb-3 opacity-40" />
-              <p className="text-sm font-bold text-slate-600">Selecione uma conversa ao lado para visualizar os detalhes.</p>
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-center text-slate-500 space-y-3 bg-slate-50/50">
+              <div className="p-4 rounded-3xl bg-emerald-500/10 text-emerald-600 border border-emerald-500/20">
+                <MessageSquare size={44} />
+              </div>
+              <div className="max-w-md">
+                <h3 className="text-base font-black text-slate-900 mb-1">Nenhuma conversa ativa no momento</h3>
+                <p className="text-xs font-semibold text-slate-500 leading-relaxed">
+                  O widget de atendimento flutuante via WhatsApp na página inicial do site está ativo e pronto. Assim que um visitante ou lead iniciar uma conversa, ela aparecerá aqui em tempo real com a resposta automatizada do Vitor (Agente SDR).
+                </p>
+              </div>
             </div>
           )}
         </div>

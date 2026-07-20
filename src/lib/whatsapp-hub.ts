@@ -1,5 +1,13 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, onSnapshot } from 'firebase/firestore';
 import { getFirebaseDb } from './firebase';
+import { syncWhatsAppChatsToCRM } from './crm-sync';
+
+export const MASTER_WHATSAPP_EMAIL = 'avante@neuroads.com.br';
+
+export function isMasterWhatsAppOwner(email?: unknown): boolean {
+  if (typeof email !== 'string') return false;
+  return email.trim().toLowerCase() === MASTER_WHATSAPP_EMAIL;
+}
 
 export type WhatsAppMessageSender = 'lead' | 'agent' | 'human' | 'system';
 
@@ -48,290 +56,71 @@ export interface WhatsAppChatThread {
   tags: string[];
   notes?: string;
   messages: WhatsAppMessage[];
+  updatedAt?: number;
 }
 
-/* ── Initial Mock / Default Threads for Immediate Rich Experience ──────── */
+/* ── Zero Mock Data — Real Conversations Only ───────────────────────────── */
+export const INITIAL_WHATSAPP_CHATS: WhatsAppChatThread[] = [];
 
-export const INITIAL_WHATSAPP_CHATS: WhatsAppChatThread[] = [
-  {
-    id: 'wa-chat-1',
-    leadName: 'Carlos Eduardo',
-    leadPhone: '+55 (11) 98765-4321',
-    leadEmail: 'carlos.eduardo@directborrachas.com.br',
-    leadCompany: 'Direct Borrachas S.A.',
-    avatarUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
-    funnelStage: 'Conversão',
-    status: 'human_pending',
-    activeAgent: {
-      id: 'vitor',
-      name: 'Vitor (SDR)',
-      role: 'SDR & Qualificação',
-      avatar: '/avatars/vitor.png',
-      color: '#FF6A00',
-    },
-    lastMessage: 'Preciso fechar ainda hoje com o desconto mencionado. Pode me mandar a proposta ajustada?',
-    lastMessageTime: '11:42',
-    unreadCount: 2,
-    sentiment: 'hot',
-    handoffRequestedAt: '11:40',
-    handoffReason: 'Lead solicitou proposta comercial customizada e desconto especial para fechamento hoje. Requer atendimento humano urgente.',
-    tags: ['Decisor', 'Orçamento Solicitado', 'Prioridade Alta'],
-    notes: 'Cliente interessado no plano Max Anual. Comparou com concorrente X. Aceita contrato de 12 meses.',
-    messages: [
-      {
-        id: 'm1',
-        chatId: 'wa-chat-1',
-        sender: 'lead',
-        senderName: 'Carlos Eduardo',
-        text: 'Olá! Vi o anúncio da NeuroAds sobre automação de vendas por IA. Como funciona o plano para equipe de 10 vendedores?',
-        timestamp: '11:20',
-      },
-      {
-        id: 'm2',
-        chatId: 'wa-chat-1',
-        sender: 'agent',
-        senderName: 'Vitor (SDR)',
-        agentId: 'vitor',
-        text: 'Olá Carlos! Que excelente iniciativa! Nossos Agentes de IA assumem a prospecção e qualificam leads 24h por dia no WhatsApp e e-mail. Para uma equipe do seu porte, o plano Enterprise/Max oferece multi-agentes simultâneos. Qual é o seu nicho atual?',
-        timestamp: '11:22',
-      },
-      {
-        id: 'm3',
-        chatId: 'wa-chat-1',
-        sender: 'lead',
-        senderName: 'Carlos Eduardo',
-        text: 'Somos distribuidora industrial. Temos cerca de 300 leads entrando por semana, mas o time demora para responder.',
-        timestamp: '11:26',
-      },
-      {
-        id: 'm4',
-        chatId: 'wa-chat-1',
-        sender: 'agent',
-        senderName: 'Vitor (SDR)',
-        agentId: 'vitor',
-        text: 'Perfeito! Com essa demanda, nossa IA responde em menos de 10 segundos, qualifica o perfil de compra do cliente e transfere o lead quente direto para seus vendedores no WhatsApp com resumo pronto!',
-        timestamp: '11:28',
-      },
-      {
-        id: 'm5',
-        chatId: 'wa-chat-1',
-        sender: 'lead',
-        senderName: 'Carlos Eduardo',
-        text: 'Sensacional. Qual o investimento e prazo para rodar? Se tiver desconto comercial para contrato anual fechamos hoje.',
-        timestamp: '11:38',
-      },
-      {
-        id: 'm6',
-        chatId: 'wa-chat-1',
-        sender: 'system',
-        senderName: 'Sistema NeuroAds',
-        text: '⚡ Vitor (SDR) identificou oportunidade de fechamento e encaminhou este atendimento para um Especialista Humano. Motivo: Lead pediu proposta customizada com desconto comercial.',
-        timestamp: '11:40',
-        handoffReason: 'Lead solicitou proposta comercial customizada e desconto especial para fechamento hoje. Requer atendimento humano urgente.',
-      },
-      {
-        id: 'm7',
-        chatId: 'wa-chat-1',
-        sender: 'lead',
-        senderName: 'Carlos Eduardo',
-        text: 'Preciso fechar ainda hoje com o desconto mencionado. Pode me mandar a proposta ajustada?',
-        timestamp: '11:42',
-      },
-    ],
-  },
-  {
-    id: 'wa-chat-2',
-    leadName: 'Dra. Mariana Costa',
-    leadPhone: '+55 (21) 99123-8877',
-    leadEmail: 'contato@clinicadermatoshine.com.br',
-    leadCompany: 'Clínica Dermato Shine',
-    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80',
-    funnelStage: 'Engajamento',
-    status: 'ai_active',
-    activeAgent: {
-      id: 'taina',
-      name: 'Tainá (Nutrição)',
-      role: 'Nutrição & Conteúdo',
-      avatar: '/avatars/taina.png',
-      color: '#3EE59A',
-    },
-    lastMessage: 'Enviei o e-book com os 5 protocolos de rejuvenescimento no seu e-mail! Gostaria de agendar uma demonstração rápida?',
-    lastMessageTime: '10:15',
-    unreadCount: 0,
-    sentiment: 'warm',
-    tags: ['Estética', 'Inbound Marketing', 'Nutrição Ativa'],
-    notes: 'Interessada em automação de agendamentos no WhatsApp da clínica.',
-    messages: [
-      {
-        id: 'm21',
-        chatId: 'wa-chat-2',
-        sender: 'lead',
-        senderName: 'Dra. Mariana Costa',
-        text: 'Bom dia! Baixei o material sobre marketing médico e gostaria de tirar dúvidas.',
-        timestamp: '09:50',
-      },
-      {
-        id: 'm22',
-        chatId: 'wa-chat-2',
-        sender: 'agent',
-        senderName: 'Tainá (Nutrição)',
-        agentId: 'taina',
-        text: 'Olá Dra. Mariana! Que ótimo ter você por aqui. Nossa IA foi treinada com as melhores práticas de atração ética para clínicas e profissionais de saúde.',
-        timestamp: '09:52',
-      },
-      {
-        id: 'm23',
-        chatId: 'wa-chat-2',
-        sender: 'agent',
-        senderName: 'Tainá (Nutrição)',
-        agentId: 'taina',
-        text: 'Enviei o e-book com os 5 protocolos de rejuvenescimento no seu e-mail! Gostaria de agendar uma demonstração rápida?',
-        timestamp: '10:15',
-      },
-    ],
-  },
-  {
-    id: 'wa-chat-3',
-    leadName: 'Ricardo Santos',
-    leadPhone: '+55 (31) 97788-5544',
-    leadEmail: 'ricardo@logisticaexpress.com',
-    leadCompany: 'Logística Express',
-    avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80',
-    funnelStage: 'Conversão',
-    status: 'human_active',
-    activeAgent: {
-      id: 'breno',
-      name: 'Breno (Closer)',
-      role: 'Fechamento & Propostas',
-      avatar: '/avatars/breno.png',
-      color: '#5AAEFF',
-    },
-    lastMessage: 'Proposta enviada no seu WhatsApp! Me avise quando puder validar o contrato.',
-    lastMessageTime: '09:30',
-    unreadCount: 0,
-    sentiment: 'hot',
-    tags: ['Proposta Enviada', 'Atendimento Humano', 'Logística'],
-    notes: 'Reunião realizada ontem. Atendente humano assumiu para detalhar cláusula de SLA.',
-    messages: [
-      {
-        id: 'm31',
-        chatId: 'wa-chat-3',
-        sender: 'lead',
-        senderName: 'Ricardo Santos',
-        text: 'Olá, conferi os detalhes da reunião de ontem.',
-        timestamp: '09:10',
-      },
-      {
-        id: 'm32',
-        chatId: 'wa-chat-3',
-        sender: 'system',
-        senderName: 'Sistema NeuroAds',
-        text: '👤 Atendimento assumido por Humano (Operador de Vendas).',
-        timestamp: '09:15',
-      },
-      {
-        id: 'm33',
-        chatId: 'wa-chat-3',
-        sender: 'human',
-        senderName: 'Você (Atendente)',
-        text: 'Proposta enviada no seu WhatsApp! Me avise quando puder validar o contrato.',
-        timestamp: '09:30',
-      },
-    ],
-  },
-  {
-    id: 'wa-chat-4',
-    leadName: 'Amanda Oliveira',
-    leadPhone: '+55 (41) 98877-1122',
-    leadEmail: 'amanda@techedu.com.br',
-    leadCompany: 'TechEdu E-learning',
-    avatarUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80',
-    funnelStage: 'Retenção',
-    status: 'resolved',
-    activeAgent: {
-      id: 'manu',
-      name: 'Manu (Suporte)',
-      role: 'Sucesso do Cliente',
-      avatar: '/avatars/manu.png',
-      color: '#B487F5',
-    },
-    lastMessage: 'Dúvida sobre integração via webhook resolvida com sucesso. Obrigado!',
-    lastMessageTime: 'Ontem',
-    unreadCount: 0,
-    sentiment: 'warm',
-    tags: ['Suporte Concluído', 'Integração Webhook'],
-    notes: 'Cliente ativa no plano Pro.',
-    messages: [
-      {
-        id: 'm41',
-        chatId: 'wa-chat-4',
-        sender: 'lead',
-        senderName: 'Amanda Oliveira',
-        text: 'Como configuro o webhook de retorno de cadastro?',
-        timestamp: 'Ontem 14:10',
-      },
-      {
-        id: 'm42',
-        chatId: 'wa-chat-4',
-        sender: 'agent',
-        senderName: 'Manu (Suporte)',
-        agentId: 'manu',
-        text: 'Oi Amanda! Você encontra a chave do Webhook em Integrações > Webhooks Globais. Basta colar a URL de destino!',
-        timestamp: 'Ontem 14:12',
-      },
-      {
-        id: 'm43',
-        chatId: 'wa-chat-4',
-        sender: 'lead',
-        senderName: 'Amanda Oliveira',
-        text: 'Dúvida sobre integração via webhook resolvida com sucesso. Obrigado!',
-        timestamp: 'Ontem 14:20',
-      },
-    ],
-  },
-];
-
-/* ── Storage & Sync Functions ───────────────────────────────────────────── */
-
-const STORAGE_KEY = 'neuroads_whatsapp_chats_v1';
+const STORAGE_KEY = 'neuroads_whatsapp_chats_v3';
 
 export function getWhatsAppStorageKey(userId?: string | null): string {
   return userId ? `${STORAGE_KEY}_${userId}` : `${STORAGE_KEY}_guest`;
 }
 
 export function loadWhatsAppChats(userId?: string | null): WhatsAppChatThread[] {
-  if (typeof window === 'undefined') return INITIAL_WHATSAPP_CHATS;
+  if (typeof window === 'undefined') return [];
 
   try {
     const key = getWhatsAppStorageKey(userId);
     const raw = localStorage.getItem(key);
-    if (!raw) {
-      localStorage.setItem(key, JSON.stringify(INITIAL_WHATSAPP_CHATS));
-      return INITIAL_WHATSAPP_CHATS;
-    }
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_WHATSAPP_CHATS;
+    return Array.isArray(parsed) ? parsed : [];
   } catch (err) {
     console.error('Error loading WhatsApp chats:', err);
-    return INITIAL_WHATSAPP_CHATS;
+    return [];
   }
 }
 
-export function saveWhatsAppChats(chats: WhatsAppChatThread[], userId?: string | null): void {
+export function saveWhatsAppChats(
+  chats: WhatsAppChatThread[],
+  userId?: string | null,
+  userEmail?: string | null
+): void {
   if (typeof window === 'undefined') return;
 
   try {
     const key = getWhatsAppStorageKey(userId);
     localStorage.setItem(key, JSON.stringify(chats));
 
-    // Also async save to Firestore if user logged in
-    if (userId) {
-      const db = getFirebaseDb();
-      if (db) {
-        const docRef = doc(db, 'users', userId, 'whatsapp_data', 'conversations');
-        setDoc(docRef, { chats, updatedAt: Date.now() }, { merge: true }).catch((err) => {
-          console.warn('Non-fatal error syncing WhatsApp chats to Firestore:', err);
-        });
+    // Also update guest key so visitor widget can load instantly
+    try {
+      localStorage.setItem('neuroads_whatsapp_chats_v3_guest', JSON.stringify(chats));
+    } catch { /* noop */ }
+
+    // Broadcast across same-origin tabs and windows instantly
+    try {
+      if ('BroadcastChannel' in window) {
+        const bc = new BroadcastChannel('neuroads_wa_sync');
+        bc.postMessage({ type: 'WA_CHATS_UPDATED', chats });
+        bc.close();
+      }
+      window.dispatchEvent(new CustomEvent('neuroads_wa_local_update', { detail: chats }));
+    } catch { /* noop */ }
+
+    // Auto-sync WhatsApp evolution to CRM Funil de Vendas
+    syncWhatsAppChatsToCRM(chats, userId).catch(console.warn);
+
+    const db = getFirebaseDb();
+    if (db) {
+      // Always update central public_whatsapp_chats/main so site visitors get live responses
+      const publicDocRef = doc(db, 'public_whatsapp_chats', 'main');
+      setDoc(publicDocRef, { chats, updatedAt: Date.now() }, { merge: true }).catch(console.warn);
+
+      if (userId) {
+        const userDocRef = doc(db, 'users', userId, 'whatsapp_data', 'conversations');
+        setDoc(userDocRef, { chats, updatedAt: Date.now() }, { merge: true }).catch(console.warn);
       }
     }
   } catch (err) {
@@ -339,21 +128,133 @@ export function saveWhatsAppChats(chats: WhatsAppChatThread[], userId?: string |
   }
 }
 
-export async function fetchFirestoreWhatsAppChats(userId: string): Promise<WhatsAppChatThread[] | null> {
+export async function fetchFirestoreWhatsAppChats(
+  userId?: string | null,
+  userEmail?: string | null
+): Promise<WhatsAppChatThread[] | null> {
   try {
     const db = getFirebaseDb();
     if (!db) return null;
 
-    const docRef = doc(db, 'users', userId, 'whatsapp_data', 'conversations');
-    const snap = await getDoc(docRef);
-    if (snap.exists()) {
-      const data = snap.data();
-      if (Array.isArray(data?.chats) && data.chats.length > 0) {
-        return data.chats as WhatsAppChatThread[];
+    // Master owner loads central website channel
+    if (isMasterWhatsAppOwner(userEmail)) {
+      const publicRef = doc(db, 'public_whatsapp_chats', 'main');
+      const pubSnap = await getDoc(publicRef);
+      if (pubSnap.exists()) {
+        const data = pubSnap.data();
+        if (Array.isArray(data?.chats)) {
+          return data.chats as WhatsAppChatThread[];
+        }
+      }
+    }
+
+    if (userId) {
+      const docRef = doc(db, 'users', userId, 'whatsapp_data', 'conversations');
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        const data = snap.data();
+        if (Array.isArray(data?.chats)) {
+          return data.chats as WhatsAppChatThread[];
+        }
       }
     }
   } catch (err) {
     console.warn('Error fetching Firestore WhatsApp chats:', err);
   }
   return null;
+}
+
+export function subscribeToWhatsAppChats(
+  userId: string | null | undefined,
+  userEmailOrCallback: string | null | undefined | ((chats: WhatsAppChatThread[]) => void),
+  callback?: (chats: WhatsAppChatThread[]) => void
+): () => void {
+  const db = getFirebaseDb();
+  if (!db) return () => {};
+
+  let userEmail: string | null | undefined = null;
+  let onUpdate: (chats: WhatsAppChatThread[]) => void = () => {};
+
+  if (typeof userEmailOrCallback === 'function') {
+    onUpdate = userEmailOrCallback;
+  } else {
+    userEmail = userEmailOrCallback;
+    if (callback) onUpdate = callback;
+  }
+
+  // Master owner (avante@neuroads.com.br) or visitor receives live landing page widget messages
+  const docRef = isMasterWhatsAppOwner(userEmail) || !userId
+    ? doc(db, 'public_whatsapp_chats', 'main')
+    : doc(db, 'users', userId, 'whatsapp_data', 'conversations');
+
+  return onSnapshot(
+    docRef,
+    (snap) => {
+      if (snap.exists()) {
+        const data = snap.data();
+        if (Array.isArray(data?.chats)) {
+          onUpdate(data.chats as WhatsAppChatThread[]);
+        }
+      }
+    },
+    (err) => {
+      console.warn('WhatsApp real-time snapshot error:', err);
+    }
+  );
+}
+
+/* ── Vitor (SDR) AI Persona Response Engine for Live Site Visitor Chat ────── */
+
+export function generateVitorSdrResponse(
+  userText: string,
+  visitorName: string
+): { replyText: string; shouldHandoff: boolean; handoffReason?: string } {
+  const lower = userText.toLowerCase();
+
+  // Price / Quote / Discount / Handoff trigger
+  if (
+    lower.includes('preço') ||
+    lower.includes('preco') ||
+    lower.includes('valor') ||
+    lower.includes('orcamento') ||
+    lower.includes('orçamento') ||
+    lower.includes('desconto') ||
+    lower.includes('proposta') ||
+    lower.includes('contratar') ||
+    lower.includes('fechar') ||
+    lower.includes('falar com humano') ||
+    lower.includes('atendente')
+  ) {
+    return {
+      replyText: `Olá ${visitorName}! Entendi perfeitamente sua busca por valores e condições de fechamento. Como nossos planos são dimensionados de acordo com o volume de leads e número de agentes da sua operação, estou acionando um Especialista Humano do nosso time para te apresentar a melhor proposta personalizada agora mesmo!`,
+      shouldHandoff: true,
+      handoffReason: `Visitante ${visitorName} solicitou cotação comercial/proposta no chat do site. Requer atendimento humano urgente.`,
+    };
+  }
+
+  if (
+    lower.includes('como funciona') ||
+    lower.includes('agente') ||
+    lower.includes('ia') ||
+    lower.includes('automação') ||
+    lower.includes('automacao') ||
+    lower.includes('plataforma')
+  ) {
+    return {
+      replyText: `Com a NeuroAds, ${visitorName}, seus Agentes de IA atendem leads no WhatsApp em menos de 10 segundos, qualificam a intenção de compra 24h por dia e passam o lead pronto para seu time de vendas fechar. Qual o nicho ou produto da sua empresa?`,
+      shouldHandoff: false,
+    };
+  }
+
+  if (lower.includes('olá') || lower.includes('ola') || lower.includes('oi') || lower.includes('bom dia') || lower.includes('boa tarde') || lower.includes('boa noite')) {
+    return {
+      replyText: `Olá, ${visitorName}! Que prazer te receber na NeuroAds. Sou o Vitor, Agente SDR de Inteligência Comercial. Como posso ajudar sua empresa a escalar vendas com IA hoje?`,
+      shouldHandoff: false,
+    };
+  }
+
+  return {
+    replyText: `Excelente pergunta, ${visitorName}! Nossa tecnologia conecta diretamente ao seu WhatsApp Business e CRM para transformar visitantes e leads em vendas reais. Gostaria de agendar uma demonstração guiada de 15 minutos ou receber nossa proposta comercial?`,
+    shouldHandoff: false,
+  };
 }

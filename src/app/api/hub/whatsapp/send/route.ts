@@ -1,5 +1,6 @@
+// 2026-07-20T13:32:00
 import { NextResponse } from 'next/server';
-import { sendWhatsAppTextMessage } from '../../../../lib/whatsapp';
+import { sendWhatsAppTextMessage } from '../../../../../lib/whatsapp';
 
 export async function POST(req: Request) {
   try {
