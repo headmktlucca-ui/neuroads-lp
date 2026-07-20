@@ -483,20 +483,20 @@ export default function HubDashboardLight() {
     () => normalizeConnections(profile?.connections || {}) as Record<string, ConnectionItem>,
     [profile?.connections]
   );
-  // Modo demo: ativado por padrão com números fictícios (pode ser desativado com ?demo=0 na URL)
-  const [demoData, setDemoData] = useState(true);
+  // Modo demo: desativado por padrão para exibir apenas dados reais dos canais autenticados pelo usuário em Integrações
+  const [demoData, setDemoData] = useState(false);
   useEffect(() => {
     const q = new URLSearchParams(window.location.search).get('demo');
-    if (q === '0') {
-      sessionStorage.setItem('hub_demo', '0');
-      setDemoData(false);
-    } else if (q === '1') {
+    if (q === '1') {
       sessionStorage.setItem('hub_demo', '1');
       setDemoData(true);
-    } else if (sessionStorage.getItem('hub_demo') === '0') {
+    } else if (q === '0') {
+      sessionStorage.setItem('hub_demo', '0');
       setDemoData(false);
-    } else {
+    } else if (sessionStorage.getItem('hub_demo') === '1') {
       setDemoData(true);
+    } else {
+      setDemoData(false);
     }
   }, []);
 
@@ -512,9 +512,17 @@ export default function HubDashboardLight() {
   const [linkedinPageData, setLinkedinPageData] = useState<LinkedinPageResponse | null>(null);
   const [searchConsoleData, setSearchConsoleData] = useState<SearchConsoleResponse | null>(null);
 
-  const hasAnyConnectionReal = isGa4Connected || isGoogleAdsConnected || isMetaAdsConnected || isLinkedinAdsConnected;
-  const hasAnyConnection = hasAnyConnectionReal;
-  const isDemo = true;
+  const hasAnyConnectionReal = Boolean(
+    connections.ga4?.isActive ||
+    connections.googleAds?.isActive ||
+    connections.metaAds?.isActive ||
+    connections.linkedinAds?.isActive ||
+    connections.instagram?.isActive ||
+    connections.linkedinPage?.isActive ||
+    connections.searchConsole?.isActive
+  );
+  const hasAnyConnection = hasAnyConnectionReal || demoData;
+  const isDemo = demoData;
 
   const recentAutomations = useMemo(() => {
     const fromProfile = getHubAutomationsFromProfile(profile)
