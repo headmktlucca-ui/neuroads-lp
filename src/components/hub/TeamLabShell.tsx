@@ -14,6 +14,12 @@ import { agents as allSpecialties } from '../../data/agents';
 import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../lib/agent-status-cache';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
+import {
+  IconUsers3D,
+  IconActivity3D,
+  IconZap3D,
+  IconSparklesPurple3D,
+} from './HubUiIcons3D';
 
 // ─── Reusable KPI Icon Wrapper ──────────────────────────────────────────────
 
@@ -338,46 +344,30 @@ export default function TeamLabShell() {
           { 
             label: 'Agentes da Equipe', 
             value: '10', 
-            icon: (
-              <KpiIconWrapper fromColor="#FF9A55" toColor="#E63E00" shadowColor="rgba(201, 55, 0, 0.4)">
-                <Users size={22} />
-              </KpiIconWrapper>
-            )
+            icon: <IconUsers3D size={54} />
           },
           { 
             label: 'Operações Ativas', 
             value: `${totalActive}`, 
-            icon: (
-              <KpiIconWrapper fromColor="#5AAEFF" toColor="#1240B8" shadowColor="rgba(12, 46, 158, 0.4)">
-                <Activity size={22} />
-              </KpiIconWrapper>
-            )
+            icon: <IconActivity3D size={54} />
           },
           { 
             label: 'Online Agora', 
             value: '10', 
-            icon: (
-              <KpiIconWrapper fromColor="#3EE59A" toColor="#036C4A" shadowColor="rgba(2, 82, 58, 0.4)">
-                <Zap size={22} />
-              </KpiIconWrapper>
-            )
+            icon: <IconZap3D size={54} />
           },
           { 
             label: 'SLA de Execução', 
             value: '100%', 
-            icon: (
-              <KpiIconWrapper fromColor="#B487F5" toColor="#54189E" shadowColor="rgba(62, 14, 122, 0.4)">
-                <Sparkles size={22} />
-              </KpiIconWrapper>
-            )
+            icon: <IconSparklesPurple3D size={54} />
           },
         ].map(({ label, value, icon }) => (
-          <div key={label} className="rounded-2xl border border-white/60 bg-white p-5 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between">
+          <div key={label} className="rounded-2xl border border-white/60 bg-white p-5 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between hover:shadow-[6px_6px_14px_#c2cbd9,_-6px_-6px_14px_#ffffff] transition-all">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400 mb-1">{label}</p>
-              <div className="text-[20px] font-black text-slate-800">{value}</div>
+              <div className="text-[22px] font-black text-slate-800 tracking-tight">{value}</div>
             </div>
-            <div className="shrink-0">{icon}</div>
+            <div className="shrink-0 transition-transform duration-300 hover:scale-110">{icon}</div>
           </div>
         ))}
       </div>

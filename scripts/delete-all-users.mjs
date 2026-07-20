@@ -72,22 +72,40 @@ async function deleteAllAuthUsers() {
   console.log('  Projeto: neuroads-production');
   console.log('============================================================\n');
 
-  console.log('1/3 — Apagando usuários do Firebase Authentication...');
+  console.log('1/2 — Apagando usuários do Firebase Authentication...');
   const authDeleted = await deleteAllAuthUsers();
   console.log(`  ✅ ${authDeleted} usuário(s) apagado(s) do Auth.\n`);
 
-  console.log('2/3 — Apagando coleção "users" do Firestore (+ subcoleções)...');
-  const usersDeleted = await deleteCollectionRecursive(db.collection('users'));
-  console.log(`  ✅ ${usersDeleted} documento(s) apagado(s) de "users".\n`);
+  console.log('2/2 — Apagando coleções do Firestore (+ subcoleções)...');
+  const collectionsToClean = [
+    'users',
+    'hub_usage',
+    'agentWorkspaces',
+    'dnaProfiles',
+    'conversations',
+    'companies',
+    'leads',
+    'notifications',
+    'admin_workspaces',
+    'integration_webhook_events',
+  ];
 
-  console.log('3/3 — Apagando coleção "hub_usage"...');
-  const usageDeleted = await deleteCollectionRecursive(db.collection('hub_usage'));
-  console.log(`  ✅ ${usageDeleted} documento(s) apagado(s) de "hub_usage".\n`);
+  let totalDocsDeleted = 0;
+  for (const collName of collectionsToClean) {
+    const deletedCount = await deleteCollectionRecursive(db.collection(collName));
+    totalDocsDeleted += deletedCount;
+    if (deletedCount > 0) {
+      console.log(`  ✅ ${deletedCount} documento(s) apagado(s) de "${collName}".`);
+    } else {
+      console.log(`  ℹ️ Coleção "${collName}" já está vazia.`);
+    }
+  }
 
-  console.log('============================================================');
+  console.log('\n============================================================');
   console.log(`  ✅  LIMPEZA CONCLUÍDA`);
   console.log(`  Auth:      ${authDeleted} usuário(s) removido(s)`);
-  console.log(`  Firestore: ${usersDeleted + usageDeleted} documento(s) removido(s)`);
+  console.log(`  Firestore: ${totalDocsDeleted} documento(s) removido(s) total`);
   console.log('============================================================\n');
   process.exit(0);
 })();
+

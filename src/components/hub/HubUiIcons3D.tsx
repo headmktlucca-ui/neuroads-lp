@@ -564,3 +564,153 @@ export function IconCoin3D(p: IconProps) {
     </Svg>
   );
 }
+
+/* ─── KPI: Agentes da Equipe (Usuários 3D Laranja) ──────────────── */
+export function IconUsers3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-users-orange" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF9A55" /><stop offset="1" stopColor="#E63E00" />
+        </linearGradient>
+      </defs>
+      {/* Usuário secundário esquerda */}
+      <circle cx="13" cy="17" r="5" fill="url(#hui-users-orange)" opacity="0.65" />
+      <path d="M5 35c0-4.5 3.5-8 8-8h2v10H5z" fill="url(#hui-users-orange)" opacity="0.65" />
+      {/* Usuário secundário direita */}
+      <circle cx="35" cy="17" r="5" fill="url(#hui-users-orange)" opacity="0.7" />
+      <path d="M35 27h2c4.5 0 8 3.5 8 8v2H35V27z" fill="url(#hui-users-orange)" opacity="0.7" />
+      {/* Usuário principal centro */}
+      <circle cx="24" cy="14" r="7.5" fill="url(#hui-users-orange)" />
+      <path d="M11 37c0-6.6 5.4-12 13-12s13 5.4 13 12v1H11v-1z" fill="url(#hui-users-orange)" />
+      {/* Brilhos de vidro */}
+      <ellipse cx="21" cy="11" rx="4" ry="2" fill="white" fillOpacity="0.35" />
+      <ellipse cx="20" cy="28" rx="6" ry="2" fill="white" fillOpacity="0.25" />
+      {/* Sombra de base */}
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#E63E00" fillOpacity="0.18" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: Raio / Online Agora / Ativas (Zap 3D Verde) ──────────── */
+export function IconZap3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-zap-green" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#3EE59A" /><stop offset="1" stopColor="#036C4A" />
+        </linearGradient>
+        <linearGradient id="hui-zap-shine" x1="12" y1="6" x2="32" y2="24" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFFFFF" stopOpacity="0.6" />
+          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0.0" />
+        </linearGradient>
+      </defs>
+      {/* Extrusão 3D de sombra */}
+      <path d="M26 5 L11 25 h9 L14 43 L36 21 h-9 L32 5 Z" fill="#01402B" opacity="0.5" />
+      {/* Raio principal */}
+      <path d="M25 4 L10 24 h9 L13 42 L35 20 h-9 L31 4 Z" fill="url(#hui-zap-green)" />
+      {/* Brilho superior */}
+      <path d="M25 4 L10 24 h9 L13 42 L35 20 h-9 L31 4 Z" fill="url(#hui-zap-shine)" />
+      <ellipse cx="21" cy="11" rx="4" ry="2" fill="white" fillOpacity="0.4" transform="rotate(-20 21 11)" />
+      {/* Partículas de energia */}
+      <circle cx="9" cy="14" r="2" fill="#7DFFC3" />
+      <circle cx="37" cy="32" r="1.5" fill="#7DFFC3" />
+      {/* Sombra de base */}
+      <ellipse cx="24" cy="45" rx="13" ry="2" fill="#036C4A" fillOpacity="0.2" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: SLA / Top Categoria (Faíscas 3D Violeta/Roxo) ────────── */
+export function IconSparklesPurple3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-spark-purple" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#C495FF" /><stop offset="1" stopColor="#54189E" />
+        </linearGradient>
+        <linearGradient id="hui-spark-purp-glow" x1="10" y1="10" x2="38" y2="38" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#E2C7FF" /><stop offset="1" stopColor="#8A3BE0" />
+        </linearGradient>
+      </defs>
+      {/* Estrela 3D principal */}
+      <path d="M24 4 L28 17 L41 21 L28 25 L24 38 L20 25 L7 21 L20 17 Z" fill="url(#hui-spark-purple)" />
+      {/* Facetas de luz 3D */}
+      <path d="M24 4 L28 17 L24 21 L20 17 Z" fill="url(#hui-spark-purp-glow)" />
+      <path d="M24 21 L28 25 L24 38 L20 25 Z" fill="url(#hui-spark-purple)" opacity="0.8" />
+      {/* Estrela 3D secundária */}
+      <path d="M36 26 L38 31 L43 33 L38 35 L36 40 L34 35 L29 33 L34 31 Z" fill="url(#hui-spark-purple)" opacity="0.9" />
+      {/* Estrela 3D menor */}
+      <path d="M12 30 L13.5 33.5 L17 35 L13.5 36.5 L12 40 L10.5 36.5 L7 35 L10.5 33.5 Z" fill="#DDB8FF" opacity="0.8" />
+      {/* Brilho de vidro */}
+      <ellipse cx="24" cy="13" rx="3.5" ry="1.8" fill="white" fillOpacity="0.45" />
+      {/* Sombra de base */}
+      <ellipse cx="24" cy="44" rx="14" ry="2" fill="#54189E" fillOpacity="0.2" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: Criativos / Processador (CPU 3D Laranja) ──────────────── */
+export function IconCpu3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-cpu-orange" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF9A55" /><stop offset="1" stopColor="#E63E00" />
+        </linearGradient>
+        <linearGradient id="hui-cpu-gold" x1="0" y1="0" x2="1" y2="1">
+          <stop stopColor="#FFE082" /><stop offset="1" stopColor="#FFB300" />
+        </linearGradient>
+      </defs>
+      {/* Pinos dourados externos */}
+      <path d="M14 6 h3 v4 h-3 z M22.5 6 h3 v4 h-3 z M31 6 h3 v4 h-3 z" fill="url(#hui-cpu-gold)" />
+      <path d="M14 38 h3 v4 h-3 z M22.5 38 h3 v4 h-3 z M31 38 h3 v4 h-3 z" fill="url(#hui-cpu-gold)" />
+      <path d="M6 14 h4 v3 h-4 z M6 22.5 h4 v3 h-4 z M6 31 h4 v3 h-4 z" fill="url(#hui-cpu-gold)" />
+      <path d="M38 14 h4 v3 h-4 z M38 22.5 h4 v3 h-4 z M38 31 h4 v3 h-4 z" fill="url(#hui-cpu-gold)" />
+
+      {/* Corpo principal do chip 3D */}
+      <rect x="9" y="9" width="30" height="30" rx="6" fill="url(#hui-cpu-orange)" />
+      {/* Moldura metálica interna */}
+      <rect x="15" y="15" width="18" height="18" rx="4" fill="#992600" />
+      {/* Núcleo de silício */}
+      <rect x="18" y="18" width="12" height="12" rx="2.5" fill="#FFE5D6" fillOpacity="0.9" />
+      <rect x="21" y="21" width="6" height="6" rx="1.5" fill="#E63E00" />
+
+      {/* Brilhos de vidro */}
+      <ellipse cx="20" cy="14" rx="7" ry="2.8" fill="white" fillOpacity="0.35" />
+      {/* Sombra de base */}
+      <ellipse cx="24" cy="44" rx="13" ry="2" fill="#E63E00" fillOpacity="0.2" />
+    </Svg>
+  );
+}
+
+/* ─── WhatsApp — balão de conversa 3D verde com fone ──────────────── */
+export function IconWhatsapp3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-wa-green" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#25D366" /><stop offset="1" stopColor="#0B8043" />
+        </linearGradient>
+        <linearGradient id="hui-wa-shine" x1="10" y1="8" x2="30" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFFFFF" stopOpacity="0.5" />
+          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0.0" />
+        </linearGradient>
+      </defs>
+      {/* Sombra de projeção 3D */}
+      <path d="M24 6c-9.5 0-17.2 6.8-17.2 15.2 0 4.8 2.5 9 6.5 11.8L11 41l8.7-3.8c1.4.3 2.9.5 4.3.5 9.5 0 17.2-6.8 17.2-15.2S33.5 6 24 6z" fill="#054D27" opacity="0.4" transform="translate(1, 2)" />
+      {/* Balão WhatsApp 3D principal */}
+      <path d="M24 6c-9.5 0-17.2 6.8-17.2 15.2 0 4.8 2.5 9 6.5 11.8L11 41l8.7-3.8c1.4.3 2.9.5 4.3.5 9.5 0 17.2-6.8 17.2-15.2S33.5 6 24 6z" fill="url(#hui-wa-green)" />
+      {/* Brilho superior de vidro */}
+      <path d="M24 6c-9.5 0-17.2 6.8-17.2 15.2 0 4.8 2.5 9 6.5 11.8L11 41l8.7-3.8c1.4.3 2.9.5 4.3.5 9.5 0 17.2-6.8 17.2-15.2S33.5 6 24 6z" fill="url(#hui-wa-shine)" />
+      {/* Ícone de Telefone / Headset branco dentro */}
+      <path d="M17.5 15.2c-.4-.9-.9-.9-1.3-.9h-1.1c-.4 0-1.1.2-1.7.8s-2.1 2.1-2.1 5.1 2.2 5.9 2.5 6.3c.3.4 4.3 6.6 10.4 9.2 1.4.6 2.6 1 3.5 1.3 1.5.5 2.8.4 3.9.2 1.2-.2 3.7-1.5 4.2-3s.5-2.8.4-3c-.1-.2-.5-.4-1.1-.7s-3.7-1.8-4.3-2c-.6-.2-1-.3-1.4.3s-1.6 2-2 2.4c-.4.4-.8.5-1.4.2-.6-.3-2.5-.9-4.8-3-1.8-1.6-3-3.6-3.4-4.2-.4-.6 0-.9.3-1.2.3-.3.6-.7.9-1.1.3-.4.4-.7.6-1.1.2-.4.1-.8 0-1.1-.1-.3-.9-2.3-1.3-3.1z" fill="white" fillOpacity="0.95" />
+      {/* Reflexo de brilho curvo */}
+      <ellipse cx="18" cy="11" rx="7" ry="2.6" fill="white" fillOpacity="0.32" />
+      {/* Sombra de base */}
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#054D27" fillOpacity="0.2" />
+    </Svg>
+  );
+}
+
+

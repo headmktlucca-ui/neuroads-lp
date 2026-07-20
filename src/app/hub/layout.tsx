@@ -48,6 +48,7 @@ import {
   IconRefresh3D,
   IconAds3D,
   IconSocial3D,
+  IconWhatsapp3D,
 } from '../../components/hub/HubUiIcons3D';
 import { CompanySwitcherTrigger } from '../../components/hub/CompanySwitcher';
 import { useCompanyMigration } from '../../hooks/useCompanyMigration';
@@ -92,6 +93,7 @@ const NAV_GROUPS: NavGroup[] = [
           { icon: IconRefresh3D,  label: 'Retenção',   href: '/hub/funil/retencao'   },
         ],
       },
+      { icon: IconWhatsapp3D,   label: 'WhatsApp',             href: '/hub/whatsapp' },
       { icon: IconFunnel3D,     label: 'CRM',                  href: '/hub/funil-vendas' },
       { icon: IconAds3D,        label: 'Ads',                  href: '/hub/ads' },
       { icon: IconSocial3D,     label: 'Redes Sociais',        href: '/hub/redes-sociais' },
