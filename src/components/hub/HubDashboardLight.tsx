@@ -37,6 +37,15 @@ import CreditMeter from './CreditMeter';
 import BentoCard from './v2/BentoCard';
 import CountUp from './v2/CountUp';
 import Sparkline from './v2/Sparkline';
+import {
+  IconWallet3D,
+  IconTarget3D,
+  IconTrending3D,
+  IconCart3D,
+  IconClick3D,
+  IconActivity3D,
+  IconCoin3D,
+} from './HubUiIcons3D';
 
 /* ─── Custom Icons ────────────────────────────────────────────────── */
 const InstagramIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
@@ -710,29 +719,29 @@ export default function HubDashboardLight() {
 
     if (reportView === 'clevel') {
       return [
-        { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+12%', positive: true,  icon: Wallet,           color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
-        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-        { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: TrendingUp,       color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
-        { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: ShoppingCart,     color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
-        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick,color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
+        { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+12%', positive: true,  icon: IconWallet3D,    color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
+        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: IconTarget3D,    color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
+        { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: IconTrending3D,  color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
+        { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: IconCart3D,      color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
+        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: IconClick3D,     color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
       ];
     }
     if (reportView === 'traffic') {
       return [
-        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-        { label: 'Cliques Ads',     rawValue: totalClicks, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '', positive: true, icon: MousePointerClick, color: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.05)', spark: Array(10).fill(0) },
-        { label: 'CTR Médio',       rawValue: totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0, isNa: isNaSpend, prefix: '', suffix: '%', decimals: 2, delta: '', positive: true, icon: Activity, color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: Array(10).fill(0) },
-        { label: 'CPC Médio',       rawValue: totalClicks > 0 ? spendNum / totalClicks : 0, isNa: isNaSpend, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true, icon: DollarSign, color: '#db2777', glow: 'rgba(219, 39, 119, 0.05)', spark: Array(10).fill(0) },
-        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick,color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
+        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: false, icon: IconTarget3D,    color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
+        { label: 'Cliques Ads',     rawValue: totalClicks, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '', positive: true, icon: IconClick3D,     color: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.05)', spark: Array(10).fill(0) },
+        { label: 'CTR Médio',       rawValue: totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0, isNa: isNaSpend, prefix: '', suffix: '%', decimals: 2, delta: '', positive: true, icon: IconActivity3D,  color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: Array(10).fill(0) },
+        { label: 'CPC Médio',       rawValue: totalClicks > 0 ? spendNum / totalClicks : 0, isNa: isNaSpend, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true, icon: IconCoin3D,      color: '#db2777', glow: 'rgba(219, 39, 119, 0.05)', spark: Array(10).fill(0) },
+        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: IconClick3D,     color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
       ];
     }
     // clevel - mostrar apenas dados reais
     return [
-      { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true,  icon: Wallet,           color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
-      { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: false, icon: Target,           color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-      { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: TrendingUp,       color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
-      { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: ShoppingCart,     color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
-      { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick,color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
+      { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true,  icon: IconWallet3D,    color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
+      { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: false, icon: IconTarget3D,    color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
+      { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: IconTrending3D,  color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
+      { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: IconCart3D,      color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
+      { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: IconClick3D,     color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
     ];
   }, [reportView, stats, revenueNum, spendNum, roasNum, convsNum, cpaNum, usersNum, SP, isDemo, trafficData]);
 
@@ -1210,8 +1219,8 @@ export default function HubDashboardLight() {
               delay={idx * 0.04}
             >
               <div className="flex items-center justify-between">
-                <div className="w-9 h-9 rounded-xl flex items-center justify-center border border-white/40 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,inset_-2px_-2px_4px_#ffffff]">
-                  <Icon size={18} style={{ color: kpi.color }} />
+                <div className="w-10 h-10 rounded-2xl flex items-center justify-center bg-gradient-to-br from-white/90 to-slate-100/70 border border-white/80 shadow-[3px_3px_8px_rgba(209,217,230,0.5),-2px_-2px_6px_rgba(255,255,255,0.9)] transition-all transform hover:scale-105 shrink-0">
+                  <Icon size={30} />
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span

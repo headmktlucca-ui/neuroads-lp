@@ -447,3 +447,120 @@ export function IconEngagement3D(p: IconProps) {
     </Svg>
   );
 }
+
+/* ─── KPI: Receita Total (Carteira 3D Teal) ────────────────────────── */
+export function IconWallet3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-wallet" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#34D399" /><stop offset="1" stopColor="#0D9488" />
+        </linearGradient>
+        <linearGradient id="hui-coin-w" x1="26" y1="6" x2="38" y2="18" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FDE047" /><stop offset="1" stopColor="#CA8A04" />
+        </linearGradient>
+      </defs>
+      <circle cx="33" cy="13" r="7" fill="url(#hui-coin-w)" />
+      <text x="33" y="16" fontSize="8" fontWeight="bold" fill="#713F12" textAnchor="middle">R$</text>
+      <rect x="6" y="14" width="34" height="24" rx="6" fill="url(#hui-wallet)" />
+      <path d="M6 14 H36 A4 4 0 0 1 40 18 V22 H6 Z" fill="white" fillOpacity="0.2" />
+      <path d="M28 20 h10 a4 4 0 0 1 4 4 v4 a4 4 0 0 1-4 4 H28 Z" fill="url(#hui-wallet)" />
+      <circle cx="34" cy="26" r="2.5" fill="#FDE047" />
+      <ellipse cx="18" cy="18" rx="8" ry="3" fill="white" fillOpacity="0.32" />
+      <ellipse cx="24" cy="44" rx="14" ry="2" fill="#0D9488" fillOpacity="0.18" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: ROAS Médio (Crescimento 3D Laranja) ──────────────────── */
+export function IconTrending3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-trend" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF9040" /><stop offset="1" stopColor="#EA5800" />
+        </linearGradient>
+      </defs>
+      <path d="M6 34 L18 20 L26 27 L40 10 L40 22 L40 10 L28 10" stroke="url(#hui-trend)" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <path d="M6 34 L18 20 L26 27 L40 10 L40 22 L40 10 L28 10" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" strokeOpacity="0.4" fill="none" />
+      <polygon points="40,10 28,10 40,22" fill="url(#hui-trend)" />
+      <ellipse cx="16" cy="15" rx="5" ry="2.2" fill="white" fillOpacity="0.35" />
+      <ellipse cx="24" cy="44" rx="14" ry="2" fill="#EA5800" fillOpacity="0.18" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: Conversões (Carrinho 3D Verde) ────────────────────────── */
+export function IconCart3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-cart" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#2DD4BF" /><stop offset="1" stopColor="#0F766E" />
+        </linearGradient>
+      </defs>
+      <path d="M6 10 h6 l5 18 h19 l4-13 H15" stroke="url(#hui-cart)" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <circle cx="19" cy="37" r="3.5" fill="url(#hui-cart)" />
+      <circle cx="34" cy="37" r="3.5" fill="url(#hui-cart)" />
+      <circle cx="19" cy="37" r="1.5" fill="white" />
+      <circle cx="34" cy="37" r="1.5" fill="white" />
+      <ellipse cx="22" cy="18" rx="6" ry="2.5" fill="white" fillOpacity="0.35" />
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#0F766E" fillOpacity="0.18" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: CPA Médio / Cliques (Ponteiro 3D Âmbar) ───────────────── */
+export function IconClick3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-click" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FBBF24" /><stop offset="1" stopColor="#D97706" />
+        </linearGradient>
+      </defs>
+      <circle cx="28" cy="14" r="8" stroke="url(#hui-click)" strokeWidth="2" fill="none" opacity="0.4" />
+      <circle cx="28" cy="14" r="4" stroke="url(#hui-click)" strokeWidth="2" fill="none" opacity="0.7" />
+      <path d="M12 8 L30 24 L21 26 L27 38 L22 40 L16 28 L9 33 Z" fill="url(#hui-click)" />
+      <ellipse cx="17" cy="14" rx="4" ry="2" fill="white" fillOpacity="0.4" />
+      <ellipse cx="24" cy="45" rx="13" ry="2" fill="#D97706" fillOpacity="0.18" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: CTR Médio (Atividade 3D Ciano) ────────────────────────── */
+export function IconActivity3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-act" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#38BDF8" /><stop offset="1" stopColor="#0284C7" />
+        </linearGradient>
+      </defs>
+      <path d="M6 24 H14 L19 10 L27 36 L33 18 L37 24 H42" stroke="url(#hui-act)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+      <circle cx="19" cy="10" r="3" fill="#38BDF8" />
+      <circle cx="27" cy="36" r="3" fill="#0284C7" />
+      <circle cx="33" cy="18" r="3" fill="#38BDF8" />
+      <ellipse cx="18" cy="14" rx="5" ry="2" fill="white" fillOpacity="0.35" />
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#0284C7" fillOpacity="0.18" />
+    </Svg>
+  );
+}
+
+/* ─── KPI: CPC Médio (Moeda 3D Rosa) ─────────────────────────────── */
+export function IconCoin3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-coinrose" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F472B6" /><stop offset="1" stopColor="#DB2777" />
+        </linearGradient>
+      </defs>
+      <circle cx="24" cy="24" r="17" fill="url(#hui-coinrose)" />
+      <circle cx="24" cy="24" r="13" fill="white" fillOpacity="0.2" />
+      <text x="24" y="31" fontSize="20" fontWeight="900" fill="white" textAnchor="middle">$</text>
+      <ellipse cx="17" cy="13" rx="7" ry="3.2" fill="white" fillOpacity="0.35" />
+      <ellipse cx="24" cy="44" rx="13" ry="2" fill="#DB2777" fillOpacity="0.18" />
+    </Svg>
+  );
+}
