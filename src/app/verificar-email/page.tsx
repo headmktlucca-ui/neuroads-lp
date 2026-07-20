@@ -108,55 +108,62 @@ function VerificarEmailContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#000000] flex items-center justify-center">
+      <div className="min-h-screen bg-[#EDF1F5] flex items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#FF6A00] border-t-transparent" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen flex bg-[#000000]">
+    <div className="h-screen max-h-screen flex bg-transparent relative overflow-hidden">
       {/* Left Panel */}
-      <div className="hidden lg:block flex-1 min-w-0">
+      <div className="hidden lg:block lg:flex-1 lg:min-w-0 h-full">
         <AuthLeftPanel />
       </div>
 
-      {/* Right Panel — fixed width, never resizes */}
-      <div className="flex items-center justify-center bg-[#06111f] shrink-0 w-full lg:w-[520px]">
-        <div className="w-full max-w-[400px] px-6 py-12">
+      {/* Right Panel */}
+      <div className="flex-1 flex items-center justify-center bg-transparent p-4 sm:p-6 lg:p-8 relative z-10 h-full overflow-y-auto">
+        <div className="w-full max-w-[540px] p-6 sm:p-8 rounded-2xl border border-slate-300 bg-white shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff]">
+
+          {/* Mobile brand */}
+          <div className="lg:hidden mb-6 text-center">
+            <span className="text-[11px] font-black uppercase tracking-[0.14em] text-[#FF6A00]">
+              NeuroAds · Verificação
+            </span>
+          </div>
 
           {success ? (
-            <div className="text-center animate-in fade-in zoom-in-95 duration-400">
-              <div className="mx-auto mb-5 w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-                <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+            <div className="text-center py-6 animate-in fade-in zoom-in-95 duration-400">
+              <div className="mx-auto mb-5 w-16 h-16 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center">
+                <CheckCircle2 className="w-8 h-8 text-emerald-500" />
               </div>
-              <h2 className="text-[22px] font-black text-white mb-2">E-mail confirmado!</h2>
-              <p className="text-[14px] text-white/45">Redirecionando para o Hub...</p>
+              <h2 className="text-[22px] font-black text-slate-900 mb-2">E-mail confirmado!</h2>
+              <p className="text-[14px] text-slate-500 font-medium">Redirecionando para o Hub...</p>
             </div>
           ) : (
             <>
               {/* Terminal visual */}
-              <div className="mb-8 rounded-2xl border border-white/[0.08] bg-[#071525]/80 p-4 font-mono text-[12px]">
+              <div className="mb-6 rounded-2xl border border-slate-200 bg-slate-900 p-4 font-mono text-[12px] shadow-sm">
                 <div className="flex items-center gap-1.5 mb-3">
-                  <div className="h-2 w-2 rounded-full bg-red-500/70" />
-                  <div className="h-2 w-2 rounded-full bg-amber-500/70" />
-                  <div className="h-2 w-2 rounded-full bg-emerald-500/70" />
-                  <span className="ml-2 text-[10px] font-bold uppercase tracking-wider text-white/30">VERIFY_EMAIL.SH</span>
+                  <div className="h-2.5 w-2.5 rounded-full bg-red-500/80" />
+                  <div className="h-2.5 w-2.5 rounded-full bg-amber-500/80" />
+                  <div className="h-2.5 w-2.5 rounded-full bg-emerald-500/80" />
+                  <span className="ml-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">VERIFY_EMAIL.SH</span>
                 </div>
-                <div className="space-y-1.5 text-[11px]">
-                  <p><span className="text-white/30">1</span> <span className="text-white/50">$ init auth_handshake --client=neuroads</span></p>
-                  <p><span className="text-white/30">2</span> <span className="text-emerald-400">[ OK ] Handshake initialized.</span></p>
-                  <p><span className="text-white/30">3</span> <span className="text-white/50">$ verify key_delivery --target=<span className="text-[#FF6A00]">{maskedEmail}</span></span></p>
-                  <p><span className="text-white/30">4</span> <span className="text-emerald-400">[ OK ] Código enviado com sucesso.</span></p>
-                  <p className="animate-pulse"><span className="text-white/30">5</span> <span className="text-white/50">$ challenge response --input=<span className="text-white/30">______</span></span></p>
+                <div className="space-y-1.5 text-[11px] text-slate-300">
+                  <p><span className="text-slate-500">1</span> <span className="text-slate-300">$ init auth_handshake --client=neuroads</span></p>
+                  <p><span className="text-slate-500">2</span> <span className="text-emerald-400">[ OK ] Handshake initialized.</span></p>
+                  <p><span className="text-slate-500">3</span> <span className="text-slate-300">$ verify key_delivery --target=<span className="text-[#FF6A00] font-semibold">{maskedEmail}</span></span></p>
+                  <p><span className="text-slate-500">4</span> <span className="text-emerald-400">[ OK ] Código enviado com sucesso.</span></p>
+                  <p className="animate-pulse"><span className="text-slate-500">5</span> <span className="text-slate-300">$ challenge response --input=<span className="text-slate-500">______</span></span></p>
                 </div>
               </div>
 
               <div className="mb-6">
-                <h1 className="text-[26px] font-black text-white leading-tight mb-1">Confirmar e-mail</h1>
-                <p className="text-[14px] text-white/45 leading-relaxed">
+                <h1 className="text-[26px] font-black text-slate-900 leading-tight mb-1.5">Confirmar e-mail</h1>
+                <p className="text-[14px] text-slate-500 font-medium leading-relaxed">
                   Digite o código de 6 dígitos enviado para{' '}
-                  <span className="text-white/70 font-semibold">{maskedEmail}</span>.
+                  <span className="text-slate-900 font-bold">{maskedEmail}</span>.
                 </p>
               </div>
 
@@ -169,14 +176,14 @@ function VerificarEmailContent() {
                   value={code}
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, CODE_LENGTH))}
                   placeholder="000000"
-                  className={`w-full h-14 rounded-xl border text-center text-[22px] font-black tracking-[0.5em] text-white transition-all focus:outline-none
-                    ${code.length === CODE_LENGTH ? 'border-[#FF6A00]/60 bg-[#FF6A00]/05 shadow-[0_0_12px_rgba(255,106,0,0.15)]' : 'border-white/[0.12] bg-white/[0.04] focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30'}`}
+                  className={`w-full h-14 rounded-xl border text-center text-[22px] font-black tracking-[0.5em] text-slate-900 transition-all focus:outline-none
+                    ${code.length === CODE_LENGTH ? 'border-[#FF6A00] bg-[#FF6A00]/05 shadow-[0_0_12px_rgba(255,106,0,0.15)]' : 'border-slate-300 bg-slate-50 focus:border-[#FF6A00]/50 focus:ring-1 focus:ring-[#FF6A00]/30'}`}
                 />
               </div>
 
               {error && (
                 <div className="mb-4 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3">
-                  <p className="text-[13px] font-semibold text-red-400">{error}</p>
+                  <p className="text-[13px] font-semibold text-red-500">{error}</p>
                 </div>
               )}
 
@@ -192,30 +199,30 @@ function VerificarEmailContent() {
               </button>
 
               <div className="flex items-center justify-between text-[13px]">
-                <div className="flex items-center gap-1.5 text-white/35">
-                  <Mail className="w-3.5 h-3.5" />
+                <div className="flex items-center gap-1.5 text-slate-500 font-medium">
+                  <Mail className="w-4 h-4 text-slate-400" />
                   <span>Não recebeu?</span>
                   <button
                     onClick={handleResend}
                     disabled={isResending || resendCooldown > 0}
-                    className="font-bold text-[#FF6A00] hover:text-[#FF8000] disabled:text-white/25 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
+                    className="font-bold text-[#FF6A00] hover:text-[#FF8000] disabled:text-slate-400 disabled:cursor-not-allowed transition-colors flex items-center gap-1"
                   >
-                    {isResending && <RotateCw className="w-3 h-3 animate-spin" />}
+                    {isResending && <RotateCw className="w-3.5 h-3.5 animate-spin" />}
                     {resendCooldown > 0 ? `Reenviar em ${resendCooldown}s` : 'Reenviar OTP'}
                   </button>
                 </div>
               </div>
 
-              <div className="mt-4 pt-4 border-t border-white/[0.06]">
-                <p className="text-center text-[11px] text-white/20">
-                  2FA Security <span className="text-emerald-400/60 font-bold">habilitado</span>
-                  <span className="mx-3 text-white/10">·</span>
+              <div className="mt-5 pt-4 border-t border-slate-100">
+                <p className="text-center text-[11px] text-slate-400">
+                  2FA Security <span className="text-emerald-600 font-bold">habilitado</span>
+                  <span className="mx-3 text-slate-300">·</span>
                   Verificação instantânea &lt; 100ms
                 </p>
               </div>
 
               <div className="mt-6 text-center">
-                <Link href="/login" className="inline-flex items-center gap-1.5 text-[13px] text-white/30 hover:text-white/60 transition-colors">
+                <Link href="/login" className="inline-flex items-center gap-1.5 text-[13px] text-slate-400 hover:text-slate-700 font-semibold transition-colors">
                   <ArrowLeft className="w-3.5 h-3.5" /> Voltar ao login
                 </Link>
               </div>
