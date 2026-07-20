@@ -474,13 +474,30 @@ export default function HubDashboardLight() {
     () => normalizeConnections(profile?.connections || {}) as Record<string, ConnectionItem>,
     [profile?.connections]
   );
-  const isGa4Connected = Boolean(connections.ga4?.isActive);
-  const isGoogleAdsConnected = Boolean(connections.googleAds?.isActive);
-  const isMetaAdsConnected = Boolean(connections.metaAds?.isActive);
-  const isLinkedinAdsConnected = Boolean(connections.linkedinAds?.isActive);
-  const isInstagramConnected = Boolean(connections.instagram?.isActive);
-  const isLinkedinPageConnected = Boolean(connections.linkedinPage?.isActive);
-  const isSearchConsoleConnected = Boolean(connections.searchConsole?.isActive);
+  // Modo demo: ativado por padrão com números fictícios (pode ser desativado com ?demo=0 na URL)
+  const [demoData, setDemoData] = useState(true);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get('demo');
+    if (q === '0') {
+      sessionStorage.setItem('hub_demo', '0');
+      setDemoData(false);
+    } else if (q === '1') {
+      sessionStorage.setItem('hub_demo', '1');
+      setDemoData(true);
+    } else if (sessionStorage.getItem('hub_demo') === '0') {
+      setDemoData(false);
+    } else {
+      setDemoData(true);
+    }
+  }, []);
+
+  const isGa4Connected = Boolean(connections.ga4?.isActive) || demoData;
+  const isGoogleAdsConnected = Boolean(connections.googleAds?.isActive) || demoData;
+  const isMetaAdsConnected = Boolean(connections.metaAds?.isActive) || demoData;
+  const isLinkedinAdsConnected = Boolean(connections.linkedinAds?.isActive) || demoData;
+  const isInstagramConnected = Boolean(connections.instagram?.isActive) || demoData;
+  const isLinkedinPageConnected = Boolean(connections.linkedinPage?.isActive) || demoData;
+  const isSearchConsoleConnected = Boolean(connections.searchConsole?.isActive) || demoData;
 
   const [igData, setIgData] = useState<InstagramResponse | null>(null);
   const [linkedinPageData, setLinkedinPageData] = useState<LinkedinPageResponse | null>(null);
@@ -491,15 +508,69 @@ export default function HubDashboardLight() {
   const isDemo = true;
 
   const recentAutomations = useMemo(() => {
-    return getHubAutomationsFromProfile(profile)
+    const fromProfile = getHubAutomationsFromProfile(profile)
       .filter(a => a.status === 'active' || a.lastUpdateAt != null)
       .sort((a, b) => (b.lastUpdateAt || 0) - (a.lastUpdateAt || 0))
       .slice(0, 5);
-  }, [profile]);
+
+    if (fromProfile.length > 0) return fromProfile;
+
+    if (demoData) {
+      return [
+        { key: '1', agentTitle: 'Agente Vitor (SDR)', cadenceTitle: 'Prospecção Ativa B2B', lastUpdateAt: Date.now() - 1800000, status: 'active', monthlyExecutions: 342 },
+        { key: '2', agentTitle: 'Agente Breno (Closer)', cadenceTitle: 'Follow-up de Propostas', lastUpdateAt: Date.now() - 5400000, status: 'active', monthlyExecutions: 189 },
+        { key: '3', agentTitle: 'Agente Paola (Tráfego)', cadenceTitle: 'Otimização de ROAS', lastUpdateAt: Date.now() - 12600000, status: 'active', monthlyExecutions: 512 },
+        { key: '4', agentTitle: 'Agente Tainá (Conteúdo)', cadenceTitle: 'Geração de Criativos', lastUpdateAt: Date.now() - 43200000, status: 'active', monthlyExecutions: 94 },
+        { key: '5', agentTitle: 'Agente Manu (Suporte)', cadenceTitle: 'Triagem Automática', lastUpdateAt: Date.now() - 86400000, status: 'active', monthlyExecutions: 230 },
+      ];
+    }
+    return [];
+  }, [profile, demoData]);
 
   useEffect(() => {
     let active = true;
     async function fetchData() {
+      if (demoData) {
+        setGa4Data({
+          activeUsers: '12847',
+          averageSessionDuration: '2m 44s',
+          conversions: '412',
+          engagementRate: '68,4%',
+          purchaseRevenue: '86420.50',
+          trafficSources: [
+            { source: 'google / cpc', sessions: 6240 },
+            { source: 'facebook / paid', sessions: 4180 },
+            { source: 'direct / none', sessions: 2350 },
+            { source: 'linkedin / paid', sessions: 1120 },
+          ],
+          usersTrend: [
+            { date: '01/07', newUsers: 320, returningUsers: 180 },
+            { date: '05/07', newUsers: 410, returningUsers: 220 },
+            { date: '09/07', newUsers: 380, returningUsers: 260 },
+            { date: '13/07', newUsers: 520, returningUsers: 310 },
+            { date: '17/07', newUsers: 610, returningUsers: 350 },
+          ],
+          regions: [
+            { country: 'Brasil', value: 9840, change: '+12%', positive: true },
+            { country: 'Portugal', value: 1620, change: '+6%', positive: true },
+            { country: 'Estados Unidos', value: 890, change: '-2%', positive: false },
+          ],
+        });
+        setTrafficData({
+          success: true,
+          channels: [
+            { platform: 'Google Ads', spend: 9820.4, impressions: 412300, clicks: 14230, conversions: 186 },
+            { platform: 'Meta Ads', spend: 7640.9, impressions: 623800, clicks: 18940, conversions: 164 },
+            { platform: 'LinkedIn Ads', spend: 3260.25, impressions: 98200, clicks: 2140, conversions: 62 },
+          ],
+          totals: { spend: 20721.55, impressions: 1134300, clicks: 35310, conversions: 412 },
+        });
+        setIgData({ username: 'neuroads', followers: 24680, reach: 148200, profileViews: 8930, websiteClicks: 1240, engagementRate: '4,8%' });
+        setLinkedinPageData({ followers: 6420, impressions: 52300, clicks: 1870, engagementRate: '3,6%' });
+        setSearchConsoleData({ clicks: 5840, impressions: 214600, ctr: '2,72%', position: '8,4', siteUrl: 'neuroads.com.br' });
+        setLoading(false);
+        return;
+      }
       if (!user) return;
       setLoading(true);
       try {
@@ -585,7 +656,7 @@ export default function HubDashboardLight() {
     }
     void fetchData();
     return () => { active = false; };
-  }, [user, isGa4Connected, isGoogleAdsConnected, isMetaAdsConnected, isLinkedinAdsConnected,
+  }, [user, demoData, isGa4Connected, isGoogleAdsConnected, isMetaAdsConnected, isLinkedinAdsConnected,
       isInstagramConnected, isLinkedinPageConnected, isSearchConsoleConnected,
       connections, dateFrom, dateTo]);
 
@@ -615,13 +686,14 @@ export default function HubDashboardLight() {
   const usersNum   = (typeof stats.activeUsers === 'number' ? stats.activeUsers : 0);
 
   /* Sparkline trend data — only real data or empty */
+  const trend = (v: number) => [0.52, 0.55, 0.5, 0.61, 0.58, 0.67, 0.72, 0.7, 0.84, 1].map(f => f * v);
   const SP = {
-    revenue: stats.revenue === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, revenueNum / 1000],
-    spend:   stats.spend   === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, spendNum   / 1000],
-    roas:    stats.roas    === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, roasNum],
-    convs:   stats.conversions === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, convsNum],
-    cpa:     stats.cpa     === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, cpaNum],
-    users:   stats.activeUsers === 'N/A' ? Array(10).fill(0) : [0, 0, 0, 0, 0, 0, 0, 0, 0, usersNum],
+    revenue: stats.revenue === 'N/A' ? Array(10).fill(0) : demoData ? trend(revenueNum / 1000) : [0, 0, 0, 0, 0, 0, 0, 0, 0, revenueNum / 1000],
+    spend:   stats.spend   === 'N/A' ? Array(10).fill(0) : demoData ? trend(spendNum / 1000)   : [0, 0, 0, 0, 0, 0, 0, 0, 0, spendNum   / 1000],
+    roas:    stats.roas    === 'N/A' ? Array(10).fill(0) : demoData ? trend(roasNum)           : [0, 0, 0, 0, 0, 0, 0, 0, 0, roasNum],
+    convs:   stats.conversions === 'N/A' ? Array(10).fill(0) : demoData ? trend(convsNum)      : [0, 0, 0, 0, 0, 0, 0, 0, 0, convsNum],
+    cpa:     stats.cpa     === 'N/A' ? Array(10).fill(0) : demoData ? trend(cpaNum)            : [0, 0, 0, 0, 0, 0, 0, 0, 0, cpaNum],
+    users:   stats.activeUsers === 'N/A' ? Array(10).fill(0) : demoData ? trend(usersNum)      : [0, 0, 0, 0, 0, 0, 0, 0, 0, usersNum],
   };
 
   /* Build KPI list dynamically based on view filters */

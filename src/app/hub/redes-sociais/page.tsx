@@ -49,7 +49,12 @@ const FOLLOWERS_GROWTH_DATA = [
 export default function RedesSociaisDashboardPage() {
   const { user } = useAuth();
   const [connections, setConnections] = useState<ConnectionsMap>({});
-  const [demoMode, setDemoMode] = useState(false);
+  const [demoMode, setDemoMode] = useState(true);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get('demo');
+    if (q === '0') setDemoMode(false);
+    else if (q === '1') setDemoMode(true);
+  }, []);
 
   useEffect(() => {
     async function fetchConnections() {

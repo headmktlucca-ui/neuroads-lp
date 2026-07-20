@@ -43,7 +43,12 @@ const CHART_DATA = [
 export default function AdsDashboardPage() {
   const { user } = useAuth();
   const [connections, setConnections] = useState<ConnectionsMap>({});
-  const [demoMode, setDemoMode] = useState(false);
+  const [demoMode, setDemoMode] = useState(true);
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get('demo');
+    if (q === '0') setDemoMode(false);
+    else if (q === '1') setDemoMode(true);
+  }, []);
   const [campaigns, setCampaigns] = useState(MOCK_CAMPAIGNS);
 
   useEffect(() => {
