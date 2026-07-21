@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import {
   MessageSquare,
   X,
@@ -161,7 +162,7 @@ export default function WhatsAppFloatingWidget() {
         id: 'vitor',
         name: 'Vitor (SDR)',
         role: 'SDR & Qualificação',
-        avatar: '/avatars/vitor.png',
+        avatar: '/images/Avatar Agentes IA/Avatar_Vitor.png',
         color: '#FF6A00',
       },
       lastMessage: initialGreetingMessage.text,
@@ -235,7 +236,7 @@ export default function WhatsAppFloatingWidget() {
           id: 'vitor',
           name: 'Vitor (SDR)',
           role: 'SDR & Qualificação',
-          avatar: '/avatars/vitor.png',
+          avatar: '/images/Avatar Agentes IA/Avatar_Vitor.png',
           color: '#FF6A00',
         },
         lastMessage: initialGreeting.text,
@@ -344,9 +345,17 @@ export default function WhatsAppFloatingWidget() {
           {/* Header */}
           <div className="bg-gradient-to-r from-emerald-700 via-teal-800 to-slate-900 text-white p-3.5 px-4 flex items-center justify-between shrink-0 shadow-md">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center relative shrink-0">
-                <Bot size={20} className="text-emerald-300" />
-                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900" />
+              <div className="relative w-10 h-10 shrink-0">
+                <div className="w-10 h-10 rounded-full border-2 border-emerald-400/50 overflow-hidden bg-slate-900 shadow-sm">
+                  <Image
+                    src={chatThread?.activeAgent?.avatar || '/images/Avatar Agentes IA/Avatar_Vitor.png'}
+                    alt="Vitor (SDR NeuroAds)"
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900 shadow-xs z-10" />
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
