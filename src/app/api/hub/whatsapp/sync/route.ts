@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { getFirebaseDb } from '@/lib/firebase';
 import { fetchKapsoMessages, type KapsoInboundMessage } from '@/lib/kapso';
-import { getWhatsAppConnectionForUser, type WhatsAppChatThread, type WhatsAppMessage } from '@/lib/whatsapp-hub';
+import { generateVitorSdrResponse, getWhatsAppConnectionForUser, isSamePhoneNumber, type WhatsAppChatThread, type WhatsAppMessage } from '@/lib/whatsapp-hub';
 
 export async function POST(req: Request) {
   try {
@@ -41,7 +41,8 @@ export async function POST(req: Request) {
     }
 
     // 2. Read existing chats from Firestore
-    const userDocRef = doc(db, 'users', userId || 'default_user', 'whatsapp_data', 'conversations');
+    const targetId = userId || process.env.LUCCA_DEFAULT_WORKSPACE_USER_ID || 'default_user';
+    const userDocRef = doc(db, 'users', targetId, 'whatsapp_data', 'conversations');
     const userSnap = await getDoc(userDocRef);
     let chats: WhatsAppChatThread[] = [];
 
@@ -66,7 +67,7 @@ export async function POST(req: Request) {
 
       for (const [phone, rawMsgs] of Object.entries(messagesByPhone)) {
         const threadId = `chat-${phone}`;
-        const existingIdx = chats.findIndex((c) => c.id === threadId || c.leadPhone.replace(/\D/g, '') === phone);
+        const existingIdx = chats.findIndex((c) => c.id === threadId || isSamePhoneNumber(c.leadPhone, phone));
 
         const formattedMsgs: WhatsAppMessage[] = rawMsgs.map((m) => {
           const text = m.text?.body || m.body || '[Mensagem WhatsApp]';
@@ -101,20 +102,62 @@ export async function POST(req: Request) {
           const existingMsgIds = new Set(target.messages.map((m) => m.id));
           const newMsgs = formattedMsgs.filter((m) => !existingMsgIds.has(m.id));
 
-          chats[existingIdx] = {
+          // Check if there are new inbound messages from lead
+          const hasNewLeadMsg = newMsgs.some((m) => m.sender === 'lead');
+
+          // If new lead messages exist, re-activate AI and auto-generate reply if needed
+          let updatedStatus = target.status;
+          let updatedMessages = [...target.messages, ...newMsgs];
+
+          if (hasNewLeadMsg) {
+            const aiResp = generateVitorSdrResponse(lastText, target.leadName);
+            updatedStatus = aiResp.shouldHandoff ? 'human_pending' : 'ai_active';
+
+            const aiMsg: WhatsAppMessage = {
+              id: `ai-${Date.now()}`,
+              chatId: target.id,
+              sender: 'agent',
+              senderName: target.activeAgent?.name || 'Vitor (SDR)',
+              agentId: target.activeAgent?.id || 'vitor-sdr',
+              text: aiResp.replyText,
+              timestamp: nowTime,
+              status: 'sent',
+            };
+            updatedMessages.push(aiMsg);
+          }
+
+          const updatedChat: WhatsAppChatThread = {
             ...target,
             lastMessage: lastText,
             lastMessageTime: nowTime,
-            messages: [...target.messages, ...newMsgs],
+            unreadCount: hasNewLeadMsg ? (target.unreadCount || 0) + newMsgs.length : target.unreadCount,
+            status: updatedStatus,
+            messages: updatedMessages,
             updatedAt: Date.now(),
           };
+
+          // Re-order thread to top of inbox
+          chats.splice(existingIdx, 1);
+          chats.unshift(updatedChat);
         } else {
+          const aiResp = generateVitorSdrResponse(lastText, rawMsgs[0]?.contact_name || `Contato ${phone}`);
+          const aiMsg: WhatsAppMessage = {
+            id: `ai-${Date.now()}`,
+            chatId: threadId,
+            sender: 'agent',
+            senderName: 'Vitor (SDR)',
+            agentId: 'vitor-sdr',
+            text: aiResp.replyText,
+            timestamp: nowTime,
+            status: 'sent',
+          };
+
           const newChat: WhatsAppChatThread = {
             id: threadId,
             leadName: rawMsgs[0]?.contact_name || `Contato ${phone}`,
             leadPhone: phone,
             funnelStage: 'Atração',
-            status: 'ai_active',
+            status: aiResp.shouldHandoff ? 'human_pending' : 'ai_active',
             activeAgent: {
               id: 'vitor-sdr',
               name: 'Vitor (SDR)',
@@ -127,7 +170,7 @@ export async function POST(req: Request) {
             unreadCount: 1,
             sentiment: 'warm',
             tags: ['WhatsApp Kapso'],
-            messages: formattedMsgs,
+            messages: [...formattedMsgs, aiMsg],
             updatedAt: Date.now(),
           };
 
@@ -135,8 +178,12 @@ export async function POST(req: Request) {
         }
       }
 
-      // Save synced chats back to Firestore
+      // Save synced chats back to Firestore user document
       await setDoc(userDocRef, { chats, updatedAt: Date.now() }, { merge: true });
+
+      // Also update public channel for live widget sync
+      const publicRef = doc(db, 'public_whatsapp_chats', 'main');
+      await setDoc(publicRef, { chats, updatedAt: Date.now() }, { merge: true });
     }
 
     return NextResponse.json({

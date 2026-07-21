@@ -284,3 +284,14 @@ export async function getWhatsAppConnectionForUser(userId: string): Promise<{
   }
   return null;
 }
+
+export function isSamePhoneNumber(phoneA?: string, phoneB?: string): boolean {
+  if (!phoneA || !phoneB) return false;
+  const numA = phoneA.replace(/\D/g, '');
+  const numB = phoneB.replace(/\D/g, '');
+  if (!numA || !numB) return false;
+  if (numA === numB) return true;
+  const tailA = numA.slice(-8);
+  const tailB = numB.slice(-8);
+  return tailA === tailB;
+}

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, serverTimestamp, where } from 'firebase/firestore';
 import { getFirebaseDb } from '../../../../../lib/firebase';
-import { generateVitorSdrResponse, type WhatsAppChatThread, type WhatsAppMessage } from '../../../../../lib/whatsapp-hub';
+import { generateVitorSdrResponse, isSamePhoneNumber, type WhatsAppChatThread, type WhatsAppMessage, type WhatsAppChatStatus } from '../../../../../lib/whatsapp-hub';
 import { sendKapsoTextMessage } from '../../../../../lib/kapso';
 
 const FRONT_KEYWORDS = [
@@ -56,11 +56,11 @@ export async function POST(request: NextRequest) {
     let messageId = '';
 
     if (isKapsoNative) {
-      phoneNumberId = payload?.phone_number_id || payload?.data?.phone_number_id || '';
+      phoneNumberId = payload?.phone_number_id || payload?.data?.phone_number_id || payload?.customer_id || '';
       const msgData = payload?.data?.message || payload?.message;
       const contactData = payload?.data?.contact || payload?.contact;
       from = msgData?.from || '';
-      textBody = msgData?.text?.body || msgData?.caption || '[Mensagem de Mídia/WhatsApp]';
+      textBody = msgData?.text?.body || msgData?.body || msgData?.caption || '[Mensagem WhatsApp]';
       clientName = contactData?.name || `Contato ${from}`;
       messageId = msgData?.id || `wamid-${Date.now()}`;
     } else {
@@ -84,7 +84,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Banco de dados não disponível.' }, { status: 500 });
     }
 
-    // 2. Identify target user owning this phoneNumberId
+    // 2. Identify target user owning this phoneNumberId in Firestore
     let targetUserId = process.env.LUCCA_DEFAULT_WORKSPACE_USER_ID || '';
     let userApiKey = process.env.KAPSO_API_KEY || '';
 
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
     const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const cleanFrom = from.replace(/\D/g, '');
     const threadId = `chat-${cleanFrom}`;
-    const existingIndex = chats.findIndex((c) => c.id === threadId || c.leadPhone.replace(/\D/g, '') === cleanFrom);
+    const existingIndex = chats.findIndex((c) => c.id === threadId || isSamePhoneNumber(c.leadPhone, from));
 
     const inboundMsg: WhatsAppMessage = {
       id: messageId,
@@ -131,46 +131,48 @@ export async function POST(request: NextRequest) {
     };
 
     if (existingIndex >= 0) {
+      // Returning contact: re-activate AI response engine regardless of previous status (resolved/human_active)
       const target = chats[existingIndex];
-      const updatedMessages = [...target.messages, inboundMsg];
-      let updatedStatus = target.status;
-      let aiReplyText = '';
+      const leadName = target.leadName || clientName;
+      
+      const aiResp = generateVitorSdrResponse(textBody, leadName);
+      const updatedStatus: WhatsAppChatStatus = aiResp.shouldHandoff ? 'human_pending' : 'ai_active';
 
-      if (target.status === 'ai_active') {
-        const aiResp = generateVitorSdrResponse(textBody, target.leadName);
-        aiReplyText = aiResp.replyText;
-        if (aiResp.shouldHandoff) {
-          updatedStatus = 'human_pending';
-        }
-        const aiMsg: WhatsAppMessage = {
-          id: `ai-${Date.now()}`,
-          chatId: target.id,
-          sender: 'agent',
-          senderName: target.activeAgent.name,
-          agentId: target.activeAgent.id,
-          text: aiResp.replyText,
-          timestamp: nowTime,
-          status: 'sent',
-        };
-        updatedMessages.push(aiMsg);
+      const aiMsg: WhatsAppMessage = {
+        id: `ai-${Date.now()}`,
+        chatId: target.id,
+        sender: 'agent',
+        senderName: target.activeAgent?.name || 'Vitor (SDR)',
+        agentId: target.activeAgent?.id || 'vitor-sdr',
+        text: aiResp.replyText,
+        timestamp: nowTime,
+        status: 'sent',
+      };
 
-        // Auto-reply over Kapso if configured
-        if (phoneNumberId && userApiKey) {
-          sendKapsoTextMessage(phoneNumberId, from, aiResp.replyText, userApiKey).catch(console.warn);
-        }
-      }
+      const updatedMessages = [...target.messages, inboundMsg, aiMsg];
 
-      chats[existingIndex] = {
+      const updatedChat: WhatsAppChatThread = {
         ...target,
+        leadName,
         lastMessage: textBody,
         lastMessageTime: nowTime,
         unreadCount: (target.unreadCount || 0) + 1,
         status: updatedStatus,
+        handoffReason: aiResp.handoffReason || target.handoffReason,
         messages: updatedMessages,
         updatedAt: Date.now(),
       };
+
+      // Remove from old position and push to front of inbox list
+      chats.splice(existingIndex, 1);
+      chats.unshift(updatedChat);
+
+      // Auto-reply over Kapso
+      if (phoneNumberId && userApiKey) {
+        sendKapsoTextMessage(phoneNumberId, from, aiResp.replyText, userApiKey).catch(console.warn);
+      }
     } else {
-      // New conversation
+      // New conversation contact
       const aiResp = generateVitorSdrResponse(textBody, clientName);
       const aiMsg: WhatsAppMessage = {
         id: `ai-${Date.now()}`,
@@ -208,7 +210,7 @@ export async function POST(request: NextRequest) {
 
       chats.unshift(newChat);
 
-      // Auto-reply over Kapso if configured
+      // Auto-reply over Kapso
       if (phoneNumberId && userApiKey) {
         sendKapsoTextMessage(phoneNumberId, from, aiResp.replyText, userApiKey).catch(console.warn);
       }
