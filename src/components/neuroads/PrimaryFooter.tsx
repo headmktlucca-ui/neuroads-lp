@@ -74,7 +74,7 @@ export default function PrimaryFooter() {
               </a>
               {/* YouTube */}
               <a
-                href="https://www.youtube.com/@neuroads"
+                href="https://www.youtube.com/@neuroads.vendas"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="YouTube NeuroAds"

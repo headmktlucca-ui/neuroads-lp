@@ -19,7 +19,7 @@ export default function Footer() {
   const socialLinks = [
     { name: 'LinkedIn', href: 'https://www.linkedin.com/company/neuroads', iconSrc: '/images/linkedin-3d.png' },
     { name: 'Instagram', href: 'https://www.instagram.com/neuroads.oficial/', iconSrc: '/images/instagram-final.png' },
-    { name: 'YouTube', href: 'https://www.youtube.com/@claudiomullermkt', iconSrc: '/images/youtube-final.png' }
+    { name: 'YouTube', href: 'https://www.youtube.com/@neuroads.vendas', iconSrc: '/images/youtube-final.png' }
   ];
 
   const defaultFooterGroups = [
