@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { getFirebaseDb } from '@/lib/firebase';
 import { fetchKapsoMessages, type KapsoInboundMessage } from '@/lib/kapso';
-import { generateVitorSdrResponse, getWhatsAppConnectionForUser, isSamePhoneNumber, type WhatsAppChatThread, type WhatsAppMessage } from '@/lib/whatsapp-hub';
+import { generateVitorSdrResponse, getWhatsAppConnectionForUser, isMasterWhatsAppOwner, isSamePhoneNumber, type WhatsAppChatThread, type WhatsAppMessage } from '@/lib/whatsapp-hub';
 
 export async function POST(req: Request) {
   try {
@@ -24,10 +24,18 @@ export async function POST(req: Request) {
       }
     }
 
+    // Fallback to environment credentials if process.env.KAPSO_API_KEY is available
+    if (!apiKey) {
+      apiKey = process.env.KAPSO_API_KEY || '';
+    }
+    if (!phoneNumberId) {
+      phoneNumberId = process.env.KAPSO_PHONE_NUMBER_ID || '597907523413541';
+    }
+
     if (!apiKey || !phoneNumberId) {
       return NextResponse.json({
         success: false,
-        error: 'Nenhuma conexão ativa do WhatsApp Business (Kapso) encontrada para este usuário.',
+        error: 'Nenhuma conexão ativa do WhatsApp Business (Kapso) encontrada.',
       }, { status: 400 });
     }
 
@@ -40,8 +48,18 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Banco de dados Firestore não inicializado.' }, { status: 500 });
     }
 
-    // 2. Read existing chats from Firestore
+    // 2. Determine target user & master ownership
     const targetId = userId || process.env.LUCCA_DEFAULT_WORKSPACE_USER_ID || 'default_user';
+    let isMaster = false;
+
+    if (targetId) {
+      const userDoc = await getDoc(doc(db, 'users', targetId));
+      const userEmail = userDoc.data()?.email;
+      if (userEmail && isMasterWhatsAppOwner(userEmail)) {
+        isMaster = true;
+      }
+    }
+
     const userDocRef = doc(db, 'users', targetId, 'whatsapp_data', 'conversations');
     const userSnap = await getDoc(userDocRef);
     let chats: WhatsAppChatThread[] = [];
@@ -50,7 +68,21 @@ export async function POST(req: Request) {
       chats = userSnap.data()?.chats as WhatsAppChatThread[];
     }
 
-    // 3. Process and merge messages from Kapso
+    // If master owner, also merge website landing page widget leads from public_whatsapp_chats/main
+    if (isMaster) {
+      const publicRef = doc(db, 'public_whatsapp_chats', 'main');
+      const pubSnap = await getDoc(publicRef);
+      if (pubSnap.exists() && Array.isArray(pubSnap.data()?.chats)) {
+        const pubChats = pubSnap.data()?.chats as WhatsAppChatThread[];
+        for (const pubChat of pubChats) {
+          if (!chats.some((c) => c.id === pubChat.id || isSamePhoneNumber(c.leadPhone, pubChat.leadPhone))) {
+            chats.push(pubChat);
+          }
+        }
+      }
+    }
+
+    // 3. Process and merge messages from Kapso Inbox
     if (kapsoMsgs.length > 0) {
       const messagesByPhone: Record<string, KapsoInboundMessage[]> = {};
 
@@ -101,11 +133,8 @@ export async function POST(req: Request) {
           const target = chats[existingIdx];
           const existingMsgIds = new Set(target.messages.map((m) => m.id));
           const newMsgs = formattedMsgs.filter((m) => !existingMsgIds.has(m.id));
-
-          // Check if there are new inbound messages from lead
           const hasNewLeadMsg = newMsgs.some((m) => m.sender === 'lead');
 
-          // If new lead messages exist, re-activate AI and auto-generate reply if needed
           let updatedStatus = target.status;
           let updatedMessages = [...target.messages, ...newMsgs];
 
@@ -136,7 +165,6 @@ export async function POST(req: Request) {
             updatedAt: Date.now(),
           };
 
-          // Re-order thread to top of inbox
           chats.splice(existingIdx, 1);
           chats.unshift(updatedChat);
         } else {
@@ -177,11 +205,13 @@ export async function POST(req: Request) {
           chats.unshift(newChat);
         }
       }
+    }
 
-      // Save synced chats back to Firestore user document
-      await setDoc(userDocRef, { chats, updatedAt: Date.now() }, { merge: true });
+    // Save synced chats to Firestore user document
+    await setDoc(userDocRef, { chats, updatedAt: Date.now() }, { merge: true });
 
-      // Also update public channel for live widget sync
+    // If master owner, also update central public_whatsapp_chats/main for site widget live sync
+    if (isMaster) {
       const publicRef = doc(db, 'public_whatsapp_chats', 'main');
       await setDoc(publicRef, { chats, updatedAt: Date.now() }, { merge: true });
     }

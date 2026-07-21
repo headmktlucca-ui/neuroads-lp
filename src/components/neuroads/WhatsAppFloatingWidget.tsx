@@ -23,6 +23,20 @@ import {
   type WhatsAppMessage,
 } from '../../lib/whatsapp-hub';
 import { useAuth } from '../../context/AuthContext';
+export function formatBrazilianPhone(value: string): string {
+  const digits = value.replace(/\D/g, '').slice(0, 11);
+  if (!digits) return '';
+  if (digits.length <= 2) {
+    return `(${digits}`;
+  }
+  if (digits.length <= 6) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  }
+  if (digits.length <= 10) {
+    return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  }
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7, 11)}`;
+}
 
 export default function WhatsAppFloatingWidget() {
   const { user } = useAuth();
@@ -415,7 +429,7 @@ export default function WhatsAppFloatingWidget() {
                       required
                       placeholder="Ex: (11) 99887-6655"
                       value={visitorPhone}
-                      onChange={(e) => setVisitorPhone(e.target.value)}
+                      onChange={(e) => setVisitorPhone(formatBrazilianPhone(e.target.value))}
                       className="w-full px-3 py-2 text-xs font-semibold bg-white rounded-xl border border-slate-200 outline-none focus:border-emerald-600 transition-colors"
                     />
                   </div>

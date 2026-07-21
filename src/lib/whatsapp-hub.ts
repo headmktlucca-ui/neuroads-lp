@@ -114,9 +114,11 @@ export function saveWhatsAppChats(
 
     const db = getFirebaseDb();
     if (db) {
-      // Always update central public_whatsapp_chats/main so site visitors get live responses
-      const publicDocRef = doc(db, 'public_whatsapp_chats', 'main');
-      setDoc(publicDocRef, { chats, updatedAt: Date.now() }, { merge: true }).catch(console.warn);
+      // Update central public_whatsapp_chats/main ONLY when saved by master owner (avante@neuroads.com.br) or site visitor
+      if (isMasterWhatsAppOwner(userEmail) || !userId) {
+        const publicDocRef = doc(db, 'public_whatsapp_chats', 'main');
+        setDoc(publicDocRef, { chats, updatedAt: Date.now() }, { merge: true }).catch(console.warn);
+      }
 
       if (userId) {
         const userDocRef = doc(db, 'users', userId, 'whatsapp_data', 'conversations');

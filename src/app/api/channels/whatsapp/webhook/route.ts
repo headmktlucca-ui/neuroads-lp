@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addDoc, collection, doc, getDoc, getDocs, query, setDoc, serverTimestamp, where } from 'firebase/firestore';
 import { getFirebaseDb } from '../../../../../lib/firebase';
-import { generateVitorSdrResponse, isSamePhoneNumber, type WhatsAppChatThread, type WhatsAppMessage, type WhatsAppChatStatus } from '../../../../../lib/whatsapp-hub';
+import { generateVitorSdrResponse, isMasterWhatsAppOwner, isSamePhoneNumber, type WhatsAppChatThread, type WhatsAppMessage, type WhatsAppChatStatus } from '../../../../../lib/whatsapp-hub';
 import { sendKapsoTextMessage } from '../../../../../lib/kapso';
 
 const FRONT_KEYWORDS = [
@@ -219,8 +219,18 @@ export async function POST(request: NextRequest) {
     // Save updated chats back to user document in Firestore (triggers live update on WhatsApp page)
     await setDoc(userDocRef, { chats, updatedAt: Date.now() }, { merge: true });
 
-    // Also update public channel if master workspace
-    if (!targetUserId || targetUserId === process.env.LUCCA_DEFAULT_WORKSPACE_USER_ID) {
+    // Also update public channel if master owner (avante@neuroads.com.br) or default workspace
+    let isMasterTarget = !targetUserId || targetUserId === process.env.LUCCA_DEFAULT_WORKSPACE_USER_ID;
+    if (!isMasterTarget && targetUserId) {
+      try {
+        const targetDoc = await getDoc(doc(db, 'users', targetUserId));
+        if (targetDoc.exists() && isMasterWhatsAppOwner(targetDoc.data()?.email)) {
+          isMasterTarget = true;
+        }
+      } catch { /* noop */ }
+    }
+
+    if (isMasterTarget) {
       const publicRef = doc(db, 'public_whatsapp_chats', 'main');
       await setDoc(publicRef, { chats, updatedAt: Date.now() }, { merge: true });
     }
