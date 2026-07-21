@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -164,6 +164,36 @@ export default function WhatsAppHubPage() {
     };
   }, [user]);
 
+  const [syncingKapso, setSyncingKapso] = useState(false);
+
+  const syncKapsoMessages = useCallback(async () => {
+    if (!user?.uid) return;
+    try {
+      setSyncingKapso(true);
+      const res = await fetch('/api/hub/whatsapp/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.uid }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (data?.success && Array.isArray(data.chats) && data.chats.length > 0) {
+        setChats(data.chats);
+      }
+    } catch (err) {
+      console.warn('Kapso auto-sync warning:', err);
+    } finally {
+      setSyncingKapso(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    if (user?.uid) {
+      syncKapsoMessages();
+      const interval = setInterval(syncKapsoMessages, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [user, syncKapsoMessages]);
+
   // Sync back to storage on updates
   const updateAndSaveChats = (newChats: WhatsAppChatThread[]) => {
     setChats(newChats);
@@ -211,9 +241,10 @@ export default function WhatsAppHubPage() {
   }, [connections]);
 
   const connectedPhoneNumber = useMemo(() => {
-    const phone = connections.whatsapp?.metadata?.phoneNumber as string | undefined;
-    if (phone) return phone;
-    return '+55 (11) 99887-6655';
+    const conn = connections.whatsapp;
+    const phoneId = (conn?.metadata?.phoneNumberId as string) || (conn?.metadata?.phoneNumber as string) || conn?.accountId;
+    if (phoneId) return `Kapso (${phoneId})`;
+    return '+55 (11) 99887-6655 (Mestre)';
   }, [connections]);
 
   // Handlers
@@ -252,12 +283,18 @@ export default function WhatsAppHubPage() {
     const updatedChatsList = chats.map((c) => (c.id === activeChat.id ? updatedChat : c));
     updateAndSaveChats(updatedChatsList);
 
-    // Call server API route
+    // Call server API route with Kapso credentials
     try {
       await fetch('/api/hub/whatsapp/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ to: activeChat.leadPhone, text: textToSend }),
+        body: JSON.stringify({
+          to: activeChat.leadPhone,
+          text: textToSend,
+          userId: user?.uid,
+          apiKey: connections.whatsapp?.accessToken,
+          phoneNumberId: (connections.whatsapp?.metadata?.phoneNumberId as string) || connections.whatsapp?.accountId,
+        }),
       });
     } catch (err) {
       console.warn('WhatsApp API send warning:', err);
@@ -378,12 +415,24 @@ export default function WhatsAppHubPage() {
               <p className="text-xs font-bold text-slate-800">{connectedPhoneNumber}</p>
             </div>
           </div>
-          <Link
-            href="/hub/integracoes"
-            className="flex items-center gap-1 text-[11px] font-black text-[#FF6A00] hover:text-[#e05d00] transition-colors bg-white px-2.5 py-1 rounded-xl border border-slate-200 shadow-xs"
-          >
-            Integrações <ChevronRight size={12} />
-          </Link>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={syncKapsoMessages}
+              disabled={syncingKapso}
+              className="flex items-center gap-1.5 text-[11px] font-black text-slate-700 hover:text-slate-900 transition-colors bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 disabled:opacity-50"
+              title="Buscar mensagens recentes diretamente da Inbox do Kapso"
+            >
+              <RefreshCw size={12} className={syncingKapso ? 'animate-spin text-[#FF6A00]' : ''} />
+              {syncingKapso ? 'Sincronizando...' : 'Sincronizar'}
+            </button>
+            <Link
+              href="/hub/integracoes"
+              className="flex items-center gap-1 text-[11px] font-black text-[#FF6A00] hover:text-[#e05d00] transition-colors bg-white px-2.5 py-1.5 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300"
+            >
+              Integrações <ChevronRight size={12} />
+            </Link>
+          </div>
         </div>
       </div>
 

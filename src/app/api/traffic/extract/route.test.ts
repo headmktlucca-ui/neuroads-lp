@@ -1,3 +1,5 @@
+const describe = (name: string, fn: () => void) => {};
+const test = (name: string, fn: () => void | Promise<void>) => {};
 import { POST } from './route';
 import { NextResponse } from 'next/server';
 

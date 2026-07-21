@@ -176,14 +176,15 @@ const CHANNEL_HELP: Partial<Record<string, HelpContent>> = {
     link: { label: 'Documentação Gmail API', url: 'https://developers.google.com/gmail/api' },
   },
   whatsapp: {
-    title: 'Como conectar o WhatsApp Business',
+    title: 'Como conectar o WhatsApp Business via Kapso',
     steps: [
-      '1. É necessário ter um número WhatsApp Business na Cloud API da Meta (via Meta Business Suite).',
-      '2. Clique em "Conectar" e faça login com a conta que administra o portfólio empresarial.',
-      '3. Autorize as permissões de gestão e mensagens do WhatsApp Business.',
-      '4. Selecione o número de telefone que os agentes usarão para conversar.',
+      '1. Acesse ou crie sua conta no Kapso (app.kapso.ai) para vincular seu número do WhatsApp Cloud API.',
+      '2. Vá em Configurações > Chaves de API no Kapso e copie sua KAPSO_API_KEY.',
+      '3. Inicie a conexão do seu número empresarial pelo fluxo de onboarding do Kapso (kapso setup link).',
+      '4. Copie a KAPSO_API_KEY e o ID do número (Phone Number ID) gerado.',
+      '5. Cole a KAPSO_API_KEY e o ID do número no campo abaixo para ativar os Agentes de IA da NeuroAds.',
     ],
-    link: { label: 'WhatsApp Cloud API', url: 'https://developers.facebook.com/docs/whatsapp/cloud-api' },
+    link: { label: 'Documentação do Kapso API', url: 'https://docs.kapso.ai' },
   },
   signature: {
     title: 'Como obter o token de assinatura digital',
@@ -412,10 +413,12 @@ const INTEGRATIONS: IntegrationDef[] = [
     flow: 'oauth-select', oauthConnector: 'gmail',
   },
   {
-    id: 'whatsapp', connectorKey: 'whatsapp', name: 'WhatsApp Business', category: 'ATENDIMENTO',
-    desc: 'Prospecção, fechamento e nutrição por chat via WhatsApp Cloud API oficial da Meta.',
+    id: 'whatsapp', connectorKey: 'whatsapp', name: 'WhatsApp Business (Kapso)', category: 'ATENDIMENTO',
+    desc: 'Prospecção, fechamento e nutrição por chat via WhatsApp Cloud API oficial da Meta integrado via Kapso.',
     isComponentIcon: true, componentIconType: 'whatsapp',
-    flow: 'oauth-select', oauthConnector: 'whatsapp',
+    flow: 'api-key',
+    apiKeyLabel: 'Chave de API Kapso (KAPSO_API_KEY) e Phone Number ID',
+    apiKeyPlaceholder: 'Cole sua KAPSO_API_KEY e Phone Number ID (ex: kap_live_... | 1234567890)',
   },
   {
     id: 'signature', connectorKey: 'signature', name: 'Assinatura Digital', category: 'VENDAS',
@@ -721,7 +724,24 @@ function HubIntegracoesContent() {
     setApiKeyModal((prev) => prev ? { ...prev, saving: true } : null);
     const { integ, value } = apiKeyModal;
     try {
-      await saveApiKeyConnection({ connector: integ.connectorKey, uid: user.uid, apiKey: value.trim() });
+      if (integ.id === 'whatsapp') {
+        const tokens = value.trim().split(/[\n,;|\s]+/);
+        const apiKey = tokens[0] || value.trim();
+        const phoneNumberId = tokens[1] || '';
+        await saveApiKeyConnection({
+          connector: integ.connectorKey,
+          uid: user.uid,
+          apiKey,
+          accountName: `WhatsApp Business via Kapso${phoneNumberId ? ` (${phoneNumberId})` : ''}`,
+          metadata: {
+            provider: 'kapso',
+            phoneNumberId,
+            connectedAt: Date.now(),
+          },
+        });
+      } else {
+        await saveApiKeyConnection({ connector: integ.connectorKey, uid: user.uid, apiKey: value.trim() });
+      }
       setConnections((prev) => ({ ...prev, [integ.connectorKey]: { isActive: true, accessToken: value.trim(), connectedAt: Date.now() } }));
       setApiKeyModal(null);
       setFlowPhase({ phase: 'success', connector: integ.connectorKey });
@@ -1149,6 +1169,34 @@ function HubIntegracoesContent() {
               <label className="block text-[11px] font-black uppercase tracking-widest text-slate-500">{apiKeyModal.integ.apiKeyLabel ?? 'Token de API'}</label>
               <HelpTooltip channelId={apiKeyModal.integ.id} />
             </div>
+            {apiKeyModal.integ.id === 'whatsapp' && (
+              <div className="mb-3 p-3 rounded-xl border border-emerald-500/20 bg-emerald-50 text-[11px] font-semibold text-emerald-800 space-y-2">
+                <p>💡 <strong>Integração via Kapso:</strong> Informe a <code className="bg-emerald-100 px-1 py-0.5 rounded text-[10px]">KAPSO_API_KEY</code> e opcionalmente o ID do número separados por vírgula ou linha.</p>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    try {
+                      const res = await fetch('/api/auth/connectors/whatsapp/setup-link', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: 'Cliente NeuroAds' }),
+                      });
+                      const data = await res.json();
+                      if (data?.url) {
+                        window.open(data.url, '_blank');
+                      } else {
+                        alert(data?.error || 'Instale ou configure a KAPSO_API_KEY no servidor para usar o Setup Link automático.');
+                      }
+                    } catch {
+                      alert('Falha ao iniciar setup link no Kapso.');
+                    }
+                  }}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] transition-all shadow-xs"
+                >
+                  <ExternalLink className="w-3 h-3" /> Gerar Setup Link no Kapso
+                </button>
+              </div>
+            )}
             <div className="mb-4">
               <div className="sr-only">{apiKeyModal.integ.apiKeyLabel}</div>
               <textarea value={apiKeyModal.value} onChange={(e) => setApiKeyModal((prev) => prev ? { ...prev, value: e.target.value } : null)}

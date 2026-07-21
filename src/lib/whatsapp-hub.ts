@@ -258,3 +258,29 @@ export function generateVitorSdrResponse(
     shouldHandoff: false,
   };
 }
+
+export async function getWhatsAppConnectionForUser(userId: string): Promise<{
+  apiKey: string;
+  phoneNumberId: string;
+  provider: string;
+} | null> {
+  try {
+    const db = getFirebaseDb();
+    if (!db) return null;
+    const snap = await getDoc(doc(db, 'users', userId));
+    if (snap.exists()) {
+      const connections = snap.data()?.connections;
+      const waConn = connections?.whatsapp_business || connections?.whatsapp;
+      if (waConn && (waConn.isActive || waConn.accessToken)) {
+        return {
+          apiKey: (waConn.accessToken as string) || '',
+          phoneNumberId: ((waConn.metadata?.phoneNumberId as string) || waConn.accountId || '') as string,
+          provider: ((waConn.metadata?.provider as string) || 'kapso') as string,
+        };
+      }
+    }
+  } catch (err) {
+    console.warn('Error reading user whatsapp connection:', err);
+  }
+  return null;
+}

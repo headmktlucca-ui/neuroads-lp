@@ -1,10 +1,13 @@
+import { sendKapsoTextMessage } from './kapso';
+
 function getWhatsAppEnv() {
   return {
-    provider: (process.env.WHATSAPP_PROVIDER || 'meta_cloud').toLowerCase(),
+    provider: (process.env.WHATSAPP_PROVIDER || (process.env.KAPSO_API_KEY ? 'kapso' : 'meta_cloud')).toLowerCase(),
     accessToken: process.env.WHATSAPP_META_ACCESS_TOKEN,
-    phoneNumberId: process.env.WHATSAPP_META_PHONE_NUMBER_ID,
-    apiVersion: process.env.WHATSAPP_META_API_VERSION || 'v21.0',
+    phoneNumberId: process.env.WHATSAPP_META_PHONE_NUMBER_ID || process.env.KAPSO_PHONE_NUMBER_ID,
+    apiVersion: process.env.WHATSAPP_META_API_VERSION || 'v24.0',
     defaultCountryCode: process.env.WHATSAPP_DEFAULT_COUNTRY_CODE || '55',
+    kapsoApiKey: process.env.KAPSO_API_KEY,
   };
 }
 
@@ -20,8 +23,21 @@ function normalizePhone(rawPhone: string, defaultCountryCode: string): string {
   return `${defaultCountryCode}${cleaned}`;
 }
 
-export async function sendWhatsAppTextMessage(to: string, body: string) {
+export async function sendWhatsAppTextMessage(to: string, body: string, overrideApiKey?: string, overridePhoneNumberId?: string) {
   const env = getWhatsAppEnv();
+  const apiKey = overrideApiKey || env.kapsoApiKey;
+  const phoneNumberId = overridePhoneNumberId || env.phoneNumberId;
+
+  // Kapso Provider (Preferred Integration Path)
+  if (env.provider === 'kapso' || apiKey) {
+    if (!phoneNumberId) {
+      return {
+        success: false,
+        error: 'Identificador do número WhatsApp (phone_number_id) do Kapso não configurado.',
+      };
+    }
+    return sendKapsoTextMessage(phoneNumberId, to, body, apiKey);
+  }
 
   if (env.provider !== 'meta_cloud') {
     return { success: false, error: `Provider não suportado: ${env.provider}` };
@@ -30,7 +46,7 @@ export async function sendWhatsAppTextMessage(to: string, body: string) {
   if (!env.accessToken || !env.phoneNumberId) {
     return {
       success: false,
-      error: 'Credenciais WhatsApp não configuradas. Defina WHATSAPP_META_ACCESS_TOKEN e WHATSAPP_META_PHONE_NUMBER_ID.',
+      error: 'Credenciais WhatsApp não configuradas. Defina KAPSO_API_KEY ou WHATSAPP_META_ACCESS_TOKEN.',
     };
   }
 

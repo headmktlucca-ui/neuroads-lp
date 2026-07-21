@@ -5,14 +5,25 @@ import PublicTopNav from './PublicTopNav';
 import HubFooter from '../hub/HubFooter';
 import WhatsAppFloatingWidget from '../neuroads/WhatsAppFloatingWidget';
 
-// Rotas privadas (Hub/auth) renderizam seu próprio chrome.
-const HUB_PREFIXES = ['/hub', '/login', '/onboarding', '/cadastro', '/verificar-email', '/preview-chat'];
+// Standalone routes (Hub and Auth pages) render their own dedicated chrome/layout
+const STANDALONE_PREFIXES = [
+  '/hub',
+  '/login',
+  '/cadastro',
+  '/onboarding',
+  '/verificar-email',
+  '/recuperar-senha',
+  '/preview-chat',
+];
 
-// Rotas públicas que já trazem a própria navegação (PrimaryTopMenu) e o próprio
-// rodapé (PrimaryFooter) — não devem receber a PublicTopNav/HubFooter globais,
-// senão a página renderiza duas navbars e dois footers sobrepostos (ruim no mobile).
+// Public landing pages with self-contained navbar and footer
 const SELF_CHROME_PREFIXES = ['/servicos', '/agentes-ia', '/conteudos', '/a-neuroads'];
 const SELF_CHROME_EXACT = ['/', '/temp-lp', '/termos', '/privacidade'];
+
+function isStandaloneRoute(pathname: string | null): boolean {
+  if (!pathname) return false;
+  return STANDALONE_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+}
 
 function hasOwnChrome(pathname: string | null): boolean {
   if (!pathname) return false;
@@ -22,9 +33,11 @@ function hasOwnChrome(pathname: string | null): boolean {
 
 export default function GlobalLayoutClient({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isHubRoute = pathname?.startsWith('/hub');
 
-  if (isHubRoute) return <>{children}</>;
+  // Auth & Hub routes render clean without PublicTopNav or HubFooter
+  if (isStandaloneRoute(pathname)) {
+    return <>{children}</>;
+  }
 
   if (hasOwnChrome(pathname)) {
     return (
