@@ -926,7 +926,7 @@ export default function Suggestion3LandingPage() {
                 <Image src="/images/linkedin-3d.png" alt="LinkedIn" width={32} height={32} className="h-full w-full object-cover" />
               </a>
               <a
-                href="https://www.instagram.com/neuroads.oficial/"
+                href="https://www.instagram.com/neuroads.com.br"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram"

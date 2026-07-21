@@ -851,7 +851,7 @@ export default function TempLandingPage() {
                 </p>
                 <div className="flex items-center gap-3 pt-1">
                   <a
-                    href="https://www.instagram.com/neuroads.oficial/"
+                    href="https://www.instagram.com/neuroads.com.br"
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label="Instagram NeuroAds"

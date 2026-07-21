@@ -62,7 +62,7 @@ export default function PrimaryFooter() {
               </a>
               {/* Instagram */}
               <a
-                href="https://www.instagram.com/neuroads.oficial/"
+                href="https://www.instagram.com/neuroads.com.br"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram NeuroAds"
