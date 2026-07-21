@@ -273,7 +273,7 @@ export async function getWhatsAppConnectionForUser(userId: string): Promise<{
     if (snap.exists()) {
       const connections = snap.data()?.connections;
       const waConn = connections?.whatsapp_business || connections?.whatsapp;
-      if (waConn && (waConn.isActive || waConn.accessToken)) {
+      if (waConn && waConn.isActive === true && Boolean(waConn.accessToken)) {
         return {
           apiKey: (waConn.accessToken as string) || '',
           phoneNumberId: ((waConn.metadata?.phoneNumberId as string) || waConn.accountId || '') as string,

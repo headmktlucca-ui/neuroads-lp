@@ -253,3 +253,58 @@ export async function fetchKapsoMessages(
     };
   }
 }
+
+/**
+ * Fetches phone number details (display_phone_number, verified_name) from Kapso API
+ */
+export async function getKapsoPhoneNumberDetails(
+  phoneNumberId: string,
+  overrideApiKey?: string
+): Promise<{ success: boolean; displayPhoneNumber?: string; verifiedName?: string; error?: string }> {
+  const config = getKapsoConfig(overrideApiKey);
+  if (!config.apiKey || !phoneNumberId) {
+    return { success: false, error: 'KAPSO_API_KEY ou phone_number_id ausentes.' };
+  }
+
+  try {
+    const url = `${config.baseUrl}/meta/whatsapp/${config.metaVersion}/${phoneNumberId}`;
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'X-API-Key': config.apiKey,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data) {
+      const displayPhoneNumber = data.display_phone_number || data.phone_number || data.number || data.display_number;
+      const verifiedName = data.verified_name || data.name;
+      if (displayPhoneNumber) {
+        return { success: true, displayPhoneNumber, verifiedName };
+      }
+    }
+
+    const platformUrl = `${config.baseUrl}/platform/v1/whatsapp/phone_numbers/${phoneNumberId}`;
+    const resPlatform = await fetch(platformUrl, {
+      method: 'GET',
+      headers: {
+        'X-API-Key': config.apiKey,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
+    const dataPlatform = await resPlatform.json().catch(() => ({}));
+    if (resPlatform.ok && dataPlatform) {
+      const phoneObj = dataPlatform.phone_number || dataPlatform;
+      const displayPhoneNumber = phoneObj.display_phone_number || phoneObj.number || phoneObj.phone_number || phoneObj.display_number;
+      const verifiedName = phoneObj.verified_name || phoneObj.name;
+      return { success: true, displayPhoneNumber, verifiedName };
+    }
+
+    return { success: false, error: data?.error?.message || 'Não foi possível buscar detalhes do número no Kapso.' };
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : 'Erro ao conectar ao Kapso.' };
+  }
+}

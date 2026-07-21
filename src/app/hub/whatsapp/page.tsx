@@ -176,8 +176,8 @@ export default function WhatsAppHubPage() {
         body: JSON.stringify({ userId: user.uid }),
       });
       const data = await res.json().catch(() => ({}));
-      if (data?.success && Array.isArray(data.chats) && data.chats.length > 0) {
-        setChats(data.chats);
+      if (data?.success && Array.isArray(data.chats)) {
+        updateAndSaveChats(data.chats);
       }
     } catch (err) {
       console.warn('Kapso auto-sync warning:', err);
@@ -235,17 +235,28 @@ export default function WhatsAppHubPage() {
   }, [chats]);
 
   const isConnected = useMemo(() => {
-    if (connections.whatsapp && (connections.whatsapp.isActive || connections.whatsapp.accessToken)) return true;
-    // Also true if env or mock mode is active
-    return true;
-  }, [connections]);
+    if (isMasterOwner) return true;
+    const conn = connections.whatsapp;
+    if (!conn) return false;
+    return Boolean(conn.isActive && conn.accessToken);
+  }, [connections, isMasterOwner]);
 
   const connectedPhoneNumber = useMemo(() => {
     const conn = connections.whatsapp;
-    const phoneId = (conn?.metadata?.phoneNumberId as string) || (conn?.metadata?.phoneNumber as string) || conn?.accountId;
-    if (phoneId) return `Kapso (${phoneId})`;
-    return '+55 (11) 99887-6655 (Mestre)';
-  }, [connections]);
+    if (conn && conn.isActive && conn.accessToken) {
+      const displayPhone =
+        (conn?.metadata?.displayPhoneNumber as string) ||
+        (conn?.metadata?.phoneNumber as string) ||
+        (conn?.metadata?.phone as string);
+      const phoneId = (conn?.metadata?.phoneNumberId as string) || conn?.accountId;
+
+      if (displayPhone) return displayPhone;
+      if (phoneId) return `Kapso (${phoneId})`;
+      return 'Kapso Conectado';
+    }
+    if (isMasterOwner) return '+55 (11) 99887-6655 (Mestre)';
+    return 'Desconectado';
+  }, [connections, isMasterOwner]);
 
   // Handlers
   const handleSendMessage = async () => {
@@ -407,11 +418,13 @@ export default function WhatsAppHubPage() {
         <div className="flex items-center gap-3 bg-slate-50 p-2.5 px-4 rounded-2xl border border-slate-200/80 shadow-sm shrink-0 w-full md:w-auto justify-between md:justify-end">
           <div className="flex items-center gap-2.5">
             <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isConnected ? 'bg-emerald-400 opacity-75' : 'bg-rose-400 opacity-75'}`}></span>
+              <span className={`relative inline-flex rounded-full h-3 w-3 ${isConnected ? 'bg-emerald-500' : 'bg-rose-500'}`}></span>
             </span>
             <div>
-              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">WhatsApp Conectado</p>
+              <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">
+                {isConnected ? 'WhatsApp Conectado' : 'WhatsApp Desconectado'}
+              </p>
               <p className="text-xs font-bold text-slate-800">{connectedPhoneNumber}</p>
             </div>
           </div>
@@ -419,7 +432,7 @@ export default function WhatsAppHubPage() {
             <button
               type="button"
               onClick={syncKapsoMessages}
-              disabled={syncingKapso}
+              disabled={syncingKapso || !isConnected}
               className="flex items-center gap-1.5 text-[11px] font-black text-slate-700 hover:text-slate-900 transition-colors bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 disabled:opacity-50"
               title="Buscar mensagens recentes diretamente da Inbox do Kapso"
             >
@@ -435,6 +448,29 @@ export default function WhatsAppHubPage() {
           </div>
         </div>
       </div>
+
+      {/* Disconnected Alert Banner */}
+      {!isConnected && !loadingConn && !isMasterOwner && (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 px-5 rounded-3xl bg-amber-500/10 border border-amber-400/40 text-amber-900 shadow-xs">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-amber-500/20 text-amber-700 shrink-0">
+              <AlertTriangle size={20} />
+            </div>
+            <div>
+              <p className="text-xs font-black uppercase tracking-wider text-amber-800">WhatsApp Desconectado</p>
+              <p className="text-xs font-semibold text-amber-800/90 mt-0.5">
+                Sua integração com o WhatsApp não está ativa. Informe sua KAPSO_API_KEY e Phone Number ID em Integrações para sincronizar seus contatos.
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/hub/integracoes"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white font-bold text-xs shadow-md hover:brightness-105 transition-all shrink-0"
+          >
+            Ir para Integrações <ChevronRight size={14} />
+          </Link>
+        </div>
+      )}
 
       {/* ── Summary KPI Cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
@@ -552,9 +588,25 @@ export default function WhatsAppHubPage() {
           {/* Conversation Cards List */}
           <div className="flex-1 overflow-y-auto divide-y divide-slate-100">
             {filteredChats.length === 0 ? (
-              <div className="p-8 text-center text-slate-400">
-                <MessageSquare size={32} className="mx-auto mb-2 opacity-50" />
-                <p className="text-xs font-bold">Nenhuma conversa encontrada neste filtro.</p>
+              <div className="p-8 text-center text-slate-400 flex flex-col items-center justify-center h-full">
+                <MessageSquare size={36} className="mx-auto mb-3 text-slate-300" />
+                <p className="text-xs font-bold text-slate-600">Nenhuma conversa encontrada.</p>
+                <p className="text-[11px] text-slate-400 mt-1 max-w-[240px]">
+                  {isConnected
+                    ? 'Clique em "Sincronizar" no topo para buscar conversas da Inbox do Kapso ou aguarde novas mensagens.'
+                    : 'Conecte sua integração do WhatsApp para sincronizar seus contatos.'}
+                </p>
+                {isConnected && (
+                  <button
+                    type="button"
+                    onClick={syncKapsoMessages}
+                    disabled={syncingKapso}
+                    className="mt-4 flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-emerald-600 text-white font-bold text-[11px] shadow-xs hover:bg-emerald-700 transition-all disabled:opacity-50"
+                  >
+                    <RefreshCw size={12} className={syncingKapso ? 'animate-spin' : ''} />
+                    {syncingKapso ? 'Sincronizando...' : 'Sincronizar Kapso'}
+                  </button>
+                )}
               </div>
             ) : (
               filteredChats.map((chat) => {

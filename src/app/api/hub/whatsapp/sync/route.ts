@@ -15,40 +15,25 @@ export async function POST(req: Request) {
 
     let apiKey = reqApiKey;
     let phoneNumberId = reqPhoneId;
+    let isUserConnected = false;
 
     if (userId && (!apiKey || !phoneNumberId)) {
       const conn = await getWhatsAppConnectionForUser(userId);
       if (conn) {
         apiKey = conn.apiKey;
         phoneNumberId = conn.phoneNumberId;
+        isUserConnected = true;
       }
+    } else if (apiKey && phoneNumberId) {
+      isUserConnected = true;
     }
-
-    // Fallback to environment credentials if process.env.KAPSO_API_KEY is available
-    if (!apiKey) {
-      apiKey = process.env.KAPSO_API_KEY || '';
-    }
-    if (!phoneNumberId) {
-      phoneNumberId = process.env.KAPSO_PHONE_NUMBER_ID || '597907523413541';
-    }
-
-    if (!apiKey || !phoneNumberId) {
-      return NextResponse.json({
-        success: false,
-        error: 'Nenhuma conexão ativa do WhatsApp Business (Kapso) encontrada.',
-      }, { status: 400 });
-    }
-
-    // 1. Fetch live messages from Kapso Inbox API
-    const kapsoRes = await fetchKapsoMessages(phoneNumberId, apiKey, 100);
-    const kapsoMsgs = kapsoRes.messages || [];
 
     const db = getFirebaseDb();
     if (!db) {
       return NextResponse.json({ error: 'Banco de dados Firestore não inicializado.' }, { status: 500 });
     }
 
-    // 2. Determine target user & master ownership
+    // Determine target user & master ownership
     const targetId = userId || process.env.LUCCA_DEFAULT_WORKSPACE_USER_ID || 'default_user';
     let isMaster = false;
 
@@ -59,6 +44,25 @@ export async function POST(req: Request) {
         isMaster = true;
       }
     }
+
+    // Fallback to environment credentials ONLY for master owner
+    if (!isUserConnected && isMaster) {
+      if (!apiKey) apiKey = process.env.KAPSO_API_KEY || '';
+      if (!phoneNumberId) phoneNumberId = process.env.KAPSO_PHONE_NUMBER_ID || '597907523413541';
+    }
+
+    if (!apiKey || !phoneNumberId || (!isUserConnected && !isMaster)) {
+      return NextResponse.json({
+        success: false,
+        connected: false,
+        chats: [],
+        error: 'Nenhuma conexão ativa do WhatsApp Business (Kapso) encontrada para este usuário.',
+      });
+    }
+
+    // 1. Fetch live messages from Kapso Inbox API
+    const kapsoRes = await fetchKapsoMessages(phoneNumberId, apiKey, 100);
+    const kapsoMsgs = kapsoRes.messages || [];
 
     const userDocRef = doc(db, 'users', targetId, 'whatsapp_data', 'conversations');
     const userSnap = await getDoc(userDocRef);

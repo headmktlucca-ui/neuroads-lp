@@ -13,6 +13,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '../../../context/AuthContext';
+import { getKapsoPhoneNumberDetails } from '../../../lib/kapso';
 import {
   saveConnection,
   saveApiKeyConnection,
@@ -418,7 +419,7 @@ const INTEGRATIONS: IntegrationDef[] = [
     isComponentIcon: true, componentIconType: 'whatsapp',
     flow: 'api-key',
     apiKeyLabel: 'Chave de API Kapso (KAPSO_API_KEY) e Phone Number ID',
-    apiKeyPlaceholder: 'Cole sua KAPSO_API_KEY e Phone Number ID (ex: kap_live_... | 1234567890)',
+    apiKeyPlaceholder: 'Cole sua KAPSO_API_KEY',
   },
   {
     id: 'signature', connectorKey: 'signature', name: 'Assinatura Digital', category: 'VENDAS',
@@ -509,7 +510,7 @@ type FlowPhase =
   | { phase: 'error'; connector: ConnectorKey; message: string };
 
 type CredsModal = { integ: IntegrationDef; values: Record<string, string> };
-type ApiKeyModal = { integ: IntegrationDef; value: string; saving: boolean };
+type ApiKeyModal = { integ: IntegrationDef; value: string; kapsoApiKey?: string; phoneNumberId?: string; displayPhoneNumber?: string; saving: boolean };
 
 // ---------------------------------------------------------------------------
 // Icon renderer (shared)
@@ -720,29 +721,69 @@ function HubIntegracoesContent() {
 
   // API key save
   const handleApiKeySave = useCallback(async () => {
-    if (!user || !apiKeyModal || !apiKeyModal.value.trim()) return;
+    if (!user || !apiKeyModal) return;
     setApiKeyModal((prev) => prev ? { ...prev, saving: true } : null);
-    const { integ, value } = apiKeyModal;
+    const { integ, value, kapsoApiKey, phoneNumberId, displayPhoneNumber } = apiKeyModal;
     try {
       if (integ.id === 'whatsapp') {
-        const tokens = value.trim().split(/[\n,;|\s]+/);
-        const apiKey = tokens[0] || value.trim();
-        const phoneNumberId = tokens[1] || '';
+        const finalApiKey = (kapsoApiKey || value).trim();
+        const finalPhoneId = (phoneNumberId || '').trim();
+        let finalDisplayPhone = (displayPhoneNumber || '').trim();
+
+        if (!finalApiKey) {
+          alert('Por favor, informe a KAPSO_API_KEY.');
+          setApiKeyModal((prev) => prev ? { ...prev, saving: false } : null);
+          return;
+        }
+
+        // Auto-fetch display phone number from Kapso if not provided manually
+        if (!finalDisplayPhone && finalPhoneId) {
+          try {
+            const details = await getKapsoPhoneNumberDetails(finalPhoneId, finalApiKey);
+            if (details.success && details.displayPhoneNumber) {
+              finalDisplayPhone = details.displayPhoneNumber;
+            }
+          } catch { /* noop */ }
+        }
+
+        const formattedName = finalDisplayPhone
+          ? `WhatsApp Business (${finalDisplayPhone})`
+          : `WhatsApp Business via Kapso${finalPhoneId ? ` (${finalPhoneId})` : ''}`;
+
         await saveApiKeyConnection({
           connector: integ.connectorKey,
           uid: user.uid,
-          apiKey,
-          accountName: `WhatsApp Business via Kapso${phoneNumberId ? ` (${phoneNumberId})` : ''}`,
+          apiKey: finalApiKey,
+          accountName: formattedName,
           metadata: {
             provider: 'kapso',
-            phoneNumberId,
+            phoneNumberId: finalPhoneId,
+            displayPhoneNumber: finalDisplayPhone,
+            phoneNumber: finalDisplayPhone,
             connectedAt: Date.now(),
           },
         });
+        setConnections((prev) => ({
+          ...prev,
+          [integ.connectorKey]: {
+            isActive: true,
+            accessToken: finalApiKey,
+            accountId: finalPhoneId,
+            metadata: {
+              provider: 'kapso',
+              phoneNumberId: finalPhoneId,
+              displayPhoneNumber: finalDisplayPhone,
+              phoneNumber: finalDisplayPhone,
+              connectedAt: Date.now(),
+            },
+            connectedAt: Date.now(),
+          },
+        }));
       } else {
+        if (!value.trim()) return;
         await saveApiKeyConnection({ connector: integ.connectorKey, uid: user.uid, apiKey: value.trim() });
+        setConnections((prev) => ({ ...prev, [integ.connectorKey]: { isActive: true, accessToken: value.trim(), connectedAt: Date.now() } }));
       }
-      setConnections((prev) => ({ ...prev, [integ.connectorKey]: { isActive: true, accessToken: value.trim(), connectedAt: Date.now() } }));
       setApiKeyModal(null);
       setFlowPhase({ phase: 'success', connector: integ.connectorKey });
       setTimeout(() => setFlowPhase({ phase: 'idle' }), 3000);
@@ -776,7 +817,22 @@ function HubIntegracoesContent() {
       integ.credFields?.forEach((f) => { initial[f.key] = ''; });
       setCredsModal({ integ, values: initial });
     } else {
-      setApiKeyModal({ integ, value: '', saving: false });
+      if (integ.id === 'whatsapp') {
+        const conn = connections.whatsapp;
+        const existingApiKey = conn?.accessToken || '';
+        const existingPhoneId = (conn?.metadata?.phoneNumberId as string) || conn?.accountId || '';
+        const existingDisplayPhone = (conn?.metadata?.displayPhoneNumber as string) || (conn?.metadata?.phoneNumber as string) || '';
+        setApiKeyModal({
+          integ,
+          value: existingApiKey,
+          kapsoApiKey: existingApiKey,
+          phoneNumberId: existingPhoneId,
+          displayPhoneNumber: existingDisplayPhone,
+          saving: false,
+        });
+      } else {
+        setApiKeyModal({ integ, value: '', saving: false });
+      }
     }
   };
 
@@ -1169,42 +1225,106 @@ function HubIntegracoesContent() {
               <label className="block text-[11px] font-black uppercase tracking-widest text-slate-500">{apiKeyModal.integ.apiKeyLabel ?? 'Token de API'}</label>
               <HelpTooltip channelId={apiKeyModal.integ.id} />
             </div>
-            {apiKeyModal.integ.id === 'whatsapp' && (
-              <div className="mb-3 p-3 rounded-xl border border-emerald-500/20 bg-emerald-50 text-[11px] font-semibold text-emerald-800 space-y-2">
-                <p>💡 <strong>Integração via Kapso:</strong> Informe a <code className="bg-emerald-100 px-1 py-0.5 rounded text-[10px]">KAPSO_API_KEY</code> e opcionalmente o ID do número separados por vírgula ou linha.</p>
-                <button
-                  type="button"
-                  onClick={async () => {
-                    try {
-                      const res = await fetch('/api/auth/connectors/whatsapp/setup-link', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name: 'Cliente NeuroAds' }),
-                      });
-                      const data = await res.json();
-                      if (data?.url) {
-                        window.open(data.url, '_blank');
-                      } else {
-                        alert(data?.error || 'Instale ou configure a KAPSO_API_KEY no servidor para usar o Setup Link automático.');
+            {apiKeyModal.integ.id === 'whatsapp' ? (
+              <div className="space-y-4 mb-4">
+                <div className="p-3 rounded-xl border border-emerald-500/20 bg-emerald-50 text-[11px] font-semibold text-emerald-800 space-y-2">
+                  <p>💡 <strong>Integração via Kapso:</strong> Preencha os campos abaixo com suas credenciais do Kapso.</p>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      try {
+                        const res = await fetch('/api/auth/connectors/whatsapp/setup-link', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ name: 'Cliente NeuroAds' }),
+                        });
+                        const data = await res.json();
+                        if (data?.url) {
+                          window.open(data.url, '_blank');
+                        } else {
+                          alert(data?.error || 'Instale ou configure a KAPSO_API_KEY no servidor para usar o Setup Link automático.');
+                        }
+                      } catch {
+                        alert('Falha ao iniciar setup link no Kapso.');
                       }
-                    } catch {
-                      alert('Falha ao iniciar setup link no Kapso.');
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] transition-all shadow-xs"
+                  >
+                    <ExternalLink className="w-3 h-3" /> Gerar Setup Link no Kapso
+                  </button>
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-1">
+                    Chave de API Kapso (KAPSO_API_KEY) *
+                  </label>
+                  <input
+                    type="password"
+                    value={apiKeyModal.kapsoApiKey ?? apiKeyModal.value ?? ''}
+                    onChange={(e) =>
+                      setApiKeyModal((prev) =>
+                        prev
+                          ? { ...prev, kapsoApiKey: e.target.value, value: e.target.value }
+                          : null
+                      )
                     }
-                  }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[10px] transition-all shadow-xs"
-                >
-                  <ExternalLink className="w-3 h-3" /> Gerar Setup Link no Kapso
-                </button>
+                    placeholder="ex: kap_live_..."
+                    disabled={apiKeyModal.saving}
+                    className="w-full rounded-xl border border-white/30 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] px-3 py-2.5 text-[13px] font-semibold text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#FF6A00]/30"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-1">
+                    ID do Número de Telefone (Phone Number ID)
+                  </label>
+                  <input
+                    type="text"
+                    value={apiKeyModal.phoneNumberId ?? ''}
+                    onChange={(e) =>
+                      setApiKeyModal((prev) =>
+                        prev
+                          ? { ...prev, phoneNumberId: e.target.value }
+                          : null
+                      )
+                    }
+                    placeholder="ex: 597907523413541"
+                    disabled={apiKeyModal.saving}
+                    className="w-full rounded-xl border border-white/30 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] px-3 py-2.5 text-[13px] font-semibold text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#FF6A00]/30"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-black uppercase tracking-widest text-slate-500 mb-1">
+                    Número do WhatsApp (ex: +55 11 99999-8888)
+                  </label>
+                  <input
+                    type="text"
+                    value={apiKeyModal.displayPhoneNumber ?? ''}
+                    onChange={(e) =>
+                      setApiKeyModal((prev) =>
+                        prev
+                          ? { ...prev, displayPhoneNumber: e.target.value }
+                          : null
+                      )
+                    }
+                    placeholder="ex: +55 11 99999-8888 (ou autodetectado do Kapso)"
+                    disabled={apiKeyModal.saving}
+                    className="w-full rounded-xl border border-white/30 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] px-3 py-2.5 text-[13px] font-semibold text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#FF6A00]/30"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="mb-4">
+                <div className="sr-only">{apiKeyModal.integ.apiKeyLabel}</div>
+                <textarea value={apiKeyModal.value} onChange={(e) => setApiKeyModal((prev) => prev ? { ...prev, value: e.target.value } : null)}
+                  placeholder={apiKeyModal.integ.apiKeyPlaceholder ?? 'Cole seu token aqui'} rows={3} disabled={apiKeyModal.saving}
+                  className="w-full rounded-xl border border-white/30 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] px-3 py-2.5 text-[13px] font-semibold text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#FF6A00]/30 resize-none"
+                />
               </div>
             )}
-            <div className="mb-4">
-              <div className="sr-only">{apiKeyModal.integ.apiKeyLabel}</div>
-              <textarea value={apiKeyModal.value} onChange={(e) => setApiKeyModal((prev) => prev ? { ...prev, value: e.target.value } : null)}
-                placeholder={apiKeyModal.integ.apiKeyPlaceholder ?? 'Cole seu token aqui'} rows={3} disabled={apiKeyModal.saving}
-                className="w-full rounded-xl border border-white/30 bg-[#eef2f7] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] px-3 py-2.5 text-[13px] font-semibold text-slate-700 placeholder:text-slate-400 outline-none focus:ring-2 focus:ring-[#FF6A00]/30 resize-none"
-              />
-            </div>
-            <button type="button" onClick={handleApiKeySave} disabled={!apiKeyModal.value.trim() || apiKeyModal.saving}
+
+            <button type="button" onClick={handleApiKeySave} disabled={(apiKeyModal.integ.id === 'whatsapp' ? !(apiKeyModal.kapsoApiKey || apiKeyModal.value)?.trim() : !apiKeyModal.value.trim()) || apiKeyModal.saving}
               className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#FF6A00] to-[#FF8805] px-4 py-3 text-[13px] font-bold text-white shadow-[0_4px_12px_rgba(255,106,0,0.25)] hover:brightness-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
               {apiKeyModal.saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
               {apiKeyModal.saving ? 'Salvando...' : 'Salvar e Conectar'}
