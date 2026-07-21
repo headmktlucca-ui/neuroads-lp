@@ -863,7 +863,7 @@ export default function HubLayout({ children }: { children: React.ReactNode }) {
 
   const userName    = user?.displayName || activeCompany?.companyName || profile?.companyName || 'Lucca';
   const companyName = activeCompany?.companyName || profile?.companyName;
-  const userPhoto   = user?.photoURL || null;
+  const userPhoto   = (profile?.photoURL as string) || (profile?.photoUrl as string) || (profile?.profilePhoto as string) || user?.photoURL || null;
 
   return (
     <HubProvider>
