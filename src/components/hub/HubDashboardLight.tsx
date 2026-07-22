@@ -38,6 +38,7 @@ import BentoCard from './v2/BentoCard';
 import CountUp from './v2/CountUp';
 import Sparkline from './v2/Sparkline';
 import {
+  IconDashboard3D,
   IconWallet3D,
   IconTarget3D,
   IconTrending3D,
@@ -950,19 +951,17 @@ export default function HubDashboardLight() {
         className="flex items-start justify-between gap-4 flex-wrap"
       >
         <div className="min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span
-              className="h-1.5 w-1.5 rounded-full bg-[#FF6A00]"
-            />
-            <span className="text-[10px] font-black uppercase tracking-[0.18em] text-[#FF6A00]">
-              Hub Estratégico
-            </span>
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+            <span>Visão Geral</span>
+            <ChevronRight size={12} />
+            <span className="text-[#FF6A00]">Dashboard</span>
           </div>
-          <h1 className="text-[24px] sm:text-[28px] font-black tracking-tight leading-none text-[#0f172a] break-words">
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+            <IconDashboard3D size={32} />
             {profile?.companyName || 'Visão Geral'}
           </h1>
-          <p className="text-[13px] text-slate-500 mt-1.5 font-bold">
-            Consolidado dos canais de tração · Autorreferenciado · Período selecionado
+          <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
+            Consolidado dos canais de tração, inteligência preditiva e métricas em tempo real.
           </p>
         </div>
       </motion.div>

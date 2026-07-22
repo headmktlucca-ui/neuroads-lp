@@ -34,6 +34,7 @@ import {
   IconGtmServer3D,
   IconBigQuery3D,
 } from '../../../components/hub/ConnectorBrandIcons';
+import { IconPlug3D } from '../../../components/hub/HubUiIcons3D';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -858,13 +859,17 @@ function HubIntegracoesContent() {
       <header className="py-8 border-b border-slate-200 mb-8">
         <div className="flex items-start justify-between gap-6 flex-wrap">
           <div>
-            <div className="flex items-center gap-2 mb-3">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#FF6A00]" />
-              <span className="text-[11px] font-black uppercase tracking-[0.16em] text-[#FF6A00]">Integracoes</span>
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+              <span>Infraestrutura</span>
+              <ChevronRight size={12} />
+              <span className="text-[#FF6A00]">Integrações</span>
             </div>
-            <h1 className="text-3xl font-black text-[#0f172a] tracking-tight leading-tight">Conecte Seus Canais</h1>
-            <p className="text-slate-500 text-[15px] mt-2 max-w-xl font-bold leading-relaxed">
-              Vincule suas plataformas de midia paga e analytics para alimentar os Agentes de IA com dados reais da sua operacao.
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+              <IconPlug3D size={32} />
+              Conecte Seus Canais
+            </h1>
+            <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed max-w-xl">
+              Vincule suas plataformas de mídia paga e analytics para alimentar os Agentes IA com dados reais da sua operação.
             </p>
           </div>
           <div className="flex flex-col gap-2 shrink-0">

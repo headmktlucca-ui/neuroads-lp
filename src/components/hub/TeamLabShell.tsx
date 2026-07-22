@@ -6,7 +6,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ChevronDown, ExternalLink, Lock,
-  Search, Sparkles, Users, X, Wrench, Activity, Zap
+  Search, Sparkles, Users, X, Wrench, Activity, Zap, ChevronRight
 } from 'lucide-react';
 import { doc, setDoc } from 'firebase/firestore';
 import { TEAM_AGENTS, TeamAgent } from '../../data/team-agents';
@@ -19,6 +19,7 @@ import {
   IconActivity3D,
   IconZap3D,
   IconSparklesPurple3D,
+  IconBrain3D,
 } from './HubUiIcons3D';
 
 // ─── Reusable KPI Icon Wrapper ──────────────────────────────────────────────
@@ -322,20 +323,24 @@ export default function TeamLabShell() {
     <div className="space-y-8 w-full px-6 pb-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       {/* ── Header ── */}
-      <div className="py-8 border-b border-slate-200">
-        <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full border border-white/60 bg-[#eef2f7] shadow-[2px_2px_5px_#d1d9e6,_-2px_-2px_5px_#ffffff]">
-          <Users size={11} className="text-[#FF6A00]" />
-          <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#FF6A00]">
-            Equipe IA · NeuroAds
-          </span>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-8 border-b border-slate-200">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+            <span>Operação</span>
+            <ChevronRight size={12} />
+            <span className="text-[#FF6A00]">Agentes IA</span>
+          </div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+            <IconBrain3D size={32} />
+            Agentes IA
+          </h1>
+          <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
+            Seu time de IA que assume o Marketing &amp; Vendas da operação. Cada Agente tem identidade própria e operações disponíveis 24h.
+          </p>
+          <p className="text-[12px] font-black mt-1.5 text-[#FF6A00]">
+            10 Agentes · {totalActive} Operações Ativas · Online 24h
+          </p>
         </div>
-        <h1 className="text-[26px] font-black text-[#0f172a] tracking-tight">Agentes IA</h1>
-        <p className="text-[13px] text-slate-500 font-semibold mt-1 max-w-2xl">
-          Seu time de IA que assume o Marketing &amp; Vendas da operação. Cada Agente tem identidade própria e operações disponíveis 24h.
-        </p>
-        <p className="text-[12px] font-black mt-1.5 text-[#FF6A00]">
-          10 Agentes · {totalActive} Operações Ativas · Online 24h
-        </p>
       </div>
 
       {/* ── Stats ── */}

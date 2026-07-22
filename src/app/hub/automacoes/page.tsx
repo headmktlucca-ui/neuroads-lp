@@ -24,6 +24,7 @@ import {
   IconActivity3D,
   IconCpu3D,
   IconSparklesPurple3D,
+  IconAutomation3D,
 } from '../../../components/hub/HubUiIcons3D';
 
 interface CustomField {
@@ -855,14 +856,18 @@ export default function HubAutomacoesPage() {
     <div className="space-y-8 w-full px-6 pb-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       {/* ── Page header ── */}
-      <div className="flex items-start justify-between gap-4 py-8 border-b border-slate-200">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-8 border-b border-slate-200">
         <div>
-          <div className="inline-flex items-center gap-2 mb-2 px-3 py-1 rounded-full border border-white/60 bg-[#eef2f7] shadow-[2px_2px_5px_#d1d9e6,_-2px_-2px_5px_#ffffff]">
-            <Cpu size={12} className="text-[#FF6A00]" />
-            <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#FF6A00]">Automações</span>
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+            <span>Operação</span>
+            <ChevronRight size={12} />
+            <span className="text-[#FF6A00]">Automações</span>
           </div>
-          <h1 className="text-[26px] font-black text-[#0f172a] tracking-tight">Fluxos Inteligentes</h1>
-          <p className="text-[13px] text-slate-500 font-semibold mt-1 max-w-xl">
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+            <IconAutomation3D size={32} />
+            Fluxos Inteligentes
+          </h1>
+          <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed max-w-xl">
             {loading
               ? 'Carregando automações…'
               : totalActive === 0

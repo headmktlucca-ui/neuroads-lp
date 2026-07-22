@@ -4,13 +4,19 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo, useEffect } from 'react';
-import { ExternalLink, Lock, Sparkles, Users, Activity, ChevronDown } from 'lucide-react';
+import { ExternalLink, Lock, Sparkles, Users, Activity, ChevronDown, ChevronRight } from 'lucide-react';
 import { doc, setDoc } from 'firebase/firestore';
 import { TEAM_AGENTS, TeamAgent } from '../../data/team-agents';
 import { agents as allSpecialties } from '../../data/agents';
 import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../lib/agent-status-cache';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
+import {
+  IconSparkles3D,
+  IconChart3D,
+  IconTarget3D,
+  IconRefresh3D,
+} from './HubUiIcons3D';
 
 // ─── Funil stage metadata ────────────────────────────────────────────────────
 
@@ -369,23 +375,27 @@ export default function FunilStagePage({ stage }: { stage: FunilStage }) {
     <div className="space-y-8 w-full px-6 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
       {/* ── Header ── */}
-      <div className="py-8 border-b border-slate-200">
-        <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full border border-white/60 bg-[#eef2f7] shadow-[2px_2px_5px_#d1d9e6,_-2px_-2px_5px_#ffffff]">
-          <Users size={11} style={{ color: meta.cor }} />
-          <span className="text-[10px] font-black uppercase tracking-[0.15em]" style={{ color: meta.cor }}>
-            Laboratório IA · {meta.label}
-          </span>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-8 border-b border-slate-200">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+            <span>Agentes IA</span>
+            <ChevronRight size={12} />
+            <span className="text-[#FF6A00]">{meta.label}</span>
+          </div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+            {stage === 'atracao' && <IconSparkles3D size={32} />}
+            {stage === 'engajamento' && <IconChart3D size={32} />}
+            {stage === 'conversao' && <IconTarget3D size={32} />}
+            {stage === 'retencao' && <IconRefresh3D size={32} />}
+            {meta.label}
+          </h1>
+          <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
+            {meta.description}
+          </p>
+          <p className="text-[12px] font-black mt-2" style={{ color: meta.cor }}>
+            {stageAgents.length} Ativos · {totalActive}/{totalSpecialties} especialidades ativas
+          </p>
         </div>
-        <h1 className="text-[26px] font-black text-[#0f172a] tracking-tight flex items-center gap-3">
-          <span className="text-[28px]">{meta.emoji}</span>
-          {meta.label}
-        </h1>
-        <p className="text-[13px] text-slate-500 font-semibold mt-1 max-w-2xl leading-relaxed">
-          {meta.description}
-        </p>
-        <p className="text-[12px] font-black mt-2" style={{ color: meta.cor }}>
-          {stageAgents.length} Ativos · {totalActive}/{totalSpecialties} especialidades ativas
-        </p>
       </div>
 
       {/* ── Funnel stages navigation ── */}

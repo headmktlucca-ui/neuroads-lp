@@ -148,8 +148,8 @@ function NavLink({
 
   const [open, setOpen] = useState(isChildActive || isActive);
 
-  const paddingLeft = depth === 1 ? 'pl-9' : 'pl-4';
-  const textSize    = depth === 1 ? 'text-[12px]' : 'text-[13px]';
+  const paddingLeft = depth === 1 ? 'pl-7' : 'pl-3';
+  const textSize    = depth === 1 ? 'text-[11.5px]' : 'text-[12.5px]';
   const ParentIcon  = item.icon;
 
   if (hasChildren) {
@@ -164,7 +164,7 @@ function NavLink({
               router.push(item.href);
             }
           }}
-          className={`w-full text-left group flex items-center gap-2.5 ${paddingLeft} pr-3 py-2 rounded-2xl ${textSize} font-bold transition-all duration-200 cursor-pointer ${
+          className={`w-full text-left group flex items-center gap-2 ${paddingLeft} pr-2.5 py-1.5 rounded-xl ${textSize} font-bold transition-all duration-200 cursor-pointer ${
             isActive
               ? isDark ? 'text-white' : 'text-[#FF6A00]'
               : isDark
@@ -177,11 +177,11 @@ function NavLink({
             borderLeft:  isActive ? (isDark ? '2px solid rgba(255,255,255,0.7)' : '2px solid #FF6A00') : '2px solid transparent',
           }}
         >
-          <ParentIcon size={22} className={`transition-transform duration-200 group-hover:scale-110 ${isActive ? (isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
+          <ParentIcon size={18} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
           <span className="flex-1">{item.label}</span>
           {isActive && <span className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-white' : 'bg-[#FF6A00]'}`} />}
           <ChevronDown
-            size={13}
+            size={12}
             className={`transition-transform duration-300 ${open ? 'rotate-180' : ''} ${isDark ? 'text-white/50' : 'text-slate-400'}`}
           />
         </button>
@@ -195,7 +195,7 @@ function NavLink({
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.22 }}
-              className={`overflow-hidden ml-4 pl-1 mt-0.5 space-y-0.5 border-l ${isDark ? 'border-white/20' : 'border-slate-200/80'}`}
+              className={`overflow-hidden ml-3 pl-1 mt-0.5 space-y-0.5 border-l ${isDark ? 'border-white/20' : 'border-slate-200/80'}`}
             >
               {item.children!.map(child => (
                 <NavLink
@@ -220,7 +220,7 @@ function NavLink({
   return (
     <Link
       href={item.href}
-      className={`group flex items-center gap-2.5 ${paddingLeft} pr-3 py-${depth === 1 ? '1.5' : '2'} rounded-2xl ${textSize} font-bold transition-all duration-200 ${
+      className={`group flex items-center gap-2 ${paddingLeft} pr-2.5 py-1 rounded-xl ${textSize} font-bold transition-all duration-200 ${
         isActive
           ? isLucca ? 'text-emerald-300' : isDark ? 'text-white' : 'text-[#FF6A00]'
           : isDark
@@ -236,22 +236,22 @@ function NavLink({
     >
       {/* Icon: use avatar image for Lucca, regular icon for others */}
       {item.avatarImage ? (
-        <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 border border-emerald-500/30 shadow-[0_0_6px_rgba(16,185,129,0.25)]">
+        <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-emerald-500/30 shadow-[0_0_6px_rgba(16,185,129,0.25)]">
           <Image
             src={item.avatarImage}
             alt={item.label}
-            width={32}
-            height={32}
+            width={24}
+            height={24}
             className="w-full h-full object-cover"
           />
         </div>
       ) : (
-        <LeafIcon size={depth === 1 ? 16 : 22} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-300' : isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
+        <LeafIcon size={depth === 1 ? 14 : 18} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-300' : isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
       )}
       <span className="flex-1">{item.label}</span>
       {isLucca && (
         <span className="flex items-center gap-1 shrink-0">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)] animate-pulse" />
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)] animate-pulse" />
         </span>
       )}
       {isActive && !isLucca && <span className={`ml-auto w-1.5 h-1.5 rounded-full ${isDark ? 'bg-white' : 'bg-[#FF6A00]'}`} />}
@@ -288,7 +288,7 @@ function SidebarContent({
   return (
     <>
       {/* Top profile header: static company/user display */}
-      <div className={`px-3 pt-2.5 pb-2 shrink-0 ${isDark ? 'border-b border-white/15' : 'border-b border-slate-200/40'}`}>
+      <div className={`px-2.5 pt-2 pb-1.5 shrink-0 ${isDark ? 'border-b border-white/15' : 'border-b border-slate-200/40'}`}>
         <CompanySwitcherTrigger
           companyName={companyName || ''}
           userName={userName}
@@ -298,10 +298,10 @@ function SidebarContent({
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-3 py-3 space-y-3.5 overflow-y-auto">
+      <nav className="flex-1 px-2.5 py-1.5 space-y-1.5 overflow-y-auto">
         {NAV_GROUPS.map(group => (
           <div key={group.title} className="space-y-0.5">
-            <h4 className={`px-4 text-[9px] font-black uppercase tracking-wider ${isDark ? 'text-white/40' : 'text-slate-400'} mb-1`}>
+            <h4 className={`px-3 text-[8.5px] font-black uppercase tracking-wider ${isDark ? 'text-white/40' : 'text-slate-400'} mb-0.5`}>
               {group.title}
             </h4>
             <div className="space-y-0.5">
@@ -320,16 +320,16 @@ function SidebarContent({
       </nav>
 
       {/* Sign out */}
-      <div className={`px-3 pb-3 shrink-0 pt-2 ${isDark ? 'border-t border-white/15' : 'border-t border-white/40'}`}>
+      <div className={`px-2.5 pb-2 shrink-0 pt-1.5 ${isDark ? 'border-t border-white/15' : 'border-t border-white/40'}`}>
         <button
           onClick={onSignOut}
-          className={`w-full flex items-center gap-2.5 px-4 py-2.5 rounded-2xl text-[13px] font-bold transition-all duration-200 border border-transparent ${
+          className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all duration-200 border border-transparent ${
             isDark
               ? 'text-white/70 hover:text-white hover:bg-white/10 hover:border-white/10'
               : 'text-[#475569] hover:text-rose-600 hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:border-rose-500/15'
           }`}
         >
-          <LogOut size={15} className={`transition-colors shrink-0 ${isDark ? 'text-white/50' : 'text-slate-400'}`} />
+          <LogOut size={14} className={`transition-colors shrink-0 ${isDark ? 'text-white/50' : 'text-slate-400'}`} />
           <span>Sair</span>
         </button>
       </div>

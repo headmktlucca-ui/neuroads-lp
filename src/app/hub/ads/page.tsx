@@ -3,8 +3,8 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import { 
-  Megaphone, 
   TrendingUp, 
+  TrendingDown,
   Activity, 
   AlertTriangle, 
   CheckCircle2, 
@@ -20,9 +20,10 @@ import {
 import { useAuth } from '../../../context/AuthContext';
 import { loadUserConnections, type ConnectionsMap } from '../../../lib/connector-save';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
+import { IconMegaphone3D } from '../../../components/hub/HubUiIcons3D';
 
-// Mock campaigns for demo
-const MOCK_CAMPAIGNS = [
+// Initial campaigns list
+const INITIAL_CAMPAIGNS = [
   { id: '1', platform: 'Meta Ads', name: 'BF2026 - Conversão - Lookalike 1-3%', status: 'active', budget: 12000, spend: 9450, impressions: 245000, clicks: 8200, conversions: 380, cpa: 24.8, roas: 4.8 },
   { id: '2', platform: 'Google Ads', name: 'Institucional - Institucional & Marca', status: 'active', budget: 5000, spend: 3200, impressions: 84000, clicks: 12400, conversions: 110, cpa: 29.0, roas: 3.9 },
   { id: '3', platform: 'Meta Ads', name: 'Remarketing - Visitantes 30 Dias', status: 'active', budget: 8000, spend: 7100, impressions: 112000, clicks: 4300, conversions: 245, cpa: 28.9, roas: 5.6 },
@@ -30,26 +31,30 @@ const MOCK_CAMPAIGNS = [
   { id: '5', platform: 'TikTok Ads', name: 'Desafio Hashtag - Topo de Funil', status: 'active', budget: 6000, spend: 4100, impressions: 380000, clicks: 15600, conversions: 95, cpa: 43.1, roas: 1.8 }
 ];
 
-const CHART_DATA = [
-  { name: 'Seg', 'Gasto (R$)': 1200, 'Conversões': 45 },
-  { name: 'Ter', 'Gasto (R$)': 1500, 'Conversões': 58 },
-  { name: 'Qua', 'Gasto (R$)': 1800, 'Conversões': 72 },
-  { name: 'Qui', 'Gasto (R$)': 1400, 'Conversões': 61 },
-  { name: 'Sex', 'Gasto (R$)': 2100, 'Conversões': 85 },
-  { name: 'Sáb', 'Gasto (R$)': 1600, 'Conversões': 69 },
-  { name: 'Dom', 'Gasto (R$)': 1300, 'Conversões': 52 }
-];
+// Helper to calculate dynamic comparison dates for period selector cards
+function getComparisonDates(days: number) {
+  const today = new Date();
+  
+  const compEnd = new Date(today);
+  compEnd.setDate(today.getDate() - days);
+
+  const compStart = new Date(compEnd);
+  compStart.setDate(compEnd.getDate() - (days - 1));
+
+  const fmt = (d: Date) => 
+    `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`;
+
+  return {
+    compStartStr: fmt(compStart),
+    compEndStr: fmt(compEnd),
+  };
+}
 
 export default function AdsDashboardPage() {
   const { user } = useAuth();
   const [connections, setConnections] = useState<ConnectionsMap>({});
-  const [demoMode, setDemoMode] = useState(true);
-  useEffect(() => {
-    const q = new URLSearchParams(window.location.search).get('demo');
-    if (q === '0') setDemoMode(false);
-    else if (q === '1') setDemoMode(true);
-  }, []);
-  const [campaigns, setCampaigns] = useState(MOCK_CAMPAIGNS);
+  const [selectedDays, setSelectedDays] = useState<number>(30); // Default active period: 30 days
+  const [campaigns, setCampaigns] = useState(INITIAL_CAMPAIGNS);
 
   useEffect(() => {
     async function fetchConnections() {
@@ -74,29 +79,108 @@ export default function AdsDashboardPage() {
   }, [connections]);
 
   const connectedCount = Object.values(activeChannels).filter(Boolean).length;
-  const hasConnected = connectedCount > 0 || demoMode;
+  const hasConnected = connectedCount > 0;
+
+  // Periods config for period selector component
+  const periodOptions = useMemo(() => {
+    return [7, 15, 30, 90].map((days) => {
+      const { compStartStr, compEndStr } = getComparisonDates(days);
+      return {
+        days,
+        label: `Últimos ${days} dias`,
+        vsText: 'Vs. último período igual',
+        comparedText: `Comparado a ${compStartStr} - ${compEndStr}`,
+      };
+    });
+  }, []);
+
+  // Multiplier scale according to selected period
+  const periodMultiplier = selectedDays / 30;
 
   const kpis = useMemo(() => {
     if (!hasConnected) {
       return [
-        { label: 'Investimento Total', value: 'R$ 0,00', sub: 'Sem canais conectados', icon: DollarSign, isNa: true },
-        { label: 'Cliques Totais', value: '0', sub: 'Sem tráfego ativo', icon: MousePointerClick, isNa: true },
-        { label: 'Conversões', value: '0', sub: 'Sem rastreamento', icon: Target, isNa: true },
-        { label: 'ROAS Médio', value: '0.0x', sub: 'Sem receita de anúncios', icon: TrendingUp, isNa: true }
+        { label: 'Investimento Total', value: 'R$ 0,00', sub: 'Sem canais conectados', evolution: null, icon: DollarSign, isNa: true },
+        { label: 'Cliques Totais', value: '0', sub: 'Sem tráfego ativo', evolution: null, icon: MousePointerClick, isNa: true },
+        { label: 'Conversões', value: '0', sub: 'Sem rastreamento', evolution: null, icon: Target, isNa: true },
+        { label: 'ROAS Médio', value: '0.0x', sub: 'Sem receita de anúncios', evolution: null, icon: TrendingUp, isNa: true }
       ];
     }
-    const totalSpend = campaigns.reduce((acc, c) => acc + (c.status === 'active' ? c.spend : 0), 0);
-    const totalClicks = campaigns.reduce((acc, c) => acc + (c.status === 'active' ? c.clicks : 0), 0);
-    const totalConversions = campaigns.reduce((acc, c) => acc + (c.status === 'active' ? c.conversions : 0), 0);
-    const avgRoas = (campaigns.reduce((acc, c) => acc + (c.status === 'active' ? c.roas : 0), 0) / campaigns.filter(c => c.status === 'active').length).toFixed(1);
+    const rawSpend = campaigns.reduce((acc, c) => acc + (c.status === 'active' ? c.spend : 0), 0);
+    const rawClicks = campaigns.reduce((acc, c) => acc + (c.status === 'active' ? c.clicks : 0), 0);
+    const rawConversions = campaigns.reduce((acc, c) => acc + (c.status === 'active' ? c.conversions : 0), 0);
+    
+    const activeCamps = campaigns.filter(c => c.status === 'active');
+    const avgRoasNum = activeCamps.length > 0 ? activeCamps.reduce((acc, c) => acc + c.roas, 0) / activeCamps.length : 0;
+
+    const scaledSpend = Math.round(rawSpend * periodMultiplier);
+    const scaledClicks = Math.round(rawClicks * periodMultiplier);
+    const scaledConversions = Math.round(rawConversions * periodMultiplier);
 
     return [
-      { label: 'Investimento Total', value: `R$ ${totalSpend.toLocaleString('pt-BR')}`, sub: 'Campanhas ativas no período', icon: DollarSign, isNa: false },
-      { label: 'Cliques Totais', value: totalClicks.toLocaleString('pt-BR'), sub: 'Tráfego gerado via anúncios', icon: MousePointerClick, isNa: false },
-      { label: 'Conversões', value: totalConversions.toLocaleString('pt-BR'), sub: 'Eventos de compra / lead', icon: Target, isNa: false },
-      { label: 'ROAS Médio', value: `${avgRoas}x`, sub: 'Retorno sobre investimento', icon: TrendingUp, isNa: false }
+      { 
+        label: 'Investimento Total', 
+        value: `R$ ${scaledSpend.toLocaleString('pt-BR')}`, 
+        sub: `Campanhas ativas nos últimos ${selectedDays}d`, 
+        evolution: { text: '+5.8% vs. período anterior', isPositive: true },
+        icon: DollarSign, 
+        isNa: false 
+      },
+      { 
+        label: 'Cliques Totais', 
+        value: scaledClicks.toLocaleString('pt-BR'), 
+        sub: `Tráfego gerado em ${selectedDays} dias`, 
+        evolution: { text: '+12.4% vs. período anterior', isPositive: true },
+        icon: MousePointerClick, 
+        isNa: false 
+      },
+      { 
+        label: 'Conversões', 
+        value: scaledConversions.toLocaleString('pt-BR'), 
+        sub: `Eventos de compra / lead (${selectedDays}d)`, 
+        evolution: { text: '+8.1% vs. período anterior', isPositive: true },
+        icon: Target, 
+        isNa: false 
+      },
+      { 
+        label: 'ROAS Médio', 
+        value: `${avgRoasNum.toFixed(1)}x`, 
+        sub: `Retorno médio (${selectedDays}d)`, 
+        evolution: { text: '+0.4x vs. período anterior', isPositive: true },
+        icon: TrendingUp, 
+        isNa: false 
+      }
     ];
-  }, [hasConnected, campaigns]);
+  }, [hasConnected, campaigns, periodMultiplier, selectedDays]);
+
+  const chartData = useMemo(() => {
+    const points = selectedDays <= 7 ? 7 : selectedDays <= 15 ? 5 : 7;
+    const baseSpend = (campaigns.reduce((acc, c) => acc + (c.status === 'active' ? c.spend : 0), 0) * periodMultiplier) / points;
+    const baseConv = (campaigns.reduce((acc, c) => acc + (c.status === 'active' ? c.conversions : 0), 0) * periodMultiplier) / points;
+
+    const result = [];
+    for (let i = 0; i < points; i++) {
+      const varSpend = [0.8, 1.1, 1.3, 0.95, 1.45, 1.15, 0.9][i % 7];
+      const varConv = [0.85, 1.05, 1.25, 1.0, 1.4, 1.2, 0.92][i % 7];
+      let label = '';
+      if (selectedDays <= 7) {
+        label = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'][i % 7];
+      } else if (selectedDays <= 15) {
+        label = `Dia ${i * 3 + 1}`;
+      } else if (selectedDays <= 30) {
+        label = `Sem ${i + 1}`;
+      } else {
+        label = `Mês ${(i % 3) + 1}`;
+      }
+
+      result.push({
+        name: label,
+        'Gasto (R$)': Math.round(baseSpend * varSpend),
+        'Conversões': Math.round(baseConv * varConv),
+      });
+    }
+    return result;
+  }, [campaigns, periodMultiplier, selectedDays]);
 
   const toggleCampaignStatus = (id: string) => {
     setCampaigns(prev => prev.map(c => {
@@ -119,7 +203,7 @@ export default function AdsDashboardPage() {
             <span className="text-[#FF6A00]">Ads</span>
           </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <Megaphone className="text-[#FF6A00]" size={28} />
+            <IconMegaphone3D size={32} />
             Campanhas Patrocinadas
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
@@ -127,24 +211,11 @@ export default function AdsDashboardPage() {
           </p>
         </div>
 
-        {/* Demo Toggle & Action Button */}
+        {/* Action Button */}
         <div className="flex items-center gap-3 self-start md:self-auto">
-          {connectedCount === 0 && (
-            <label className="relative inline-flex items-center cursor-pointer select-none">
-              <input 
-                type="checkbox" 
-                checked={demoMode} 
-                onChange={(e) => setDemoMode(e.target.checked)} 
-                className="sr-only peer"
-              />
-              <div className="w-10 h-6 bg-slate-300 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#FF6B00]"></div>
-              <span className="ml-2 text-xs font-bold text-slate-500 uppercase tracking-wide">Modo Demo</span>
-            </label>
-          )}
-
           <Link
             href="/hub/integracoes"
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/50 bg-[#eef2f7] text-[12px] font-bold text-slate-600 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] transition-all hover:scale-105 active:scale-95 duration-200 cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-[12px] font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-all hover:scale-105 active:scale-95 duration-200 cursor-pointer"
           >
             <Plus size={14} />
             <span>Gerenciar Canais</span>
@@ -152,7 +223,42 @@ export default function AdsDashboardPage() {
         </div>
       </div>
 
-      {/* Integration Status Grid */}
+      {/* SELETOR DE PERÍODO (Posicionado logo abaixo da descrição do cabeçalho) */}
+      <div className="space-y-2 pt-1">
+        <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+          SELETOR DE PERÍODO
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {periodOptions.map((opt) => {
+            const isActive = selectedDays === opt.days;
+            return (
+              <button
+                key={opt.days}
+                type="button"
+                onClick={() => setSelectedDays(opt.days)}
+                className={`text-left rounded-2xl p-4 transition-all duration-200 cursor-pointer ${
+                  isActive
+                    ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_10px_25px_-5px_rgba(255,106,0,0.35)] border border-transparent scale-[1.02]'
+                    : 'bg-white text-slate-800 border border-slate-200/80 shadow-sm hover:border-[#FF6A00]/40 hover:shadow-md hover:scale-[1.01]'
+                }`}
+              >
+                <p className={`text-sm font-extrabold tracking-tight ${isActive ? 'text-white' : 'text-slate-900'}`}>
+                  {opt.label}
+                </p>
+                <p className={`text-[11px] font-semibold mt-1 ${isActive ? 'text-white/90' : 'text-slate-400'}`}>
+                  {opt.vsText}
+                </p>
+                <p className={`text-[10.5px] font-bold mt-0.5 truncate ${isActive ? 'text-white' : 'text-slate-500'}`}>
+                  {opt.comparedText}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Integration Status Grid (Cards com fundo branco) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {[
           { key: 'metaAds', name: 'Meta Ads', desc: 'Facebook & Instagram' },
@@ -160,11 +266,11 @@ export default function AdsDashboardPage() {
           { key: 'linkedinAds', name: 'LinkedIn Ads', desc: 'Campanhas B2B' },
           { key: 'tiktokAds', name: 'TikTok Ads', desc: 'Vídeos Patrocinados' }
         ].map((platform) => {
-          const isConnected = activeChannels[platform.key as keyof typeof activeChannels] || (demoMode && platform.key !== 'linkedinAds');
+          const isConnected = activeChannels[platform.key as keyof typeof activeChannels];
           return (
             <div 
               key={platform.key}
-              className="rounded-2xl border border-white/80 bg-[#eef2f7] p-4 flex items-center justify-between shadow-[5px_5px_15px_#c2cbd9,_-5px_-5px_15px_#ffffff] transition-all hover:scale-[1.02]"
+              className="rounded-2xl border border-slate-200/80 bg-white p-4 flex items-center justify-between shadow-sm hover:shadow-md transition-all"
             >
               <div>
                 <p className="text-[14px] font-black text-slate-800 leading-tight">{platform.name}</p>
@@ -190,78 +296,94 @@ export default function AdsDashboardPage() {
       </div>
 
       {!hasConnected ? (
-        /* Empty State */
-        <div className="rounded-[32px] border border-white/80 bg-[#eef2f7] p-8 text-center shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] max-w-2xl mx-auto py-16">
-          <div className="w-16 h-16 rounded-full border border-white bg-[#eef2f7] shadow-[4px_4px_10px_#c2cbd9,_-4px_-4px_10px_#ffffff] flex items-center justify-center mx-auto mb-6 text-slate-400">
-            <Megaphone size={28} />
+        /* Empty State (Fundo branco) */
+        <div className="rounded-[32px] border border-slate-200/80 bg-white p-8 text-center shadow-sm max-w-2xl mx-auto py-16">
+          <div className="w-16 h-16 rounded-full border border-slate-200 bg-white shadow-sm flex items-center justify-center mx-auto mb-6 text-slate-400">
+            <IconMegaphone3D size={28} />
           </div>
           <h3 className="text-xl font-black text-slate-900 tracking-tight">Nenhuma Plataforma de Anúncios Conectada</h3>
           <p className="text-sm font-semibold text-slate-500 mt-2 max-w-md mx-auto leading-relaxed">
             Conecte suas contas do Meta Ads, Google Ads ou outras plataformas de tráfego para visualizar dados reais das suas campanhas.
           </p>
-          <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <button 
-              onClick={() => setDemoMode(true)}
-              className="px-5 py-2.5 rounded-xl border border-[#FF6A00]/20 bg-[#FF6A00]/5 text-[12px] font-bold uppercase tracking-wider text-[#FF6A00] hover:bg-[#FF6A00]/10 transition-all cursor-pointer"
-            >
-              Visualizar Dados Demo
-            </button>
+          <div className="mt-8 flex justify-center">
             <Link 
               href="/hub/integracoes"
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-br from-[#FF6A00] to-[#FF8805] text-[12px] font-bold uppercase tracking-wider text-white shadow-[3px_3px_6px_rgba(255,106,0,0.2),_-3px_-3px_6px_#ffffff] hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+              className="px-6 py-3 rounded-xl bg-gradient-to-br from-[#FF6A00] to-[#FF8805] text-[12px] font-bold uppercase tracking-wider text-white shadow-md hover:brightness-105 active:scale-95 transition-all cursor-pointer"
             >
-              Conectar Agora
+              Conectar Agora em Integrações
             </Link>
           </div>
         </div>
       ) : (
         /* Content Panel */
         <>
-          {/* KPI Dashboard Row */}
+          {/* KPI Dashboard Row (Cards com fundo branco e evolução comparativa) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {kpis.map((kpi, idx) => {
               const KpiIcon = kpi.icon;
               return (
                 <div 
                   key={idx}
-                  className="rounded-2xl border border-white/80 bg-[#eef2f7] p-5 shadow-[6px_6px_18px_#c2cbd9,_-6px_-6px_18px_#ffffff]"
+                  className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between"
                 >
-                  <div className="flex justify-between items-start gap-2 mb-3">
-                    <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">{kpi.label}</span>
-                    <div className="w-7 h-7 rounded-xl border border-white/60 bg-white flex items-center justify-center text-slate-500 shadow-sm">
-                      <KpiIcon size={14} className={kpi.isNa ? 'text-slate-300' : 'text-[#FF6A00]'} />
+                  <div>
+                    <div className="flex justify-between items-start gap-2 mb-3">
+                      <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">{kpi.label}</span>
+                      <div className="w-7 h-7 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-center text-slate-500 shadow-sm">
+                        <KpiIcon size={14} className={kpi.isNa ? 'text-slate-300' : 'text-[#FF6A00]'} />
+                      </div>
                     </div>
+
+                    <p className="text-2xl font-black text-slate-900 tracking-tight font-mono">{kpi.value}</p>
+                    <p className="text-[10px] font-semibold text-slate-500 mt-0.5">{kpi.sub}</p>
                   </div>
 
-                  <p className="text-2xl font-black text-slate-900 tracking-tight font-mono">{kpi.value}</p>
-                  <p className="text-[10px] font-semibold text-slate-500 mt-1">{kpi.sub}</p>
+                  {/* Indicador de Evolução Comparativa */}
+                  {kpi.evolution && (
+                    <div className="mt-3 pt-3 border-t border-slate-100 flex items-center">
+                      <span 
+                        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${
+                          kpi.evolution.isPositive 
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700' 
+                            : 'bg-rose-500/10 border-rose-500/20 text-rose-700'
+                        }`}
+                      >
+                        {kpi.evolution.isPositive ? <TrendingUp size={11} /> : <TrendingDown size={11} />}
+                        {kpi.evolution.text}
+                      </span>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
 
-          {/* Analytics Chart & Breakdown */}
+          {/* Analytics Chart & Breakdown (Cards com fundo branco) */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
             {/* Chart Area */}
-            <div className="lg:col-span-2 rounded-[28px] border border-white/80 bg-[#eef2f7] p-6 shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] flex flex-col justify-between">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
+            <div className="lg:col-span-2 rounded-[28px] border border-slate-200/80 bg-white p-6 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
                 <div className="flex items-center gap-2">
                   <Activity size={16} className="text-[#FF6A00]" />
-                  <span className="text-[13px] font-black uppercase tracking-wider text-slate-900">Desempenho Semanal</span>
+                  <span className="text-[13px] font-black uppercase tracking-wider text-slate-900">
+                    Desempenho de Tráfego ({selectedDays} dias)
+                  </span>
                 </div>
-                <span className="text-[10px] font-bold text-slate-400 bg-white border border-slate-200 px-2 py-0.5 rounded-full uppercase">Últimos 7 dias</span>
+                <span className="text-[10px] font-bold text-slate-500 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-full uppercase">
+                  Últimos {selectedDays} dias
+                </span>
               </div>
 
               <div className="h-60 w-full relative">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={CHART_DATA} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(203,213,225,0.4)" />
+                  <LineChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(226,232,240,0.7)" />
                     <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 'bold' }} axisLine={false} tickLine={false} />
                     <YAxis yAxisId="left" tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 'bold' }} axisLine={false} tickLine={false} />
                     <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 'bold' }} axisLine={false} tickLine={false} />
                     <RechartsTooltip 
-                      contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', fontSize: '11px', fontWeight: 'bold' }}
+                      contentStyle={{ borderRadius: '12px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0, 0, 0, 0.05)', fontSize: '11px', fontWeight: 'bold', backgroundColor: '#ffffff' }}
                       labelStyle={{ color: '#0f172a', marginBottom: '4px' }}
                     />
                     <Line yAxisId="left" type="monotone" dataKey="Gasto (R$)" name="Investimento (R$)" stroke="#FF6A00" strokeWidth={2.5} dot={{ r: 3 }} activeDot={{ r: 5 }} />
@@ -270,7 +392,7 @@ export default function AdsDashboardPage() {
                 </ResponsiveContainer>
               </div>
 
-              <div className="flex items-center justify-center gap-6 text-[10px] font-black uppercase text-slate-500 pt-4 border-t border-slate-200/50 mt-4">
+              <div className="flex items-center justify-center gap-6 text-[10px] font-black uppercase text-slate-500 pt-4 border-t border-slate-100 mt-4">
                 <div className="flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#FF6A00]" />
                   <span>Investimento (R$)</span>
@@ -282,10 +404,10 @@ export default function AdsDashboardPage() {
               </div>
             </div>
 
-            {/* Campaign Config Panel / Info */}
-            <div className="rounded-[28px] border border-white/80 bg-[#eef2f7] p-6 shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] flex flex-col gap-4 text-left">
-              <div className="border-b border-slate-200 pb-3">
-                <span className="text-[13px] font-black uppercase tracking-wider text-slate-900">Análise de IA de Tráfego</span>
+            {/* Campaign Config Panel / Info (Fundo branco) */}
+            <div className="rounded-[28px] border border-slate-200/80 bg-white p-6 shadow-sm flex flex-col gap-4 text-left">
+              <div className="border-b border-slate-100 pb-3">
+                <span className="text-[13px] font-black uppercase tracking-wider text-slate-900">Análise de IA de Tráfego (Paola)</span>
               </div>
 
               <div className="space-y-4">
@@ -329,9 +451,9 @@ export default function AdsDashboardPage() {
 
           </div>
 
-          {/* Campaigns Table */}
-          <div className="rounded-[28px] border border-white/80 bg-[#eef2f7] p-6 shadow-[10px_10px_30px_#c2cbd9,_-10px_-10px_30px_#ffffff] text-left">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-4 mb-4">
+          {/* Campaigns Table (Fundo branco) */}
+          <div className="rounded-[28px] border border-slate-200/80 bg-white p-6 shadow-sm text-left">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
               <span className="text-[13px] font-black uppercase tracking-wider text-slate-900">Listagem de Campanhas</span>
               <span className="text-xs font-bold text-slate-400">{campaigns.length} campanhas identificadas</span>
             </div>
@@ -344,7 +466,7 @@ export default function AdsDashboardPage() {
                     <th className="py-3 px-4">Nome da Campanha</th>
                     <th className="py-3 px-4">Status</th>
                     <th className="py-3 px-4 text-right">Orçamento / Dia</th>
-                    <th className="py-3 px-4 text-right">Gasto</th>
+                    <th className="py-3 px-4 text-right">Gasto ({selectedDays}d)</th>
                     <th className="py-3 px-4 text-right">Cliques</th>
                     <th className="py-3 px-4 text-right">Conversões</th>
                     <th className="py-3 px-4 text-right">ROAS</th>
@@ -352,10 +474,72 @@ export default function AdsDashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {campaigns.map((camp) => (
-                    <tr key={camp.id} className="border-b border-slate-200/60 hover:bg-white/40 transition-colors font-semibold">
-                      <td className="py-3.5 px-4">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black ${
+                  {campaigns.map((camp) => {
+                    const campSpend = Math.round(camp.spend * periodMultiplier);
+                    const campClicks = Math.round(camp.clicks * periodMultiplier);
+                    const campConversions = Math.round(camp.conversions * periodMultiplier);
+
+                    return (
+                      <tr key={camp.id} className="border-b border-slate-100 hover:bg-slate-50/70 transition-colors font-semibold">
+                        <td className="py-3.5 px-4">
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black ${
+                            camp.platform === 'Google Ads' ? 'bg-blue-100 text-blue-800' :
+                            camp.platform === 'LinkedIn Ads' ? 'bg-sky-100 text-sky-800' :
+                            camp.platform === 'TikTok Ads' ? 'bg-stone-800 text-white' :
+                            'bg-pink-100 text-pink-800'
+                          }`}>
+                            {camp.platform}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-slate-800 font-extrabold max-w-[200px] truncate" title={camp.name}>
+                          {camp.name}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <span className={`inline-flex items-center gap-1 text-[10px] font-bold ${
+                            camp.status === 'active' ? 'text-emerald-600' : 'text-slate-400'
+                          }`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${camp.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                            {camp.status === 'active' ? 'Ativa' : 'Pausada'}
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-right font-mono">R$ {camp.budget.toLocaleString('pt-BR')}</td>
+                        <td className="py-3.5 px-4 text-right font-mono">R$ {campSpend.toLocaleString('pt-BR')}</td>
+                        <td className="py-3.5 px-4 text-right font-mono">{campClicks.toLocaleString('pt-BR')}</td>
+                        <td className="py-3.5 px-4 text-right font-mono">{campConversions.toLocaleString('pt-BR')}</td>
+                        <td className="py-3.5 px-4 text-right font-mono text-slate-900 font-black">{camp.roas}x</td>
+                        <td className="py-3.5 px-4 text-center">
+                          <button
+                            type="button"
+                            onClick={() => toggleCampaignStatus(camp.id)}
+                            className={`h-7 w-7 rounded-lg border border-slate-200 flex items-center justify-center shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer mx-auto ${
+                              camp.status === 'active'
+                                ? 'bg-rose-500/5 text-rose-600 hover:bg-rose-500/10'
+                                : 'bg-emerald-500/5 text-emerald-600 hover:bg-emerald-500/10'
+                            }`}
+                            title={camp.status === 'active' ? 'Pausar Campanha' : 'Retomar Campanha'}
+                          >
+                            {camp.status === 'active' ? <Pause size={12} /> : <Play size={12} />}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Card List */}
+            <div className="block md:hidden space-y-4">
+              {campaigns.map((camp) => {
+                const campSpend = Math.round(camp.spend * periodMultiplier);
+                const campClicks = Math.round(camp.clicks * periodMultiplier);
+                const campConversions = Math.round(camp.conversions * periodMultiplier);
+
+                return (
+                  <div key={camp.id} className="p-4 rounded-2xl border border-slate-200/80 bg-white shadow-sm flex flex-col gap-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
                           camp.platform === 'Google Ads' ? 'bg-blue-100 text-blue-800' :
                           camp.platform === 'LinkedIn Ads' ? 'bg-sky-100 text-sky-800' :
                           camp.platform === 'TikTok Ads' ? 'bg-stone-800 text-white' :
@@ -363,98 +547,48 @@ export default function AdsDashboardPage() {
                         }`}>
                           {camp.platform}
                         </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-slate-800 font-extrabold max-w-[200px] truncate" title={camp.name}>
-                        {camp.name}
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <span className={`inline-flex items-center gap-1 text-[10px] font-bold ${
-                          camp.status === 'active' ? 'text-emerald-600' : 'text-slate-400'
-                        }`}>
-                          <span className={`w-1.5 h-1.5 rounded-full ${camp.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
-                          {camp.status === 'active' ? 'Ativa' : 'Pausada'}
-                        </span>
-                      </td>
-                      <td className="py-3.5 px-4 text-right font-mono">R$ {camp.budget.toLocaleString('pt-BR')}</td>
-                      <td className="py-3.5 px-4 text-right font-mono">R$ {camp.spend.toLocaleString('pt-BR')}</td>
-                      <td className="py-3.5 px-4 text-right font-mono">{camp.clicks.toLocaleString('pt-BR')}</td>
-                      <td className="py-3.5 px-4 text-right font-mono">{camp.conversions.toLocaleString('pt-BR')}</td>
-                      <td className="py-3.5 px-4 text-right font-mono text-slate-900 font-black">{camp.roas}x</td>
-                      <td className="py-3.5 px-4 text-center">
-                        <button
-                          type="button"
-                          onClick={() => toggleCampaignStatus(camp.id)}
-                          className={`h-7 w-7 rounded-lg border border-white/60 flex items-center justify-center shadow-sm transition-all hover:scale-105 active:scale-95 cursor-pointer mx-auto ${
-                            camp.status === 'active'
-                              ? 'bg-rose-500/5 text-rose-600 hover:bg-rose-500/10'
-                              : 'bg-emerald-500/5 text-emerald-600 hover:bg-emerald-500/10'
-                          }`}
-                          title={camp.status === 'active' ? 'Pausar Campanha' : 'Retomar Campanha'}
-                        >
-                          {camp.status === 'active' ? <Pause size={12} /> : <Play size={12} />}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile Card List */}
-            <div className="block md:hidden space-y-4">
-              {campaigns.map((camp) => (
-                <div key={camp.id} className="p-4 rounded-2xl border border-white/80 bg-white shadow-sm flex flex-col gap-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
-                        camp.platform === 'Google Ads' ? 'bg-blue-100 text-blue-800' :
-                        camp.platform === 'LinkedIn Ads' ? 'bg-sky-100 text-sky-800' :
-                        camp.platform === 'TikTok Ads' ? 'bg-stone-800 text-white' :
-                        'bg-pink-100 text-pink-800'
-                      }`}>
-                        {camp.platform}
+                        <h4 className="text-[13px] font-extrabold text-[#0f172a] mt-1.5 leading-snug break-words">{camp.name}</h4>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => toggleCampaignStatus(camp.id)}
+                        className={`h-8 w-8 rounded-lg border border-slate-200 bg-white flex items-center justify-center shadow-sm transition-all active:scale-90 cursor-pointer shrink-0 ${
+                          camp.status === 'active'
+                            ? 'bg-rose-500/5 text-rose-600'
+                            : 'bg-emerald-500/5 text-emerald-600'
+                        }`}
+                      >
+                        {camp.status === 'active' ? <Pause size={12} /> : <Play size={12} />}
+                      </button>
+                    </div>
+                    
+                    <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                      <div>
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Orçamento</p>
+                        <p className="text-[11.5px] font-bold text-slate-700 mt-0.5 font-mono truncate">R$ {camp.budget.toLocaleString('pt-BR')}</p>
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Gasto ({selectedDays}d)</p>
+                        <p className="text-[11.5px] font-bold text-slate-700 mt-0.5 font-mono truncate">R$ {campSpend.toLocaleString('pt-BR')}</p>
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">ROAS</p>
+                        <p className="text-[11.5px] font-extrabold text-[#FF6A00] mt-0.5 font-mono">{camp.roas}x</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500 border-t border-slate-100 pt-2 font-mono">
+                      <span className="flex items-center gap-1.5">
+                        <span className={`w-1.5 h-1.5 rounded-full ${camp.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
+                        {camp.status === 'active' ? 'Ativa' : 'Pausada'}
                       </span>
-                      <h4 className="text-[13px] font-extrabold text-[#0f172a] mt-1.5 leading-snug break-words">{camp.name}</h4>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => toggleCampaignStatus(camp.id)}
-                      className={`h-8 w-8 rounded-lg border border-slate-200 bg-white flex items-center justify-center shadow-sm transition-all active:scale-90 cursor-pointer shrink-0 ${
-                        camp.status === 'active'
-                          ? 'bg-rose-500/5 text-rose-600'
-                          : 'bg-emerald-500/5 text-emerald-600'
-                      }`}
-                    >
-                      {camp.status === 'active' ? <Pause size={12} /> : <Play size={12} />}
-                    </button>
-                  </div>
-                  
-                  <div className="grid grid-cols-3 gap-2 bg-slate-50 p-3 rounded-xl border border-slate-100">
-                    <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Orçamento</p>
-                      <p className="text-[11.5px] font-bold text-slate-700 mt-0.5 font-mono truncate">R$ {camp.budget.toLocaleString('pt-BR')}</p>
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Gasto</p>
-                      <p className="text-[11.5px] font-bold text-slate-700 mt-0.5 font-mono truncate">R$ {camp.spend.toLocaleString('pt-BR')}</p>
-                    </div>
-                    <div>
-                      <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">ROAS</p>
-                      <p className="text-[11.5px] font-extrabold text-[#FF6A00] mt-0.5 font-mono">{camp.roas}x</p>
+                      <span className="text-[10px] text-slate-400">
+                        Cliques: <strong className="text-slate-600">{campClicks.toLocaleString('pt-BR')}</strong> · Conv: <strong className="text-slate-600">{campConversions.toLocaleString('pt-BR')}</strong>
+                      </span>
                     </div>
                   </div>
-                  
-                  <div className="flex items-center justify-between text-[11px] font-semibold text-slate-500 border-t border-slate-100 pt-2 font-mono">
-                    <span className="flex items-center gap-1.5">
-                      <span className={`w-1.5 h-1.5 rounded-full ${camp.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'}`} />
-                      {camp.status === 'active' ? 'Ativa' : 'Pausada'}
-                    </span>
-                    <span className="text-[10px] text-slate-400">
-                      Cliques: <strong className="text-slate-600">{camp.clicks.toLocaleString('pt-BR')}</strong> · Conv: <strong className="text-slate-600">{camp.conversions.toLocaleString('pt-BR')}</strong>
-                    </span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </>

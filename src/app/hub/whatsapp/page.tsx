@@ -388,30 +388,33 @@ export default function WhatsAppHubPage() {
     <div className="flex flex-col gap-5 max-w-[1600px] mx-auto p-4 md:p-6 text-slate-800">
       {/* ── Header Title & Connection Status Banner ── */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white/80 backdrop-blur-xl border border-white/60 p-5 rounded-3xl shadow-[4px_4px_12px_#d1d9e6,_-4px_-4px_12px_#ffffff]">
-        <div className="flex items-center gap-3.5">
-          <div className="p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 shadow-inner">
-            <IconWhatsapp3D size={38} />
+        <div>
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+            <span>Operação</span>
+            <ChevronRight size={12} />
+            <span className="text-[#FF6A00]">WhatsApp</span>
           </div>
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-2xl font-black text-slate-900 tracking-tight">WhatsApp Live &amp; Agentes IA</h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200">
-                Atendimento Ao Vivo
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+              <IconWhatsapp3D size={32} />
+              WhatsApp Live &amp; Agentes IA
+            </h1>
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200">
+              Atendimento Ao Vivo
+            </span>
+            {isMasterOwner ? (
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-600 text-white shadow-xs">
+                👑 Canal Mestre do Site (avante@neuroads.com.br)
               </span>
-              {isMasterOwner ? (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-600 text-white shadow-xs">
-                  👑 Canal Mestre do Site (avante@neuroads.com.br)
-                </span>
-              ) : (
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-800 border border-purple-200">
-                  🔒 Canal Privado ({user?.email || 'Conta'})
-                </span>
-              )}
-            </div>
-            <p className="text-xs font-semibold text-slate-500 mt-0.5">
-              Supervisione as conversas em tempo real entre seus leads e os Agentes IA. {isMasterOwner ? 'Você está gerenciando o canal central do Widget da página inicial do site.' : 'Você está visualizando seu ambiente de atendimento privado.'}
-            </p>
+            ) : (
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-purple-100 text-purple-800 border border-purple-200">
+                🔒 Canal Privado ({user?.email || 'Conta'})
+              </span>
+            )}
           </div>
+          <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
+            Supervisione as conversas em tempo real entre seus leads e os Agentes IA. {isMasterOwner ? 'Você está gerenciando o canal central do Widget da página inicial do site.' : 'Você está visualizando seu ambiente de atendimento privado.'}
+          </p>
         </div>
 
         {/* WhatsApp Connection Card Indicator */}

@@ -4,12 +4,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Layers, Plus, Trash2, ArrowRight, CheckCircle2,
-  Bot, ShieldAlert, Send, Play, Cpu, Trash, X
+  Bot, ShieldAlert, Send, Play, Cpu, Trash, X, ChevronRight
 } from 'lucide-react';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { getFirebaseDb } from '../../../lib/firebase';
 import { subscribeToCRMLeads } from '../../../lib/crm-sync';
+import { IconFunnel3D } from '../../../components/hub/HubUiIcons3D';
 
 /* ─── 3D KPI icons (plastic/clay style) ──────────────────────────────────── */
 
@@ -601,21 +602,23 @@ export default function FunilVendasPage() {
       {/* ── Header ── */}
       <div className="py-8 border-b border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full border border-white/60 bg-[#eef2f7] shadow-[2px_2px_5px_#d1d9e6,_-2px_-2px_5px_#ffffff]">
-            <Layers size={11} className="text-[#FF6A00]" />
-            <span className="text-[10px] font-black uppercase tracking-[0.15em] text-[#FF6A00]">
-              CRM Autônomo · NeuroAds
-            </span>
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+            <span>Operação</span>
+            <ChevronRight size={12} />
+            <span className="text-[#FF6A00]">CRM</span>
           </div>
-          <h1 className="text-[26px] font-black text-[#0f172a] tracking-tight">Funil de Vendas</h1>
-          <p className="text-[13px] text-slate-500 font-semibold mt-1 max-w-2xl">
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+            <IconFunnel3D size={32} />
+            Funil de Vendas
+          </h1>
+          <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed max-w-2xl">
             Acompanhe a jornada dos leads capturados pelas operações dos Agentes IA. Execute ações dos agentes em tempo real para conduzi-los até o fechamento.
           </p>
         </div>
 
         <button
           onClick={() => setShowAddForm(!showAddForm)}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[12px] font-black text-white hover:brightness-110 active:scale-95 transition-all shadow-[0_2px_8px_rgba(255,106,0,0.25)] cursor-pointer"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[12px] font-black text-white hover:brightness-110 active:scale-95 transition-all shadow-[0_2px_8px_rgba(255,106,0,0.25)] cursor-pointer self-start md:self-auto"
           style={{ background: 'linear-gradient(135deg, #FF4D00, #FF8805)' }}
         >
           <Plus size={14} /> Novo Lead

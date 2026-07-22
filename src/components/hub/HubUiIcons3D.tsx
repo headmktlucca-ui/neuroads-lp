@@ -713,4 +713,97 @@ export function IconWhatsapp3D(p: IconProps) {
   );
 }
 
+/* ─── Redes Sociais — Nós de conexão 3D Laranja ───────────────────── */
+export function IconSocialMedia3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-social-orange" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF9A55" /><stop offset="1" stopColor="#E63E00" />
+        </linearGradient>
+        <linearGradient id="hui-social-shine" x1="10" y1="8" x2="30" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFFFFF" stopOpacity="0.65" />
+          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0.0" />
+        </linearGradient>
+      </defs>
+
+      {/* Sombras de extrusão 3D das hastes de conexão */}
+      <line x1="14" y1="24" x2="34" y2="12" stroke="#601000" strokeWidth="5" strokeLinecap="round" opacity="0.35" />
+      <line x1="14" y1="24" x2="34" y2="36" stroke="#601000" strokeWidth="5" strokeLinecap="round" opacity="0.35" />
+
+      {/* Hastes de conexão 3D */}
+      <line x1="14" y1="24" x2="34" y2="12" stroke="url(#hui-social-orange)" strokeWidth="4.5" strokeLinecap="round" />
+      <line x1="14" y1="24" x2="34" y2="36" stroke="url(#hui-social-orange)" strokeWidth="4.5" strokeLinecap="round" />
+
+      {/* Nó principal esquerda 3D */}
+      <circle cx="14" cy="24" r="9" fill="url(#hui-social-orange)" />
+      <circle cx="14" cy="24" r="9" fill="url(#hui-social-shine)" />
+      <circle cx="14" cy="24" r="4.5" fill="white" fillOpacity="0.85" />
+      <ellipse cx="12" cy="19" rx="3.5" ry="1.8" fill="white" fillOpacity="0.5" />
+
+      {/* Nó superior direita 3D */}
+      <circle cx="34" cy="12" r="7" fill="url(#hui-social-orange)" />
+      <circle cx="34" cy="12" r="7" fill="url(#hui-social-shine)" />
+      <circle cx="34" cy="12" r="3.2" fill="white" fillOpacity="0.85" />
+      <ellipse cx="32" cy="9" rx="2.5" ry="1.3" fill="white" fillOpacity="0.5" />
+
+      {/* Nó inferior direita 3D */}
+      <circle cx="34" cy="36" r="7" fill="url(#hui-social-orange)" />
+      <circle cx="34" cy="36" r="7" fill="url(#hui-social-shine)" />
+      <circle cx="34" cy="36" r="3.2" fill="white" fillOpacity="0.85" />
+      <ellipse cx="32" cy="33" rx="2.5" ry="1.3" fill="white" fillOpacity="0.5" />
+
+      {/* Sombra de base */}
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#E63E00" fillOpacity="0.22" />
+    </Svg>
+  );
+}
+
+/* ─── Campanhas Patrocinadas / Ads — Megafone 3D Laranja ───────────── */
+export function IconMegaphone3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-mega-orange" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FF9A55" /><stop offset="1" stopColor="#E63E00" />
+        </linearGradient>
+        <linearGradient id="hui-mega-shine" x1="10" y1="8" x2="30" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFFFFF" stopOpacity="0.65" />
+          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0.0" />
+        </linearGradient>
+      </defs>
+
+      {/* Sombra de projeção 3D do cabo e cone */}
+      <path d="M12 18 L28 10 L34 26 L12 28 Z" fill="#601000" opacity="0.3" transform="translate(1, 2)" />
+      <path d="M16 28 L14 38 L20 37 L20 28 Z" fill="#601000" opacity="0.3" transform="translate(1, 2)" />
+
+      {/* Cabo do megafone 3D */}
+      <path d="M16 27 L14 37 L20 36 L20 27 Z" fill="url(#hui-mega-orange)" />
+      <rect x="15" y="27" width="5" height="10" rx="2" fill="white" fillOpacity="0.3" />
+
+      {/* Cone principal 3D */}
+      <path d="M11 17 L28 9 L33 25 L11 27 Z" fill="url(#hui-mega-orange)" />
+      <path d="M11 17 L28 9 L33 25 L11 27 Z" fill="url(#hui-mega-shine)" />
+
+      {/* Abertura traseira 3D */}
+      <ellipse cx="11" cy="22" rx="3.5" ry="5" fill="#992600" />
+      <ellipse cx="11" cy="22" rx="2" ry="3.5" fill="#FFE5D6" fillOpacity="0.9" />
+
+      {/* Anel da boca frontal 3D */}
+      <ellipse cx="30.5" cy="17" rx="4.5" ry="8" fill="url(#hui-mega-orange)" />
+      <ellipse cx="30.5" cy="17" rx="4.5" ry="8" fill="url(#hui-mega-shine)" />
+      <ellipse cx="29.5" cy="14" rx="2" ry="4" fill="white" fillOpacity="0.5" />
+
+      {/* Ondas de som / emissão 3D */}
+      <path d="M37 11 A10 10 0 0 1 37 23" stroke="#FF9A55" strokeWidth="3" strokeLinecap="round" fill="none" />
+      <path d="M42 7 A16 16 0 0 1 42 27" stroke="url(#hui-mega-orange)" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+
+      {/* Sombra de base */}
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#E63E00" fillOpacity="0.2" />
+    </Svg>
+  );
+}
+
+
+
 

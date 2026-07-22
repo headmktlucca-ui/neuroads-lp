@@ -10,9 +10,9 @@ import { useAuth } from '../../context/AuthContext';
 import {
   User, Mail, Phone, Crown, Activity, Workflow, Fingerprint,
   ShieldAlert, Trash2, Building2, Globe, CreditCard, DollarSign,
-  ShieldCheck, Calendar, Gauge
+  ShieldCheck, Calendar, Gauge, ChevronRight
 } from 'lucide-react';
-import { IconUserBadge3D, IconGear3D } from './HubUiIcons3D';
+import { IconUserBadge3D, IconGear3D, IconBook3D } from './HubUiIcons3D';
 import { getFirebaseDb } from '../../lib/firebase';
 import { HTTPS_PREFIX, isHttpsPlaceholderOnly, normalizeHttpsMaskedUrlInput } from '../../lib/url-mask';
 import { getHubProfileSummary } from '../../lib/hub-profile';
@@ -319,20 +319,22 @@ export default function SettingsHubPage() {
 
   return (
     <div className="w-full space-y-6">
-      {/* Header */}
-      <header className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white border border-slate-200">
-            <IconGear3D size={30} />
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
+        <div>
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+            <span>Infraestrutura</span>
+            <ChevronRight size={12} />
+            <span className="text-[#FF6A00]">{activeTab === 'conhecimento' ? 'Base de Conhecimento' : 'Configurações'}</span>
           </div>
-          <div>
-            <h1 className="text-xl font-black tracking-tight text-[#0f172a] leading-none">
-              Configurações
-            </h1>
-            <p className="text-[11px] font-black text-slate-500 mt-1 uppercase tracking-widest">
-              Gerencie seu perfil, detalhes institucionais e financeiro
-            </p>
-          </div>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+            {activeTab === 'conhecimento' ? <IconBook3D size={32} /> : <IconGear3D size={32} />}
+            {activeTab === 'conhecimento' ? 'Base de Conhecimento' : 'Configurações'}
+          </h1>
+          <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
+            {activeTab === 'conhecimento'
+              ? 'Documentos e ativos da sua marca que alimentam com contexto as decisões dos Agentes IA.'
+              : 'Gerencie seu perfil, detalhes institucionais, plano e preferências da sua conta.'}
+          </p>
         </div>
       </header>
 

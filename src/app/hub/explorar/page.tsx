@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { useAuth } from '../../../context/AuthContext';
 import { getFirebaseDb } from '../../../lib/firebase';
 import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
+import { IconSparkles3D } from '../../../components/hub/HubUiIcons3D';
 
 /* ── Types ── */
 type Priority = 'alta' | 'media' | 'baixa';
@@ -323,13 +324,18 @@ export default function OportunidadesPage() {
     return (
       <div className="space-y-6 w-full">
         {/* Header */}
-        <div className="flex items-start justify-between gap-4 flex-wrap">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles size={18} className="text-[#FF6A00]" />
-              <h1 className="text-[22px] font-black text-[#1e293b]">Oportunidades</h1>
+            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+              <span>Visão Geral</span>
+              <ChevronRight size={12} />
+              <span className="text-[#FF6A00]">Oportunidades</span>
             </div>
-            <p className="text-[13px] text-slate-500 font-semibold">
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+              <IconSparkles3D size={32} />
+              Oportunidades
+            </h1>
+            <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
               Insights gerados pelos Agentes IA com base nos seus dados integrados — priorizados por impacto.
             </p>
           </div>
@@ -365,18 +371,23 @@ export default function OportunidadesPage() {
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-start justify-between gap-4 flex-wrap"
+        className="flex flex-col md:flex-row md:items-center justify-between gap-4"
       >
         <div>
-          <div className="flex items-center gap-2 mb-1">
-            <Sparkles size={18} className="text-[#FF6A00]" />
-            <h1 className="text-[22px] font-black text-[#1e293b]">Oportunidades</h1>
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
+            <span>Visão Geral</span>
+            <ChevronRight size={12} />
+            <span className="text-[#FF6A00]">Oportunidades</span>
           </div>
-          <p className="text-[13px] text-slate-500 font-semibold">
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+            <IconSparkles3D size={32} />
+            Oportunidades
+          </h1>
+          <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
             Insights gerados pelos Agentes IA com base nos seus dados integrados — priorizados por impacto.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-400">
+        <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-400 self-start md:self-auto">
           <RefreshCw size={12} />
           <span>Atualizado {lastUpdated.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
         </div>
