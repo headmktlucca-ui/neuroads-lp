@@ -387,7 +387,7 @@ export default function WhatsAppHubPage() {
   return (
     <div className="flex flex-col gap-5 max-w-[1600px] mx-auto p-4 md:p-6 text-slate-800">
       {/* ── Header Title & Connection Status Banner ── */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white/80 backdrop-blur-xl border border-white/60 p-5 rounded-3xl shadow-[4px_4px_12px_#d1d9e6,_-4px_-4px_12px_#ffffff]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-8 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
             <span>Operação</span>
@@ -418,7 +418,7 @@ export default function WhatsAppHubPage() {
         </div>
 
         {/* WhatsApp Connection Card Indicator */}
-        <div className="flex items-center gap-3 bg-slate-50 p-2.5 px-4 rounded-2xl border border-slate-200/80 shadow-sm shrink-0 w-full md:w-auto justify-between md:justify-end">
+        <div className="flex items-center gap-3 bg-white p-2.5 px-4 rounded-2xl border border-slate-200/80 shadow-xs shrink-0 w-full md:w-auto justify-between md:justify-end">
           <div className="flex items-center gap-2.5">
             <span className="relative flex h-3 w-3">
               <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isConnected ? 'bg-emerald-400 opacity-75' : 'bg-rose-400 opacity-75'}`}></span>
@@ -436,7 +436,7 @@ export default function WhatsAppHubPage() {
               type="button"
               onClick={syncKapsoMessages}
               disabled={syncingKapso || !isConnected}
-              className="flex items-center gap-1.5 text-[11px] font-black text-slate-700 hover:text-slate-900 transition-colors bg-white px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 disabled:opacity-50"
+              className="flex items-center gap-1.5 text-[11px] font-black text-slate-700 hover:text-slate-900 transition-colors bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 shadow-xs disabled:opacity-50"
               title="Buscar mensagens recentes diretamente da Inbox do Kapso"
             >
               <RefreshCw size={12} className={syncingKapso ? 'animate-spin text-[#FF6A00]' : ''} />
@@ -444,7 +444,7 @@ export default function WhatsAppHubPage() {
             </button>
             <Link
               href="/hub/integracoes"
-              className="flex items-center gap-1 text-[11px] font-black text-[#FF6A00] hover:text-[#e05d00] transition-colors bg-white px-2.5 py-1.5 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300"
+              className="flex items-center gap-1 text-[11px] font-black text-[#FF6A00] hover:text-[#e05d00] transition-colors bg-slate-50 hover:bg-slate-100 px-2.5 py-1.5 rounded-xl border border-slate-200 shadow-xs"
             >
               Integrações <ChevronRight size={12} />
             </Link>

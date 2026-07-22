@@ -267,9 +267,9 @@ export default function SettingsHubPage() {
 
   const handleDeleteAccount = async () => {
     if (!user || isDeletingAccount) return;
-    const firstConfirmation = window.confirm('Tem certeza que deseja excluir sua conta? Esta ação vai cancelar seu plano e remover seus dados do banco.');
+    const firstConfirmation = window.confirm('Tem certeza que deseja excluir sua conta? Esta ação vai cancelar seu plano e remover permanentemente todos os seus dados, documentos e relatórios.');
     if (!firstConfirmation) return;
-    const secondConfirmation = window.confirm('Confirmação final: esta ação é irreversível. Deseja continuar com a exclusão da conta?');
+    const secondConfirmation = window.confirm('Confirmação final: esta ação é irreversível e excluirá definitivamente todo o seu cadastro. Deseja prosseguir com a exclusão?');
     if (!secondConfirmation) return;
 
     setDeleteAccountError(null);
@@ -282,8 +282,15 @@ export default function SettingsHubPage() {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
         body: JSON.stringify({ uid: user.uid, email: userEmail }),
       });
-      if (!response.ok) throw new Error('Não foi possível concluir a exclusão da conta.');
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data?.error || 'Não foi possível concluir a exclusão da conta.');
+      }
       
+      try {
+        window.localStorage.clear();
+      } catch {}
+
       await logout();
       router.push('/');
     } catch (error) {

@@ -697,8 +697,8 @@ function MobileDrawer({
   );
 }
 
-/* ─── TopBar Component ─────────────────────────────────────────────── */
-function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: string }) {
+/* ─── DesktopNotificationBell Component ─────────────────────────────── */
+function DesktopNotificationBell() {
   const {
     unreadCount,
     isNotificationsOpen,
@@ -709,8 +709,6 @@ function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: stri
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      // On mobile the notifications state is owned by MobileHeader/MobileNotificationsPanel;
-      // this hidden desktop bell must not close it.
       const isDesktop = window.matchMedia('(min-width: 1024px)').matches;
       if (isDesktop && bellRef.current && !bellRef.current.contains(e.target as Node)) {
         setIsNotificationsOpen(false);
@@ -721,28 +719,23 @@ function TopBar({ onRefresh, pathname }: { onRefresh: () => void; pathname: stri
   }, [setIsNotificationsOpen]);
 
   return (
-    <header className="hidden lg:flex items-center gap-4 px-8 h-16 border-b border-white/40 bg-[#D9DDE1] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
+    <div className="hidden lg:block absolute top-6 right-8 z-30" ref={bellRef}>
+      <button
+        onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
+        className="relative w-10 h-10 rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md flex items-center justify-center text-[#475569] shadow-xs hover:border-[#FF6A00]/40 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
+        aria-label="Notificações"
+        title="Notificações"
+      >
+        <Bell size={18} />
+        {unreadCount > 0 && <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#FF6A00] ring-2 ring-white" />}
+      </button>
 
-      <div className="ml-auto flex items-center gap-2 sm:gap-3 relative">
-        {/* Notifications */}
-        <div className="relative" ref={bellRef}>
-          <button
-            onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-            className="relative w-9 h-9 rounded-xl border border-white/40 bg-[#eef2f7] flex items-center justify-center text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[4px_4px_8px_#c2cbd9,_-4px_-4px_8px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
-            aria-label="Notificações"
-          >
-            <Bell size={15} />
-            {unreadCount > 0 && <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#FF6A00]" />}
-          </button>
-
-          {isNotificationsOpen && (
-            <div className="absolute right-0 mt-2 z-[999] w-80 rounded-[24px] border border-white/80 bg-[#eef2f7] p-4 shadow-[5px_5px_15px_#d1d9e6,_-5px_-5px_15px_#ffffff] animate-in fade-in slide-in-from-top-2 duration-150">
-              <NotificationsPanelContent />
-            </div>
-          )}
+      {isNotificationsOpen && (
+        <div className="absolute right-0 mt-2 z-[999] w-80 rounded-[24px] border border-slate-200 bg-white/95 backdrop-blur-xl p-4 shadow-xl animate-in fade-in slide-in-from-top-2 duration-150">
+          <NotificationsPanelContent />
         </div>
-      </div>
-    </header>
+      )}
+    </div>
   );
 }
 
@@ -791,8 +784,8 @@ function HubLayoutInner({
         {/* Mobile notifications sheet — hidden on desktop */}
         <MobileNotificationsPanel />
 
-        {/* Desktop topbar — hidden on mobile */}
-        <TopBar onRefresh={() => window.location.reload()} pathname={pathname} />
+        {/* Desktop notification bell (floats top-right on desktop, without gray bar) */}
+        <DesktopNotificationBell />
 
         {pathname === '/hub/assistente-ia' ? (
           <div className="flex-1 overflow-hidden relative z-10 p-4 pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-4">

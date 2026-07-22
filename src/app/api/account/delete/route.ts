@@ -67,15 +67,41 @@ const KNOWN_SUBCOLLECTIONS = [
   'sessions',
   'agentRuns',
   'notifications',
+  'companies',
+  'leads',
+  'opportunities',
+  'chatSessions',
+  'knowledgeBase',
+  'agentReportHistory',
+  'agentReports',
+  'whatsappChats',
+  'prospects',
+  'activities',
 ] as const;
 
 const BATCH_SIZE = 450; // Firestore max batch is 500 — leave margin
+
+async function deleteQueryMatches(collectionName: string, fieldName: string, value: string): Promise<void> {
+  const db = getAdminDb();
+  try {
+    const snap = await db.collection(collectionName).where(fieldName, '==', value).get();
+    if (snap.empty) return;
+    const docs = snap.docs;
+    for (let i = 0; i < docs.length; i += BATCH_SIZE) {
+      const batch = db.batch();
+      docs.slice(i, i + BATCH_SIZE).forEach((docSnap) => batch.delete(docSnap.ref));
+      await batch.commit();
+    }
+  } catch {
+    // Non-fatal if index doesn't exist or collection isn't present
+  }
+}
 
 async function deleteFirestoreUserData(uid: string): Promise<void> {
   const db = getAdminDb();
   const userRef = db.collection('users').doc(uid);
 
-  // 1. Delete known sub-collections in parallel
+  // 1. Delete known sub-collections under users/{uid} in parallel
   await Promise.allSettled(
     KNOWN_SUBCOLLECTIONS.map(async (sub) => {
       const snap = await userRef.collection(sub).listDocuments();
@@ -88,17 +114,37 @@ async function deleteFirestoreUserData(uid: string): Promise<void> {
     })
   );
 
-  // 2. Delete the root user document itself
-  await userRef.delete();
-
-  // 3. Also clean up any top-level collections that reference the user by UID
-  //    (e.g. agentWorkspaces/{uid}, dnaProfiles/{uid})
+  // 2. Delete top-level documents directly keyed by UID
   const topLevelRefs = [
     db.collection('agentWorkspaces').doc(uid),
     db.collection('dnaProfiles').doc(uid),
     db.collection('conversations').doc(uid),
+    db.collection('companyProfiles').doc(uid),
   ];
   await Promise.allSettled(topLevelRefs.map((ref) => ref.delete()));
+
+  // 3. Delete top-level documents referencing the user by userId / user_id
+  const topLevelCollections = [
+    'knowledgeDocs',
+    'agentReports',
+    'crmLeads',
+    'whatsappChats',
+    'opportunities',
+    'automations',
+    'activities',
+    'prospects',
+  ];
+
+  await Promise.allSettled(
+    topLevelCollections.flatMap((col) => [
+      deleteQueryMatches(col, 'userId', uid),
+      deleteQueryMatches(col, 'user_id', uid),
+      deleteQueryMatches(col, 'uid', uid),
+    ])
+  );
+
+  // 4. Delete the root user document itself
+  await userRef.delete();
 }
 
 // ─── Cancel all Stripe subscriptions for a user ───────────────────────────────

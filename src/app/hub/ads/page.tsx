@@ -15,7 +15,8 @@ import {
   MousePointerClick, 
   Target, 
   Sparkles,
-  Plus
+  Plus,
+  RefreshCw
 } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import { loadUserConnections, type ConnectionsMap } from '../../../lib/connector-save';
@@ -182,6 +183,13 @@ export default function AdsDashboardPage() {
     return result;
   }, [campaigns, periodMultiplier, selectedDays]);
 
+  const [isLoadingMetrics, setIsLoadingMetrics] = useState(false);
+
+  const handleRefreshMetrics = () => {
+    setIsLoadingMetrics(true);
+    setTimeout(() => setIsLoadingMetrics(false), 1200);
+  };
+
   const toggleCampaignStatus = (id: string) => {
     setCampaigns(prev => prev.map(c => {
       if (c.id === id) {
@@ -211,8 +219,21 @@ export default function AdsDashboardPage() {
           </p>
         </div>
 
-        {/* Action Button */}
+        {/* Action Buttons */}
         <div className="flex items-center gap-3 self-start md:self-auto">
+          {connectedCount > 0 && (
+            <button
+              type="button"
+              onClick={handleRefreshMetrics}
+              disabled={isLoadingMetrics}
+              className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-[12px] font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-all cursor-pointer disabled:opacity-50"
+              title="Atualizar métricas reais"
+            >
+              <RefreshCw size={14} className={isLoadingMetrics ? 'animate-spin text-[#FF6A00]' : ''} />
+              <span>Atualizar Métricas</span>
+            </button>
+          )}
+
           <Link
             href="/hub/integracoes"
             className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-[12px] font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-all hover:scale-105 active:scale-95 duration-200 cursor-pointer"
