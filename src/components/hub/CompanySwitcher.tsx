@@ -12,6 +12,8 @@ interface CompanySwitcherTriggerProps {
   userName: string;
   userPhoto?: string | null;
   isDark?: boolean;
+  compact?: boolean;
+  avatarOnly?: boolean;
   className?: string;
 }
 
