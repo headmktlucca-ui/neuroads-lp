@@ -27,10 +27,10 @@ export function NeumorphicTileIcon({
 }: NeumorphicTileProps) {
   const dimensions =
     size === 'sm'
-      ? 'w-6.5 h-6.5 rounded-[9px]'
+      ? 'w-5.5 h-5.5 rounded-[7px]'
       : size === 'lg'
-      ? 'w-9 h-9 rounded-2xl'
-      : 'w-8 h-8 rounded-xl';
+      ? 'w-8 h-8 rounded-xl'
+      : 'w-6.5 h-6.5 rounded-lg';
 
   return (
     <div

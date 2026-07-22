@@ -151,8 +151,8 @@ function NavLink({
 
   const [open, setOpen] = useState(isChildActive || isActive);
 
-  const paddingLeft = depth === 1 ? 'pl-6' : 'pl-2.5';
-  const textSize    = depth === 1 ? 'text-[11.5px]' : 'text-[12.5px]';
+  const paddingLeft = depth === 1 ? 'pl-5' : 'pl-2';
+  const textSize    = depth === 1 ? 'text-[11px]' : 'text-[12px]';
   const ParentIcon  = item.icon;
 
   if (hasChildren) {
@@ -167,7 +167,7 @@ function NavLink({
               router.push(item.href);
             }
           }}
-          className={`w-full text-left group flex items-center gap-2.5 ${paddingLeft} pr-2.5 py-1.5 rounded-xl ${textSize} font-bold transition-all duration-200 cursor-pointer ${
+          className={`w-full text-left group flex items-center gap-2 ${paddingLeft} pr-2 py-1 rounded-xl ${textSize} font-bold transition-all duration-200 cursor-pointer ${
             isActive
               ? isDark ? 'text-white' : 'text-[#FF6A00]'
               : isDark
@@ -181,12 +181,12 @@ function NavLink({
           }}
         >
           <NeumorphicTileIcon isActive={isActive} isDark={isDark} size={depth === 1 ? 'sm' : 'md'}>
-            <ParentIcon size={depth === 1 ? 14 : 17} />
+            <ParentIcon size={depth === 1 ? 12 : 15} />
           </NeumorphicTileIcon>
-          <span className="flex-1">{item.label}</span>
+          <span className="flex-1 truncate">{item.label}</span>
           {isActive && <span className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-white' : 'bg-[#FF6A00]'}`} />}
           <ChevronDown
-            size={12}
+            size={11}
             className={`transition-transform duration-300 ${open ? 'rotate-180' : ''} ${isDark ? 'text-white/50' : 'text-slate-400'}`}
           />
         </button>
@@ -199,8 +199,8 @@ function NavLink({
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.22 }}
-              className={`overflow-hidden ml-3 pl-1 mt-0.5 space-y-0.5 border-l ${isDark ? 'border-white/20' : 'border-slate-200/80'}`}
+              transition={{ duration: 0.2 }}
+              className={`overflow-hidden ml-2.5 pl-1 my-0.5 space-y-0.5 border-l ${isDark ? 'border-white/20' : 'border-slate-200/80'}`}
             >
               {item.children!.map(child => (
                 <NavLink
@@ -225,7 +225,7 @@ function NavLink({
   return (
     <Link
       href={item.href}
-      className={`group flex items-center gap-2.5 ${paddingLeft} pr-2.5 py-1.5 rounded-xl ${textSize} font-bold transition-all duration-200 ${
+      className={`group flex items-center gap-2 ${paddingLeft} pr-2 py-1 rounded-xl ${textSize} font-bold transition-all duration-200 ${
         isActive
           ? isLucca ? 'text-emerald-300' : isDark ? 'text-white' : 'text-[#FF6A00]'
           : isDark
@@ -240,21 +240,21 @@ function NavLink({
       }}
     >
       {item.avatarImage ? (
-        <div className="w-7 h-7 rounded-lg overflow-hidden shrink-0 border border-emerald-400/60 shadow-[0_0_10px_rgba(16,185,129,0.35)] group-hover:scale-110 transition-transform duration-200">
+        <div className="w-6.5 h-6.5 rounded-lg overflow-hidden shrink-0 border border-emerald-400/60 shadow-[0_0_10px_rgba(16,185,129,0.35)] group-hover:scale-110 transition-transform duration-200">
           <Image
             src={item.avatarImage}
             alt={item.label}
-            width={28}
-            height={28}
+            width={26}
+            height={26}
             className="w-full h-full object-cover"
           />
         </div>
       ) : (
         <NeumorphicTileIcon isActive={isActive} isDark={isDark} size={depth === 1 ? 'sm' : 'md'}>
-          <LeafIcon size={depth === 1 ? 14 : 17} />
+          <LeafIcon size={depth === 1 ? 12 : 15} />
         </NeumorphicTileIcon>
       )}
-      <span className="flex-1">{item.label}</span>
+      <span className="flex-1 truncate">{item.label}</span>
       {isLucca && (
         <span className="flex items-center gap-1 shrink-0">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.7)] animate-pulse" />
@@ -294,20 +294,21 @@ function SidebarContent({
   return (
     <>
       {/* Top profile header: static company/user display */}
-      <div className={`px-2.5 pt-2 pb-1.5 shrink-0 ${isDark ? 'border-b border-white/15' : 'border-b border-slate-200/40'}`}>
+      <div className={`px-2 pt-1.5 pb-1 shrink-0 ${isDark ? 'border-b border-white/15' : 'border-b border-slate-200/40'}`}>
         <CompanySwitcherTrigger
           companyName={companyName || ''}
           userName={userName}
           userPhoto={userPhoto}
           isDark={isDark}
+          compact={true}
         />
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2.5 py-1.5 space-y-1.5 overflow-y-auto">
+      <nav className="flex-1 px-2 py-1 space-y-1 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
         {NAV_GROUPS.map(group => (
           <div key={group.title} className="space-y-0.5">
-            <h4 className={`px-3 text-[8.5px] font-black uppercase tracking-wider ${isDark ? 'text-white/40' : 'text-slate-400'} mb-0.5`}>
+            <h4 className={`px-2 text-[8px] font-black uppercase tracking-wider ${isDark ? 'text-white/50' : 'text-slate-400'} mb-0.5 mt-0.5`}>
               {group.title}
             </h4>
             <div className="space-y-0.5">
@@ -326,16 +327,16 @@ function SidebarContent({
       </nav>
 
       {/* Sign out */}
-      <div className={`px-2.5 pb-2 shrink-0 pt-1.5 ${isDark ? 'border-t border-white/15' : 'border-t border-white/40'}`}>
+      <div className={`px-2 pb-1.5 shrink-0 pt-1 ${isDark ? 'border-t border-white/15' : 'border-t border-white/40'}`}>
         <button
           onClick={onSignOut}
-          className={`w-full flex items-center gap-2 px-3 py-1.5 rounded-xl text-[12px] font-bold transition-all duration-200 border border-transparent ${
+          className={`w-full flex items-center gap-2 px-2.5 py-1 rounded-xl text-[11.5px] font-bold transition-all duration-200 border border-transparent ${
             isDark
               ? 'text-white/70 hover:text-white hover:bg-white/10 hover:border-white/10'
               : 'text-[#475569] hover:text-rose-600 hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:border-rose-500/15'
           }`}
         >
-          <LogOut size={14} className={`transition-colors shrink-0 ${isDark ? 'text-white/50' : 'text-slate-400'}`} />
+          <LogOut size={13} className={`transition-colors shrink-0 ${isDark ? 'text-white/50' : 'text-slate-400'}`} />
           <span>Sair</span>
         </button>
       </div>
