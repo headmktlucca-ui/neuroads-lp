@@ -35,21 +35,24 @@ import {
   Users,
 } from 'lucide-react';
 import {
-  IconDashboard3D,
-  IconBrain3D,
-  IconFunnel3D,
-  IconAutomation3D,
-  IconSparkles3D,
-  IconPlug3D,
-  IconBook3D,
-  IconGear3D,
-  IconChart3D,
-  IconTarget3D,
-  IconRefresh3D,
-  IconAds3D,
-  IconSocial3D,
-  IconWhatsapp3D,
-} from '../../components/hub/HubUiIcons3D';
+  NeumorphicTileIcon,
+  IconNeuDashboard,
+  IconNeuOpportunities,
+  IconNeuBrain,
+  IconNeuAttraction,
+  IconNeuEngagement,
+  IconNeuConversion,
+  IconNeuRetention,
+  IconNeuWhatsapp,
+  IconNeuCRM,
+  IconNeuAds,
+  IconNeuSocial,
+  IconNeuAutomation,
+  IconNeuPlug,
+  IconNeuBook,
+  IconNeuSettings,
+  IconNeuLucca,
+} from '../../components/hub/NeumorphicMenuIcons';
 import { CompanySwitcherTrigger } from '../../components/hub/CompanySwitcher';
 import { useCompanyMigration } from '../../hooks/useCompanyMigration';
 
@@ -70,48 +73,48 @@ type NavGroup = {
   items: NavItem[];
 };
 
-/* ─── Nav groups grouped by journey (HubUiIcons3D) ────────────────── */
+/* ─── Nav groups grouped by journey (Neumorphic 3D Squircle Icons) ── */
 const NAV_GROUPS: NavGroup[] = [
   {
     title: 'Visão Geral',
     items: [
-      { icon: IconDashboard3D, label: 'Dashboard',           href: '/hub' },
-      { icon: IconSparkles3D,   label: 'Oportunidades',        href: '/hub/explorar' },
+      { icon: IconNeuDashboard,     label: 'Dashboard',           href: '/hub' },
+      { icon: IconNeuOpportunities, label: 'Oportunidades',        href: '/hub/explorar' },
     ],
   },
   {
     title: 'Operação',
     items: [
       {
-        icon: IconBrain3D,
+        icon: IconNeuBrain,
         label: 'Agentes IA',
         href: '/hub/laboratorio-agentes',
         children: [
-          { icon: IconSparkles3D, label: 'Atração',    href: '/hub/funil/atracao'    },
-          { icon: IconChart3D,    label: 'Engajamento', href: '/hub/funil/engajamento' },
-          { icon: IconTarget3D,   label: 'Conversão',  href: '/hub/funil/conversao'  },
-          { icon: IconRefresh3D,  label: 'Retenção',   href: '/hub/funil/retencao'   },
+          { icon: IconNeuAttraction,  label: 'Atração',    href: '/hub/funil/atracao'    },
+          { icon: IconNeuEngagement,  label: 'Engajamento', href: '/hub/funil/engajamento' },
+          { icon: IconNeuConversion,  label: 'Conversão',  href: '/hub/funil/conversao'  },
+          { icon: IconNeuRetention,   label: 'Retenção',   href: '/hub/funil/retencao'   },
         ],
       },
-      { icon: IconWhatsapp3D,   label: 'WhatsApp',             href: '/hub/whatsapp' },
-      { icon: IconFunnel3D,     label: 'CRM',                  href: '/hub/funil-vendas' },
-      { icon: IconAds3D,        label: 'Ads',                  href: '/hub/ads' },
-      { icon: IconSocial3D,     label: 'Redes Sociais',        href: '/hub/redes-sociais' },
-      { icon: IconAutomation3D, label: 'Automações',           href: '/hub/automacoes' },
+      { icon: IconNeuWhatsapp,   label: 'WhatsApp',             href: '/hub/whatsapp' },
+      { icon: IconNeuCRM,        label: 'CRM',                  href: '/hub/funil-vendas' },
+      { icon: IconNeuAds,        label: 'Ads',                  href: '/hub/ads' },
+      { icon: IconNeuSocial,     label: 'Redes Sociais',        href: '/hub/redes-sociais' },
+      { icon: IconNeuAutomation, label: 'Automações',           href: '/hub/automacoes' },
     ],
   },
   {
     title: 'Infraestrutura',
     items: [
-      { icon: IconPlug3D,       label: 'Integrações',          href: '/hub/integracoes' },
-      { icon: IconBook3D,       label: 'Base de Conhecimento', href: '/hub/configuracoes?tab=conhecimento' },
-      { icon: IconGear3D,       label: 'Configurações',        href: '/hub/configuracoes' },
+      { icon: IconNeuPlug,       label: 'Integrações',          href: '/hub/integracoes' },
+      { icon: IconNeuBook,       label: 'Base de Conhecimento', href: '/hub/configuracoes?tab=conhecimento' },
+      { icon: IconNeuSettings,   label: 'Configurações',        href: '/hub/configuracoes' },
     ],
   },
   {
     title: 'Agentes',
     items: [
-      { icon: Users,            label: 'Agentes Online',       href: '/hub/assistente-ia' },
+      { icon: IconNeuLucca,      label: 'Agentes Online',       href: '/hub/assistente-ia' },
     ],
   },
 ];
@@ -148,7 +151,7 @@ function NavLink({
 
   const [open, setOpen] = useState(isChildActive || isActive);
 
-  const paddingLeft = depth === 1 ? 'pl-7' : 'pl-3';
+  const paddingLeft = depth === 1 ? 'pl-6' : 'pl-2.5';
   const textSize    = depth === 1 ? 'text-[11.5px]' : 'text-[12.5px]';
   const ParentIcon  = item.icon;
 
@@ -164,11 +167,11 @@ function NavLink({
               router.push(item.href);
             }
           }}
-          className={`w-full text-left group flex items-center gap-2 ${paddingLeft} pr-2.5 py-1.5 rounded-xl ${textSize} font-bold transition-all duration-200 cursor-pointer ${
+          className={`w-full text-left group flex items-center gap-2.5 ${paddingLeft} pr-2.5 py-1.5 rounded-xl ${textSize} font-bold transition-all duration-200 cursor-pointer ${
             isActive
               ? isDark ? 'text-white' : 'text-[#FF6A00]'
               : isDark
-                ? 'text-white/70 hover:text-white hover:bg-white/10'
+                ? 'text-white/80 hover:text-white hover:bg-white/10'
                 : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
           }`}
           style={{
@@ -177,7 +180,9 @@ function NavLink({
             borderLeft:  isActive ? (isDark ? '2px solid rgba(255,255,255,0.7)' : '2px solid #FF6A00') : '2px solid transparent',
           }}
         >
-          <ParentIcon size={18} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
+          <NeumorphicTileIcon isActive={isActive} isDark={isDark} size={depth === 1 ? 'sm' : 'md'}>
+            <ParentIcon size={depth === 1 ? 14 : 17} />
+          </NeumorphicTileIcon>
           <span className="flex-1">{item.label}</span>
           {isActive && <span className={`w-1.5 h-1.5 rounded-full ${isDark ? 'bg-white' : 'bg-[#FF6A00]'}`} />}
           <ChevronDown
@@ -220,11 +225,11 @@ function NavLink({
   return (
     <Link
       href={item.href}
-      className={`group flex items-center gap-2 ${paddingLeft} pr-2.5 py-1 rounded-xl ${textSize} font-bold transition-all duration-200 ${
+      className={`group flex items-center gap-2.5 ${paddingLeft} pr-2.5 py-1.5 rounded-xl ${textSize} font-bold transition-all duration-200 ${
         isActive
           ? isLucca ? 'text-emerald-300' : isDark ? 'text-white' : 'text-[#FF6A00]'
           : isDark
-            ? 'text-white/70 hover:text-white hover:bg-white/10'
+            ? 'text-white/80 hover:text-white hover:bg-white/10'
             : 'text-[#475569] hover:text-[#1e293b] hover:shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff]'
       }`}
       style={{
@@ -234,19 +239,20 @@ function NavLink({
         textDecoration: 'none',
       }}
     >
-      {/* Icon: use avatar image for Lucca, regular icon for others */}
       {item.avatarImage ? (
-        <div className="w-6 h-6 rounded-full overflow-hidden shrink-0 border border-emerald-500/30 shadow-[0_0_6px_rgba(16,185,129,0.25)]">
+        <div className="w-7 h-7 rounded-lg overflow-hidden shrink-0 border border-emerald-400/60 shadow-[0_0_10px_rgba(16,185,129,0.35)] group-hover:scale-110 transition-transform duration-200">
           <Image
             src={item.avatarImage}
             alt={item.label}
-            width={24}
-            height={24}
+            width={28}
+            height={28}
             className="w-full h-full object-cover"
           />
         </div>
       ) : (
-        <LeafIcon size={depth === 1 ? 14 : 18} className={`transition-transform duration-200 group-hover:scale-110 shrink-0 ${isActive ? (isLucca ? 'text-emerald-300' : isDark ? 'text-white' : 'text-[#FF6A00]') : isDark ? 'text-white/60' : 'text-slate-500'}`} />
+        <NeumorphicTileIcon isActive={isActive} isDark={isDark} size={depth === 1 ? 'sm' : 'md'}>
+          <LeafIcon size={depth === 1 ? 14 : 17} />
+        </NeumorphicTileIcon>
       )}
       <span className="flex-1">{item.label}</span>
       {isLucca && (
@@ -500,17 +506,17 @@ const PERIOD_OPTIONS = [
 ];
 
 function getMobilePageIcon(pathname: string) {
-  if (pathname === '/hub') return IconDashboard3D;
-  if (pathname.startsWith('/hub/explorar')) return IconSparkles3D;
-  if (pathname.startsWith('/hub/laboratorio-agentes') || pathname.startsWith('/hub/agentes') || pathname.startsWith('/hub/assistente-ia')) return IconBrain3D;
-  if (pathname.startsWith('/hub/whatsapp')) return IconWhatsapp3D;
-  if (pathname.startsWith('/hub/funil-vendas') || pathname.startsWith('/hub/funil')) return IconFunnel3D;
-  if (pathname.startsWith('/hub/ads')) return IconAds3D;
-  if (pathname.startsWith('/hub/redes-sociais')) return IconSocial3D;
-  if (pathname.startsWith('/hub/automacoes')) return IconAutomation3D;
-  if (pathname.startsWith('/hub/integracoes')) return IconPlug3D;
-  if (pathname.startsWith('/hub/configuracoes')) return IconGear3D;
-  return IconDashboard3D;
+  if (pathname === '/hub') return IconNeuDashboard;
+  if (pathname.startsWith('/hub/explorar')) return IconNeuOpportunities;
+  if (pathname.startsWith('/hub/laboratorio-agentes') || pathname.startsWith('/hub/agentes') || pathname.startsWith('/hub/assistente-ia')) return IconNeuBrain;
+  if (pathname.startsWith('/hub/whatsapp')) return IconNeuWhatsapp;
+  if (pathname.startsWith('/hub/funil-vendas') || pathname.startsWith('/hub/funil')) return IconNeuCRM;
+  if (pathname.startsWith('/hub/ads')) return IconNeuAds;
+  if (pathname.startsWith('/hub/redes-sociais')) return IconNeuSocial;
+  if (pathname.startsWith('/hub/automacoes')) return IconNeuAutomation;
+  if (pathname.startsWith('/hub/integracoes')) return IconNeuPlug;
+  if (pathname.startsWith('/hub/configuracoes')) return IconNeuSettings;
+  return IconNeuDashboard;
 }
 
 function MobileHeader({
@@ -752,7 +758,7 @@ function HubLayoutInner({
         {/* Mobile notifications sheet — hidden on desktop */}
         <MobileNotificationsPanel />
 
-        {/* Desktop notification bell (floats top-right on desktop, without gray bar) */}
+        {/* Desktop notification bell (floats top-right on desktop) */}
         <DesktopNotificationBell />
 
         {pathname === '/hub/assistente-ia' ? (

@@ -328,11 +328,6 @@ export default function SettingsHubPage() {
     <div className="w-full space-y-6">
       <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-            <span>Infraestrutura</span>
-            <ChevronRight size={12} />
-            <span className="text-[#FF6A00]">{activeTab === 'conhecimento' ? 'Base de Conhecimento' : 'Configurações'}</span>
-          </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
             {activeTab === 'conhecimento' ? <IconBook3D size={32} /> : <IconGear3D size={32} />}
             {activeTab === 'conhecimento' ? 'Base de Conhecimento' : 'Configurações'}
@@ -346,7 +341,7 @@ export default function SettingsHubPage() {
       </header>
 
       {/* Tabs */}
-      <div className="flex flex-wrap gap-2 px-1">
+      <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-1.5 rounded-2xl border border-slate-800/80 shadow-[0_4px_14px_rgba(15,23,42,0.18)] flex-wrap w-full sm:w-auto">
         {[
           { id: 'perfil', label: 'Meu Perfil' },
           { id: 'empresa', label: 'Sua Empresa' },
@@ -358,11 +353,12 @@ export default function SettingsHubPage() {
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`px-4 py-2 rounded-full text-[13px] font-bold border transition-all duration-150 cursor-pointer ${
+              className={`px-4 py-2 rounded-xl text-[12px] font-black transition-all duration-200 cursor-pointer ${
                 active
-                  ? 'bg-[#eef2f7] text-[#FF6A00] shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border border-white/20'
-                  : 'bg-[#eef2f7] border border-white/40 text-slate-600 shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff] hover:shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff]'
+                  ? 'bg-white text-[#FF6A00] shadow-[0_2px_8px_rgba(0,0,0,0.2)] scale-[1.02]'
+                  : 'text-slate-300 hover:text-white hover:bg-white/10'
               }`}
+              style={{ border: 'none' }}
             >
               {tab.label}
             </button>

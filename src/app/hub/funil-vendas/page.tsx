@@ -602,14 +602,9 @@ export default function FunilVendasPage() {
       {/* ── Header ── */}
       <div className="py-8 border-b border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-            <span>Operação</span>
-            <ChevronRight size={12} />
-            <span className="text-[#FF6A00]">CRM</span>
-          </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
             <IconFunnel3D size={32} />
-            Funil de Vendas
+            CRM
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed max-w-2xl">
             Acompanhe a jornada dos leads capturados pelas operações dos Agentes IA. Execute ações dos agentes em tempo real para conduzi-los até o fechamento.

@@ -389,15 +389,10 @@ export default function WhatsAppHubPage() {
       {/* ── Header Title & Connection Status Banner ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-8 border-b border-slate-200">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-            <span>Operação</span>
-            <ChevronRight size={12} />
-            <span className="text-[#FF6A00]">WhatsApp</span>
-          </div>
           <div className="flex items-center gap-2 flex-wrap">
             <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
               <IconWhatsapp3D size={32} />
-              WhatsApp Live &amp; Agentes IA
+              WhatsApp
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200">
               Atendimento Ao Vivo

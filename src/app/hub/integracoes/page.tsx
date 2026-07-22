@@ -859,14 +859,9 @@ function HubIntegracoesContent() {
       <header className="py-8 border-b border-slate-200 mb-8">
         <div className="flex items-start justify-between gap-6 flex-wrap">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-              <span>Infraestrutura</span>
-              <ChevronRight size={12} />
-              <span className="text-[#FF6A00]">Integrações</span>
-            </div>
             <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
               <IconPlug3D size={32} />
-              Conecte Seus Canais
+              Integrações
             </h1>
             <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed max-w-xl">
               Vincule suas plataformas de mídia paga e analytics para alimentar os Agentes IA com dados reais da sua operação.

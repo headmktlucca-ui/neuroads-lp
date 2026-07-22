@@ -213,14 +213,9 @@ export default function AdsDashboardPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-            <span>Operações</span>
-            <ChevronRight size={12} />
-            <span className="text-[#FF6A00]">Ads</span>
-          </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
             <IconMegaphone3D size={32} />
-            Campanhas Patrocinadas
+            Ads
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
             Monitore o desempenho das mídias pagas da sua marca nos canais configurados.

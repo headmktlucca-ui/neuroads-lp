@@ -858,14 +858,9 @@ export default function HubAutomacoesPage() {
       {/* ── Page header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-8 border-b border-slate-200">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-            <span>Operação</span>
-            <ChevronRight size={12} />
-            <span className="text-[#FF6A00]">Automações</span>
-          </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
             <IconAutomation3D size={32} />
-            Fluxos Inteligentes
+            Automações
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed max-w-xl">
             {loading
@@ -929,21 +924,25 @@ export default function HubAutomacoesPage() {
           )}
         </div>
 
-        {/* Category pills */}
-        <div className="flex gap-2 flex-wrap">
-          {CATEGORY_FILTERS.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setFilterCategory(cat)}
-              className={`px-3.5 py-2 rounded-xl text-[11px] font-black transition-all duration-200 bg-[#eef2f7] ${
-                filterCategory === cat
-                  ? 'shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] border border-orange-500/20 text-[#FF6A00]'
-                  : 'text-slate-500 border border-white/60 shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] hover:shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        {/* Category pills — Dark Navy Blue Capsule Container */}
+        <div className="flex items-center gap-1.5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-1.5 rounded-2xl border border-slate-800/80 shadow-[0_4px_14px_rgba(15,23,42,0.18)] flex-wrap">
+          {CATEGORY_FILTERS.map((cat) => {
+            const isActive = filterCategory === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setFilterCategory(cat)}
+                className={`px-3.5 py-1.5 rounded-xl text-[11px] font-black transition-all duration-200 cursor-pointer ${
+                  isActive
+                    ? 'bg-white text-[#FF6A00] shadow-[0_2px_8px_rgba(0,0,0,0.2)] scale-[1.02]'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10'
+                }`}
+                style={{ border: 'none' }}
+              >
+                {cat}
+              </button>
+            );
+          })}
         </div>
       </div>
 

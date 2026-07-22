@@ -216,7 +216,7 @@ export default function RedesSociaisDashboardPage() {
       const strA = String(valA).toLowerCase();
       const strB = String(valB).toLowerCase();
       return sortDirection === 'asc' ? strA.localeCompare(strB) : strB.localeCompare(strA);
-    });
+    }).slice(0, 10);
   }, [realMetrics, sortColumn, sortDirection]);
 
   return (
@@ -225,14 +225,9 @@ export default function RedesSociaisDashboardPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-            <span>Operações</span>
-            <ChevronRight size={12} />
-            <span className="text-[#FF6A00]">Redes Sociais</span>
-          </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
             <IconSocialMedia3D size={32} />
-            Mídias Sociais
+            Redes Sociais
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
             Acompanhe o engajamento orgânico, crescimento de comunidade e postagens extraídos diretamente dos seus canais ativos.

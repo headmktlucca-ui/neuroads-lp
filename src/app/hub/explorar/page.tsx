@@ -326,11 +326,6 @@ export default function OportunidadesPage() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-              <span>Visão Geral</span>
-              <ChevronRight size={12} />
-              <span className="text-[#FF6A00]">Oportunidades</span>
-            </div>
             <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
               <IconSparkles3D size={32} />
               Oportunidades
@@ -374,11 +369,6 @@ export default function OportunidadesPage() {
         className="flex flex-col md:flex-row md:items-center justify-between gap-4"
       >
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-            <span>Visão Geral</span>
-            <ChevronRight size={12} />
-            <span className="text-[#FF6A00]">Oportunidades</span>
-          </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
             <IconSparkles3D size={32} />
             Oportunidades

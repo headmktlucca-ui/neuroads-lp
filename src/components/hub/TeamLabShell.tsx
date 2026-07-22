@@ -325,11 +325,6 @@ export default function TeamLabShell() {
       {/* ── Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-8 border-b border-slate-200">
         <div>
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-            <span>Operação</span>
-            <ChevronRight size={12} />
-            <span className="text-[#FF6A00]">Agentes IA</span>
-          </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
             <IconBrain3D size={32} />
             Agentes IA

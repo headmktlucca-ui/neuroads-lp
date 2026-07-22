@@ -61,6 +61,8 @@ export function CompanySwitcherTrigger({
   userName,
   userPhoto,
   isDark = true,
+  compact = false,
+  avatarOnly = false,
   className = '',
 }: CompanySwitcherTriggerProps) {
   const { user } = useAuth();
@@ -119,8 +121,15 @@ export function CompanySwitcherTrigger({
     }
   };
 
+  const avatarSizeClass = avatarOnly
+    ? 'w-10 h-10 text-[14px]'
+    : compact
+    ? 'w-9 h-9 text-[12px]'
+    : 'w-[56px] h-[56px] text-[15px]';
+  const companyTextSizeClass = compact ? 'text-[13px]' : 'text-[17px]';
+
   return (
-    <div className={`w-full flex items-center gap-3 px-2 py-2 ${className}`}>
+    <div className={`flex items-center ${avatarOnly ? '' : compact ? 'w-full gap-2.5 py-0.5' : 'w-full gap-3 px-2 py-2'} ${className}`}>
       {/* Invisible file input */}
       <input
         ref={fileInputRef}
@@ -136,7 +145,7 @@ export function CompanySwitcherTrigger({
         onClick={handleAvatarClick}
         disabled={uploading}
         title="Clique para alterar a foto do avatar"
-        className="group relative w-[56px] h-[56px] rounded-full overflow-hidden shrink-0 ring-2 ring-white/60 shadow-[0_4px_14px_rgba(0,0,0,0.22)] flex items-center justify-center text-white font-black text-[15px] select-none bg-gradient-to-tr from-[#cc4400] to-[#FF8805] cursor-pointer hover:scale-105 active:scale-95 transition-all duration-200"
+        className={`group relative ${avatarSizeClass} rounded-full overflow-hidden shrink-0 ring-2 ring-white/80 shadow-xs flex items-center justify-center text-white font-black select-none bg-gradient-to-tr from-[#cc4400] to-[#FF8805] cursor-pointer hover:scale-105 active:scale-95 transition-all duration-200`}
       >
         {activePhoto ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -148,29 +157,31 @@ export function CompanySwitcherTrigger({
         {/* Hover Camera Icon Overlay */}
         <div className="absolute inset-0 bg-black/55 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-200 text-white">
           {uploading ? (
-            <Loader2 className="w-5 h-5 animate-spin text-white" />
+            <Loader2 className={`${compact || avatarOnly ? 'w-3.5 h-3.5' : 'w-5 h-5'} animate-spin text-white`} />
           ) : (
-            <Camera className="w-5 h-5 text-white drop-shadow-md" />
+            <Camera className={`${compact || avatarOnly ? 'w-3.5 h-3.5' : 'w-5 h-5'} text-white drop-shadow-md`} />
           )}
         </div>
       </button>
 
-      {/* Info */}
-      <div className="flex flex-col min-w-0 flex-1">
-        {companyName && (
-          <span className={`text-[17px] font-black truncate block leading-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>
-            {companyName.charAt(0).toUpperCase() + companyName.slice(1).toLowerCase()}
-          </span>
-        )}
-        <div className="flex items-baseline gap-1 mt-0.5 min-w-0">
-          <span className={`text-[10px] font-normal leading-none shrink-0 ${isDark ? 'text-white/60' : 'text-slate-400'}`}>
-            {greeting}
-          </span>
-          <span className={`text-[10px] font-normal truncate leading-none ${isDark ? 'text-white/70' : 'text-slate-500'}`}>
-            {userName.split(' ')[0]}
-          </span>
+      {/* Info — Rendered ONLY if avatarOnly is false */}
+      {!avatarOnly && (
+        <div className="flex flex-col min-w-0 flex-1">
+          {companyName && (
+            <span className={`${companyTextSizeClass} font-black truncate block leading-tight ${isDark ? 'text-white' : 'text-slate-800'}`}>
+              {companyName.charAt(0).toUpperCase() + companyName.slice(1).toLowerCase()}
+            </span>
+          )}
+          <div className="flex items-baseline gap-1 mt-0.5 min-w-0">
+            <span className={`text-[10px] font-normal leading-none shrink-0 ${isDark ? 'text-white/60' : 'text-slate-400'}`}>
+              {greeting}
+            </span>
+            <span className={`text-[10px] font-normal truncate leading-none ${isDark ? 'text-white/70' : 'text-slate-500'}`}>
+              {userName.split(' ')[0]}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

@@ -951,14 +951,9 @@ export default function HubDashboardLight() {
         className="flex items-start justify-between gap-4 flex-wrap"
       >
         <div className="min-w-0">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-400 uppercase tracking-widest mb-1.5">
-            <span>Visão Geral</span>
-            <ChevronRight size={12} />
-            <span className="text-[#FF6A00]">Dashboard</span>
-          </div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
             <IconDashboard3D size={32} />
-            {profile?.companyName || 'Visão Geral'}
+            Dashboard
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
             Consolidado dos canais de tração, inteligência preditiva e métricas em tempo real.
@@ -1012,7 +1007,7 @@ export default function HubDashboardLight() {
       {/* View Toggles & Actions Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-slate-200/50 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
         {/* Report Toggles */}
-        <div className="flex items-center gap-1 bg-slate-200/50 p-1 rounded-xl border border-white/20 w-full md:w-auto">
+        <div className="flex items-center gap-1.5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-1.5 rounded-2xl border border-slate-800/80 shadow-[0_4px_14px_rgba(15,23,42,0.18)] w-full md:w-auto">
           {[
             { id: 'clevel', label: 'Visão C-Level' },
             { id: 'traffic', label: 'Visão Operacional de Tráfego' },
@@ -1021,10 +1016,10 @@ export default function HubDashboardLight() {
             <button
               key={opt.id}
               onClick={() => setReportView(opt.id as any)}
-              className={`flex-1 md:flex-none px-3.5 py-2 rounded-lg text-[11px] font-black transition-all cursor-pointer ${
+              className={`flex-1 md:flex-none px-4 py-2 rounded-xl text-[11px] font-black transition-all duration-200 cursor-pointer ${
                 reportView === opt.id
-                  ? 'bg-white text-[#FF6A00] shadow-[2px_2px_5px_#d1d9e6,-2px_-2px_5px_#ffffff]'
-                  : 'text-[#475569] hover:text-[#1e293b]'
+                  ? 'bg-white text-[#FF6A00] shadow-[0_2px_8px_rgba(0,0,0,0.2)] scale-[1.02]'
+                  : 'text-slate-300 hover:text-white hover:bg-white/10'
               }`}
               style={{ border: 'none' }}
             >
@@ -1322,7 +1317,7 @@ export default function HubDashboardLight() {
               <span className="text-[14px] font-black uppercase tracking-wider text-[#0f172a]">Resumo do Funil de Conversão</span>
             </div>
 
-            <div className="flex items-center gap-1 bg-[#eef2f7] p-1 rounded-xl shadow-[inset_2px_2px_4px_#d1d9e6,_inset_-2px_-2px_4px_#ffffff] border border-white/20 w-full sm:w-auto">
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-1.5 rounded-2xl border border-slate-800/80 shadow-[0_4px_14px_rgba(15,23,42,0.18)] w-full sm:w-auto">
               {(
                 [
                   { id: 'all', label: 'Todos' },
@@ -1330,21 +1325,23 @@ export default function HubDashboardLight() {
                   { id: 'metaAds', label: 'Meta' },
                   { id: 'linkedinAds', label: 'LinkedIn' },
                 ] as const
-              ).map(opt => (
-                <button
-                  key={opt.id}
-                  onClick={() => setFunnelFilter(opt.id)}
-                  className="flex-1 sm:flex-none px-2 sm:px-3 py-2 sm:py-1.5 rounded-lg text-[10px] font-black transition-all cursor-pointer"
-                  style={{
-                    background: funnelFilter === opt.id ? '#eef2f7' : 'transparent',
-                    color: funnelFilter === opt.id ? '#FF6A00' : '#475569',
-                    boxShadow: funnelFilter === opt.id ? '2px 2px 5px #d1d9e6, -2px -2px 5px #ffffff' : 'none',
-                    border: 'none',
-                  }}
-                >
-                  {opt.label}
-                </button>
-              ))}
+              ).map(opt => {
+                const isActive = funnelFilter === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => setFunnelFilter(opt.id)}
+                    className={`flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl text-[11px] font-black transition-all duration-200 cursor-pointer ${
+                      isActive
+                        ? 'bg-white text-[#FF6A00] shadow-[0_2px_8px_rgba(0,0,0,0.2)] scale-[1.02]'
+                        : 'text-slate-300 hover:text-white hover:bg-white/10'
+                    }`}
+                    style={{ border: 'none' }}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
