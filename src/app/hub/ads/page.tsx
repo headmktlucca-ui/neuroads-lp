@@ -185,9 +185,17 @@ export default function AdsDashboardPage() {
 
   const [isLoadingMetrics, setIsLoadingMetrics] = useState(false);
 
-  const handleRefreshMetrics = () => {
+  const handleRefreshMetrics = async () => {
+    if (!user || isLoadingMetrics) return;
     setIsLoadingMetrics(true);
-    setTimeout(() => setIsLoadingMetrics(false), 1200);
+    try {
+      const userConns = await loadUserConnections(user.uid);
+      setConnections(userConns);
+    } catch (err) {
+      console.error('Error refreshing connections/metrics:', err);
+    } finally {
+      setTimeout(() => setIsLoadingMetrics(false), 800);
+    }
   };
 
   const toggleCampaignStatus = (id: string) => {

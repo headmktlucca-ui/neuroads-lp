@@ -499,6 +499,20 @@ const PERIOD_OPTIONS = [
   { label: 'Últimos 90 dias', value: '90' },
 ];
 
+function getMobilePageIcon(pathname: string) {
+  if (pathname === '/hub') return IconDashboard3D;
+  if (pathname.startsWith('/hub/explorar')) return IconSparkles3D;
+  if (pathname.startsWith('/hub/laboratorio-agentes') || pathname.startsWith('/hub/agentes') || pathname.startsWith('/hub/assistente-ia')) return IconBrain3D;
+  if (pathname.startsWith('/hub/whatsapp')) return IconWhatsapp3D;
+  if (pathname.startsWith('/hub/funil-vendas') || pathname.startsWith('/hub/funil')) return IconFunnel3D;
+  if (pathname.startsWith('/hub/ads')) return IconAds3D;
+  if (pathname.startsWith('/hub/redes-sociais')) return IconSocial3D;
+  if (pathname.startsWith('/hub/automacoes')) return IconAutomation3D;
+  if (pathname.startsWith('/hub/integracoes')) return IconPlug3D;
+  if (pathname.startsWith('/hub/configuracoes')) return IconGear3D;
+  return IconDashboard3D;
+}
+
 function MobileHeader({
   pathname,
   onMenuOpen,
@@ -508,81 +522,35 @@ function MobileHeader({
 }) {
   const { unreadCount, isNotificationsOpen, setIsNotificationsOpen } = useHub();
   const pageTitle = getMobilePageTitle(pathname);
+  const PageIcon = getMobilePageIcon(pathname);
 
   return (
-    <header className="flex lg:hidden items-center gap-2 px-3 h-14 border-b border-white/40 bg-[#eef2f7] shrink-0 relative z-20 shadow-[0_4px_12px_rgba(0,0,0,0.015)]">
-      <button
-        onClick={onMenuOpen}
-        className="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center text-[#475569] border border-white/40 bg-[#eef2f7] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
-        aria-label="Abrir menu de navegação"
-      >
-        <Menu size={18} />
-      </button>
-
-      <span className="flex-1 min-w-0 text-[15px] font-black text-[#1e293b] truncate">{pageTitle}</span>
+    <header className="flex lg:hidden items-center justify-between gap-3 px-4 h-14 border-b border-slate-200/80 bg-white/95 backdrop-blur-md shrink-0 relative z-20 shadow-xs">
+      <div className="flex items-center gap-2.5 min-w-0">
+        <button
+          onClick={onMenuOpen}
+          className="w-10 h-10 shrink-0 rounded-xl flex items-center justify-center text-slate-700 border border-slate-200 bg-white shadow-xs hover:border-[#FF6A00]/40 active:scale-95 transition-all duration-150 cursor-pointer"
+          aria-label="Abrir menu de navegação"
+        >
+          <Menu size={18} />
+        </button>
+        <div className="flex items-center gap-2 min-w-0">
+          <PageIcon size={20} className="shrink-0" />
+          <span className="text-[14.5px] font-black text-slate-900 truncate tracking-tight">{pageTitle}</span>
+        </div>
+      </div>
 
       <button
         onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
-        className="relative w-11 h-11 shrink-0 rounded-xl border border-white/40 bg-[#eef2f7] flex items-center justify-center text-[#475569] shadow-[3px_3px_6px_#d1d9e6,_-3px_-3px_6px_#ffffff] active:shadow-[inset_2px_2px_5px_#d1d9e6,_inset_-2px_-2px_5px_#ffffff] transition-all duration-150"
+        className="relative w-10 h-10 shrink-0 rounded-xl border border-slate-200 bg-white flex items-center justify-center text-slate-700 shadow-xs hover:border-[#FF6A00]/40 active:scale-95 transition-all duration-150 cursor-pointer"
         aria-label="Notificações"
       >
         <Bell size={18} />
         {unreadCount > 0 && (
-          <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#FF6A00]" />
+          <span className="absolute top-2.5 right-2.5 w-2 h-2 rounded-full bg-[#FF6A00] ring-2 ring-white" />
         )}
       </button>
     </header>
-  );
-}
-
-/* ─── Mobile Bottom Nav ─────────────────────────────────────────────── */
-const BOTTOM_NAV_ITEMS = [
-  { icon: LayoutDashboard, label: 'Dashboard', href: '/hub',               exact: true  },
-  { icon: Bot,             label: 'Agentes',   href: '/hub/agentes-ativos', exact: false },
-  { icon: Plug2,           label: 'Integrar',  href: '/hub/integracoes',    exact: false },
-  { icon: Layers,          label: 'Explorar',  href: '/hub/explorar',       exact: false },
-] as const;
-
-function MobileBottomNav({
-  pathname,
-  onMenuOpen,
-}: {
-  pathname: string;
-  onMenuOpen: () => void;
-}) {
-  return (
-    <nav
-      className="fixed bottom-0 left-0 right-0 z-40 flex lg:hidden bg-[#eef2f7] border-t border-white/50 shadow-[0_-4px_16px_rgba(0,0,0,0.08)]"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-      aria-label="Navegação principal"
-    >
-      {BOTTOM_NAV_ITEMS.map(({ icon: Icon, label, href, exact }) => {
-        const isActive = exact
-          ? pathname === href
-          : pathname.startsWith(href);
-        return (
-          <Link
-            key={href}
-            href={href}
-            className={`flex-1 flex flex-col items-center justify-center gap-1 h-16 min-w-0 transition-colors ${
-              isActive ? 'text-[#FF6A00]' : 'text-slate-400'
-            }`}
-            aria-current={isActive ? 'page' : undefined}
-          >
-            <Icon size={20} strokeWidth={isActive ? 2.5 : 1.8} />
-            <span className="text-[10px] font-bold leading-none">{label}</span>
-          </Link>
-        );
-      })}
-      <button
-        onClick={onMenuOpen}
-        className="flex-1 flex flex-col items-center justify-center gap-1 h-16 min-w-0 text-slate-400 active:text-[#FF6A00] transition-colors"
-        aria-label="Mais opções de navegação"
-      >
-        <Menu size={20} strokeWidth={1.8} />
-        <span className="text-[10px] font-bold leading-none">Menu</span>
-      </button>
-    </nav>
   );
 }
 
@@ -788,23 +756,18 @@ function HubLayoutInner({
         <DesktopNotificationBell />
 
         {pathname === '/hub/assistente-ia' ? (
-          <div className="flex-1 overflow-hidden relative z-10 p-4 pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-4">
+          <div className="flex-1 overflow-hidden relative z-10 p-1.5 sm:p-4 lg:p-4">
             {children}
           </div>
         ) : (
           <div
             id="hub-scroll-container"
-            className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 lg:px-8 lg:py-8 lg:pb-8 relative z-10 mobile-content-area"
-            style={{ paddingBottom: 'calc(4rem + env(safe-area-inset-bottom))' }}
+            className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 lg:px-8 lg:py-8 pb-6 relative z-10"
           >
             {children}
           </div>
         )}
-        <style>{`@media (min-width: 1024px) { .mobile-content-area { padding-bottom: 2rem !important; } }`}</style>
       </div>
-
-      {/* Mobile bottom navigation bar */}
-      <MobileBottomNav pathname={pathname} onMenuOpen={() => setMobileDrawerOpen(true)} />
     </div>
   );
 }

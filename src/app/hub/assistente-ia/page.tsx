@@ -2746,30 +2746,31 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
       className="relative flex w-full h-full bg-[#EBEBED] overflow-hidden rounded-xl border border-[#E0E0E3] shadow-sm"
     >
       {/* ── Mobile pane switcher ── */}
-      <div className="lg:hidden absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-0.5 p-1 rounded-full bg-white/85 backdrop-blur-md border border-[#E0E0E3] shadow-[0_4px_16px_rgba(15,23,42,0.10)]">
-        <button
-          type="button"
-          onClick={() => setMobilePane('panel')}
-          className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-black transition-all duration-200 ${
-            mobilePane === 'panel'
-              ? 'bg-[#111827] text-white shadow-sm'
-              : 'text-slate-500 active:scale-95'
-          }`}
-        >
-          <LayoutGrid size={12} />
-          Painel
-        </button>
+      <div className="lg:hidden absolute top-2.5 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1 p-1 rounded-full bg-white/90 backdrop-blur-xl border border-slate-200 shadow-md">
         <button
           type="button"
           onClick={() => setMobilePane('chat')}
-          className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-black transition-all duration-200 ${
+          className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-black transition-all duration-200 cursor-pointer ${
             mobilePane === 'chat'
-              ? 'bg-[#FF6A00] text-white shadow-sm'
-              : 'text-slate-500 active:scale-95'
+              ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-xs'
+              : 'text-slate-500 hover:text-slate-800 active:scale-95'
           }`}
         >
-          <MessageSquare size={12} />
-          Chat
+          <MessageSquare size={13} />
+          <span>Chat ({activeAgent?.nome || 'Lucca'})</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setMobilePane('panel')}
+          className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[11px] font-black transition-all duration-200 cursor-pointer ${
+            mobilePane === 'panel'
+              ? 'bg-slate-900 text-white shadow-xs'
+              : 'text-slate-500 hover:text-slate-800 active:scale-95'
+          }`}
+        >
+          <LayoutGrid size={13} />
+          <span>Painel</span>
+          {currentResult && <span className="w-1.5 h-1.5 rounded-full bg-[#FF6A00] animate-pulse" />}
         </button>
       </div>
 
