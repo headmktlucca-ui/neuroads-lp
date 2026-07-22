@@ -9,6 +9,7 @@ import {
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { getFirebaseDb } from '../../../lib/firebase';
+import { subscribeToCRMLeads } from '../../../lib/crm-sync';
 import { IconFunnel3D } from '../../../components/hub/HubUiIcons3D';
 import {
   IconNeuKpiAgentes,

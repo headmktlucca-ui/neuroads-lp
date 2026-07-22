@@ -72,10 +72,10 @@ export default function PublicTopNav() {
         {/* CTA — Desktop */}
         <div className="hidden lg:block">
           <Link
-            href="/hub"
-            className="flex items-center justify-center px-6 h-11 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] transition-all text-[14px] font-bold text-white shadow-[0_2px_12px_rgba(255,106,0,0.3)]"
+            href="/login"
+            className="flex items-center justify-center px-6 h-11 rounded-xl bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white shadow-[0_4px_14px_rgba(15,23,42,0.35)] border border-slate-700/80 hover:from-[#1e293b] hover:to-[#0f172a] hover:shadow-[0_6px_18px_rgba(15,23,42,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all text-[14px] font-bold"
           >
-            Acessar Hub
+            Login
           </Link>
         </div>
 
@@ -113,10 +113,10 @@ export default function PublicTopNav() {
           
           <div className="pt-6 border-t border-white/[0.06]">
             <Link
-              href="/hub"
+              href="/login"
               className="flex items-center justify-center w-full h-14 rounded-xl bg-gradient-to-r from-[#F24900] to-[#FF8805] hover:from-[#d93f00] hover:to-[#e07500] transition-all text-[16px] font-bold text-white shadow-[0_2px_12px_rgba(255,106,0,0.3)]"
             >
-              Acessar Hub
+              Login
             </Link>
           </div>
         </div>

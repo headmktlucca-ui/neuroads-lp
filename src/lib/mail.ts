@@ -181,3 +181,65 @@ export async function sendStrategyRequestEmail(
     return { success: false, error: String(error) };
   }
 }
+
+export async function sendDemoRequestEmail(input: {
+  name: string;
+  email: string;
+  company: string;
+}) {
+  const { smtpUser } = getMailEnv();
+  const transporter = createTransporter();
+
+  const senderEmail = 'contato.neuroads@gmail.com';
+  const recipientEmail = 'avante@neuroads.com.br';
+  const subject = 'Nova Solicitação de Demonstração';
+
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #ffffff; color: #0f172a; padding: 32px; border: 1px solid #e2e8f0; border-radius: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.05);">
+      <div style="text-align: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid #e2e8f0;">
+        <h2 style="color: #FF5500; font-size: 22px; font-weight: 800; margin: 0; text-transform: uppercase; letter-spacing: 0.5px;">NeuroAds AI</h2>
+        <p style="color: #64748b; font-size: 13px; font-weight: 600; margin-top: 4px;">Nova Solicitação de Demonstração</p>
+      </div>
+
+      <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #cbd5e1; margin-bottom: 24px;">
+        <h3 style="color: #0f172a; font-size: 15px; margin-top: 0; margin-bottom: 14px; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px;">Dados do Lead / Usuário:</h3>
+        <p style="margin: 8px 0; font-size: 14px; color: #334155;"><strong>Nome Completo:</strong> ${input.name}</p>
+        <p style="margin: 8px 0; font-size: 14px; color: #334155;"><strong>E-mail Corporativo:</strong> <a href="mailto:${input.email}" style="color: #FF5500; text-decoration: none; font-weight: bold;">${input.email}</a></p>
+        <p style="margin: 8px 0; font-size: 14px; color: #334155;"><strong>Empresa:</strong> ${input.company || 'Não informada'}</p>
+        <p style="margin: 8px 0; font-size: 14px; color: #334155;"><strong>Data da Solicitação:</strong> ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}</p>
+      </div>
+
+      <div style="background: #0f172a; color: #ffffff; padding: 16px; border-radius: 10px; text-align: center; font-size: 12px; font-weight: 600;">
+        Solicitação capturada pelo formulário "Solicitar Demonstração" na Landing Page.
+      </div>
+
+      <p style="color: #94a3b8; font-size: 11px; text-align: center; margin-top: 24px;">
+        © 2026 NeuroAds — E-mail enviado de ${senderEmail} para ${recipientEmail}.
+      </p>
+    </div>
+  `;
+
+  if (!transporter) {
+    console.warn('[Mail] Transporter não inicializado (verifique SMTP_USER/SMTP_PASS). Exibindo dados no console:');
+    console.log(`[DEMO REQUEST LOG] From: ${senderEmail} | To: ${recipientEmail} | Subject: ${subject}`);
+    console.log(`Dados: Nome=${input.name}, Email=${input.email}, Empresa=${input.company}`);
+    return { success: true, logged: true };
+  }
+
+  try {
+    const info = await transporter.sendMail({
+      from: `"NeuroAds Contato" <${senderEmail}>`,
+      to: recipientEmail,
+      replyTo: input.email,
+      subject,
+      html,
+      text: `Nova Solicitação de Demonstração\n\nNome: ${input.name}\nE-mail: ${input.email}\nEmpresa: ${input.company}`,
+    });
+    console.log(`[Mail] Solicitação de demonstração enviada para ${recipientEmail} (MessageID: ${info.messageId})`);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error('[Mail] Erro ao enviar e-mail de demonstração:', error);
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
+  }
+}
+

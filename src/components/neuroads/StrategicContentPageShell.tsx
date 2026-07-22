@@ -282,9 +282,9 @@ export default function StrategicContentPageShell({ data }: { data: StrategicCon
           <div>
             <Link
               href="/login"
-              className="inline-flex items-center justify-center font-bold text-xs px-6 py-2.5 rounded-full bg-[#EDF1F5] text-slate-700 shadow-[4px_4px_8px_#c8d0e7,-4px_-4px_8px_#ffffff] border border-white/60 hover:shadow-[2px_2px_4px_#c8d0e7,-2px_-2px_4px_#ffffff] hover:bg-[#e4ecf5] active:scale-[0.98] transition-all duration-200"
+              className="inline-flex items-center justify-center font-bold text-xs px-6 py-2.5 rounded-full bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white shadow-[0_4px_14px_rgba(15,23,42,0.35)] border border-slate-700/80 hover:from-[#1e293b] hover:to-[#0f172a] hover:shadow-[0_6px_18px_rgba(15,23,42,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
             >
-              Acessar Hub
+              Login
             </Link>
           </div>
         </div>
