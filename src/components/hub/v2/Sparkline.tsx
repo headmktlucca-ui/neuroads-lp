@@ -21,10 +21,12 @@ export default function Sparkline({
   const max = Math.max(...points);
   const min = Math.min(...points);
   const range = max - min || 1;
+  const padX = 4;
+  const drawWidth = width - padX * 2;
 
   const coords = points.map((p, i) => {
-    const x = (i / (points.length - 1)) * width;
-    const y = height - ((p - min) / range) * height * 0.8 - height * 0.1;
+    const x = padX + (i / (points.length - 1)) * drawWidth;
+    const y = height - ((p - min) / range) * height * 0.75 - height * 0.12;
     return { x, y };
   });
 
@@ -32,7 +34,7 @@ export default function Sparkline({
     .map((c, i) => (i === 0 ? `M ${c.x},${c.y}` : `L ${c.x},${c.y}`))
     .join(' ');
 
-  const areaPath = `${path} L ${width},${height} L 0,${height} Z`;
+  const areaPath = `${path} L ${padX + drawWidth},${height} L ${padX},${height} Z`;
   const gradId = `spark-grad-${color.replace(/[^a-z0-9]/gi, '')}`;
 
   return (

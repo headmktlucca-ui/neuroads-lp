@@ -180,21 +180,33 @@ export function IconChart3D(p: IconProps) {
   );
 }
 
-/* ─── Conversão — alvo verde ─────────────────────────────────────────── */
+/* ─── Conversão / Investimento — alvo 3D azul e dourado ─────────────── */
 export function IconTarget3D(p: IconProps) {
   return (
     <Svg {...p}>
       <defs>
-        <linearGradient id="hui-target" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#4ADE80" /><stop offset="1" stopColor="#047857" />
+        <linearGradient id="hui-target-blue" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#60A5FA" /><stop offset="1" stopColor="#1D4ED8" />
+        </linearGradient>
+        <linearGradient id="hui-target-gold" x1="12" y1="12" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FDE047" /><stop offset="1" stopColor="#D97706" />
         </linearGradient>
       </defs>
-      <circle cx="24" cy="24" r="17" fill="url(#hui-target)" />
-      <circle cx="24" cy="24" r="11" fill="white" fillOpacity="0.28" />
-      <circle cx="24" cy="24" r="10" fill="url(#hui-target)" />
-      <circle cx="24" cy="24" r="4.5" fill="white" fillOpacity="0.92" />
-      <ellipse cx="17" cy="15" rx="7" ry="3.4" fill="white" fillOpacity="0.28" />
-      <ellipse cx="24" cy="44" rx="13" ry="2" fill="#047857" fillOpacity="0.15" />
+      {/* Sombra de projeção 3D */}
+      <circle cx="25" cy="25" r="18" fill="#1E3A8A" opacity="0.35" />
+      {/* Anel externo 3D azul */}
+      <circle cx="24" cy="24" r="18" fill="url(#hui-target-blue)" />
+      {/* Anel intermediário branco de vidro */}
+      <circle cx="24" cy="24" r="13" fill="white" fillOpacity="0.9" />
+      {/* Anel interno 3D azul */}
+      <circle cx="24" cy="24" r="9.5" fill="url(#hui-target-blue)" />
+      {/* Centro/Bullseye dourado 3D */}
+      <circle cx="24" cy="24" r="5.5" fill="url(#hui-target-gold)" />
+      <circle cx="24" cy="24" r="2" fill="white" />
+      {/* Brilho superior de vidro */}
+      <ellipse cx="18" cy="12" rx="7" ry="3" fill="white" fillOpacity="0.45" transform="rotate(-20 18 12)" />
+      {/* Sombra de base */}
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#1D4ED8" fillOpacity="0.2" />
     </Svg>
   );
 }
@@ -803,6 +815,36 @@ export function IconMegaphone3D(p: IconProps) {
     </Svg>
   );
 }
+
+/* ─── KPI: Alerta / Alta Prioridade (Triângulo 3D Rosa/Vermelho) ──────────── */
+export function IconAlert3D(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <defs>
+        <linearGradient id="hui-alert-red" x1="6" y1="6" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#F87171" /><stop offset="1" stopColor="#DC2626" />
+        </linearGradient>
+        <linearGradient id="hui-alert-shine" x1="12" y1="8" x2="32" y2="28" gradientUnits="userSpaceOnUse">
+          <stop stopColor="#FFFFFF" stopOpacity="0.65" />
+          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0.0" />
+        </linearGradient>
+      </defs>
+      {/* Sombra de projeção 3D */}
+      <path d="M24 7 L43 39 H5 Z" fill="#7F1D1D" opacity="0.35" transform="translate(1, 2)" />
+      {/* Triângulo principal 3D */}
+      <path d="M24 6 L43 38 H5 Z" fill="url(#hui-alert-red)" />
+      <path d="M24 6 L43 38 H5 Z" fill="url(#hui-alert-shine)" />
+      {/* Exclamação 3D branca */}
+      <rect x="22.5" y="16" width="3" height="12" rx="1.5" fill="white" />
+      <circle cx="24" cy="32" r="2" fill="white" />
+      {/* Reflexo de vidro */}
+      <ellipse cx="21" cy="14" rx="4" ry="2" fill="white" fillOpacity="0.4" transform="rotate(-30 21 14)" />
+      {/* Sombra de base */}
+      <ellipse cx="24" cy="45" rx="14" ry="2" fill="#DC2626" fillOpacity="0.2" />
+    </Svg>
+  );
+}
+
 
 
 

@@ -31,6 +31,12 @@ import {
   IconLikes3D, 
   IconEngagement3D 
 } from '../../../components/hub/HubUiIcons3D';
+import {
+  IconNeuKpiAgentes,
+  IconNeuKpiOperacoes,
+  IconNeuKpiOportunidades,
+  IconNeuKpiImpacto,
+} from '../../../components/hub/NeumorphicMenuIcons';
 
 // Helper to calculate dynamic comparison dates for period selector cards
 function getComparisonDates(days: number) {
@@ -125,10 +131,10 @@ export default function RedesSociaisDashboardPage() {
   const kpis = useMemo(() => {
     if (!hasConnected || !realMetrics) {
       return [
-        { label: 'Seguidores Totais', value: '0', sub: 'Sem canais conectados', evolution: null, icon: IconFollowers3D, isNa: true },
-        { label: 'Alcance Médio', value: '0', sub: 'Sem tráfego ativo', evolution: null, icon: IconReach3D, isNa: true },
-        { label: 'Reações / Curtidas', value: '0', sub: 'Sem interações', evolution: null, icon: IconLikes3D, isNa: true },
-        { label: 'Taxa de Engajamento', value: '0.0%', sub: 'Sem engajamento', evolution: null, icon: IconEngagement3D, isNa: true }
+        { label: 'Seguidores Totais', value: '0', sub: 'Sem canais conectados', evolution: null, icon: IconNeuKpiAgentes, isNa: true },
+        { label: 'Alcance Médio', value: '0', sub: 'Sem tráfego ativo', evolution: null, icon: IconNeuKpiOperacoes, isNa: true },
+        { label: 'Reações / Curtidas', value: '0', sub: 'Sem interações', evolution: null, icon: IconNeuKpiOportunidades, isNa: true },
+        { label: 'Taxa de Engajamento', value: '0.0%', sub: 'Sem engajamento', evolution: null, icon: IconNeuKpiImpacto, isNa: true }
       ];
     }
 
@@ -138,7 +144,7 @@ export default function RedesSociaisDashboardPage() {
         value: realMetrics.totalFollowers.toLocaleString('pt-BR'), 
         sub: realMetrics.followersSubtext, 
         evolution: realMetrics.followersEvolution,
-        icon: IconFollowers3D, 
+        icon: IconNeuKpiAgentes, 
         isNa: false 
       },
       { 
@@ -146,7 +152,7 @@ export default function RedesSociaisDashboardPage() {
         value: realMetrics.totalReach.toLocaleString('pt-BR'), 
         sub: realMetrics.reachSubtext, 
         evolution: realMetrics.reachEvolution,
-        icon: IconReach3D, 
+        icon: IconNeuKpiOperacoes, 
         isNa: false 
       },
       { 
@@ -154,7 +160,7 @@ export default function RedesSociaisDashboardPage() {
         value: realMetrics.totalLikes.toLocaleString('pt-BR'), 
         sub: realMetrics.likesSubtext, 
         evolution: realMetrics.likesEvolution,
-        icon: IconLikes3D, 
+        icon: IconNeuKpiOportunidades, 
         isNa: false 
       },
       { 
@@ -162,7 +168,7 @@ export default function RedesSociaisDashboardPage() {
         value: realMetrics.avgEngagementRate, 
         sub: realMetrics.engagementSubtext, 
         evolution: realMetrics.engagementEvolution,
-        icon: IconEngagement3D, 
+        icon: IconNeuKpiImpacto, 
         isNa: false 
       }
     ];
@@ -374,7 +380,7 @@ export default function RedesSociaisDashboardPage() {
                     <div className="flex justify-between items-start gap-2 mb-3">
                       <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider mt-1">{kpi.label}</span>
                       <div className="shrink-0 flex items-center justify-center">
-                        <KpiIcon size={34} className={kpi.isNa ? 'opacity-40 grayscale' : ''} />
+                        <KpiIcon size={44} />
                       </div>
                     </div>
 

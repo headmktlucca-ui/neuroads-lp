@@ -26,6 +26,12 @@ import {
   IconSparklesPurple3D,
   IconAutomation3D,
 } from '../../../components/hub/HubUiIcons3D';
+import {
+  IconNeuKpiOnline,
+  IconNeuKpiOperacoes,
+  IconNeuKpiCpu,
+  IconNeuKpiOportunidades,
+} from '../../../components/hub/NeumorphicMenuIcons';
 
 interface CustomField {
   name: string;
@@ -878,22 +884,22 @@ export default function HubAutomacoesPage() {
           { 
             label: 'Ativas', 
             value: loading ? '…' : String(totalActive), 
-            icon: <IconZap3D size={54} />
+            icon: <IconNeuKpiOnline size={44} />
           },
           { 
             label: 'Performance', 
             value: loading ? '…' : String(byCategory['Performance'] ?? 0), 
-            icon: <IconActivity3D size={54} />
+            icon: <IconNeuKpiOperacoes size={44} />
           },
           { 
             label: 'Criativos', 
             value: loading ? '…' : String(byCategory['Criativos'] ?? 0), 
-            icon: <IconCpu3D size={54} />
+            icon: <IconNeuKpiCpu size={44} />
           },
           { 
             label: 'Top categoria', 
             value: loading ? '…' : topCategory, 
-            icon: <IconSparklesPurple3D size={54} />
+            icon: <IconNeuKpiOportunidades size={44} />
           },
         ].map(({ label, value, icon }) => (
           <div key={label} className="rounded-2xl border border-white/60 bg-white p-5 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between hover:shadow-[6px_6px_14px_#c2cbd9,_-6px_-6px_14px_#ffffff] transition-all">
@@ -934,7 +940,7 @@ export default function HubAutomacoesPage() {
                 onClick={() => setFilterCategory(cat)}
                 className={`px-3.5 py-1.5 rounded-xl text-[11px] font-black transition-all duration-200 cursor-pointer ${
                   isActive
-                    ? 'bg-white text-[#FF6A00] shadow-[0_2px_8px_rgba(0,0,0,0.2)] scale-[1.02]'
+                    ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.35)] scale-[1.02]'
                     : 'text-slate-300 hover:text-white hover:bg-white/10'
                 }`}
                 style={{ border: 'none' }}

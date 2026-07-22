@@ -2689,6 +2689,20 @@ Diga-me qual é a sua meta atual ou escolha uma atividade abaixo para começar:`
   // (ex: "Analista de Tráfego", "DNA da Marca", "Análise Viral", etc.)
   // Operações com campos obrigatórios (SPECIALTY_FIELDS) aguardam input do usuário.
   const autoRunRef = useRef<string | null>(null);
+
+  // Auto-executa quando um prompt customizado é passado via URL (?prompt=...)
+  useEffect(() => {
+    if (!activeAgent || !user) return;
+    const promptParam = searchParams.get('prompt');
+    if (!promptParam) return;
+
+    const runKey = `prompt:${promptParam.slice(0, 50)}`;
+    if (autoRunRef.current === runKey) return;
+    autoRunRef.current = runKey;
+
+    handleSend(promptParam);
+  }, [activeAgent, user, searchParams, handleSend]);
+
   useEffect(() => {
     if (!activeAgent || !user || !specialtyTitle) return;
 

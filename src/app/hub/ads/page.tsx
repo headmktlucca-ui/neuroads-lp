@@ -22,6 +22,7 @@ import { useAuth } from '../../../context/AuthContext';
 import { loadUserConnections, type ConnectionsMap } from '../../../lib/connector-save';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import { IconMegaphone3D } from '../../../components/hub/HubUiIcons3D';
+import { NeumorphicTileIcon } from '../../../components/hub/NeumorphicMenuIcons';
 
 // Initial campaigns list
 const INITIAL_CAMPAIGNS = [
@@ -353,9 +354,9 @@ export default function AdsDashboardPage() {
                   <div>
                     <div className="flex justify-between items-start gap-2 mb-3">
                       <span className="text-[11px] font-black text-slate-400 uppercase tracking-wider">{kpi.label}</span>
-                      <div className="w-7 h-7 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-center text-slate-500 shadow-sm">
-                        <KpiIcon size={14} className={kpi.isNa ? 'text-slate-300' : 'text-[#FF6A00]'} />
-                      </div>
+                      <NeumorphicTileIcon size="card" className="shadow-sm">
+                        <KpiIcon size={16} />
+                      </NeumorphicTileIcon>
                     </div>
 
                     <p className="text-2xl font-black text-slate-900 tracking-tight font-mono">{kpi.value}</p>

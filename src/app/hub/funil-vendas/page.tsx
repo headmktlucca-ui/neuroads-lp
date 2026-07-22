@@ -9,8 +9,13 @@ import {
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { getFirebaseDb } from '../../../lib/firebase';
-import { subscribeToCRMLeads } from '../../../lib/crm-sync';
 import { IconFunnel3D } from '../../../components/hub/HubUiIcons3D';
+import {
+  IconNeuKpiAgentes,
+  IconNeuKpiClock,
+  IconNeuKpiImpacto,
+  IconNeuKpiTicket,
+} from '../../../components/hub/NeumorphicMenuIcons';
 
 /* ─── 3D KPI icons (plastic/clay style) ──────────────────────────────────── */
 
@@ -623,10 +628,10 @@ export default function FunilVendasPage() {
       {/* ── Stats Row ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: 'Leads no Funil', value: stats.totalLeads, icon: <KpiIconLeads /> },
-          { label: 'Em Negociação', value: `R$ ${stats.valueInNegotiation.toLocaleString('pt-BR')}`, icon: <KpiIconClock /> },
-          { label: 'Faturamento Fechado', value: `R$ ${stats.totalWonValue.toLocaleString('pt-BR')}`, icon: <KpiIconMoney /> },
-          { label: 'Ticket Médio', value: `R$ ${Math.round(stats.averageTicket).toLocaleString('pt-BR')}`, icon: <KpiIconTicket /> },
+          { label: 'Leads no Funil', value: stats.totalLeads, icon: <IconNeuKpiAgentes size={44} /> },
+          { label: 'Em Negociação', value: `R$ ${stats.valueInNegotiation.toLocaleString('pt-BR')}`, icon: <IconNeuKpiClock size={44} /> },
+          { label: 'Faturamento Fechado', value: `R$ ${stats.totalWonValue.toLocaleString('pt-BR')}`, icon: <IconNeuKpiImpacto size={44} /> },
+          { label: 'Ticket Médio', value: `R$ ${Math.round(stats.averageTicket).toLocaleString('pt-BR')}`, icon: <IconNeuKpiTicket size={44} /> },
         ].map(({ label, value, icon }) => (
           <div key={label} className="rounded-2xl border border-white/60 bg-white p-5 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between">
             <div>
@@ -792,30 +797,32 @@ export default function FunilVendasPage() {
       </AnimatePresence>
 
       {/* ── Filter Toolbar ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-white/60 bg-[#eef2f7] shadow-[inset_1px_1px_3px_#d1d9e6,_inset_-1px_-1px_3px_#ffffff]">
-        <div className="flex items-center gap-1.5 flex-wrap">
-          <span className="text-[10px] font-black uppercase text-slate-400 mr-2 font-sans tracking-wider">Filtrar Origem:</span>
-          {[
-            { id: 'all', label: 'Todos' },
-            { id: 'google', label: 'Google Ads' },
-            { id: 'meta', label: 'Meta Ads' },
-            { id: 'linkedin', label: 'LinkedIn Ads' },
-            { id: 'outbound', label: 'Outbound SDR' },
-            { id: 'seo', label: 'SEO & Orgânico' },
-          ].map(opt => (
+      <div className="inline-flex items-center gap-1.5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-1.5 rounded-2xl border border-slate-800/80 shadow-[0_4px_14px_rgba(15,23,42,0.18)] flex-wrap w-full sm:w-auto">
+        <span className="text-[10px] font-black uppercase text-slate-400 px-3.5 py-1.5 tracking-wider">Filtrar Origem:</span>
+        {[
+          { id: 'all', label: 'Todos' },
+          { id: 'google', label: 'Google Ads' },
+          { id: 'meta', label: 'Meta Ads' },
+          { id: 'linkedin', label: 'LinkedIn Ads' },
+          { id: 'outbound', label: 'Outbound SDR' },
+          { id: 'seo', label: 'SEO & Orgânico' },
+        ].map(opt => {
+          const isActive = originFilter === opt.id;
+          return (
             <button
               key={opt.id}
               onClick={() => setOriginFilter(opt.id as 'all' | 'google' | 'meta' | 'linkedin' | 'outbound' | 'seo')}
-              className={`px-3 py-1.5 rounded-xl text-[11px] font-black transition-all cursor-pointer ${
-                originFilter === opt.id
-                  ? 'bg-white text-[#FF6A00] border border-[#FF6A00]/30 shadow-sm'
-                  : 'text-[#475569] hover:text-[#1e293b] border border-transparent'
+              className={`px-3.5 py-1.5 rounded-xl text-[11px] font-black transition-all duration-200 cursor-pointer ${
+                isActive
+                  ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.35)] scale-[1.02]'
+                  : 'text-slate-300 hover:text-white hover:bg-white/10'
               }`}
+              style={{ border: 'none' }}
             >
               {opt.label}
             </button>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
       {/* ── Kanban Columns Grid ── */}

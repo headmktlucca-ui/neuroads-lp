@@ -355,7 +355,7 @@ export default function SettingsHubPage() {
               onClick={() => handleTabChange(tab.id)}
               className={`px-4 py-2 rounded-xl text-[12px] font-black transition-all duration-200 cursor-pointer ${
                 active
-                  ? 'bg-white text-[#FF6A00] shadow-[0_2px_8px_rgba(0,0,0,0.2)] scale-[1.02]'
+                  ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.35)] scale-[1.02]'
                   : 'text-slate-300 hover:text-white hover:bg-white/10'
               }`}
               style={{ border: 'none' }}

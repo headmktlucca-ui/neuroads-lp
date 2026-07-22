@@ -10,7 +10,10 @@
 [Descreva o produto, quem é o cliente e o modelo de receita para dar contexto às decisões técnicas. Ex: SaaS B2B focado em clínicas médicas, com modelo de assinatura mensal.]
 
 ## 4. PADRÕES DE CÓDIGO
-[Defina as convenções do time. Ex: Usar camelCase para variáveis, PascalCase para componentes, componentes em pastas com index.ts, preferir imports absolutos.]
+- **Seletor de Abas / Cápsula de Segmentos (Tab Switcher)**:
+  - **Container**: Cápsula em gradiente escuro: `bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-1.5 rounded-2xl border border-slate-800/80 shadow-[0_4px_14px_rgba(15,23,42,0.18)]`
+  - **Item Ativo**: Cápsula em gradiente laranja vibrante com texto branco e brilho suave: `bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.35)] scale-[1.02]`
+  - **Item Inativo**: `text-slate-300 hover:text-white hover:bg-white/10`
 
 ## 5. ROTINA
 [Liste os comandos essenciais e fluxos diários. Ex: "npm run dev" para iniciar localmente, "npm run test" antes de cada PR.]

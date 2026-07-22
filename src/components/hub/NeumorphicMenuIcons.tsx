@@ -15,7 +15,7 @@ type NeumorphicTileProps = {
   children: React.ReactNode;
   isActive?: boolean;
   isDark?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'sm' | 'md' | 'card' | 'lg';
   className?: string;
 };
 
@@ -28,8 +28,10 @@ export function NeumorphicTileIcon({
   const dimensions =
     size === 'sm'
       ? 'w-5.5 h-5.5 rounded-[7px]'
+      : size === 'card'
+      ? 'w-10 h-10 rounded-xl'
       : size === 'lg'
-      ? 'w-8 h-8 rounded-xl'
+      ? 'w-11 h-11 rounded-2xl'
       : 'w-6.5 h-6.5 rounded-lg';
 
   return (
@@ -212,5 +214,141 @@ export function IconNeuLucca(p: IconProps) {
     <Svg {...p}>
       <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 6C13.66 6 15 7.34 15 9C15 10.66 13.66 12 12 12C10.34 12 9 10.66 9 9C9 7.34 10.34 6 12 6ZM12 20C9.67 20 7.42 19.06 5.86 17.44C6.01 15.39 10.02 14.25 12 14.25C13.98 14.25 17.99 15.39 18.14 17.44C16.58 19.06 14.33 20 12 20Z" />
     </Svg>
+  );
+}
+
+/* ─── 17. Wallet / Impacto Financeiro ───────────────────────────────── */
+export function IconNeuWallet(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M21 7.28V5c0-1.1-.9-2-2-2H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-2.28c.59-.35 1-.99 1-1.72V9c0-.73-.41-1.37-1-1.72zM20 9v6h-3c-1.1 0-2-.9-2-2s.9-2 2-2h3zM5 5h14v2H5V5z" />
+    </Svg>
+  );
+}
+
+/* ─── 18. Alert / Alta Prioridade ───────────────────────────────────── */
+export function IconNeuAlert(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M12 2L1 21H23L12 2ZM13 18H11V16H13V18ZM13 14H11V10H13V14Z" />
+    </Svg>
+  );
+}
+
+/* ─── 19. Users / Agentes Envolvidos ────────────────────────────────── */
+export function IconNeuUsers(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+    </Svg>
+  );
+}
+
+/* ─── 20. Zap / Lightning / Online ───────────────────────────────────── */
+export function IconNeuZap(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
+    </Svg>
+  );
+}
+
+/* ─── 21. Clock / Tempo ──────────────────────────────────────────────── */
+export function IconNeuClock(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+    </Svg>
+  );
+}
+
+/* ─── 22. Cpu / Processador ─────────────────────────────────────────── */
+export function IconNeuCpu(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M15 9H9v6h6V9zm-2 4h-2v-2h2v2zm8-2V9h-2V7c0-1.1-.9-2-2-2h-2V3h-2v2h-2V3H9v2H7c-1.1 0-2 .9-2 2v2H3v2h2v2H3v2h2v2c0 1.1.9 2 2 2h2v2h2v-2h2v2h2v-2h2c1.1 0 2-.9 2-2v-2h2v-2h-2v-2h2zm-4 6H7V7h10v10z" />
+    </Svg>
+  );
+}
+
+/* ─── 23. Ticket / Cupon ─────────────────────────────────────────────── */
+export function IconNeuTicket(p: IconProps) {
+  return (
+    <Svg {...p}>
+      <path d="M22 10V6c0-1.11-.9-2-2-2H4c-1.1 0-1.99.89-1.99 2v4c1.1 0 1.99.9 1.99 2s-.89 2-1.99 2v4c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2v-4c-1.1 0-2-.9-2-2s.9-2 2-2zm-2-1.46c-1.19.69-2 1.99-2 3.46s.81 2.77 2 3.46V18H4v-2.54c1.19-.69 2-1.99 2-3.46.01-1.48-.8-2.77-1.99-3.46V6h16v2.54z" />
+    </Svg>
+  );
+}
+
+/* ─── Neumorphic KPI Tile Wrappers (Layout idêntico aos botões do menu) ─── */
+export function IconNeuKpiOportunidades({ size = 44, isActive = false }: { size?: number; isActive?: boolean }) {
+  return (
+    <NeumorphicTileIcon isActive={isActive} size="lg" className="shadow-md">
+      <IconNeuOpportunities size={size ? Math.round(size * 0.5) : 22} />
+    </NeumorphicTileIcon>
+  );
+}
+
+export function IconNeuKpiImpacto({ size = 44, isActive = false }: { size?: number; isActive?: boolean }) {
+  return (
+    <NeumorphicTileIcon isActive={isActive} size="lg" className="shadow-md">
+      <IconNeuWallet size={size ? Math.round(size * 0.5) : 22} />
+    </NeumorphicTileIcon>
+  );
+}
+
+export function IconNeuKpiPrioridade({ size = 44, isActive = false }: { size?: number; isActive?: boolean }) {
+  return (
+    <NeumorphicTileIcon isActive={isActive} size="lg" className="shadow-md">
+      <IconNeuAlert size={size ? Math.round(size * 0.5) : 22} />
+    </NeumorphicTileIcon>
+  );
+}
+
+export function IconNeuKpiAgentes({ size = 44, isActive = false }: { size?: number; isActive?: boolean }) {
+  return (
+    <NeumorphicTileIcon isActive={isActive} size="lg" className="shadow-md">
+      <IconNeuUsers size={size ? Math.round(size * 0.5) : 22} />
+    </NeumorphicTileIcon>
+  );
+}
+
+export function IconNeuKpiOperacoes({ size = 44, isActive = false }: { size?: number; isActive?: boolean }) {
+  return (
+    <NeumorphicTileIcon isActive={isActive} size="lg" className="shadow-md">
+      <IconNeuAutomation size={size ? Math.round(size * 0.5) : 22} />
+    </NeumorphicTileIcon>
+  );
+}
+
+export function IconNeuKpiOnline({ size = 44, isActive = false }: { size?: number; isActive?: boolean }) {
+  return (
+    <NeumorphicTileIcon isActive={isActive} size="lg" className="shadow-md">
+      <IconNeuZap size={size ? Math.round(size * 0.5) : 22} />
+    </NeumorphicTileIcon>
+  );
+}
+
+export function IconNeuKpiCpu({ size = 44, isActive = false }: { size?: number; isActive?: boolean }) {
+  return (
+    <NeumorphicTileIcon isActive={isActive} size="lg" className="shadow-md">
+      <IconNeuCpu size={size ? Math.round(size * 0.5) : 22} />
+    </NeumorphicTileIcon>
+  );
+}
+
+export function IconNeuKpiClock({ size = 44, isActive = false }: { size?: number; isActive?: boolean }) {
+  return (
+    <NeumorphicTileIcon isActive={isActive} size="lg" className="shadow-md">
+      <IconNeuClock size={size ? Math.round(size * 0.5) : 22} />
+    </NeumorphicTileIcon>
+  );
+}
+
+export function IconNeuKpiTicket({ size = 44, isActive = false }: { size?: number; isActive?: boolean }) {
+  return (
+    <NeumorphicTileIcon isActive={isActive} size="lg" className="shadow-md">
+      <IconNeuTicket size={size ? Math.round(size * 0.5) : 22} />
+    </NeumorphicTileIcon>
   );
 }

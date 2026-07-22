@@ -21,6 +21,12 @@ import {
   IconSparklesPurple3D,
   IconBrain3D,
 } from './HubUiIcons3D';
+import {
+  IconNeuKpiAgentes,
+  IconNeuKpiOperacoes,
+  IconNeuKpiOnline,
+  IconNeuKpiOportunidades,
+} from './NeumorphicMenuIcons';
 
 // ─── Reusable KPI Icon Wrapper ──────────────────────────────────────────────
 
@@ -344,22 +350,22 @@ export default function TeamLabShell() {
           { 
             label: 'Agentes da Equipe', 
             value: '10', 
-            icon: <IconUsers3D size={54} />
+            icon: <IconNeuKpiAgentes size={44} />
           },
           { 
             label: 'Operações Ativas', 
             value: `${totalActive}`, 
-            icon: <IconActivity3D size={54} />
+            icon: <IconNeuKpiOperacoes size={44} />
           },
           { 
             label: 'Online Agora', 
             value: '10', 
-            icon: <IconZap3D size={54} />
+            icon: <IconNeuKpiOnline size={44} />
           },
           { 
             label: 'SLA de Execução', 
             value: '100%', 
-            icon: <IconSparklesPurple3D size={54} />
+            icon: <IconNeuKpiOportunidades size={44} />
           },
         ].map(({ label, value, icon }) => (
           <div key={label} className="rounded-2xl border border-white/60 bg-white p-5 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between hover:shadow-[6px_6px_14px_#c2cbd9,_-6px_-6px_14px_#ffffff] transition-all">

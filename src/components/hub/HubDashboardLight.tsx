@@ -65,6 +65,28 @@ const LinkedinIcon = ({ size = 16, className = "" }: { size?: number; className?
   </svg>
 );
 
+/* ─── Reusable Soft UI Tile Icon ───────────────────────────────────── */
+function SoftUiTileIcon({
+  icon: IconComponent,
+  size = 32,
+  iconSize = 16,
+  className = "",
+}: {
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  size?: number;
+  iconSize?: number;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`relative flex items-center justify-center rounded-xl bg-gradient-to-b from-white via-[#f8fafc] to-[#e2e8f0] border border-white/90 shadow-[3px_4px_10px_rgba(148,163,184,0.35),-2px_-2px_6px_rgba(255,255,255,0.9)] hover:shadow-[4px_6px_14px_rgba(148,163,184,0.45)] hover:scale-105 transition-all duration-200 shrink-0 ${className}`}
+      style={{ width: size, height: size }}
+    >
+      <IconComponent size={iconSize} className="text-[#1e293b] stroke-[2.2]" />
+    </div>
+  );
+}
+
 /* ─── Types ────────────────────────────────────────────────────────── */
 type ChannelResult = {
   platform: string; spend: number; impressions: number; clicks: number; conversions: number; error?: string;
@@ -728,29 +750,29 @@ export default function HubDashboardLight() {
 
     if (reportView === 'clevel') {
       return [
-        { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+12%', positive: true,  icon: IconWallet3D,    color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
-        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: IconTarget3D,    color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-        { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: IconTrending3D,  color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
-        { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: IconCart3D,      color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
-        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: IconClick3D,     color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
+        { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+12%', positive: true,  icon: Wallet,            color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
+        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: Target,            color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
+        { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: TrendingUp,        color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
+        { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: ShoppingCart,      color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
+        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick, color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
       ];
     }
     if (reportView === 'traffic') {
       return [
-        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: false, icon: IconTarget3D,    color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-        { label: 'Cliques Ads',     rawValue: totalClicks, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '', positive: true, icon: IconClick3D,     color: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.05)', spark: Array(10).fill(0) },
-        { label: 'CTR Médio',       rawValue: totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0, isNa: isNaSpend, prefix: '', suffix: '%', decimals: 2, delta: '', positive: true, icon: IconActivity3D,  color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: Array(10).fill(0) },
-        { label: 'CPC Médio',       rawValue: totalClicks > 0 ? spendNum / totalClicks : 0, isNa: isNaSpend, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true, icon: IconCoin3D,      color: '#db2777', glow: 'rgba(219, 39, 119, 0.05)', spark: Array(10).fill(0) },
-        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: IconClick3D,     color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
+        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: false, icon: Target,            color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
+        { label: 'Cliques Ads',     rawValue: totalClicks, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '', positive: true, icon: MousePointerClick, color: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.05)', spark: Array(10).fill(0) },
+        { label: 'CTR Médio',       rawValue: totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0, isNa: isNaSpend, prefix: '', suffix: '%', decimals: 2, delta: '', positive: true, icon: Activity,  color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: Array(10).fill(0) },
+        { label: 'CPC Médio',       rawValue: totalClicks > 0 ? spendNum / totalClicks : 0, isNa: isNaSpend, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true, icon: DollarSign,       color: '#db2777', glow: 'rgba(219, 39, 119, 0.05)', spark: Array(10).fill(0) },
+        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick, color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
       ];
     }
     // clevel - mostrar apenas dados reais
     return [
-      { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true,  icon: IconWallet3D,    color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
-      { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: false, icon: IconTarget3D,    color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-      { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: IconTrending3D,  color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
-      { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: IconCart3D,      color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
-      { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: IconClick3D,     color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
+      { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true,  icon: Wallet,            color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
+      { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: false, icon: Target,            color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
+      { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: TrendingUp,        color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
+      { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: ShoppingCart,      color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
+      { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick, color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
     ];
   }, [reportView, stats, revenueNum, spendNum, roasNum, convsNum, cpaNum, usersNum, SP, isDemo, trafficData]);
 
@@ -961,6 +983,36 @@ export default function HubDashboardLight() {
         </div>
       </motion.div>
 
+      {/* Period Selector Cards — Posicionado logo abaixo da descrição */}
+      <div className="space-y-2">
+        <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Seletor de Período</p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[
+            { label: 'Últimos 7 dias', value: '7', compareText: 'Comparado a 05/07/2026 - 11/07/2026' },
+            { label: 'Últimos 15 dias', value: '15', compareText: 'Comparado a 27/06/2026 - 11/07/2026' },
+            { label: 'Últimos 30 dias', value: '30', compareText: 'Comparado a 12/06/2026 - 11/07/2026' },
+            { label: 'Últimos 90 dias', value: '90', compareText: 'Comparado a 13/04/2026 - 11/07/2026' },
+          ].map(p => {
+            const active = selectedPeriod === p.value;
+            return (
+              <button
+                key={p.value}
+                onClick={() => setSelectedPeriod(p.value)}
+                className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                  active
+                    ? 'bg-gradient-to-br from-[#FF6A00] to-[#FF8805] border-[#FF6A00] shadow-[0_4px_12px_rgba(255,106,0,0.2)]'
+                    : 'bg-white border-slate-200 shadow-sm hover:bg-slate-50/60'
+                }`}
+              >
+                <p className={`text-[12px] font-black ${active ? 'text-white' : 'text-slate-700'}`}>{p.label}</p>
+                <p className={`text-[10px] font-semibold mt-1 ${active ? 'text-white/80' : 'text-slate-400'}`}>Vs. último período igual</p>
+                <p className={`text-[9px] font-bold mt-0.5 ${active ? 'text-white/90' : 'text-slate-500'}`}>{p.compareText}</p>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
       {/* Trial countdown — visível apenas para usuários em período de teste */}
       {/* <HubTrialBanner /> */}
 
@@ -1018,7 +1070,7 @@ export default function HubDashboardLight() {
               onClick={() => setReportView(opt.id as any)}
               className={`flex-1 md:flex-none px-4 py-2 rounded-xl text-[11px] font-black transition-all duration-200 cursor-pointer ${
                 reportView === opt.id
-                  ? 'bg-white text-[#FF6A00] shadow-[0_2px_8px_rgba(0,0,0,0.2)] scale-[1.02]'
+                  ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.35)] scale-[1.02]'
                   : 'text-slate-300 hover:text-white hover:bg-white/10'
               }`}
               style={{ border: 'none' }}
@@ -1044,7 +1096,10 @@ export default function HubDashboardLight() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Block 1: Status de Dados */}
         <BentoCard variant="neumorphic" glowColor="rgba(37, 99, 235, 0.02)" className="p-4 flex flex-col gap-2">
-          <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Status de Dados</p>
+          <div className="flex items-center gap-2">
+            <SoftUiTileIcon icon={Link2} size={26} iconSize={13} />
+            <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Status de Dados</p>
+          </div>
           <div className="space-y-1.5 mt-1">
             <div className="flex items-center justify-between text-[11px] font-bold">
               <span className="text-slate-600">Google Analytics 4</span>
@@ -1069,7 +1124,10 @@ export default function HubDashboardLight() {
 
         {/* Block 2: Resumo do Funil */}
         <BentoCard variant="neumorphic" glowColor="rgba(16, 185, 129, 0.02)" className="p-4 flex flex-col gap-2">
-          <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Resumo do Funil</p>
+          <div className="flex items-center gap-2">
+            <SoftUiTileIcon icon={TrendingUp} size={26} iconSize={13} />
+            <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Resumo do Funil</p>
+          </div>
           <div className="grid grid-cols-2 gap-2 mt-1">
             <div>
               <p className="text-[9px] font-black text-slate-400 uppercase">Conversões</p>
@@ -1086,7 +1144,10 @@ export default function HubDashboardLight() {
 
         {/* Block 3: Tarefas de Hoje */}
         <BentoCard variant="neumorphic" glowColor="rgba(245, 158, 11, 0.02)" className="p-4 flex flex-col gap-2">
-          <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Tarefas Hoje</p>
+          <div className="flex items-center gap-2">
+            <SoftUiTileIcon icon={CheckCircle2} size={26} iconSize={13} />
+            <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Tarefas Hoje</p>
+          </div>
           <div className="space-y-1.5 mt-1">
             {alerts.length > 0 ? (
               <div className="flex items-center gap-1.5 text-[11px] font-bold text-rose-700">
@@ -1104,36 +1165,6 @@ export default function HubDashboardLight() {
             </Link>
           </div>
         </BentoCard>
-      </div>
-
-      {/* Period Selector Cards */}
-      <div className="space-y-2">
-        <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">Seletor de Período</p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { label: 'Últimos 7 dias', value: '7', compareText: 'Comparado a 05/07/2026 - 11/07/2026' },
-            { label: 'Últimos 15 dias', value: '15', compareText: 'Comparado a 27/06/2026 - 11/07/2026' },
-            { label: 'Últimos 30 dias', value: '30', compareText: 'Comparado a 12/06/2026 - 11/07/2026' },
-            { label: 'Últimos 90 dias', value: '90', compareText: 'Comparado a 13/04/2026 - 11/07/2026' },
-          ].map(p => {
-            const active = selectedPeriod === p.value;
-            return (
-              <button
-                key={p.value}
-                onClick={() => setSelectedPeriod(p.value)}
-                className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
-                  active
-                    ? 'bg-gradient-to-br from-[#FF6A00] to-[#FF8805] border-[#FF6A00] shadow-[0_4px_12px_rgba(255,106,0,0.2)]'
-                    : 'bg-white border-slate-200 shadow-sm hover:bg-slate-50/60'
-                }`}
-              >
-                <p className={`text-[12px] font-black ${active ? 'text-white' : 'text-slate-700'}`}>{p.label}</p>
-                <p className={`text-[10px] font-semibold mt-1 ${active ? 'text-white/80' : 'text-slate-400'}`}>Vs. último período igual</p>
-                <p className={`text-[9px] font-bold mt-0.5 ${active ? 'text-white/90' : 'text-slate-500'}`}>{p.compareText}</p>
-              </button>
-            );
-          })}
-        </div>
       </div>
 
       <AnimatePresence>
@@ -1207,40 +1238,45 @@ export default function HubDashboardLight() {
         }}
         initial="hidden"
         animate="show"
-        className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-4.5 w-full"
       >
         {KPIS.map((kpi, idx) => {
-          const Icon = kpi.icon as React.FC<{ size?: number; style?: React.CSSProperties }>;
+          const Icon = kpi.icon as React.FC<{ size?: number; className?: string; style?: React.CSSProperties }>;
           return (
             <BentoCard
               key={kpi.label}
               variant="neumorphic"
               glowColor={kpi.glow}
               accentColor={kpi.color}
-              className="p-4 sm:p-5 flex flex-col gap-3.5"
+              hideLeftBorder={true}
+              className="p-4.5 sm:p-5 flex flex-col justify-between gap-4 bg-gradient-to-b from-white via-white to-[#f8fafc] border border-slate-200/80 shadow-[0_4px_16px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_28px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-300"
               delay={idx * 0.04}
             >
               <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-2xl flex items-center justify-center bg-gradient-to-br from-white/90 to-slate-100/70 border border-white/80 shadow-[3px_3px_8px_rgba(209,217,230,0.5),-2px_-2px_6px_rgba(255,255,255,0.9)] transition-all transform hover:scale-105 shrink-0">
-                  <Icon size={30} />
+                <div className="w-11 h-11 rounded-[18px] flex items-center justify-center bg-gradient-to-b from-white via-[#f8fafc] to-[#e2e8f0] border border-white/90 shadow-[4px_6px_14px_rgba(148,163,184,0.38),-3px_-3px_10px_rgba(255,255,255,0.95)] hover:shadow-[6px_9px_20px_rgba(148,163,184,0.52)] hover:scale-105 active:scale-95 transition-all duration-200 shrink-0">
+                  <Icon size={22} className="text-[#1e293b] stroke-[2.2]" />
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <span
-                    className="flex items-center gap-0.5 text-[10px] font-black px-1.5 py-0.5 rounded-full border border-white/60 bg-[#eef2f7] shadow-[1px_1px_2px_#d1d9e6,_-1px_-1px_2px_#ffffff]"
-                    style={{ 
-                      color: kpi.positive ? '#0d9488' : '#e11d48', 
-                    }}
-                  >
-                    {kpi.positive ? <ArrowUpRight size={10} /> : <ArrowDownRight size={10} />}
-                    {kpi.delta}
-                  </span>
+                <div className="flex items-center gap-1.5 ml-auto">
+                  {Boolean(kpi.delta) && (
+                    <span
+                      className="flex items-center gap-0.5 text-[10.5px] font-extrabold px-2 py-0.5 rounded-full border shadow-sm"
+                      style={{ 
+                        color: kpi.positive ? '#0d9488' : '#e11d48', 
+                        backgroundColor: kpi.positive ? 'rgba(13, 148, 136, 0.08)' : 'rgba(225, 29, 72, 0.08)',
+                        borderColor: kpi.positive ? 'rgba(13, 148, 136, 0.2)' : 'rgba(225, 29, 72, 0.2)',
+                      }}
+                    >
+                      {kpi.positive ? <ArrowUpRight size={11} strokeWidth={2.5} /> : <ArrowDownRight size={11} strokeWidth={2.5} />}
+                      {kpi.delta}
+                    </span>
+                  )}
                   <KpiHelpPopover label={kpi.label} isNa={kpi.isNa} />
                 </div>
               </div>
-              <div className="min-w-0">
-                <div className="text-[18px] sm:text-[22px] font-black tracking-tight text-[#0f172a] font-mono tabular-nums leading-none break-words">
+              <div className="min-w-0 my-1">
+                <div className="text-[20px] sm:text-[23px] font-black tracking-tight text-[#0f172a] font-mono tabular-nums leading-none break-words">
                   {kpi.isNa ? (
-                    <span className="text-slate-400">N/A</span>
+                    <span className="text-slate-400 font-sans font-bold text-[18px] sm:text-[20px]">N/A</span>
                   ) : (
                     <CountUp
                       value={kpi.rawValue}
@@ -1250,16 +1286,18 @@ export default function HubDashboardLight() {
                     />
                   )}
                 </div>
-                <p className="text-[12px] text-slate-500 mt-1 font-bold">{kpi.label}</p>
+                <p className="text-[13px] text-slate-600 font-bold mt-1.5 tracking-wide">{kpi.label}</p>
                 {isDemo && kpi.isNa && (
-                  <p className="text-[9.5px] font-semibold text-slate-500 leading-snug mt-1.5 p-1.5 rounded-lg bg-[#FF6A00]/5 border border-[#FF6A00]/15">
+                  <p className="text-[9.5px] font-semibold text-slate-500 leading-snug mt-2 p-1.5 rounded-lg bg-[#FF6A00]/5 border border-[#FF6A00]/15">
                     💡 Conecte em <Link href="/hub/integracoes" className="text-[#FF6A00] font-black">Integrações</Link> para ver dados reais.
                   </p>
                 )}
               </div>
-              <div className="mt-1 flex items-center justify-between">
-                <span className="text-[9px] font-black uppercase tracking-wider text-slate-400">Histórico</span>
-                <Sparkline points={kpi.spark} color={kpi.color} width={80} height={20} fillOpacity={0.06} />
+              <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                <span className="text-[9.5px] font-extrabold uppercase tracking-widest text-slate-400">Histórico</span>
+                <div className="shrink-0 overflow-hidden">
+                  <Sparkline points={kpi.spark} color={kpi.color} width={76} height={20} fillOpacity={0.08} />
+                </div>
               </div>
             </BentoCard>
           );
@@ -1277,7 +1315,7 @@ export default function HubDashboardLight() {
           {/* Dynamic Alerts Bento Block */}
           <BentoCard variant="neumorphic" className="flex flex-col" glowColor="rgba(239, 68, 68, 0.03)">
             <div className="flex items-center gap-2 px-5 py-4 border-b border-white/40">
-              <Activity size={15} className="text-[#FF6A00]" />
+              <SoftUiTileIcon icon={AlertTriangle} size={28} iconSize={14} />
               <span className="text-[13px] font-black uppercase tracking-wider text-[#0f172a]">Alertas Operacionais</span>
               <span className="ml-auto text-[10px] font-black px-2 py-0.5 rounded-full border border-white/60 bg-[#eef2f7] shadow-[2px_2px_4px_#d1d9e6,_-2px_-2px_4px_#ffffff]">
                 {alerts.length}
@@ -1287,9 +1325,7 @@ export default function HubDashboardLight() {
               {alerts.map((a, i) => {
                 return (
                   <div key={i} onClick={() => setSelectedAlert(a)} className="flex items-start gap-3 px-4 py-3.5 hover:bg-slate-100/10 transition-all cursor-pointer">
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 border border-white/45 bg-[#eef2f7]" style={{ boxShadow: 'inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff' }}>
-                      <span className="w-2 h-2 rounded-full animate-pulse" style={{ backgroundColor: a.color }} />
-                    </div>
+                    <SoftUiTileIcon icon={AlertTriangle} size={28} iconSize={14} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
                         <p className="text-[10px] font-black uppercase tracking-wider text-slate-400">{a.platform}</p>
@@ -1313,7 +1349,7 @@ export default function HubDashboardLight() {
         <BentoCard variant="neumorphic" className="lg:col-span-6 flex flex-col p-4 sm:p-6" glowColor="rgba(255, 106, 0, 0.04)">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-white/40 pb-4 mb-6">
             <div className="flex items-center gap-2">
-              <TrendingUp size={16} className="text-[#FF6A00]" />
+              <SoftUiTileIcon icon={TrendingUp} size={30} iconSize={15} />
               <span className="text-[14px] font-black uppercase tracking-wider text-[#0f172a]">Resumo do Funil de Conversão</span>
             </div>
 
@@ -1333,7 +1369,7 @@ export default function HubDashboardLight() {
                     onClick={() => setFunnelFilter(opt.id)}
                     className={`flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl text-[11px] font-black transition-all duration-200 cursor-pointer ${
                       isActive
-                        ? 'bg-white text-[#FF6A00] shadow-[0_2px_8px_rgba(0,0,0,0.2)] scale-[1.02]'
+                        ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.35)] scale-[1.02]'
                         : 'text-slate-300 hover:text-white hover:bg-white/10'
                     }`}
                     style={{ border: 'none' }}
@@ -1352,7 +1388,7 @@ export default function HubDashboardLight() {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-[12px] font-black text-slate-700">
                 <div className="flex items-center gap-2">
-                  <Users size={14} className="text-yellow-500 animate-pulse" />
+                  <SoftUiTileIcon icon={Users} size={26} iconSize={13} />
                   <span>Atração (Impressões)</span>
                   <span className="text-[10px] font-bold text-slate-400 cursor-help" title="Total de visualizações de seus anúncios e postagens. Benchmark: CPM saudável é entre R$ 10 e R$ 25 dependendo do público.">ⓘ</span>
                 </div>
@@ -1375,7 +1411,7 @@ export default function HubDashboardLight() {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-[12px] font-black text-slate-700">
                 <div className="flex items-center gap-2">
-                  <MousePointerClick size={14} className="text-blue-500" />
+                  <SoftUiTileIcon icon={MousePointerClick} size={26} iconSize={13} />
                   <span>Engajamento (Cliques)</span>
                   <span className="text-[10px] font-bold text-slate-400 cursor-help" title="Total de visitas direcionadas ao seu site. Benchmark: CPC saudável no Google Search: R$ 1.50 - R$ 4.00 | Meta Ads: R$ 0.60 - R$ 1.80.">ⓘ</span>
                 </div>
@@ -1398,7 +1434,7 @@ export default function HubDashboardLight() {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-[12px] font-black text-slate-700">
                 <div className="flex items-center gap-2">
-                  <ShoppingCart size={14} className="text-orange-500" />
+                  <SoftUiTileIcon icon={ShoppingCart} size={26} iconSize={13} />
                   <span>Ações (Conversões)</span>
                   <span className="text-[10px] font-bold text-slate-400 cursor-help" title="Ações de valor (vendas, cadastros, formulários). Benchmark: Custo por Lead (CPL) ideal: R$ 15 - R$ 40 dependendo do setor.">ⓘ</span>
                 </div>
@@ -1421,7 +1457,7 @@ export default function HubDashboardLight() {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-[12px] font-black text-slate-700">
                 <div className="flex items-center gap-2">
-                  <Wallet size={14} className="text-emerald-505" />
+                  <SoftUiTileIcon icon={Wallet} size={26} iconSize={13} />
                   <span>Receita (Vendas)</span>
                   <span className="text-[10px] font-bold text-slate-400 cursor-help" title="Receita líquida total gerada a partir das vendas atribuídas aos anúncios.">ⓘ</span>
                 </div>
@@ -1442,7 +1478,7 @@ export default function HubDashboardLight() {
           {/* Active Automations Bento Block */}
           <BentoCard variant="neumorphic" className="flex flex-col h-full" glowColor="rgba(59, 130, 246, 0.03)">
             <div className="flex items-center gap-2 px-5 py-4 border-b border-white/40">
-              <Brain size={15} className="text-[#FF6A00]" />
+              <SoftUiTileIcon icon={Brain} size={28} iconSize={14} />
               <span className="text-[13px] font-black uppercase tracking-wider text-[#0f172a]">Últimas Automações</span>
               <Link 
                 href="/hub/laboratorio-agentes" 
@@ -1456,9 +1492,7 @@ export default function HubDashboardLight() {
             <div className="divide-y divide-white/20 flex-1 overflow-y-auto">
               {recentAutomations.length > 0 ? recentAutomations.map(ag => (
                 <div key={ag.key} className="flex items-center gap-3.5 px-5 py-4 hover:bg-slate-100/10 transition-colors">
-                  <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 border border-white/40 bg-[#eef2f7]" style={{ boxShadow: 'inset 2px 2px 4px #d1d9e6, inset -2px -2px 4px #ffffff' }}>
-                    <Zap size={13} className="text-[#FF6A00]" />
-                  </div>
+                  <SoftUiTileIcon icon={Zap} size={28} iconSize={14} />
                   <div className="min-w-0 flex-1">
                     <p className="text-[13px] font-bold text-[#1e293b] truncate">{ag.agentTitle}</p>
                     <p className="text-[11px] text-slate-500 truncate mt-0.5">{ag.cadenceTitle}{ag.lastUpdateAt ? ` - ${formatAutomationDateTime(ag.lastUpdateAt)}` : ''}</p>
@@ -1494,7 +1528,7 @@ export default function HubDashboardLight() {
         <BentoCard variant="neumorphic" glowColor="rgba(8, 145, 178, 0.03)" className="p-5 flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-white/40 pb-3">
             <div className="flex items-center gap-2">
-              <Users size={16} className="text-[#0891b2]" />
+              <SoftUiTileIcon icon={Users} size={30} iconSize={15} />
               <span className="text-[13px] font-black uppercase tracking-wider text-[#0f172a]">Google Analytics 4</span>
             </div>
             <span className={`text-[10px] font-black px-2 py-0.5 rounded-md border ${
@@ -1581,7 +1615,7 @@ export default function HubDashboardLight() {
         <BentoCard variant="neumorphic" glowColor="rgba(255, 106, 0, 0.03)" className="p-5 flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-white/40 pb-3">
             <div className="flex items-center gap-2">
-              <Target size={16} className="text-[#FF6A00]" />
+              <SoftUiTileIcon icon={Target} size={30} iconSize={15} />
               <span className="text-[13px] font-black uppercase tracking-wider text-[#0f172a]">Performance das Campanhas</span>
             </div>
             {(() => {
@@ -1632,7 +1666,7 @@ export default function HubDashboardLight() {
         <BentoCard variant="neumorphic" glowColor="rgba(217, 119, 6, 0.03)" className="p-5 flex flex-col gap-4">
           <div className="flex items-center justify-between border-b border-white/40 pb-3">
             <div className="flex items-center gap-2">
-              <InstagramIcon size={16} className="text-pink-600" />
+              <SoftUiTileIcon icon={InstagramIcon} size={30} iconSize={15} />
               <span className="text-[13px] font-black uppercase tracking-wider text-[#0f172a]">Redes Sociais & Orgânico</span>
             </div>
             {(() => {
@@ -1647,9 +1681,7 @@ export default function HubDashboardLight() {
             {/* Instagram Stats */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center border border-white/50 bg-[#eef2f7] shadow-[inset_1px_1px_2px_#d1d9e6,inset_-1px_-1px_2px_#ffffff]">
-                  <InstagramIcon size={13} className="text-pink-600" />
-                </div>
+                <SoftUiTileIcon icon={InstagramIcon} size={28} iconSize={14} />
                 <div>
                   <p className="text-[12px] font-bold text-slate-700">Instagram Organic</p>
                   <p className="text-[10px] text-slate-400 font-semibold">
@@ -1676,9 +1708,7 @@ export default function HubDashboardLight() {
             {/* LinkedIn Page Stats */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center border border-white/50 bg-[#eef2f7] shadow-[inset_1px_1px_2px_#d1d9e6,inset_-1px_-1px_2px_#ffffff]">
-                  <LinkedinIcon size={13} className="text-blue-700" />
-                </div>
+                <SoftUiTileIcon icon={LinkedinIcon} size={28} iconSize={14} />
                 <div>
                   <p className="text-[12px] font-bold text-slate-700">Página do LinkedIn</p>
                   <p className="text-[10px] text-slate-400 font-semibold">
@@ -1705,9 +1735,7 @@ export default function HubDashboardLight() {
             {/* Search Console Organic Stats */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-lg flex items-center justify-center border border-white/50 bg-[#eef2f7] shadow-[inset_1px_1px_2px_#d1d9e6,inset_-1px_-1px_2px_#ffffff]">
-                  <TrendingUp size={13} className="text-emerald-600" />
-                </div>
+                <SoftUiTileIcon icon={TrendingUp} size={28} iconSize={14} />
                 <div>
                   <p className="text-[12px] font-bold text-slate-700">Google Search Console</p>
                   <p className="text-[10px] text-slate-400 font-semibold">
@@ -1737,7 +1765,7 @@ export default function HubDashboardLight() {
       {/* ── Métricas Avançadas (GA4) ── */}
       <div className="mt-8 space-y-6">
         <div className="flex items-center gap-2 border-b border-slate-200/60 pb-3">
-          <Activity size={18} className="text-[#FF6A00]" />
+          <SoftUiTileIcon icon={Activity} size={32} iconSize={16} />
           <h2 className="text-[16px] font-black uppercase tracking-wider text-[#0f172a]">Métricas Avançadas (GA4)</h2>
         </div>
 
