@@ -228,7 +228,7 @@ export default function AdsDashboardPage() {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-3 self-start md:self-auto">
+        <div className="flex items-center gap-3 self-start md:self-auto lg:mt-6">
           {connectedCount > 0 && (
             <button
               type="button"
