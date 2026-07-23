@@ -51,7 +51,13 @@ import {
   type WhatsAppChatStatus,
   type LeadSentiment,
 } from '../../../lib/whatsapp-hub';
-import { IconWhatsapp3D, IconUsers3D, IconZap3D, IconSparklesPurple3D } from '../../../components/hub/HubUiIcons3D';
+import {
+  PageTitleIcon,
+  IconNeuWhatsapp,
+  IconNeuAlert,
+  IconNeuZap,
+  IconNeuUsers,
+} from '../../../components/hub/NeumorphicMenuIcons';
 
 // Quick Response Templates
 const QUICK_TEMPLATES = [
@@ -72,6 +78,38 @@ const QUICK_TEMPLATES = [
     text: 'Garantimos 100% de disponibilidade dos Agentes IA 24/7 com resposta média inferior a 15 segundos para todos os seus leads no WhatsApp.',
   },
 ];
+
+function KpiCard({
+  label,
+  value,
+  icon: Icon,
+  isActive = false,
+}: {
+  label: string;
+  value: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  isActive?: boolean;
+}) {
+  return (
+    <div
+      className={`flex items-center justify-between p-4 rounded-2xl border border-slate-200/80 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all ${
+        isActive ? 'bg-amber-500/5 border-amber-400/50 ring-2 ring-amber-400/30' : ''
+      }`}
+    >
+      <div>
+        <p className={`text-[10px] sm:text-[11px] font-bold uppercase tracking-wide mb-1 ${isActive ? 'text-amber-600' : 'text-slate-500'}`}>
+          {label}
+        </p>
+        <p className={`text-[22px] sm:text-[24px] font-black leading-none tracking-tight ${isActive ? 'text-amber-700' : 'text-[#1e293b]'}`}>
+          {value}
+        </p>
+      </div>
+      <div className={`shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-white shadow-[0_3px_8px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04)] border border-slate-50/50 transition-transform duration-300 hover:scale-110 ${isActive ? 'animate-bounce text-amber-600' : 'text-slate-700'}`}>
+        <Icon size={20} className={isActive ? 'text-amber-600' : 'text-slate-700'} />
+      </div>
+    </div>
+  );
+}
 
 export default function WhatsAppHubPage() {
   const { user } = useAuth();
@@ -390,8 +428,8 @@ export default function WhatsAppHubPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-8 border-b border-slate-200">
         <div>
           <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-              <IconWhatsapp3D size={32} />
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+              <PageTitleIcon icon={IconNeuWhatsapp} />
               WhatsApp
             </h1>
             <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-100 text-emerald-700 border border-emerald-200">
@@ -472,56 +510,10 @@ export default function WhatsAppHubPage() {
 
       {/* ── Summary KPI Cards ── */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
-        <div className="rounded-2xl border border-white/60 bg-white p-4 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">Conversas Ativas</p>
-            <p className="text-xl font-black text-slate-800">{metrics.total}</p>
-          </div>
-          <div className="shrink-0 p-2 rounded-xl bg-orange-500/10 text-orange-600">
-            <IconUsers3D size={42} />
-          </div>
-        </div>
-
-        <div
-          className={`rounded-2xl border p-4 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between transition-all ${
-            metrics.pendingHuman > 0
-              ? 'bg-amber-500/10 border-amber-400/50 ring-2 ring-amber-400/30'
-              : 'border-white/60 bg-white'
-          }`}
-        >
-          <div>
-            <div className="flex items-center gap-1.5 mb-1">
-              <p className="text-[10px] font-black uppercase tracking-wider text-amber-600">Aguardando Humano</p>
-              {metrics.pendingHuman > 0 && (
-                <span className="animate-pulse w-2 h-2 rounded-full bg-amber-500 shrink-0" />
-              )}
-            </div>
-            <p className="text-xl font-black text-amber-700">{metrics.pendingHuman}</p>
-          </div>
-          <div className="shrink-0 p-2 rounded-xl bg-amber-500/20 text-amber-600">
-            <AlertTriangle size={26} className={metrics.pendingHuman > 0 ? 'animate-bounce' : ''} />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-white/60 bg-white p-4 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">Com Agentes IA</p>
-            <p className="text-xl font-black text-emerald-600">{metrics.aiActive}</p>
-          </div>
-          <div className="shrink-0 p-2 rounded-xl bg-emerald-500/10 text-emerald-600">
-            <IconZap3D size={42} />
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-white/60 bg-white p-4 shadow-[4px_4px_10px_#d1d9e6,_-4px_-4px_10px_#ffffff] flex items-center justify-between">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">Em Atendimento Humano</p>
-            <p className="text-xl font-black text-blue-600">{metrics.humanActive}</p>
-          </div>
-          <div className="shrink-0 p-2 rounded-xl bg-purple-500/10 text-purple-600">
-            <IconSparklesPurple3D size={42} />
-          </div>
-        </div>
+        <KpiCard label="Conversas Ativas" value={String(metrics.total)} icon={IconNeuWhatsapp} />
+        <KpiCard label="Aguardando Humano" value={String(metrics.pendingHuman)} icon={IconNeuAlert} isActive={metrics.pendingHuman > 0} />
+        <KpiCard label="Com Agentes IA" value={String(metrics.aiActive)} icon={IconNeuZap} />
+        <KpiCard label="Em Atendimento Humano" value={String(metrics.humanActive)} icon={IconNeuUsers} />
       </div>
 
       {/* ── Main Split View (Chats List + Messages Window + Details) ── */}

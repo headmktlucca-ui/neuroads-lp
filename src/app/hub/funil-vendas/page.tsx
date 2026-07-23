@@ -10,7 +10,7 @@ import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from '../../../context/AuthContext';
 import { getFirebaseDb } from '../../../lib/firebase';
 import { subscribeToCRMLeads } from '../../../lib/crm-sync';
-import { IconFunnel3D } from '../../../components/hub/HubUiIcons3D';
+import { IconNeuCRM, PageTitleIcon } from '../../../components/hub/NeumorphicMenuIcons';
 import {
   IconNeuKpiAgentes,
   IconNeuKpiClock,
@@ -608,8 +608,8 @@ export default function FunilVendasPage() {
       {/* ── Header ── */}
       <div className="py-8 border-b border-slate-200 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <IconFunnel3D size={32} />
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+            <PageTitleIcon icon={IconNeuCRM} />
             CRM
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed max-w-2xl">

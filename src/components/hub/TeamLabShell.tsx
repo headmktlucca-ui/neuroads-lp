@@ -14,18 +14,13 @@ import { agents as allSpecialties } from '../../data/agents';
 import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../lib/agent-status-cache';
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
-import {
-  IconUsers3D,
-  IconActivity3D,
-  IconZap3D,
-  IconSparklesPurple3D,
-  IconBrain3D,
-} from './HubUiIcons3D';
+
 import {
   IconNeuKpiAgentes,
   IconNeuKpiOperacoes,
   IconNeuKpiOnline,
   IconNeuKpiOportunidades,
+  IconNeuBrain,
 } from './NeumorphicMenuIcons';
 
 // ─── Reusable KPI Icon Wrapper ──────────────────────────────────────────────
@@ -332,7 +327,7 @@ export default function TeamLabShell() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-8 border-b border-slate-200">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <IconBrain3D size={32} />
+            <IconNeuBrain size={32} />
             Agentes IA
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">

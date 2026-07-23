@@ -352,3 +352,22 @@ export function IconNeuKpiTicket({ size = 44, isActive = false }: { size?: numbe
     </NeumorphicTileIcon>
   );
 }
+
+/* ─── Page Title Icon Wrapper (Template Anexo 03) ─── */
+export function PageTitleIcon({
+  icon: Icon,
+  className = "w-8 h-8",
+  iconSize = 18,
+}: {
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  className?: string;
+  iconSize?: number;
+}) {
+  return (
+    <div
+      className={`shrink-0 flex items-center justify-center rounded-full bg-white shadow-[0_3px_8px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04)] border border-slate-200/50 ${className}`}
+    >
+      <Icon size={iconSize} className="text-slate-700" />
+    </div>
+  );
+}

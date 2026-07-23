@@ -38,7 +38,6 @@ import BentoCard from './v2/BentoCard';
 import CountUp from './v2/CountUp';
 import Sparkline from './v2/Sparkline';
 import {
-  IconDashboard3D,
   IconWallet3D,
   IconTarget3D,
   IconTrending3D,
@@ -47,6 +46,7 @@ import {
   IconActivity3D,
   IconCoin3D,
 } from './HubUiIcons3D';
+import { IconNeuDashboard } from './NeumorphicMenuIcons';
 
 /* ─── Custom Icons ────────────────────────────────────────────────── */
 const InstagramIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
@@ -974,7 +974,7 @@ export default function HubDashboardLight() {
       >
         <div className="min-w-0">
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <IconDashboard3D size={32} />
+            <IconNeuDashboard size={32} />
             Dashboard
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
@@ -1056,41 +1056,6 @@ export default function HubDashboardLight() {
       )}
 
 
-      {/* View Toggles & Actions Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-slate-200/50 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.02)]">
-        {/* Report Toggles */}
-        <div className="flex items-center gap-1.5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-1.5 rounded-2xl border border-slate-800/80 shadow-[0_4px_14px_rgba(15,23,42,0.18)] w-full md:w-auto">
-          {[
-            { id: 'clevel', label: 'Visão C-Level' },
-            { id: 'traffic', label: 'Visão Operacional de Tráfego' },
-            { id: 'fullfunnel', label: 'Visão de Funil Completo' },
-          ].map(opt => (
-            <button
-              key={opt.id}
-              onClick={() => setReportView(opt.id as any)}
-              className={`flex-1 md:flex-none px-4 py-2 rounded-xl text-[11px] font-black transition-all duration-200 cursor-pointer ${
-                reportView === opt.id
-                  ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.35)] scale-[1.02]'
-                  : 'text-slate-300 hover:text-white hover:bg-white/10'
-              }`}
-              style={{ border: 'none' }}
-            >
-              {opt.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Guide Mode & Export */}
-        <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto">
-          <button
-            onClick={handleExport}
-            disabled={exporting}
-            className="inline-flex items-center gap-1.5 px-4 h-9 rounded-xl text-[11px] font-black border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 shadow-sm transition-all shrink-0 cursor-pointer"
-          >
-            {exporting ? 'Exportando...' : 'Exportar Relatório'}
-          </button>
-        </div>
-      </div>
 
       {/* Operational Cockpit Header */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
@@ -1225,6 +1190,42 @@ export default function HubDashboardLight() {
         </Link>
       </div>
 
+      {/* View Toggles & Actions Bar */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-slate-200/50 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.02)] mb-4">
+        {/* Report Toggles */}
+        <div className="flex items-center gap-1.5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-1.5 rounded-2xl border border-slate-800/80 shadow-[0_4px_14px_rgba(15,23,42,0.18)] w-full md:w-auto">
+          {[
+            { id: 'clevel', label: 'Visão C-Level' },
+            { id: 'traffic', label: 'Visão Operacional de Tráfego' },
+            { id: 'fullfunnel', label: 'Visão de Funil Completo' },
+          ].map(opt => (
+            <button
+              key={opt.id}
+              onClick={() => setReportView(opt.id as any)}
+              className={`flex-1 md:flex-none px-4 py-2 rounded-xl text-[11px] font-black transition-all duration-200 cursor-pointer ${
+                reportView === opt.id
+                  ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.35)] scale-[1.02]'
+                  : 'text-slate-300 hover:text-white hover:bg-white/10'
+              }`}
+              style={{ border: 'none' }}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Guide Mode & Export */}
+        <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto">
+          <button
+            onClick={handleExport}
+            disabled={exporting}
+            className="inline-flex items-center gap-1.5 px-4 h-9 rounded-xl text-[11px] font-black border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 text-slate-700 shadow-sm transition-all shrink-0 cursor-pointer"
+          >
+            {exporting ? 'Exportando...' : 'Exportar Relatório'}
+          </button>
+        </div>
+      </div>
+
       {/* KPI Bento Grid */}
       <motion.div 
         variants={{
@@ -1253,8 +1254,8 @@ export default function HubDashboardLight() {
               delay={idx * 0.04}
             >
               <div className="flex items-center justify-between">
-                <div className="w-11 h-11 rounded-[18px] flex items-center justify-center bg-gradient-to-b from-white via-[#f8fafc] to-[#e2e8f0] border border-white/90 shadow-[4px_6px_14px_rgba(148,163,184,0.38),-3px_-3px_10px_rgba(255,255,255,0.95)] hover:shadow-[6px_9px_20px_rgba(148,163,184,0.52)] hover:scale-105 active:scale-95 transition-all duration-200 shrink-0">
-                  <Icon size={22} className="text-[#1e293b] stroke-[2.2]" />
+                <div className="w-9 h-9 rounded-[14px] flex items-center justify-center bg-gradient-to-b from-white via-[#f8fafc] to-[#e2e8f0] border border-white/90 shadow-[4px_6px_14px_rgba(148,163,184,0.38),-3px_-3px_10px_rgba(255,255,255,0.95)] hover:shadow-[6px_9px_20px_rgba(148,163,184,0.52)] hover:scale-105 active:scale-95 transition-all duration-200 shrink-0">
+                  <Icon size={18} className="text-[#1e293b] stroke-[2.2]" />
                 </div>
                 <div className="flex items-center gap-1.5 ml-auto">
                   {Boolean(kpi.delta) && (

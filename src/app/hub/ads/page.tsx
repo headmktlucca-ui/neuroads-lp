@@ -21,8 +21,7 @@ import {
 import { useAuth } from '../../../context/AuthContext';
 import { loadUserConnections, type ConnectionsMap } from '../../../lib/connector-save';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
-import { IconMegaphone3D } from '../../../components/hub/HubUiIcons3D';
-import { NeumorphicTileIcon } from '../../../components/hub/NeumorphicMenuIcons';
+import { IconNeuAds, PageTitleIcon, NeumorphicTileIcon } from '../../../components/hub/NeumorphicMenuIcons';
 
 // Initial campaigns list
 const INITIAL_CAMPAIGNS = [
@@ -214,8 +213,8 @@ export default function AdsDashboardPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <IconMegaphone3D size={32} />
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+            <PageTitleIcon icon={IconNeuAds} />
             Ads
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
@@ -324,7 +323,7 @@ export default function AdsDashboardPage() {
         /* Empty State (Fundo branco) */
         <div className="rounded-[32px] border border-slate-200/80 bg-white p-8 text-center shadow-sm max-w-2xl mx-auto py-16">
           <div className="w-16 h-16 rounded-full border border-slate-200 bg-white shadow-sm flex items-center justify-center mx-auto mb-6 text-slate-400">
-            <IconMegaphone3D size={28} />
+            <IconNeuAds size={28} />
           </div>
           <h3 className="text-xl font-black text-slate-900 tracking-tight">Nenhuma Plataforma de Anúncios Conectada</h3>
           <p className="text-sm font-semibold text-slate-500 mt-2 max-w-md mx-auto leading-relaxed">

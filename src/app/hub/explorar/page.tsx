@@ -13,13 +13,14 @@ import { useAuth } from '../../../context/AuthContext';
 import { getFirebaseDb } from '../../../lib/firebase';
 import { collection, onSnapshot, query, orderBy, doc, deleteDoc, addDoc } from 'firebase/firestore';
 import { TEAM_AGENTS, TeamAgent } from '../../../data/team-agents';
-import { IconSparkles3D } from '../../../components/hub/HubUiIcons3D';
+// Removed IconSparkles3D
 import {
   NeumorphicTileIcon,
-  IconNeuKpiOportunidades,
-  IconNeuKpiImpacto,
-  IconNeuKpiPrioridade,
-  IconNeuKpiAgentes,
+  PageTitleIcon,
+  IconNeuOpportunities,
+  IconNeuWallet,
+  IconNeuAlert,
+  IconNeuUsers,
 } from '../../../components/hub/NeumorphicMenuIcons';
 
 /* ── Helper ── */
@@ -97,20 +98,20 @@ function KpiCard({
 }: {
   label: string;
   value: string;
-  icon: React.ComponentType<{ size?: number; isActive?: boolean }>;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
 }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="flex items-center gap-3.5 p-4 rounded-2xl border border-slate-200/80 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all"
+      className="flex items-center justify-between p-4 rounded-2xl border border-slate-200/80 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.03)] hover:shadow-md transition-all"
     >
-      <div className="shrink-0 transition-transform duration-300 hover:scale-110">
-        <Icon size={44} />
-      </div>
       <div>
-        <p className="text-[22px] font-black text-[#1e293b] leading-none tracking-tight">{value}</p>
-        <p className="text-[11px] font-bold text-slate-500 mt-1">{label}</p>
+        <p className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">{label}</p>
+        <p className="text-[22px] sm:text-[24px] font-black text-[#1e293b] leading-none tracking-tight">{value}</p>
+      </div>
+      <div className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-white shadow-[0_3px_8px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04)] border border-slate-50/50 transition-transform duration-300 hover:scale-110">
+        <Icon size={20} className="text-slate-700" />
       </div>
     </motion.div>
   );
@@ -529,10 +530,10 @@ export default function OportunidadesPage() {
       : 'R$ 0';
 
     return [
-      { label: 'Oportunidades Identificadas', value: String(activeOpportunities.length), icon: IconNeuKpiOportunidades },
-      { label: 'Impacto Estimado / mês',       value: impactLabel,                       icon: IconNeuKpiImpacto },
-      { label: 'Alta Prioridade',              value: String(activeOpportunities.filter(o => o.priority === 'alta').length), icon: IconNeuKpiPrioridade },
-      { label: 'Agentes Envolvidos',           value: String(new Set(activeOpportunities.map(o => o.agent).filter(Boolean)).size), icon: IconNeuKpiAgentes },
+      { label: 'Oportunidades Identificadas', value: String(activeOpportunities.length), icon: IconNeuOpportunities },
+      { label: 'Impacto Estimado / mês',       value: impactLabel,                       icon: IconNeuWallet },
+      { label: 'Alta Prioridade',              value: String(activeOpportunities.filter(o => o.priority === 'alta').length), icon: IconNeuAlert },
+      { label: 'Agentes Envolvidos',           value: String(new Set(activeOpportunities.map(o => o.agent).filter(Boolean)).size), icon: IconNeuUsers },
     ];
   }, [activeOpportunities]);
 
@@ -569,8 +570,8 @@ export default function OportunidadesPage() {
           className="flex flex-col md:flex-row md:items-center justify-between gap-4"
         >
           <div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-              <IconSparkles3D size={32} />
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+              <PageTitleIcon icon={IconNeuOpportunities} />
               Oportunidades
             </h1>
             <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
@@ -581,10 +582,10 @@ export default function OportunidadesPage() {
 
         {/* Real Zero KPIs */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <KpiCard label="Oportunidades Identificadas" value="0" icon={IconNeuKpiOportunidades} />
-          <KpiCard label="Impacto Estimado / mês" value="R$ 0" icon={IconNeuKpiImpacto} />
-          <KpiCard label="Alta Prioridade" value="0" icon={IconNeuKpiPrioridade} />
-          <KpiCard label="Agentes Envolvidos" value="0" icon={IconNeuKpiAgentes} />
+          <KpiCard label="Oportunidades Identificadas" value="0" icon={IconNeuOpportunities} />
+          <KpiCard label="Impacto Estimado / mês" value="R$ 0" icon={IconNeuWallet} />
+          <KpiCard label="Alta Prioridade" value="0" icon={IconNeuAlert} />
+          <KpiCard label="Agentes Envolvidos" value="0" icon={IconNeuUsers} />
         </div>
 
         {/* Empty state card */}
@@ -620,8 +621,8 @@ export default function OportunidadesPage() {
         className="flex flex-col md:flex-row md:items-center justify-between gap-4"
       >
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <IconSparkles3D size={32} />
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+            <PageTitleIcon icon={IconNeuOpportunities} />
             Oportunidades
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">

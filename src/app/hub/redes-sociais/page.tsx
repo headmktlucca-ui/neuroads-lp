@@ -25,7 +25,6 @@ import {
 } from '../../../lib/social-metrics-extractor';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import { 
-  IconSocialMedia3D,
   IconFollowers3D, 
   IconReach3D, 
   IconLikes3D, 
@@ -36,6 +35,8 @@ import {
   IconNeuKpiOperacoes,
   IconNeuKpiOportunidades,
   IconNeuKpiImpacto,
+  IconNeuSocial,
+  PageTitleIcon,
 } from '../../../components/hub/NeumorphicMenuIcons';
 
 // Helper to calculate dynamic comparison dates for period selector cards
@@ -231,8 +232,8 @@ export default function RedesSociaisDashboardPage() {
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <IconSocialMedia3D size={32} />
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+            <PageTitleIcon icon={IconNeuSocial} />
             Redes Sociais
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
@@ -349,7 +350,7 @@ export default function RedesSociaisDashboardPage() {
         /* Empty State (Fundo branco) */
         <div className="rounded-[32px] border border-slate-200/80 bg-white p-8 text-center shadow-sm max-w-2xl mx-auto py-16">
           <div className="w-16 h-16 rounded-full border border-slate-200 bg-white shadow-sm flex items-center justify-center mx-auto mb-6 text-slate-400">
-            <IconSocialMedia3D size={28} />
+            <IconNeuSocial size={28} />
           </div>
           <h3 className="text-xl font-black text-slate-900 tracking-tight">Nenhum Canal Social Conectado</h3>
           <p className="text-sm font-semibold text-slate-500 mt-2 max-w-md mx-auto leading-relaxed">

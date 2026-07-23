@@ -4,12 +4,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from 'framer-motion';
-import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Menu, X, Volume2, VolumeX } from 'lucide-react';
+import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Menu, X, Volume2, VolumeX, Sparkles } from 'lucide-react';
 import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
 import HeroSilkBackground from '@/components/ui/HeroSilkBackground';
 import FunnelInteractiveShowcase from '@/components/neuroads/FunnelInteractiveShowcase';
 import PricingValuesSection from '@/components/neuroads/PricingValuesSection';
 import { ScreenshotShowcase } from '@/components/ui/screenshot-showcase';
+import StrategicDiagnosisModal from '@/components/neuroads/StrategicDiagnosisModal';
 
 function IconBotAI() {
   return (
@@ -248,6 +249,7 @@ export default function TempLandingPage() {
   const [activeAgent, setActiveAgent] = useState<any>(null);
   const [isSobreOpen, setIsSobreOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDiagnosisModalOpen, setIsDiagnosisModalOpen] = useState(false);
 
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -597,16 +599,32 @@ export default function TempLandingPage() {
             <p className="font-sans text-[clamp(1rem,1.4vw,1.15rem)] leading-[1.65] text-[#5A6678] max-w-[54ch] animate-rise-sub">
               A NeuroAds une campanhas patrocinadas, automação e um ecossistema de agentes inteligentes para transformar o marketing e o comercial da sua empresa B2B em uma máquina previsível de receita.
             </p>
-            <div className="flex flex-col items-start mt-8 w-full animate-rise-actions">
-              <Link
-                href="/cadastro"
-                className="inline-flex items-center justify-center font-bold text-sm px-8 py-4 rounded-2xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[4px_4px_12px_rgba(255,85,0,0.3),-4px_-4px_12px_#ffffff] hover:shadow-[6px_6px_16px_rgba(255,85,0,0.45),-6px_-6px_16px_#ffffff] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 gap-2 border border-orange-400/20"
-              >
-                Ativar meu ecossistema <span className="text-xs">→</span>
-              </Link>
-              <span className="text-slate-500 text-[11px] mt-2.5 ml-2 font-bold tracking-wider uppercase">
-                Experimente por 14 dias sem custos.
-              </span>
+            <div className="flex flex-col items-start gap-3 mt-8 w-full animate-rise-actions">
+              <div className="flex flex-col items-start">
+                <Link
+                  href="/cadastro"
+                  className="inline-flex items-center justify-center font-bold text-sm px-8 py-4 rounded-2xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[4px_4px_12px_rgba(255,85,0,0.3),-4px_-4px_12px_#ffffff] hover:shadow-[6px_6px_16px_rgba(255,85,0,0.45),-6px_-6px_16px_#ffffff] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 gap-2 border border-orange-400/20"
+                >
+                  Ativar meu ecossistema <span className="text-xs">→</span>
+                </Link>
+                <span className="text-slate-500 text-[11px] mt-2 ml-2 font-bold tracking-wider uppercase">
+                  Experimente por 14 dias sem custos.
+                </span>
+              </div>
+
+              <div className="flex flex-col items-start mt-2">
+                <button
+                  type="button"
+                  onClick={() => setIsDiagnosisModalOpen(true)}
+                  className="inline-flex items-center justify-center font-black text-xs px-7 py-3.5 rounded-2xl bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white shadow-[0_4px_14px_rgba(15,23,42,0.35)] border border-slate-700/80 hover:from-[#1e293b] hover:to-[#0f172a] hover:shadow-[0_6px_18px_rgba(15,23,42,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 gap-2 cursor-pointer"
+                >
+                  <Sparkles size={14} className="text-[#FF8805]" />
+                  <span>Diagnóstico Estratégico</span>
+                </button>
+                <p className="text-slate-500 text-xs mt-2 ml-1 leading-relaxed max-w-[50ch]">
+                  Receba um diagnóstico estratégico completo da sua presença digital com insights sobre marca, SEO, GEO, concorrência, cliente ideal e oportunidades para acelerar seus resultados.
+                </p>
+              </div>
             </div>
           </div>
           
@@ -914,6 +932,11 @@ export default function TempLandingPage() {
 
 
 
+      {/* Strategic Diagnosis Modal (Laís) */}
+      <StrategicDiagnosisModal
+        isOpen={isDiagnosisModalOpen}
+        onClose={() => setIsDiagnosisModalOpen(false)}
+      />
     </div>
   );
 }

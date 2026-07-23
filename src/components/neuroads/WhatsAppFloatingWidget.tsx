@@ -549,7 +549,17 @@ export default function WhatsAppFloatingWidget() {
           IA
         </span>
 
-        {isOpen ? <X size={24} /> : <MessageSquare size={24} className="fill-white/20" />}
+        {isOpen ? (
+          <X size={24} />
+        ) : (
+          <Image
+            src="/images/Logos/iconwhats.jpeg"
+            alt="WhatsApp"
+            width={40}
+            height={40}
+            className="w-10 h-10 object-contain rounded-full"
+          />
+        )}
 
         {/* Hover Tooltip */}
         <span className="absolute right-16 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 text-white text-xs font-bold whitespace-nowrap shadow-xl border border-slate-700 pointer-events-none">

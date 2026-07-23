@@ -34,8 +34,7 @@ import {
   IconGtmServer3D,
   IconBigQuery3D,
 } from '../../../components/hub/ConnectorBrandIcons';
-import { IconPlug3D } from '../../../components/hub/HubUiIcons3D';
-
+import { IconNeuPlug, PageTitleIcon } from '../../../components/hub/NeumorphicMenuIcons';
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -859,8 +858,8 @@ function HubIntegracoesContent() {
       <header className="py-8 border-b border-slate-200 mb-8">
         <div className="flex items-start justify-between gap-6 flex-wrap">
           <div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-              <IconPlug3D size={32} />
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+              <PageTitleIcon icon={IconNeuPlug} />
               Integrações
             </h1>
             <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed max-w-xl">

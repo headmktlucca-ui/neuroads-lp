@@ -23,14 +23,14 @@ import {
   IconZap3D,
   IconActivity3D,
   IconCpu3D,
-  IconSparklesPurple3D,
-  IconAutomation3D,
 } from '../../../components/hub/HubUiIcons3D';
 import {
   IconNeuKpiOnline,
   IconNeuKpiOperacoes,
   IconNeuKpiCpu,
   IconNeuKpiOportunidades,
+  IconNeuAutomation,
+  PageTitleIcon,
 } from '../../../components/hub/NeumorphicMenuIcons';
 
 interface CustomField {
@@ -864,8 +864,8 @@ export default function HubAutomacoesPage() {
       {/* ── Page header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-8 border-b border-slate-200">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <IconAutomation3D size={32} />
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-3">
+            <PageTitleIcon icon={IconNeuAutomation} />
             Automações
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed max-w-xl">

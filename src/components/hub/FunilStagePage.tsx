@@ -12,11 +12,11 @@ import { readAgentStatusOverrides, writeAgentStatusOverrides } from '../../lib/a
 import { useAuth } from '../../context/AuthContext';
 import { getFirebaseDb } from '../../lib/firebase';
 import {
-  IconSparkles3D,
-  IconChart3D,
-  IconTarget3D,
-  IconRefresh3D,
-} from './HubUiIcons3D';
+  IconNeuAttraction,
+  IconNeuEngagement,
+  IconNeuConversion,
+  IconNeuRetention,
+} from './NeumorphicMenuIcons';
 
 // ─── Funil stage metadata ────────────────────────────────────────────────────
 
@@ -378,10 +378,10 @@ export default function FunilStagePage({ stage }: { stage: FunilStage }) {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 py-8 border-b border-slate-200">
         <div>
           <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            {stage === 'atracao' && <IconSparkles3D size={32} />}
-            {stage === 'engajamento' && <IconChart3D size={32} />}
-            {stage === 'conversao' && <IconTarget3D size={32} />}
-            {stage === 'retencao' && <IconRefresh3D size={32} />}
+            {stage === 'atracao' && <IconNeuAttraction size={32} />}
+            {stage === 'engajamento' && <IconNeuEngagement size={32} />}
+            {stage === 'conversao' && <IconNeuConversion size={32} />}
+            {stage === 'retencao' && <IconNeuRetention size={32} />}
             {meta.label}
           </h1>
           <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
