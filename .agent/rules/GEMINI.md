@@ -270,4 +270,29 @@ When user's prompt is NOT in English:
 - **Audits**: `ux_audit.py`, `mobile_audit.py`, `lighthouse_audit.py`, `seo_checker.py`
 - **Test**: `playwright_runner.py`, `test_runner.py`
 
+
 ---
+
+## 🎯 NEUROADS PROJECT — DESIGN RULES (ALWAYS ON)
+
+### P0 — ÍCONES DE INDICADORES ("Bola 2014")
+
+> 🔴 **MANDATORY:** Toda vez que for solicitado adicionar um ícone para representar um indicador (KPI, métrica, status, título de página etc.) ou substituir qualquer ícone existente, você DEVE usar **exatamente** o mesmo padrão visual da imagem de referência chamada "bola 2014" — os ícones em círculo neumórfico branco que aparecem nos cards de KPI do Hub NeuroAds.
+
+**Descrição do template (bola 2014):**
+- Fundo circular branco (`rounded-full bg-white`)
+- Sombra suave externa: `shadow-[0_3px_8px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04)]`
+- Borda fina translúcida: `border border-slate-200/50`
+- Ícone SVG escuro centralizado (tamanho ~16–20px dentro do círculo)
+- Tamanho do container: ~36px × 36px (pode variar entre 32–40px conforme contexto)
+
+**Implementação:**
+- Use o componente `PageTitleIcon` de `NeumorphicMenuIcons.tsx` para ícones de título de página
+- Use o componente `NeumorphicTileIcon` de `NeumorphicMenuIcons.tsx` para ícones de KPI card
+- Ao criar novos ícones SVG, siga o padrão de gradiente e shadow das funções `IconNeu*` já existentes
+
+**Proibido:**
+- ❌ Usar ícones Lucide diretamente no título ou card sem o wrapper circular
+- ❌ Criar ícones com fundos coloridos sólidos (fora do padrão da bola branca)
+- ❌ Usar imagens externas em cards de indicadores quando um `IconNeu*` SVG inline for possível
+

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import HeroCircuitBackground from '../ui/HeroCircuitBackground';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -207,44 +208,50 @@ export default function StrategicDiagnosisModal({ isOpen, onClose }: StrategicDi
       <div className="relative w-full max-w-5xl bg-white border border-slate-200/80 rounded-[32px] shadow-[0_25px_60px_rgba(15,23,42,0.35)] overflow-hidden my-auto max-h-[92vh] flex flex-col">
         
         {/* ── Modal Header with Agent Laís Badge ── */}
-        <div className="shrink-0 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-5 sm:p-6 text-white border-b border-slate-800 relative">
-          <button
-            onClick={onClose}
-            type="button"
-            className="absolute top-5 right-5 p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-all cursor-pointer z-10"
-            title="Fechar"
-          >
-            <X size={20} />
-          </button>
+        <div className="shrink-0 relative overflow-hidden bg-[#f8f9fb] border-b border-slate-200/80">
+          {/* Animated circuit background */}
+          <HeroCircuitBackground id="circuit-diagnosis-header" />
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pr-10">
-            {/* Avatar Laís */}
-            <div className="relative shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-[#FF6A00] shadow-[0_0_20px_rgba(255,106,0,0.4)] bg-slate-900">
-              <Image
-                src="/images/Avatar Agentes IA/Avatar_Lais.png"
-                alt="Agente Laís"
-                fill
-                className="object-cover"
-              />
-            </div>
+          {/* Content layer above circuit animation */}
+          <div className="relative z-10 p-5 sm:p-6">
+            <button
+              onClick={onClose}
+              type="button"
+              className="absolute top-5 right-5 p-2 rounded-full bg-white/80 hover:bg-white border border-slate-200/80 text-slate-500 hover:text-slate-800 transition-all cursor-pointer z-10 shadow-sm"
+              title="Fechar"
+            >
+              <X size={20} />
+            </button>
 
-            {/* Agent Info */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-lg sm:text-xl font-black tracking-tight text-white">LAÍS</span>
-                <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-[#FF6A00]/20 text-[#FF8805] border border-[#FF6A00]/40">
-                  Conteúdo &amp; Inteligência de Marca
-                </span>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 pr-10">
+              {/* Avatar Laís */}
+              <div className="relative shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl overflow-hidden border-2 border-[#FF6A00] shadow-[0_0_20px_rgba(255,106,0,0.3)] bg-slate-100">
+                <Image
+                  src="/images/Avatar Agentes IA/Avatar_Lais.png"
+                  alt="Agente Laís"
+                  fill
+                  className="object-cover"
+                />
               </div>
-              <p className="text-xs text-slate-300 font-medium mt-1 leading-relaxed">
-                Especialista em SEO, GEO (AI Search) &amp; Posicionamento Estratégico
-              </p>
-            </div>
-          </div>
 
-          {/* First Person Presentation from Laís */}
-          <div className="mt-4 p-3.5 sm:p-4 rounded-2xl bg-white/5 border border-white/10 text-xs sm:text-[13px] text-slate-200 leading-relaxed italic font-sans">
-            &ldquo;Olá! Sou a <strong className="text-white not-italic">Laís</strong>, especialista em SEO, GEO &amp; Inteligência de Marca na NeuroAds. Desenvolvi este <strong className="text-[#FF8805] not-italic">Diagnóstico Estratégico de Presença Digital</strong> para analisar em profundidade a sua marca. Irei mapear seu ecossistema digital, autoridade para pesquisas por Inteligência Artificial (ChatGPT, Perplexity, Gemini) e um plano prático com potenciais oportunidades reais de crescimento.&rdquo;
+              {/* Agent Info */}
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-lg sm:text-xl font-black tracking-tight text-slate-900">LAÍS</span>
+                  <span className="text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full bg-[#FF6A00]/10 text-[#FF6A00] border border-[#FF6A00]/30">
+                    Conteúdo &amp; Inteligência de Marca
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                  Especialista em SEO, GEO (AI Search) &amp; Posicionamento Estratégico
+                </p>
+              </div>
+            </div>
+
+            {/* First Person Presentation from Laís */}
+            <div className="mt-4 p-3.5 sm:p-4 rounded-2xl bg-white/70 border border-slate-200/80 backdrop-blur-sm text-xs sm:text-[13px] text-slate-700 leading-relaxed italic font-sans shadow-sm">
+              &ldquo;Olá! Sou a <strong className="text-slate-900 not-italic">Laís</strong>, especialista em SEO, GEO &amp; Inteligência de Marca na NeuroAds. Desenvolvi este <strong className="text-[#FF6A00] not-italic">Diagnóstico Estratégico de Presença Digital</strong> para analisar em profundidade a sua marca. Irei mapear seu ecossistema digital, autoridade para pesquisas por Inteligência Artificial (ChatGPT, Perplexity, Gemini) e um plano prático com potenciais oportunidades reais de crescimento.&rdquo;
+            </div>
           </div>
         </div>
 
