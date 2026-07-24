@@ -359,10 +359,9 @@ export default function StrategicDiagnosisModal({ isOpen, onClose }: StrategicDi
                 <div className="pt-2">
                   <button
                     type="submit"
-                    className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white font-black text-sm shadow-[0_4px_16px_rgba(255,106,0,0.35)] hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white font-black text-sm shadow-[0_4px_16px_rgba(255,106,0,0.35)] hover:scale-[1.01] active:scale-[0.99] transition-all flex items-center justify-center cursor-pointer"
                   >
                     <span>Gerar Diagnóstico Estratégico</span>
-                    <ArrowRight size={16} />
                   </button>
                   <p className="text-[11px] text-slate-400 text-center mt-2.5">
                     A IA utilizará essas informações para consultar fontes públicas e consolidar um relatório completo do seu ecossistema.

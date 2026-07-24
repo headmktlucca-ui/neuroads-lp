@@ -622,9 +622,9 @@ export default function TempLandingPage() {
               <div className="flex flex-col items-start">
                 <Link
                   href="/cadastro"
-                  className="inline-flex items-center justify-center font-bold text-sm px-8 py-4 rounded-2xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[4px_4px_12px_rgba(255,85,0,0.3),-4px_-4px_12px_#ffffff] hover:shadow-[6px_6px_16px_rgba(255,85,0,0.45),-6px_-6px_16px_#ffffff] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 gap-2 border border-orange-400/20"
+                  className="inline-flex items-center justify-center font-bold text-sm px-8 py-4 rounded-2xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[4px_4px_12px_rgba(255,85,0,0.3),-4px_-4px_12px_#ffffff] hover:shadow-[6px_6px_16px_rgba(255,85,0,0.45),-6px_-6px_16px_#ffffff] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 border border-orange-400/20"
                 >
-                  Quero testar AGORA! <span className="text-xs">→</span>
+                  Quero testar AGORA!
                 </Link>
                 <span className="text-slate-500 text-[11px] mt-2 ml-2 font-bold tracking-wider uppercase">
                   Experimente por 14 dias sem custos.
