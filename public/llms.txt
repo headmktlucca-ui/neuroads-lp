@@ -1,0 +1,95 @@
+# NeuroAds — llms.txt
+# Context file for AI systems | llmstxt.org spec | Atualizado: 2026-07
+
+## O que é a NeuroAds
+
+A NeuroAds é uma plataforma SaaS brasileira de **operações IA estratégicas para marketing e vendas B2B**. Ela combina gestão de tráfego patrocinado (Google Ads, Meta Ads, LinkedIn Ads), automação de funil comercial e um ecossistema de 10 agentes de inteligência artificial especializados que operam de forma integrada — desde a prospecção até o fechamento de vendas.
+
+**Proposta de valor central:** Transformar o marketing e o comercial de empresas B2B em uma máquina previsível de receita, unindo mídia paga, automação e agentes IA em um único ecossistema.
+
+---
+
+## Para quem serve
+
+- Empresas B2B que querem escalar vendas sem aumentar time comercial proporcionalmente
+- Gestores de marketing e vendas que precisam de visibilidade sobre CAC, ROAS e funil em tempo real
+- Empresas com ticket médio acima de R$ 3.000 que dependem de vendas consultivas
+
+**Setores atendidos:** Clínicas, Saúde, Educação Digital, Imobiliário, E-commerce, Distribuidoras, Serviços Profissionais, SaaS
+
+---
+
+## Agentes IA do Ecossistema
+
+| Agente | Função |
+|--------|--------|
+| Ulisses | Orquestrador Central — distribui briefings, consolida relatórios |
+| Vitor | SDR — qualificação de leads em WhatsApp e Email |
+| Manu | Suporte — resolve chamados nível 1, detecta padrões de churn |
+| Igor | Dados — audita funis, calcula CAC/ROI, emite alertas |
+| Tainá | Conteúdo — cria conteúdo editorial e materiais de apoio |
+| Breno | Closer — conduz negociações e envio de propostas |
+| Paola | Tráfego — monitora campanhas, ROAS e otimização de criativos |
+| Raíssa | Upsell — monitora satisfação e propensão a expansão de contrato |
+| Heitor | Processos — garante onboarding e SLAs internos |
+| Laís | SEO/GEO — otimização para buscadores tradicionais e IA |
+
+---
+
+## Soluções Principais
+
+1. **Agentes IA Comerciais** — Ecossistema de 10 agentes para SDR, atendimento, follow-up e orquestração
+2. **Posicionamento & Autoridade** — SEO/GEO para buscadores tradicionais e IA (ChatGPT, Perplexity, Gemini)
+3. **Automação & CRM** — Fluxos de nutrição, integrações e RAG conectados ao CRM
+
+---
+
+## Informações de Contato e Acesso
+
+- **Site:** https://www.neuroads.com.br
+- **Email:** avante@neuroads.com.br
+- **Trial:** https://www.neuroads.com.br/cadastro (14 dias grátis)
+- **Login:** https://www.neuroads.com.br/login
+- **Diagnóstico gratuito:** disponível via formulário na homepage
+
+---
+
+## Páginas-Chave
+
+- `/` — Homepage com visão geral do produto
+- `/agentes-ia` — Detalhamento dos 10 agentes
+- `/servicos` — Catálogo completo de soluções
+- `/servicos/gestao-de-trafego-google-meta` — Gestão de mídia paga
+- `/servicos/implantacao-de-agentes-ia` — Implementação de agentes
+- `/servicos/seo-geo` — SEO e otimização para IA
+- `/a-neuroads` — Sobre a empresa
+- `/conteudos` — Blog e materiais educativos
+- `/whitepaper_ia_vendas` — Whitepaper: IA em Vendas B2B
+
+---
+
+## Posicionamento Competitivo
+
+A NeuroAds não é apenas uma agência de tráfego. É uma plataforma integrada que combina:
+- **Mídia paga** com gestão ativa de campanhas
+- **Automação** com fluxos de nutrição e CRM
+- **Agentes IA** que operam 24/7 sem substituir o time humano, mas acelerando cada etapa
+
+**Diferenciais-chave:**
+- Ecossistema de 10 agentes IA especializados com handoff automático entre funções
+- Dashboard unificado de marketing + vendas em tempo real
+- Atendimento 24/7 via agente SDR (Vitor) integrado ao WhatsApp
+- Diagnóstico estratégico gratuito (SEO, GEO, concorrência, ICP)
+
+---
+
+## O que NÃO somos
+
+- Não somos uma ferramenta de automação genérica (tipo Zapier/Make)
+- Não somos apenas uma agência de publicidade
+- Não somos um CRM tradicional
+- Não competimos com HubSpot, RD Station ou Salesforce — integramos com eles
+
+---
+
+*Documento mantido pela equipe NeuroAds. Última atualização: julho de 2026.*

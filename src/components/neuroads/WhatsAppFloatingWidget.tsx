@@ -538,26 +538,29 @@ export default function WhatsAppFloatingWidget() {
       {/* ── Fixed Floating Button Trigger ── */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="group relative flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-r from-emerald-500 via-teal-600 to-emerald-700 text-white shadow-2xl hover:scale-105 active:scale-95 transition-all duration-300 ring-4 ring-emerald-500/20"
+        className="group relative flex items-center justify-center w-14 h-14 rounded-full text-white hover:scale-105 active:scale-95 transition-all duration-300"
         aria-label="Abrir WhatsApp Live Chat"
       >
-        {/* Pulsing ring */}
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-40" />
+        {/* Pulsing animated ring */}
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-30" />
+        <span className="absolute inline-flex h-full w-full rounded-full border-2 border-emerald-400/40 rounded-full" />
 
         {/* Badge status dot */}
-        <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-emerald-400 border-2 border-white flex items-center justify-center font-black text-[8px] text-slate-900 shadow-xs">
+        <span className="absolute top-0 right-0 w-4 h-4 rounded-full bg-emerald-400 border-2 border-white flex items-center justify-center font-black text-[8px] text-slate-900 shadow-xs z-10">
           IA
         </span>
 
         {isOpen ? (
-          <X size={24} />
+          <div className="relative z-10 w-12 h-12 rounded-full bg-gradient-to-br from-emerald-500 to-teal-700 flex items-center justify-center shadow-2xl">
+            <X size={22} />
+          </div>
         ) : (
           <Image
             src="/images/Logos/iconwhats.jpeg"
             alt="WhatsApp"
-            width={40}
-            height={40}
-            className="w-10 h-10 object-contain rounded-full"
+            width={56}
+            height={56}
+            className="w-14 h-14 object-contain rounded-full relative z-10 shadow-2xl"
           />
         )}
 

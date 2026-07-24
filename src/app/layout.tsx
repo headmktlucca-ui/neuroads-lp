@@ -45,11 +45,61 @@ const sora = Sora({
 });
 
 export const metadata: Metadata = {
-  title: "NeuroAds | Gestão de Tráfego de Alta Performance e Funis Automatizados",
-  description: "Escale suas vendas com a NeuroAds. Gestão de tráfego focado em ROI, inteligência neural e funis preditivos para empresas que querem dominar seu mercado.",
+  title: "NeuroAds | Agentes IA para Marketing e Vendas B2B",
+  description: "A NeuroAds une campanhas patrocinadas, automação e um ecossistema de 10 agentes de IA especializados para transformar o marketing e o comercial da sua empresa B2B em uma máquina previsível de receita. Experimente grátis por 14 dias.",
   metadataBase: new URL("https://www.neuroads.com.br"),
   alternates: {
-    canonical: "/",
+    canonical: "https://www.neuroads.com.br/",
+  },
+  keywords: [
+    "agentes de IA para vendas",
+    "automação comercial com inteligência artificial",
+    "gestão de tráfego B2B",
+    "SDR com IA",
+    "ecossistema de agentes IA",
+    "marketing B2B com IA",
+    "CRM com inteligência artificial",
+    "funil de vendas automatizado",
+    "GEO SEO para empresas B2B",
+    "plataforma de marketing e vendas B2B"
+  ],
+  authors: [{ name: "NeuroAds", url: "https://www.neuroads.com.br" }],
+  creator: "NeuroAds",
+  publisher: "NeuroAds",
+  openGraph: {
+    type: "website",
+    locale: "pt_BR",
+    url: "https://www.neuroads.com.br/",
+    siteName: "NeuroAds",
+    title: "NeuroAds | Agentes IA para Marketing e Vendas B2B",
+    description: "Ecossistema de 10 agentes IA especializados (SDR, Closer, Suporte, Dados, Tráfego) que operam 24/7 para transformar o funil comercial B2B em uma máquina previsível de receita.",
+    images: [
+      {
+        url: "/images/og-neuroads.png",
+        width: 1200,
+        height: 630,
+        alt: "NeuroAds — Agentes IA para Marketing e Vendas B2B",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NeuroAds | Agentes IA para Marketing e Vendas B2B",
+    description: "Ecossistema de 10 agentes IA especializados (SDR, Closer, Suporte, Dados, Tráfego) que operam 24/7 para transformar o funil comercial B2B.",
+    images: ["/images/og-neuroads.png"],
+    creator: "@neuroads",
+    site: "@neuroads",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
     icon: [
@@ -58,8 +108,11 @@ export const metadata: Metadata = {
       { url: '/images/icon_neuroads_transparente.png', sizes: '192x192', type: 'image/png' },
     ],
     apple: [
-      { url: '/images/icon_neuroads_transparente.png' },
+      { url: '/images/icon_neurados_transparente.png' },
     ],
+  },
+  verification: {
+    google: "google357a42d89079c6ac",
   },
 };
 
@@ -75,6 +128,101 @@ export default function RootLayout({
       className="h-full antialiased"
     >
       <head>
+        {/* Organization Schema JSON-LD — Entity Recognition for Google KG + AI Citation */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "@id": "https://www.neuroads.com.br/#organization",
+              "name": "NeuroAds",
+              "legalName": "NeuroAds Operações IA Ltda",
+              "url": "https://www.neuroads.com.br",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://www.neuroads.com.br/images/Logos/Logo_primario.png",
+                "width": 172,
+                "height": 39
+              },
+              "description": "Plataforma SaaS brasileira de operações IA estratégicas para marketing e vendas B2B. Ecossistema de 10 agentes de inteligência artificial especializados — SDR, Closer, Suporte, Dados e Tráfego — que operam de forma integrada para transformar o funil comercial em uma máquina previsível de receita.",
+              "foundingDate": "2023",
+              "numberOfEmployees": { "@type": "QuantitativeValue", "value": "10" },
+              "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "BR",
+                "addressLocality": "Brasil"
+              },
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "customer support",
+                "email": "avante@neuroads.com.br",
+                "availableLanguage": "Portuguese",
+                "hoursAvailable": "Mo-Su 00:00-23:59"
+              },
+              "sameAs": [
+                "https://www.instagram.com/neuroads.com.br",
+                "https://www.linkedin.com/company/neuroads",
+                "https://www.youtube.com/@neuroads.vendas"
+              ],
+              "offers": {
+                "@type": "Offer",
+                "name": "Trial 14 Dias Grátis",
+                "price": "0",
+                "priceCurrency": "BRL",
+                "url": "https://www.neuroads.com.br/cadastro",
+                "description": "Experimente o ecossistema NeuroAds gratuitamente por 14 dias sem necessidade de cartão de crédito."
+              },
+              "hasOfferCatalog": {
+                "@type": "OfferCatalog",
+                "name": "Soluções NeuroAds",
+                "itemListElement": [
+                  { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Agentes IA Comerciais", "description": "Ecossistema de 10 agentes IA especializados em SDR, atendimento, follow-up e orquestração." } },
+                  { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Gestão de Tráfego Pago", "description": "Gestão ativa de campanhas no Google Ads, Meta Ads e LinkedIn Ads com foco em ROAS." } },
+                  { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Posicionamento & Autoridade (SEO/GEO)", "description": "Otimização da presença digital em buscadores tradicionais e motores de IA (ChatGPT, Perplexity, Gemini)." } },
+                  { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Automação & CRM", "description": "Fluxos de nutrição, integrações e RAG conectados ao CRM da empresa." } }
+                ]
+              }
+            })
+          }}
+        />
+        {/* SoftwareApplication Schema — Product-level entity */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "@id": "https://www.neuroads.com.br/#software",
+              "name": "NeuroAds Platform",
+              "applicationCategory": "BusinessApplication",
+              "applicationSubCategory": "CRM, Marketing Automation, AI Agents",
+              "operatingSystem": "Web",
+              "url": "https://www.neuroads.com.br",
+              "description": "Plataforma integrada de marketing e vendas B2B com ecossistema de 10 agentes de IA, gestão de tráfego pago e automação de funil comercial.",
+              "inLanguage": "pt-BR",
+              "offers": {
+                "@type": "Offer",
+                "name": "Trial 14 Dias",
+                "price": "0",
+                "priceCurrency": "BRL",
+                "eligibleDuration": { "@type": "QuantitativeValue", "value": 14, "unitCode": "DAY" }
+              },
+              "publisher": {
+                "@id": "https://www.neuroads.com.br/#organization"
+              },
+              "featureList": [
+                "10 Agentes IA especializados (SDR, Closer, Suporte, Dados, Tráfego, SEO)",
+                "Gestão de campanhas Google Ads, Meta Ads, LinkedIn Ads",
+                "Dashboard unificado de marketing e vendas em tempo real",
+                "Automação de follow-up em WhatsApp e Email",
+                "Integração nativa com CRMs (HubSpot, RD Station, Pipedrive, Kommo)",
+                "Diagnóstico estratégico gratuito de presença digital",
+                "Atendimento 24/7 via Agente SDR no WhatsApp"
+              ]
+            })
+          }}
+        />
         {/* Google tag (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-80X93TW8EK"

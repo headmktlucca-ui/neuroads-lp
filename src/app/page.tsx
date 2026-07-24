@@ -4,13 +4,52 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, AnimatePresence, useScroll, useTransform, MotionValue } from 'framer-motion';
-import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Menu, X, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { Database, Filter, Cpu, ArrowRight, LayoutDashboard, BarChart3, Network, UserCheck, Mail, MessageSquare, CheckCircle2, ChevronDown, Menu, X, Volume2, VolumeX } from 'lucide-react';
 import HeroCircuitBackground from '@/components/ui/HeroCircuitBackground';
 import HeroSilkBackground from '@/components/ui/HeroSilkBackground';
 import FunnelInteractiveShowcase from '@/components/neuroads/FunnelInteractiveShowcase';
 import PricingValuesSection from '@/components/neuroads/PricingValuesSection';
 import { ScreenshotShowcase } from '@/components/ui/screenshot-showcase';
 import StrategicDiagnosisModal from '@/components/neuroads/StrategicDiagnosisModal';
+
+// ── Neumorphic Button Icons ("Bola 2014" style) ──────────────────────────
+function NeuIconLogin() {
+  return (
+    <div className="w-[34px] h-[34px] rounded-full bg-white flex items-center justify-center shrink-0"
+      style={{ boxShadow: '0 3px 8px rgba(0,0,0,0.06),0 1px 3px rgba(0,0,0,0.04)', border: '1px solid rgba(148,163,184,0.3)' }}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="8" r="4" fill="#1e293b" fillOpacity="0.85" />
+        <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#1e293b" strokeWidth="2" strokeLinecap="round" strokeOpacity="0.85" />
+      </svg>
+    </div>
+  );
+}
+
+function NeuIconRocket() {
+  return (
+    <div className="w-[34px] h-[34px] rounded-full bg-white/25 flex items-center justify-center shrink-0"
+      style={{ boxShadow: '0 3px 8px rgba(0,0,0,0.10),0 1px 3px rgba(0,0,0,0.07)', border: '1px solid rgba(255,255,255,0.4)' }}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C12 2 7 7 7 13c0 2.76 2.24 5 5 5s5-2.24 5-5c0-6-5-11-5-11z" fill="white" fillOpacity="0.95" />
+        <circle cx="12" cy="13" r="2" fill="white" fillOpacity="0.6" />
+        <path d="M9 20l-2 2M15 20l2 2" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeOpacity="0.8" />
+      </svg>
+    </div>
+  );
+}
+
+function NeuIconDiagnosis() {
+  return (
+    <div className="w-[34px] h-[34px] rounded-full bg-white/15 flex items-center justify-center shrink-0"
+      style={{ boxShadow: '0 3px 8px rgba(0,0,0,0.10),0 1px 3px rgba(0,0,0,0.07)', border: '1px solid rgba(255,255,255,0.25)' }}>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M9 17H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2h-4l-3 4-3-4z" stroke="#FF8805" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M8 10h8M8 13h5" stroke="#FF8805" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    </div>
+  );
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 function IconBotAI() {
   return (
@@ -446,8 +485,9 @@ export default function TempLandingPage() {
           <div className="flex items-center gap-3">
             <Link
               href="/login"
-              className="hidden md:inline-flex items-center justify-center font-bold text-xs px-6 py-2.5 rounded-full bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white shadow-[0_4px_14px_rgba(15,23,42,0.35)] border border-slate-700/80 hover:from-[#1e293b] hover:to-[#0f172a] hover:shadow-[0_6px_18px_rgba(15,23,42,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+              className="hidden md:inline-flex items-center justify-center font-bold text-xs px-5 py-2 rounded-full bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white shadow-[0_4px_14px_rgba(15,23,42,0.35)] border border-slate-700/80 hover:from-[#1e293b] hover:to-[#0f172a] hover:shadow-[0_6px_18px_rgba(15,23,42,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 gap-2"
             >
+              <NeuIconLogin />
               Login
             </Link>
 
@@ -597,15 +637,33 @@ export default function TempLandingPage() {
               Operações IA Estratégicas em <br /> <span className="font-extrabold text-[#FF5500]">Marketing &amp; Vendas B2B</span>.
             </h1>
             <p className="font-sans text-[clamp(1rem,1.4vw,1.15rem)] leading-[1.65] text-[#5A6678] max-w-[54ch] animate-rise-sub">
-              A NeuroAds une campanhas patrocinadas, automação e um ecossistema de agentes inteligentes para transformar o marketing e o comercial da sua empresa B2B em uma máquina previsível de receita.
+              A NeuroAds é uma plataforma de operações IA para empresas B2B que combina gestão de tráfego pago, automação de funil comercial e um ecossistema de 10 agentes de inteligência artificial especializados — SDR, Closer, Suporte, Dados e Tráfego — operando 24/7 para converter leads em receita previsível.
             </p>
+            {/* Stats strip — AI-extractable data with specific metrics */}
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-4 animate-rise-sub">
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#FF5500] font-extrabold text-sm">10</span>
+                <span className="text-slate-500 text-xs font-semibold">agentes IA especializados</span>
+              </div>
+              <span className="hidden sm:block w-px h-4 bg-slate-300" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#FF5500] font-extrabold text-sm">24/7</span>
+                <span className="text-slate-500 text-xs font-semibold">operação contínua</span>
+              </div>
+              <span className="hidden sm:block w-px h-4 bg-slate-300" />
+              <div className="flex items-center gap-1.5">
+                <span className="text-[#FF5500] font-extrabold text-sm">14 dias</span>
+                <span className="text-slate-500 text-xs font-semibold">grátis para testar</span>
+              </div>
+            </div>
             <div className="flex flex-col items-start gap-3 mt-8 w-full animate-rise-actions">
               <div className="flex flex-col items-start">
                 <Link
                   href="/cadastro"
                   className="inline-flex items-center justify-center font-bold text-sm px-8 py-4 rounded-2xl bg-gradient-to-r from-[#FF5500] to-[#FF7A00] text-white shadow-[4px_4px_12px_rgba(255,85,0,0.3),-4px_-4px_12px_#ffffff] hover:shadow-[6px_6px_16px_rgba(255,85,0,0.45),-6px_-6px_16px_#ffffff] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 gap-2 border border-orange-400/20"
                 >
-                  Ativar meu ecossistema <span className="text-xs">→</span>
+                  <NeuIconRocket />
+                  Quero testar AGORA! <span className="text-xs">→</span>
                 </Link>
                 <span className="text-slate-500 text-[11px] mt-2 ml-2 font-bold tracking-wider uppercase">
                   Experimente por 14 dias sem custos.
@@ -616,9 +674,9 @@ export default function TempLandingPage() {
                 <button
                   type="button"
                   onClick={() => setIsDiagnosisModalOpen(true)}
-                  className="inline-flex items-center justify-center font-black text-xs px-7 py-3.5 rounded-2xl bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white shadow-[0_4px_14px_rgba(15,23,42,0.35)] border border-slate-700/80 hover:from-[#1e293b] hover:to-[#0f172a] hover:shadow-[0_6px_18px_rgba(15,23,42,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 gap-2 cursor-pointer"
+                  className="inline-flex items-center justify-center font-black text-xs px-5 py-2.5 rounded-2xl bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] text-white shadow-[0_4px_14px_rgba(15,23,42,0.35)] border border-slate-700/80 hover:from-[#1e293b] hover:to-[#0f172a] hover:shadow-[0_6px_18px_rgba(15,23,42,0.45)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 gap-2 cursor-pointer"
                 >
-                  <Sparkles size={14} className="text-[#FF8805]" />
+                  <NeuIconDiagnosis />
                   <span>Diagnóstico Estratégico</span>
                 </button>
                 <p className="text-slate-500 text-xs mt-2 ml-1 leading-relaxed max-w-[50ch]">
@@ -2210,8 +2268,28 @@ function FaqSection() {
     }
   ];
 
+  // FAQPage Schema JSON-LD — injected co-located with FAQ content for maximum AI extractability
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map((faq) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  };
+
   return (
     <section id="faq" className="py-24 px-6 max-w-4xl mx-auto space-y-12">
+      {/* FAQPage JSON-LD Schema */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       <h2 className="font-title text-3xl font-extrabold text-center text-slate-900 tracking-tight">
         Perguntas Frequentes
       </h2>
