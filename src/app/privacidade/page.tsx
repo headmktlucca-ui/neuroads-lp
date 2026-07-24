@@ -127,17 +127,26 @@ export default function PrivacyPage() {
             </p>
           </SectionCard>
 
-          <SectionCard id="google" num="7" title="Compartilhamento de Dados do Google">
+          <SectionCard id="google" num="7" title="Uso de APIs do Google e Integrações de IA">
             <p>
-              A NeuroAds utiliza APIs do Google (incluindo Google Ads, Google Analytics, Google Search Console e
-              Google BigQuery) exclusivamente para fins internos de operação e prestação de serviços aos nossos clientes.
+              A NeuroAds utiliza APIs do Google (incluindo Google Ads, Google Analytics, Google Search Console, Google BigQuery, 
+              Google Calendar e Gmail) exclusivamente para fins internos de operação, consolidação de dados e prestação de serviços aos nossos clientes.
             </p>
-            <p>Não compartilhamos, transferimos nem divulgamos dados de usuários obtidos por meio das APIs do Google a terceiros, exceto:</p>
+            <p>
+              Em estrita conformidade com a <strong>Política de Dados do Usuário do Google Workspace (Google Workspace API User Data and Developer Policy)</strong>, 
+              nós garantimos que <strong>nenhum dado de usuário obtido por meio de APIs do Google Workspace</strong> (como informações de Gmail e eventos do Google Calendar) 
+              — sejam eles brutos, agregados ou derivados — é utilizado, transferido ou vendido para criar, treinar ou aprimorar modelos de 
+              inteligência artificial ou aprendizado de máquina (incluindo modelos de linguagem de grande porte - LLMs públicos ou generalistas).
+            </p>
+            <p>
+              Para a execução de recursos inteligentes de assistência, a plataforma integra-se com APIs corporativas de provedores de IA (como OpenAI API, Anthropic Claude API e Google Gemini API). 
+              Esta integração ocorre sob termos de uso estritamente corporativos e de desenvolvimento, os quais:
+            </p>
             <ul className="list-none space-y-2">
               {[
-                'Quando exigido por lei ou ordem judicial;',
-                'Para prestadores de serviços essenciais à operação da plataforma, mediante acordo de confidencialidade e apenas na medida necessária;',
-                'Com o consentimento explícito do usuário.',
+                'Proíbem expressamente o uso de qualquer dado do cliente ou histórico de prompts para o treinamento de modelos dos respectivos provedores;',
+                'Garantem o isolamento completo de dados e processamento temporário em memória;',
+                'Mantêm conformidade rígida com os regulamentos de privacidade e proteção de dados aplicáveis.',
               ].map((item) => (
                 <li key={item} className="flex items-start gap-2.5">
                   <span className="mt-[6px] h-1.5 w-1.5 rounded-full bg-[#FF5500] shrink-0" />
@@ -145,9 +154,12 @@ export default function PrivacyPage() {
                 </li>
               ))}
             </ul>
+            <p>Não compartilhamos, transferimos nem divulgamos dados obtidos por meio das APIs do Google a terceiros para qualquer outra finalidade, exceto se exigido por lei ou com consentimento explícito do usuário.</p>
             <p>
-              O uso de dados obtidos por meio das APIs do Google está em conformidade com a Política de Dados do
-              Usuário dos Serviços de API do Google, incluindo os requisitos de Uso Limitado (Limited Use).
+              O uso de informações recebidas de APIs do Google está em estrita conformidade com a 
+              <a href="https://developers.google.com/terms/api-services-user-data-policy" target="_blank" rel="noopener noreferrer" className="text-[#FF5500] font-bold hover:underline ml-1">
+                Política de Dados do Usuário dos Serviços de API do Google
+              </a>, incluindo os requisitos de Uso Limitado (Limited Use).
             </p>
           </SectionCard>
 

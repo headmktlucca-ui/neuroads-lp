@@ -361,7 +361,7 @@ const CONNECTOR_OAUTH_CONFIGS: Record<ConnectorKey, ConnectorOAuthConfig | null>
         provider: 'google',
         authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
         tokenUrl: 'https://oauth2.googleapis.com/token',
-        scope: 'https://www.googleapis.com/auth/gmail.send https://www.googleapis.com/auth/gmail.readonly openid email profile',
+        scope: 'https://www.googleapis.com/auth/gmail.send openid email profile',
         clientIdEnvKeys: ['GMAIL_CLIENT_ID', 'GOOGLE_ADS_CLIENT_ID', 'GOOGLE_OAUTH_CLIENT_ID'],
         clientSecretEnvKeys: ['GMAIL_CLIENT_SECRET', 'GOOGLE_ADS_CLIENT_SECRET', 'GOOGLE_OAUTH_CLIENT_SECRET'],
         authExtraParams: {

@@ -4,14 +4,16 @@ function toStringValue(value: unknown): string {
   return typeof value === 'string' ? value.trim() : '';
 }
 
-type GmailProfileResponse = {
-  emailAddress?: string;
-  messagesTotal?: number;
-  error?: { message?: string };
+type GoogleUserInfoResponse = {
+  sub?: string;
+  email?: string;
+  name?: string;
+  error?: string;
+  error_description?: string;
 };
 
 /**
- * Retorna a caixa de e-mail do usuário autenticado (perfil Gmail). O Gmail é
+ * Retorna a caixa de e-mail do usuário autenticado (identidade Google). O Gmail é
  * 1:1 com a conta Google, então a "seleção" confirma qual caixa foi conectada.
  */
 export async function POST(request: Request) {
@@ -23,22 +25,22 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'access_token_required' }, { status: 400 });
     }
 
-    const response = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/profile', {
+    const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
       method: 'GET',
       cache: 'no-store',
       headers: { Authorization: `Bearer ${accessToken}` },
     });
 
-    const payload = (await response.json()) as GmailProfileResponse;
+    const payload = (await response.json()) as GoogleUserInfoResponse;
 
     if (!response.ok) {
-      const message = toStringValue(payload?.error?.message) || 'Falha ao identificar a caixa Gmail conectada.';
+      const message = toStringValue(payload?.error_description || payload?.error) || 'Falha ao identificar a conta Google conectada.';
       return NextResponse.json({ error: message }, { status: 400 });
     }
 
-    const email = toStringValue(payload.emailAddress);
+    const email = toStringValue(payload.email);
     if (!email) {
-      return NextResponse.json({ error: 'Nenhuma caixa Gmail encontrada para esta conta.' }, { status: 400 });
+      return NextResponse.json({ error: 'Nenhum e-mail encontrado para esta conta.' }, { status: 400 });
     }
 
     return NextResponse.json({
