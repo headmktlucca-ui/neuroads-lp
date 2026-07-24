@@ -1031,11 +1031,17 @@ export default function HubDashboardLight() {
       days.push(d);
     }
     
+    const weekday = now.toLocaleDateString('pt-BR', { weekday: 'long' });
+    const weekdayFormatted = weekday.split('-')[0];
+    const dateRest = now.toLocaleDateString('pt-BR', { day: 'numeric', month: 'long', year: 'numeric' });
+    const fullDateText = `${weekdayFormatted}. ${dateRest}`;
+
     return {
       days,
       monthName: now.toLocaleDateString('pt-BR', { month: 'long' }),
       year,
-      currentDay: now.getDate()
+      currentDay: now.getDate(),
+      fullDateText
     };
   }, []);
 
@@ -1090,8 +1096,8 @@ export default function HubDashboardLight() {
               {greeting}, {firstName}!
             </h1>
             
-            <p className="text-xs md:text-[13px] font-bold text-slate-700 leading-relaxed mt-2.5">
-              {executiveSummary}
+            <p className="text-xs md:text-[13px] font-bold italic text-slate-700 leading-relaxed mt-2.5">
+              "{executiveSummary}"
             </p>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4 pt-3.5 border-t border-slate-200/25">
@@ -1127,10 +1133,9 @@ export default function HubDashboardLight() {
             className="p-5 flex flex-col justify-between h-full bg-gradient-to-b from-white to-[#f8fafc] border border-slate-200/80 shadow-[0_4px_16px_rgba(0,0,0,0.03)]"
           >
             <div className="flex flex-col h-full justify-between">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6A00]">Calendário Operacional</span>
-                <span className="text-[12px] font-black text-slate-800 capitalize">
-                  {calendarDays.monthName} {calendarDays.year}
+              <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+                <span className="text-[11.5px] font-black text-slate-800 lowercase first-letter:capitalize">
+                  {calendarDays.fullDateText}
                 </span>
               </div>
               
