@@ -692,9 +692,8 @@ function DesktopNotificationBell() {
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, [setIsNotificationsOpen]);
-
   return (
-    <div className="hidden lg:block absolute top-6 right-8 z-30" ref={bellRef}>
+    <div className="hidden lg:block relative z-30" ref={bellRef}>
       <button
         onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
         className="relative w-10 h-10 rounded-2xl border border-slate-200/90 bg-white/90 backdrop-blur-md flex items-center justify-center text-[#475569] shadow-xs hover:border-[#FF6A00]/40 hover:shadow-md hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
@@ -759,8 +758,10 @@ function HubLayoutInner({
         {/* Mobile notifications sheet — hidden on desktop */}
         <MobileNotificationsPanel />
 
-        {/* Desktop notification bell (floats top-right on desktop) */}
-        <DesktopNotificationBell />
+        {/* Desktop Header bar containing the Notification Bell */}
+        <div className="hidden lg:flex h-16 items-center justify-end px-8 shrink-0 border-b border-slate-200/20 bg-white/40 backdrop-blur-md z-30">
+          <DesktopNotificationBell />
+        </div>
 
         {pathname === '/hub/assistente-ia' ? (
           <div className="flex-1 overflow-hidden relative z-10 p-1.5 sm:p-4 lg:p-4">
@@ -769,7 +770,7 @@ function HubLayoutInner({
         ) : (
           <div
             id="hub-scroll-container"
-            className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 lg:px-8 lg:py-8 pb-6 relative z-10"
+            className="flex-1 overflow-y-auto overflow-x-hidden px-4 py-4 lg:px-8 lg:py-6 pb-6 relative z-10"
           >
             {children}
           </div>

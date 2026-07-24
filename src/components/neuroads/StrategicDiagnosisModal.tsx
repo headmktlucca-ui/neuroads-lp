@@ -584,7 +584,7 @@ export default function StrategicDiagnosisModal({ isOpen, onClose }: StrategicDi
                 </div>
 
                 {/* Page Navigation Tabs */}
-                <div className="inline-flex items-center gap-1 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-1.5 rounded-xl border border-slate-800 shadow-sm">
+                <div className="inline-flex items-center gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200/60 shadow-[inset_0_2px_4px_rgba(0,0,0,0.03)]">
                   {[
                     { num: 1, label: 'Diagnóstico Executivo' },
                     { num: 2, label: 'Oportunidades' },
@@ -597,7 +597,7 @@ export default function StrategicDiagnosisModal({ isOpen, onClose }: StrategicDi
                       className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all cursor-pointer ${
                         activeReportPage === p.num
                           ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-md'
-                          : 'text-slate-300 hover:text-white hover:bg-white/10'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
                       }`}
                     >
                       Página {p.num}: {p.label}

@@ -12,6 +12,7 @@ type BentoCardProps = {
   delay?: number;
   variant?: 'glass' | 'neumorphic';
   hideLeftBorder?: boolean;
+  style?: React.CSSProperties;
 };
 
 export default function BentoCard({
@@ -22,6 +23,7 @@ export default function BentoCard({
   delay = 0,
   variant = 'glass',
   hideLeftBorder = false,
+  style = {},
 }: BentoCardProps) {
   const ref = useRef<HTMLDivElement>(null);
   const mouseX = useMotionValue(-200);
@@ -63,6 +65,7 @@ export default function BentoCard({
           ? '6px 6px 12px #d1d9e6, -6px -6px 12px #ffffff'
           : `0 1px 0 0 rgba(255,255,255,0.04) inset, 0 24px 60px -28px ${finalGlowColor}`,
         ...(isNeumorphic && !hideLeftBorder && { borderLeft: `3px solid ${accentColor}` }),
+        ...style,
       }}
     >
       {/* Spotlight glow */}

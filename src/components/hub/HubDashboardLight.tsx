@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PieChart, Pie, Cell, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid } from 'recharts';
 import {
@@ -26,6 +27,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   DollarSign,
+  MessageSquare,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useHub } from '../../context/HubContext';
@@ -131,6 +133,9 @@ type KpiDef = {
   color: string;
   glow: string;
   spark: number[];
+  agentName: string;
+  agentColor: string;
+  agentAvatar: string;
 };
 
 interface ConnectionItem {
@@ -750,29 +755,29 @@ export default function HubDashboardLight() {
 
     if (reportView === 'clevel') {
       return [
-        { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+12%', positive: true,  icon: Wallet,            color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
-        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: Target,            color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-        { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: TrendingUp,        color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
-        { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: ShoppingCart,      color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
-        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick, color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
+        { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '+12%', positive: true,  icon: Wallet,            color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue, agentName: 'Breno', agentColor: '#34D399', agentAvatar: '/images/Avatar Agentes IA/Avatar_Breno.png' },
+        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '+4%',  positive: false, icon: Target,            color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend, agentName: 'Paola', agentColor: '#FACC15', agentAvatar: '/images/Avatar Agentes IA/Avatar_Paola.png'   },
+        { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: TrendingUp,        color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas, agentName: 'Heitor', agentColor: '#60A5FA', agentAvatar: '/images/Avatar Agentes IA/Avatar_Heitor.png'    },
+        { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: ShoppingCart,      color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs, agentName: 'Raíssa', agentColor: '#22D3EE', agentAvatar: '/images/Avatar Agentes IA/Avatar_Raissa.png'   },
+        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick, color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa, agentName: 'Igor', agentColor: '#A78BFA', agentAvatar: '/images/Avatar Agentes IA/Avatar_Igor.png'     },
       ];
     }
     if (reportView === 'traffic') {
       return [
-        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: false, icon: Target,            color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-        { label: 'Cliques Ads',     rawValue: totalClicks, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '', positive: true, icon: MousePointerClick, color: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.05)', spark: Array(10).fill(0) },
-        { label: 'CTR Médio',       rawValue: totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0, isNa: isNaSpend, prefix: '', suffix: '%', decimals: 2, delta: '', positive: true, icon: Activity,  color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: Array(10).fill(0) },
-        { label: 'CPC Médio',       rawValue: totalClicks > 0 ? spendNum / totalClicks : 0, isNa: isNaSpend, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true, icon: DollarSign,       color: '#db2777', glow: 'rgba(219, 39, 119, 0.05)', spark: Array(10).fill(0) },
-        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick, color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
+        { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: false, icon: Target,            color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend, agentName: 'Paola', agentColor: '#FACC15', agentAvatar: '/images/Avatar Agentes IA/Avatar_Paola.png'   },
+        { label: 'Cliques Ads',     rawValue: totalClicks, isNa: isNaSpend, prefix: '', suffix: '', decimals: 0, delta: '', positive: true, icon: MousePointerClick, color: '#0ea5e9', glow: 'rgba(14, 165, 233, 0.05)', spark: Array(10).fill(0), agentName: 'Vitor', agentColor: '#34D399', agentAvatar: '/images/Avatar Agentes IA/Avatar_Vitor.png' },
+        { label: 'CTR Médio',       rawValue: totalImpressions > 0 ? (totalClicks / totalImpressions) * 100 : 0, isNa: isNaSpend, prefix: '', suffix: '%', decimals: 2, delta: '', positive: true, icon: Activity,  color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: Array(10).fill(0), agentName: 'Laís', agentColor: '#FB923C', agentAvatar: '/images/Avatar Agentes IA/Avatar_Lais.png' },
+        { label: 'CPC Médio',       rawValue: totalClicks > 0 ? spendNum / totalClicks : 0, isNa: isNaSpend, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true, icon: DollarSign,       color: '#db2777', glow: 'rgba(219, 39, 119, 0.05)', spark: Array(10).fill(0), agentName: 'Paola', agentColor: '#FACC15', agentAvatar: '/images/Avatar Agentes IA/Avatar_Paola.png' },
+        { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick, color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa, agentName: 'Igor', agentColor: '#A78BFA', agentAvatar: '/images/Avatar Agentes IA/Avatar_Igor.png'     },
       ];
     }
     // clevel - mostrar apenas dados reais
     return [
-      { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true,  icon: Wallet,            color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue },
-      { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: false, icon: Target,            color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend   },
-      { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: TrendingUp,        color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas    },
-      { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: ShoppingCart,      color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs   },
-      { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick, color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa     },
+      { label: 'Receita Total',   rawValue: revenueNum, isNa: isNaRev, prefix: 'R$ ', suffix: '', decimals: 2, delta: '', positive: true,  icon: Wallet,            color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.revenue, agentName: 'Breno', agentColor: '#34D399', agentAvatar: '/images/Avatar Agentes IA/Avatar_Breno.png' },
+      { label: 'Investimento',    rawValue: isNaSpend ? 0 : spendNum,   isNa: isNaSpend,   prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: false, icon: Target,            color: '#2563eb', glow: 'rgba(37, 99, 235, 0.05)', spark: SP.spend, agentName: 'Paola', agentColor: '#FACC15', agentAvatar: '/images/Avatar Agentes IA/Avatar_Paola.png'   },
+      { label: 'ROAS Médio',      rawValue: isNaRoas ? 0 : roasNum,    isNa: isNaRoas,    prefix: '', suffix: '×', decimals: 2, delta: '', positive: true,  icon: TrendingUp,        color: '#FF6A00', glow: 'rgba(255, 106, 0, 0.05)', spark: SP.roas, agentName: 'Heitor', agentColor: '#60A5FA', agentAvatar: '/images/Avatar Agentes IA/Avatar_Heitor.png'    },
+      { label: 'Conversões',      rawValue: isNaConvs ? 0 : convsNum,   isNa: isNaConvs, prefix: '', suffix: '', decimals: 0, delta: '', positive: true,  icon: ShoppingCart,      color: '#0d9488', glow: 'rgba(13, 148, 136, 0.05)', spark: SP.convs, agentName: 'Raíssa', agentColor: '#22D3EE', agentAvatar: '/images/Avatar Agentes IA/Avatar_Raissa.png'   },
+      { label: 'CPA Médio',       rawValue: isNaCpa ? 0 : cpaNum,     isNa: isNaCpa,     prefix: 'R$ ', suffix: '', decimals: 2, delta: '',  positive: true,  icon: MousePointerClick, color: '#d97706', glow: 'rgba(217, 119, 6, 0.05)', spark: SP.cpa, agentName: 'Igor', agentColor: '#A78BFA', agentAvatar: '/images/Avatar Agentes IA/Avatar_Igor.png'     },
     ];
   }, [reportView, stats, revenueNum, spendNum, roasNum, convsNum, cpaNum, usersNum, SP, isDemo, trafficData]);
 
@@ -929,6 +934,111 @@ export default function HubDashboardLight() {
   const displayScData = searchConsoleData;
   const displayGa4Data = ga4Data;
 
+  // Greeting State (safe from Next.js hydration mismatch)
+  const [greeting, setGreeting] = useState('Olá');
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour >= 6 && hour < 12) {
+      setGreeting('Bom dia');
+    } else if (hour >= 12 && hour < 18) {
+      setGreeting('Boa tarde');
+    } else {
+      setGreeting('Boa noite');
+    }
+  }, []);
+
+  const rawDisplayName = user?.displayName || (profile as any)?.displayName || (profile as any)?.name || 'Membro';
+  const userName = typeof rawDisplayName === 'string' ? rawDisplayName : 'Membro';
+  const firstName = userName.split(' ')[0];
+
+  // Helper function to format metric values
+  const formatKpiValue = (val: number, prefix = '', suffix = '', decimals = 0) => {
+    return `${prefix}${val.toLocaleString('pt-BR', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })}${suffix}`;
+  };
+
+  // Executive summary based on actual dashboard metrics
+  const executiveSummary = useMemo(() => {
+    if (isDemo) {
+      return `Seja bem-vindo ao seu painel integrado NeuroAds! Sou o Ulisses, seu Chief of Staff, e atualmente você está visualizando dados de demonstração. Conecte suas contas de tráfego pago e analítica no menu "Integrações" para que eu e meu time de agentes IA possamos monitorar e otimizar seu ROI real a partir de dados consolidados de Google, Meta e LinkedIn Ads.`;
+    }
+
+    const isNaRev = stats.revenue === 'N/A';
+    const isNaSpend = stats.spend === 'N/A';
+    const isNaConvs = stats.conversions === 'N/A';
+    const isNaRoas = stats.roas === 'N/A';
+    const isNaCpa = stats.cpa === 'N/A';
+
+    if (isNaRev && isNaSpend && isNaConvs && isNaRoas && isNaCpa) {
+      return `Estou aguardando a conclusão da importação de dados dos seus canais conectados. Assim que as primeiras métricas forem registradas, eu consolidarei seu funil aqui e iniciarei os relatórios diários de performance junto com meu time de agentes.`;
+    }
+
+    let summaryParts = [];
+
+    if (!isNaSpend && spendNum > 0) {
+      summaryParts.push(`um investimento em mídia de ${formatKpiValue(spendNum, 'R$ ', '', 2)}`);
+    }
+
+    if (!isNaRev && revenueNum > 0) {
+      summaryParts.push(`uma receita gerada de ${formatKpiValue(revenueNum, 'R$ ', '', 2)}`);
+    }
+
+    if (!isNaRoas && roasNum > 0) {
+      summaryParts.push(`um ROAS médio de ${formatKpiValue(roasNum, '', '×', 2)}`);
+    }
+
+    if (!isNaConvs && convsNum > 0) {
+      summaryParts.push(`acumulando ${convsNum} conversões`);
+    }
+
+    if (!isNaCpa && cpaNum > 0) {
+      summaryParts.push(`com um custo médio por aquisição (CPA) de ${formatKpiValue(cpaNum, 'R$ ', '', 2)}`);
+    }
+
+    if (summaryParts.length > 0) {
+      let sentence = `Analisei suas métricas consolidadas e identifiquei: ${summaryParts.join(', ')}`;
+      
+      // Polish spacing and formatting
+      sentence = sentence.replace(', um ROAS', ' e um ROAS');
+      
+      if (!isNaRoas && roasNum >= 2) {
+        sentence += `. O retorno sobre o investimento está positivo, indicando oportunidades para Paola e Breno aumentarem a escala de orçamentos sob minha coordenação.`;
+      } else if (!isNaRoas && roasNum > 0 && roasNum < 2) {
+        sentence += `. O ROAS atual requer atenção estratégica; recomendei ao Igor auditar os criativos e a segmentação de público para estancarmos desperdícios.`;
+      } else {
+        sentence += `. Acompanharei de perto a calibragem do custo das conversões com o time de agentes nos próximos dias.`;
+      }
+      return sentence;
+    }
+
+    return `Seja bem-vindo ao seu painel! Seus dados de tráfego e conversão estão sendo consolidados. Acompanharei de perto o progresso do funil a partir de hoje.`;
+  }, [isDemo, stats, revenueNum, spendNum, roasNum, convsNum, cpaNum]);
+
+  // Dynamic monthly calendar calculation
+  const calendarDays = useMemo(() => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    
+    const firstDay = new Date(year, month, 1);
+    const startDayOfWeek = firstDay.getDay(); // 0 (Sunday) to 6 (Saturday)
+    const totalDays = new Date(year, month + 1, 0).getDate();
+    
+    const days = [];
+    for (let i = 0; i < startDayOfWeek; i++) {
+      days.push(null);
+    }
+    for (let d = 1; d <= totalDays; d++) {
+      days.push(d);
+    }
+    
+    return {
+      days,
+      monthName: now.toLocaleDateString('pt-BR', { month: 'long' }),
+      year,
+      currentDay: now.getDate()
+    };
+  }, []);
+
   const handleExport = () => {
     setExporting(true);
     setTimeout(() => {
@@ -965,23 +1075,97 @@ export default function HubDashboardLight() {
         )}
       </AnimatePresence>
 
-      {/* Page Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex items-start justify-between gap-4 flex-wrap"
-      >
-        <div className="min-w-0">
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
-            <IconNeuDashboard size={32} />
-            Dashboard
-          </h1>
-          <p className="text-sm font-semibold text-slate-500 mt-1 leading-relaxed">
-            Consolidado dos canais de tração, inteligência preditiva e métricas em tempo real.
-          </p>
-        </div>
-      </motion.div>
+      {/* Welcome Banner & Calendar Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-full items-stretch">
+        {/* Left Welcome Banner (lg:col-span-2) */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="lg:col-span-2 relative rounded-3xl overflow-hidden shadow-md flex flex-col justify-center min-h-[180px] p-6 md:p-8 border border-slate-200/50 bg-[url('/images/backgrounds/Bn_dash.png')] bg-cover bg-no-repeat bg-center"
+        >
+          {/* Content */}
+          <div className="relative z-10 max-w-xl">
+            <h1 className="text-2xl md:text-3xl font-black text-slate-900 tracking-tight">
+              {greeting}, {firstName}!
+            </h1>
+            
+            <p className="text-xs md:text-[13px] font-bold text-slate-700 leading-relaxed mt-2.5">
+              {executiveSummary}
+            </p>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-4 pt-3.5 border-t border-slate-200/25">
+              <div className="flex flex-col">
+                <span className="text-[12px] font-black text-slate-800 leading-tight">
+                  Agente Ulisses
+                </span>
+                <span className="text-[9px] font-extrabold text-[#FF6A00] uppercase tracking-wider mt-0.5">
+                  Chief of Staff
+                </span>
+              </div>
+              
+              <Link
+                href="/hub/assistente-ia"
+                className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[10.5px] font-black bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.25)] hover:scale-[1.02] active:scale-[0.98] transition-all shrink-0 cursor-pointer"
+              >
+                <MessageSquare size={12} className="animate-pulse" />
+                Conversar com o Ulisses
+              </Link>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Right Calendar Bento Card (lg:col-span-1) */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="lg:col-span-1"
+        >
+          <BentoCard
+            variant="neumorphic"
+            className="p-5 flex flex-col justify-between h-full bg-gradient-to-b from-white to-[#f8fafc] border border-slate-200/80 shadow-[0_4px_16px_rgba(0,0,0,0.03)]"
+          >
+            <div className="flex flex-col h-full justify-between">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-black uppercase tracking-wider text-[#FF6A00]">Calendário Operacional</span>
+                <span className="text-[12px] font-black text-slate-800 capitalize">
+                  {calendarDays.monthName} {calendarDays.year}
+                </span>
+              </div>
+              
+              <div className="grid grid-cols-7 gap-y-1.5 text-center mt-1">
+                {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((wd, i) => (
+                  <span key={i} className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                    {wd}
+                  </span>
+                ))}
+                
+                {calendarDays.days.map((day, i) => {
+                  if (day === null) {
+                    return <span key={`empty-${i}`} />;
+                  }
+                  
+                  const isToday = day === calendarDays.currentDay;
+                  
+                  return (
+                    <div
+                      key={`day-${day}`}
+                      className={`w-7 h-7 flex items-center justify-center text-[11px] font-bold rounded-full mx-auto transition-all ${
+                        isToday
+                          ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.35)] scale-[1.05] font-black'
+                          : 'text-slate-700 hover:bg-slate-100/80 cursor-pointer'
+                      }`}
+                    >
+                      {day}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </BentoCard>
+        </motion.div>
+      </div>
 
       {/* Period Selector Cards — Posicionado logo abaixo da descrição */}
       <div className="space-y-2">
@@ -998,10 +1182,10 @@ export default function HubDashboardLight() {
               <button
                 key={p.value}
                 onClick={() => setSelectedPeriod(p.value)}
-                className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer ${
+                className={`p-3.5 rounded-2xl border text-left transition-all cursor-pointer backdrop-blur-md ${
                   active
                     ? 'bg-gradient-to-br from-[#FF6A00] to-[#FF8805] border-[#FF6A00] shadow-[0_4px_12px_rgba(255,106,0,0.2)]'
-                    : 'bg-white border-slate-200 shadow-sm hover:bg-slate-50/60'
+                    : 'bg-white/50 border-slate-200/60 shadow-xs hover:bg-white/80'
                 }`}
               >
                 <p className={`text-[12px] font-black ${active ? 'text-white' : 'text-slate-700'}`}>{p.label}</p>
@@ -1193,7 +1377,7 @@ export default function HubDashboardLight() {
       {/* View Toggles & Actions Bar */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl border border-slate-200/50 bg-white shadow-[0_4px_12px_rgba(0,0,0,0.02)] mb-4">
         {/* Report Toggles */}
-        <div className="flex items-center gap-1.5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-1.5 rounded-2xl border border-slate-800/80 shadow-[0_4px_14px_rgba(15,23,42,0.18)] w-full md:w-auto">
+        <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/60 shadow-[inset_0_2px_4px_rgba(0,0,0,0.03)] w-full md:w-auto">
           {[
             { id: 'clevel', label: 'Visão C-Level' },
             { id: 'traffic', label: 'Visão Operacional de Tráfego' },
@@ -1205,7 +1389,7 @@ export default function HubDashboardLight() {
               className={`flex-1 md:flex-none px-4 py-2 rounded-xl text-[11px] font-black transition-all duration-200 cursor-pointer ${
                 reportView === opt.id
                   ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.35)] scale-[1.02]'
-                  : 'text-slate-300 hover:text-white hover:bg-white/10'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
               }`}
               style={{ border: 'none' }}
             >
@@ -1243,6 +1427,10 @@ export default function HubDashboardLight() {
       >
         {KPIS.map((kpi, idx) => {
           const Icon = kpi.icon as React.FC<{ size?: number; className?: string; style?: React.CSSProperties }>;
+          const agentColor = kpi.agentColor || '#FF6A00';
+          const agentName = kpi.agentName || 'Ulisses';
+          const agentAvatar = kpi.agentAvatar || '/images/Avatar Agentes IA/Avatar_Ulisses.png';
+          
           return (
             <BentoCard
               key={kpi.label}
@@ -1250,11 +1438,15 @@ export default function HubDashboardLight() {
               glowColor={kpi.glow}
               accentColor={kpi.color}
               hideLeftBorder={true}
-              className="p-4.5 sm:p-5 flex flex-col justify-between gap-4 bg-gradient-to-b from-white via-white to-[#f8fafc] border border-slate-200/80 shadow-[0_4px_16px_rgba(0,0,0,0.03)] hover:shadow-[0_12px_28px_rgba(0,0,0,0.06)] hover:-translate-y-0.5 transition-all duration-300"
+              className="p-4.5 sm:p-5 flex flex-col justify-between gap-4 border border-white/60 shadow-[3px_3px_8px_#d1d9e6,_-3px_-3px_8px_#ffffff] hover:shadow-[inset_3px_3px_8px_#d1d9e6,_inset_-3px_-3px_8px_#ffffff] hover:scale-[1.01] transition-all duration-300"
+              style={{
+                background: `linear-gradient(to right, ${agentColor}12, #eef2f7, #eef2f7)`
+              }}
               delay={idx * 0.04}
             >
               <div className="flex items-center justify-between">
-                <div className="w-9 h-9 rounded-[14px] flex items-center justify-center bg-gradient-to-b from-white via-[#f8fafc] to-[#e2e8f0] border border-white/90 shadow-[4px_6px_14px_rgba(148,163,184,0.38),-3px_-3px_10px_rgba(255,255,255,0.95)] hover:shadow-[6px_9px_20px_rgba(148,163,184,0.52)] hover:scale-105 active:scale-95 transition-all duration-200 shrink-0">
+                {/* Standard P0 circular icon wrapper (bola 2014) */}
+                <div className="w-9 h-9 rounded-full bg-white border border-slate-200/50 shadow-[0_3px_8px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04)] flex items-center justify-center shrink-0">
                   <Icon size={18} className="text-[#1e293b] stroke-[2.2]" />
                 </div>
                 <div className="flex items-center gap-1.5 ml-auto">
@@ -1294,10 +1486,22 @@ export default function HubDashboardLight() {
                   </p>
                 )}
               </div>
-              <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                <span className="text-[9.5px] font-extrabold uppercase tracking-widest text-slate-400">Histórico</span>
-                <div className="shrink-0 overflow-hidden">
-                  <Sparkline points={kpi.spark} color={kpi.color} width={76} height={20} fillOpacity={0.08} />
+              
+              <div className="flex flex-col gap-2 pt-2 border-t border-slate-200/40">
+                <div className="flex items-center justify-between">
+                  <span className="text-[9.5px] font-extrabold uppercase tracking-widest text-slate-400">Histórico</span>
+                  <div className="shrink-0 overflow-hidden">
+                    <Sparkline points={kpi.spark} color={kpi.color} width={76} height={20} fillOpacity={0.08} />
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-1.5 pt-1.5 border-t border-slate-200/25">
+                  <div className="w-5 h-5 rounded-full overflow-hidden border border-white shadow-sm shrink-0 relative bg-slate-100">
+                    <Image src={agentAvatar} alt={agentName} width={20} height={20} className="w-full h-full object-cover" />
+                  </div>
+                  <span className="text-[10px] font-bold text-slate-500">
+                    Otimizado por <span className="font-extrabold" style={{ color: agentColor }}>{agentName}</span>
+                  </span>
                 </div>
               </div>
             </BentoCard>
@@ -1354,7 +1558,7 @@ export default function HubDashboardLight() {
               <span className="text-[14px] font-black uppercase tracking-wider text-[#0f172a]">Resumo do Funil de Conversão</span>
             </div>
 
-            <div className="flex items-center gap-1.5 bg-gradient-to-r from-[#0f172a] via-[#1e293b] to-[#0f172a] p-1.5 rounded-2xl border border-slate-800/80 shadow-[0_4px_14px_rgba(15,23,42,0.18)] w-full sm:w-auto">
+            <div className="flex items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200/60 shadow-[inset_0_2px_4px_rgba(0,0,0,0.03)] w-full sm:w-auto">
               {(
                 [
                   { id: 'all', label: 'Todos' },
@@ -1371,7 +1575,7 @@ export default function HubDashboardLight() {
                     className={`flex-1 sm:flex-none px-3.5 py-1.5 rounded-xl text-[11px] font-black transition-all duration-200 cursor-pointer ${
                       isActive
                         ? 'bg-gradient-to-r from-[#FF6A00] to-[#FF8805] text-white shadow-[0_2px_8px_rgba(255,106,0,0.35)] scale-[1.02]'
-                        : 'text-slate-300 hover:text-white hover:bg-white/10'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
                     }`}
                     style={{ border: 'none' }}
                   >

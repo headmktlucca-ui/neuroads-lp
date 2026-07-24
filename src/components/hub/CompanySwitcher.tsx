@@ -174,14 +174,6 @@ export function CompanySwitcherTrigger({
               {companyName.charAt(0).toUpperCase() + companyName.slice(1).toLowerCase()}
             </span>
           )}
-          <div className="flex items-baseline gap-1 mt-0.5 min-w-0">
-            <span className={`text-[10px] font-normal leading-none shrink-0 ${isDark ? 'text-white/60' : 'text-slate-400'}`}>
-              {greeting}
-            </span>
-            <span className={`text-[10px] font-normal truncate leading-none ${isDark ? 'text-white/70' : 'text-slate-500'}`}>
-              {userName.split(' ')[0]}
-            </span>
-          </div>
         </div>
       )}
     </div>
