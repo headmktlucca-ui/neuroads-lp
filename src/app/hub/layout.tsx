@@ -705,7 +705,7 @@ function DesktopNotificationBell() {
       </button>
 
       {isNotificationsOpen && (
-        <div className="absolute right-0 mt-2 z-[999] w-80 rounded-[24px] border border-slate-200 bg-white/95 backdrop-blur-xl p-4 shadow-xl animate-in fade-in slide-in-from-top-2 duration-150">
+        <div className="absolute right-0 mt-2 z-[100] w-80 rounded-[24px] border border-slate-200 bg-white/95 backdrop-blur-xl p-4 shadow-xl animate-in fade-in slide-in-from-top-2 duration-150">
           <NotificationsPanelContent />
         </div>
       )}

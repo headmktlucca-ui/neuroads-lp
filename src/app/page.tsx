@@ -411,7 +411,7 @@ export default function TempLandingPage() {
       {/* ========================================================================= */}
       {/* HEADER TEMPLATE 01 */}
       {/* ========================================================================= */}
-      <header className="fixed top-4 left-0 right-0 w-full z-[999] px-4 sm:px-8 lg:px-24">
+      <header className="fixed top-4 left-0 right-0 w-full z-[100] px-4 sm:px-8 lg:px-24">
         <div className="bg-transparent md:bg-white shadow-none md:shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] border-none md:border md:border-white/50 rounded-none md:rounded-full py-2 md:py-4 px-0 md:px-8 flex items-center justify-between transition-all duration-300">
           {/* Logo */}
           <Link href="#" className="flex items-center group transition-transform duration-300 hover:scale-[1.01]">
@@ -471,7 +471,7 @@ export default function TempLandingPage() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-16 left-4 right-4 bg-white border border-white/50 shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] rounded-[24px] p-6 flex flex-col gap-4 md:hidden z-[998]"
+              className="absolute top-16 left-4 right-4 bg-white border border-white/50 shadow-[6px_6px_12px_#c8d0e7,-6px_-6px_12px_#ffffff] rounded-[24px] p-6 flex flex-col gap-4 md:hidden z-50"
             >
               <Link
                 href="#publico-alvo"
@@ -593,7 +593,7 @@ export default function TempLandingPage() {
         
         {/* Animated Background (Circuit) */}
         <HeroCircuitBackground id="circuit-hero" />
-        <div className="relative z-[2] w-full px-6 md:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center min-h-[calc(100vh-120px)] pt-20 lg:pt-0">
+        <div className="relative z-2 w-full px-6 md:px-12 lg:px-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center min-h-[calc(100vh-120px)] pt-20 lg:pt-0">
           <div className="lg:col-span-7 flex flex-col items-start text-left">
             <h1 className="font-title font-semibold text-[32px] md:text-[48px] leading-[1.14] text-slate-900 tracking-tight max-w-3xl mt-[26px] mb-[22px] animate-rise-title">
               Operações IA Estratégicas em <br /> <span className="font-extrabold text-[#FF5500]">Marketing &amp; Vendas B2B</span>.
@@ -704,19 +704,19 @@ export default function TempLandingPage() {
       {/* ========================================================================= */}
       <div ref={solutionsSectionRef} className="relative w-full overflow-hidden py-24 md:py-28">
         {/* Top transition mask to blend with previous section (#EDF1F5) */}
-        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#EDF1F5] to-transparent z-[5] pointer-events-none" />
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-[#EDF1F5] to-transparent z-5 pointer-events-none" />
 
         {/* Parallax Background Wrapper */}
         <motion.div
           style={{ y: solutionsBackgroundY }}
-          className="absolute -top-80 -bottom-80 inset-x-0 overflow-hidden bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] z-[1]"
+          className="absolute -top-80 -bottom-80 inset-x-0 overflow-hidden bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] z-1"
         >
           <div className="absolute top-80 bottom-80 inset-x-0">
             <HeroCircuitBackground id="circuit-solutions" />
           </div>
         </motion.div>
 
-        <section id="solucoes" className="relative z-[2] max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="solucoes" className="relative z-2 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Header grid */}
         <motion.div
@@ -844,7 +844,7 @@ export default function TempLandingPage() {
         </motion.div>
 
         {/* Mask para remover a linha dura (borda) do fim do background parallax e suavizar com o resto da página */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#EDF1F5] to-transparent z-[5] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#EDF1F5] to-transparent z-5 pointer-events-none" />
       </section>
     </div>
 
@@ -869,11 +869,11 @@ export default function TempLandingPage() {
       {/* ========================================================================= */}
       <div className="relative w-full overflow-hidden py-16 md:py-24 mt-24">
         {/* Footer Background Wrapper */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] z-[1]">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#FAFBFD] to-[#ECEFF4] z-1">
           <HeroCircuitBackground id="circuit-footer" />
         </div>
 
-        <footer className="relative z-[2] max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <footer className="relative z-2 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="p-8 md:p-12">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
               <div className="md:col-span-8 space-y-4">
