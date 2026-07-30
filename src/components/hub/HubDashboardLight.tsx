@@ -16,6 +16,7 @@ import {
   FlaskConical,
   Link2,
   MousePointerClick,
+  RefreshCw,
   ShoppingCart,
   Sparkles,
   Target,
@@ -48,8 +49,11 @@ import {
   IconActivity3D,
   IconCoin3D,
 } from './HubUiIcons3D';
-import { IconNeuDashboard } from './NeumorphicMenuIcons';
+import { IconNeuDashboard, PageTitleIcon, IconNeuOpportunities, IconNeuRefresh } from './NeumorphicMenuIcons';
 import { VisualAnalysisPanel } from './visual-analysis/VisualAnalysisPanel';
+import { analyzeVisually, getScoreColor, getScoreLabel } from '../../lib/visual-analysis';
+import { getFirebaseDb } from '../../lib/firebase';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 /* ─── Custom Icons ────────────────────────────────────────────────── */
 const InstagramIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
@@ -485,36 +489,100 @@ function GA4ActiveRegions({ regions, connected, loading }: { regions: Ga4Region[
 
 /* ─── NeuroVisão Widget (Hub Principal) ─────────────────────────────── */
 function NeuroVisaoWidget({ userUrl }: { userUrl?: string }) {
+  const { user, activeCompany } = useAuth();
   const [showModal, setShowModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'site' | 'ads'>('site');
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [lastAnalysis, setLastAnalysis] = useState<{
+    overall: number;
+    criteria: Array<{ key: string; label: string; score: number; passed: boolean }>;
+    analyzedAt: string;
+    subjectLabel: string;
+  } | null>(null);
 
   const displayUrl = userUrl || 'neuroads.com.br';
 
-  const recentAnalyses = [
-    { label: `Página inicial — ${displayUrl}`, score: 72, time: '2h atrás' },
-    { label: 'Banner Meta Ads — BF2026',          score: 81, time: '1d atrás' },
-    { label: 'LinkedIn Ad — Decisores B2B',        score: 58, time: '3d atrás' },
-  ];
-
   const getColor = (s: number) =>
     s >= 75 ? '#22c55e' : s >= 50 ? '#f97316' : '#ef4444';
+
+  // Load last analysis from Firestore on mount
+  useEffect(() => {
+    let active = true;
+    async function load() {
+      if (!user?.uid || !activeCompany?.id) {
+        setIsLoading(false);
+        return;
+      }
+      try {
+        setIsLoading(true);
+        const db = getFirebaseDb();
+        const ref = doc(db, 'users', user.uid, 'companies', activeCompany.id, 'visual-analysis', 'latest');
+        const snap = await getDoc(ref);
+        if (active && snap.exists()) {
+          const d = snap.data();
+          setLastAnalysis({
+            overall: d.overall,
+            criteria: d.criteria || [],
+            analyzedAt: d.analyzedAt,
+            subjectLabel: d.subjectLabel || displayUrl,
+          });
+        }
+      } catch (err) {
+        console.warn('NeuroVisão: erro ao carregar histórico', err);
+      } finally {
+        if (active) setIsLoading(false);
+      }
+    }
+    load();
+    return () => { active = false; };
+  }, [user?.uid, activeCompany?.id, displayUrl]);
+
+  // Run a new analysis using the real company URL
+  const handleAnalyze = useCallback(async () => {
+    if (!user?.uid || !activeCompany?.id) return;
+    setIsAnalyzing(true);
+    try {
+      const result = await analyzeVisually({ url: displayUrl });
+      const db = getFirebaseDb();
+      const ref = doc(db, 'users', user.uid, 'companies', activeCompany.id, 'visual-analysis', 'latest');
+      await setDoc(ref, {
+        overall: result.overall,
+        criteria: result.criteria,
+        heatmap: result.heatmap,
+        analyzedAt: result.analyzedAt,
+        subjectLabel: displayUrl,
+        predictedCTR: result.predictedCTR,
+        ctrBenchmark: result.ctrBenchmark,
+        ctrDelta: result.ctrDelta,
+        aboveFoldScore: result.aboveFoldScore,
+      });
+      setLastAnalysis({
+        overall: result.overall,
+        criteria: result.criteria,
+        analyzedAt: result.analyzedAt,
+        subjectLabel: displayUrl,
+      });
+    } catch (err) {
+      console.error('NeuroVisão: erro ao analisar', err);
+    } finally {
+      setIsAnalyzing(false);
+    }
+  }, [user?.uid, activeCompany?.id, displayUrl]);
+
+  // Format date nicely
+  const formatDate = (iso: string) => {
+    try {
+      const d = new Date(iso);
+      return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    } catch { return iso; }
+  };
 
   return (
     <>
       <div className="mt-8 space-y-4">
         {/* Header da seção */}
         <div className="flex items-center gap-2 border-b border-slate-200/60 pb-3">
-          <div
-            className="flex items-center justify-center rounded-full"
-            style={{
-              width: 32, height: 32,
-              background: 'white',
-              boxShadow: '0 3px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)',
-              border: '1px solid rgba(226,232,240,0.5)',
-            }}
-          >
-            <Sparkles size={15} style={{ color: '#FF6A00' }} />
-          </div>
+          <PageTitleIcon icon={IconNeuOpportunities} className="w-8 h-8" iconSize={15} />
           <h2 className="text-[16px] font-black uppercase tracking-wider text-[#0f172a]">
             NeuroVisão — Análise Visual IA
           </h2>
@@ -528,104 +596,189 @@ function NeuroVisaoWidget({ userUrl }: { userUrl?: string }) {
           >
             BETA
           </span>
+
+          {/* Refresh button - Bola 2014 */}
+          <button
+            onClick={handleAnalyze}
+            disabled={isAnalyzing || isLoading}
+            className="ml-auto flex items-center justify-center rounded-full bg-white border border-slate-200/50 shadow-[0_3px_8px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04)] w-9 h-9 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+            title={isAnalyzing ? 'Analisando...' : lastAnalysis ? 'Atualizar Análise' : 'Analisar Agora'}
+          >
+            <IconNeuRefresh size={16} className={`text-slate-700 ${isAnalyzing ? 'animate-spin' : ''}`} />
+          </button>
         </div>
 
-        {/* Grid: Score geral + análises recentes */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          {/* Card principal — CTA de análise */}
+        {/* Content */}
+        {isLoading ? (
+          /* Loading skeleton */
           <div
-            className="lg:col-span-1 rounded-2xl p-5 flex flex-col justify-between gap-4 cursor-pointer group transition-all hover:scale-[1.01]"
+            className="rounded-2xl p-6 flex flex-col items-center justify-center gap-3 h-32"
             style={{
-              background: 'linear-gradient(135deg, rgba(255,106,0,0.06), rgba(255,136,5,0.03))',
-              border: '1px solid rgba(255,106,0,0.15)',
-              boxShadow: '0 4px 16px rgba(255,106,0,0.06)',
+              background: 'linear-gradient(135deg, rgba(255,106,0,0.04), rgba(255,136,5,0.02))',
+              border: '1px solid rgba(255,106,0,0.1)',
             }}
-            onClick={() => setShowModal(true)}
           >
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-bold text-slate-700">Analisar Agora</p>
-                <p className="text-[11px] text-slate-400 mt-0.5">Site, landing page ou criativo</p>
+            <div className="w-6 h-6 border-[3px] border-t-orange-500 border-orange-100 rounded-full animate-spin" />
+            <p className="text-[11px] text-slate-400 font-semibold">Buscando última análise...</p>
+          </div>
+        ) : lastAnalysis ? (
+          /* ── RESULTS: last analysis ── */
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            {/* Score principal */}
+            <div
+              className="lg:col-span-1 rounded-2xl p-5 flex flex-col items-center justify-center gap-3"
+              style={{
+                background: 'white',
+                border: '1px solid rgba(226,232,240,0.7)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
+              }}
+            >
+              {/* Score ring */}
+              <div className="relative w-20 h-20">
+                <svg width={80} height={80} className="-rotate-90">
+                  <circle cx={40} cy={40} r={32} fill="none" stroke="#e2e8f0" strokeWidth={6} />
+                  <circle
+                    cx={40} cy={40} r={32} fill="none"
+                    stroke={getColor(lastAnalysis.overall)} strokeWidth={6} strokeLinecap="round"
+                    strokeDasharray={2 * Math.PI * 32}
+                    strokeDashoffset={2 * Math.PI * 32 * (1 - lastAnalysis.overall / 100)}
+                    style={{ transition: 'stroke-dashoffset 1s ease' }}
+                  />
+                </svg>
+                <span
+                  className="absolute inset-0 flex flex-col items-center justify-center"
+                >
+                  <span className="text-[20px] font-black" style={{ color: getColor(lastAnalysis.overall) }}>
+                    {lastAnalysis.overall}
+                  </span>
+                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider -mt-0.5">Score</span>
+                </span>
               </div>
-              <div
-                className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
+              <div className="text-center">
+                <p className="text-[13px] font-black text-slate-800">{getScoreLabel(lastAnalysis.overall)}</p>
+                <p className="text-[10px] text-slate-400 mt-0.5 truncate max-w-[140px]" title={lastAnalysis.subjectLabel}>
+                  {lastAnalysis.subjectLabel}
+                </p>
+                <p className="text-[9px] text-slate-400 font-semibold mt-1">
+                  Atualizado em {formatDate(lastAnalysis.analyzedAt)}
+                </p>
+              </div>
+            </div>
+
+            {/* Critérios */}
+            <div
+              className="lg:col-span-2 rounded-2xl p-5"
+              style={{
+                background: 'white',
+                border: '1px solid rgba(226,232,240,0.7)',
+                boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
+              }}
+            >
+              <p className="text-[12px] font-black uppercase tracking-wider text-slate-500 mb-3">
+                Critérios de Avaliação
+              </p>
+              <div className="space-y-2.5">
+                {lastAnalysis.criteria.map((c) => (
+                  <div key={c.key} className="flex items-center gap-3">
+                    {/* Mini ring */}
+                    <div className="relative w-8 h-8 flex-shrink-0">
+                      <svg width={32} height={32} className="-rotate-90">
+                        <circle cx={16} cy={16} r={12} fill="none" stroke="#e2e8f0" strokeWidth={3} />
+                        <circle
+                          cx={16} cy={16} r={12} fill="none"
+                          stroke={getColor(c.score)} strokeWidth={3} strokeLinecap="round"
+                          strokeDasharray={2 * Math.PI * 12}
+                          strokeDashoffset={2 * Math.PI * 12 * (1 - c.score / 100)}
+                        />
+                      </svg>
+                      <span
+                        className="absolute inset-0 flex items-center justify-center text-[8px] font-black"
+                        style={{ color: getColor(c.score) }}
+                      >
+                        {c.score}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[12px] font-semibold text-slate-700 truncate">{c.label}</p>
+                        <span
+                          className={`text-[9px] font-black px-1.5 py-0.5 rounded-full flex-shrink-0 ml-2 ${
+                            c.passed ? 'text-emerald-700 bg-emerald-500/10' : 'text-rose-700 bg-rose-500/10'
+                          }`}
+                        >
+                          {c.passed ? '✓ OK' : '✗ Melhorar'}
+                        </span>
+                      </div>
+                      {/* Progress bar */}
+                      <div className="h-1 mt-1 rounded-full bg-slate-100 overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-700"
+                          style={{ width: `${c.score}%`, backgroundColor: getColor(c.score) }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowModal(true)}
+                className="mt-4 w-full text-center text-[11px] text-orange-500 hover:text-orange-600 font-semibold transition-colors"
+              >
+                + Ver análise detalhada com Heatmap
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* ── NO HISTORY: invite user ── */
+          <div
+            className="rounded-2xl p-8 flex flex-col items-center justify-center gap-5 text-center"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,106,0,0.04), rgba(255,136,5,0.02))',
+              border: '1px dashed rgba(255,106,0,0.25)',
+            }}
+          >
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center bg-white border border-slate-200/50 shadow-[0_4px_12px_rgba(0,0,0,0.06),0_1px_4px_rgba(0,0,0,0.04)]"
+            >
+              <IconNeuOpportunities size={28} className="text-slate-700" />
+            </div>
+            <div>
+              <p className="text-[15px] font-black text-slate-800 mb-1">Sua primeira análise visual</p>
+              <p className="text-[12px] text-slate-500 max-w-md leading-relaxed">
+                Descubra como o seu site está sendo percebido visualmente. A NeuroVisão usa IA para gerar mapas de atenção, análise de CTAs e score de hierarquia visual.
+              </p>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={handleAnalyze}
+                disabled={isAnalyzing}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[12px] font-bold text-white transition-all disabled:opacity-60"
                 style={{
                   background: 'linear-gradient(135deg, #FF6A00, #FF8805)',
                   boxShadow: '0 4px 12px rgba(255,106,0,0.35)',
                 }}
               >
-                <Sparkles size={18} className="text-white" />
-              </div>
+                <IconNeuOpportunities size={14} className="text-white" />
+                {isAnalyzing ? 'Analisando...' : `Analisar ${displayUrl}`}
+              </button>
+              <button
+                onClick={() => setShowModal(true)}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-[12px] font-bold text-slate-600 transition-all hover:bg-slate-100"
+                style={{ border: '1px solid rgba(226,232,240,0.8)' }}
+              >
+                Analisar outro URL
+              </button>
             </div>
-            <div className="space-y-1.5">
-              <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wide">Recursos disponíveis</p>
-              {['Heatmap Preditivo', 'Scoring de Atenção (0–100)', 'Pré-validação de Criativos'].map(r => (
-                <div key={r} className="flex items-center gap-1.5">
-                  <span className="text-orange-500">✓</span>
-                  <span className="text-[11px] text-slate-600">{r}</span>
-                </div>
-              ))}
-            </div>
+            {isAnalyzing && (
+              <p className="text-[11px] text-orange-500 font-semibold animate-pulse">
+                Gerando heatmap preditivo e avaliando critérios...
+              </p>
+            )}
           </div>
-
-          {/* Análises recentes */}
-          <div
-            className="lg:col-span-2 rounded-2xl p-5"
-            style={{
-              background: 'white',
-              border: '1px solid rgba(226,232,240,0.7)',
-              boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
-            }}
-          >
-            <p className="text-[12px] font-black uppercase tracking-wider text-slate-500 mb-3">
-              Análises Recentes
-            </p>
-            <div className="space-y-3">
-              {recentAnalyses.map((a, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0 cursor-pointer group"
-                  onClick={() => setShowModal(true)}
-                >
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    {/* Mini ring */}
-                    <div className="relative w-9 h-9 flex-shrink-0">
-                      <svg width={36} height={36} className="-rotate-90">
-                        <circle cx={18} cy={18} r={14} fill="none" stroke="#e2e8f0" strokeWidth={3} />
-                        <circle
-                          cx={18} cy={18} r={14} fill="none"
-                          stroke={getColor(a.score)} strokeWidth={3} strokeLinecap="round"
-                          strokeDasharray={2 * Math.PI * 14}
-                          strokeDashoffset={2 * Math.PI * 14 * (1 - a.score / 100)}
-                        />
-                      </svg>
-                      <span
-                        className="absolute inset-0 flex items-center justify-center text-[9px] font-bold"
-                        style={{ color: getColor(a.score) }}
-                      >
-                        {a.score}
-                      </span>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-[12px] font-semibold text-slate-700 truncate">{a.label}</p>
-                      <p className="text-[10px] text-slate-400">{a.time}</p>
-                    </div>
-                  </div>
-                  <ChevronRight size={14} className="text-slate-300 group-hover:text-orange-400 transition-colors flex-shrink-0" />
-                </div>
-              ))}
-            </div>
-            <button
-              onClick={() => setShowModal(true)}
-              className="mt-3 w-full text-center text-[11px] text-orange-500 hover:text-orange-600 font-semibold transition-colors"
-            >
-              + Nova análise visual
-            </button>
-          </div>
-        </div>
+        )}
       </div>
 
-      {/* Modal de análise */}
+      {/* Modal de análise detalhada */}
       {showModal && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center p-4"
@@ -633,36 +786,13 @@ function NeuroVisaoWidget({ userUrl }: { userUrl?: string }) {
           onClick={e => { if (e.target === e.currentTarget) setShowModal(false); }}
         >
           <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl">
-            {/* Tabs */}
-            <div
-              className="flex gap-2 p-3 rounded-2xl mb-3"
-              style={{ background: '#f1f5f9', border: '1px solid rgba(226,232,240,0.6)' }}
-            >
-              {(['site', 'ads'] as const).map(tab => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className="flex-1 py-2 px-4 rounded-xl text-xs font-semibold transition-all"
-                  style={activeTab === tab ? {
-                    background: 'linear-gradient(135deg, #FF6A00, #FF8805)',
-                    color: 'white',
-                    boxShadow: '0 2px 8px rgba(255,106,0,0.35)',
-                    transform: 'scale(1.02)',
-                  } : { color: '#64748b' }}
-                >
-                  {tab === 'site' ? '🌐 Site / Landing Page' : '📢 Criativo de Anúncio'}
-                </button>
-              ))}
-            </div>
-
-            <VisualAnalysisPanel
-              subjectLabel={activeTab === 'site' ? displayUrl : 'Criativo de Anúncio'}
-              seed={activeTab === 'site' ? 7 : 42}
-              onClose={() => setShowModal(false)}
-            />
-          </div>
-        </div>
-      )}
+             <VisualAnalysisPanel
+               subjectLabel={displayUrl}
+               onClose={() => setShowModal(false)}
+             />
+           </div>
+         </div>
+       )}
     </>
   );
 }
@@ -1700,16 +1830,11 @@ export default function HubDashboardLight() {
         })}
       </motion.div>
 
-      {/* ── NeuroVisão: Análise Visual IA ── */}
-      <NeuroVisaoWidget userUrl={activeCompany?.site || profile?.site || 'neuroads.com.br'} />
-
       {/* Main Content Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        {/* Left Column: Alerts & Credit Meter (3/12 width) */}
+        {/* Left Column: Alerts (3/12 width) */}
         <div className="lg:col-span-3 space-y-6">
-          {/* Plan Credits Meter */}
-          <CreditMeter />
 
           {/* Dynamic Alerts Bento Block */}
           <BentoCard variant="neumorphic" className="flex flex-col" glowColor="rgba(239, 68, 68, 0.03)">
@@ -2199,6 +2324,9 @@ export default function HubDashboardLight() {
           </BentoCard>
         </div>
       </div>
+
+      {/* ── NeuroVisão: Análise Visual IA (ao final da página) ── */}
+      <NeuroVisaoWidget userUrl={activeCompany?.site || profile?.site || 'neuroads.com.br'} />
     </div>
   );
 }

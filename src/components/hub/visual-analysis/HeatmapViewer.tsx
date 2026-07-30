@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useEffect, useState } from 'react';
-import { Eye, EyeOff, Download } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import type { HeatmapData, HeatmapFocusPoint } from '../../../lib/visual-analysis';
 
 // ─── Utilitário: desenhar heatmap no canvas ───────────────────────────────────
@@ -168,7 +168,7 @@ export function HeatmapViewer({ heatmap, imageUrl, label, className = '' }: Heat
               </div>
               {/* Mensagem de placeholder */}
               <div className="flex-1 flex items-end justify-center pb-4">
-                <span className="text-xs text-slate-400">Prévia do criativo (imagem não carregada)</span>
+                <span className="text-xs text-slate-400 font-semibold">Prévia do Site / Landing Page (imagem não carregada)</span>
               </div>
             </div>
           </div>

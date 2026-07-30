@@ -264,7 +264,6 @@ export function scoreMessageTemplate(title: string, text: string): MessageCTASco
   };
 }
 
-// ─── Requisição Real para API ────────────────────────────────────────────────
 export async function analyzeVisually(params: {
   url?: string;
   creativeName?: string;
@@ -279,7 +278,16 @@ export async function analyzeVisually(params: {
   });
 
   if (!response.ok) {
-    throw new Error('Erro ao processar análise visual na API');
+    try {
+      const errData = await response.json();
+      const err = new Error(errData.error || 'Erro ao processar análise visual na API.');
+      (err as any).details = errData.details || '';
+      (err as any).troubleshoot = errData.troubleshoot || [];
+      throw err;
+    } catch (e: any) {
+      if (e.troubleshoot) throw e;
+      throw new Error('Erro de conexão com o servidor da API.');
+    }
   }
 
   const data = await response.json();

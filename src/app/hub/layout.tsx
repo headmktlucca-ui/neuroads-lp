@@ -55,6 +55,10 @@ import {
 } from '../../components/hub/NeumorphicMenuIcons';
 import { CompanySwitcherTrigger } from '../../components/hub/CompanySwitcher';
 import { useCompanyMigration } from '../../hooks/useCompanyMigration';
+import { doc, getDoc } from 'firebase/firestore';
+import { getFirebaseDb } from '../../lib/firebase';
+import { subscribeToCRMLeads, type CRMLead } from '../../lib/crm-sync';
+import CreditMeter from '../../components/hub/CreditMeter';
 
 
 /* ─── Types ────────────────────────────────────────────────────────── */
@@ -325,6 +329,9 @@ function SidebarContent({
           </div>
         ))}
       </nav>
+
+      {/* Credits */}
+      <CreditMeter variant="sidebar" isDark={isDark} />
 
       {/* Sign out */}
       <div className={`px-2 pb-1.5 shrink-0 pt-1 ${isDark ? 'border-t border-white/15' : 'border-t border-white/40'}`}>
@@ -652,6 +659,11 @@ function MobileDrawer({
               ))}
             </nav>
 
+            {/* Credits */}
+            <div className="px-1">
+              <CreditMeter variant="sidebar" isDark={false} />
+            </div>
+
             {/* Sign out */}
             <div
               className="px-3 pt-3 shrink-0 border-t border-white/40"
@@ -713,6 +725,96 @@ function DesktopNotificationBell() {
   );
 }
 
+/* ─── CRM Header Widget (Top bar stats) ─────────────────────────────── */
+function CRMHeaderWidget() {
+  const { user } = useAuth();
+  const [leads, setLeads] = useState<CRMLead[]>([]);
+
+  useEffect(() => {
+    let active = true;
+    
+    // Initial fetch from Firestore / LocalStorage
+    async function loadInitial() {
+      if (!user) return;
+      try {
+        const db = getFirebaseDb();
+        const docRef = doc(db, 'users', user.uid, 'leads_funil', 'main');
+        const snap = await getDoc(docRef);
+        if (active && snap.exists() && snap.data().leads) {
+          setLeads(snap.data().leads);
+        } else {
+          const local = localStorage.getItem(`leads_funil_${user.uid}`);
+          if (active && local) setLeads(JSON.parse(local));
+        }
+      } catch {}
+    }
+    loadInitial();
+
+    const unsubscribe = subscribeToCRMLeads(user?.uid, (remoteLeads) => {
+      if (active && Array.isArray(remoteLeads)) {
+        setLeads(remoteLeads);
+      }
+    });
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, [user]);
+
+  const stats = useMemo(() => {
+    const list = {
+      capturado: { count: 0, value: 0, label: 'Captura', color: '#60A5FA' },
+      qualificado: { count: 0, value: 0, label: 'Qualif.', color: '#34D399' },
+      proposta: { count: 0, value: 0, label: 'Proposta', color: '#FBBF24' },
+      fechamento: { count: 0, value: 0, label: 'Fecham.', color: '#FB923C' },
+      ganho: { count: 0, value: 0, label: 'Ganho', color: '#10B981' },
+    };
+
+    leads.forEach((l) => {
+      const stage = l.stage as keyof typeof list;
+      if (list[stage]) {
+        list[stage].count += 1;
+        list[stage].value += l.value || 0;
+      }
+    });
+
+    return Object.entries(list).map(([id, item]) => ({
+      id,
+      ...item,
+    }));
+  }, [leads]);
+
+  return (
+    <div className="flex items-center gap-2 overflow-x-auto scrollbar-none max-w-full mr-auto py-1">
+      {stats.map((s) => (
+        <div
+          key={s.id}
+          className="flex items-center gap-2 px-2.5 py-1 rounded-xl bg-white border border-slate-200/50 shadow-[1px_1px_3px_rgba(0,0,0,0.03)] shrink-0 transition-transform duration-200 hover:scale-[1.02]"
+        >
+          <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ backgroundColor: s.color }} />
+          <div className="flex flex-col">
+            <span className="text-[8px] font-black uppercase tracking-wider text-slate-400 leading-none">
+              {s.label}
+            </span>
+            <div className="flex items-baseline gap-1 mt-0.5">
+              <span className="text-[11px] font-black text-slate-700 leading-none font-mono">
+                {s.count}
+              </span>
+              <span className="text-[8px] font-medium text-slate-400 leading-none">
+                {s.count === 1 ? 'lead' : 'leads'}
+              </span>
+              <span className="text-[9px] font-bold text-slate-500 font-mono leading-none ml-1.5">
+                R$ {s.value.toLocaleString('pt-BR')}
+              </span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 /* ─── HubLayoutInner ───────────────────────────────────────────────── */
 function HubLayoutInner({
   children,
@@ -758,8 +860,9 @@ function HubLayoutInner({
         {/* Mobile notifications sheet — hidden on desktop */}
         <MobileNotificationsPanel />
 
-        {/* Desktop Header bar containing the Notification Bell */}
-        <div className="hidden lg:flex h-16 items-center justify-end px-8 shrink-0 border-b border-slate-200/20 bg-white/40 backdrop-blur-md z-30">
+        {/* Desktop Header bar containing the CRM stages & Notification Bell */}
+        <div className="hidden lg:flex h-16 items-center justify-between px-8 shrink-0 border-b border-slate-200/20 bg-white/40 backdrop-blur-md z-30">
+          <CRMHeaderWidget />
           <DesktopNotificationBell />
         </div>
 
