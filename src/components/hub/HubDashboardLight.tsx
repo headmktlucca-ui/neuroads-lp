@@ -49,6 +49,7 @@ import {
   IconCoin3D,
 } from './HubUiIcons3D';
 import { IconNeuDashboard } from './NeumorphicMenuIcons';
+import { VisualAnalysisPanel } from './visual-analysis/VisualAnalysisPanel';
 
 /* ─── Custom Icons ────────────────────────────────────────────────── */
 const InstagramIcon = ({ size = 16, className = "" }: { size?: number; className?: string }) => (
@@ -482,9 +483,194 @@ function GA4ActiveRegions({ regions, connected, loading }: { regions: Ga4Region[
   );
 }
 
+/* ─── NeuroVisão Widget (Hub Principal) ─────────────────────────────── */
+function NeuroVisaoWidget({ userUrl }: { userUrl?: string }) {
+  const [showModal, setShowModal] = useState(false);
+  const [activeTab, setActiveTab] = useState<'site' | 'ads'>('site');
+
+  const displayUrl = userUrl || 'neuroads.com.br';
+
+  const recentAnalyses = [
+    { label: `Página inicial — ${displayUrl}`, score: 72, time: '2h atrás' },
+    { label: 'Banner Meta Ads — BF2026',          score: 81, time: '1d atrás' },
+    { label: 'LinkedIn Ad — Decisores B2B',        score: 58, time: '3d atrás' },
+  ];
+
+  const getColor = (s: number) =>
+    s >= 75 ? '#22c55e' : s >= 50 ? '#f97316' : '#ef4444';
+
+  return (
+    <>
+      <div className="mt-8 space-y-4">
+        {/* Header da seção */}
+        <div className="flex items-center gap-2 border-b border-slate-200/60 pb-3">
+          <div
+            className="flex items-center justify-center rounded-full"
+            style={{
+              width: 32, height: 32,
+              background: 'white',
+              boxShadow: '0 3px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)',
+              border: '1px solid rgba(226,232,240,0.5)',
+            }}
+          >
+            <Sparkles size={15} style={{ color: '#FF6A00' }} />
+          </div>
+          <h2 className="text-[16px] font-black uppercase tracking-wider text-[#0f172a]">
+            NeuroVisão — Análise Visual IA
+          </h2>
+          <span
+            className="ml-2 px-2 py-0.5 rounded-lg text-[10px] font-bold"
+            style={{
+              background: 'rgba(255,106,0,0.08)',
+              color: '#FF6A00',
+              border: '1px solid rgba(255,106,0,0.2)',
+            }}
+          >
+            BETA
+          </span>
+        </div>
+
+        {/* Grid: Score geral + análises recentes */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          {/* Card principal — CTA de análise */}
+          <div
+            className="lg:col-span-1 rounded-2xl p-5 flex flex-col justify-between gap-4 cursor-pointer group transition-all hover:scale-[1.01]"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,106,0,0.06), rgba(255,136,5,0.03))',
+              border: '1px solid rgba(255,106,0,0.15)',
+              boxShadow: '0 4px 16px rgba(255,106,0,0.06)',
+            }}
+            onClick={() => setShowModal(true)}
+          >
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-bold text-slate-700">Analisar Agora</p>
+                <p className="text-[11px] text-slate-400 mt-0.5">Site, landing page ou criativo</p>
+              </div>
+              <div
+                className="w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform"
+                style={{
+                  background: 'linear-gradient(135deg, #FF6A00, #FF8805)',
+                  boxShadow: '0 4px 12px rgba(255,106,0,0.35)',
+                }}
+              >
+                <Sparkles size={18} className="text-white" />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <p className="text-[10px] text-slate-500 font-semibold uppercase tracking-wide">Recursos disponíveis</p>
+              {['Heatmap Preditivo', 'Scoring de Atenção (0–100)', 'Pré-validação de Criativos'].map(r => (
+                <div key={r} className="flex items-center gap-1.5">
+                  <span className="text-orange-500">✓</span>
+                  <span className="text-[11px] text-slate-600">{r}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Análises recentes */}
+          <div
+            className="lg:col-span-2 rounded-2xl p-5"
+            style={{
+              background: 'white',
+              border: '1px solid rgba(226,232,240,0.7)',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.04)',
+            }}
+          >
+            <p className="text-[12px] font-black uppercase tracking-wider text-slate-500 mb-3">
+              Análises Recentes
+            </p>
+            <div className="space-y-3">
+              {recentAnalyses.map((a, i) => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0 cursor-pointer group"
+                  onClick={() => setShowModal(true)}
+                >
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    {/* Mini ring */}
+                    <div className="relative w-9 h-9 flex-shrink-0">
+                      <svg width={36} height={36} className="-rotate-90">
+                        <circle cx={18} cy={18} r={14} fill="none" stroke="#e2e8f0" strokeWidth={3} />
+                        <circle
+                          cx={18} cy={18} r={14} fill="none"
+                          stroke={getColor(a.score)} strokeWidth={3} strokeLinecap="round"
+                          strokeDasharray={2 * Math.PI * 14}
+                          strokeDashoffset={2 * Math.PI * 14 * (1 - a.score / 100)}
+                        />
+                      </svg>
+                      <span
+                        className="absolute inset-0 flex items-center justify-center text-[9px] font-bold"
+                        style={{ color: getColor(a.score) }}
+                      >
+                        {a.score}
+                      </span>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-[12px] font-semibold text-slate-700 truncate">{a.label}</p>
+                      <p className="text-[10px] text-slate-400">{a.time}</p>
+                    </div>
+                  </div>
+                  <ChevronRight size={14} className="text-slate-300 group-hover:text-orange-400 transition-colors flex-shrink-0" />
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={() => setShowModal(true)}
+              className="mt-3 w-full text-center text-[11px] text-orange-500 hover:text-orange-600 font-semibold transition-colors"
+            >
+              + Nova análise visual
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal de análise */}
+      {showModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(15,23,42,0.5)', backdropFilter: 'blur(4px)' }}
+          onClick={e => { if (e.target === e.currentTarget) setShowModal(false); }}
+        >
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-3xl">
+            {/* Tabs */}
+            <div
+              className="flex gap-2 p-3 rounded-2xl mb-3"
+              style={{ background: '#f1f5f9', border: '1px solid rgba(226,232,240,0.6)' }}
+            >
+              {(['site', 'ads'] as const).map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className="flex-1 py-2 px-4 rounded-xl text-xs font-semibold transition-all"
+                  style={activeTab === tab ? {
+                    background: 'linear-gradient(135deg, #FF6A00, #FF8805)',
+                    color: 'white',
+                    boxShadow: '0 2px 8px rgba(255,106,0,0.35)',
+                    transform: 'scale(1.02)',
+                  } : { color: '#64748b' }}
+                >
+                  {tab === 'site' ? '🌐 Site / Landing Page' : '📢 Criativo de Anúncio'}
+                </button>
+              ))}
+            </div>
+
+            <VisualAnalysisPanel
+              subjectLabel={activeTab === 'site' ? displayUrl : 'Criativo de Anúncio'}
+              seed={activeTab === 'site' ? 7 : 42}
+              onClose={() => setShowModal(false)}
+            />
+          </div>
+        </div>
+      )}
+    </>
+  );
+}
+
 /* ─── Main Component ───────────────────────────────────────────────── */
 export default function HubDashboardLight() {
-  const { user, profile } = useAuth();
+
+  const { user, profile, activeCompany } = useAuth();
   const { dateRange, selectedPeriod, setSelectedPeriod } = useHub();
   const { dateFrom, dateTo } = dateRange;
   const [selectedAlert, setSelectedAlert] = useState<{
@@ -1514,6 +1700,9 @@ export default function HubDashboardLight() {
         })}
       </motion.div>
 
+      {/* ── NeuroVisão: Análise Visual IA ── */}
+      <NeuroVisaoWidget userUrl={activeCompany?.site || profile?.site || 'neuroads.com.br'} />
+
       {/* Main Content Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -1971,6 +2160,8 @@ export default function HubDashboardLight() {
           </div>
         </BentoCard>
       </div>
+
+
 
       {/* ── Métricas Avançadas (GA4) ── */}
       <div className="mt-8 space-y-6">

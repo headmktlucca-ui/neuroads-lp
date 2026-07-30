@@ -22,6 +22,8 @@ import { useAuth } from '../../../context/AuthContext';
 import { loadUserConnections, type ConnectionsMap } from '../../../lib/connector-save';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer } from 'recharts';
 import { IconNeuAds, PageTitleIcon, NeumorphicTileIcon } from '../../../components/hub/NeumorphicMenuIcons';
+import { CreativePreValidator } from '../../../components/hub/visual-analysis/CreativePreValidator';
+import { scoreCreative, getScoreColor, getScoreLabel, type Platform } from '../../../lib/visual-analysis';
 
 // Initial campaigns list
 const INITIAL_CAMPAIGNS = [
@@ -56,6 +58,7 @@ export default function AdsDashboardPage() {
   const [connections, setConnections] = useState<ConnectionsMap>({});
   const [selectedDays, setSelectedDays] = useState<number>(30); // Default active period: 30 days
   const [campaigns, setCampaigns] = useState(INITIAL_CAMPAIGNS);
+  const [validatingCampaignId, setValidatingCampaignId] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchConnections() {
@@ -617,6 +620,123 @@ export default function AdsDashboardPage() {
           </div>
         </>
       )}
+
+      {/* ── Pré-validação de Criativos ── */}
+      <div className="mt-8 space-y-4">
+        <div className="flex items-center gap-2 border-b border-slate-200/60 pb-3">
+          <div
+            className="flex items-center justify-center rounded-full"
+            style={{
+              width: 32, height: 32,
+              background: 'white',
+              boxShadow: '0 3px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04)',
+              border: '1px solid rgba(226,232,240,0.5)',
+            }}
+          >
+            <Sparkles size={15} style={{ color: '#FF6A00' }} />
+          </div>
+          <h2 className="text-[15px] font-black uppercase tracking-wider text-[#0f172a]">
+            Pré-validação de Criativos
+          </h2>
+          <span
+            className="ml-1 px-2 py-0.5 rounded-lg text-[10px] font-bold"
+            style={{ background: 'rgba(255,106,0,0.08)', color: '#FF6A00', border: '1px solid rgba(255,106,0,0.2)' }}
+          >
+            IA
+          </span>
+        </div>
+
+        {/* Insight de contexto */}
+        <div
+          className="flex items-center gap-3 px-4 py-3 rounded-xl"
+          style={{ background: 'rgba(255,106,0,0.04)', border: '1px solid rgba(255,106,0,0.12)' }}
+        >
+          <Target size={14} className="text-orange-400 flex-shrink-0" />
+          <p className="text-[11px] text-slate-600 leading-relaxed">
+            <strong>Insight IA:</strong> Criativos com Score Visual &gt; 75 têm em média <strong>ROAS 2.3x maior</strong>.
+            Valide antes de veicular para maximizar seu retorno.
+          </p>
+        </div>
+
+        {/* Grid de campanha com score */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
+          {campaigns.map(camp => {
+            const analysis = scoreCreative(camp.id, camp.platform as Platform, camp.name, camp.id.charCodeAt(0));
+            const isOpen = validatingCampaignId === camp.id;
+            const color = getScoreColor(analysis.attentionScore.overall);
+
+            return (
+              <div key={camp.id}>
+                {/* Card compacto com score */}
+                <div
+                  className="p-4 rounded-2xl border cursor-pointer transition-all hover:scale-[1.01]"
+                  style={{
+                    background: 'white',
+                    border: isOpen ? `1.5px solid ${color}` : '1px solid rgba(226,232,240,0.7)',
+                    boxShadow: isOpen ? `0 4px 16px ${color}25` : '0 2px 8px rgba(0,0,0,0.04)',
+                  }}
+                  onClick={() => setValidatingCampaignId(isOpen ? null : camp.id)}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0 flex-1">
+                      <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
+                        camp.platform === 'Google Ads' ? 'bg-blue-100 text-blue-800' :
+                        camp.platform === 'LinkedIn Ads' ? 'bg-sky-100 text-sky-800' :
+                        camp.platform === 'TikTok Ads' ? 'bg-stone-800 text-white' :
+                        'bg-pink-100 text-pink-800'
+                      }`}>
+                        {camp.platform}
+                      </span>
+                      <p className="text-[12px] font-bold text-slate-700 mt-1.5 leading-snug truncate">{camp.name}</p>
+                    </div>
+                    {/* Score badge */}
+                    <div className="flex flex-col items-center flex-shrink-0">
+                      <div className="relative w-10 h-10">
+                        <svg width={40} height={40} className="-rotate-90">
+                          <circle cx={20} cy={20} r={16} fill="none" stroke="#e2e8f0" strokeWidth={3} />
+                          <circle
+                            cx={20} cy={20} r={16} fill="none" stroke={color} strokeWidth={3} strokeLinecap="round"
+                            strokeDasharray={2 * Math.PI * 16}
+                            strokeDashoffset={2 * Math.PI * 16 * (1 - analysis.attentionScore.overall / 100)}
+                          />
+                        </svg>
+                        <span
+                          className="absolute inset-0 flex items-center justify-center text-[9px] font-bold"
+                          style={{ color }}
+                        >
+                          {analysis.attentionScore.overall}
+                        </span>
+                      </div>
+                      <span className="text-[8px] font-semibold mt-0.5" style={{ color }}>
+                        {getScoreLabel(analysis.attentionScore.overall)}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
+                    <span className="text-[10px] text-slate-400">CTR preditivo: <strong style={{ color }}>{analysis.predictedCTR.toFixed(2)}%</strong></span>
+                    <span className="text-[10px] text-orange-500 font-semibold">
+                      {isOpen ? 'Fechar ↑' : 'Ver análise ↓'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Validador expandido */}
+                {isOpen && (
+                  <div className="mt-2">
+                    <CreativePreValidator
+                      creativeId={camp.id}
+                      creativeName={camp.name}
+                      platform={camp.platform as Platform}
+                      onClose={() => setValidatingCampaignId(null)}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 }
