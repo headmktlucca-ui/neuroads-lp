@@ -1,6 +1,6 @@
 'use server';
 
-import OpenAI from 'openai';
+import { generateChatCompletion } from '../../lib/llm-router';
 
 export type TrafficAiAnalysisInput = {
   dateFrom: string;
@@ -32,30 +32,9 @@ export type TrafficAiAnalysisResponse = {
   };
 };
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || '',
-});
-
 export async function generateTrafficAiAnalysis(
   input: TrafficAiAnalysisInput
 ): Promise<TrafficAiAnalysisResponse> {
-  if (!process.env.OPENAI_API_KEY) {
-    return {
-      success: true,
-      executiveSummary: 'Análise de tráfego executada no modo local simplificado. Por favor, conecte a chave de API da OpenAI para receber análises preditivas mais profundas.',
-      priorities: [
-        'Google Ads: Otimizar lances de conversão nas campanhas institucionais.',
-        'Meta Ads: Rotacionar peças criativas saturadas em conjuntos de público aberto.',
-        'Reduzir CPC geral negativando termos de pesquisa com alto custo e baixa conversão.'
-      ],
-      metrics: {
-        creativeFatigueIndex: 45,
-        roasGapPct: -18,
-        cpmOscillation: 'Estável (+2.4% Geral)',
-      },
-    };
-  }
-
   const prompt = `
 Você é o Analista de Tráfego de Mídia e IA Sênior da NeuroAds.
 Analise as seguintes métricas de tráfego consolidadas das contas de anúncios (Google Ads, Meta Ads e LinkedIn Ads) e gere um diagnóstico de performance inteligente.
@@ -82,7 +61,7 @@ INSTRUÇÕES OBRIGATÓRIAS:
 5. Descreva o "cpmOscillation" estimando a oscilação de CPM nos canais mais ativos.
 6. Crie um resumo executivo direto e 3 a 5 prioridades de otimização de alta urgência com explicações financeiras de impacto.
 
-Retorne APENAS um JSON válido seguindo EXATAMENTE esta estrutura:
+Retorne APENAS um JSON válido seguindo EXATAMENTE esta estrutura (nenhum outro texto extra fora do bloco JSON):
 {
   "executiveSummary": "Resumo analítico curto sobre o desempenho do tráfego no período",
   "priorities": [
@@ -99,31 +78,30 @@ Retorne APENAS um JSON válido seguindo EXATAMENTE esta estrutura:
 `.trim();
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      response_format: { type: 'json_object' },
-      temperature: 0.3,
-      messages: [
-        {
-          role: 'system',
-          content: 'Você é um Analista de Mídia Paga e Performance focado em eficiência de tráfego para empresas B2B e B2C. Responda apenas JSON válido.',
-        },
-        { role: 'user', content: prompt },
-      ],
+    const result = await generateChatCompletion({
+      agentKey: 'dados',
+      systemPrompt: 'Você é um Analista de Mídia Paga e Performance focado em eficiência de tráfego para empresas B2B e B2C. Responda apenas com o objeto JSON estruturado solicitado, sem tags markdown ou cabeçalhos.',
+      userPrompt: prompt,
+      temperature: 0.2,
     });
 
-    const content = completion.choices[0]?.message?.content;
-    if (!content) {
-      throw new Error('Sem resposta do motor de IA.');
+    if (!result.success || !result.content) {
+      throw new Error(result.error || 'Sem resposta do motor de IA.');
     }
 
-    const parsed = JSON.parse(content) as Record<string, any>;
-    const metricsRaw = parsed.metrics && typeof parsed.metrics === 'object' ? parsed.metrics : {};
+    // Limpar possíveis tags markdown de código (ex: ```json ... ```) se o modelo as inserir
+    let rawContent = result.content.trim();
+    if (rawContent.startsWith('```')) {
+      rawContent = rawContent.replace(/^```(json)?/, '').replace(/```$/, '').trim();
+    }
+
+    const parsed = JSON.parse(rawContent) as Record<string, unknown>;
+    const metricsRaw = (parsed.metrics && typeof parsed.metrics === 'object' ? parsed.metrics : {}) as Record<string, unknown>;
 
     return {
       success: true,
       executiveSummary: String(parsed.executiveSummary || 'Análise de tráfego realizada com sucesso.'),
-      priorities: Array.isArray(parsed.priorities) ? parsed.priorities.map(String) : [],
+      priorities: Array.isArray(parsed.priorities) ? (parsed.priorities as unknown[]).map(String) : [],
       metrics: {
         creativeFatigueIndex: typeof metricsRaw.creativeFatigueIndex === 'number' ? Math.max(0, Math.min(100, metricsRaw.creativeFatigueIndex)) : 40,
         roasGapPct: typeof metricsRaw.roasGapPct === 'number' ? metricsRaw.roasGapPct : -10,

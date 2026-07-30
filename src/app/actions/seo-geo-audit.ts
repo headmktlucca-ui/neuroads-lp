@@ -1,7 +1,7 @@
 'use server';
 
-import OpenAI from 'openai';
 import { SeoGeoAuditInput, SeoGeoAuditResult } from '../../types/seo-geo';
+import { generateChatCompletion } from '../../lib/llm-router';
 
 function normalizeUrl(url: string): string {
   const candidate = url.trim();
@@ -73,7 +73,7 @@ Avalie:
 - Jornada do usuário e funil de conversão estimado
 - Pontos de atrito cognitivo e oportunidades de melhoria
 
-## 🔗 6. AUTORIDADE & LINK BUILDING
+## 🔗 6. AUDITORIA & LINK BUILDING
 - Perfil de backlinks estimado e Domain Authority
 - 8 táticas de link building específicas para o setor identificado
 - Oportunidades de PR digital e menções em mídia
@@ -92,13 +92,6 @@ Organize em fases:
 - Metas de conversão e Domain Authority alvo`;
 
 export async function generateSeoGeoAudit(input: SeoGeoAuditInput): Promise<SeoGeoAuditResult> {
-  if (!process.env.OPENAI_API_KEY) {
-    return {
-      success: false,
-      error: 'OPENAI_API_KEY não configurada no ambiente.',
-    };
-  }
-
   const normalizedUrl = normalizeUrl(input.websiteUrl);
   if (!normalizedUrl) {
     return {
@@ -126,33 +119,26 @@ export async function generateSeoGeoAudit(input: SeoGeoAuditInput): Promise<SeoG
     .join('\n\n');
 
   try {
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY || '',
+    const result = await generateChatCompletion({
+      agentKey: 'pesquisa',
+      systemPrompt: SYSTEM_PROMPT,
+      userPrompt: userPrompt,
+      maxTokens: 8000,
+      useSearch: true,
     });
 
-    const response = await (openai as any).responses.create({
-      model: 'gpt-4o',
-      tools: [{ type: 'web_search_preview' }],
-      max_output_tokens: 8000, // Increased for full report
-      input: [
-        { role: 'system', content: [{ type: 'input_text', text: SYSTEM_PROMPT }] },
-        { role: 'user', content: [{ type: 'input_text', text: userPrompt }] },
-      ],
-    });
-
-    const report = response.output_text?.trim();
-    if (!report) {
+    if (!result.success) {
       return {
         success: false,
-        error: 'Não foi possível gerar o relatório no momento.',
+        error: result.error || 'Não foi possível gerar o relatório no momento.',
       };
     }
 
     return {
       success: true,
-      report,
+      report: result.content,
       generatedAt: new Date().toISOString(),
-      model: 'gpt-4o',
+      model: result.modelUsed,
       usedWebSearch: true,
     };
   } catch (error) {

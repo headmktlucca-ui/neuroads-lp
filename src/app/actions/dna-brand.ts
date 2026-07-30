@@ -1,6 +1,6 @@
 'use server';
 
-import OpenAI from 'openai';
+import { generateChatCompletion } from '../../lib/llm-router';
 
 export type DnaBrandInput = {
   siteUrl: string;
@@ -218,11 +218,7 @@ function normalizePresentation(raw: unknown): DnaBrandPresentation {
   };
 }
 
-function getClient() {
-  return new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || '',
-  });
-}
+
 
 function normalizeUrl(value: string): string {
   const raw = value.trim();
@@ -454,10 +450,10 @@ function buildMarkdown(presentation: DnaBrandPresentation, sources: DnaBrandSour
 }
 
 export async function generateDnaBrandReport(input: DnaBrandInput): Promise<DnaBrandResult> {
-  if (!process.env.OPENAI_API_KEY) {
+  if (!process.env.OPENAI_API_KEY && !process.env.ANTHROPIC_API_KEY && !process.env.GEMINI_API_KEY) {
     return {
       success: false,
-      error: 'OPENAI_API_KEY não configurada no servidor.',
+      error: 'Serviço de IA não configurado no servidor.',
     };
   }
 
@@ -474,8 +470,6 @@ export async function generateDnaBrandReport(input: DnaBrandInput): Promise<DnaB
     fetchSource('linkedin', input.linkedinUrl),
   ]);
   try {
-    const client = getClient();
-
     const sourcePayload = sources.map((item) => JSON.stringify(item)).join('\n');
     const siteSource = sources.find((s) => s.label === 'site');
     const extractedColorsHint =
@@ -483,19 +477,8 @@ export async function generateDnaBrandReport(input: DnaBrandInput): Promise<DnaB
         ? `\nCORES HEXADECIMAIS REAIS EXTRAÍDAS DO CÓDIGO FONTE DO SITE (Use como base principal para identificar a paleta real da marca): ${siteSource.colors.join(', ')}\n`
         : '';
 
-    const response = await client.chat.completions.create({
-      model: 'gpt-4o',
-      temperature: 0.55,
-      response_format: { type: 'json_object' },
-      messages: [
-        {
-          role: 'system',
-          content:
-            'Você é especialista sênior em branding e posicionamento da NeuroAds. Faça análise profunda com base nas fontes fornecidas. Responda apenas JSON válido.',
-        },
-        {
-          role: 'user',
-          content: `Analise profundamente as fontes e monte uma apresentação estratégica completa de DNA da Marca com foco em crescimento previsível e impacto financeiro.
+    const systemPrompt = 'Você é especialista sênior em branding e posicionamento da NeuroAds. Faça análise profunda com base nas fontes fornecidas. Responda apenas com o JSON válido solicitado, sem blocos explicativos de texto ou tags markdown adicionais.';
+    const userPrompt = `Analise profundamente as fontes e monte uma apresentação estratégica completa de DNA da Marca com foco em crescimento previsível e impacto financeiro.
 ${extractedColorsHint}
 Fontes coletadas:
 ${sourcePayload}
@@ -579,18 +562,26 @@ Regras:
 - Traduza estratégia para impacto no caixa (aquisição, conversão, retenção, previsibilidade).
 - probabilityScore, needScore e engagementPotential devem estar entre 0 e 100.
 - As oportunidades práticas devem ser objetivas, acionáveis e alinhadas ao cliente ideal.
-- Se alguma fonte estiver fraca/inacessível, sinalize com clareza e proponha contingência.`,
-        },
-      ],
+- Se alguma fonte estiver fraca/inacessível, sinalize com clareza e proponha contingência.`;
+
+    const result = await generateChatCompletion({
+      agentKey: 'juridico',
+      systemPrompt,
+      userPrompt,
+      temperature: 0.55,
     });
 
-    const raw = response.choices[0]?.message?.content?.trim();
-    if (!raw) {
+    if (!result.success || !result.content) {
       return {
         success: false,
         sources,
-        error: 'Falha ao gerar conteúdo do DNA da Marca.',
+        error: result.error || 'Falha ao gerar conteúdo do DNA da Marca.',
       };
+    }
+
+    let raw = result.content.trim();
+    if (raw.startsWith('```')) {
+      raw = raw.replace(/^```(json)?/, '').replace(/```$/, '').trim();
     }
 
     const presentation = normalizePresentation(JSON.parse(raw));
