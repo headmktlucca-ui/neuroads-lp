@@ -95,6 +95,13 @@ function CadastroPageContent() {
         await sendEmailVerification(currentUser);
       }
 
+      // ChatGPT Ads Pixel — conversions: registration_completed + lead_created
+      if (typeof window !== 'undefined' && typeof (window as { oaiq?: (...args: unknown[]) => void }).oaiq === 'function') {
+        const _oaiq = (window as { oaiq: (...args: unknown[]) => void }).oaiq;
+        _oaiq('measure', 'registration_completed', { type: 'customer_action' });
+        _oaiq('measure', 'lead_created', { type: 'customer_action' });
+      }
+
       router.replace('/verificar-email');
     } catch (err: unknown) {
       const code = (err as { code?: string }).code ?? '';
@@ -118,6 +125,13 @@ function CadastroPageContent() {
       setIsSubmitting(true);
       setAuthError(null);
       await loginWithGoogle();
+
+      // ChatGPT Ads Pixel — conversions: registration_completed + lead_created
+      if (typeof window !== 'undefined' && typeof (window as { oaiq?: (...args: unknown[]) => void }).oaiq === 'function') {
+        const _oaiq = (window as { oaiq: (...args: unknown[]) => void }).oaiq;
+        _oaiq('measure', 'registration_completed', { type: 'customer_action' });
+        _oaiq('measure', 'lead_created', { type: 'customer_action' });
+      }
     } catch {
       setAuthError('Não foi possível cadastrar com Google. Tente novamente.');
     } finally {

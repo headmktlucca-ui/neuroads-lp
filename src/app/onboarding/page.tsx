@@ -344,6 +344,16 @@ function OnboardingPageContent() {
         { merge: true }
       );
 
+      // ChatGPT Ads Pixel — conversions: trial_started + subscription_created
+      if (typeof window !== 'undefined' && typeof (window as { oaiq?: (...args: unknown[]) => void }).oaiq === 'function') {
+        const _oaiq = (window as { oaiq: (...args: unknown[]) => void }).oaiq;
+        _oaiq('measure', 'trial_started', {
+          type: 'plan_enrollment',
+          plan_id: selectedPlan.slug,
+        });
+        _oaiq('measure', 'subscription_created', { type: 'plan_enrollment' });
+      }
+
       router.replace(nextPath);
     } catch (error) {
       console.error('Falha ao iniciar trial:', error);

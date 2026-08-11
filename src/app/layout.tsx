@@ -223,6 +223,26 @@ export default function RootLayout({
             })
           }}
         />
+        {/* ChatGPT Ads Measurement Pixel */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function (w, d, s, u) {
+  if (w.oaiq) return;
+  var q = function () { q.q.push(arguments); };
+  q.q = [];
+  w.oaiq = q;
+  var js = d.createElement(s);
+  js.async = true;
+  js.src = u;
+  var f = d.getElementsByTagName(s)[0];
+  f.parentNode.insertBefore(js, f);
+})(window, document, "script", "https://bzrcdn.openai.com/sdk/oaiq.min.js");
+
+oaiq("init", {
+  pixelId: "L4icExrpiGYxyXyu2t4WKt",
+});`,
+          }}
+        />
         {/* Google tag (gtag.js) */}
         <Script
           src="https://www.googletagmanager.com/gtag/js?id=G-80X93TW8EK"
